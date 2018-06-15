@@ -8,9 +8,9 @@
 #include "Doom/Wad.hpp"
 #include "Doom/Flat/AbstractFlat.hpp"
 
-namespace Game
+namespace DOOM
 {
-  class AnimatedFlat : public virtual AbstractFlat
+  class AnimatedFlat : public virtual DOOM::AbstractFlat
   {
     static const int	FrameDuration = 8;	// Tics between two frames of animation
 
@@ -19,10 +19,10 @@ namespace Game
     std::vector<std::vector<uint8_t>>	_flats;		// Vector of flats composing animation
     
   public:
-    AnimatedFlat(const Game::Wad &, const std::vector<uint64_t> &);
+    AnimatedFlat(const DOOM::Wad & wad, const std::vector<uint64_t> & flat);
     virtual ~AnimatedFlat();
 
-    virtual void				update(sf::Time) override;	// Update animation sequence
+    virtual void				update(sf::Time elapsed) override;	// Update animation sequence
     virtual const std::vector<uint8_t> &	flat() const override;			// Return flat to be displayed
   };
 };

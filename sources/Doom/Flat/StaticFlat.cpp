@@ -1,17 +1,17 @@
 #include "Doom/Flat/StaticFlat.hpp"	
 
-Game::StaticFlat::StaticFlat(Game::Wad::RawResources::Flat const & flat) :
+DOOM::StaticFlat::StaticFlat(DOOM::Wad::RawResources::Flat const & flat) :
   AbstractFlat(),
-  _flat(sizeof(Game::Wad::RawResources::Flat::texture) / sizeof(uint8_t))
+  _flat(sizeof(DOOM::Wad::RawResources::Flat::texture) / sizeof(uint8_t))
 {
   // Copy raw flat
-  std::memcpy(_flat.data(), flat.texture, sizeof(Game::Wad::RawResources::Flat::texture));
+  std::memcpy(_flat.data(), flat.texture, sizeof(DOOM::Wad::RawResources::Flat::texture));
 }
 
-Game::StaticFlat::~StaticFlat()
+DOOM::StaticFlat::~StaticFlat()
 {}
 
-std::vector<uint8_t> const &	Game::StaticFlat::flat() const
+std::vector<uint8_t> const &	DOOM::StaticFlat::flat() const
 {
   // Return flat
   return _flat;

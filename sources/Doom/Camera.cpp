@@ -2,11 +2,11 @@
 
 #include "Doom/Camera.hpp"
 #include "Doom/Flat/AbstractFlat.hpp"
+#include "Doom/Linedef/AbstractLinedef.hpp"
+#include "Doom/Sector/AbstractSector.hpp"
 #include "Doom/Thing/AbstractThing.hpp"
 
-#include <iostream>
-
-Game::Camera::Camera() :
+DOOM::Camera::Camera(unsigned int width, unsigned int height) :
   position(0.f, 0.f),
   height(48.f),
   angle(Math::DegToRad(0.f)),
@@ -17,10 +17,10 @@ Game::Camera::Camera() :
   _sprite()
 {
   // Create rendering target
-  _image.create(DefaultWidth, DefaultHeight, sf::Color::Black);
+  _image.create(width, height, sf::Color::Black);
 
   // Create texture on VRAM
-  if (_texture.create(DefaultWidth, DefaultHeight) == false)
+  if (_texture.create(width, height) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Set texture and sprite parameters
@@ -28,10 +28,10 @@ Game::Camera::Camera() :
   _sprite.setTexture(_texture);
 }
 
-Game::Camera::~Camera()
+DOOM::Camera::~Camera()
 {}
 
-void	Game::Camera::render(Game::Doom const & doom)
+void	DOOM::Camera::render(DOOM::Doom const & doom)
 {
   // Clear image
   std::memset((void *)_image.getPixelsPtr(), 0, sizeof(sf::Color) * _image.getSize().x * _image.getSize().y);
@@ -79,38 +79,28 @@ void	Game::Camera::render(Game::Doom const & doom)
   _texture.update(_image);
 }
 
-bool	Game::Camera::renderNode(Game::Doom const & doom, int16_t index)
+bool	DOOM::Camera::renderNode(DOOM::Doom const & doom, int16_t index)
 {
   // Draw subsector if node ID has subsector mask
   if (index & 0b1000000000000000)
     return renderSubsector(doom, index & 0b0111111111111111);
 
-  Game::Doom::Level::Node const &	node(doom.level.nodes[index]);
+  DOOM::Doom::Level::Node const &	node(doom.level.nodes[index]);
 
   // Use derterminant to find which side should be rendered first
   if (Math::Vector<2>::determinant(node.direction, position - node.origin) > 0.f)
-  {
-    // TODO: use bounding box to fasten rendering
-
-    // Explore left child first
-    if (renderNode(doom, node.leftchild) == true || renderNode(doom, node.rightchild) == true)
-      return true;
-  }
+    return renderNode(doom, node.leftchild) == true ||
+    ((Math::Vector<2>::determinant(node.origin - position, node.direction) / Math::Vector<2>::determinant(_screen_start - position, node.direction) >= 0.f || Math::Vector<2>::determinant(node.origin - position, node.direction) / Math::Vector<2>::determinant(_screen_end - position, node.direction) >= 0.f) && renderNode(doom, node.rightchild) == true);
   else
-  {
-    // TODO: use bounding box to fasten rendering
-
-    // Explore right child first
-    if (renderNode(doom, node.rightchild) == true || renderNode(doom, node.leftchild) == true)
-      return true;
-  }
+    return renderNode(doom, node.rightchild) == true ||
+    ((Math::Vector<2>::determinant(node.origin - position, node.direction) / Math::Vector<2>::determinant(_screen_start - position, node.direction) >= 0.f || Math::Vector<2>::determinant(node.origin - position, node.direction) / Math::Vector<2>::determinant(_screen_end - position, node.direction) >= 0.f) && renderNode(doom, node.leftchild) == true);
 
   return false;
 }
 
-bool	Game::Camera::renderSubsector(Game::Doom const & doom, int16_t index)
+bool	DOOM::Camera::renderSubsector(DOOM::Doom const & doom, int16_t index)
 {
-  Game::Doom::Level::Subsector const &	subsector(doom.level.subsectors[index]);
+  DOOM::Doom::Level::Subsector const &	subsector(doom.level.subsectors[index]);
 
   // Render subsector segs
   for (int16_t i = 0; i < subsector.count; i++)
@@ -120,12 +110,12 @@ bool	Game::Camera::renderSubsector(Game::Doom const & doom, int16_t index)
   return false;
 }
 
-bool	Game::Camera::renderSeg(Game::Doom const & doom, int16_t index)
+bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, int16_t index)
 {
   // Get segment from level data
-  Game::Doom::Level::Segment const &	seg(doom.level.segments[index]);
-  Game::Doom::Level::Vertex const &	seg_start(doom.level.vertexes[seg.start]);
-  Game::Doom::Level::Vertex const &	seg_end(doom.level.vertexes[seg.end]);
+  DOOM::Doom::Level::Segment const &	seg(doom.level.segments[index]);
+  DOOM::Doom::Level::Vertex const &	seg_start(doom.level.vertexes[seg.start]);
+  DOOM::Doom::Level::Vertex const &	seg_end(doom.level.vertexes[seg.end]);
 
   // Compute intersection of vertexes with screen
   std::pair<float, float>	start(Math::intersection(_screen_start, _screen, position, seg_start - position));
@@ -145,7 +135,7 @@ bool	Game::Camera::renderSeg(Game::Doom const & doom, int16_t index)
   if (std::isnan(left.screen) == true || std::isnan(right.screen) == true || (left.screen < 0.f && right.screen < 0.f) || (left.screen >= 1.f && right.screen >= 1.f) || (left.screen == right.screen))
     return false;
 
-  Game::Doom::Level::Linedef const &	linedef(doom.level.linedefs[seg.linedef]);
+  DOOM::AbstractLinedef const &	linedef(*doom.level.linedefs[seg.linedef]);
   bool					side(seg.direction == 0 ? left.screen > right.screen : left.screen < right.screen);
 
   // Cancel if no sidedef on left side
@@ -164,37 +154,40 @@ bool	Game::Camera::renderSeg(Game::Doom const & doom, int16_t index)
   if (column_start >= column_end)
     return false;
 
-  const Game::Doom::Level::Sidedef &	sidedef_front(doom.level.sidedefs[side == true ? (linedef.back != -1 ? linedef.back : linedef.front) : linedef.front]);
-  const Game::Doom::Level::Sidedef &	sidedef_back(doom.level.sidedefs[side == true ? linedef.front : (linedef.back != -1 ? linedef.back : linedef.front)]);
-  const Game::Doom::Level::Sector &	sector_front(doom.level.sectors[sidedef_front.sector]);
-  const Game::Doom::Level::Sector &	sector_back(doom.level.sectors[sidedef_back.sector]);
+  const DOOM::Doom::Level::Sidedef &	sidedef_front(doom.level.sidedefs[side == true ? (linedef.back != -1 ? linedef.back : linedef.front) : linedef.front]);
+  const DOOM::Doom::Level::Sidedef &	sidedef_back(doom.level.sidedefs[side == true ? linedef.front : (linedef.back != -1 ? linedef.back : linedef.front)]);
+  const DOOM::AbstractSector &	sector_front(*doom.level.sectors[sidedef_front.sector]);
+  const DOOM::AbstractSector &	sector_back(*doom.level.sectors[sidedef_back.sector]);
   
-  const Game::Doom::Resources::Texture &	texture_upper(sidedef_front.upper());
-  const Game::Doom::Resources::Texture &	texture_lower(sidedef_front.lower());
-  const Game::Doom::Resources::Texture &	texture_middle(sidedef_front.middle());
+  const DOOM::Doom::Resources::Texture &	texture_upper(sidedef_front.upper());
+  const DOOM::Doom::Resources::Texture &	texture_lower(sidedef_front.lower());
+  const DOOM::Doom::Resources::Texture &	texture_middle(sidedef_front.middle());
 
   // Y projection of first and second vertexes
   float	left_c = _factor / left.distance;
   float	right_c = _factor / right.distance;
-  float	left_lower_front = _horizon - (sector_front.floor_height - height) * left_c;
-  float	left_lower_back = _horizon - (sector_back.floor_height - height) * left_c;
-  float	left_upper_front = _horizon - (sector_front.ceiling_height - height) * left_c;
-  float	left_upper_back = _horizon - (sector_back.ceiling_height - height) * left_c;
-  float	right_lower_front = _horizon - (sector_front.floor_height - height) * right_c;
-  float	right_lower_back = _horizon - (sector_back.floor_height - height) * right_c;
-  float	right_upper_front = _horizon - (sector_front.ceiling_height - height) * right_c;
-  float	right_upper_back = _horizon - (sector_back.ceiling_height - height) * right_c;
+  float	left_lower_front = _horizon - (sector_front.floor() - height) * left_c;
+  float	left_lower_back = _horizon - (sector_back.floor() - height) * left_c;
+  float	left_upper_front = _horizon - (sector_front.ceiling() - height) * left_c;
+  float	left_upper_back = _horizon - (sector_back.ceiling() - height) * left_c;
+  float	right_lower_front = _horizon - (sector_front.floor() - height) * right_c;
+  float	right_lower_back = _horizon - (sector_back.floor() - height) * right_c;
+  float	right_upper_front = _horizon - (sector_front.ceiling() - height) * right_c;
+  float	right_upper_back = _horizon - (sector_back.ceiling() - height) * right_c;
   
   // Texture Y offsets
-  int	upper_offset_y = (linedef.flag & Game::Doom::Level::Linedef::Flag::UpperUnpegged) ?
-    (int)(sidedef_front.y - (sector_front.ceiling_height - std::max(sector_front.ceiling_height, sector_back.ceiling_height))) :
-    (int)(sidedef_front.y - (sector_front.ceiling_height - std::min(sector_front.ceiling_height, sector_back.ceiling_height)) + texture_upper.height);
-  int	middle_offset_y = (linedef.flag & Game::Doom::Level::Linedef::Flag::LowerUnpegged) ?
-    (int)(sidedef_front.y - (sector_front.ceiling_height - std::max(sector_front.floor_height, sector_back.floor_height)) + texture_middle.height) :
-    (int)(sidedef_front.y - (sector_front.ceiling_height - std::min(sector_front.ceiling_height, sector_back.ceiling_height)));
-  int	lower_offset_y = (linedef.flag & Game::Doom::Level::Linedef::Flag::LowerUnpegged) ?
-    (int)(sidedef_front.y - (sector_back.floor_height - sector_front.ceiling_height)) :
-    (int)(sidedef_front.y - (sector_back.floor_height - std::max(sector_front.floor_height, sector_back.floor_height)));
+  int	upper_offset_y = (linedef.flag & DOOM::AbstractLinedef::Flag::UpperUnpegged) ?
+    (int)(sidedef_front.y - (sector_front.ceiling() - std::max(sector_front.ceiling(), sector_back.ceiling()))) :
+    (int)(sidedef_front.y - (sector_front.ceiling() - std::min(sector_front.ceiling(), sector_back.ceiling())) + texture_upper.height);
+  int	middle_offset_y = (linedef.flag & DOOM::AbstractLinedef::Flag::LowerUnpegged) ?
+    (int)(sidedef_front.y - (sector_front.ceiling() - std::max(sector_front.floor(), sector_back.floor())) + texture_middle.height) :
+    (int)(sidedef_front.y - (sector_front.ceiling() - std::min(sector_front.ceiling(), sector_back.ceiling())));
+  int	lower_offset_y = (linedef.flag & DOOM::AbstractLinedef::Flag::LowerUnpegged) ?
+    (int)(sidedef_front.y - (sector_back.floor() - sector_front.ceiling())) :
+    (int)(sidedef_front.y - (sector_back.floor() - std::max(sector_front.floor(), sector_back.floor())));
+
+  // Compute sector light
+  int16_t	light = sector_front.light();
 
   // Iterate through pixels of projection
   for (int column = column_start; column < column_end; column++)
@@ -214,42 +207,42 @@ bool	Game::Camera::renderSeg(Game::Doom const & doom, int16_t index)
 
     // TODO: solve nan values
     // Projection segment offset
-    float	seg_offset = std::clamp(left.seg + (right.seg - left.seg) * ((std::abs(right.distance - left.distance) < 0.1f) ? screen_offset : ((((sector_front.ceiling_height - height) * _factor / (_horizon - upper_front)) - left.distance) / (right.distance - left.distance))), 0.f, 1.f);
+    float	seg_offset = std::clamp(left.seg + (right.seg - left.seg) * ((std::abs(right.distance - left.distance) < 0.1f) ? screen_offset : ((((sector_front.ceiling() - height) * _factor / (_horizon - upper_front)) - left.distance) / (right.distance - left.distance))), 0.f, 1.f);
     
     // Texture X offset
     int		texture_offset_x = seg.offset + sidedef_front.x + (int)((seg_end - seg_start).length() * (((bool)seg.direction == side) ? seg_offset : (1.f - seg_offset)));
 
     // Draw ceiling/sky
-    if (sector_front.ceiling == Game::str_to_key("F_SKY1"))
+    if (sector_front.ceiling_name == DOOM::str_to_key("F_SKY1"))
     {
-      renderSky(doom, column, 0, (int)std::min(upper_front, upper_back), sector_front.ceiling_height, index);
+      renderSky(doom, column, 0, (int)std::min(upper_front, upper_back), sector_front.ceiling(), index);
       _vertical[column].first = std::max(_vertical[column].first, (int)std::min(upper_front, upper_back));
     }
-    else if (height < sector_front.ceiling_height)
+    else if (height < sector_front.ceiling())
     {
-      renderFlat(doom, *sector_front.ceiling_flat, column, 0, (int)upper_front, sector_front.ceiling_height, sector_front.light, index);
+      renderFlat(doom, *sector_front.ceiling_flat, column, 0, (int)upper_front, sector_front.ceiling(), light, index);
       _vertical[column].first = std::max(_vertical[column].first, (int)upper_front);
     }
 
     // Draw floor/sky
-    if (sector_front.floor == Game::str_to_key("F_SKY1"))
+    if (sector_front.floor_name == DOOM::str_to_key("F_SKY1"))
     {
-      renderSky(doom, column, (int)std::max(lower_front, lower_back), _image.getSize().y, sector_front.floor_height, index);
+      renderSky(doom, column, (int)std::max(lower_front, lower_back), _image.getSize().y, sector_front.floor(), index);
       _vertical[column].second = std::min(_vertical[column].second, (int)std::max(lower_front, lower_back));
     }
-    else if (height > sector_front.floor_height)
+    else if (height > sector_front.floor())
     {
-      renderFlat(doom, *sector_front.floor_flat, column, (int)lower_front, _image.getSize().y, sector_front.floor_height, sector_front.light, index);
+      renderFlat(doom, *sector_front.floor_flat, column, (int)lower_front, _image.getSize().y, sector_front.floor(), light, index);
       _vertical[column].second = std::min(_vertical[column].second, (int)lower_front);
     }
 
     // Draw upper/lower/middle walls
-    if (upper_front < upper_back && texture_upper.height != 0 && (sector_front.ceiling != Game::str_to_key("F_SKY1") || sector_back.ceiling != Game::str_to_key("F_SKY1")))
-      renderTexture(doom, texture_upper, column, upper_front, upper_back, std::abs(sector_front.ceiling_height - sector_back.ceiling_height), texture_offset_x, upper_offset_y, sector_front.light, index);
-    if (lower_front > lower_back && texture_lower.height != 0 && (sector_front.floor != Game::str_to_key("F_SKY1") || sector_back.floor != Game::str_to_key("F_SKY1")))
-      renderTexture(doom, texture_lower, column, lower_back, lower_front, std::abs(sector_front.floor_height - sector_back.floor_height), texture_offset_x, lower_offset_y, sector_front.light, index);
+    if (upper_front < upper_back && texture_upper.height != 0 && (sector_front.ceiling_name != DOOM::str_to_key("F_SKY1") || sector_back.ceiling_name != DOOM::str_to_key("F_SKY1")))
+      renderTexture(doom, texture_upper, column, upper_front, upper_back, std::abs(sector_front.ceiling() - sector_back.ceiling()), texture_offset_x, upper_offset_y, light, index);
+    if (lower_front > lower_back && texture_lower.height != 0 && (sector_front.floor_name != DOOM::str_to_key("F_SKY1") || sector_back.floor_name != DOOM::str_to_key("F_SKY1")))
+      renderTexture(doom, texture_lower, column, lower_back, lower_front, std::abs(sector_front.floor() - sector_back.floor()), texture_offset_x, lower_offset_y, light, index);
     if (upper_front < lower_front && texture_middle.height != 0)
-      renderTexture(doom, texture_middle, column, upper_front, lower_front, std::abs(sector_front.ceiling_height - sector_front.floor_height), texture_offset_x, middle_offset_y, sector_front.light, index);
+      renderTexture(doom, texture_middle, column, upper_front, lower_front, std::abs(sector_front.ceiling() - sector_front.floor()), texture_offset_x, middle_offset_y, light, index);
 
     // Complete column if final wall
     if (linedef.back == -1)
@@ -275,10 +268,10 @@ bool	Game::Camera::renderSeg(Game::Doom const & doom, int16_t index)
   return _horizontal.first == _horizontal.second;
 }
 
-void	Game::Camera::renderTexture(Game::Doom const & doom, Game::Doom::Resources::Texture const & texture, int column, float top, float bottom, float height, int offset_x, int offset_y, int16_t light, int16_t seg)
+void	DOOM::Camera::renderTexture(DOOM::Doom const & doom, DOOM::Doom::Resources::Texture const & texture, int column, float top, float bottom, float height, int offset_x, int offset_y, int16_t light, int16_t seg)
 {
   int									pixel_x(Math::Modulo(offset_x, texture.width));
-  std::vector<Game::Doom::Resources::Texture::Column::Span> const &	spans(texture.columns[pixel_x].spans);
+  std::vector<DOOM::Doom::Resources::Texture::Column::Span> const &	spans(texture.columns[pixel_x].spans);
 
   // Draw column of pixels
   for (int row = std::max(_vertical[column].first, (int)top); row < std::min((int)bottom + 1, _vertical[column].second); row++)
@@ -287,7 +280,7 @@ void	Game::Camera::renderTexture(Game::Doom const & doom, Game::Doom::Resources:
       int	pixel_y(Math::Modulo<128>(offset_y + std::max((int)(height * (row - top) / (bottom - top)), 0)));
 
       // Find pixel in column span
-      for (Game::Doom::Resources::Texture::Column::Span const & span : spans)
+      for (DOOM::Doom::Resources::Texture::Column::Span const & span : spans)
       {
 	// TODO: optimize this (remember last span ?)
 
@@ -308,7 +301,7 @@ void	Game::Camera::renderTexture(Game::Doom const & doom, Game::Doom::Resources:
     }
 }
 
-void	Game::Camera::renderFlat(Game::Doom const & doom, const Game::AbstractFlat & flat, int column, int start, int end, float altitude, int16_t light, int16_t seg)
+void	DOOM::Camera::renderFlat(DOOM::Doom const & doom, const DOOM::AbstractFlat & flat, int column, int start, int end, float altitude, int16_t light, int16_t seg)
 {
   Math::Vector<2>		direction(_screen_start + _screen * ((float)column / (float)_image.getSize().x) - position);
   std::vector<uint8_t> const &	texture = flat.flat();
@@ -327,12 +320,12 @@ void	Game::Camera::renderFlat(Game::Doom const & doom, const Game::AbstractFlat 
     }
 }
 
-void	Game::Camera::renderSky(Game::Doom const & doom, int column, int start, int end, float altitude, int16_t seg)
+void	DOOM::Camera::renderSky(DOOM::Doom const & doom, int column, int start, int end, float altitude, int16_t seg)
 {
-  Game::Doom::Resources::Texture const &				sky(doom.level.sky);
+  DOOM::Doom::Resources::Texture const &				sky(doom.level.sky);
   Math::Vector<2>							direction(_screen_start + _screen * ((float)column / (float)_image.getSize().x) - position);
   int									pixel_x(Math::Modulo((int)(Math::Vector<2>::angle(Math::Vector<2>(1.f, 0.f), direction) * (Math::Vector<2>::determinant(Math::Vector<2>(1.f, 0.f), direction) > 0 ? +1.f : -1.f) * 4.f / (2.f * Math::Pi) * sky.width), sky.width));
-  std::vector<Game::Doom::Resources::Texture::Column::Span> const &	spans(sky.columns[pixel_x].spans);
+  std::vector<DOOM::Doom::Resources::Texture::Column::Span> const &	spans(sky.columns[pixel_x].spans);
   float									sky_factor(_screen.length() * 2.f * sky.width / (_image.getSize().x * direction.length() * Math::Pi));
 
   for (int row = std::max(_vertical[column].first, start); row < std::min(end, _vertical[column].second); row++)
@@ -345,7 +338,7 @@ void	Game::Camera::renderSky(Game::Doom const & doom, int column, int start, int
 	continue;
 
       // Find pixel in column span
-      for (Game::Doom::Resources::Texture::Column::Span const & span : spans)
+      for (DOOM::Doom::Resources::Texture::Column::Span const & span : spans)
       {
 	// Skip spans if before targeted pixel
 	if (span.offset + span.pixels.size() <= pixel_y)
@@ -364,9 +357,9 @@ void	Game::Camera::renderSky(Game::Doom const & doom, int column, int start, int
     }
 }
 
-void	Game::Camera::renderThings(Game::Doom const & doom)
+void	DOOM::Camera::renderThings(DOOM::Doom const & doom)
 {
-  std::list<std::pair<Game::AbstractThing const *, float>>	things;		// List of things to render and their distance to camera
+  std::list<std::pair<DOOM::AbstractThing const *, float>>	things;		// List of things to render and their distance to camera
   std::unordered_map<int16_t, float>				vertexes;	// Map of vertexes and their distance to camera
 
   // Pre-calculated projection factors
@@ -375,36 +368,38 @@ void	Game::Camera::renderThings(Game::Doom const & doom)
   float			eye_r(Math::Vector<2>::determinant(eye_0, eye_90));
 
   // Render every things of current level
-  for (Game::AbstractThing const * thing : doom.level.things)
+  for (const std::unique_ptr<DOOM::AbstractThing> & thing : doom.level.things)
   {
     float	distance = Math::Vector<2>::determinant(thing->position - position, eye_90) / eye_r;
 
     // Push thing to list to render only if front of camera
     if (distance > 0.f)
-      things.push_back({ thing, distance });
+      things.push_back({ thing.get(), distance });
   }
 
   // Order list of things of render
-  things.sort([](std::pair<Game::AbstractThing const *, float> const & a, std::pair<Game::AbstractThing const *, float> const & b) { return a.second > b.second; });
+  things.sort([](std::pair<DOOM::AbstractThing const *, float> const & a, std::pair<DOOM::AbstractThing const *, float> const & b) { return a.second > b.second; });
 
   // Render things in reverse order
-  for (std::list<std::pair<Game::AbstractThing const *, float>>::const_iterator iterator = things.begin(); iterator != things.end(); iterator++)
+  for (std::list<std::pair<DOOM::AbstractThing const *, float>>::const_iterator iterator = things.begin(); iterator != things.end(); iterator++)
   {
-    Game::AbstractThing const *						thing(iterator->first);
-    std::pair<Game::Doom::Resources::Texture const *, bool> const &	texture(thing->sprite(angle));
+    DOOM::AbstractThing const &						thing(*iterator->first);
+    std::pair<DOOM::Doom::Resources::Texture const *, bool> const &	texture(thing.sprite(angle));
     
     // Compute thing position on screen
-    std::pair<float, float>	thing_projection(Math::intersection(_screen_start, _screen, position, thing->position - position));
-    std::pair<int16_t, int16_t>	thing_sector(doom.level.sector(thing->position));
+    std::pair<float, float>	thing_projection(Math::intersection(_screen_start, _screen, position, thing.position - position));
+    std::pair<int16_t, int16_t>	thing_sector(doom.level.sector(thing.position));
 
-    float	thing_factor = _factor / ((thing->position - position).length() / (_screen_start + _screen * thing_projection.first - position).length());
+    float	thing_factor = _factor / ((thing.position - position).length() / (_screen_start + _screen * thing_projection.first - position).length());
     float	first_x = thing_projection.first * _image.getSize().x + ((texture.second == false ? 0 : texture.first->width) - texture.first->left) * thing_factor;
-    float	first_y = _horizon - (((thing->properties & Game::AbstractThing::Properties::Hanging) ? doom.level.sectors[thing_sector.first].ceiling_height + texture.first->height - texture.first->top : doom.level.sectors[thing_sector.first].floor_height + texture.first->top) - height) * thing_factor;
+    float	first_y = _horizon - (((thing.properties & DOOM::AbstractThing::Properties::Hanging) ? doom.level.sectors[thing_sector.first]->ceiling() + texture.first->height - texture.first->top : doom.level.sectors[thing_sector.first]->floor() + texture.first->top) - height) * thing_factor;
     float	second_x = thing_projection.first * _image.getSize().x + ((texture.second == false ? texture.first->width : 0) - texture.first->left) * thing_factor;
-    float	second_y = _horizon - (((thing->properties & Game::AbstractThing::Properties::Hanging) ? doom.level.sectors[thing_sector.first].ceiling_height - texture.first->top : doom.level.sectors[thing_sector.first].floor_height - texture.first->height + texture.first->top) - height) * thing_factor;
+    float	second_y = _horizon - (((thing.properties & DOOM::AbstractThing::Properties::Hanging) ? doom.level.sectors[thing_sector.first]->ceiling() - texture.first->top : doom.level.sectors[thing_sector.first]->floor() - texture.first->height + texture.first->top) - height) * thing_factor;
 
     // Map of thing visibility against segments
     std::unordered_map<int16_t, bool>	visible;
+
+    int16_t	light = doom.level.sectors[thing_sector.first]->light();
 
     // Render pixels of the sprite
     for (int column = std::max((int)first_x, 0); column < std::min((int)second_x, (int)_image.getSize().x); column++)
@@ -415,7 +410,7 @@ void	Game::Camera::renderThings(Game::Doom const & doom)
 	// Process segment if valid index
 	if (segment_index != -1)
 	{
-	  const Game::Doom::Level::Segment &	segment = doom.level.segments[segment_index];
+	  const DOOM::Doom::Level::Segment &	segment = doom.level.segments[segment_index];
 
 	  // Compute vertexes distances if not already registered
 	  if (vertexes.find(segment.start) == vertexes.end())
@@ -434,7 +429,7 @@ void	Game::Camera::renderThings(Game::Doom const & doom)
 	    else
 	    {
 	      // Compute intersection of segment with eye-thing vector
-	      std::pair<float, float>		intersection(Math::intersection(position, thing->position - position, doom.level.vertexes[segment.start], doom.level.vertexes[segment.end] - doom.level.vertexes[segment.start]));
+	      std::pair<float, float>		intersection(Math::intersection(position, thing.position - position, doom.level.vertexes[segment.start], doom.level.vertexes[segment.end] - doom.level.vertexes[segment.start]));
 
 	      visible[segment_index] = (intersection.first < 0.f || intersection.first > 1.f);
 	    }
@@ -448,7 +443,7 @@ void	Game::Camera::renderThings(Game::Doom const & doom)
 	int	pixel_x = (int)(std::clamp(((texture.second == false) ? (column - first_x) : (second_x - column)) / (second_x - first_x), 0.f, 0.9999f) * texture.first->width);
 	int	pixel_y = (int)(std::clamp((row - first_y) / (second_y - first_y), 0.f, 0.9999f) * texture.first->height);
 
-	for (Game::Doom::Resources::Texture::Column::Span const & span : texture.first->columns[pixel_x].spans)
+	for (DOOM::Doom::Resources::Texture::Column::Span const & span : texture.first->columns[pixel_x].spans)
 	{
 	  // Interrupt if pixel missed
 	  if (span.offset > pixel_y)
@@ -456,7 +451,7 @@ void	Game::Camera::renderThings(Game::Doom const & doom)
 
 	  if (span.offset + span.pixels.size() > pixel_y)
 	  {
-	    _image.setPixel(column, row, doom.resources.palettes[0][doom.resources.colormaps[31 - doom.level.sectors[thing_sector.first].light / 8][span.pixels[pixel_y - span.offset]]]);
+	    _image.setPixel(column, row, doom.resources.palettes[0][doom.resources.colormaps[31 - light / 8][span.pixels[pixel_y - span.offset]]]);
 	    break;
 	  }
 	}

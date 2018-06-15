@@ -8,15 +8,15 @@
 #include "Doom/Thing/AbstractThing.hpp"
 #include "Doom/Doom.hpp"
 
-namespace Game
+namespace DOOM
 {
   class NullThing : public virtual AbstractThing
   {    
   public:
-    NullThing(const Game::Doom &, const Game::Wad::RawLevel::Thing &);
+    NullThing(const DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing);
     virtual ~NullThing();
 
-    const std::pair<Game::Doom::Resources::Texture const *, bool> &	sprite(float) const override;
+    const std::pair<DOOM::Doom::Resources::Texture const *, bool> &	sprite(float angle) const override;
   };
 };
 

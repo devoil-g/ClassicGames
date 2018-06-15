@@ -1,5 +1,5 @@
 # ClassicGames
-A C++ network game
+A collection of classical games re-coded in C++
 
 ## How to build (Windows):
 

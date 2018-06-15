@@ -14,12 +14,12 @@
   
 namespace Game
 {
-  class GameState : public Game::AbstractState
+  class DoomState : public Game::AbstractState
   {
   private:
-    sf::Time					_elapsed;	// Elapsed time since creation
-    Game::Doom					_doom;		// Instance of current level
-    Game::Camera				_camera;	// Camera to render level
+    sf::Time		_elapsed;	// Elapsed time since creation
+    DOOM::Doom		_doom;		// Instance of current level
+    DOOM::Camera	_camera;	// Camera to render level
 
     bool	updatePlayer(sf::Time);
 
@@ -27,8 +27,8 @@ namespace Game
     void	drawImage();	// Draw rendered image to screen
 
   public:
-    GameState();
-    ~GameState() override;
+    DoomState();
+    ~DoomState() override;
 
     bool	initialize();			// Load resources and levels from WAD file
     bool	update(sf::Time) override;	// Update state

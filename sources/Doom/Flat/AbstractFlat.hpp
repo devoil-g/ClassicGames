@@ -8,18 +8,18 @@
 #include "Doom/Wad.hpp"
 #include "Math/Vector.hpp"
 
-namespace Game
+namespace DOOM
 {
   class AbstractFlat
   {
   public:
-    static Game::AbstractFlat *	factory(const Game::Wad &, uint64_t, const Game::Wad::RawResources::Flat &);
+    static DOOM::AbstractFlat *	factory(const DOOM::Wad & wad, uint64_t, const DOOM::Wad::RawResources::Flat & flat);
 
     AbstractFlat();
     virtual ~AbstractFlat();
 
-    virtual void				update(sf::Time);	// Update flat
-    virtual std::vector<uint8_t> const &	flat() const = 0;	// Return flat to be displayed
+    virtual void				update(sf::Time elapsed);	// Update flat
+    virtual const std::vector<uint8_t> &	flat() const = 0;		// Return flat to be displayed
   };
 };
 

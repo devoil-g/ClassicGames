@@ -18,6 +18,28 @@ SET(GAME_DOOM_FLAT_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Flat/StaticFlat.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Flat/StaticFlat.hpp
 )
+SET(GAME_DOOM_LINEDEF_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/AbstractLinedef.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/AbstractLinedef.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/NormalLinedef.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/NormalLinedef.hpp
+)
+SET(GAME_DOOM_SECTOR_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/AbstractSector.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/AbstractSector.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/NormalSector.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/NormalSector.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/AbstractLightSector.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/AbstractLightSector.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/FixedLightSector.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/FixedLightSector.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/FlickerLightSector.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/FlickerLightSector.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/GlowLightSector.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/GlowLightSector.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/RandomLightSector.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/RandomLightSector.hpp
+)
 SET(GAME_DOOM_THING_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractThing.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractThing.hpp
@@ -37,8 +59,8 @@ SET(GAME_STATES_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/StateMachine.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/AbstractState.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/AbstractState.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/GameState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/GameState.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/DoomState.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/DoomState.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/LoadingState.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/LoadingState.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/MessageState.cpp
@@ -73,6 +95,8 @@ SET(GAME_SYSTEM_LIBRARY_SRCS
 SET(GAME_SRCS
 	${GAME_DOOM_SRCS}
 	${GAME_DOOM_FLAT_SRCS}
+	${GAME_DOOM_LINEDEF_SRCS}
+	${GAME_DOOM_SECTOR_SRCS}
 	${GAME_DOOM_THING_SRCS}
 	${GAME_MATH_SRCS}
 	${GAME_STATES_SRCS}
@@ -92,6 +116,8 @@ SET(GAME_RSRC
 SOURCE_GROUP("\\" FILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp)
 SOURCE_GROUP("Doom\\" FILES ${GAME_DOOM_SRCS})
 SOURCE_GROUP("Doom\\Flat\\" FILES ${GAME_DOOM_FLAT_SRCS})
+SOURCE_GROUP("Doom\\Linedef\\" FILES ${GAME_DOOM_LINEDEF_SRCS})
+SOURCE_GROUP("Doom\\Sector\\" FILES ${GAME_DOOM_SECTOR_SRCS})
 SOURCE_GROUP("Doom\\Thing\\" FILES ${GAME_DOOM_THING_SRCS})
 SOURCE_GROUP("Math\\" FILES ${GAME_MATH_SRCS})
 SOURCE_GROUP("States\\" FILES ${GAME_STATES_SRCS})

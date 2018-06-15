@@ -1,5 +1,5 @@
 #include "System/Library/FontLibrary.hpp"
-#include "States/GameState.hpp"
+#include "States/DoomState.hpp"
 #include "States/Menu/MainMenuState.hpp"
 #include "States/Menu/OptionsMenuState.hpp"
 #include "States/MessageState.hpp"
@@ -42,7 +42,7 @@ void	Game::MainMenuState::selectNew(Game::AbstractMenuState::Item &)
   // Go to new game menu
   Game::StateMachine::Instance().push(new Game::LoadingState(std::async(std::launch::async, []
   {
-    Game::GameState *	game = new Game::GameState();
+    Game::DoomState *	game = new Game::DoomState();
 
     // Initialize game
     if (game->initialize() == false)

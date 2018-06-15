@@ -11,13 +11,13 @@
 #include "Doom/Doom.hpp"
 #include "Math/Vector.hpp"
 
-namespace Game
+namespace DOOM
 {
   class Camera
   {
   public:
-    static const int	DefaultWidth = 320;	// Default rendering width size
-    static const int	DefaultHeight = 180;	// Default rendering height size
+    static const unsigned int	DefaultWidth = 640;	// Default rendering width size
+    static const unsigned int	DefaultHeight = 360;	// Default rendering height size
 
     Math::Vector<2>	position;	// Camera position
     float		height;		// Camera Z position
@@ -37,19 +37,19 @@ namespace Game
     float					_horizon, _factor;			// Pre-computed projection variables
     Math::Vector<2>				_screen, _screen_start, _screen_end;	// Pre-computed screen space
 
-    bool	renderNode(const Game::Doom &, int16_t);												// Render level BSP tree recursively from its root node
-    bool	renderSubsector(const Game::Doom &, int16_t);												// Iterate through seg of subsector
-    bool	renderSeg(const Game::Doom &, int16_t);													// Projection of segment on screen
-    void	renderTexture(const Game::Doom &, const Game::Doom::Resources::Texture &, int, float, float, float, int, int, int16_t, int16_t);	// Draw a column from a texture
-    void	renderFlat(const Game::Doom &, const Game::AbstractFlat &, int, int, int, float, int16_t, int16_t);					// Draw a column from a flat
-    void	renderSky(const Game::Doom &, int, int, int, float, int16_t);											// Draw a column from a sky texture
-    void	renderThings(const Game::Doom &);													// Draw things of current level
+    bool	renderNode(const DOOM::Doom & doom, int16_t index);																			// Render level BSP tree recursively from its root node
+    bool	renderSubsector(const DOOM::Doom & doom, int16_t index);																		// Iterate through seg of subsector
+    bool	renderSeg(const DOOM::Doom & doom, int16_t index);																			// Projection of segment on screen
+    void	renderTexture(const DOOM::Doom & doom, const DOOM::Doom::Resources::Texture & texture, int column, float top, float bottom, float height, int offset_x, int offset_y, int16_t light, int16_t seg);	// Draw a column from a texture
+    void	renderFlat(const DOOM::Doom & doom, const DOOM::AbstractFlat & flat, int column, int start, int end, float altitude, int16_t light, int16_t seg);							// Draw a column from a flat
+    void	renderSky(const DOOM::Doom & doom, int column, int start, int end, float altitude, int16_t seg);													// Draw a column from a sky texture
+    void	renderThings(const DOOM::Doom & doom);																					// Draw things of current level
 
   public:
-    Camera();
+    Camera(unsigned int width = DOOM::Camera::DefaultWidth, unsigned int height = DOOM::Camera::DefaultHeight);
     ~Camera();
 
-    void	render(Game::Doom const &);	// Render level using resources from camera point of view
+    void	render(DOOM::Doom const & doom);	// Render level using resources from camera point of view
 
     // Getter/setter
     inline sf::Image &		image() { return _image; }

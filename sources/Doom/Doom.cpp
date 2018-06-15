@@ -2,30 +2,32 @@
 
 #include "Doom/Doom.hpp"
 #include "Doom/Flat/AbstractFlat.hpp"
+#include "Doom/Linedef/AbstractLinedef.hpp"
+#include "Doom/Sector/AbstractSector.hpp"
 #include "Doom/Thing/AbstractThing.hpp"
 
-sf::Time const	Game::Doom::Tic = sf::seconds(1.f / 35.f);
+sf::Time const	DOOM::Doom::Tic = sf::seconds(1.f / 35.f);
 
-Game::Doom::Resources::Texture const	Game::Doom::Resources::NullTexture = { 0,0,0,0,{} };
+DOOM::Doom::Resources::Texture const	DOOM::Doom::Resources::NullTexture = { 0,0,0,0,{} };
 
-Game::Doom::Doom() :
+DOOM::Doom::Doom() :
   resources(),
   level()
 {}
 
-Game::Doom::~Doom()
+DOOM::Doom::~Doom()
 {
   // Delete every resources loaded
   clear();
 }
 
-bool	Game::Doom::load(std::string const & path)
+bool	DOOM::Doom::load(std::string const & path)
 {
   // Clear resources
   clear();
 
   // Attempt to load WAD file
-  if (_wad.load(path) == false)
+  if (wad.load(path) == false)
     return false;
 
   // Build resources of WAD file
@@ -35,45 +37,41 @@ bool	Game::Doom::load(std::string const & path)
   return true;
 }
 
-void	Game::Doom::update(sf::Time elapsed)
+void	DOOM::Doom::update(sf::Time elapsed)
 {
   // Update components
   resources.update(elapsed);
   level.update(elapsed);
 }
 
-std::list<std::pair<uint8_t, uint8_t>>	Game::Doom::getLevel() const
+std::list<std::pair<uint8_t, uint8_t>>	DOOM::Doom::getLevel() const
 {
   std::list<std::pair<uint8_t, uint8_t>>	list;
 
   // Build list of available levels in WAD file
-  for (std::pair<std::pair<uint8_t, uint8_t>, Game::Wad::RawLevel> const & level : _wad.levels)
+  for (std::pair<std::pair<uint8_t, uint8_t>, DOOM::Wad::RawLevel> const & level : wad.levels)
     list.push_back(level.first);
 
   return list;
 }
 
-bool	Game::Doom::setLevel(std::pair<uint8_t, uint8_t> const & level)
+bool	DOOM::Doom::setLevel(std::pair<uint8_t, uint8_t> const & level)
 {
   // Build level
   return buildLevel(level);
 }
 
-void	Game::Doom::clear()
+void	DOOM::Doom::clear()
 {
   // Clear resources and current level
   clearResources();
   clearLevel();
 }
 
-void	Game::Doom::clearResources()
+void	DOOM::Doom::clearResources()
 {
   // Clear level to avoid reference to deleted datas
   clearLevel();
-
-  // Delete allocated resources
-  for (std::pair<uint64_t, Game::AbstractFlat *> const & flat : resources.flats)
-    delete flat.second;
 
   // Clear resources data containers
   resources.palettes.clear();
@@ -85,15 +83,11 @@ void	Game::Doom::clearResources()
   resources.sounds.clear();
 }
 
-void	Game::Doom::clearLevel()
+void	DOOM::Doom::clearLevel()
 {
   // Set default level identifier
   level.episode = { 0, 0 };
-  level.sky = Game::Doom::Resources::NullTexture;
-
-  // Delete allocated things
-  for (Game::AbstractThing const * thing : level.things)
-    delete thing;
+  level.sky = DOOM::Doom::Resources::NullTexture;
 
   // Clear level data containers
   level.things.clear();
@@ -104,9 +98,12 @@ void	Game::Doom::clearLevel()
   level.subsectors.clear();
   level.nodes.clear();
   level.sectors.clear();
+  
+  // Reset blockmap
+  level.blockmap = DOOM::Doom::Level::Blockmap();
 }
 
-bool	Game::Doom::buildResources()
+bool	DOOM::Doom::buildResources()
 {
   // Remove old resources and level
   clear();
@@ -130,16 +127,16 @@ bool	Game::Doom::buildResources()
   return true;
 }
 
-bool	Game::Doom::buildResourcesPalettes()
+bool	DOOM::Doom::buildResourcesPalettes()
 {
   // Load palettes from WAD resources
-  for (Game::Wad::RawResources::Palette const & palette : _wad.resources.palettes)
+  for (DOOM::Wad::RawResources::Palette const & palette : wad.resources.palettes)
   {
     // Push new palette in resources
-    resources.palettes.push_back(Game::Doom::Resources::Palette());
+    resources.palettes.push_back(DOOM::Doom::Resources::Palette());
 
     // Convert WAD color to sf::Color
-    for (Game::Wad::RawResources::Palette::Color const & color : palette.colors)
+    for (DOOM::Wad::RawResources::Palette::Color const & color : palette.colors)
       resources.palettes.back().push_back(sf::Color(color.r, color.g, color.b));
   }
 
@@ -150,13 +147,13 @@ bool	Game::Doom::buildResourcesPalettes()
   return true;
 }
 
-bool	Game::Doom::buildResourcesColormaps()
+bool	DOOM::Doom::buildResourcesColormaps()
 {
   // Load color maps from WAD resources
-  for (Game::Wad::RawResources::Colormap const & colormap : _wad.resources.colormaps)
+  for (DOOM::Wad::RawResources::Colormap const & colormap : wad.resources.colormaps)
   {
     // Push new color map in resources
-    resources.colormaps.push_back(Game::Doom::Resources::Colormap());
+    resources.colormaps.push_back(DOOM::Doom::Resources::Colormap());
 
     // Convert color map indexes
     for (uint8_t const & index : colormap.index)
@@ -170,10 +167,10 @@ bool	Game::Doom::buildResourcesColormaps()
   return true;
 }
 
-bool	Game::Doom::buildResourcesTextures()
+bool	DOOM::Doom::buildResourcesTextures()
 {
   // Load textures from WAD resources
-  for (std::pair<uint64_t, Game::Wad::RawResources::Texture> const & texture : _wad.resources.textures)
+  for (std::pair<uint64_t, DOOM::Wad::RawResources::Texture> const & texture : wad.resources.textures)
   {
     // Copy texture size
     resources.textures[texture.first].width = texture.second.width;
@@ -187,20 +184,20 @@ bool	Game::Doom::buildResourcesTextures()
     std::vector<std::vector<int>>	texture_map(resources.textures[texture.first].width, std::vector<int>(resources.textures[texture.first].height, -1));
 
     // Build full texture map from texture patches
-    for (Game::Wad::RawResources::Texture::Patch const & texture_patch : texture.second.patches)
+    for (DOOM::Wad::RawResources::Texture::Patch const & texture_patch : texture.second.patches)
     {
       // Check patch datas
       if (texture_patch.colormap != 0 ||
 	texture_patch.stepdir != 1 ||
-	texture_patch.pname >= _wad.resources.pnames.size() ||
-	_wad.resources.patches.find(_wad.resources.pnames[texture_patch.pname]) == _wad.resources.patches.end())
+	texture_patch.pname >= wad.resources.pnames.size() ||
+	wad.resources.patches.find(wad.resources.pnames[texture_patch.pname]) == wad.resources.patches.end())
 	return false;
 
-      Game::Wad::RawResources::Patch const &	patch = _wad.resources.patches[_wad.resources.pnames[texture_patch.pname]];
+      DOOM::Wad::RawResources::Patch const &	patch = wad.resources.patches[wad.resources.pnames[texture_patch.pname]];
 
       // Print patch on full texture map
       for (int x = std::max(0, -patch.left); x < std::min((int)patch.width, resources.textures[texture.first].width - texture_patch.x); x++)
-	for (Game::Wad::RawResources::Patch::Column::Span span : patch.columns[x].spans)
+	for (DOOM::Wad::RawResources::Patch::Column::Span span : patch.columns[x].spans)
 	  for (int y = std::max(0, -(texture_patch.y + span.offset)); y < std::min((int)span.pixels.size(), resources.textures[texture.first].height - (texture_patch.y + span.offset)); y++)
 	    if (x + texture_patch.x >= 0 && x + texture_patch.x < resources.textures[texture.first].width &&
 	      y + texture_patch.y + span.offset >= 0 && y + texture_patch.y + span.offset < resources.textures[texture.first].height)
@@ -221,7 +218,7 @@ bool	Game::Doom::buildResourcesTextures()
 	// Add column span if not transparent
 	else
 	{
-	  resources.textures[texture.first].columns[x].spans.push_back(Game::Doom::Resources::Texture::Column::Span());
+	  resources.textures[texture.first].columns[x].spans.push_back(DOOM::Doom::Resources::Texture::Column::Span());
 	  resources.textures[texture.first].columns[x].spans.back().offset = y;
 
 	  // Push whole span of pixels in column span
@@ -234,10 +231,10 @@ bool	Game::Doom::buildResourcesTextures()
   return true;
 }
 
-bool	Game::Doom::buildResourcesSprites()
+bool	DOOM::Doom::buildResourcesSprites()
 {
   // Load sprites textures from WAD resources
-  for (std::pair<uint64_t, Game::Wad::RawResources::Patch> const & patch : _wad.resources.sprites)
+  for (std::pair<uint64_t, DOOM::Wad::RawResources::Patch> const & patch : wad.resources.sprites)
   {
     // Copy texture size and position
     resources.sprites[patch.first].width = patch.second.width;
@@ -246,12 +243,12 @@ bool	Game::Doom::buildResourcesSprites()
     resources.sprites[patch.first].top = patch.second.top;
 
     // Copy texture data structures
-    for (Game::Wad::RawResources::Patch::Column const & column : patch.second.columns)
+    for (DOOM::Wad::RawResources::Patch::Column const & column : patch.second.columns)
     {
-      resources.sprites[patch.first].columns.push_back(Game::Doom::Resources::Texture::Column());
-      for (Game::Wad::RawResources::Patch::Column::Span const & span : column.spans)
+      resources.sprites[patch.first].columns.push_back(DOOM::Doom::Resources::Texture::Column());
+      for (DOOM::Wad::RawResources::Patch::Column::Span const & span : column.spans)
       {
-	resources.sprites[patch.first].columns.back().spans.push_back(Game::Doom::Resources::Texture::Column::Span());
+	resources.sprites[patch.first].columns.back().spans.push_back(DOOM::Doom::Resources::Texture::Column::Span());
 	resources.sprites[patch.first].columns.back().spans.back().offset = span.offset;
 	for (uint8_t const & pixel : span.pixels)
 	  resources.sprites[patch.first].columns.back().spans.back().pixels.push_back(pixel);
@@ -262,10 +259,10 @@ bool	Game::Doom::buildResourcesSprites()
   return true;
 }
 
-bool	Game::Doom::buildResourcesMenus()
+bool	DOOM::Doom::buildResourcesMenus()
 {
   // Load menus textures from WAD resources
-  for (std::pair<uint64_t, Game::Wad::RawResources::Patch> const & patch : _wad.resources.menus)
+  for (std::pair<uint64_t, DOOM::Wad::RawResources::Patch> const & patch : wad.resources.menus)
   {
     // Copy texture size and position
     resources.menus[patch.first].width = patch.second.width;
@@ -274,12 +271,12 @@ bool	Game::Doom::buildResourcesMenus()
     resources.menus[patch.first].top = patch.second.top;
 
     // Copy texture data structures
-    for (Game::Wad::RawResources::Patch::Column const & column : patch.second.columns)
+    for (DOOM::Wad::RawResources::Patch::Column const & column : patch.second.columns)
     {
-      resources.menus[patch.first].columns.push_back(Game::Doom::Resources::Texture::Column());
-      for (Game::Wad::RawResources::Patch::Column::Span const & span : column.spans)
+      resources.menus[patch.first].columns.push_back(DOOM::Doom::Resources::Texture::Column());
+      for (DOOM::Wad::RawResources::Patch::Column::Span const & span : column.spans)
       {
-	resources.menus[patch.first].columns.back().spans.push_back(Game::Doom::Resources::Texture::Column::Span());
+	resources.menus[patch.first].columns.back().spans.push_back(DOOM::Doom::Resources::Texture::Column::Span());
 	resources.menus[patch.first].columns.back().spans.back().offset = span.offset;
 	for (uint8_t const & pixel : span.pixels)
 	  resources.menus[patch.first].columns.back().spans.back().pixels.push_back(pixel);
@@ -290,28 +287,28 @@ bool	Game::Doom::buildResourcesMenus()
   return true;
 }
 
-bool	Game::Doom::buildResourcesFlats()
+bool	DOOM::Doom::buildResourcesFlats()
 {
   // Load flats from WAD resources
-  for (std::pair<uint64_t, Game::Wad::RawResources::Flat> const & flat : _wad.resources.flats)
+  for (std::pair<uint64_t, DOOM::Wad::RawResources::Flat> const & flat : wad.resources.flats)
   {
     // Convert flat from WAD
-    Game::AbstractFlat *	converted = Game::AbstractFlat::factory(_wad, flat.first, flat.second);
+    DOOM::AbstractFlat *	converted = DOOM::AbstractFlat::factory(wad, flat.first, flat.second);
 
     // Check for error
     if (converted == nullptr)
-      std::cout << "[Doom::build] Warning, failed to convert flat '" << Game::key_to_str(flat.first) << "'." << std::endl;
+      std::cout << "[Doom::build] Warning, failed to convert flat '" << DOOM::key_to_str(flat.first) << "'." << std::endl;
     else
-      resources.flats[flat.first] = converted;
+      resources.flats[flat.first] = std::unique_ptr<DOOM::AbstractFlat>(converted);
   }
 
   return true;
 }
 
-bool	Game::Doom::buildResourcesSounds()
+bool	DOOM::Doom::buildResourcesSounds()
 {
   // Load sounds from WAD resources
-  for (std::pair<uint64_t, Game::Wad::RawResources::Sound> const & sound : _wad.resources.sounds)
+  for (std::pair<uint64_t, DOOM::Wad::RawResources::Sound> const & sound : wad.resources.sounds)
   {
     std::vector<int16_t>	buffer;
 
@@ -330,13 +327,13 @@ bool	Game::Doom::buildResourcesSounds()
   return true;
 }
 
-bool	Game::Doom::buildLevel(std::pair<uint8_t, uint8_t> const & level)
+bool	DOOM::Doom::buildLevel(std::pair<uint8_t, uint8_t> const & level)
 {
   // Remove old level
   clearLevel();
 
   // Check if level exist in WAD file
-  if (_wad.levels.find(level) == _wad.levels.end())
+  if (wad.levels.find(level) == wad.levels.end())
     return false;
 
   // Check for sky texture
@@ -354,7 +351,8 @@ bool	Game::Doom::buildLevel(std::pair<uint8_t, uint8_t> const & level)
     buildLevelSubsectors(level) == false ||
     buildLevelThings(level) == false ||
     buildLevelSegments(level) == false ||
-    buildLevelNodes(level) == false)
+    buildLevelNodes(level) == false ||
+    buildLevelBlockmap(level) == false)
   {
     clearLevel();
     return false;
@@ -366,68 +364,62 @@ bool	Game::Doom::buildLevel(std::pair<uint8_t, uint8_t> const & level)
   return true;
 }
 
-bool	Game::Doom::buildLevelVertexes(std::pair<uint8_t, uint8_t> const & level)
+bool	DOOM::Doom::buildLevelVertexes(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's vertexes from WAD
-  for (Game::Wad::RawLevel::Vertex const & vertex : _wad.levels[level].vertexes)
-    this->level.vertexes.push_back(Game::Doom::Level::Vertex((float)vertex.x, (float)vertex.y));
+  for (DOOM::Wad::RawLevel::Vertex const & vertex : wad.levels[level].vertexes)
+    this->level.vertexes.push_back(DOOM::Doom::Level::Vertex((float)vertex.x, (float)vertex.y));
 
   return true;
 }
 
-bool	Game::Doom::buildLevelSectors(std::pair<uint8_t, uint8_t> const & level)
+bool	DOOM::Doom::buildLevelSectors(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's sectors from WAD
-  for (Game::Wad::RawLevel::Sector const & sector : _wad.levels[level].sectors)
+  try
   {
-    // Check for errors
-    if (sector.floor_height > sector.ceiling_height ||
-      (sector.floor_texture != Game::str_to_key("F_SKY1") && resources.flats.find(sector.floor_texture) == resources.flats.end()) ||
-      (sector.ceiling_texture != Game::str_to_key("F_SKY1") && resources.flats.find(sector.ceiling_texture) == resources.flats.end()) ||
-      sector.light < 0 || sector.light > 255)
-    {
-      std::cerr << "[Doom::build] Invalid sector." << std::endl;
-      return false;
-    }
+    for (DOOM::Wad::RawLevel::Sector const & sector : wad.levels[level].sectors) {
+      DOOM::AbstractSector *	ptr = DOOM::AbstractSector::factory(*this, sector);
 
-    // Convert data structure
-    this->level.sectors.push_back(Game::Doom::Level::Sector{
-      (float)sector.floor_height,
-      (float)sector.ceiling_height,
-      sector.floor_texture,
-      sector.ceiling_texture,
-      (sector.floor_texture == Game::str_to_key("F_SKY1")) ? nullptr : resources.flats[sector.floor_texture],
-      (sector.ceiling_texture == Game::str_to_key("F_SKY1")) ? nullptr : resources.flats[sector.ceiling_texture],
-      sector.light,
-      sector.special,
-      sector.tag
-    });
+      if (ptr == nullptr) {
+	throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+      }
+      else {
+	this->level.sectors.push_back(std::unique_ptr<DOOM::AbstractSector>(ptr));
+      }
+    }
   }
+  catch (std::exception e)
+  {
+    std::cerr << "[Doom::build] Invalid sector (" << std::string(e.what()) << ")." << std::endl;
+    return false;
+  }
+
   return true;
 }
 
-bool	Game::Doom::buildLevelSubsectors(std::pair<uint8_t, uint8_t> const & level)
+bool	DOOM::Doom::buildLevelSubsectors(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's sectors from WAD
-  for (Game::Wad::RawLevel::Subsector const & subsector : _wad.levels[level].subsectors)
+  for (DOOM::Wad::RawLevel::Subsector const & subsector : wad.levels[level].subsectors)
   {
     // Check for errors
     if (subsector.index < 0 || subsector.count < 0 ||
-      subsector.index + subsector.count > _wad.levels[level].segments.size())
+      subsector.index + subsector.count > wad.levels[level].segments.size())
     {
       std::cerr << "[Doom::build] Invalid subsector." << std::endl;
       return false;
     }
 
     // Convert data structure
-    this->level.subsectors.push_back(Game::Doom::Level::Subsector{
+    this->level.subsectors.push_back(DOOM::Doom::Level::Subsector{
       subsector.count,
       subsector.index,
 
-      _wad.levels[level].sidedefs[
-	_wad.levels[level].segments[subsector.index].direction == 0 ?
-	  _wad.levels[level].linedefs[_wad.levels[level].segments[subsector.index].linedef].front :
-	  _wad.levels[level].linedefs[_wad.levels[level].segments[subsector.index].linedef].back
+      wad.levels[level].sidedefs[
+	wad.levels[level].segments[subsector.index].direction == 0 ?
+	  wad.levels[level].linedefs[wad.levels[level].segments[subsector.index].linedef].front :
+	  wad.levels[level].linedefs[wad.levels[level].segments[subsector.index].linedef].back
       ].sector
     });
   }
@@ -435,43 +427,45 @@ bool	Game::Doom::buildLevelSubsectors(std::pair<uint8_t, uint8_t> const & level)
   return true;
 }
 
-bool	Game::Doom::buildLevelLinedefs(std::pair<uint8_t, uint8_t> const & level)
+bool	DOOM::Doom::buildLevelLinedefs(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's linedefs from WAD
-  for (Game::Wad::RawLevel::Linedef const & linedef : _wad.levels[level].linedefs)
+  for (DOOM::Wad::RawLevel::Linedef const & linedef : wad.levels[level].linedefs)
   {
     // Check for errors
-    if (linedef.start < 0 || linedef.start >= _wad.levels[level].vertexes.size() ||
-      linedef.end < 0 || linedef.end >= _wad.levels[level].vertexes.size() ||
-      linedef.front < 0 || linedef.front >= _wad.levels[level].sidedefs.size() ||
-      linedef.back != -1 && (linedef.back < 0 || linedef.back >= _wad.levels[level].sidedefs.size()))
+    if (linedef.start < 0 || linedef.start >= wad.levels[level].vertexes.size() ||
+      linedef.end < 0 || linedef.end >= wad.levels[level].vertexes.size() ||
+      linedef.front < 0 || linedef.front >= wad.levels[level].sidedefs.size() ||
+      linedef.back != -1 && (linedef.back < 0 || linedef.back >= wad.levels[level].sidedefs.size()))
     {
       std::cerr << "[Doom::build] Invalid linedef." << std::endl;
       return false;
     }
 
-    // Convert data structure
-    this->level.linedefs.push_back(Game::Doom::Level::Linedef{
-      linedef.start,
-      linedef.end,
-      linedef.flag,
-      linedef.type,
-      linedef.tag,
-      linedef.front,
-      linedef.back
-    });
+    // Convert linedef from WAD
+    DOOM::AbstractLinedef *	converted = DOOM::AbstractLinedef::factory(*this, linedef);
+
+    // Check for error
+    if (converted == nullptr)
+    {
+      std::cerr << "[Doom::build]: Error, unknown linedef type '" << linedef.type << "'." << std::endl;
+      return false;
+    }
+    
+    // Push linedef in vector
+    this->level.linedefs.push_back(std::unique_ptr<DOOM::AbstractLinedef>(converted));
   }
 
   return true;
 }
 
-bool	Game::Doom::buildLevelSidedefs(std::pair<uint8_t, uint8_t> const & level)
+bool	DOOM::Doom::buildLevelSidedefs(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's sidedefs from WAD
   try
   {
-    for (Game::Wad::RawLevel::Sidedef const & sidedef : _wad.levels[level].sidedefs)
-      this->level.sidedefs.push_back(Game::Doom::Level::Sidedef(*this, sidedef));
+    for (DOOM::Wad::RawLevel::Sidedef const & sidedef : wad.levels[level].sidedefs)
+      this->level.sidedefs.push_back(DOOM::Doom::Level::Sidedef(*this, sidedef));
   }
   catch (std::exception e)
   {
@@ -482,15 +476,15 @@ bool	Game::Doom::buildLevelSidedefs(std::pair<uint8_t, uint8_t> const & level)
   return true;
 }
 
-bool	Game::Doom::buildLevelSegments(std::pair<uint8_t, uint8_t> const & level)
+bool	DOOM::Doom::buildLevelSegments(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's segments from WAD
-  for (Game::Wad::RawLevel::Segment const & segment : _wad.levels[level].segments)
+  for (DOOM::Wad::RawLevel::Segment const & segment : wad.levels[level].segments)
   {
     // Check for errors
-    if (segment.start < 0 || segment.start >= _wad.levels[level].segments.size() ||
-      segment.end < 0 || segment.end >= _wad.levels[level].segments.size() ||
-      segment.linedef < 0 || segment.linedef >= _wad.levels[level].linedefs.size() ||
+    if (segment.start < 0 || segment.start >= wad.levels[level].segments.size() ||
+      segment.end < 0 || segment.end >= wad.levels[level].segments.size() ||
+      segment.linedef < 0 || segment.linedef >= wad.levels[level].linedefs.size() ||
       (segment.direction != 0 && segment.direction != 1))
     {
       std::cerr << "[Doom::build] Invalid segment." << std::endl;
@@ -498,7 +492,7 @@ bool	Game::Doom::buildLevelSegments(std::pair<uint8_t, uint8_t> const & level)
     }
 
     // Convert data structure
-    this->level.segments.push_back(Game::Doom::Level::Segment{
+    this->level.segments.push_back(DOOM::Doom::Level::Segment{
       segment.start,
       segment.end,
       segment.angle / 32768.f * Math::Pi,
@@ -511,24 +505,24 @@ bool	Game::Doom::buildLevelSegments(std::pair<uint8_t, uint8_t> const & level)
   return true;
 }
 
-bool	Game::Doom::buildLevelNodes(std::pair<uint8_t, uint8_t> const & level)
+bool	DOOM::Doom::buildLevelNodes(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's nodes from WAD
-  for (Game::Wad::RawLevel::Node const & node : _wad.levels[level].nodes)
+  for (DOOM::Wad::RawLevel::Node const & node : wad.levels[level].nodes)
   {
     // Check for errors
     if ((node.direction_x == 0 && node.direction_y == 0) ||
       node.right_bb.top < node.right_bb.bottom || node.right_bb.right < node.right_bb.left ||
       node.left_bb.top < node.left_bb.bottom || node.left_bb.right < node.left_bb.left ||
-      ((node.right_ss & 0b1000000000000000) ? ((node.right_ss & 0b0111111111111111) >= _wad.levels[level].subsectors.size()) : (node.right_ss >= _wad.levels[level].nodes.size())) ||
-      ((node.left_ss & 0b1000000000000000) ? ((node.left_ss & 0b0111111111111111) >= _wad.levels[level].subsectors.size()) : (node.left_ss >= _wad.levels[level].nodes.size())))
+      ((node.right_ss & 0b1000000000000000) ? ((node.right_ss & 0b0111111111111111) >= wad.levels[level].subsectors.size()) : (node.right_ss >= wad.levels[level].nodes.size())) ||
+      ((node.left_ss & 0b1000000000000000) ? ((node.left_ss & 0b0111111111111111) >= wad.levels[level].subsectors.size()) : (node.left_ss >= wad.levels[level].nodes.size())))
     {
       std::cerr << "[Doom::build] Invalid node." << std::endl;
       return false;
     }
 
     // Convert data structure
-    this->level.nodes.push_back(Game::Doom::Level::Node{
+    this->level.nodes.push_back(DOOM::Doom::Level::Node{
       Math::Vector<2>((float)node.origin_x, (float)node.origin_y),
       Math::Vector<2>((float)node.direction_x, (float)node.direction_y),
       {
@@ -551,25 +545,67 @@ bool	Game::Doom::buildLevelNodes(std::pair<uint8_t, uint8_t> const & level)
   return true;
 }
 
-bool	Game::Doom::buildLevelThings(std::pair<uint8_t, uint8_t> const & level)
+bool	DOOM::Doom::buildLevelThings(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's things from WAD
-  for (Game::Wad::RawLevel::Thing const & thing : _wad.levels[level].things)
+  for (DOOM::Wad::RawLevel::Thing const & thing : wad.levels[level].things)
   {
     // Convert thing from WAD
-    Game::AbstractThing *	converted = Game::AbstractThing::factory(*this, thing);
+    DOOM::AbstractThing *	converted = DOOM::AbstractThing::factory(*this, thing);
 
     // Check for error
     if (converted == nullptr)
       std::cerr << "[Doom::build]: Warning, unknown thing type '" << thing.type << "'." << std::endl;
     else
-      this->level.things.push_back(converted);
+      this->level.things.push_back(std::unique_ptr<DOOM::AbstractThing>(converted));
   }
 
   return true;
 }
 
-std::pair<int16_t, int16_t>	Game::Doom::Level::sector(Math::Vector<2> const & position, int16_t index) const
+bool	DOOM::Doom::buildLevelBlockmap(std::pair<uint8_t, uint8_t> const & level)
+{
+  // Copy basic informations
+  this->level.blockmap.x = wad.levels[level].blockmap.x;
+  this->level.blockmap.y = wad.levels[level].blockmap.y;
+  this->level.blockmap.column = wad.levels[level].blockmap.column;
+  this->level.blockmap.row = wad.levels[level].blockmap.row;
+
+  // Load blockmap from WAD
+  for (uint16_t offset : wad.levels[level].blockmap.offset)
+  {
+    uint16_t	index = (uint16_t)(offset - (4 + wad.levels[level].blockmap.offset.size()));
+
+    // Check first blocklist delimiter
+    if (index >= wad.levels[level].blockmap.blocklist.size() || wad.levels[level].blockmap.blocklist[index] != 0x0000)
+    {
+      std::cerr << "[Doom::build] Invalid blockmap." << std::endl;
+      return false;
+    }
+
+    // Skip blocklist delimiter
+    index += 1;
+
+    // Push new block in blockmap
+    this->level.blockmap.blocks.push_back(DOOM::Doom::Level::Blockmap::Block());
+
+    // Iterate over blocklist
+    for (; index < wad.levels[level].blockmap.blocklist.size() && wad.levels[level].blockmap.blocklist[index] != (int16_t)0xFFFF; index++) {
+      this->level.blockmap.blocks.back().linedefs.push_back(wad.levels[level].blockmap.blocklist[index]);
+    }
+
+    // Check last blocklist delimiter
+    if (index >= wad.levels[level].blockmap.blocklist.size() || wad.levels[level].blockmap.blocklist[index] != (int16_t)0xFFFF)
+    {
+      std::cerr << "[Doom::build] Invalid blockmap 2." << std::endl;
+      return false;
+    }
+  }
+
+  return true;
+}
+
+std::pair<int16_t, int16_t>	DOOM::Doom::Level::sector(Math::Vector<2> const & position, int16_t index) const
 {
   // Start to search sector from top node
   if (index == -1)
@@ -579,7 +615,7 @@ std::pair<int16_t, int16_t>	Game::Doom::Level::sector(Math::Vector<2> const & po
   if (index & 0b1000000000000000)
     return { subsectors[index & 0b0111111111111111].sector, index & 0b0111111111111111 };
 
-  Game::Doom::Level::Node const &	node(nodes[index]);
+  DOOM::Doom::Level::Node const &	node(nodes[index]);
   
   // Use derterminant to find on which side the position is
   if (Math::Vector<2>::determinant(node.direction, position - node.origin) > 0.f)
@@ -588,25 +624,29 @@ std::pair<int16_t, int16_t>	Game::Doom::Level::sector(Math::Vector<2> const & po
     return sector(position, node.rightchild);
 }
 
-void	Game::Doom::Resources::update(sf::Time elapsed)
+void	DOOM::Doom::Resources::update(sf::Time elapsed)
 {
   // Update resources flats
-  for (std::pair<uint64_t, Game::AbstractFlat *> const & flat : flats)
+  for (const std::pair<const uint64_t, std::unique_ptr<DOOM::AbstractFlat>> & flat : flats)
     flat.second->update(elapsed);
 }
 
-void	Game::Doom::Level::update(sf::Time elapsed)
+void	DOOM::Doom::Level::update(sf::Time elapsed)
 {
   // Update level things
-  for (Game::AbstractThing * thing : things)
+  for (const std::unique_ptr<DOOM::AbstractThing> & thing : things)
     thing->update(elapsed);
 
+  // Update level sectors
+  for (const std::unique_ptr<DOOM::AbstractSector> & sector : sectors)
+    sector->update(elapsed);
+
   // Update level sidedef
-  for (Game::Doom::Level::Sidedef & sidedef : sidedefs)
+  for (DOOM::Doom::Level::Sidedef & sidedef : sidedefs)
     sidedef.update(elapsed);
 }
 
-Game::Doom::Level::Sidedef::Sidedef(const Game::Doom & doom, const Game::Wad::RawLevel::Sidedef & sidedef) :
+DOOM::Doom::Level::Sidedef::Sidedef(const DOOM::Doom & doom, const DOOM::Wad::RawLevel::Sidedef & sidedef) :
   x(sidedef.x), y(sidedef.y), sector(sidedef.sector), _elapsed(),
   _upper(animation(doom, sidedef.upper)),
   _lower(animation(doom, sidedef.lower)),
@@ -617,30 +657,30 @@ Game::Doom::Level::Sidedef::Sidedef(const Game::Doom & doom, const Game::Wad::Ra
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-Game::Doom::Level::Sidedef::~Sidedef()
+DOOM::Doom::Level::Sidedef::~Sidedef()
 {}
 
-std::vector<const Game::Doom::Resources::Texture *>	Game::Doom::Level::Sidedef::animation(const Game::Doom & doom, uint64_t name) const
+std::vector<const DOOM::Doom::Resources::Texture *>	DOOM::Doom::Level::Sidedef::animation(const DOOM::Doom & doom, uint64_t name) const
 {
   // Check for null texture
-  if (Game::key_to_str(name) == "-")
-    return { &Game::Doom::Resources::NullTexture };
+  if (DOOM::key_to_str(name) == "-")
+    return { &DOOM::Doom::Resources::NullTexture };
 
   // List of registered animations
   const static std::vector<std::vector<uint64_t>>	animations = {
-    { Game::str_to_key("BLODGR1"), Game::str_to_key("BLODGR2"), Game::str_to_key("BLODGR3"), Game::str_to_key("BLODGR4") },
-    { Game::str_to_key("BLODRIP1"), Game::str_to_key("BLODRIP2"), Game::str_to_key("BLODRIP3"), Game::str_to_key("BLODRIP4") },
-    { Game::str_to_key("FIREBLU1"), Game::str_to_key("FIREBLU2") },
-    { Game::str_to_key("FIRLAV3"), Game::str_to_key("FIRLAVA") },
-    { Game::str_to_key("FIREMAG1"), Game::str_to_key("FIREMAG2"), Game::str_to_key("FIREMAG3") },
-    { Game::str_to_key("FIREWALA"), Game::str_to_key("FIREWALB"), Game::str_to_key("FIREWALL") },
-    { Game::str_to_key("GSTFONT1"), Game::str_to_key("GSTFONT2"), Game::str_to_key("GSTFONT3") },
-    { Game::str_to_key("ROCKRED1"), Game::str_to_key("ROCKRED2"), Game::str_to_key("ROCKRED3") },
-    { Game::str_to_key("SLADRIP1"), Game::str_to_key("SLADRIP2"), Game::str_to_key("SLADRIP3") },
-    { Game::str_to_key("BFALL1"), Game::str_to_key("BFALL2"), Game::str_to_key("BFALL3"), Game::str_to_key("BFALL4") },
-    { Game::str_to_key("SFALL1"), Game::str_to_key("SFALL2"), Game::str_to_key("SFALL3"), Game::str_to_key("SFALL4") },
-    { Game::str_to_key("WFALL1"), Game::str_to_key("WFALL2"), Game::str_to_key("WFALL3"), Game::str_to_key("WFALL4") },
-    { Game::str_to_key("DBRAIN1"), Game::str_to_key("DBRAIN2"), Game::str_to_key("DBRAIN3"), Game::str_to_key("DBRAIN4") }
+    { DOOM::str_to_key("BLODGR1"), DOOM::str_to_key("BLODGR2"), DOOM::str_to_key("BLODGR3"), DOOM::str_to_key("BLODGR4") },
+    { DOOM::str_to_key("BLODRIP1"), DOOM::str_to_key("BLODRIP2"), DOOM::str_to_key("BLODRIP3"), DOOM::str_to_key("BLODRIP4") },
+    { DOOM::str_to_key("FIREBLU1"), DOOM::str_to_key("FIREBLU2") },
+    { DOOM::str_to_key("FIRLAV3"), DOOM::str_to_key("FIRLAVA") },
+    { DOOM::str_to_key("FIREMAG1"), DOOM::str_to_key("FIREMAG2"), DOOM::str_to_key("FIREMAG3") },
+    { DOOM::str_to_key("FIREWALA"), DOOM::str_to_key("FIREWALB"), DOOM::str_to_key("FIREWALL") },
+    { DOOM::str_to_key("GSTFONT1"), DOOM::str_to_key("GSTFONT2"), DOOM::str_to_key("GSTFONT3") },
+    { DOOM::str_to_key("ROCKRED1"), DOOM::str_to_key("ROCKRED2"), DOOM::str_to_key("ROCKRED3") },
+    { DOOM::str_to_key("SLADRIP1"), DOOM::str_to_key("SLADRIP2"), DOOM::str_to_key("SLADRIP3") },
+    { DOOM::str_to_key("BFALL1"), DOOM::str_to_key("BFALL2"), DOOM::str_to_key("BFALL3"), DOOM::str_to_key("BFALL4") },
+    { DOOM::str_to_key("SFALL1"), DOOM::str_to_key("SFALL2"), DOOM::str_to_key("SFALL3"), DOOM::str_to_key("SFALL4") },
+    { DOOM::str_to_key("WFALL1"), DOOM::str_to_key("WFALL2"), DOOM::str_to_key("WFALL3"), DOOM::str_to_key("WFALL4") },
+    { DOOM::str_to_key("DBRAIN1"), DOOM::str_to_key("DBRAIN2"), DOOM::str_to_key("DBRAIN3"), DOOM::str_to_key("DBRAIN4") }
   };
 
   std::vector<uint64_t>	animation = { name };
@@ -651,12 +691,11 @@ std::vector<const Game::Doom::Resources::Texture *>	Game::Doom::Level::Sidedef::
       if (name == frame)
 	animation = frames;
 
-  std::vector<const Game::Doom::Resources::Texture *>	result;
+  std::vector<const DOOM::Doom::Resources::Texture *>	result;
 
   // Check if frames are registered in resources
   for (uint64_t frame : animation) {
     if (doom.resources.textures.find(frame) == doom.resources.textures.end()) {
-      std::cout << "'" << Game::key_to_str(frame) << "'" << std::endl;
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
     }
     result.push_back(&doom.resources.textures.find(frame)->second);
@@ -666,26 +705,26 @@ std::vector<const Game::Doom::Resources::Texture *>	Game::Doom::Level::Sidedef::
   return result;
 }
 
-void	Game::Doom::Level::Sidedef::update(sf::Time elapsed)
+void	DOOM::Doom::Level::Sidedef::update(sf::Time elapsed)
 {
   // Add elapsed time to total
   _elapsed += elapsed;
 }
 
-const Game::Doom::Resources::Texture &	Game::Doom::Level::Sidedef::upper() const
+const DOOM::Doom::Resources::Texture &	DOOM::Doom::Level::Sidedef::upper() const
 {
   // Return upper frame
-  return *_upper[_elapsed.asMicroseconds() / (Game::Doom::Tic.asMicroseconds() * Game::Doom::Level::Sidedef::FrameDuration) % _upper.size()];
+  return *_upper[_elapsed.asMicroseconds() / (DOOM::Doom::Tic.asMicroseconds() * DOOM::Doom::Level::Sidedef::FrameDuration) % _upper.size()];
 }
 
-const Game::Doom::Resources::Texture &	Game::Doom::Level::Sidedef::lower() const
+const DOOM::Doom::Resources::Texture &	DOOM::Doom::Level::Sidedef::lower() const
 {
   // Return lower frame
-  return *_lower[_elapsed.asMicroseconds() / (Game::Doom::Tic.asMicroseconds() * Game::Doom::Level::Sidedef::FrameDuration) % _lower.size()];
+  return *_lower[_elapsed.asMicroseconds() / (DOOM::Doom::Tic.asMicroseconds() * DOOM::Doom::Level::Sidedef::FrameDuration) % _lower.size()];
 }
 
-const Game::Doom::Resources::Texture &	Game::Doom::Level::Sidedef::middle() const
+const DOOM::Doom::Resources::Texture &	DOOM::Doom::Level::Sidedef::middle() const
 {
   // Return middle frame
-  return *_middle[_elapsed.asMicroseconds() / (Game::Doom::Tic.asMicroseconds() * Game::Doom::Level::Sidedef::FrameDuration) % _middle.size()];
+  return *_middle[_elapsed.asMicroseconds() / (DOOM::Doom::Tic.asMicroseconds() * DOOM::Doom::Level::Sidedef::FrameDuration) % _middle.size()];
 }

@@ -9,12 +9,12 @@
 #include "Doom/Doom.hpp"
 #include "Math/Vector.hpp"
 
-namespace Game
+namespace DOOM
 {
   class AbstractThing
   {
   public:
-    static Game::AbstractThing *	factory(const Game::Doom &, const Game::Wad::RawLevel::Thing &);
+    static DOOM::AbstractThing *	factory(const DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing);
 
     enum Flag : int16_t
     {
@@ -43,11 +43,11 @@ namespace Game
     const int16_t	radius;		// Thing radius (square box)
     const int16_t	properties;	// Thing properties (see enum)
 
-    AbstractThing(const Game::Doom &, const Game::Wad::RawLevel::Thing &, int16_t, int16_t);
+    AbstractThing(const DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing, int16_t radius, int16_t properties);
     virtual ~AbstractThing();
 
-    virtual bool								update(sf::Time);		// Update thing, return true if thing should be deleted
-    virtual const std::pair<Game::Doom::Resources::Texture const *, bool> &	sprite(float) const = 0;	// Return sprite to be displayed
+    virtual bool								update(sf::Time elapsed);	// Update thing, return true if thing should be deleted
+    virtual const std::pair<DOOM::Doom::Resources::Texture const *, bool> &	sprite(float angle) const = 0;	// Return sprite to be displayed
   };
 };
 

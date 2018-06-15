@@ -7,15 +7,15 @@
 #include "Doom/Wad.hpp"
 #include "System/Config.hpp"
 
-Game::Wad::Wad() :
+DOOM::Wad::Wad() :
   levels(),
   resources()
 {}
 
-Game::Wad::~Wad()
+DOOM::Wad::~Wad()
 {}
 
-bool	Game::Wad::load(std::string const & path)
+bool	DOOM::Wad::load(std::string const & path)
 {
   std::ifstream	file(path, std::ifstream::binary);
 
@@ -46,7 +46,7 @@ bool	Game::Wad::load(std::string const & path)
   return loadLumps(file, numlumps, infotableofs);
 }
 
-bool	Game::Wad::loadLumps(std::ifstream & file, int32_t const numlumps, int32_t const infotableofs)
+bool	DOOM::Wad::loadLumps(std::ifstream & file, int32_t const numlumps, int32_t const infotableofs)
 {
   std::pair<uint8_t, uint8_t>	level = { 0, 0 };
 
@@ -54,11 +54,11 @@ bool	Game::Wad::loadLumps(std::ifstream & file, int32_t const numlumps, int32_t 
   for (int32_t iterator = 0; iterator < numlumps; iterator++)
   {
     // Lump header data structure
-    Game::Wad::Lump	lump;
+    DOOM::Wad::Lump	lump;
 
     // Read lump header data from file
-    file.seekg(infotableofs + iterator * sizeof(Game::Wad::Lump), file.beg);
-    file.read((char *)&lump, sizeof(Game::Wad::Lump));
+    file.seekg(infotableofs + iterator * sizeof(DOOM::Wad::Lump), file.beg);
+    file.read((char *)&lump, sizeof(DOOM::Wad::Lump));
 
     // Force name format
     uppercase(lump.name);
@@ -67,54 +67,54 @@ bool	Game::Wad::loadLumps(std::ifstream & file, int32_t const numlumps, int32_t 
     std::list<std::pair<std::regex, std::function<bool()>>>	commands_regex =
     { 
       // Scoped lumps
-      { std::regex("F_START"), std::bind(&Game::Wad::loadResourceFlats, this, std::ref(file), numlumps, infotableofs, std::ref(iterator)) },
-      { std::regex("S_START"), std::bind(&Game::Wad::loadResourceSprites, this, std::ref(file), numlumps, infotableofs, std::ref(iterator)) },
-      { std::regex("P_START"), std::bind(&Game::Wad::loadResourcePatches, this, std::ref(file), numlumps, infotableofs, std::ref(iterator)) },
+      { std::regex("F_START"), std::bind(&DOOM::Wad::loadResourceFlats, this, std::ref(file), numlumps, infotableofs, std::ref(iterator)) },
+      { std::regex("S_START"), std::bind(&DOOM::Wad::loadResourceSprites, this, std::ref(file), numlumps, infotableofs, std::ref(iterator)) },
+      { std::regex("P_START"), std::bind(&DOOM::Wad::loadResourcePatches, this, std::ref(file), numlumps, infotableofs, std::ref(iterator)) },
 
       // Resources lumps
-      { std::regex("PLAYPAL"), std::bind(&Game::Wad::loadResourcePlaypal, this, std::ref(file), std::ref(lump)) },
-      { std::regex("COLORMAP"), std::bind(&Game::Wad::loadResourceColormap, this, std::ref(file), std::ref(lump)) },
-      { std::regex("TEXTURE1"), std::bind(&Game::Wad::loadResourceTexture, this, std::ref(file), std::ref(lump)) },
-      { std::regex("TEXTURE2"), std::bind(&Game::Wad::loadResourceTexture, this, std::ref(file), std::ref(lump)) },
-      { std::regex("PNAMES"), std::bind(&Game::Wad::loadResourcePnames, this, std::ref(file), std::ref(lump)) },
-      { std::regex("ENDOOM"), std::bind(&Game::Wad::loadResourceEndoom, this, std::ref(file), std::ref(lump)) },
-      { std::regex("GENMIDI"), std::bind(&Game::Wad::loadResourceGenmidi, this, std::ref(file), std::ref(lump)) },
-      { std::regex("DMXGUS"), std::bind(&Game::Wad::loadIgnore, this) },
-      { std::regex("D_[[:alnum:]]+"), std::bind(&Game::Wad::loadResourceMusic, this, std::ref(file), std::ref(lump)) },
-      { std::regex("DS[[:alnum:]]+"), std::bind(&Game::Wad::loadResourceSound, this, std::ref(file), std::ref(lump)) },
-      { std::regex("DP[[:alnum:]]+"), std::bind(&Game::Wad::loadIgnore, this) },
-      { std::regex("DEMO[[:digit:]]"), std::bind(&Game::Wad::loadResourceDemox, this, std::ref(file), std::ref(lump)) },
+      { std::regex("PLAYPAL"), std::bind(&DOOM::Wad::loadResourcePlaypal, this, std::ref(file), std::ref(lump)) },
+      { std::regex("COLORMAP"), std::bind(&DOOM::Wad::loadResourceColormap, this, std::ref(file), std::ref(lump)) },
+      { std::regex("TEXTURE1"), std::bind(&DOOM::Wad::loadResourceTexture, this, std::ref(file), std::ref(lump)) },
+      { std::regex("TEXTURE2"), std::bind(&DOOM::Wad::loadResourceTexture, this, std::ref(file), std::ref(lump)) },
+      { std::regex("PNAMES"), std::bind(&DOOM::Wad::loadResourcePnames, this, std::ref(file), std::ref(lump)) },
+      { std::regex("ENDOOM"), std::bind(&DOOM::Wad::loadResourceEndoom, this, std::ref(file), std::ref(lump)) },
+      { std::regex("GENMIDI"), std::bind(&DOOM::Wad::loadResourceGenmidi, this, std::ref(file), std::ref(lump)) },
+      { std::regex("DMXGUS"), std::bind(&DOOM::Wad::loadIgnore, this) },
+      { std::regex("D_[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMusic, this, std::ref(file), std::ref(lump)) },
+      { std::regex("DS[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceSound, this, std::ref(file), std::ref(lump)) },
+      { std::regex("DP[[:alnum:]]+"), std::bind(&DOOM::Wad::loadIgnore, this) },
+      { std::regex("DEMO[[:digit:]]"), std::bind(&DOOM::Wad::loadResourceDemox, this, std::ref(file), std::ref(lump)) },
       
       // Menu resources lumps
-      { std::regex("HELP1"), std::bind(&Game::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("HELP2"), std::bind(&Game::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("TITLEPIC"), std::bind(&Game::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("CREDIT"), std::bind(&Game::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("VICTORY2"), std::bind(&Game::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("PFUB1"), std::bind(&Game::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("PFUB2"), std::bind(&Game::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("INTERPIC"), std::bind(&Game::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("ENDPIC"), std::bind(&Game::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("END[[:digit:]]"), std::bind(&Game::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("AMMNUM[[:digit:]]"), std::bind(&Game::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("ST[[:alnum:]]+"), std::bind(&Game::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("WI[[:alnum:]]+"), std::bind(&Game::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("M_[[:alnum:]]+"), std::bind(&Game::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("BRDR_[[:alnum:]]+"), std::bind(&Game::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("HELP1"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("HELP2"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("TITLEPIC"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("CREDIT"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("VICTORY2"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("PFUB1"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("PFUB2"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("INTERPIC"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("ENDPIC"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("END[[:digit:]]"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("AMMNUM[[:digit:]]"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("ST[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("WI[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("M_[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("BRDR_[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
 
       // Level lumps
-      { std::regex("VERTEXES"), std::bind(&Game::Wad::loadLevelVertexes, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("SECTORS"), std::bind(&Game::Wad::loadLevelSectors, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("SIDEDEFS"), std::bind(&Game::Wad::loadLevelSidedefs, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("LINEDEFS"), std::bind(&Game::Wad::loadLevelLinedefs, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("SEGS"), std::bind(&Game::Wad::loadLevelSegs, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("SSECTORS"), std::bind(&Game::Wad::loadLevelSsectors, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("NODES"), std::bind(&Game::Wad::loadLevelNodes, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("REJECT"), std::bind(&Game::Wad::loadLevelReject, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("BLOCKMAP"), std::bind(&Game::Wad::loadLevelBlockmap, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("THINGS"), std::bind(&Game::Wad::loadLevelThings, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("E[[:digit:]]M[[:digit:]]"), std::bind(&Game::Wad::loadLevelExmy, this, std::ref(lump), std::ref(level)) },
-      { std::regex("MAP[[:digit:]][[:digit:]]"), std::bind(&Game::Wad::loadLevelMapxy, this, std::ref(lump), std::ref(level)) }
+      { std::regex("VERTEXES"), std::bind(&DOOM::Wad::loadLevelVertexes, this, std::ref(file), std::ref(lump), level) },
+      { std::regex("SECTORS"), std::bind(&DOOM::Wad::loadLevelSectors, this, std::ref(file), std::ref(lump), level) },
+      { std::regex("SIDEDEFS"), std::bind(&DOOM::Wad::loadLevelSidedefs, this, std::ref(file), std::ref(lump), level) },
+      { std::regex("LINEDEFS"), std::bind(&DOOM::Wad::loadLevelLinedefs, this, std::ref(file), std::ref(lump), level) },
+      { std::regex("SEGS"), std::bind(&DOOM::Wad::loadLevelSegs, this, std::ref(file), std::ref(lump), level) },
+      { std::regex("SSECTORS"), std::bind(&DOOM::Wad::loadLevelSsectors, this, std::ref(file), std::ref(lump), level) },
+      { std::regex("NODES"), std::bind(&DOOM::Wad::loadLevelNodes, this, std::ref(file), std::ref(lump), level) },
+      { std::regex("REJECT"), std::bind(&DOOM::Wad::loadLevelReject, this, std::ref(file), std::ref(lump), level) },
+      { std::regex("BLOCKMAP"), std::bind(&DOOM::Wad::loadLevelBlockmap, this, std::ref(file), std::ref(lump), level) },
+      { std::regex("THINGS"), std::bind(&DOOM::Wad::loadLevelThings, this, std::ref(file), std::ref(lump), level) },
+      { std::regex("E[[:digit:]]M[[:digit:]]"), std::bind(&DOOM::Wad::loadLevelExmy, this, std::ref(lump), std::ref(level)) },
+      { std::regex("MAP[[:digit:]][[:digit:]]"), std::bind(&DOOM::Wad::loadLevelMapxy, this, std::ref(lump), std::ref(level)) }
     };
 
     // Remove each non-matching regex
@@ -137,23 +137,23 @@ bool	Game::Wad::loadLumps(std::ifstream & file, int32_t const numlumps, int32_t 
   return true;
 }
 
-bool	Game::Wad::loadResourceFlats(std::ifstream & file, int32_t const numlumps, int32_t const infotableofs, int32_t & iterator)
+bool	DOOM::Wad::loadResourceFlats(std::ifstream & file, int32_t const numlumps, int32_t const infotableofs, int32_t & iterator)
 {
   // Process every lump in scope
   for (; iterator < numlumps; iterator++)
   {
     // Lump header data structure
-    Game::Wad::Lump	lump;
+    DOOM::Wad::Lump	lump;
 
     // Read lump header data from file
-    file.seekg(infotableofs + iterator * sizeof(Game::Wad::Lump), file.beg);
-    file.read((char *)&lump, sizeof(Game::Wad::Lump));
+    file.seekg(infotableofs + iterator * sizeof(DOOM::Wad::Lump), file.beg);
+    file.read((char *)&lump, sizeof(DOOM::Wad::Lump));
 
     // Force name format
     uppercase(lump.name);
     
     // Stop if end of scope
-    if (lump.name == Game::str_to_key("F_END"))
+    if (lump.name == DOOM::str_to_key("F_END"))
       return true;
 
     // Load flat lump
@@ -164,23 +164,23 @@ bool	Game::Wad::loadResourceFlats(std::ifstream & file, int32_t const numlumps, 
   return false;
 }
 
-bool	Game::Wad::loadResourceSprites(std::ifstream & file, int32_t const numlumps, int32_t const infotableofs, int32_t & iterator)
+bool	DOOM::Wad::loadResourceSprites(std::ifstream & file, int32_t const numlumps, int32_t const infotableofs, int32_t & iterator)
 {
   // Process every lump in scope
   for (; iterator < numlumps; iterator++)
   {
     // Lump header data structure
-    Game::Wad::Lump	lump;
+    DOOM::Wad::Lump	lump;
 
     // Read lump header data from file
-    file.seekg(infotableofs + iterator * sizeof(Game::Wad::Lump), file.beg);
-    file.read((char *)&lump, sizeof(Game::Wad::Lump));
+    file.seekg(infotableofs + iterator * sizeof(DOOM::Wad::Lump), file.beg);
+    file.read((char *)&lump, sizeof(DOOM::Wad::Lump));
 
     // Force name format
     uppercase(lump.name);
 
     // Stop if end of scope
-    if (lump.name == Game::str_to_key("S_END"))
+    if (lump.name == DOOM::str_to_key("S_END"))
       return true;
 
     // Load flat lump
@@ -191,23 +191,23 @@ bool	Game::Wad::loadResourceSprites(std::ifstream & file, int32_t const numlumps
   return false;
 }
 
-bool	Game::Wad::loadResourcePatches(std::ifstream & file, int32_t const numlumps, int32_t const infotableofs, int32_t & iterator)
+bool	DOOM::Wad::loadResourcePatches(std::ifstream & file, int32_t const numlumps, int32_t const infotableofs, int32_t & iterator)
 {
   // Process every lump in scope
   for (; iterator < numlumps; iterator++)
   {
     // Lump header data structure
-    Game::Wad::Lump	lump;
+    DOOM::Wad::Lump	lump;
 
     // Read lump header data from file
-    file.seekg(infotableofs + iterator * sizeof(Game::Wad::Lump), file.beg);
-    file.read((char *)&lump, sizeof(Game::Wad::Lump));
+    file.seekg(infotableofs + iterator * sizeof(DOOM::Wad::Lump), file.beg);
+    file.read((char *)&lump, sizeof(DOOM::Wad::Lump));
 
     // Force name format
     uppercase(lump.name);
 
     // Stop if end of scope
-    if (lump.name == Game::str_to_key("P_END"))
+    if (lump.name == DOOM::str_to_key("P_END"))
       return true;
 
     // Load patch lump
@@ -218,7 +218,7 @@ bool	Game::Wad::loadResourcePatches(std::ifstream & file, int32_t const numlumps
   return false;
 }
 
-bool	Game::Wad::loadResourceTexture(std::ifstream & file, Game::Wad::Lump const & lump)
+bool	DOOM::Wad::loadResourceTexture(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   int32_t	numtexture;
 
@@ -260,41 +260,41 @@ bool	Game::Wad::loadResourceTexture(std::ifstream & file, Game::Wad::Lump const 
     // Read texture's patches
     for (int16_t j = 0; j < numpatch; j++)
     {
-      resources.textures[name].patches.push_back(Game::Wad::RawResources::Texture::Patch());
-      file.read((char *)&resources.textures[name].patches.back(), sizeof(Game::Wad::RawResources::Texture::Patch));
+      resources.textures[name].patches.push_back(DOOM::Wad::RawResources::Texture::Patch());
+      file.read((char *)&resources.textures[name].patches.back(), sizeof(DOOM::Wad::RawResources::Texture::Patch));
     }
   }
 
   return true;
 }
 
-bool	Game::Wad::loadResourceSprite(std::ifstream & file, Game::Wad::Lump const & lump)
+bool	DOOM::Wad::loadResourceSprite(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Ignore special delimiters (TODO: dont ignore them ?)
-  if (lump.name == Game::str_to_key("S_START") || lump.name == Game::str_to_key("S_END"))
+  if (lump.name == DOOM::str_to_key("S_START") || lump.name == DOOM::str_to_key("S_END"))
     return true;
 
   return loadResourcePatch(file, lump, resources.sprites);
 }
 
-bool	Game::Wad::loadResourcePatch(std::ifstream & file, Game::Wad::Lump const & lump)
+bool	DOOM::Wad::loadResourcePatch(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Ignore special delimiters (TODO: dont ignore them ?)
-  if (lump.name == Game::str_to_key("P_START") || lump.name == Game::str_to_key("P_END") ||
-    lump.name == Game::str_to_key("P1_START") || lump.name == Game::str_to_key("P1_END") ||
-    lump.name == Game::str_to_key("P2_START") || lump.name == Game::str_to_key("P2_END") ||
-    lump.name == Game::str_to_key("P3_START") || lump.name == Game::str_to_key("P3_END"))
+  if (lump.name == DOOM::str_to_key("P_START") || lump.name == DOOM::str_to_key("P_END") ||
+    lump.name == DOOM::str_to_key("P1_START") || lump.name == DOOM::str_to_key("P1_END") ||
+    lump.name == DOOM::str_to_key("P2_START") || lump.name == DOOM::str_to_key("P2_END") ||
+    lump.name == DOOM::str_to_key("P3_START") || lump.name == DOOM::str_to_key("P3_END"))
     return true;
 
   return loadResourcePatch(file, lump, resources.patches);
 }
 
-bool	Game::Wad::loadResourceMenu(std::ifstream & file, Game::Wad::Lump const & lump)
+bool	DOOM::Wad::loadResourceMenu(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   return loadResourcePatch(file, lump, resources.menus);
 }
 
-bool	Game::Wad::loadResourcePatch(std::ifstream & file, Game::Wad::Lump const & lump, std::unordered_map<uint64_t, Game::Wad::RawResources::Patch> & target)
+bool	DOOM::Wad::loadResourcePatch(std::ifstream & file, DOOM::Wad::Lump const & lump, std::unordered_map<uint64_t, DOOM::Wad::RawResources::Patch> & target)
 {
   // Cancel if patch name already registered
   if (target.find(lump.name) != target.end())
@@ -320,12 +320,12 @@ bool	Game::Wad::loadResourcePatch(std::ifstream & file, Game::Wad::Lump const & 
     file.seekg(lump.position + pointer, file.beg);
 
     // Push a new column
-    target[lump.name].columns.push_back(Game::Wad::RawResources::Patch::Column());
+    target[lump.name].columns.push_back(DOOM::Wad::RawResources::Patch::Column());
 
     // Read each column spans
     while (true)
     {
-      Game::Wad::RawResources::Patch::Column::Span	span;
+      DOOM::Wad::RawResources::Patch::Column::Span	span;
       uint8_t						offset;
       uint8_t						size;
 
@@ -362,12 +362,12 @@ bool	Game::Wad::loadResourcePatch(std::ifstream & file, Game::Wad::Lump const & 
   return true;
 }
 
-bool	Game::Wad::loadResourceFlat(std::ifstream & file, Game::Wad::Lump const & lump)
+bool	DOOM::Wad::loadResourceFlat(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Ignore special delimiters (TODO: dont ignore them ?)
-  if (lump.name == Game::str_to_key("F_START") || lump.name == Game::str_to_key("F_END") ||
-    lump.name == Game::str_to_key("F1_START") || lump.name == Game::str_to_key("F1_END") ||
-    lump.name == Game::str_to_key("F2_START") || lump.name == Game::str_to_key("F2_END"))
+  if (lump.name == DOOM::str_to_key("F_START") || lump.name == DOOM::str_to_key("F_END") ||
+    lump.name == DOOM::str_to_key("F1_START") || lump.name == DOOM::str_to_key("F1_END") ||
+    lump.name == DOOM::str_to_key("F2_START") || lump.name == DOOM::str_to_key("F2_END"))
     return true;
 
   // Check for invalid lump size
@@ -381,10 +381,10 @@ bool	Game::Wad::loadResourceFlat(std::ifstream & file, Game::Wad::Lump const & l
   return true;
 }
 
-bool	Game::Wad::loadResourceGenmidi(std::ifstream & file, Game::Wad::Lump const & lump)
+bool	DOOM::Wad::loadResourceGenmidi(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Check for invalid lump size
-  if (lump.size != sizeof(int8_t) * 8 + sizeof(Game::Wad::RawResources::Genmidi) * 175)
+  if (lump.size != sizeof(int8_t) * 8 + sizeof(DOOM::Wad::RawResources::Genmidi) * 175)
     return false;
 
   // Set position to lump data
@@ -401,14 +401,14 @@ bool	Game::Wad::loadResourceGenmidi(std::ifstream & file, Game::Wad::Lump const 
 
   for (int i = 0; i < 175; i++)
   {
-    Game::Wad::RawResources::Genmidi	record;
+    DOOM::Wad::RawResources::Genmidi	record;
 
     // Read record data
-    file.seekg(lump.position + sizeof(int8_t) * 8 + (sizeof(Game::Wad::RawResources::Genmidi) - sizeof(int8_t) * 32) * i, file.beg);
-    file.read((char *)&record, sizeof(Game::Wad::RawResources::Genmidi) - sizeof(int8_t) * 32);
+    file.seekg(lump.position + sizeof(int8_t) * 8 + (sizeof(DOOM::Wad::RawResources::Genmidi) - sizeof(int8_t) * 32) * i, file.beg);
+    file.read((char *)&record, sizeof(DOOM::Wad::RawResources::Genmidi) - sizeof(int8_t) * 32);
 
     // Read record name
-    file.seekg(lump.position + sizeof(int8_t) * 8 + (sizeof(Game::Wad::RawResources::Genmidi) - sizeof(int8_t) * 32) * 175 + sizeof(int8_t) * 32 * i, file.beg);
+    file.seekg(lump.position + sizeof(int8_t) * 8 + (sizeof(DOOM::Wad::RawResources::Genmidi) - sizeof(int8_t) * 32) * 175 + sizeof(int8_t) * 32 * i, file.beg);
     file.read((char *)record.name, sizeof(int8_t) * 32);
 
     // Push record to record vector
@@ -418,7 +418,7 @@ bool	Game::Wad::loadResourceGenmidi(std::ifstream & file, Game::Wad::Lump const 
   return true;
 }
 
-bool	Game::Wad::loadResourceMusic(std::ifstream & file, Game::Wad::Lump const & lump)
+bool	DOOM::Wad::loadResourceMusic(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Check for invalid lump size
   if (lump.size < sizeof(int8_t) * 4 + sizeof(int16_t) * 7)
@@ -458,7 +458,7 @@ bool	Game::Wad::loadResourceMusic(std::ifstream & file, Game::Wad::Lump const & 
   return true;
 }
 
-bool	Game::Wad::loadResourceSound(std::ifstream & file, Game::Wad::Lump const & lump)
+bool	DOOM::Wad::loadResourceSound(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Check for invalid lump size
   if (lump.size < sizeof(int16_t) * 4)
@@ -486,7 +486,7 @@ bool	Game::Wad::loadResourceSound(std::ifstream & file, Game::Wad::Lump const & 
   return true;
 }
 
-bool	Game::Wad::loadResourceDemox(std::ifstream & file, Game::Wad::Lump const & lump)
+bool	DOOM::Wad::loadResourceDemox(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Check for invalid lump size
   if (lump.size < sizeof(int8_t) * 7)
@@ -517,11 +517,11 @@ bool	Game::Wad::loadResourceDemox(std::ifstream & file, Game::Wad::Lump const & 
     file.read((char *)&resources.demos[(lump.name << 32 & 0xFF) - '0'].player4, sizeof(int8_t));
 
     // Complete data structure
-    resources.demos[(lump.name << 32 & 0xFF) - '0'].mode = Game::Wad::RawResources::Demo::Mode::Single;
+    resources.demos[(lump.name << 32 & 0xFF) - '0'].mode = DOOM::Wad::RawResources::Demo::Mode::Single;
     resources.demos[(lump.name << 32 & 0xFF) - '0'].respawn = 0;
     resources.demos[(lump.name << 32 & 0xFF) - '0'].fast = 0;
     resources.demos[(lump.name << 32 & 0xFF) - '0'].nomonster = 0;
-    resources.demos[(lump.name << 32 & 0xFF) - '0'].viewpoint = Game::Wad::RawResources::Demo::ViewPoint::Player1;
+    resources.demos[(lump.name << 32 & 0xFF) - '0'].viewpoint = DOOM::Wad::RawResources::Demo::ViewPoint::Player1;
   }
 
   // Load 13 bytes header
@@ -562,27 +562,27 @@ bool	Game::Wad::loadResourceDemox(std::ifstream & file, Game::Wad::Lump const & 
     // Move read cursor backward
     file.seekg(-(int)sizeof(int8_t), file.cur);
 
-    Game::Wad::RawResources::Demo::Record	record;
+    DOOM::Wad::RawResources::Demo::Record	record;
 
     // Read whole record
-    file.read((char *)&record, sizeof(Game::Wad::RawResources::Demo::Record));
+    file.read((char *)&record, sizeof(DOOM::Wad::RawResources::Demo::Record));
 
     // Push record to player move vector
     resources.demos[(lump.name << 32 & 0xFF) - '0'].records.push_back(record);
   }
 }
 
-bool	Game::Wad::loadResourcePlaypal(std::ifstream & file, Game::Wad::Lump const & lump)
+bool	DOOM::Wad::loadResourcePlaypal(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
-  return loadLump<Game::Wad::RawResources::Palette>(file, lump, resources.palettes);
+  return loadLump<DOOM::Wad::RawResources::Palette>(file, lump, resources.palettes);
 }
 
-bool	Game::Wad::loadResourceColormap(std::ifstream & file, Game::Wad::Lump const & lump)
+bool	DOOM::Wad::loadResourceColormap(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
-  return loadLump<Game::Wad::RawResources::Colormap>(file, lump, resources.colormaps);
+  return loadLump<DOOM::Wad::RawResources::Colormap>(file, lump, resources.colormaps);
 }
 
-bool	Game::Wad::loadResourcePnames(std::ifstream & file, Game::Wad::Lump const & lump)
+bool	DOOM::Wad::loadResourcePnames(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Check for invalid lump size
   if ((lump.size - 4) % sizeof(uint64_t) != 0)
@@ -614,20 +614,20 @@ bool	Game::Wad::loadResourcePnames(std::ifstream & file, Game::Wad::Lump const &
   return true;
 }
 
-bool	Game::Wad::loadResourceEndoom(std::ifstream & file, Game::Wad::Lump const & lump)
+bool	DOOM::Wad::loadResourceEndoom(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Check for invalid lump size
-  if (lump.size != sizeof(Game::Wad::RawResources::Endoom))
+  if (lump.size != sizeof(DOOM::Wad::RawResources::Endoom))
     return false;
 
   // Read header from file
   file.seekg(lump.position, file.beg);
-  file.read((char *)&resources.endoom, sizeof(Game::Wad::RawResources::Endoom));
+  file.read((char *)&resources.endoom, sizeof(DOOM::Wad::RawResources::Endoom));
 
   return true;
 }
 
-bool	Game::Wad::loadLevelExmy(Game::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> & level)
+bool	DOOM::Wad::loadLevelExmy(DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> & level)
 {
   // Get episode and mission number from name
   level = { (uint8_t)((lump.name >> 8) & 0xFF) - '0', (uint8_t)((lump.name >> 24) & 0xFF) - '0' };
@@ -635,7 +635,7 @@ bool	Game::Wad::loadLevelExmy(Game::Wad::Lump const & lump, std::pair<uint8_t, u
   return true;
 }
 
-bool	Game::Wad::loadLevelMapxy(Game::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> & level)
+bool	DOOM::Wad::loadLevelMapxy(DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> & level)
 {
   // Get episode and mission number from name
   level = { (uint8_t)((lump.name >> 24) & 0xFF) - '0', (uint8_t)((lump.name >> 32) & 0xFF) - '0' };
@@ -643,24 +643,24 @@ bool	Game::Wad::loadLevelMapxy(Game::Wad::Lump const & lump, std::pair<uint8_t, 
   return true;
 }
 
-bool	Game::Wad::loadLevelThings(std::ifstream & file, Game::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+bool	DOOM::Wad::loadLevelThings(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
-  return loadLump<Game::Wad::RawLevel::Thing>(file, lump, levels[level].things);
+  return loadLump<DOOM::Wad::RawLevel::Thing>(file, lump, levels[level].things);
 }
 
-bool	Game::Wad::loadLevelLinedefs(std::ifstream & file, Game::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+bool	DOOM::Wad::loadLevelLinedefs(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
-  return loadLump<Game::Wad::RawLevel::Linedef>(file, lump, levels[level].linedefs);
+  return loadLump<DOOM::Wad::RawLevel::Linedef>(file, lump, levels[level].linedefs);
 }
 
-bool	Game::Wad::loadLevelSidedefs(std::ifstream & file, Game::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+bool	DOOM::Wad::loadLevelSidedefs(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
   // Load sidedefs from file
-  if (loadLump<Game::Wad::RawLevel::Sidedef>(file, lump, levels[level].sidedefs) == false)
+  if (loadLump<DOOM::Wad::RawLevel::Sidedef>(file, lump, levels[level].sidedefs) == false)
     return false;
 
   // Convert name in sidedefs to uppercase
-  for (Game::Wad::RawLevel::Sidedef & sidedef : levels[level].sidedefs)
+  for (DOOM::Wad::RawLevel::Sidedef & sidedef : levels[level].sidedefs)
   {
     uppercase(sidedef.upper);
     uppercase(sidedef.lower);
@@ -670,33 +670,33 @@ bool	Game::Wad::loadLevelSidedefs(std::ifstream & file, Game::Wad::Lump const & 
   return true;
 }
 
-bool	Game::Wad::loadLevelVertexes(std::ifstream & file, Game::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+bool	DOOM::Wad::loadLevelVertexes(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
-  return loadLump<Game::Wad::RawLevel::Vertex>(file, lump, levels[level].vertexes);
+  return loadLump<DOOM::Wad::RawLevel::Vertex>(file, lump, levels[level].vertexes);
 }
 
-bool	Game::Wad::loadLevelSegs(std::ifstream & file, Game::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+bool	DOOM::Wad::loadLevelSegs(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
-  return loadLump<Game::Wad::RawLevel::Segment>(file, lump, levels[level].segments);
+  return loadLump<DOOM::Wad::RawLevel::Segment>(file, lump, levels[level].segments);
 }
 
-bool	Game::Wad::loadLevelSsectors(std::ifstream & file, Game::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+bool	DOOM::Wad::loadLevelSsectors(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
-  return loadLump<Game::Wad::RawLevel::Subsector>(file, lump, levels[level].subsectors);
+  return loadLump<DOOM::Wad::RawLevel::Subsector>(file, lump, levels[level].subsectors);
 }
 
-bool	Game::Wad::loadLevelNodes(std::ifstream & file, Game::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+bool	DOOM::Wad::loadLevelNodes(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
-  return loadLump<Game::Wad::RawLevel::Node>(file, lump, levels[level].nodes);
+  return loadLump<DOOM::Wad::RawLevel::Node>(file, lump, levels[level].nodes);
 }
 
-bool	Game::Wad::loadLevelSectors(std::ifstream & file, Game::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+bool	DOOM::Wad::loadLevelSectors(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
-  if (loadLump<Game::Wad::RawLevel::Sector>(file, lump, levels[level].sectors) == false)
+  if (loadLump<DOOM::Wad::RawLevel::Sector>(file, lump, levels[level].sectors) == false)
     return false;
 
   // Convert name in sectors to uppercase
-  for (Game::Wad::RawLevel::Sector & sector : levels[level].sectors)
+  for (DOOM::Wad::RawLevel::Sector & sector : levels[level].sectors)
   {
     uppercase(sector.floor_texture);
     uppercase(sector.ceiling_texture);
@@ -705,12 +705,12 @@ bool	Game::Wad::loadLevelSectors(std::ifstream & file, Game::Wad::Lump const & l
   return true;
 }
 
-bool	Game::Wad::loadLevelReject(std::ifstream & file, Game::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+bool	DOOM::Wad::loadLevelReject(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
   return loadLump<uint8_t>(file, lump, levels[level].reject.rejects);
 }
 
-bool	Game::Wad::loadLevelBlockmap(std::ifstream & file, Game::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+bool	DOOM::Wad::loadLevelBlockmap(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
   // Check for invalid lump size
   if (lump.size < sizeof(int16_t) * 4)
@@ -731,7 +731,7 @@ bool	Game::Wad::loadLevelBlockmap(std::ifstream & file, Game::Wad::Lump const & 
   return true;
 }
 
-bool	Game::Wad::loadIgnore()
+bool	DOOM::Wad::loadIgnore()
 {
   // Ignore lump
   return true;

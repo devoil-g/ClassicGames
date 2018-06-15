@@ -1,21 +1,23 @@
 #include <iostream>
 
+#include "Doom/Doom.hpp"
+#include "Doom/Sector/AbstractSector.hpp"
 #include "Doom/Thing/AbstractThing.hpp"
-#include "States/GameState.hpp"
+#include "States/DoomState.hpp"
 #include "States/StateMachine.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
-Game::GameState::GameState() :
+Game::DoomState::DoomState() :
   _elapsed(sf::seconds(0)),
   _doom(),
   _camera()
 {}
 
-Game::GameState::~GameState()
+Game::DoomState::~DoomState()
 {}
 
-bool	Game::GameState::initialize()
+bool	Game::DoomState::initialize()
 {
   // Load a level
   if (_doom.load(Game::Config::ExecutablePath + "/assets/levels/doom.wad") == false)
@@ -33,11 +35,11 @@ bool	Game::GameState::initialize()
   _camera.angle = 0.f;
 
   // Set player initial position
-  for (Game::AbstractThing const * thing : _doom.level.things)
+  for (const std::unique_ptr<DOOM::AbstractThing> & thing : _doom.level.things)
     if (thing->type == 1)
     {
       _camera.position = thing->position;
-      _camera.height = _doom.level.sectors[_doom.level.sector(thing->position).first].floor_height + 32.f;
+      _camera.height = _doom.level.sectors[_doom.level.sector(thing->position).first]->floor() + 32.f;
       _camera.angle = thing->angle;
       break;
     }
@@ -45,7 +47,7 @@ bool	Game::GameState::initialize()
   return true;
 }
 
-bool	Game::GameState::update(sf::Time elapsed)
+bool	Game::DoomState::update(sf::Time elapsed)
 {
   // Update time
   _elapsed += elapsed;
@@ -69,7 +71,7 @@ bool	Game::GameState::update(sf::Time elapsed)
   return false;
 }
 
-bool	Game::GameState::updatePlayer(sf::Time elapsed)
+bool	Game::DoomState::updatePlayer(sf::Time elapsed)
 {
   // Arbitrary values
   float const	speed = 256.f;
@@ -94,7 +96,6 @@ bool	Game::GameState::updatePlayer(sf::Time elapsed)
   // Apply movement vector with rotation
   _camera.position.x() += std::cos(_camera.angle) * d.x() - std::sin(_camera.angle) * d.y();
   _camera.position.y() += std::sin(_camera.angle) * d.x() + std::cos(_camera.angle) * d.y();
-  _camera.height += d.x() * std::tan(_camera.orientation);
 
   // Change field of view angle
   if (Game::Window::Instance().keyboard().key(sf::Keyboard::O)) _camera.fov += Math::DegToRad(+20.f) * elapsed.asSeconds();
@@ -129,11 +130,11 @@ bool	Game::GameState::updatePlayer(sf::Time elapsed)
 	throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
       // Set new camera position
-      for (Game::AbstractThing const * thing : _doom.level.things)
+      for (const std::unique_ptr<DOOM::AbstractThing> & thing : _doom.level.things)
 	if (thing->type == 1)
 	{
 	  _camera.position = thing->position;
-	  _camera.height = _doom.level.sectors[_doom.level.sector(thing->position).first].floor_height + 32.f;
+	  _camera.height = _doom.level.sectors[_doom.level.sector(thing->position).first]->floor() + 32.f;
 	  _camera.angle = thing->angle;
 	  break;
 	}
@@ -145,7 +146,7 @@ bool	Game::GameState::updatePlayer(sf::Time elapsed)
   return false;
 }
 
-void	Game::GameState::draw()
+void	Game::DoomState::draw()
 {
   // TODO: compute image
   drawCamera();
@@ -154,13 +155,13 @@ void	Game::GameState::draw()
   drawImage();
 }
 
-void	Game::GameState::drawCamera()
+void	Game::DoomState::drawCamera()
 {
   // Draw cameras
   _camera.render(_doom);
 }
 
-void	Game::GameState::drawImage()
+void	Game::DoomState::drawImage()
 {
   // Load texture as sprite
   float	scale = std::min((float)Game::Window::Instance().window().getSize().x / (float)_camera.image().getSize().x, (float)Game::Window::Instance().window().getSize().y / (float)_camera.image().getSize().y);

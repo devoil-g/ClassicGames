@@ -6,15 +6,15 @@
 #include "Doom/Flat/AbstractFlat.hpp"
 #include "Doom/Wad.hpp"
 
-namespace Game
+namespace DOOM
 {
-  class StaticFlat : public virtual AbstractFlat
+  class StaticFlat : public virtual DOOM::AbstractFlat
   {
   private:
     std::vector<uint8_t>	_flat;
 
   public:
-    StaticFlat(const Game::Wad::RawResources::Flat &);
+    StaticFlat(const DOOM::Wad::RawResources::Flat & flat);
     virtual ~StaticFlat();
 
     const std::vector<uint8_t> &	flat() const override;
