@@ -14,6 +14,9 @@ namespace DOOM
     class AbstractSectorAction
     {
     public:
+      static const std::vector<int16_t>	LevelingTypes;
+      static const std::vector<int16_t>	LightingTypes;
+
       static DOOM::AbstractSector::AbstractSectorAction *	factory(DOOM::AbstractSector & sector, int16_t type);
 
       DOOM::AbstractSector &	sector;	// Reference on sector in which action is performed
@@ -66,7 +69,8 @@ namespace DOOM
     const DOOM::Doom &		_doom;		// Reference to DOOM instance
 
   private:
-    std::unique_ptr<DOOM::AbstractSector::AbstractSectorAction>	_action;	// Current performed action
+    std::unique_ptr<DOOM::AbstractSector::AbstractSectorAction>	_leveling;	// Current floor/ceiling leveling effect
+    std::unique_ptr<DOOM::AbstractSector::AbstractSectorAction>	_lighting;	// Current lighting effect
 
   public:
     AbstractSector(const DOOM::Doom & doom, const DOOM::Wad::RawLevel::Sector & sector);
@@ -80,7 +84,7 @@ namespace DOOM
     virtual float	damage() const;		// Get damage par second
 
     void	action(int16_t type);	// Add action to sector if possible
-
+    
     float	getNeighborLowestFloor() const;		// Get lowest neighbor floor level
     float	getNeighborHighestFloor() const;	// Get highest neighbor floor level
     float	getNeighborNextLowestFloor() const;	// Get next lowest neighbor floor level

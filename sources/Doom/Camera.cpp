@@ -208,7 +208,11 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, int16_t index)
     // TODO: solve nan values
     // Projection segment offset
     float	seg_offset = std::clamp(left.seg + (right.seg - left.seg) * ((std::abs(right.distance - left.distance) < 0.1f) ? screen_offset : ((((sector_front.ceiling() - height) * _factor / (_horizon - upper_front)) - left.distance) / (right.distance - left.distance))), 0.f, 1.f);
-    
+
+    // Compute light level according to distance TODO: improve this process
+    float	distance = (position - (seg_start + (seg_end - seg_start) * seg_offset)).length();
+    int16_t	shaded = (int16_t)std::clamp((int)((int)light * 2 - 255 + 255 * DOOM::Camera::LightFade / distance), (int)0, (int)light);
+
     // Texture X offset
     int		texture_offset_x = seg.offset + sidedef_front.x + (int)((seg_end - seg_start).length() * (((bool)seg.direction == side) ? seg_offset : (1.f - seg_offset)));
 
@@ -238,11 +242,11 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, int16_t index)
 
     // Draw upper/lower/middle walls
     if (upper_front < upper_back && texture_upper.height != 0 && (sector_front.ceiling_name != DOOM::str_to_key("F_SKY1") || sector_back.ceiling_name != DOOM::str_to_key("F_SKY1")))
-      renderTexture(doom, texture_upper, column, upper_front, upper_back, std::abs(sector_front.ceiling() - sector_back.ceiling()), texture_offset_x, upper_offset_y, light, index);
+      renderTexture(doom, texture_upper, column, upper_front, upper_back, std::abs(sector_front.ceiling() - sector_back.ceiling()), texture_offset_x, upper_offset_y, shaded, index);
     if (lower_front > lower_back && texture_lower.height != 0 && (sector_front.floor_name != DOOM::str_to_key("F_SKY1") || sector_back.floor_name != DOOM::str_to_key("F_SKY1")))
-      renderTexture(doom, texture_lower, column, lower_back, lower_front, std::abs(sector_front.floor() - sector_back.floor()), texture_offset_x, lower_offset_y, light, index);
+      renderTexture(doom, texture_lower, column, lower_back, lower_front, std::abs(sector_front.floor() - sector_back.floor()), texture_offset_x, lower_offset_y, shaded, index);
     if (upper_front < lower_front && texture_middle.height != 0)
-      renderTexture(doom, texture_middle, column, upper_front, lower_front, std::abs(sector_front.ceiling() - sector_front.floor()), texture_offset_x, middle_offset_y, light, index);
+      renderTexture(doom, texture_middle, column, upper_front, lower_front, std::abs(sector_front.ceiling() - sector_front.floor()), texture_offset_x, middle_offset_y, shaded, index);
 
     // Complete column if final wall
     if (linedef.back == -1)
@@ -314,8 +318,12 @@ void	DOOM::Camera::renderFlat(DOOM::Doom const & doom, const DOOM::AbstractFlat 
       // Get grid coordinates
       Math::Vector<2>	coord(position + direction * k);
 
+      // Compute light level according to distance TODO: improve this process
+      float	distance = (position - coord).length();
+      int16_t	shaded = (int16_t)std::clamp((int)((int)light * 2 - 255 + 255 * DOOM::Camera::LightFade / distance), (int)0, (int)light);
+
       // Get color in flat from coordinates and register segment index in seg-buffer
-      _image.setPixel(column, row, doom.resources.palettes[0][doom.resources.colormaps[31 - light / 8][texture[(Math::Modulo<64>(64 - (int)coord.y())) * 64 + Math::Modulo<64>((int)coord.x())]]]);
+      _image.setPixel(column, row, doom.resources.palettes[0][doom.resources.colormaps[31 - shaded / 8][texture[(Math::Modulo<64>(64 - (int)coord.y())) * 64 + Math::Modulo<64>((int)coord.x())]]]);
       _sbuffer[column * _image.getSize().y + row] = { seg, altitude };
     }
 }
@@ -336,7 +344,7 @@ void	DOOM::Camera::renderSky(DOOM::Doom const & doom, int column, int start, int
       // Skip pixel if outside of sky texture
       if (pixel_y < 0 || pixel_y >= sky.height)
 	continue;
-
+      
       // Find pixel in column span
       for (DOOM::Doom::Resources::Texture::Column::Span const & span : spans)
       {

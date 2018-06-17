@@ -16,7 +16,7 @@ Game::MainMenuState::MainMenuState()
   // Set menu items/handlers
   menu() =
   {
-    Game::AbstractMenuState::Item("New game", font, std::function<void(Game::AbstractMenuState::Item &)>(std::bind(&Game::MainMenuState::selectNew, this, std::placeholders::_1))),
+    Game::AbstractMenuState::Item("DOOM", font, std::function<void(Game::AbstractMenuState::Item &)>(std::bind(&Game::MainMenuState::selectDoom, this, std::placeholders::_1))),
     Game::AbstractMenuState::Item("Options", font, std::function<void(Game::AbstractMenuState::Item &)>(std::bind(&Game::MainMenuState::selectOptions, this, std::placeholders::_1))),
     Game::AbstractMenuState::Item("Exit", font, std::function<void(Game::AbstractMenuState::Item &)>(std::bind(&Game::MainMenuState::selectExit, this, std::placeholders::_1)))
   };
@@ -37,7 +37,7 @@ void	Game::MainMenuState::draw()
   Game::AbstractMenuState::draw();
 }
 
-void	Game::MainMenuState::selectNew(Game::AbstractMenuState::Item &)
+void	Game::MainMenuState::selectDoom(Game::AbstractMenuState::Item &)
 {
   // Go to new game menu
   Game::StateMachine::Instance().push(new Game::LoadingState(std::async(std::launch::async, []

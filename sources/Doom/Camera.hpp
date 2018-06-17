@@ -16,8 +16,10 @@ namespace DOOM
   class Camera
   {
   public:
-    static const unsigned int	DefaultWidth = 640;	// Default rendering width size
-    static const unsigned int	DefaultHeight = 360;	// Default rendering height size
+    static const unsigned int	DefaultWidth = 320;	// Default rendering width size
+    static const unsigned int	DefaultHeight = 180;	// Default rendering height size
+
+    static const unsigned int	LightFade = 128;	// Light distance diminishing factor
 
     Math::Vector<2>	position;	// Camera position
     float		height;		// Camera Z position

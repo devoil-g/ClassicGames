@@ -13,7 +13,7 @@ namespace Game
   class MainMenuState : public Game::AbstractMenuState
   {
   private:
-    void	selectNew(Game::AbstractMenuState::Item &);	// Create a new game
+    void	selectDoom(Game::AbstractMenuState::Item &);	// Create a new game
     void	selectOptions(Game::AbstractMenuState::Item &);	// Go to option menu
     void	selectExit(Game::AbstractMenuState::Item &);	// Exit game
     

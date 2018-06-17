@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Doom/Doom.hpp"
 #include "Doom/Sector/AbstractSector.hpp"
 #include "Doom/Sector/NormalSector.hpp"
@@ -5,6 +7,14 @@
 #include "Doom/Sector/FlickerLightSector.hpp"
 #include "Doom/Sector/GlowLightSector.hpp"
 #include "Doom/Sector/RandomLightSector.hpp"
+
+const std::vector<int16_t>	DOOM::AbstractSector::AbstractSectorAction::LevelingTypes = {
+
+};
+
+const std::vector<int16_t>	DOOM::AbstractSector::AbstractSectorAction::LightingTypes = {
+
+};
 
 DOOM::AbstractSector::AbstractSector(const DOOM::Doom & doom, const DOOM::Wad::RawLevel::Sector & sector) :
   floor_name(sector.floor_texture),
@@ -116,9 +126,22 @@ float	DOOM::AbstractSector::damage() const
 
 void	DOOM::AbstractSector::action(int16_t type)
 {
-  // Push new action only if 
-  if (_action.get() == nullptr)
-    _action.reset(DOOM::AbstractSector::AbstractSectorAction::factory(*this, type));
+  // Check if action is a leveling effect
+  if (std::find(DOOM::AbstractSector::AbstractSectorAction::LevelingTypes.begin(), DOOM::AbstractSector::AbstractSectorAction::LevelingTypes.end(), type) != DOOM::AbstractSector::AbstractSectorAction::LevelingTypes.end()) {
+    if (_leveling.get() == nullptr)
+      _leveling.reset(DOOM::AbstractSector::AbstractSectorAction::factory(*this, type));
+  }
+
+  // Check if action is a lighting effect
+  else if (std::find(DOOM::AbstractSector::AbstractSectorAction::LightingTypes.begin(), DOOM::AbstractSector::AbstractSectorAction::LightingTypes.end(), type) != DOOM::AbstractSector::AbstractSectorAction::LightingTypes.end()) {
+    if (_lighting.get() == nullptr)
+      _lighting.reset(DOOM::AbstractSector::AbstractSectorAction::factory(*this, type));
+  }
+
+  // Warning if unknown action
+  else {
+    std::cerr << "[Doom::AbstractSector]: Warning, unknown action type '" << type << "'." << std::endl;
+  }
 }
 
 float	DOOM::AbstractSector::getNeighborLowestFloor() const
@@ -267,4 +290,6 @@ DOOM::AbstractSector::AbstractSectorAction *	DOOM::AbstractSector::AbstractSecto
   default:
     return nullptr;
   }
+
+  return nullptr;
 }

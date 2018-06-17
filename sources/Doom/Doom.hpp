@@ -136,7 +136,7 @@ namespace DOOM
 	};
 
 	int16_t	x;	// Blockmap X origin
-	int16_t	y;	// Blockmap X origin
+	int16_t	y;	// Blockmap Y origin
 	int16_t	column;	// Number of column in blockmap
 	int16_t	row;	// Number of row in blockmap
 

@@ -4,7 +4,7 @@
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
-std::string const	Game::Window::DefaultTitle = "UnnamedGame";
+std::string const	Game::Window::DefaultTitle = "Classical Games";
 unsigned int const	Game::Window::DefaultWidth = 640;
 unsigned int const	Game::Window::DefaultHeight = 360;
 unsigned int const	Game::Window::DefaultAntialiasing = 4;
