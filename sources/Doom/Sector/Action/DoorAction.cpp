@@ -17,26 +17,28 @@ DOOM::DoorAction::~DoorAction()
 
 void	DOOM::DoorAction::update(sf::Time elapsed)
 {
-  // Handlers map
-  static const std::unordered_map < DOOM::DoorAction::State, std::function<sf::Time(DOOM::DoorAction *, sf::Time)>>	handlers =
-  {
-    { StateOpen, &DOOM::DoorAction::updateOpen },
-    { StateClose, &DOOM::DoorAction::updateClose },
-    { StateForceClose, &DOOM::DoorAction::updateForceClose },
-    { StateWait, &DOOM::DoorAction::updateWait },
-    { StateForceWait, &DOOM::DoorAction::updateForceWait }
-  };
-
   while (_states.empty() == false) {
-    std::unordered_map<DOOM::DoorAction::State, std::function<sf::Time(DOOM::DoorAction *, sf::Time)>>::const_iterator	handler = handlers.find(_states.front());
-
-    // Handle error (should not happen)
-    if (handler == handlers.end())
+    switch (_states.front())
+    {
+    case DOOM::DoorAction::State::StateOpen:
+      elapsed = updateOpen(elapsed);
+      break;
+    case DOOM::DoorAction::State::StateClose:
+      elapsed = updateClose(elapsed);
+      break;
+    case DOOM::DoorAction::State::StateForceClose:
+      elapsed = updateForceClose(elapsed);
+      break;
+    case DOOM::DoorAction::State::StateWait:
+      elapsed = updateWait(elapsed);
+      break;
+    case DOOM::DoorAction::State::StateForceWait:
+      elapsed = updateForceWait(elapsed);
+      break;
+    default:	// Handle error (should not happen)
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-    // Call state handler
-    elapsed = handler->second(this, elapsed);
-
+    }
+    
     // Stop if no more elapsed time
     if (elapsed == sf::Time::Zero)
       break;

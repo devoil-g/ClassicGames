@@ -31,7 +31,7 @@ DOOM::AbstractLinedef *	DOOM::AbstractLinedef::factory(DOOM::Doom & doom, DOOM::
     return new DOOM::TriggerableLinedef<DOOM::TriggerableLinedef<>::EnumTrigger::TriggerSwitched, false>(doom, linedef);
   case 114: case 116: case 42: case 115: case 196: case 63: case 61:	// Switched repeatable
     return new DOOM::TriggerableLinedef<DOOM::TriggerableLinedef<>::EnumTrigger::TriggerSwitched, true>(doom, linedef);
-  case 3: case 2: case 4: case 110: case 108: case 109: case 16:	// Walkover once
+  case 2: case 3: case 4: case 110: case 108: case 109: case 16:	// Walkover once
     return new DOOM::TriggerableLinedef<DOOM::TriggerableLinedef<>::EnumTrigger::TriggerSwitched, false>(doom, linedef);
   case 106: case 107: case 75: case 105: case 86: case 90: case 76:	// Walkover repeatable
     return new DOOM::TriggerableLinedef<DOOM::TriggerableLinedef<>::EnumTrigger::TriggerSwitched, true>(doom, linedef);

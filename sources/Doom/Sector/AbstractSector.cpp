@@ -10,7 +10,10 @@
 #include "Doom/Sector/Action/DoorAction.hpp"
 
 const std::vector<int16_t>	DOOM::AbstractSector::AbstractAction::LevelingTypes = {
-  63
+  // Regular and extended door types
+  1, 2, 3, 4, 16, 29, 31, 42, 46, 50, 61, 63, 75, 76, 86, 90, 103, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 175, 196,
+  // Regular and extended locked door types
+  26, 27, 28, 32, 33, 34, 99, 133, 134, 135, 136, 137
 };
 
 const std::vector<int16_t>	DOOM::AbstractSector::AbstractAction::LightingTypes = {
@@ -272,8 +275,30 @@ DOOM::AbstractSector::AbstractAction *	DOOM::AbstractSector::AbstractAction::fac
 {
   // Generate action from type
   switch (type) {
-  case 63:
-    return new DOOM::DoorAction(sector, { DOOM::DoorAction::State::StateOpen, DOOM::DoorAction::State::StateWait, DOOM::DoorAction::State::StateClose }, DOOM::DoorAction::Speed::SpeedNormal, (int)(sf::seconds(4.f).asMicroseconds() / DOOM::Doom::Tic.asMicroseconds()));
+
+  // Regular and extended door types
+  case 1: case 4: case 29: case 63: case 90:	// Open, wait then close (slow)
+    return new DOOM::DoorAction(sector, { DOOM::DoorAction::State::StateOpen, DOOM::DoorAction::State::StateWait, DOOM::DoorAction::State::StateClose }, DOOM::DoorAction::Speed::SpeedSlow, (int)(sf::seconds(4.f).asMicroseconds() / DOOM::Doom::Tic.asMicroseconds()));
+  case 105: case 108: case 111: case 114: case 117:	// Open, wait then close (fast)
+    return new DOOM::DoorAction(sector, { DOOM::DoorAction::State::StateOpen, DOOM::DoorAction::State::StateWait, DOOM::DoorAction::State::StateClose }, DOOM::DoorAction::Speed::SpeedFast, (int)(sf::seconds(4.f).asMicroseconds() / DOOM::Doom::Tic.asMicroseconds()));
+  case 2: case 31: case 46: case 61: case 86: case 103:	// Open and stay open (slow)
+    return new DOOM::DoorAction(sector, { DOOM::DoorAction::State::StateOpen }, DOOM::DoorAction::Speed::SpeedSlow);
+  case 106: case 109: case 112: case 115: case 118:	// Open and stay open (fast)
+    return new DOOM::DoorAction(sector, { DOOM::DoorAction::State::StateOpen }, DOOM::DoorAction::Speed::SpeedFast);
+  case 16: case 76: case 175: case 196:	// Close, wait then open (slow)
+    return new DOOM::DoorAction(sector, { DOOM::DoorAction::State::StateClose, DOOM::DoorAction::State::StateWait, DOOM::DoorAction::State::StateOpen }, DOOM::DoorAction::Speed::SpeedNormal, (int)(sf::seconds(30.f).asMicroseconds() / DOOM::Doom::Tic.asMicroseconds()));
+  case 3: case 42: case 50: case 75:	// Close and stay close (slow)
+    return new DOOM::DoorAction(sector, { DOOM::DoorAction::State::StateClose }, DOOM::DoorAction::Speed::SpeedSlow);
+  case 107: case 110: case 113: case 116:	// Close and stay close (fast)
+    return new DOOM::DoorAction(sector, { DOOM::DoorAction::State::StateClose }, DOOM::DoorAction::Speed::SpeedFast);
+
+  // Regular and extended locked door types
+  case 32: case 33: case 34:	// Open and stay open (slow)
+    return new DOOM::DoorAction(sector, { DOOM::DoorAction::State::StateOpen }, DOOM::DoorAction::Speed::SpeedSlow);
+  case 99: case 133: case 134: case 135: case 136: case 137:	// Open and stay open (fast)
+    return new DOOM::DoorAction(sector, { DOOM::DoorAction::State::StateOpen }, DOOM::DoorAction::Speed::SpeedFast);
+  case 26: case 27: case 28:	// Open, wait then close (slow)
+    return new DOOM::DoorAction(sector, { DOOM::DoorAction::State::StateOpen, DOOM::DoorAction::State::StateWait, DOOM::DoorAction::State::StateClose }, DOOM::DoorAction::Speed::SpeedSlow, (int)(sf::seconds(4.f).asMicroseconds() / DOOM::Doom::Tic.asMicroseconds()));
 
   default:
     return nullptr;

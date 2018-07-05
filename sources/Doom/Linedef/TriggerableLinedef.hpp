@@ -36,20 +36,31 @@ namespace DOOM
 	return (_triggered == true) ? (false) : (_triggered = true);
     }
 
-    template<EnumTrigger Triggerer>
+    template<EnumTrigger _Trigger>
     void	trigger()
     {
-      if (!(Triggerer & Trigger))
+      if (!(_Trigger & Trigger))
 	return;
 
       // Return if action can't be repeated
       if (triggerable() == false)
 	return;
 
-      // Trigger tagged sectors
-      for (const std::unique_ptr<DOOM::AbstractSector> & sector : _doom.level.sectors)
-	if (sector->tag == tag)
-	  sector->action(type);
+      // SWITCHED, WALKOVER & GUNFIRE: Trigger tagged sectors
+      if ((_Trigger & TriggerSwitched) || (_Trigger & TriggerWalkover) || (_Trigger & TriggerGunfire)) {
+	for (const std::unique_ptr<DOOM::AbstractSector> & sector : _doom.level.sectors)
+	  if (sector->tag == tag)
+	    sector->action(type);
+      }
+
+      // PUSHED: Trigger sector of second sidedef
+      else if (_Trigger & TriggerPushed) {
+	if (back != -1)
+	  _doom.level.sectors[_doom.level.sidedefs[back].sector]->action(type);
+      }
+
+
+      // TODO: pushed affect sector on the other side (no tag)
     }
 
   public:
