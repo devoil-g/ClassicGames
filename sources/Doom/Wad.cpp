@@ -8,20 +8,19 @@
 #include "System/Config.hpp"
 
 DOOM::Wad::Wad() :
-  levels(),
-  resources()
+  levels(), resources()
 {}
 
 DOOM::Wad::~Wad()
 {}
 
-bool	DOOM::Wad::load(std::string const & path)
+void	DOOM::Wad::load(std::string const & path)
 {
   std::ifstream	file(path, std::ifstream::binary);
 
   // Check if failed to open file
   if (file.bad() == true)
-    return false;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // WAD file header
   int8_t	identification[4 + 1] = { 0 };
@@ -35,18 +34,17 @@ bool	DOOM::Wad::load(std::string const & path)
 
   // Check for valid file data
   if ((std::string((const char *)identification) != "IWAD" && std::string((const char *)identification) != "PWAD") || numlumps < 0 || infotableofs < 0)
-    return false;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Load base level if file is an extension
   if (std::string((const char *)identification) != "IWAD")
-    if (load(Game::Config::ExecutablePath + "/assets/levels/doom.wad") == false)
-      return false;
+    load(Game::Config::ExecutablePath + "/assets/levels/doom.wad");
 
   // Load lumps
-  return loadLumps(file, numlumps, infotableofs);
+  loadLumps(file, numlumps, infotableofs);
 }
 
-bool	DOOM::Wad::loadLumps(std::ifstream & file, int32_t const numlumps, int32_t const infotableofs)
+void	DOOM::Wad::loadLumps(std::ifstream & file, int32_t const numlumps, int32_t const infotableofs)
 {
   std::pair<uint8_t, uint8_t>	level = { 0, 0 };
 
@@ -64,7 +62,7 @@ bool	DOOM::Wad::loadLumps(std::ifstream & file, int32_t const numlumps, int32_t 
     uppercase(lump.name);
 
     // Initialize regex command map
-    std::list<std::pair<std::regex, std::function<bool()>>>	commands_regex =
+    std::list<std::pair<std::regex, std::function<void()>>>	commands_regex =
     { 
       // Scoped lumps
       { std::regex("F_START"), std::bind(&DOOM::Wad::loadResourceFlats, this, std::ref(file), numlumps, infotableofs, std::ref(iterator)) },
@@ -118,26 +116,17 @@ bool	DOOM::Wad::loadLumps(std::ifstream & file, int32_t const numlumps, int32_t 
     };
 
     // Remove each non-matching regex
-    commands_regex.remove_if([lump](std::pair<std::regex, std::function<bool()>> const & regex) { uint64_t str[] = { lump.name, 0 }; return std::regex_match((char const *)str, regex.first) == false; });
+    commands_regex.remove_if([lump](const std::pair<std::regex, std::function<void()>> & regex) { uint64_t str[] = { lump.name, 0 }; return std::regex_match((char const *)str, regex.first) == false; });
 
     // Execute matching regex if only one found
     if (commands_regex.size() == 1)
-    {
-      if (commands_regex.front().second() == false)
-	return false;
-    }
+      commands_regex.front().second();
     else
-    {
-      uint64_t str[2] = { lump.name, 0 };
-
-      std::cerr << "[Wad::load]: Warning, unknown lump name '" << std::string((char const *)str) << "'." << std::endl;
-    }
+      std::cerr << "[Wad::load]: Warning, unknown lump name '" << DOOM::key_to_str(lump.name) << "'." << std::endl;
   }
-
-  return true;
 }
 
-bool	DOOM::Wad::loadResourceFlats(std::ifstream & file, int32_t const numlumps, int32_t const infotableofs, int32_t & iterator)
+void	DOOM::Wad::loadResourceFlats(std::ifstream & file, int32_t const numlumps, int32_t const infotableofs, int32_t & iterator)
 {
   // Process every lump in scope
   for (; iterator < numlumps; iterator++)
@@ -154,17 +143,17 @@ bool	DOOM::Wad::loadResourceFlats(std::ifstream & file, int32_t const numlumps, 
     
     // Stop if end of scope
     if (lump.name == DOOM::str_to_key("F_END"))
-      return true;
+      return;
 
     // Load flat lump
-    if (loadResourceFlat(file, lump) == false)
-      return false;
+    loadResourceFlat(file, lump);
   }
 
-  return false;
+  // End of flat scope not reached
+  throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-bool	DOOM::Wad::loadResourceSprites(std::ifstream & file, int32_t const numlumps, int32_t const infotableofs, int32_t & iterator)
+void	DOOM::Wad::loadResourceSprites(std::ifstream & file, int32_t const numlumps, int32_t const infotableofs, int32_t & iterator)
 {
   // Process every lump in scope
   for (; iterator < numlumps; iterator++)
@@ -181,17 +170,17 @@ bool	DOOM::Wad::loadResourceSprites(std::ifstream & file, int32_t const numlumps
 
     // Stop if end of scope
     if (lump.name == DOOM::str_to_key("S_END"))
-      return true;
+      return;
 
     // Load flat lump
-    if (loadResourceSprite(file, lump) == false)
-      return false;
+    loadResourceSprite(file, lump);
   }
 
-  return false;
+  // End of sprite scope not reached
+  throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-bool	DOOM::Wad::loadResourcePatches(std::ifstream & file, int32_t const numlumps, int32_t const infotableofs, int32_t & iterator)
+void	DOOM::Wad::loadResourcePatches(std::ifstream & file, int32_t const numlumps, int32_t const infotableofs, int32_t & iterator)
 {
   // Process every lump in scope
   for (; iterator < numlumps; iterator++)
@@ -208,17 +197,17 @@ bool	DOOM::Wad::loadResourcePatches(std::ifstream & file, int32_t const numlumps
 
     // Stop if end of scope
     if (lump.name == DOOM::str_to_key("P_END"))
-      return true;
+      return;
 
     // Load patch lump
-    if (loadResourcePatch(file, lump) == false)
-      return false;
+    loadResourcePatch(file, lump);
   }
 
-  return false;
+  // End of patches scope not reached
+  throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-bool	DOOM::Wad::loadResourceTexture(std::ifstream & file, DOOM::Wad::Lump const & lump)
+void	DOOM::Wad::loadResourceTexture(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   int32_t	numtexture;
 
@@ -264,41 +253,39 @@ bool	DOOM::Wad::loadResourceTexture(std::ifstream & file, DOOM::Wad::Lump const 
       file.read((char *)&resources.textures[name].patches.back(), sizeof(DOOM::Wad::RawResources::Texture::Patch));
     }
   }
-
-  return true;
 }
 
-bool	DOOM::Wad::loadResourceSprite(std::ifstream & file, DOOM::Wad::Lump const & lump)
+void	DOOM::Wad::loadResourceSprite(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Ignore special delimiters (TODO: dont ignore them ?)
   if (lump.name == DOOM::str_to_key("S_START") || lump.name == DOOM::str_to_key("S_END"))
-    return true;
+    return;
 
-  return loadResourcePatch(file, lump, resources.sprites);
+  loadResourcePatch(file, lump, resources.sprites);
 }
 
-bool	DOOM::Wad::loadResourcePatch(std::ifstream & file, DOOM::Wad::Lump const & lump)
+void	DOOM::Wad::loadResourcePatch(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Ignore special delimiters (TODO: dont ignore them ?)
   if (lump.name == DOOM::str_to_key("P_START") || lump.name == DOOM::str_to_key("P_END") ||
     lump.name == DOOM::str_to_key("P1_START") || lump.name == DOOM::str_to_key("P1_END") ||
     lump.name == DOOM::str_to_key("P2_START") || lump.name == DOOM::str_to_key("P2_END") ||
     lump.name == DOOM::str_to_key("P3_START") || lump.name == DOOM::str_to_key("P3_END"))
-    return true;
+    return;
 
-  return loadResourcePatch(file, lump, resources.patches);
+  loadResourcePatch(file, lump, resources.patches);
 }
 
-bool	DOOM::Wad::loadResourceMenu(std::ifstream & file, DOOM::Wad::Lump const & lump)
+void	DOOM::Wad::loadResourceMenu(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
-  return loadResourcePatch(file, lump, resources.menus);
+  loadResourcePatch(file, lump, resources.menus);
 }
 
-bool	DOOM::Wad::loadResourcePatch(std::ifstream & file, DOOM::Wad::Lump const & lump, std::unordered_map<uint64_t, DOOM::Wad::RawResources::Patch> & target)
+void	DOOM::Wad::loadResourcePatch(std::ifstream & file, DOOM::Wad::Lump const & lump, std::unordered_map<uint64_t, DOOM::Wad::RawResources::Patch> & target)
 {
   // Cancel if patch name already registered
   if (target.find(lump.name) != target.end())
-    return true;
+    return;
 
   // Read sprite informations
   file.seekg(lump.position, file.beg);
@@ -358,34 +345,30 @@ bool	DOOM::Wad::loadResourcePatch(std::ifstream & file, DOOM::Wad::Lump const & 
       target[lump.name].columns.back().spans.push_back(span);
     }
   }
-
-  return true;
 }
 
-bool	DOOM::Wad::loadResourceFlat(std::ifstream & file, DOOM::Wad::Lump const & lump)
+void	DOOM::Wad::loadResourceFlat(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Ignore special delimiters (TODO: dont ignore them ?)
   if (lump.name == DOOM::str_to_key("F_START") || lump.name == DOOM::str_to_key("F_END") ||
     lump.name == DOOM::str_to_key("F1_START") || lump.name == DOOM::str_to_key("F1_END") ||
     lump.name == DOOM::str_to_key("F2_START") || lump.name == DOOM::str_to_key("F2_END"))
-    return true;
+    return;
 
   // Check for invalid lump size
   if (lump.size != sizeof(uint8_t) * 64 * 64)
-    return false;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Read flat data from file
   file.seekg(lump.position, file.beg);
   file.read((char *)resources.flats[lump.name].texture, sizeof(uint8_t) * 64 * 64);
-
-  return true;
 }
 
-bool	DOOM::Wad::loadResourceGenmidi(std::ifstream & file, DOOM::Wad::Lump const & lump)
+void	DOOM::Wad::loadResourceGenmidi(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Check for invalid lump size
   if (lump.size != sizeof(int8_t) * 8 + sizeof(DOOM::Wad::RawResources::Genmidi) * 175)
-    return false;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Set position to lump data
   file.seekg(lump.position, file.beg);
@@ -397,7 +380,7 @@ bool	DOOM::Wad::loadResourceGenmidi(std::ifstream & file, DOOM::Wad::Lump const 
 
   // Check for valid header
   if (std::string((char const *)header) != "#OPL_II#")
-    return false;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   for (int i = 0; i < 175; i++)
   {
@@ -414,15 +397,13 @@ bool	DOOM::Wad::loadResourceGenmidi(std::ifstream & file, DOOM::Wad::Lump const 
     // Push record to record vector
     resources.genmidis.push_back(record);
   }
-
-  return true;
 }
 
-bool	DOOM::Wad::loadResourceMusic(std::ifstream & file, DOOM::Wad::Lump const & lump)
+void	DOOM::Wad::loadResourceMusic(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Check for invalid lump size
   if (lump.size < sizeof(int8_t) * 4 + sizeof(int16_t) * 7)
-    return false;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Set position to lump data
   file.seekg(lump.position, file.beg);
@@ -454,15 +435,13 @@ bool	DOOM::Wad::loadResourceMusic(std::ifstream & file, DOOM::Wad::Lump const & 
 
   // Read audio data from lump
   file.read((char *)resources.musics[lump.name].data.data(), datasize);
-
-  return true;
 }
 
-bool	DOOM::Wad::loadResourceSound(std::ifstream & file, DOOM::Wad::Lump const & lump)
+void	DOOM::Wad::loadResourceSound(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Check for invalid lump size
   if (lump.size < sizeof(int16_t) * 4)
-    return false;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Set position to lump data
   file.seekg(lump.position, file.beg);
@@ -482,15 +461,13 @@ bool	DOOM::Wad::loadResourceSound(std::ifstream & file, DOOM::Wad::Lump const & 
 
   // Read sound data to buffer
   file.read((char *)resources.sounds[lump.name].buffer.data(), sizeof(uint8_t) * resources.sounds[lump.name].samples);
-
-  return true;
 }
 
-bool	DOOM::Wad::loadResourceDemox(std::ifstream & file, DOOM::Wad::Lump const & lump)
+void	DOOM::Wad::loadResourceDemox(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Check for invalid lump size
   if (lump.size < sizeof(int8_t) * 7)
-    return false;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Set position to lump data
   file.seekg(lump.position, file.beg);
@@ -548,7 +525,7 @@ bool	DOOM::Wad::loadResourceDemox(std::ifstream & file, DOOM::Wad::Lump const & 
 
   // Unsupported version
   else
-    return true;
+    return;
 
   while (true)
   {
@@ -557,7 +534,7 @@ bool	DOOM::Wad::loadResourceDemox(std::ifstream & file, DOOM::Wad::Lump const & 
 
     // Quit if quit byte encountered
     if (byte == 0x80)
-      return true;
+      return;
 
     // Move read cursor backward
     file.seekg(-(int)sizeof(int8_t), file.cur);
@@ -572,21 +549,21 @@ bool	DOOM::Wad::loadResourceDemox(std::ifstream & file, DOOM::Wad::Lump const & 
   }
 }
 
-bool	DOOM::Wad::loadResourcePlaypal(std::ifstream & file, DOOM::Wad::Lump const & lump)
+void	DOOM::Wad::loadResourcePlaypal(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
-  return loadLump<DOOM::Wad::RawResources::Palette>(file, lump, resources.palettes);
+  loadLump<DOOM::Wad::RawResources::Palette>(file, lump, resources.palettes);
 }
 
-bool	DOOM::Wad::loadResourceColormap(std::ifstream & file, DOOM::Wad::Lump const & lump)
+void	DOOM::Wad::loadResourceColormap(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
-  return loadLump<DOOM::Wad::RawResources::Colormap>(file, lump, resources.colormaps);
+  loadLump<DOOM::Wad::RawResources::Colormap>(file, lump, resources.colormaps);
 }
 
-bool	DOOM::Wad::loadResourcePnames(std::ifstream & file, DOOM::Wad::Lump const & lump)
+void	DOOM::Wad::loadResourcePnames(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Check for invalid lump size
   if ((lump.size - 4) % sizeof(uint64_t) != 0)
-    return false;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Reset data container
   resources.pnames.clear();
@@ -599,7 +576,7 @@ bool	DOOM::Wad::loadResourcePnames(std::ifstream & file, DOOM::Wad::Lump const &
 
   // Check for errors
   if (number < 0)
-    return false;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Read names from file
   for (int i = 0; i < number; i++)
@@ -610,54 +587,45 @@ bool	DOOM::Wad::loadResourcePnames(std::ifstream & file, DOOM::Wad::Lump const &
     // Force name format
     uppercase(resources.pnames.back());
   }
-
-  return true;
 }
 
-bool	DOOM::Wad::loadResourceEndoom(std::ifstream & file, DOOM::Wad::Lump const & lump)
+void	DOOM::Wad::loadResourceEndoom(std::ifstream & file, DOOM::Wad::Lump const & lump)
 {
   // Check for invalid lump size
   if (lump.size != sizeof(DOOM::Wad::RawResources::Endoom))
-    return false;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Read header from file
   file.seekg(lump.position, file.beg);
   file.read((char *)&resources.endoom, sizeof(DOOM::Wad::RawResources::Endoom));
-
-  return true;
 }
 
-bool	DOOM::Wad::loadLevelExmy(DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> & level)
+void	DOOM::Wad::loadLevelExmy(DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> & level)
 {
   // Get episode and mission number from name
   level = { (uint8_t)((lump.name >> 8) & 0xFF) - '0', (uint8_t)((lump.name >> 24) & 0xFF) - '0' };
-
-  return true;
 }
 
-bool	DOOM::Wad::loadLevelMapxy(DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> & level)
+void	DOOM::Wad::loadLevelMapxy(DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> & level)
 {
   // Get episode and mission number from name
   level = { (uint8_t)((lump.name >> 24) & 0xFF) - '0', (uint8_t)((lump.name >> 32) & 0xFF) - '0' };
-
-  return true;
 }
 
-bool	DOOM::Wad::loadLevelThings(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+void	DOOM::Wad::loadLevelThings(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
-  return loadLump<DOOM::Wad::RawLevel::Thing>(file, lump, levels[level].things);
+  loadLump<DOOM::Wad::RawLevel::Thing>(file, lump, levels[level].things);
 }
 
-bool	DOOM::Wad::loadLevelLinedefs(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+void	DOOM::Wad::loadLevelLinedefs(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
-  return loadLump<DOOM::Wad::RawLevel::Linedef>(file, lump, levels[level].linedefs);
+  loadLump<DOOM::Wad::RawLevel::Linedef>(file, lump, levels[level].linedefs);
 }
 
-bool	DOOM::Wad::loadLevelSidedefs(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+void	DOOM::Wad::loadLevelSidedefs(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
   // Load sidedefs from file
-  if (loadLump<DOOM::Wad::RawLevel::Sidedef>(file, lump, levels[level].sidedefs) == false)
-    return false;
+  loadLump<DOOM::Wad::RawLevel::Sidedef>(file, lump, levels[level].sidedefs);
 
   // Convert name in sidedefs to uppercase
   for (DOOM::Wad::RawLevel::Sidedef & sidedef : levels[level].sidedefs)
@@ -666,34 +634,31 @@ bool	DOOM::Wad::loadLevelSidedefs(std::ifstream & file, DOOM::Wad::Lump const & 
     uppercase(sidedef.lower);
     uppercase(sidedef.middle);
   }
-
-  return true;
 }
 
-bool	DOOM::Wad::loadLevelVertexes(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+void	DOOM::Wad::loadLevelVertexes(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
-  return loadLump<DOOM::Wad::RawLevel::Vertex>(file, lump, levels[level].vertexes);
+  loadLump<DOOM::Wad::RawLevel::Vertex>(file, lump, levels[level].vertexes);
 }
 
-bool	DOOM::Wad::loadLevelSegs(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+void	DOOM::Wad::loadLevelSegs(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
-  return loadLump<DOOM::Wad::RawLevel::Segment>(file, lump, levels[level].segments);
+  loadLump<DOOM::Wad::RawLevel::Segment>(file, lump, levels[level].segments);
 }
 
-bool	DOOM::Wad::loadLevelSsectors(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+void	DOOM::Wad::loadLevelSsectors(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
-  return loadLump<DOOM::Wad::RawLevel::Subsector>(file, lump, levels[level].subsectors);
+  loadLump<DOOM::Wad::RawLevel::Subsector>(file, lump, levels[level].subsectors);
 }
 
-bool	DOOM::Wad::loadLevelNodes(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+void	DOOM::Wad::loadLevelNodes(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
-  return loadLump<DOOM::Wad::RawLevel::Node>(file, lump, levels[level].nodes);
+  loadLump<DOOM::Wad::RawLevel::Node>(file, lump, levels[level].nodes);
 }
 
-bool	DOOM::Wad::loadLevelSectors(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+void	DOOM::Wad::loadLevelSectors(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
-  if (loadLump<DOOM::Wad::RawLevel::Sector>(file, lump, levels[level].sectors) == false)
-    return false;
+  loadLump<DOOM::Wad::RawLevel::Sector>(file, lump, levels[level].sectors);
 
   // Convert name in sectors to uppercase
   for (DOOM::Wad::RawLevel::Sector & sector : levels[level].sectors)
@@ -701,20 +666,18 @@ bool	DOOM::Wad::loadLevelSectors(std::ifstream & file, DOOM::Wad::Lump const & l
     uppercase(sector.floor_texture);
     uppercase(sector.ceiling_texture);
   }
-
-  return true;
 }
 
-bool	DOOM::Wad::loadLevelReject(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+void	DOOM::Wad::loadLevelReject(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
-  return loadLump<uint8_t>(file, lump, levels[level].reject.rejects);
+  loadLump<uint8_t>(file, lump, levels[level].reject.rejects);
 }
 
-bool	DOOM::Wad::loadLevelBlockmap(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
+void	DOOM::Wad::loadLevelBlockmap(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)
 {
   // Check for invalid lump size
   if (lump.size < sizeof(int16_t) * 4)
-    return false;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Read header from file
   file.seekg(lump.position, file.beg);
@@ -727,12 +690,7 @@ bool	DOOM::Wad::loadLevelBlockmap(std::ifstream & file, DOOM::Wad::Lump const & 
   // Read blocklists
   levels[level].blockmap.blocklist.resize((lump.size - (sizeof(int16_t) * 4 + sizeof(int16_t) * (levels[level].blockmap.column * levels[level].blockmap.row))) / sizeof(int16_t));
   file.read((char *)levels[level].blockmap.blocklist.data(), lump.size - (sizeof(int16_t) * 4 + sizeof(int16_t) * (levels[level].blockmap.column * levels[level].blockmap.row)));
-
-  return true;
 }
 
-bool	DOOM::Wad::loadIgnore()
-{
-  // Ignore lump
-  return true;
-}
+void	DOOM::Wad::loadIgnore()
+{}

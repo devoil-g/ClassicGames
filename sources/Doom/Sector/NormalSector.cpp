@@ -7,5 +7,8 @@ DOOM::NormalSector::NormalSector(const DOOM::Doom & doom, const DOOM::Wad::RawLe
 DOOM::NormalSector::~NormalSector()
 {}
 
-void	DOOM::NormalSector::update(sf::Time)
-{}
+void	DOOM::NormalSector::update(sf::Time elapsed)
+{
+  // Update base class
+  DOOM::AbstractSector::update(elapsed);
+}

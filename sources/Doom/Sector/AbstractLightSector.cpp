@@ -11,6 +11,9 @@ DOOM::AbstractLightSector::~AbstractLightSector()
 
 void	DOOM::AbstractLightSector::update(sf::Time elapsed)
 {
+  // Update base class
+  DOOM::AbstractSector::update(elapsed);
+
   // Update elapsed time
   _elapsed += elapsed;
 }

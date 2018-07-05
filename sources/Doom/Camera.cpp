@@ -94,8 +94,6 @@ bool	DOOM::Camera::renderNode(DOOM::Doom const & doom, int16_t index)
   else
     return renderNode(doom, node.rightchild) == true ||
     ((Math::Vector<2>::determinant(node.origin - position, node.direction) / Math::Vector<2>::determinant(_screen_start - position, node.direction) >= 0.f || Math::Vector<2>::determinant(node.origin - position, node.direction) / Math::Vector<2>::determinant(_screen_end - position, node.direction) >= 0.f) && renderNode(doom, node.leftchild) == true);
-
-  return false;
 }
 
 bool	DOOM::Camera::renderSubsector(DOOM::Doom const & doom, int16_t index)
@@ -176,15 +174,15 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, int16_t index)
   float	right_upper_back = _horizon - (sector_back.ceiling() - height) * right_c;
   
   // Texture Y offsets
-  int	upper_offset_y = (linedef.flag & DOOM::AbstractLinedef::Flag::UpperUnpegged) ?
-    (int)(sidedef_front.y - (sector_front.ceiling() - std::max(sector_front.ceiling(), sector_back.ceiling()))) :
-    (int)(sidedef_front.y - (sector_front.ceiling() - std::min(sector_front.ceiling(), sector_back.ceiling())) + texture_upper.height);
-  int	middle_offset_y = (linedef.flag & DOOM::AbstractLinedef::Flag::LowerUnpegged) ?
-    (int)(sidedef_front.y - (sector_front.ceiling() - std::max(sector_front.floor(), sector_back.floor())) + texture_middle.height) :
-    (int)(sidedef_front.y - (sector_front.ceiling() - std::min(sector_front.ceiling(), sector_back.ceiling())));
-  int	lower_offset_y = (linedef.flag & DOOM::AbstractLinedef::Flag::LowerUnpegged) ?
-    (int)(sidedef_front.y - (sector_back.floor() - sector_front.ceiling())) :
-    (int)(sidedef_front.y - (sector_back.floor() - std::max(sector_front.floor(), sector_back.floor())));
+  float	upper_offset_y = (linedef.flag & DOOM::AbstractLinedef::Flag::UpperUnpegged) ?
+    (sidedef_front.y - (sector_front.ceiling() - std::max(sector_front.ceiling(), sector_back.ceiling()))) :
+    (sidedef_front.y - (sector_front.ceiling() - std::min(sector_front.ceiling(), sector_back.ceiling())) + texture_upper.height);
+  float	middle_offset_y = (linedef.flag & DOOM::AbstractLinedef::Flag::LowerUnpegged) ?
+    (sidedef_front.y - (sector_front.ceiling() - std::max(sector_front.floor(), sector_back.floor())) + texture_middle.height) :
+    (sidedef_front.y - (sector_front.ceiling() - std::min(sector_front.ceiling(), sector_back.ceiling())));
+  float	lower_offset_y = (linedef.flag & DOOM::AbstractLinedef::Flag::LowerUnpegged) ?
+    (sidedef_front.y - (sector_back.floor() - sector_front.ceiling())) :
+    (sidedef_front.y - (sector_back.floor() - std::max(sector_front.floor(), sector_back.floor())));
 
   // Compute sector light
   int16_t	light = sector_front.light();
@@ -272,7 +270,7 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, int16_t index)
   return _horizontal.first == _horizontal.second;
 }
 
-void	DOOM::Camera::renderTexture(DOOM::Doom const & doom, DOOM::Doom::Resources::Texture const & texture, int column, float top, float bottom, float height, int offset_x, int offset_y, int16_t light, int16_t seg)
+void	DOOM::Camera::renderTexture(DOOM::Doom const & doom, DOOM::Doom::Resources::Texture const & texture, int column, float top, float bottom, float height, int offset_x, float offset_y, int16_t light, int16_t seg)
 {
   int									pixel_x(Math::Modulo(offset_x, texture.width));
   std::vector<DOOM::Doom::Resources::Texture::Column::Span> const &	spans(texture.columns[pixel_x].spans);
@@ -281,7 +279,7 @@ void	DOOM::Camera::renderTexture(DOOM::Doom const & doom, DOOM::Doom::Resources:
   for (int row = std::max(_vertical[column].first, (int)top); row < std::min((int)bottom + 1, _vertical[column].second); row++)
     if (_image.getPixel(column, row).a == 0)
     {
-      int	pixel_y(Math::Modulo<128>(offset_y + std::max((int)(height * (row - top) / (bottom - top)), 0)));
+      int	pixel_y(Math::Modulo<128>((int)(offset_y + std::max((height * (row - top) / (bottom - top)), 0.f))));
 
       // Find pixel in column span
       for (DOOM::Doom::Resources::Texture::Column::Span const & span : spans)

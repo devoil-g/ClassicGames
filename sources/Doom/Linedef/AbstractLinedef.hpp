@@ -8,10 +8,11 @@
 
 namespace DOOM
 {
+  // NOTE: Abstraction needed because of templateted triggerable class
   class AbstractLinedef
   {
   public:
-    static DOOM::AbstractLinedef *	factory(const DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef);
+    static DOOM::AbstractLinedef *	factory(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef);
 
     enum Flag
     {
@@ -32,8 +33,8 @@ namespace DOOM
     int16_t	tag;		// Linedef sector tag
     int16_t	front, back;	// Front and back sidedefs indexes (-1 if no sidedef)
 
-    AbstractLinedef(const DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef);
-    virtual ~AbstractLinedef();
+    AbstractLinedef(const DOOM::Wad::RawLevel::Linedef & linedef);
+    virtual ~AbstractLinedef() = 0;
 
     virtual void	update(sf::Time elapsed) = 0;	// Update linedef
 

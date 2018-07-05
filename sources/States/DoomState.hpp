@@ -30,7 +30,6 @@ namespace Game
     DoomState();
     ~DoomState() override;
 
-    bool	initialize();			// Load resources and levels from WAD file
     bool	update(sf::Time) override;	// Update state
     void	draw() override;		// Draw state
   };

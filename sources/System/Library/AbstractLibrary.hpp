@@ -16,7 +16,7 @@ namespace Game
       : _library()
     {}
 
-    virtual ~AbstractLibrary()
+    virtual ~AbstractLibrary() = 0
     {
       clear();
     }
@@ -33,7 +33,7 @@ namespace Game
     void		clear()				// Reset library content
     {
       // Unload each element of the library
-      for (std::pair<Key, Data> const & it : _library)
+      for (const std::pair<Key, Data> & it : _library)
 	unload(it.first);
 
       // Reset library map

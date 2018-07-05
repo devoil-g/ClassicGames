@@ -44,7 +44,7 @@ namespace DOOM
     const int16_t	properties;	// Thing properties (see enum)
 
     AbstractThing(const DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing, int16_t radius, int16_t properties);
-    virtual ~AbstractThing();
+    virtual ~AbstractThing() = 0;
 
     virtual bool								update(sf::Time elapsed);	// Update thing, return true if thing should be deleted
     virtual const std::pair<DOOM::Doom::Resources::Texture const *, bool> &	sprite(float angle) const = 0;	// Return sprite to be displayed

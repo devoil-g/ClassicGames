@@ -42,19 +42,16 @@ void	Game::MainMenuState::selectDoom(Game::AbstractMenuState::Item &)
   // Go to new game menu
   Game::StateMachine::Instance().push(new Game::LoadingState(std::async(std::launch::async, []
   {
-    Game::DoomState *	game = new Game::DoomState();
-
-    // Initialize game
-    if (game->initialize() == false)
+    try
     {
-      // Delete game state if failed
-      delete game;
-
+      // Load DOOM state
+      return static_cast<Game::AbstractState *>(new Game::DoomState());
+    }
+    catch (std::exception)
+    {
       // Return an error message
       return static_cast<Game::AbstractState *>(new Game::MessageState("Error: failed to load WAD file."));
     }
-    else
-      return static_cast<Game::AbstractState *>(game);
   })));
 }
 

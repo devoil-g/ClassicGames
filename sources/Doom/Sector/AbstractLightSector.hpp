@@ -13,7 +13,7 @@ namespace DOOM
 
   public:
     AbstractLightSector(const DOOM::Doom & doom, const DOOM::Wad::RawLevel::Sector & sector);
-    virtual ~AbstractLightSector();
+    virtual ~AbstractLightSector() = 0;
 
     virtual void	update(sf::Time elapsed) override;	// Update light sector
 

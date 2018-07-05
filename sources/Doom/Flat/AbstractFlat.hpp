@@ -16,7 +16,7 @@ namespace DOOM
     static DOOM::AbstractFlat *	factory(const DOOM::Wad & wad, uint64_t, const DOOM::Wad::RawResources::Flat & flat);
 
     AbstractFlat();
-    virtual ~AbstractFlat();
+    virtual ~AbstractFlat() = 0;
 
     virtual void				update(sf::Time elapsed);	// Update flat
     virtual const std::vector<uint8_t> &	flat() const = 0;		// Return flat to be displayed

@@ -8,25 +8,31 @@
 
 namespace DOOM
 {
+  // TODO: remove sector abstraction
   class AbstractSector
   {
   public:
-    class AbstractSectorAction
+    class AbstractAction
     {
     public:
       static const std::vector<int16_t>	LevelingTypes;
       static const std::vector<int16_t>	LightingTypes;
 
-      static DOOM::AbstractSector::AbstractSectorAction *	factory(DOOM::AbstractSector & sector, int16_t type);
+      static DOOM::AbstractSector::AbstractAction *	factory(DOOM::AbstractSector & sector, int16_t type);
 
+    protected:
       DOOM::AbstractSector &	sector;	// Reference on sector in which action is performed
 
-      AbstractSectorAction(DOOM::AbstractSector & sector);
-      virtual ~AbstractSectorAction();
+    public:
+      AbstractAction(DOOM::AbstractSector & sector);
+      virtual ~AbstractAction() = 0;
 
       virtual void	update(sf::Time elapsed) = 0;	// Update sector's action
+      void		remove();			// Remove action from sector
     };
 
+    friend AbstractAction;
+    
     static DOOM::AbstractSector *	factory(const DOOM::Doom & doom, const DOOM::Wad::RawLevel::Sector & sector);
 
     enum Special
@@ -53,47 +59,56 @@ namespace DOOM
     const DOOM::AbstractFlat	*floor_flat, *ceiling_flat;	// Textures pointers (null if sky)
     int16_t			tag;				// Sector/linedef tag
 
-    enum Speed
-    {
-      SpeedSlow = 8,	// Move 8 units/tic
-      SpeedNormal = 16,	// Move 16 units/tic
-      SpeedFast = 32,	// Move 32 units/tic
-      SpeedTurbo = 64	// Move 64 units/tic
-    };
-
   protected:
-    int16_t			_light;		// Sector original light level
-    float			_floor;		// Sector floor original height
-    float			_ceiling;	// Sector ceiling original height
+    int16_t	_light, _baseLight;	// Sector base and current light level
+    float	_floor, _baseFloor;	// Sector base and current floor height
+    float	_ceiling, _baseCeiling;	// Sector base and current ceiling height
+    float	_damage, _baseDamage;	// Sector base and current damage/sec
+
     std::vector<int16_t>	_neighbors;	// List of neighbor sectors
     const DOOM::Doom &		_doom;		// Reference to DOOM instance
 
   private:
-    std::unique_ptr<DOOM::AbstractSector::AbstractSectorAction>	_leveling;	// Current floor/ceiling leveling effect
-    std::unique_ptr<DOOM::AbstractSector::AbstractSectorAction>	_lighting;	// Current lighting effect
+    std::unique_ptr<DOOM::AbstractSector::AbstractAction>	_leveling;	// Current floor/ceiling leveling effect
+    std::unique_ptr<DOOM::AbstractSector::AbstractAction>	_lighting;	// Current lighting effect
 
   public:
     AbstractSector(const DOOM::Doom & doom, const DOOM::Wad::RawLevel::Sector & sector);
-    virtual ~AbstractSector();
+    virtual ~AbstractSector() = 0;
 
-    virtual void	update(sf::Time elapsed) = 0;	// Update sector
+    virtual void	update(sf::Time elapsed);	// Update sector
 
-    virtual int16_t	light() const;		// Get current sector light level
-    virtual float	floor() const;		// Get current floor height
-    virtual float	ceiling() const;	// Get current ceiling height
-    virtual float	damage() const;		// Get damage par second
+    // Const getter (TODO: light)
+    inline virtual int16_t	light() const { return _light; }
+    inline int16_t	baseLight() const { return _baseLight; }
+    inline float	floor() const { return _floor; }
+    inline float	baseFloor() const { return _baseFloor; }
+    inline float	ceiling() const { return _ceiling; }
+    inline float	baseCeiling() const { return _baseCeiling; }
+    inline float	damage() const { return _damage; }
+    inline float	baseDamage() const { return _baseDamage; }
+
+    // Setter (TODO: light)
+    // inline int16_t	light() { return _light; }
+    inline int16_t &	baseLight() { return _baseLight; }
+    inline float &	floor() { return _floor; }
+    inline float &	baseFloor() { return _baseFloor; }
+    inline float &	ceiling() { return _ceiling; }
+    inline float &	baseCeiling() { return _baseCeiling; }
+    inline float &	damage() { return _damage; }
+    inline float &	baseDamage() { return _baseDamage; }
 
     void	action(int16_t type);	// Add action to sector if possible
     
-    float	getNeighborLowestFloor() const;		// Get lowest neighbor floor level
-    float	getNeighborHighestFloor() const;	// Get highest neighbor floor level
-    float	getNeighborNextLowestFloor() const;	// Get next lowest neighbor floor level
-    float	getNeighborNextHighestFloor() const;	// Get next highest neighbor floor level
+    float	getNeighborLowestFloor() const;				// Get lowest neighbor floor level
+    float	getNeighborHighestFloor() const;			// Get highest neighbor floor level
+    float	getNeighborNextLowestFloor(float height) const;		// Get next lowest neighbor floor level from height
+    float	getNeighborNextHighestFloor(float height) const;	// Get next highest neighbor floor level from height
 
-    float	getNeighborLowestCeiling() const;	// Get lowest neighbor floor level
-    float	getNeighborHighestCeiling() const;	// Get highest neighbor floor level
-    float	getNeighborNextLowestCeiling() const;	// Get next lowest neighbor floor level
-    float	getNeighborNextHighestCeiling() const;	// Get next highest neighbor floor level
+    float	getNeighborLowestCeiling() const;			// Get lowest neighbor floor level
+    float	getNeighborHighestCeiling() const;			// Get highest neighbor floor level
+    float	getNeighborNextLowestCeiling(float height) const;	// Get next lowest neighbor floor level from height
+    float	getNeighborNextHighestCeiling(float height) const;	// Get next highest neighbor floor level from height
 
     int16_t	getNeighborLowestLight() const;		// Get lowest neighbor light level
     int16_t	getNeighborHighestLight() const;	// Get highest neighbor light level

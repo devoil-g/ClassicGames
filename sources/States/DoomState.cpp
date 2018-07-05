@@ -12,22 +12,14 @@ Game::DoomState::DoomState() :
   _elapsed(sf::seconds(0)),
   _doom(),
   _camera()
-{}
-
-Game::DoomState::~DoomState()
-{}
-
-bool	Game::DoomState::initialize()
 {
   // Load a level
-  if (_doom.load(Game::Config::ExecutablePath + "/assets/levels/doom.wad") == false)
-    return false;
+  _doom.load(Game::Config::ExecutablePath + "/assets/levels/doom.wad");
 
   // Set first level
   if (_doom.getLevel().empty() == true)
-    return false;
-  if (_doom.setLevel(_doom.getLevel().front()) == false)
-    return false;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  _doom.setLevel(_doom.getLevel().front());
 
   // Initialize camera position
   _camera.position = Math::Vector<2>(0.f, 0.f);
@@ -43,9 +35,10 @@ bool	Game::DoomState::initialize()
       _camera.angle = thing->angle;
       break;
     }
-
-  return true;
 }
+
+Game::DoomState::~DoomState()
+{}
 
 bool	Game::DoomState::update(sf::Time elapsed)
 {
@@ -63,7 +56,7 @@ bool	Game::DoomState::update(sf::Time elapsed)
 
   // Update player informations
   if (updatePlayer(elapsed) == true)
-    return true;
+    return false;
 
   // Update game components
   _doom.update(elapsed);
@@ -119,15 +112,21 @@ bool	Game::DoomState::updatePlayer(sf::Time elapsed)
 	*std::next(std::find(levels.begin(), levels.end(), _doom.level.episode)) :
 	levels.front())
       :
-      (std::prev(std::find(levels.begin(), levels.end(), _doom.level.episode)) != levels.end() ?
+      (std::find(levels.begin(), levels.end(), _doom.level.episode) != levels.begin() ?
 	*std::prev(std::find(levels.begin(), levels.end(), _doom.level.episode)) :
-	*std::prev(levels.end()));
+	levels.back());
 
     Game::StateMachine::Instance().push(new Game::LoadingState(std::async(std::launch::async, [this, next]
     {
       // Load new level
-      if (_doom.setLevel(next) == false)
-	throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+      try
+      {
+	_doom.setLevel(next);
+      }
+      catch (std::exception)
+      {
+	return static_cast<Game::AbstractState *>(nullptr);
+      }
 
       // Set new camera position
       for (const std::unique_ptr<DOOM::AbstractThing> & thing : _doom.level.things)
@@ -141,6 +140,8 @@ bool	Game::DoomState::updatePlayer(sf::Time elapsed)
       
       return static_cast<Game::AbstractState *>(nullptr);
     })));
+
+    return true;
   }
   
   return false;

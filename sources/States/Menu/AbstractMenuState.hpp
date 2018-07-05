@@ -33,7 +33,7 @@ namespace Game
 
   public:
     AbstractMenuState();
-    virtual ~AbstractMenuState();
+    virtual ~AbstractMenuState() = 0;
 
     virtual bool	update(sf::Time) override;	// Update menu state
     virtual void	draw() override;		// Draw menu state

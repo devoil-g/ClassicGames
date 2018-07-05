@@ -21,20 +21,16 @@ DOOM::Doom::~Doom()
   clear();
 }
 
-bool	DOOM::Doom::load(std::string const & path)
+void	DOOM::Doom::load(std::string const & path)
 {
   // Clear resources
   clear();
-
-  // Attempt to load WAD file
-  if (wad.load(path) == false)
-    return false;
+  
+  // Load WAD file
+  wad.load(path);
 
   // Build resources of WAD file
-  if (buildResources() == false)
-    return false;
-
-  return true;
+  buildResources();
 }
 
 void	DOOM::Doom::update(sf::Time elapsed)
@@ -55,10 +51,10 @@ std::list<std::pair<uint8_t, uint8_t>>	DOOM::Doom::getLevel() const
   return list;
 }
 
-bool	DOOM::Doom::setLevel(std::pair<uint8_t, uint8_t> const & level)
+void	DOOM::Doom::setLevel(std::pair<uint8_t, uint8_t> const & level)
 {
   // Build level
-  return buildLevel(level);
+  buildLevel(level);
 }
 
 void	DOOM::Doom::clear()
@@ -103,31 +99,33 @@ void	DOOM::Doom::clearLevel()
   level.blockmap = DOOM::Doom::Level::Blockmap();
 }
 
-bool	DOOM::Doom::buildResources()
+void	DOOM::Doom::buildResources()
 {
   // Remove old resources and level
   clear();
 
   // Build every component of resources
-  if (buildResourcesPalettes() == false ||
-    buildResourcesColormaps() == false ||
-    buildResourcesTextures() == false ||
-    buildResourcesSprites() == false ||
-    buildResourcesMenus() == false ||
-    buildResourcesFlats() == false ||
-    buildResourcesSounds() == false)
+  try
+  {
+    buildResourcesPalettes();
+    buildResourcesColormaps();
+    buildResourcesTextures();
+    buildResourcesSprites();
+    buildResourcesMenus();
+    buildResourcesFlats();
+    buildResourcesSounds();
+  }
+  catch (std::exception e)
   {
     clear();
-    return false;
+    throw std::runtime_error(e.what());
   }
 
   // Update components (might be useful for initializations)
   resources.update(sf::seconds(0.f));
-
-  return true;
 }
 
-bool	DOOM::Doom::buildResourcesPalettes()
+void	DOOM::Doom::buildResourcesPalettes()
 {
   // Load palettes from WAD resources
   for (DOOM::Wad::RawResources::Palette const & palette : wad.resources.palettes)
@@ -142,12 +140,10 @@ bool	DOOM::Doom::buildResourcesPalettes()
 
   // Check palettes data
   if (resources.palettes.size() != 14)
-    return false;
-
-  return true;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-bool	DOOM::Doom::buildResourcesColormaps()
+void	DOOM::Doom::buildResourcesColormaps()
 {
   // Load color maps from WAD resources
   for (DOOM::Wad::RawResources::Colormap const & colormap : wad.resources.colormaps)
@@ -162,12 +158,10 @@ bool	DOOM::Doom::buildResourcesColormaps()
 
   // Check color maps data
   if (resources.colormaps.size() != 34)
-    return false;
-
-  return true;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-bool	DOOM::Doom::buildResourcesTextures()
+void	DOOM::Doom::buildResourcesTextures()
 {
   // Load textures from WAD resources
   for (std::pair<uint64_t, DOOM::Wad::RawResources::Texture> const & texture : wad.resources.textures)
@@ -191,7 +185,7 @@ bool	DOOM::Doom::buildResourcesTextures()
 	texture_patch.stepdir != 1 ||
 	texture_patch.pname >= wad.resources.pnames.size() ||
 	wad.resources.patches.find(wad.resources.pnames[texture_patch.pname]) == wad.resources.patches.end())
-	return false;
+	throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
       DOOM::Wad::RawResources::Patch const &	patch = wad.resources.patches[wad.resources.pnames[texture_patch.pname]];
 
@@ -227,11 +221,9 @@ bool	DOOM::Doom::buildResourcesTextures()
 	}
       }
   }
-
-  return true;
 }
 
-bool	DOOM::Doom::buildResourcesSprites()
+void	DOOM::Doom::buildResourcesSprites()
 {
   // Load sprites textures from WAD resources
   for (std::pair<uint64_t, DOOM::Wad::RawResources::Patch> const & patch : wad.resources.sprites)
@@ -255,11 +247,9 @@ bool	DOOM::Doom::buildResourcesSprites()
       }
     }
   }
-
-  return true;
 }
 
-bool	DOOM::Doom::buildResourcesMenus()
+void	DOOM::Doom::buildResourcesMenus()
 {
   // Load menus textures from WAD resources
   for (std::pair<uint64_t, DOOM::Wad::RawResources::Patch> const & patch : wad.resources.menus)
@@ -283,11 +273,9 @@ bool	DOOM::Doom::buildResourcesMenus()
       }
     }
   }
-
-  return true;
 }
 
-bool	DOOM::Doom::buildResourcesFlats()
+void	DOOM::Doom::buildResourcesFlats()
 {
   // Load flats from WAD resources
   for (std::pair<uint64_t, DOOM::Wad::RawResources::Flat> const & flat : wad.resources.flats)
@@ -297,15 +285,13 @@ bool	DOOM::Doom::buildResourcesFlats()
 
     // Check for error
     if (converted == nullptr)
-      std::cout << "[Doom::build] Warning, failed to convert flat '" << DOOM::key_to_str(flat.first) << "'." << std::endl;
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
     else
       resources.flats[flat.first] = std::unique_ptr<DOOM::AbstractFlat>(converted);
   }
-
-  return true;
 }
 
-bool	DOOM::Doom::buildResourcesSounds()
+void	DOOM::Doom::buildResourcesSounds()
 {
   // Load sounds from WAD resources
   for (std::pair<uint64_t, DOOM::Wad::RawResources::Sound> const & sound : wad.resources.sounds)
@@ -318,87 +304,73 @@ bool	DOOM::Doom::buildResourcesSounds()
 
     // Load sound buffer (mono)
     if (resources.sounds[sound.first].buffer.loadFromSamples(buffer.data(), sound.second.samples, 1, sound.second.rate) == false)
-      return false;
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
     // Attribute soundbuffer to sound
     resources.sounds[sound.first].sound.setBuffer(resources.sounds[sound.first].buffer);
   }
-
-  return true;
 }
 
-bool	DOOM::Doom::buildLevel(std::pair<uint8_t, uint8_t> const & level)
+void	DOOM::Doom::buildLevel(std::pair<uint8_t, uint8_t> const & level)
 {
   // Remove old level
   clearLevel();
 
   // Check if level exist in WAD file
   if (wad.levels.find(level) == wad.levels.end())
-    return false;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Check for sky texture
   if (resources.textures.find(0x0000000000594B53 | (((int64_t)level.first + '0') << 24)) == resources.textures.end())
-    return false;
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   this->level.episode = level;
   this->level.sky = resources.textures[0x0000000000594B53 | (((int64_t)level.first + '0') << 24)];
 
   // Build every component of resources
-  if (buildLevelVertexes(level) == false ||
-    buildLevelSectors(level) == false ||
-    buildLevelLinedefs(level) == false ||
-    buildLevelSidedefs(level) == false ||
-    buildLevelSubsectors(level) == false ||
-    buildLevelThings(level) == false ||
-    buildLevelSegments(level) == false ||
-    buildLevelNodes(level) == false ||
-    buildLevelBlockmap(level) == false)
+  try
+  {
+    buildLevelVertexes(level);
+    buildLevelSectors(level);
+    buildLevelLinedefs(level);
+    buildLevelSidedefs(level);
+    buildLevelSubsectors(level);
+    buildLevelThings(level);
+    buildLevelSegments(level);
+    buildLevelNodes(level);
+    buildLevelBlockmap(level);
+  }
+  catch (std::exception e)
   {
     clearLevel();
-    return false;
+    throw std::runtime_error(e.what());
   }
 
   // Update components (might be useful for initializations)
   this->level.update(sf::seconds(0.f));
-
-  return true;
 }
 
-bool	DOOM::Doom::buildLevelVertexes(std::pair<uint8_t, uint8_t> const & level)
+void	DOOM::Doom::buildLevelVertexes(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's vertexes from WAD
   for (DOOM::Wad::RawLevel::Vertex const & vertex : wad.levels[level].vertexes)
     this->level.vertexes.push_back(DOOM::Doom::Level::Vertex((float)vertex.x, (float)vertex.y));
-
-  return true;
 }
 
-bool	DOOM::Doom::buildLevelSectors(std::pair<uint8_t, uint8_t> const & level)
+void	DOOM::Doom::buildLevelSectors(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's sectors from WAD
-  try
-  {
-    for (DOOM::Wad::RawLevel::Sector const & sector : wad.levels[level].sectors) {
-      DOOM::AbstractSector *	ptr = DOOM::AbstractSector::factory(*this, sector);
+  for (DOOM::Wad::RawLevel::Sector const & sector : wad.levels[level].sectors) {
+    DOOM::AbstractSector *	ptr = DOOM::AbstractSector::factory(*this, sector);
 
-      if (ptr == nullptr) {
-	throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-      }
-      else {
-	this->level.sectors.push_back(std::unique_ptr<DOOM::AbstractSector>(ptr));
-      }
-    }
-  }
-  catch (std::exception e)
-  {
-    std::cerr << "[Doom::build] Invalid sector (" << std::string(e.what()) << ")." << std::endl;
-    return false;
-  }
+    if (ptr == nullptr)
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-  return true;
+    this->level.sectors.push_back(std::unique_ptr<DOOM::AbstractSector>(ptr));
+  }
 }
 
-bool	DOOM::Doom::buildLevelSubsectors(std::pair<uint8_t, uint8_t> const & level)
+void	DOOM::Doom::buildLevelSubsectors(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's sectors from WAD
   for (DOOM::Wad::RawLevel::Subsector const & subsector : wad.levels[level].subsectors)
@@ -406,10 +378,7 @@ bool	DOOM::Doom::buildLevelSubsectors(std::pair<uint8_t, uint8_t> const & level)
     // Check for errors
     if (subsector.index < 0 || subsector.count < 0 ||
       subsector.index + subsector.count > wad.levels[level].segments.size())
-    {
-      std::cerr << "[Doom::build] Invalid subsector." << std::endl;
-      return false;
-    }
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
     // Convert data structure
     this->level.subsectors.push_back(DOOM::Doom::Level::Subsector{
@@ -423,11 +392,9 @@ bool	DOOM::Doom::buildLevelSubsectors(std::pair<uint8_t, uint8_t> const & level)
       ].sector
     });
   }
-
-  return true;
 }
 
-bool	DOOM::Doom::buildLevelLinedefs(std::pair<uint8_t, uint8_t> const & level)
+void	DOOM::Doom::buildLevelLinedefs(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's linedefs from WAD
   for (DOOM::Wad::RawLevel::Linedef const & linedef : wad.levels[level].linedefs)
@@ -437,46 +404,28 @@ bool	DOOM::Doom::buildLevelLinedefs(std::pair<uint8_t, uint8_t> const & level)
       linedef.end < 0 || linedef.end >= wad.levels[level].vertexes.size() ||
       linedef.front < 0 || linedef.front >= wad.levels[level].sidedefs.size() ||
       linedef.back != -1 && (linedef.back < 0 || linedef.back >= wad.levels[level].sidedefs.size()))
-    {
-      std::cerr << "[Doom::build] Invalid linedef." << std::endl;
-      return false;
-    }
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
     // Convert linedef from WAD
     DOOM::AbstractLinedef *	converted = DOOM::AbstractLinedef::factory(*this, linedef);
 
     // Check for error
     if (converted == nullptr)
-    {
-      std::cerr << "[Doom::build]: Error, unknown linedef type '" << linedef.type << "'." << std::endl;
-      return false;
-    }
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
     
     // Push linedef in vector
     this->level.linedefs.push_back(std::unique_ptr<DOOM::AbstractLinedef>(converted));
   }
-
-  return true;
 }
 
-bool	DOOM::Doom::buildLevelSidedefs(std::pair<uint8_t, uint8_t> const & level)
+void	DOOM::Doom::buildLevelSidedefs(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's sidedefs from WAD
-  try
-  {
-    for (DOOM::Wad::RawLevel::Sidedef const & sidedef : wad.levels[level].sidedefs)
-      this->level.sidedefs.push_back(DOOM::Doom::Level::Sidedef(*this, sidedef));
-  }
-  catch (std::exception e)
-  {
-    std::cerr << "[Doom::build] Invalid sidedef (" << std::string(e.what()) << ")." << std::endl;
-    return false;
-  }
-
-  return true;
+  for (DOOM::Wad::RawLevel::Sidedef const & sidedef : wad.levels[level].sidedefs)
+    this->level.sidedefs.push_back(DOOM::Doom::Level::Sidedef(*this, sidedef));
 }
 
-bool	DOOM::Doom::buildLevelSegments(std::pair<uint8_t, uint8_t> const & level)
+void	DOOM::Doom::buildLevelSegments(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's segments from WAD
   for (DOOM::Wad::RawLevel::Segment const & segment : wad.levels[level].segments)
@@ -486,10 +435,7 @@ bool	DOOM::Doom::buildLevelSegments(std::pair<uint8_t, uint8_t> const & level)
       segment.end < 0 || segment.end >= wad.levels[level].segments.size() ||
       segment.linedef < 0 || segment.linedef >= wad.levels[level].linedefs.size() ||
       (segment.direction != 0 && segment.direction != 1))
-    {
-      std::cerr << "[Doom::build] Invalid segment." << std::endl;
-      return false;
-    }
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
     // Convert data structure
     this->level.segments.push_back(DOOM::Doom::Level::Segment{
@@ -501,11 +447,9 @@ bool	DOOM::Doom::buildLevelSegments(std::pair<uint8_t, uint8_t> const & level)
       segment.offset
     });
   }
-
-  return true;
 }
 
-bool	DOOM::Doom::buildLevelNodes(std::pair<uint8_t, uint8_t> const & level)
+void	DOOM::Doom::buildLevelNodes(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's nodes from WAD
   for (DOOM::Wad::RawLevel::Node const & node : wad.levels[level].nodes)
@@ -516,10 +460,7 @@ bool	DOOM::Doom::buildLevelNodes(std::pair<uint8_t, uint8_t> const & level)
       node.left_bb.top < node.left_bb.bottom || node.left_bb.right < node.left_bb.left ||
       ((node.right_ss & 0b1000000000000000) ? ((node.right_ss & 0b0111111111111111) >= wad.levels[level].subsectors.size()) : (node.right_ss >= wad.levels[level].nodes.size())) ||
       ((node.left_ss & 0b1000000000000000) ? ((node.left_ss & 0b0111111111111111) >= wad.levels[level].subsectors.size()) : (node.left_ss >= wad.levels[level].nodes.size())))
-    {
-      std::cerr << "[Doom::build] Invalid node." << std::endl;
-      return false;
-    }
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
     // Convert data structure
     this->level.nodes.push_back(DOOM::Doom::Level::Node{
@@ -541,11 +482,9 @@ bool	DOOM::Doom::buildLevelNodes(std::pair<uint8_t, uint8_t> const & level)
       node.left_ss
     });
   }
-
-  return true;
 }
 
-bool	DOOM::Doom::buildLevelThings(std::pair<uint8_t, uint8_t> const & level)
+void	DOOM::Doom::buildLevelThings(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's things from WAD
   for (DOOM::Wad::RawLevel::Thing const & thing : wad.levels[level].things)
@@ -555,15 +494,13 @@ bool	DOOM::Doom::buildLevelThings(std::pair<uint8_t, uint8_t> const & level)
 
     // Check for error
     if (converted == nullptr)
-      std::cerr << "[Doom::build]: Warning, unknown thing type '" << thing.type << "'." << std::endl;
-    else
-      this->level.things.push_back(std::unique_ptr<DOOM::AbstractThing>(converted));
-  }
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-  return true;
+    this->level.things.push_back(std::unique_ptr<DOOM::AbstractThing>(converted));
+  }
 }
 
-bool	DOOM::Doom::buildLevelBlockmap(std::pair<uint8_t, uint8_t> const & level)
+void	DOOM::Doom::buildLevelBlockmap(std::pair<uint8_t, uint8_t> const & level)
 {
   // Copy basic informations
   this->level.blockmap.x = wad.levels[level].blockmap.x;
@@ -578,10 +515,7 @@ bool	DOOM::Doom::buildLevelBlockmap(std::pair<uint8_t, uint8_t> const & level)
 
     // Check first blocklist delimiter
     if (index >= wad.levels[level].blockmap.blocklist.size() || wad.levels[level].blockmap.blocklist[index] != 0x0000)
-    {
-      std::cerr << "[Doom::build] Invalid blockmap." << std::endl;
-      return false;
-    }
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
     // Skip blocklist delimiter
     index += 1;
@@ -590,19 +524,13 @@ bool	DOOM::Doom::buildLevelBlockmap(std::pair<uint8_t, uint8_t> const & level)
     this->level.blockmap.blocks.push_back(DOOM::Doom::Level::Blockmap::Block());
 
     // Iterate over blocklist
-    for (; index < wad.levels[level].blockmap.blocklist.size() && wad.levels[level].blockmap.blocklist[index] != (int16_t)0xFFFF; index++) {
+    for (; index < wad.levels[level].blockmap.blocklist.size() && wad.levels[level].blockmap.blocklist[index] != (int16_t)0xFFFF; index++)
       this->level.blockmap.blocks.back().linedefs.push_back(wad.levels[level].blockmap.blocklist[index]);
-    }
 
     // Check last blocklist delimiter
     if (index >= wad.levels[level].blockmap.blocklist.size() || wad.levels[level].blockmap.blocklist[index] != (int16_t)0xFFFF)
-    {
-      std::cerr << "[Doom::build] Invalid blockmap 2." << std::endl;
-      return false;
-    }
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
   }
-
-  return true;
 }
 
 std::pair<int16_t, int16_t>	DOOM::Doom::Level::sector(Math::Vector<2> const & position, int16_t index) const
@@ -640,6 +568,10 @@ void	DOOM::Doom::Level::update(sf::Time elapsed)
   // Update level sectors
   for (const std::unique_ptr<DOOM::AbstractSector> & sector : sectors)
     sector->update(elapsed);
+
+  // Update level linedef
+  for (const std::unique_ptr<DOOM::AbstractLinedef> & linedef : linedefs)
+    linedef->update(elapsed);
 
   // Update level sidedef
   for (DOOM::Doom::Level::Sidedef & sidedef : sidedefs)

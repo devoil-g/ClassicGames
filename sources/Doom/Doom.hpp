@@ -165,25 +165,25 @@ namespace DOOM
     void	clearResources();	// Clear resources
     void	clearLevel();		// Clear current level
 
-    bool	buildResources();		// Build resources from WAD
-    bool	buildResourcesPalettes();	// Build color palettes from WAD
-    bool	buildResourcesColormaps();	// Build color maps from WAD
-    bool	buildResourcesTextures();	// Build textures from WAD
-    bool	buildResourcesSprites();	// Build sprites textures from WAD
-    bool	buildResourcesMenus();		// Build menus textures from WAD
-    bool	buildResourcesFlats();		// Build flats from WAD
-    bool	buildResourcesSounds();		// Build sounds from WAD
+    void	buildResources();		// Build resources from WAD
+    void	buildResourcesPalettes();	// Build color palettes from WAD
+    void	buildResourcesColormaps();	// Build color maps from WAD
+    void	buildResourcesTextures();	// Build textures from WAD
+    void	buildResourcesSprites();	// Build sprites textures from WAD
+    void	buildResourcesMenus();		// Build menus textures from WAD
+    void	buildResourcesFlats();		// Build flats from WAD
+    void	buildResourcesSounds();		// Build sounds from WAD
     
-    bool	buildLevel(const std::pair<uint8_t, uint8_t> & level);			// Build level from WAD file
-    bool	buildLevelVertexes(const std::pair<uint8_t, uint8_t> & level);		// Build level's vertexes from WAD file
-    bool	buildLevelSectors(const std::pair<uint8_t, uint8_t> & level);		// Build level's sectors from WAD file
-    bool	buildLevelLinedefs(const std::pair<uint8_t, uint8_t> & level);		// Build level's linedefs from WAD file
-    bool	buildLevelSidedefs(const std::pair<uint8_t, uint8_t> & level);		// Build level's sidedefs from WAD file
-    bool	buildLevelSubsectors(const std::pair<uint8_t, uint8_t> & level);	// Build level's subsectors from WAD file
-    bool	buildLevelThings(const std::pair<uint8_t, uint8_t> & level);		// Build level's things from WAD file
-    bool	buildLevelSegments(const std::pair<uint8_t, uint8_t> & level);		// Build level's segments from WAD file
-    bool	buildLevelNodes(const std::pair<uint8_t, uint8_t> & level);		// Build level's nodes from WAD file
-    bool	buildLevelBlockmap(const std::pair<uint8_t, uint8_t> & level);		// Build level's blockmap from WAD file
+    void	buildLevel(const std::pair<uint8_t, uint8_t> & level);			// Build level from WAD file
+    void	buildLevelVertexes(const std::pair<uint8_t, uint8_t> & level);		// Build level's vertexes from WAD file
+    void	buildLevelSectors(const std::pair<uint8_t, uint8_t> & level);		// Build level's sectors from WAD file
+    void	buildLevelLinedefs(const std::pair<uint8_t, uint8_t> & level);		// Build level's linedefs from WAD file
+    void	buildLevelSidedefs(const std::pair<uint8_t, uint8_t> & level);		// Build level's sidedefs from WAD file
+    void	buildLevelSubsectors(const std::pair<uint8_t, uint8_t> & level);	// Build level's subsectors from WAD file
+    void	buildLevelThings(const std::pair<uint8_t, uint8_t> & level);		// Build level's things from WAD file
+    void	buildLevelSegments(const std::pair<uint8_t, uint8_t> & level);		// Build level's segments from WAD file
+    void	buildLevelNodes(const std::pair<uint8_t, uint8_t> & level);		// Build level's nodes from WAD file
+    void	buildLevelBlockmap(const std::pair<uint8_t, uint8_t> & level);		// Build level's blockmap from WAD file
     
   public:
     DOOM::Wad			wad;		// File holding WAD datas
@@ -193,11 +193,11 @@ namespace DOOM
     Doom();
     ~Doom();
 
-    bool	load(const std::string & file);	// Load WAD file and build resources
+    void	load(const std::string & file);	// Load WAD file and build resources
     void	update(sf::Time elapsed);	// Update current level and resources
 
     std::list<std::pair<uint8_t, uint8_t>>	getLevel() const;					// Return list of available level in WAD
-    bool					setLevel(const std::pair<uint8_t, uint8_t> & level);	// Build specified level from WAD, return true if successful
+    void					setLevel(const std::pair<uint8_t, uint8_t> & level);	// Build specified level from WAD, return true if successful
   };
 };
 

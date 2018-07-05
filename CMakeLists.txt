@@ -23,6 +23,8 @@ SET(GAME_DOOM_LINEDEF_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/AbstractLinedef.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/NormalLinedef.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/NormalLinedef.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/TriggerableLinedef.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/TriggerableLinedef.hpp
 )
 SET(GAME_DOOM_SECTOR_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/AbstractSector.cpp
@@ -39,6 +41,10 @@ SET(GAME_DOOM_SECTOR_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/GlowLightSector.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/RandomLightSector.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/RandomLightSector.hpp
+)
+SET(GAME_DOOM_SECTOR_ACTION_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/Action/DoorAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/Action/DoorAction.hpp
 )
 SET(GAME_DOOM_THING_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractThing.cpp
@@ -97,6 +103,7 @@ SET(GAME_SRCS
 	${GAME_DOOM_FLAT_SRCS}
 	${GAME_DOOM_LINEDEF_SRCS}
 	${GAME_DOOM_SECTOR_SRCS}
+	${GAME_DOOM_SECTOR_ACTION_SRCS}
 	${GAME_DOOM_THING_SRCS}
 	${GAME_MATH_SRCS}
 	${GAME_STATES_SRCS}
@@ -118,6 +125,7 @@ SOURCE_GROUP("Doom\\" FILES ${GAME_DOOM_SRCS})
 SOURCE_GROUP("Doom\\Flat\\" FILES ${GAME_DOOM_FLAT_SRCS})
 SOURCE_GROUP("Doom\\Linedef\\" FILES ${GAME_DOOM_LINEDEF_SRCS})
 SOURCE_GROUP("Doom\\Sector\\" FILES ${GAME_DOOM_SECTOR_SRCS})
+SOURCE_GROUP("Doom\\Sector\\Action\\" FILES ${GAME_DOOM_SECTOR_ACTION_SRCS})
 SOURCE_GROUP("Doom\\Thing\\" FILES ${GAME_DOOM_THING_SRCS})
 SOURCE_GROUP("Math\\" FILES ${GAME_MATH_SRCS})
 SOURCE_GROUP("States\\" FILES ${GAME_STATES_SRCS})
