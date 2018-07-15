@@ -21,30 +21,24 @@ SET(GAME_DOOM_FLAT_SRCS
 SET(GAME_DOOM_LINEDEF_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/AbstractLinedef.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/AbstractLinedef.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/NormalLinedef.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/NormalLinedef.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/TriggerableLinedef.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/TriggerableLinedef.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/NullLinedef.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/NullLinedef.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/ActionTriggerableLinedef.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/ActionTriggerableLinedef.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/LightTriggerableLinedef.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/LightTriggerableLinedef.hpp
 )
 SET(GAME_DOOM_SECTOR_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/AbstractSector.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/AbstractSector.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/NormalSector.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/NormalSector.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/AbstractLightSector.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/AbstractLightSector.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/FixedLightSector.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/FixedLightSector.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/FlickerLightSector.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/FlickerLightSector.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/GlowLightSector.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/GlowLightSector.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/RandomLightSector.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/RandomLightSector.hpp
-)
-SET(GAME_DOOM_SECTOR_ACTION_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/Action/DoorAction.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/Action/DoorAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/BlinkLightingAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/BlinkLightingAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/DoorLevelingAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/DoorLevelingAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/FlickerLightingAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/FlickerLightingAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/OscillateLightingAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/OscillateLightingAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/RandomLightingAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/RandomLightingAction.hpp
 )
 SET(GAME_DOOM_THING_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractThing.cpp
@@ -103,7 +97,6 @@ SET(GAME_SRCS
 	${GAME_DOOM_FLAT_SRCS}
 	${GAME_DOOM_LINEDEF_SRCS}
 	${GAME_DOOM_SECTOR_SRCS}
-	${GAME_DOOM_SECTOR_ACTION_SRCS}
 	${GAME_DOOM_THING_SRCS}
 	${GAME_MATH_SRCS}
 	${GAME_STATES_SRCS}
@@ -125,7 +118,6 @@ SOURCE_GROUP("Doom\\" FILES ${GAME_DOOM_SRCS})
 SOURCE_GROUP("Doom\\Flat\\" FILES ${GAME_DOOM_FLAT_SRCS})
 SOURCE_GROUP("Doom\\Linedef\\" FILES ${GAME_DOOM_LINEDEF_SRCS})
 SOURCE_GROUP("Doom\\Sector\\" FILES ${GAME_DOOM_SECTOR_SRCS})
-SOURCE_GROUP("Doom\\Sector\\Action\\" FILES ${GAME_DOOM_SECTOR_ACTION_SRCS})
 SOURCE_GROUP("Doom\\Thing\\" FILES ${GAME_DOOM_THING_SRCS})
 SOURCE_GROUP("Math\\" FILES ${GAME_MATH_SRCS})
 SOURCE_GROUP("States\\" FILES ${GAME_STATES_SRCS})
@@ -146,13 +138,13 @@ ADD_EXECUTABLE(Game ${GAME_SRCS} ${GAME_RSRC})
 TARGET_LINK_LIBRARIES(Game ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
 
 # Force C++11
-SET_TARGET_PROPERTIES(Game PROPERTIES CXX_STANDARD 11 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)
+SET_TARGET_PROPERTIES(Game PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)
 
 # Specific OS commands
 IF (UNIX)
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast -Wall -Wextra")
 ELSE (UNIX)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /std:c++latest")
 ENDIF (UNIX)
 
 # Copy assets to build directory

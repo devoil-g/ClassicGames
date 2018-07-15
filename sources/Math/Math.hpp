@@ -5,7 +5,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <ctgmath>
 #include <limits>
 #include <utility>
 #include <vector>
@@ -14,6 +13,7 @@
 # define M_PI	3.14159265358979323846
 #endif
 
+#if __cplusplus < __cpp_2017
 namespace std
 {
   template<typename Type>
@@ -22,10 +22,11 @@ namespace std
     return std::min(high, std::max(low, value));
   }
 };
+#endif
 
 namespace Math
 {
-  float const	Pi = (float)M_PI;	// Use this instead of M_PI
+  constexpr float const	Pi = (float)M_PI;	// Use this instead of M_PI
   
   template<int Mod>
   inline int	Modulo(int i)

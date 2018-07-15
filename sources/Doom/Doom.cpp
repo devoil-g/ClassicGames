@@ -3,7 +3,11 @@
 #include "Doom/Doom.hpp"
 #include "Doom/Flat/AbstractFlat.hpp"
 #include "Doom/Linedef/AbstractLinedef.hpp"
-#include "Doom/Sector/AbstractSector.hpp"
+#include "Doom/Sector/BlinkLightingAction.hpp"
+#include "Doom/Sector/DoorLevelingAction.hpp"
+#include "Doom/Sector/FlickerLightingAction.hpp"
+#include "Doom/Sector/OscillateLightingAction.hpp"
+#include "Doom/Sector/RandomLightingAction.hpp"
 #include "Doom/Thing/AbstractThing.hpp"
 
 sf::Time const	DOOM::Doom::Tic = sf::seconds(1.f / 35.f);
@@ -281,13 +285,13 @@ void	DOOM::Doom::buildResourcesFlats()
   for (std::pair<uint64_t, DOOM::Wad::RawResources::Flat> const & flat : wad.resources.flats)
   {
     // Convert flat from WAD
-    DOOM::AbstractFlat *	converted = DOOM::AbstractFlat::factory(wad, flat.first, flat.second);
+    std::unique_ptr<DOOM::AbstractFlat>	converted = DOOM::AbstractFlat::factory(wad, flat.first, flat.second);
 
     // Check for error
-    if (converted == nullptr)
+    if (converted.get() == nullptr)
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
     else
-      resources.flats[flat.first] = std::unique_ptr<DOOM::AbstractFlat>(converted);
+      resources.flats[flat.first] = std::move(converted);
   }
 }
 
@@ -360,14 +364,8 @@ void	DOOM::Doom::buildLevelVertexes(std::pair<uint8_t, uint8_t> const & level)
 void	DOOM::Doom::buildLevelSectors(std::pair<uint8_t, uint8_t> const & level)
 {
   // Load level's sectors from WAD
-  for (DOOM::Wad::RawLevel::Sector const & sector : wad.levels[level].sectors) {
-    DOOM::AbstractSector *	ptr = DOOM::AbstractSector::factory(*this, sector);
-
-    if (ptr == nullptr)
-      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-    this->level.sectors.push_back(std::unique_ptr<DOOM::AbstractSector>(ptr));
-  }
+  for (DOOM::Wad::RawLevel::Sector const & sector : wad.levels[level].sectors)
+    this->level.sectors.emplace_back(*this, sector);
 }
 
 void	DOOM::Doom::buildLevelSubsectors(std::pair<uint8_t, uint8_t> const & level)
@@ -407,14 +405,14 @@ void	DOOM::Doom::buildLevelLinedefs(std::pair<uint8_t, uint8_t> const & level)
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
     // Convert linedef from WAD
-    DOOM::AbstractLinedef *	converted = DOOM::AbstractLinedef::factory(*this, linedef);
+    std::unique_ptr<DOOM::AbstractLinedef>	converted = DOOM::AbstractLinedef::factory(*this, linedef);
 
     // Check for error
-    if (converted == nullptr)
+    if (converted.get() == nullptr)
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
     
     // Push linedef in vector
-    this->level.linedefs.push_back(std::unique_ptr<DOOM::AbstractLinedef>(converted));
+    this->level.linedefs.push_back(std::move(converted));
   }
 }
 
@@ -490,13 +488,13 @@ void	DOOM::Doom::buildLevelThings(std::pair<uint8_t, uint8_t> const & level)
   for (DOOM::Wad::RawLevel::Thing const & thing : wad.levels[level].things)
   {
     // Convert thing from WAD
-    DOOM::AbstractThing *	converted = DOOM::AbstractThing::factory(*this, thing);
+    std::unique_ptr<DOOM::AbstractThing>	converted = DOOM::AbstractThing::factory(*this, thing);
 
     // Check for error
-    if (converted == nullptr)
+    if (converted.get() == nullptr)
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-    this->level.things.push_back(std::unique_ptr<DOOM::AbstractThing>(converted));
+    this->level.things.push_back(std::move(converted));
   }
 }
 
@@ -566,8 +564,8 @@ void	DOOM::Doom::Level::update(sf::Time elapsed)
     thing->update(elapsed);
 
   // Update level sectors
-  for (const std::unique_ptr<DOOM::AbstractSector> & sector : sectors)
-    sector->update(elapsed);
+  for (DOOM::Doom::Level::Sector & sector : sectors)
+    sector.update(elapsed);
 
   // Update level linedef
   for (const std::unique_ptr<DOOM::AbstractLinedef> & linedef : linedefs)
@@ -660,3 +658,326 @@ const DOOM::Doom::Resources::Texture &	DOOM::Doom::Level::Sidedef::middle() cons
   // Return middle frame
   return *_middle[_elapsed.asMicroseconds() / (DOOM::Doom::Tic.asMicroseconds() * DOOM::Doom::Level::Sidedef::FrameDuration) % _middle.size()];
 }
+
+DOOM::Doom::Level::Sector::Sector(const DOOM::Doom & doom, const DOOM::Wad::RawLevel::Sector & sector) :
+  floor_name(sector.floor_texture),
+  ceiling_name(sector.ceiling_texture),
+  floor_flat(nullptr),
+  ceiling_flat(nullptr),
+  tag(sector.tag),
+  special(sector.special),
+  _light(sector.light), _baseLight(sector.light),
+  _floor(sector.floor_height), _baseFloor(sector.floor_height),
+  _ceiling(sector.ceiling_height), _baseCeiling(sector.ceiling_height),
+  _damage(0.f), _baseDamage(0.f),
+  _neighbors(),
+  _doom(doom),
+  _leveling(nullptr),
+  _lighting(nullptr)
+{
+  // Check for errors
+  if (_floor > _ceiling ||
+    (floor_name != DOOM::str_to_key("F_SKY1") && doom.resources.flats.find(floor_name) == doom.resources.flats.end()) ||
+    (ceiling_name != DOOM::str_to_key("F_SKY1") && doom.resources.flats.find(ceiling_name) == doom.resources.flats.end()) ||
+    _light < 0 || _light > 255) {
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  }
+
+  // Retrieve flat textures
+  if (floor_name != DOOM::str_to_key("F_SKY1"))
+    floor_flat = doom.resources.flats.find(floor_name)->second.get();
+  if (ceiling_name != DOOM::str_to_key("F_SKY1"))
+    ceiling_flat = doom.resources.flats.find(ceiling_name)->second.get();
+
+  // Index of this sector
+  int16_t	index = (int16_t)doom.level.sectors.size();
+
+  // Compute neighbor sectors
+  for (const DOOM::Wad::RawLevel::Linedef & linedef : doom.wad.levels.find(doom.level.episode)->second.linedefs) {
+    if (doom.wad.levels.find(doom.level.episode)->second.sidedefs[linedef.front].sector == index && linedef.back != -1)
+      _neighbors.push_back(doom.wad.levels.find(doom.level.episode)->second.sidedefs[linedef.back].sector);
+    if (linedef.back != -1 && doom.wad.levels.find(doom.level.episode)->second.sidedefs[linedef.back].sector == index)
+      _neighbors.push_back(doom.wad.levels.find(doom.level.episode)->second.sidedefs[linedef.front].sector);
+  }
+
+  // Sort sector list
+  std::sort(_neighbors.begin(), _neighbors.end());
+
+  // Unique sector list
+  _neighbors.resize(std::distance(_neighbors.begin(), std::unique(_neighbors.begin(), _neighbors.end())));
+
+  // Push action for specific specials
+  switch (sector.special)
+  {
+  case DOOM::Doom::Level::Sector::Special::Normal:
+    break;
+  case DOOM::Doom::Level::Sector::Special::LightBlinkRandom:
+    _lighting.reset(new DOOM::RandomLightingAction<24, 4>());
+    break;
+  case DOOM::Doom::Level::Sector::Special::LightBlink05:
+    _lighting.reset(new DOOM::BlinkLightingAction<15, 4, false>());
+    break;
+  case DOOM::Doom::Level::Sector::Special::LightBlink10:
+    _lighting.reset(new DOOM::BlinkLightingAction<35, 4, false>());
+    break;
+  case DOOM::Doom::Level::Sector::Special::Damage20Blink05:
+    break;	// TODO
+  case DOOM::Doom::Level::Sector::Special::Damage10:
+    _damage = 10.f;
+    break;
+  case DOOM::Doom::Level::Sector::Special::Damage5:
+    _damage = 5.f;
+    break;
+  case DOOM::Doom::Level::Sector::Special::LightOscillates:
+    _lighting.reset(new DOOM::OscillateLightingAction());
+    break;
+  case DOOM::Doom::Level::Sector::Special::Secret:
+    break;	// TODO
+  case DOOM::Doom::Level::Sector::Special::DoorClose:
+    _leveling.reset(new DOOM::DoorLevelingAction({ DOOM::DoorLevelingAction::State::StateWait, DOOM::DoorLevelingAction::State::StateClose }, DOOM::DoorLevelingAction::Speed::SpeedSlow, (int)(sf::seconds(30.f).asMicroseconds() / DOOM::Doom::Tic.asMicroseconds())));
+    break;
+  case DOOM::Doom::Level::Sector::Special::End:
+    break;	// TODO
+  case DOOM::Doom::Level::Sector::Special::LightBlink05Sync:
+    _lighting.reset(new DOOM::BlinkLightingAction<15, 4, true>());
+    break;
+  case DOOM::Doom::Level::Sector::Special::LightBlink10Sync:
+    _lighting.reset(new DOOM::BlinkLightingAction<35, 4, true>());
+    break;
+  case DOOM::Doom::Level::Sector::Special::DoorOpen:
+    _leveling.reset(new DOOM::DoorLevelingAction({ DOOM::DoorLevelingAction::State::StateWait, DOOM::DoorLevelingAction::State::StateOpen }, DOOM::DoorLevelingAction::Speed::SpeedSlow, (int)(sf::seconds(300.f).asMicroseconds() / DOOM::Doom::Tic.asMicroseconds())));
+    break;
+  case DOOM::Doom::Level::Sector::Special::Damage20:
+    _damage = 20.f;
+    break;
+  case DOOM::Doom::Level::Sector::Special::LightFlickers:
+    _lighting.reset(new DOOM::FlickerLightingAction());
+    break;
+
+  default:
+    break;
+  }
+}
+
+DOOM::Doom::Level::Sector::Sector(DOOM::Doom::Level::Sector && sector) :
+  floor_name(sector.floor_name),
+  ceiling_name(sector.ceiling_name),
+  floor_flat(sector.floor_flat),
+  ceiling_flat(sector.ceiling_flat),
+  tag(sector.tag),
+  special(sector.special),
+  _light(sector._light), _baseLight(sector._baseLight),
+  _floor(sector._floor), _baseFloor(sector._baseFloor),
+  _ceiling(sector._ceiling), _baseCeiling(sector._baseCeiling),
+  _damage(sector._damage), _baseDamage(sector._baseDamage),
+  _neighbors(std::move(sector._neighbors)),
+  _doom(sector._doom),
+  _leveling(std::move(sector._leveling)),
+  _lighting(std::move(sector._lighting))
+{}
+
+DOOM::Doom::Level::Sector::~Sector()
+{}
+
+void	DOOM::Doom::Level::Sector::update(sf::Time elapsed)
+{
+  // Update sector actions
+  if (_leveling.get() != nullptr)
+    _leveling->update(*this, elapsed);
+  if (_lighting.get() != nullptr)
+    _lighting->update(*this, elapsed);
+}
+
+void	DOOM::Doom::Level::Sector::leveling(int16_t type)
+{
+  // Push action if leveling slot available
+  if (_leveling.get() == nullptr)
+    _leveling = std::move(DOOM::Doom::Level::Sector::AbstractAction::factory(*this, type));
+}
+
+void	DOOM::Doom::Level::Sector::lighting(int16_t type)
+{
+  // Push action if lighting slot available
+  if (_lighting.get() == nullptr)
+    _lighting = std::move(DOOM::Doom::Level::Sector::AbstractAction::factory(*this, type));
+}
+
+float	DOOM::Doom::Level::Sector::getNeighborLowestFloor() const
+{
+  float	result = std::numeric_limits<float>::quiet_NaN();
+
+  // Find lowest neighboor floor
+  for (int16_t index : _neighbors)
+    result = std::isnan(result) == true ? _doom.level.sectors[index].baseFloor() : std::min(result, _doom.level.sectors[index].baseFloor());
+
+  return result;
+}
+
+float	DOOM::Doom::Level::Sector::getNeighborHighestFloor() const
+{
+  float	result = std::numeric_limits<float>::quiet_NaN();
+
+  // Find highest neighboor floor
+  for (int16_t index : _neighbors)
+    result = std::isnan(result) == true ? _doom.level.sectors[index].baseFloor() : std::max(result, _doom.level.sectors[index].baseFloor());
+
+  return result;
+}
+
+float	DOOM::Doom::Level::Sector::getNeighborNextLowestFloor(float height) const
+{
+  float		result = std::numeric_limits<float>::quiet_NaN();
+
+  // Find next lowest neighboor floor
+  for (int16_t index : _neighbors) {
+    float	floor = _doom.level.sectors[index].baseFloor();
+
+    if (floor < height && (std::isnan(result) == true || floor > result))
+      result = std::max(result, floor);
+  }
+
+  return result;
+}
+
+float	DOOM::Doom::Level::Sector::getNeighborNextHighestFloor(float height) const
+{
+  float		result = std::numeric_limits<float>::quiet_NaN();
+
+  // Find next highest neighboor floor
+  for (int16_t index : _neighbors) {
+    float	floor = _doom.level.sectors[index].baseFloor();
+
+    if (floor > height && (std::isnan(result) == true || floor < result))
+      result = std::min(result, floor);
+  }
+
+  return result;
+}
+
+float	DOOM::Doom::Level::Sector::getNeighborLowestCeiling() const
+{
+  float	result = std::numeric_limits<float>::quiet_NaN();
+
+  // Find lowest neighboor ceiling
+  for (int16_t index : _neighbors)
+    result = std::isnan(result) == true ? _doom.level.sectors[index].baseCeiling() : std::min(result, _doom.level.sectors[index].baseCeiling());
+
+  return result;
+}
+
+float	DOOM::Doom::Level::Sector::getNeighborHighestCeiling() const
+{
+  float	result = std::numeric_limits<float>::quiet_NaN();
+
+  // Find highest neighboor ceiling
+  for (int16_t index : _neighbors)
+    result = std::isnan(result) == true ? _doom.level.sectors[index].baseCeiling() : std::max(result, _doom.level.sectors[index].baseCeiling());
+
+  return result;
+}
+
+float	DOOM::Doom::Level::Sector::getNeighborNextLowestCeiling(float height) const
+{
+  float		result = std::numeric_limits<float>::quiet_NaN();
+
+  // Find next lowest neighboor ceiling
+  for (int16_t index : _neighbors) {
+    float	ceiling = _doom.level.sectors[index].baseCeiling();
+
+    if (ceiling < height && (std::isnan(result) == true || ceiling > result))
+      result = std::max(result, ceiling);
+  }
+
+  return result;
+}
+
+float	DOOM::Doom::Level::Sector::getNeighborNextHighestCeiling(float height) const
+{
+  float		result = std::numeric_limits<float>::quiet_NaN();
+
+  // Find next highest neighboor floor
+  for (int16_t index : _neighbors) {
+    float	ceiling = _doom.level.sectors[index].baseCeiling();
+
+    if (ceiling > height && (std::isnan(result) == true || ceiling < result))
+      result = std::min(result, ceiling);
+  }
+
+  return result;
+}
+
+int16_t	DOOM::Doom::Level::Sector::getNeighborLowestLight() const
+{
+  int16_t	result = light();
+
+  // Find lowest neighboor light level
+  for (int16_t index : _neighbors)
+    result = std::min(result, _doom.level.sectors[index].baseLight());
+
+  return result;
+}
+
+int16_t	DOOM::Doom::Level::Sector::getNeighborHighestLight() const
+{
+  int16_t	result = light();
+
+  // Find highest neighboor light level
+  for (int16_t index : _neighbors)
+    result = std::min(result, _doom.level.sectors[index].baseLight());
+
+  return result;
+}
+
+DOOM::Doom::Level::Sector::AbstractAction::AbstractAction()
+{}
+
+DOOM::Doom::Level::Sector::AbstractAction::~AbstractAction()
+{}
+
+std::unique_ptr<DOOM::Doom::Level::Sector::AbstractAction>	DOOM::Doom::Level::Sector::AbstractAction::factory(DOOM::Doom::Level::Sector & sector, int16_t type)
+{
+  // Generate action from type
+  switch (type) {
+
+    // Regular and extended door types
+  case 1: case 4: case 29: case 63: case 90:	// Open, wait then close (slow)
+    return std::unique_ptr<DOOM::DoorLevelingAction>(new DOOM::DoorLevelingAction({ DOOM::DoorLevelingAction::State::StateOpen, DOOM::DoorLevelingAction::State::StateWait, DOOM::DoorLevelingAction::State::StateClose }, DOOM::DoorLevelingAction::Speed::SpeedSlow, (int)(sf::seconds(4.f).asMicroseconds() / DOOM::Doom::Tic.asMicroseconds())));
+  case 105: case 108: case 111: case 114: case 117:	// Open, wait then close (fast)
+    return std::unique_ptr<DOOM::DoorLevelingAction>(new DOOM::DoorLevelingAction({ DOOM::DoorLevelingAction::State::StateOpen, DOOM::DoorLevelingAction::State::StateWait, DOOM::DoorLevelingAction::State::StateClose }, DOOM::DoorLevelingAction::Speed::SpeedFast, (int)(sf::seconds(4.f).asMicroseconds() / DOOM::Doom::Tic.asMicroseconds())));
+  case 2: case 31: case 46: case 61: case 86: case 103:	// Open and stay open (slow)
+    return std::unique_ptr<DOOM::DoorLevelingAction>(new DOOM::DoorLevelingAction({ DOOM::DoorLevelingAction::State::StateOpen }, DOOM::DoorLevelingAction::Speed::SpeedSlow));
+  case 106: case 109: case 112: case 115: case 118:	// Open and stay open (fast)
+    return std::unique_ptr<DOOM::DoorLevelingAction>(new DOOM::DoorLevelingAction({ DOOM::DoorLevelingAction::State::StateOpen }, DOOM::DoorLevelingAction::Speed::SpeedFast));
+  case 16: case 76: case 175: case 196:	// Close, wait then open (slow)
+    return std::unique_ptr<DOOM::DoorLevelingAction>(new DOOM::DoorLevelingAction({ DOOM::DoorLevelingAction::State::StateClose, DOOM::DoorLevelingAction::State::StateWait, DOOM::DoorLevelingAction::State::StateOpen }, DOOM::DoorLevelingAction::Speed::SpeedNormal, (int)(sf::seconds(30.f).asMicroseconds() / DOOM::Doom::Tic.asMicroseconds())));
+  case 3: case 42: case 50: case 75:	// Close and stay close (slow)
+    return std::unique_ptr<DOOM::DoorLevelingAction>(new DOOM::DoorLevelingAction({ DOOM::DoorLevelingAction::State::StateClose }, DOOM::DoorLevelingAction::Speed::SpeedSlow));
+  case 107: case 110: case 113: case 116:	// Close and stay close (fast)
+    return std::unique_ptr<DOOM::DoorLevelingAction>(new DOOM::DoorLevelingAction({ DOOM::DoorLevelingAction::State::StateClose }, DOOM::DoorLevelingAction::Speed::SpeedFast));
+
+    // Regular and extended locked door types
+  case 32: case 33: case 34:	// Open and stay open (slow)
+    return std::unique_ptr<DOOM::DoorLevelingAction>(new DOOM::DoorLevelingAction({ DOOM::DoorLevelingAction::State::StateOpen }, DOOM::DoorLevelingAction::Speed::SpeedSlow));
+  case 99: case 133: case 134: case 135: case 136: case 137:	// Open and stay open (fast)
+    return std::unique_ptr<DOOM::DoorLevelingAction>(new DOOM::DoorLevelingAction({ DOOM::DoorLevelingAction::State::StateOpen }, DOOM::DoorLevelingAction::Speed::SpeedFast));
+  case 26: case 27: case 28:	// Open, wait then close (slow)
+    return std::unique_ptr<DOOM::DoorLevelingAction>(new DOOM::DoorLevelingAction({ DOOM::DoorLevelingAction::State::StateOpen, DOOM::DoorLevelingAction::State::StateWait, DOOM::DoorLevelingAction::State::StateClose }, DOOM::DoorLevelingAction::Speed::SpeedSlow, (int)(sf::seconds(4.f).asMicroseconds() / DOOM::Doom::Tic.asMicroseconds())));
+
+  default:
+    return nullptr;
+  }
+
+  return nullptr;
+}
+
+void	DOOM::Doom::Level::Sector::AbstractAction::remove(DOOM::Doom::Level::Sector & sector)
+{
+  // Remove action from sector
+  if (sector._leveling.get() == this)
+    sector._leveling.reset();
+  else if (sector._lighting.get() == this)
+    sector._lighting.reset();
+}
+
+void	DOOM::Doom::Level::Sector::AbstractAction::stop()
+{}

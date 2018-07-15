@@ -11,7 +11,7 @@ DOOM::AbstractFlat::~AbstractFlat()
 void	DOOM::AbstractFlat::update(sf::Time)
 {}
 
-DOOM::AbstractFlat *	DOOM::AbstractFlat::factory(DOOM::Wad const & wad, uint64_t name, DOOM::Wad::RawResources::Flat const & flat)
+std::unique_ptr<DOOM::AbstractFlat>	DOOM::AbstractFlat::factory(DOOM::Wad const & wad, uint64_t name, DOOM::Wad::RawResources::Flat const & flat)
 {
   // List of animated flats and their frames
   static std::vector<std::vector<uint64_t>> const	animations =
@@ -31,8 +31,8 @@ DOOM::AbstractFlat *	DOOM::AbstractFlat::factory(DOOM::Wad const & wad, uint64_t
   for (std::vector<uint64_t> const & sequence : animations)
     for (uint64_t const frame : sequence)
       if (name == frame)
-	return new DOOM::AnimatedFlat(wad, sequence);
+	return std::make_unique<DOOM::AnimatedFlat>(wad, sequence);
   
   // Default static flat
-  return new DOOM::StaticFlat(flat);
+  return std::make_unique<DOOM::StaticFlat>(flat);
 }

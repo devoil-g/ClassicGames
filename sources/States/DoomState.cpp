@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "Doom/Doom.hpp"
-#include "Doom/Sector/AbstractSector.hpp"
 #include "Doom/Thing/AbstractThing.hpp"
 #include "States/DoomState.hpp"
 #include "States/StateMachine.hpp"
@@ -31,7 +30,7 @@ Game::DoomState::DoomState() :
     if (thing->type == 1)
     {
       _camera.position = thing->position;
-      _camera.height = _doom.level.sectors[_doom.level.sector(thing->position).first]->floor() + 32.f;
+      _camera.height = _doom.level.sectors[_doom.level.sector(thing->position).first].floor() + 32.f;
       _camera.angle = thing->angle;
       break;
     }
@@ -133,7 +132,7 @@ bool	Game::DoomState::updatePlayer(sf::Time elapsed)
 	if (thing->type == 1)
 	{
 	  _camera.position = thing->position;
-	  _camera.height = _doom.level.sectors[_doom.level.sector(thing->position).first]->floor() + 32.f;
+	  _camera.height = _doom.level.sectors[_doom.level.sector(thing->position).first].floor() + 32.f;
 	  _camera.angle = thing->angle;
 	  break;
 	}

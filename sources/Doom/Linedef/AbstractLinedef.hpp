@@ -8,11 +8,57 @@
 
 namespace DOOM
 {
+  namespace EnumLinedef
+  {
+    enum Trigger
+    {
+      TriggerNone = 0b0000,
+      TriggerPushed = 0b0001,
+      TriggerSwitched = 0b0010,
+      TriggerWalkover = 0b0100,
+      TriggerGunfire = 0b1000
+    };
+
+    enum Action
+    {
+      ActionLeveling,
+      ActionLighting
+    };
+
+    enum Key
+    {
+      KeyNone,
+      KeyBlue,
+      KeyRed,
+      KeyYellow,
+    };
+
+    enum Repeat
+    {
+      RepeatFalse = false,
+      RepeatTrue = true
+    };
+
+    enum Monster
+    {
+      MonsterFalse = false,
+      MonsterTrue = true
+    };
+
+    enum Light
+    {
+      Light35,
+      Light255,
+      LightMinimum,
+      LightMaximum
+    };
+  };
+
   // NOTE: Abstraction needed because of templateted triggerable class
   class AbstractLinedef
   {
   public:
-    static DOOM::AbstractLinedef *	factory(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef);
+    static std::unique_ptr<DOOM::AbstractLinedef>	factory(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef);
 
     enum Flag
     {

@@ -1,39 +1,39 @@
 #include <functional>
 
-#include "Doom/Sector/Action/DoorAction.hpp"
+#include "Doom/Sector/DoorLevelingAction.hpp"
 
-const int	DOOM::DoorAction::ForceWait = (int)(sf::seconds(4.f).asMicroseconds() / DOOM::Doom::Tic.asMicroseconds());
+const int	DOOM::DoorLevelingAction::ForceWait = (int)(sf::seconds(4.f).asMicroseconds() / DOOM::Doom::Tic.asMicroseconds());
 
-DOOM::DoorAction::DoorAction(DOOM::AbstractSector & sector, std::list<DOOM::DoorAction::State> && states, DOOM::DoorAction::Speed speed, int wait) :
-  DOOM::AbstractSector::AbstractAction(sector),
+DOOM::DoorLevelingAction::DoorLevelingAction(std::list<DOOM::DoorLevelingAction::State> && states, DOOM::DoorLevelingAction::Speed speed, int wait) :
+  DOOM::Doom::Level::Sector::AbstractAction(),
   _states(std::move(states)),
   _speed(speed),
   _wait(wait),
   _elapsed(sf::Time::Zero)
 {}
 
-DOOM::DoorAction::~DoorAction()
+DOOM::DoorLevelingAction::~DoorLevelingAction()
 {}
 
-void	DOOM::DoorAction::update(sf::Time elapsed)
+void	DOOM::DoorLevelingAction::update(DOOM::Doom::Level::Sector & sector, sf::Time elapsed)
 {
   while (_states.empty() == false) {
     switch (_states.front())
     {
-    case DOOM::DoorAction::State::StateOpen:
-      elapsed = updateOpen(elapsed);
+    case DOOM::DoorLevelingAction::State::StateOpen:
+      elapsed = updateOpen(sector, elapsed);
       break;
-    case DOOM::DoorAction::State::StateClose:
-      elapsed = updateClose(elapsed);
+    case DOOM::DoorLevelingAction::State::StateClose:
+      elapsed = updateClose(sector, elapsed);
       break;
-    case DOOM::DoorAction::State::StateForceClose:
-      elapsed = updateForceClose(elapsed);
+    case DOOM::DoorLevelingAction::State::StateForceClose:
+      elapsed = updateForceClose(sector, elapsed);
       break;
-    case DOOM::DoorAction::State::StateWait:
-      elapsed = updateWait(elapsed);
+    case DOOM::DoorLevelingAction::State::StateWait:
+      elapsed = updateWait(sector, elapsed);
       break;
-    case DOOM::DoorAction::State::StateForceWait:
-      elapsed = updateForceWait(elapsed);
+    case DOOM::DoorLevelingAction::State::StateForceWait:
+      elapsed = updateForceWait(sector, elapsed);
       break;
     default:	// Handle error (should not happen)
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
@@ -51,11 +51,11 @@ void	DOOM::DoorAction::update(sf::Time elapsed)
   // Update ceiling base value when animation ended and remove action from sector
   if (_states.empty() == true) {
     sector.baseCeiling() = sector.ceiling();
-    remove();
+    remove(sector);
   }
 }
 
-sf::Time	DOOM::DoorAction::updateOpen(sf::Time elapsed)
+sf::Time	DOOM::DoorLevelingAction::updateOpen(DOOM::Doom::Level::Sector & sector, sf::Time elapsed)
 {
   const float	top = sector.getNeighborLowestCeiling() - 4.f;
 
@@ -80,7 +80,7 @@ sf::Time	DOOM::DoorAction::updateOpen(sf::Time elapsed)
   }
 }
 
-sf::Time	DOOM::DoorAction::updateClose(sf::Time elapsed)
+sf::Time	DOOM::DoorLevelingAction::updateClose(DOOM::Doom::Level::Sector & sector, sf::Time elapsed)
 {
   // Instant close if under floor
   if (sector.ceiling() < sector.floor()) {
@@ -90,8 +90,8 @@ sf::Time	DOOM::DoorAction::updateClose(sf::Time elapsed)
 
   // TODO: add check for things in sector
   if (false) {
-    _states.push_front(DOOM::DoorAction::State::StateForceWait);
-    _states.push_front(DOOM::DoorAction::State::StateOpen);
+    _states.push_front(DOOM::DoorLevelingAction::State::StateForceWait);
+    _states.push_front(DOOM::DoorLevelingAction::State::StateOpen);
     return elapsed;
   }
 
@@ -110,7 +110,7 @@ sf::Time	DOOM::DoorAction::updateClose(sf::Time elapsed)
   }
 }
 
-sf::Time	DOOM::DoorAction::updateForceClose(sf::Time elapsed)
+sf::Time	DOOM::DoorLevelingAction::updateForceClose(DOOM::Doom::Level::Sector & sector, sf::Time elapsed)
 {
   // Instant close if under floor
   if (sector.ceiling() < sector.floor()) {
@@ -138,7 +138,7 @@ sf::Time	DOOM::DoorAction::updateForceClose(sf::Time elapsed)
   }
 }
 
-sf::Time	DOOM::DoorAction::updateWait(sf::Time elapsed)
+sf::Time	DOOM::DoorLevelingAction::updateWait(DOOM::Doom::Level::Sector & sector, sf::Time elapsed)
 {
   _elapsed += elapsed;
 
@@ -146,10 +146,10 @@ sf::Time	DOOM::DoorAction::updateWait(sf::Time elapsed)
   return std::max(_elapsed - (DOOM::Doom::Tic * (float)_wait), sf::Time::Zero);
 }
 
-sf::Time	DOOM::DoorAction::updateForceWait(sf::Time elapsed)
+sf::Time	DOOM::DoorLevelingAction::updateForceWait(DOOM::Doom::Level::Sector & sector, sf::Time elapsed)
 {
   _elapsed += elapsed;
 
   // Return remaining time if any
-  return std::max(_elapsed - (DOOM::Doom::Tic * (float)DOOM::DoorAction::ForceWait), sf::Time::Zero);
+  return std::max(_elapsed - (DOOM::Doom::Tic * (float)DOOM::DoorLevelingAction::ForceWait), sf::Time::Zero);
 }

@@ -15,7 +15,7 @@ namespace DOOM
 
   public:
     StaticFlat(const DOOM::Wad::RawResources::Flat & flat);
-    virtual ~StaticFlat();
+    ~StaticFlat() override;
 
     const std::vector<uint8_t> &	flat() const override;
   };

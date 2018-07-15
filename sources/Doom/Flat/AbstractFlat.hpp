@@ -13,7 +13,7 @@ namespace DOOM
   class AbstractFlat
   {
   public:
-    static DOOM::AbstractFlat *	factory(const DOOM::Wad & wad, uint64_t, const DOOM::Wad::RawResources::Flat & flat);
+    static std::unique_ptr<DOOM::AbstractFlat>	factory(const DOOM::Wad & wad, uint64_t, const DOOM::Wad::RawResources::Flat & flat);
 
     AbstractFlat();
     virtual ~AbstractFlat() = 0;

@@ -3,7 +3,6 @@
 #include "Doom/Camera.hpp"
 #include "Doom/Flat/AbstractFlat.hpp"
 #include "Doom/Linedef/AbstractLinedef.hpp"
-#include "Doom/Sector/AbstractSector.hpp"
 #include "Doom/Thing/AbstractThing.hpp"
 
 DOOM::Camera::Camera(unsigned int width, unsigned int height) :
@@ -154,8 +153,8 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, int16_t index)
 
   const DOOM::Doom::Level::Sidedef &	sidedef_front(doom.level.sidedefs[side == true ? (linedef.back != -1 ? linedef.back : linedef.front) : linedef.front]);
   const DOOM::Doom::Level::Sidedef &	sidedef_back(doom.level.sidedefs[side == true ? linedef.front : (linedef.back != -1 ? linedef.back : linedef.front)]);
-  const DOOM::AbstractSector &	sector_front(*doom.level.sectors[sidedef_front.sector]);
-  const DOOM::AbstractSector &	sector_back(*doom.level.sectors[sidedef_back.sector]);
+  const DOOM::Doom::Level::Sector &	sector_front(doom.level.sectors[sidedef_front.sector]);
+  const DOOM::Doom::Level::Sector &	sector_back(doom.level.sectors[sidedef_back.sector]);
   
   const DOOM::Doom::Resources::Texture &	texture_upper(sidedef_front.upper());
   const DOOM::Doom::Resources::Texture &	texture_lower(sidedef_front.lower());
@@ -215,25 +214,25 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, int16_t index)
     int		texture_offset_x = seg.offset + sidedef_front.x + (int)((seg_end - seg_start).length() * (((bool)seg.direction == side) ? seg_offset : (1.f - seg_offset)));
 
     // Draw ceiling/sky
-    if (sector_front.ceiling_name == DOOM::str_to_key("F_SKY1"))
-    {
-      renderSky(doom, column, 0, (int)std::min(upper_front, upper_back), sector_front.ceiling(), index);
-      _vertical[column].first = std::max(_vertical[column].first, (int)std::min(upper_front, upper_back));
+    if (sector_front.ceiling_name == DOOM::str_to_key("F_SKY1")) {
+      if (linedef.back == -1 || sector_back.ceiling_name != DOOM::str_to_key("F_SKY1")) {
+	renderSky(doom, column, 0, (int)std::min(upper_front, upper_back), sector_front.ceiling(), index);
+	_vertical[column].first = std::max(_vertical[column].first, (int)std::min(upper_front, upper_back));
+      }
     }
-    else if (height < sector_front.ceiling())
-    {
+    else if (height < sector_front.ceiling()) {
       renderFlat(doom, *sector_front.ceiling_flat, column, 0, (int)upper_front, sector_front.ceiling(), light, index);
       _vertical[column].first = std::max(_vertical[column].first, (int)upper_front);
     }
 
     // Draw floor/sky
-    if (sector_front.floor_name == DOOM::str_to_key("F_SKY1"))
-    {
-      renderSky(doom, column, (int)std::max(lower_front, lower_back), _image.getSize().y, sector_front.floor(), index);
-      _vertical[column].second = std::min(_vertical[column].second, (int)std::max(lower_front, lower_back));
+    if (sector_front.floor_name == DOOM::str_to_key("F_SKY1")) {
+      if (linedef.back == -1 || sector_back.floor_name != DOOM::str_to_key("F_SKY1")) {
+	renderSky(doom, column, (int)std::max(lower_front, lower_back), _image.getSize().y, sector_front.floor(), index);
+	_vertical[column].second = std::min(_vertical[column].second, (int)std::max(lower_front, lower_back));
+      }
     }
-    else if (height > sector_front.floor())
-    {
+    else if (height > sector_front.floor()) {
       renderFlat(doom, *sector_front.floor_flat, column, (int)lower_front, _image.getSize().y, sector_front.floor(), light, index);
       _vertical[column].second = std::min(_vertical[column].second, (int)lower_front);
     }
@@ -398,14 +397,16 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom)
 
     float	thing_factor = _factor / ((thing.position - position).length() / (_screen_start + _screen * thing_projection.first - position).length());
     float	first_x = thing_projection.first * _image.getSize().x + ((texture.second == false ? 0 : texture.first->width) - texture.first->left) * thing_factor;
-    float	first_y = _horizon - (((thing.properties & DOOM::AbstractThing::Properties::Hanging) ? doom.level.sectors[thing_sector.first]->ceiling() + texture.first->height - texture.first->top : doom.level.sectors[thing_sector.first]->floor() + texture.first->top) - height) * thing_factor;
+    float	first_y = _horizon - (((thing.properties & DOOM::AbstractThing::Properties::Hanging) ? doom.level.sectors[thing_sector.first].ceiling() + texture.first->height - texture.first->top : doom.level.sectors[thing_sector.first].floor() + texture.first->top) - height) * thing_factor;
     float	second_x = thing_projection.first * _image.getSize().x + ((texture.second == false ? texture.first->width : 0) - texture.first->left) * thing_factor;
-    float	second_y = _horizon - (((thing.properties & DOOM::AbstractThing::Properties::Hanging) ? doom.level.sectors[thing_sector.first]->ceiling() - texture.first->top : doom.level.sectors[thing_sector.first]->floor() - texture.first->height + texture.first->top) - height) * thing_factor;
+    float	second_y = _horizon - (((thing.properties & DOOM::AbstractThing::Properties::Hanging) ? doom.level.sectors[thing_sector.first].ceiling() - texture.first->top : doom.level.sectors[thing_sector.first].floor() - texture.first->height + texture.first->top) - height) * thing_factor;
 
     // Map of thing visibility against segments
     std::unordered_map<int16_t, bool>	visible;
 
-    int16_t	light = doom.level.sectors[thing_sector.first]->light();
+    // Compute light level of thing
+    int16_t	light = doom.level.sectors[thing_sector.first].light();
+    int16_t	shaded = (int16_t)std::clamp((int)((int)light * 2 - 255 + 255 * DOOM::Camera::LightFade / (thing.position - position).length()), (int)0, (int)light);
 
     // Render pixels of the sprite
     for (int column = std::max((int)first_x, 0); column < std::min((int)second_x, (int)_image.getSize().x); column++)
@@ -457,7 +458,7 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom)
 
 	  if (span.offset + span.pixels.size() > pixel_y)
 	  {
-	    _image.setPixel(column, row, doom.resources.palettes[0][doom.resources.colormaps[31 - light / 8][span.pixels[pixel_y - span.offset]]]);
+	    _image.setPixel(column, row, doom.resources.palettes[0][doom.resources.colormaps[31 - shaded / 8][span.pixels[pixel_y - span.offset]]]);
 	    break;
 	  }
 	}

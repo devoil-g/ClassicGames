@@ -14,7 +14,7 @@ namespace DOOM
   class AbstractThing
   {
   public:
-    static DOOM::AbstractThing *	factory(const DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing);
+    static std::unique_ptr<DOOM::AbstractThing>	factory(const DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing);
 
     enum Flag : int16_t
     {

@@ -20,10 +20,10 @@ namespace DOOM
     
   public:
     AnimatedFlat(const DOOM::Wad & wad, const std::vector<uint64_t> & flat);
-    virtual ~AnimatedFlat();
+    ~AnimatedFlat() override;
 
-    virtual void				update(sf::Time elapsed) override;	// Update animation sequence
-    virtual const std::vector<uint8_t> &	flat() const override;			// Return flat to be displayed
+    void				update(sf::Time elapsed) override;	// Update animation sequence
+    const std::vector<uint8_t> &	flat() const override;			// Return flat to be displayed
   };
 };
 
