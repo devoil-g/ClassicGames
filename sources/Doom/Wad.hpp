@@ -254,7 +254,7 @@ namespace DOOM
 	int16_t	flag;		// Linedef flag (see enum)
 	int16_t	type;		// Linedef type (see enum)
 	int16_t	tag;		// Linedef/sector tag
-	int16_t	front, back;	// Front and back sidedefs indexes (-1 if no sidedef)
+	int16_t	front, back;	// Front (right) and back (left) sidedefs indexes (-1 if no sidedef)
       };
 
       struct Sidedef

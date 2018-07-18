@@ -5,7 +5,7 @@
 
 namespace DOOM
 {
-  template<unsigned int CycleDuration = 35, unsigned int FlashDuration = 4, bool Sync = false>
+  template<unsigned int CycleDuration = 35, unsigned int FlashDuration = 5, bool Sync = false>
   class BlinkLightingAction : public DOOM::Doom::Level::Sector::AbstractAction
   {
   private:
@@ -14,7 +14,7 @@ namespace DOOM
   public:
     BlinkLightingAction() :
       DOOM::Doom::Level::Sector::AbstractAction(),
-      _elapsed(Sync == true ? sf::Time::Zero : DOOM::Doom::Tic * (5.f * Math::Random()))
+      _elapsed(Sync == true ? sf::Time::Zero : DOOM::Doom::Tic * (9.f * Math::Random()))
     {}
 
     ~BlinkLightingAction() override

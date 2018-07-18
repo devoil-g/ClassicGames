@@ -2,6 +2,7 @@
 #include "Doom/Linedef/NullLinedef.hpp"
 #include "Doom/Linedef/ActionTriggerableLinedef.hpp"
 #include "Doom/Linedef/LightTriggerableLinedef.hpp"
+#include "Doom/Linedef/StairTriggerableLinedef.hpp"
 
 DOOM::AbstractLinedef::AbstractLinedef(const DOOM::Wad::RawLevel::Linedef & linedef) :
   start(linedef.start), end(linedef.end),
@@ -130,6 +131,16 @@ std::unique_ptr<DOOM::AbstractLinedef>	DOOM::AbstractLinedef::factory(DOOM::Doom
     return std::make_unique<DOOM::LightTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerSwitched, DOOM::EnumLinedef::Light::Light255, DOOM::EnumLinedef::Repeat::RepeatTrue>>(doom, linedef);
   case 139:
     return std::make_unique<DOOM::LightTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerSwitched, DOOM::EnumLinedef::Light::Light35, DOOM::EnumLinedef::Repeat::RepeatTrue>>(doom, linedef);
+
+    // Regular stair builders
+  case 7:	// Switched once, slow, 8 step
+    return std::make_unique<DOOM::StairTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerSwitched, DOOM::EnumAction::Speed::SpeedSlow, 8>>(doom, linedef);
+  case 8:	// Walkover once, slow, 8 step
+    return std::make_unique<DOOM::StairTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerWalkover, DOOM::EnumAction::Speed::SpeedSlow, 8>>(doom, linedef);
+  case 100:	// Walkover once, fast, 16 step
+    return std::make_unique<DOOM::StairTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerWalkover, DOOM::EnumAction::Speed::SpeedFast, 16>>(doom, linedef);
+  case 127:	// Switched once, fast, 16 step
+    return std::make_unique<DOOM::StairTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerSwitched, DOOM::EnumAction::Speed::SpeedFast, 16>>(doom, linedef);
 
     // TODO: type 54 & 89 stop perpetual platform lift (remove sector leveling action)
     // TODO: type 57 & 74 stop crusher (remove sector leveling action)

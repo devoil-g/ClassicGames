@@ -114,7 +114,10 @@ namespace DOOM
 
     virtual void	update(sf::Time elapsed) override	// Update linedef
     {
+      pushed(*_doom.level.things.front().get());
+      switched(*_doom.level.things.front().get());
       walkover(*_doom.level.things.front().get());
+      gunfire(*_doom.level.things.front().get());
     }
 
     virtual void	pushed(const DOOM::AbstractThing & thing) override	// To call when linedef is pushed by thing

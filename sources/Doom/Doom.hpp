@@ -16,6 +16,38 @@
 
 namespace DOOM
 {
+  namespace EnumAction
+  {
+    enum Speed
+    {
+      SpeedSlow = 1,	// Move 1 units/tic
+      SpeedNormal = 2,	// Move 2 units/tic
+      SpeedFast = 4,	// Move 4 units/tic
+      SpeedTurbo = 8	// Move 8 units/tic
+    };
+
+    enum State
+    {
+      StateOpen,	// Open the door
+      StateClose,	// Close the door
+      StateForceClose,	// Close the door without bouncing on thing
+      StateWait,	// Wait for the spcified time
+      StateForceWait	// Wait for a fixed time
+    };
+
+    enum Direction
+    {
+      DirectionUp,
+      DirectionDown
+    };
+
+    enum Crush
+    {
+      CrushFalse = false,
+      CrushTrue = true
+    };
+  }
+
   class AbstractFlat;
   class AbstractLinedef;
   class AbstractThing;
@@ -190,7 +222,7 @@ namespace DOOM
 
 	void	update(sf::Time elapsed);	// Update sector
 
-	// Const getter (TODO: light)
+	// Const getter
 	inline int16_t	light() const { return _light; }
 	inline int16_t	baseLight() const { return _baseLight; }
 	inline float	floor() const { return _floor; }
@@ -210,8 +242,10 @@ namespace DOOM
 	inline float &		damage() { return _damage; }
 	inline float &		baseDamage() { return _baseDamage; }
 
-	void	leveling(int16_t type);	// Add action to sector if possible
-	void	lighting(int16_t type);	// Add action to sector if possible
+	void	leveling(int16_t type);								// Add action to sector if possible
+	void	leveling(std::unique_ptr<DOOM::Doom::Level::Sector::AbstractAction> && action);	// Add action to sector if possible
+	void	lighting(int16_t type);								// Add action to sector if possible
+	void	lighting(std::unique_ptr<DOOM::Doom::Level::Sector::AbstractAction> && action);	// Add action to sector if possible
 
 	inline const std::unique_ptr<DOOM::Doom::Level::Sector::AbstractAction> &	leveling() const { return _leveling; }	// Get action of sector
 	inline const std::unique_ptr<DOOM::Doom::Level::Sector::AbstractAction> &	lighting() const { return _lighting; }	// Get action of sector
