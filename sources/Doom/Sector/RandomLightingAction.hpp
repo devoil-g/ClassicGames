@@ -1,11 +1,16 @@
 #ifndef _RANDOM_LIGHTING_ACTION_HPP_
 #define _RANDOM_LIGHTING_ACTION_HPP_
 
+#include <SFML/System/Time.hpp>
+
 #include "Doom/Doom.hpp"
 
 namespace DOOM
 {
-  template<unsigned int CycleDuration = 24, unsigned int FlashDuration = 4>
+  template<
+    unsigned int CycleDuration = 24,
+    unsigned int FlashDuration = 4
+  >
   class RandomLightingAction : public DOOM::Doom::Level::Sector::AbstractAction
   {
   private:
@@ -14,8 +19,8 @@ namespace DOOM
     sf::Time	_elapsed;	// Elapsed time
 
   public:
-    RandomLightingAction() :
-      DOOM::Doom::Level::Sector::AbstractAction(),
+    RandomLightingAction(DOOM::Doom & doom) :
+      DOOM::Doom::Level::Sector::AbstractAction(doom),
       _cycle(0),
       _flash(0),
       _elapsed(sf::Time::Zero)
@@ -23,10 +28,9 @@ namespace DOOM
       static_assert(CycleDuration != 0 && FlashDuration != 0 && CycleDuration >= FlashDuration, "Invalid RandomLightingAction parameters.");
     }
 
-    ~RandomLightingAction() override
-    {}
+    ~RandomLightingAction() override = default;
 
-    virtual void	update(DOOM::Doom::Level::Sector & sector, sf::Time elapsed) override	// Update light sector
+    virtual void	update(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed) override	// Update light sector
     {
       // Update elapsed time
       _elapsed += elapsed;
@@ -40,9 +44,9 @@ namespace DOOM
 
       // Compute light value from elapsed time
       if (_elapsed < DOOM::Doom::Tic * (float)_flash)
-	sector.light() = sector.baseLight();
+	sector.light_current = sector.light_base;
       else
-	sector.light() = sector.getNeighborLowestLight();
+	sector.light_current = sector.getNeighborLowestLight(doom);
     }
   };
 };

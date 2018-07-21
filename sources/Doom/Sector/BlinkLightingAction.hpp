@@ -12,23 +12,22 @@ namespace DOOM
     sf::Time	_elapsed;	// Elapsed time
 
   public:
-    BlinkLightingAction() :
-      DOOM::Doom::Level::Sector::AbstractAction(),
+    BlinkLightingAction(DOOM::Doom & doom) :
+      DOOM::Doom::Level::Sector::AbstractAction(doom),
       _elapsed(Sync == true ? sf::Time::Zero : DOOM::Doom::Tic * (9.f * Math::Random()))
     {}
 
-    ~BlinkLightingAction() override
-    {}
+    ~BlinkLightingAction() override = default;
 
-    virtual void	update(DOOM::Doom::Level::Sector & sector, sf::Time elapsed) override	// Update sector
+    virtual void	update(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed) override	// Update sector
     {
       // Update time
       _elapsed += elapsed;
 
       if (_elapsed.asMicroseconds() / DOOM::Doom::Tic.asMicroseconds() % CycleDuration < FlashDuration)
-	sector.light() = sector.baseLight();
+	sector.light_current = sector.light_base;
       else
-	sector.light() = sector.getNeighborLowestLight();
+	sector.light_current = sector.getNeighborLowestLight(doom);
     }
   };
 };

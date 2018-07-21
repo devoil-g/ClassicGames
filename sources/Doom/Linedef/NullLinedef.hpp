@@ -1,18 +1,18 @@
-#ifndef _NORMAL_LINEDEF_HPP_
-#define _NORMAL_LINEDEF_HPP_
+#ifndef _NULL_LINEDEF_HPP_
+#define _NULL_LINEDEF_HPP_
 
-#include "Doom/Linedef/ActionTriggerableLinedef.hpp"
+#include "Doom/Doom.hpp"
 
 namespace DOOM
 {
-  class NullLinedef : public DOOM::AbstractLinedef
+  class NullLinedef : public DOOM::Doom::Level::AbstractLinedef
   {
   public:
-    NullLinedef(const DOOM::Wad::RawLevel::Linedef & linedef);
-    NullLinedef(const DOOM::AbstractLinedef & linedef);
-    ~NullLinedef() override;
+    NullLinedef(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef);
+    NullLinedef(DOOM::Doom & doom, const DOOM::Doom::Level::AbstractLinedef & linedef);
+    ~NullLinedef() override = default;
 
-    void	update(sf::Time elapsed) override;	// Update linedef
+    void	update(DOOM::Doom & doom, sf::Time elapsed) override;	// Update linedef
   };
 };
 

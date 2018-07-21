@@ -16,8 +16,8 @@ namespace DOOM
   class Camera
   {
   public:
-    static const unsigned int	DefaultWidth = 320;	// Default rendering width size
-    static const unsigned int	DefaultHeight = 180;	// Default rendering height size
+    static const unsigned int	DefaultWidth = 640;	// Default rendering width size
+    static const unsigned int	DefaultHeight = 360;	// Default rendering height size
 
     static const unsigned int	LightFade = 128;	// Light distance diminishing factor
 
@@ -43,7 +43,7 @@ namespace DOOM
     bool	renderSubsector(const DOOM::Doom & doom, int16_t index);																		// Iterate through seg of subsector
     bool	renderSeg(const DOOM::Doom & doom, int16_t index);																			// Projection of segment on screen
     void	renderTexture(const DOOM::Doom & doom, const DOOM::Doom::Resources::Texture & texture, int column, float top, float bottom, float height, int offset_x, float offset_y, int16_t light, int16_t seg);	// Draw a column from a texture
-    void	renderFlat(const DOOM::Doom & doom, const DOOM::AbstractFlat & flat, int column, int start, int end, float altitude, int16_t light, int16_t seg);							// Draw a column from a flat
+    void	renderFlat(const DOOM::Doom & doom, const DOOM::Doom::Resources::AbstractFlat & flat, int column, int start, int end, float altitude, int16_t light, int16_t seg);							// Draw a column from a flat
     void	renderSky(const DOOM::Doom & doom, int column, int start, int end, float altitude, int16_t seg);													// Draw a column from a sky texture
     void	renderThings(const DOOM::Doom & doom);																					// Draw things of current level
 

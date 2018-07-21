@@ -5,18 +5,17 @@
 
 #include <SFML/System/Time.hpp>
 
-#include "Doom/Thing/AbstractThing.hpp"
 #include "Doom/Doom.hpp"
 
 namespace DOOM
 {
-  class NullThing : public virtual AbstractThing
+  class NullThing : public virtual DOOM::Doom::Level::AbstractThing
   {    
   public:
-    NullThing(const DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing);
-    virtual ~NullThing();
+    NullThing(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing);
+    virtual ~NullThing() = default;
 
-    const std::pair<DOOM::Doom::Resources::Texture const *, bool> &	sprite(float angle) const override;
+    const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	sprite(float angle) const override;
   };
 };
 

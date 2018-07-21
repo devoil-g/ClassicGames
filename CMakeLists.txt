@@ -11,16 +11,12 @@ SET(GAME_DOOM_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Wad.hpp
 )
 SET(GAME_DOOM_FLAT_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Flat/AbstractFlat.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Flat/AbstractFlat.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Flat/AnimatedFlat.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Flat/AnimatedFlat.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Flat/StaticFlat.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Flat/StaticFlat.hpp
 )
 SET(GAME_DOOM_LINEDEF_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/AbstractLinedef.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/AbstractLinedef.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/NullLinedef.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/NullLinedef.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/ActionTriggerableLinedef.cpp
@@ -47,8 +43,6 @@ SET(GAME_DOOM_SECTOR_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/RandomLightingAction.hpp
 )
 SET(GAME_DOOM_THING_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractThing.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractThing.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AnimatedThing.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AnimatedThing.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/NullThing.cpp
@@ -134,14 +128,14 @@ SOURCE_GROUP("Resources\\" FILES ${GAME_RSRC})
 
 # Import SFML library
 SET(SFML_STATIC_LIBRARIES TRUE)
-FIND_PACKAGE(SFML 2 COMPONENTS system window network graphics audio REQUIRED)
+FIND_PACKAGE(SFML 2 COMPONENTS system main window network graphics audio REQUIRED)
 
 # Set includes directories
-INCLUDE_DIRECTORIES(${SFML_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/sources/)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/sources/)
 
 # Generate executables
 ADD_EXECUTABLE(Game ${GAME_SRCS} ${GAME_RSRC})
-TARGET_LINK_LIBRARIES(Game ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
+TARGET_LINK_LIBRARIES(Game sfml-main sfml-window sfml-network sfml-graphics sfml-audio)
 
 # Force C++11
 SET_TARGET_PROPERTIES(Game PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)

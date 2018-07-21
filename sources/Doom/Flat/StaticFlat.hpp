@@ -1,23 +1,25 @@
 #ifndef _STATIC_FLAT_HPP_
 #define _STATIC_FLAT_HPP_
 
-#include <vector>
-
-#include "Doom/Flat/AbstractFlat.hpp"
-#include "Doom/Wad.hpp"
+#include "Doom/Doom.hpp"
 
 namespace DOOM
 {
-  class StaticFlat : public virtual DOOM::AbstractFlat
+  class StaticFlat : public virtual DOOM::Doom::Resources::AbstractFlat
   {
+  public:
+    static DOOM::StaticFlat	NullFlat;
+
   private:
-    std::vector<uint8_t>	_flat;
+    std::array<uint8_t, 4096>	_flat;	// Flat texture buffer
+
+    StaticFlat() = default;
 
   public:
-    StaticFlat(const DOOM::Wad::RawResources::Flat & flat);
-    ~StaticFlat() override;
+    StaticFlat(DOOM::Doom & doom, const DOOM::Wad::RawResources::Flat & flat);
+    ~StaticFlat() override = default;
 
-    const std::vector<uint8_t> &	flat() const override;
+    const std::array<uint8_t, 4096> &	flat() const override;
   };
 };
 

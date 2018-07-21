@@ -1,6 +1,8 @@
 #ifndef _VECTOR_HPP_
 #define _VECTOR_HPP_
 
+#include <string>
+
 #include "Math/Math.hpp"
 
 namespace Math

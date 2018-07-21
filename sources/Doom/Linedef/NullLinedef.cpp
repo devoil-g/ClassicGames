@@ -1,15 +1,12 @@
 #include "Doom/Linedef/NullLinedef.hpp"
 
-DOOM::NullLinedef::NullLinedef(const DOOM::Wad::RawLevel::Linedef & linedef) :
-  DOOM::AbstractLinedef(linedef)
+DOOM::NullLinedef::NullLinedef(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef) :
+  DOOM::Doom::Level::AbstractLinedef(doom, linedef)
 {}
 
-DOOM::NullLinedef::NullLinedef(const DOOM::AbstractLinedef & linedef) :
-  DOOM::AbstractLinedef(linedef)
+DOOM::NullLinedef::NullLinedef(DOOM::Doom & doom, const DOOM::Doom::Level::AbstractLinedef & linedef) :
+  DOOM::Doom::Level::AbstractLinedef(doom, linedef)
 {}
 
-DOOM::NullLinedef::~NullLinedef()
-{}
-
-void	DOOM::NullLinedef::update(sf::Time)
+void	DOOM::NullLinedef::update(DOOM::Doom & doom, sf::Time)
 {}
