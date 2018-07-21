@@ -5,7 +5,7 @@
 #include "System/Window.hpp"
 
 Game::MessageState::MessageState(std::string const & message)
-  : _message(message, Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")), _return("Return", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf"))
+  : _message(message, Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")), _return("Return", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")), _selected(-1)
 {}
 
 Game::MessageState::~MessageState()

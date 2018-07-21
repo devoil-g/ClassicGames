@@ -1,7 +1,7 @@
 #ifndef _ACTION_TRIGGERABLE_LINEDEF_HPP_
 #define _ACTION_TRIGGERABLE_LINEDEF_HPP_
 
-#include "Doom/Doom.hpp"
+#include "Doom/Linedef/AbstractLinedef.hpp"
 #include "Doom/Linedef/NullLinedef.hpp"
 
 namespace DOOM
@@ -13,7 +13,7 @@ namespace DOOM
     DOOM::EnumLinedef::Monster Monster = DOOM::EnumLinedef::Monster::MonsterFalse,
     DOOM::EnumLinedef::Key Key = DOOM::EnumLinedef::Key::KeyNone
   >
-  class ActionTriggerableLinedef : public DOOM::Doom::Level::AbstractLinedef
+  class ActionTriggerableLinedef : public DOOM::AbstractLinedef
   {
   private:
     template<DOOM::EnumLinedef::Action _Action = DOOM::EnumLinedef::Action::ActionLeveling>
@@ -29,27 +29,27 @@ namespace DOOM
     }
 
     template<DOOM::EnumLinedef::Key _Key = DOOM::EnumLinedef::Key::KeyNone>
-    inline std::enable_if_t<Key == _Key, bool>	triggerKey(DOOM::Doom & doom, DOOM::Doom::Level::AbstractThing & thing)	// No check for key
+    inline std::enable_if_t<Key == _Key, bool>	triggerKey(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// No check for key
     {
       return true;
     }
 
     template<DOOM::EnumLinedef::Key _Key = DOOM::EnumLinedef::Key::KeyNone>
-    inline std::enable_if_t<Key != _Key, bool>	triggerKey(DOOM::Doom & doom, DOOM::Doom::Level::AbstractThing & thing)	// Check if player has the correct key
+    inline std::enable_if_t<Key != _Key, bool>	triggerKey(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Check if player has the correct key
     {
       // TODO: check key
       return true;
     }
     
     template<DOOM::EnumLinedef::Monster _Monster = DOOM::EnumLinedef::Monster::MonsterTrue>
-    inline std::enable_if_t<Monster == _Monster, bool>	triggerMonster(DOOM::Doom & doom, DOOM::Doom::Level::AbstractThing & thing)	// Trigger sector of second sidedef
+    inline std::enable_if_t<Monster == _Monster, bool>	triggerMonster(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger sector of second sidedef
     {
       // TODO: check monster
       return true;
     }
 
     template<DOOM::EnumLinedef::Monster _Monster = DOOM::EnumLinedef::Monster::MonsterTrue>
-    inline std::enable_if_t<Monster != _Monster, bool>	triggerMonster(DOOM::Doom & doom, DOOM::Doom::Level::AbstractThing & thing)	// Trigger sector of second sidedef
+    inline std::enable_if_t<Monster != _Monster, bool>	triggerMonster(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger sector of second sidedef
     {
       // TODO: check monster
       return true;
@@ -59,7 +59,7 @@ namespace DOOM
     inline std::enable_if_t<Repeat != _Repeat>	triggerRepeat(DOOM::Doom & doom)	// Replace linedef with null if not repeatable
     {
       // Replace current sector by a normal sector
-      for (std::unique_ptr<DOOM::Doom::Level::AbstractLinedef> & linedef : doom.level.linedefs)
+      for (std::unique_ptr<DOOM::AbstractLinedef> & linedef : doom.level.linedefs)
 	if (linedef.get() == this) {
 	  linedef = std::make_unique<DOOM::NullLinedef>(doom, *this);
 	  return;
@@ -74,7 +74,7 @@ namespace DOOM
     {}
 
     template<DOOM::EnumLinedef::Trigger _Trigger = DOOM::EnumLinedef::Trigger::TriggerPushed>
-    inline std::enable_if_t<(Trigger & _Trigger) != 0>	triggerSector(DOOM::Doom & doom, DOOM::Doom::Level::AbstractThing & thing)	// Trigger sector of second sidedef
+    inline std::enable_if_t<(Trigger & _Trigger) != 0>	triggerSector(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger sector of second sidedef
     {
       // Handle error
       if (back == -1)
@@ -90,7 +90,7 @@ namespace DOOM
     }
 
     template<DOOM::EnumLinedef::Trigger _Trigger = DOOM::EnumLinedef::Trigger::TriggerPushed>
-    inline std::enable_if_t<(Trigger & _Trigger) == 0>	triggerSector(DOOM::Doom & doom, DOOM::Doom::Level::AbstractThing & thing)	// Trigger tagged sectors
+    inline std::enable_if_t<(Trigger & _Trigger) == 0>	triggerSector(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger tagged sectors
     {
       // Trigger tagged sectors
       for (DOOM::Doom::Level::Sector & sector : doom.level.sectors)
@@ -99,11 +99,11 @@ namespace DOOM
     }
 
     template<DOOM::EnumLinedef::Trigger _Trigger>
-    inline std::enable_if_t<(Trigger & _Trigger) == 0>	trigger(DOOM::Doom & doom, DOOM::Doom::Level::AbstractThing & thing)	// Does nothing if wrong event triggered
+    inline std::enable_if_t<(Trigger & _Trigger) == 0>	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Does nothing if wrong event triggered
     {}
 
     template<DOOM::EnumLinedef::Trigger _Trigger>
-    inline std::enable_if_t<(Trigger & _Trigger) != 0>	trigger(DOOM::Doom & doom, DOOM::Doom::Level::AbstractThing & thing)	// Trigger event if correct event triggered
+    inline std::enable_if_t<(Trigger & _Trigger) != 0>	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger event if correct event triggered
     {
       // Check for monster condition
       if (triggerMonster(doom, thing) == false)
@@ -122,7 +122,7 @@ namespace DOOM
 
   public:
     ActionTriggerableLinedef(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef) :
-      DOOM::Doom::Level::AbstractLinedef(doom, linedef)
+      DOOM::AbstractLinedef(doom, linedef)
     {}
 
     ~ActionTriggerableLinedef() = default;
@@ -136,22 +136,22 @@ namespace DOOM
       gunfire(doom, *doom.level.things.front().get());
     }
 
-    virtual void	pushed(DOOM::Doom & doom, DOOM::Doom::Level::AbstractThing & thing) override	// To call when linedef is pushed by thing
+    virtual void	pushed(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// To call when linedef is pushed by thing
     {
       trigger<DOOM::EnumLinedef::Trigger::TriggerPushed>(doom, thing);
     }
 
-    virtual void	switched(DOOM::Doom & doom, DOOM::Doom::Level::AbstractThing & thing) override	// To call when linedef is switched (used) by thing
+    virtual void	switched(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// To call when linedef is switched (used) by thing
     {
       trigger<DOOM::EnumLinedef::Trigger::TriggerSwitched>(doom, thing);
     }
 
-    virtual void	walkover(DOOM::Doom & doom, DOOM::Doom::Level::AbstractThing & thing) override	// To call when thing walk over the linedef
+    virtual void	walkover(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// To call when thing walk over the linedef
     {
       trigger<DOOM::EnumLinedef::Trigger::TriggerWalkover>(doom, thing);
     }
 
-    virtual void	gunfire(DOOM::Doom & doom, DOOM::Doom::Level::AbstractThing & thing) override	// To call when thing shot the linedef
+    virtual void	gunfire(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// To call when thing shot the linedef
     {
       trigger<DOOM::EnumLinedef::Trigger::TriggerGunfire>(doom, thing);
     }

@@ -1,19 +1,19 @@
 #ifndef _BLINK_LIGHTING_ACTION_HPP_
 #define _BLINK_LIGHTING_ACTION_HPP_
 
-#include "Doom/Doom.hpp"
+#include "Doom/Action/AbstractAction.hpp"
 
 namespace DOOM
 {
   template<unsigned int CycleDuration = 35, unsigned int FlashDuration = 5, bool Sync = false>
-  class BlinkLightingAction : public DOOM::Doom::Level::Sector::AbstractAction
+  class BlinkLightingAction : public DOOM::AbstractAction
   {
   private:
     sf::Time	_elapsed;	// Elapsed time
 
   public:
     BlinkLightingAction(DOOM::Doom & doom) :
-      DOOM::Doom::Level::Sector::AbstractAction(doom),
+      DOOM::AbstractAction(doom),
       _elapsed(Sync == true ? sf::Time::Zero : DOOM::Doom::Tic * (9.f * Math::Random()))
     {}
 

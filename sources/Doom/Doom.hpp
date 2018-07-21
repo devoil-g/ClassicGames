@@ -115,6 +115,12 @@ namespace DOOM
     };
   }
 
+  // Forward declaration of external components
+  class AbstractAction;
+  class AbstractFlat;
+  class AbstractLinedef;
+  class AbstractThing;
+
   class Doom
   {
   public:
@@ -138,25 +144,11 @@ namespace DOOM
 	~Colormap() = default;
       };
 
-      class AbstractFlat
-      {
-      public:
-	static std::unique_ptr<DOOM::Doom::Resources::AbstractFlat>	factory(DOOM::Doom & doom, uint64_t name, const DOOM::Wad::RawResources::Flat & flat);
-
-      protected:
-	AbstractFlat() = default;
-
-      public:
-	AbstractFlat(DOOM::Doom & doom);
-	virtual ~AbstractFlat() = default;
-
-	virtual void					update(DOOM::Doom & doom, sf::Time elapsed);	// Update flat
-	virtual const std::array<uint8_t, 4096> &	flat() const = 0;				// Return flat to be displayed
-      };
-
       class Texture
       {
       public:
+	static const DOOM::Doom::Resources::Texture	Null;	// Empty texture
+
 	struct Column
 	{
 	  struct Span
@@ -189,15 +181,13 @@ namespace DOOM
 	~Sound() = default;
       };
 
-      static const DOOM::Doom::Resources::Texture	NullTexture;	// Empty texture
-
-      std::array<DOOM::Doom::Resources::Palette, 14>						palettes;	// Color palettes
-      std::array<DOOM::Doom::Resources::Colormap, 34>						colormaps;	// Color brightness maps
-      std::unordered_map<uint64_t, std::unique_ptr<DOOM::Doom::Resources::AbstractFlat>>	flats;		// Map of flat (ground/ceiling texture)
-      std::unordered_map<uint64_t, DOOM::Doom::Resources::Texture>				textures;	// Map of wall textures
-      std::unordered_map<uint64_t, DOOM::Doom::Resources::Texture>				sprites;	// Map of sprites
-      std::unordered_map<uint64_t, DOOM::Doom::Resources::Texture>				menus;		// Map of menu patches
-      std::unordered_map<uint64_t, DOOM::Doom::Resources::Sound>				sounds;		// Map of sounds
+      std::array<DOOM::Doom::Resources::Palette, 14>			palettes;	// Color palettes
+      std::array<DOOM::Doom::Resources::Colormap, 34>			colormaps;	// Color brightness maps
+      std::unordered_map<uint64_t, std::unique_ptr<DOOM::AbstractFlat>>	flats;		// Map of flat (ground/ceiling texture)
+      std::unordered_map<uint64_t, DOOM::Doom::Resources::Texture>	textures;	// Map of wall textures
+      std::unordered_map<uint64_t, DOOM::Doom::Resources::Texture>	sprites;	// Map of sprites
+      std::unordered_map<uint64_t, DOOM::Doom::Resources::Texture>	menus;		// Map of menu patches
+      std::unordered_map<uint64_t, DOOM::Doom::Resources::Sound>	sounds;		// Map of sounds
 
       Resources() = default;
       ~Resources() = default;
@@ -238,81 +228,6 @@ namespace DOOM
 	const DOOM::Doom::Resources::Texture &	upper() const;					// Return upper texture to be displayed
 	const DOOM::Doom::Resources::Texture &	lower() const;					// Return lower texture to be displayed
 	const DOOM::Doom::Resources::Texture &	middle() const;					// Return middle texture to be displayed
-      };
-
-      class AbstractThing
-      {
-      public:
-	static std::unique_ptr<DOOM::Doom::Level::AbstractThing>	factory(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing);
-
-	enum Flag : int16_t
-	{
-	  SkillLevel12 = 0x0001,	// Active on skill level 1 & 2
-	  SkillLevel3 = 0x0002,	// Active on skill level 3
-	  SkillLevel45 = 0x0004,	// Active on skill level 4 & 5
-	  Ambush = 0x0008,		// Monster is in ambush mode
-	  Multiplayer = 0x0010	// Only active in multiplayer mode
-	};
-
-	enum Properties : int16_t
-	{
-	  None = 0x0000,		// No properties
-	  Artifact = 0x0001,	// Artifact item, counts toward ITEMS percentage at the end of a level
-	  Hanging = 0x0002,		// Hangs from ceiling, or floats if a monster
-	  Monster = 0x0004,		// Monster, counts towards kill percentage
-	  Obstacle = 0x0008,	// Obstacle, players and monsters must walk around
-	  Pickup = 0x0010		// Pickup, player can pick the thing up by walking over it
-	};
-
-	Math::Vector<2>	position;	// Thing position
-	float		height;		// Thing height from floor (or ceiling is hanging)
-	float		angle;		// Thing orientation (rad.)
-	const int16_t	type;		// Thing flags (see enum)
-	const int16_t	flag;		// Thing flags (see enum)
-	const int16_t	radius;		// Thing radius (square box)
-	const int16_t	properties;	// Thing properties (see enum)
-
-	AbstractThing(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing, int16_t radius, int16_t properties);
-	virtual ~AbstractThing() = default;
-
-	virtual bool											update(DOOM::Doom & doom, sf::Time elapsed);	// Update thing, return true if thing should be deleted
-	virtual const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	sprite(float angle) const = 0;			// Return sprite to be displayed
-      };
-
-      class AbstractLinedef
-      {
-      public:
-	static std::unique_ptr<DOOM::Doom::Level::AbstractLinedef>	factory(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef);
-
-	enum Flag
-	{
-	  Impassible = 0x0001,	// Players and monsters cannot cross this line
-	  BlockMonsters = 0x0002,	// Monsters cannot cross this line
-	  TwoSided = 0x0004,	// See documentation
-	  UpperUnpegged = 0x0008,	// The upper texture is pasted onto the wall from the top down instead of from the bottom up like usual
-	  LowerUnpegged = 0x0010,	// Lower and middle textures are drawn from the bottom up, instead of from the top down like usual
-	  Secret = 0x0020,		// See documentation
-	  BlockSound = 0x0040,	// For purposes of monsters hearing sounds and thus becoming alerted
-	  NotOnMap = 0x0080,	// The line is not shown on the automap
-	  AlreadyOnMap = 0x0100	// When the level is begun, this line is already on the automap
-	};
-
-	int16_t	start, end;	// Start and end vertexes
-	int16_t	flag;		// Linedef flag (see enum)
-	int16_t	type;		// Linedef type (see enum)
-	int16_t	tag;		// Linedef sector tag
-	int16_t	front, back;	// Front (right) and back (left) sidedefs indexes (-1 if no sidedef)
-
-	AbstractLinedef(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef);
-	AbstractLinedef(DOOM::Doom & doom, const DOOM::Doom::Level::AbstractLinedef & linedef);
-	virtual ~AbstractLinedef() = default;
-
-	virtual void	update(DOOM::Doom & doom, sf::Time elapsed) = 0;	// Update linedef (TODO: remove this ?)
-
-	virtual void	pushed(DOOM::Doom & doom, DOOM::Doom::Level::AbstractThing & thing);	// To call when linedef is pushed by thing
-	virtual void	switched(DOOM::Doom & doom, DOOM::Doom::Level::AbstractThing & thing);	// To call when linedef is switched (used) by thing
-	virtual void	walkover(DOOM::Doom & doom, DOOM::Doom::Level::AbstractThing & thing);	// To call when thing walk over the linedef
-	virtual void	gunfire(DOOM::Doom & doom, DOOM::Doom::Level::AbstractThing & thing);	// To call when thing shot the linedef
       };
 
       class Segment
@@ -359,19 +274,6 @@ namespace DOOM
       class Sector
       {
       public:
-	class AbstractAction
-	{
-	public:
-	  static std::unique_ptr<DOOM::Doom::Level::Sector::AbstractAction>	factory(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, int16_t type);	// Factory of sector action build from type
-
-	public:
-	  AbstractAction(DOOM::Doom & doom);
-	  virtual ~AbstractAction() = default;
-
-	  virtual void	update(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed) = 0;	// Update sector's action
-	  virtual void	stop();											// Request action to stop (for lift & crusher)
-	};
-
 	enum Special : int16_t
 	{
 	  Normal = 0x0000,		// Normal
@@ -392,8 +294,8 @@ namespace DOOM
 	  LightFlickers = 0x0011	// Flickers randomly (fire)
 	};
 
-	uint64_t								floor_name, ceiling_name;	// Textures names
-	std::reference_wrapper<const DOOM::Doom::Resources::AbstractFlat>	floor_flat, ceiling_flat;	// Textures pointers (null if sky)
+	uint64_t						floor_name, ceiling_name;	// Textures names
+	std::reference_wrapper<const DOOM::AbstractFlat>	floor_flat, ceiling_flat;	// Textures pointers (null if sky)
 	
 	int16_t	light_current, light_base;	// Sector base and current light level
 	float	floor_current, floor_base;	// Sector base and current floor height
@@ -407,8 +309,10 @@ namespace DOOM
 	std::vector<int16_t>	_neighbors;	// List of neighbor sectors
 
       private:
-	std::array<std::unique_ptr<DOOM::Doom::Level::Sector::AbstractAction>, DOOM::EnumAction::Type::TypeNumber>	_actions;	// Actions on sector
+	std::array<std::unique_ptr<DOOM::AbstractAction>, DOOM::EnumAction::Type::TypeNumber>	_actions;	// Actions on sector
 	
+	static std::unique_ptr<DOOM::AbstractAction>	_factory(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, int16_t type);	// Action factory intermediate function (cycling inclusion problem)
+
       public:
 	Sector(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Sector & sector);
 	Sector(DOOM::Doom::Level::Sector && sector);
@@ -424,11 +328,11 @@ namespace DOOM
 
 	  // Push action if slot available
 	  if (_actions.at(Type).get() == nullptr)
-	    _actions.at(Type) = std::move(DOOM::Doom::Level::Sector::AbstractAction::factory(doom, *this, type));
+	    _actions.at(Type) = std::move(_factory(doom, *this, type));
 	}
 
 	template<DOOM::EnumAction::Type Type>
-	inline void	action(std::unique_ptr<DOOM::Doom::Level::Sector::AbstractAction> && action)	// Add action to sector if possible
+	inline void	action(std::unique_ptr<DOOM::AbstractAction> && action)	// Add action to sector if possible
 	{
 	  // Check template parameter
 	  static_assert(Type >= 0 && Type < DOOM::EnumAction::Type::TypeNumber, "Invalid action template parameters.");
@@ -439,7 +343,7 @@ namespace DOOM
 	}
 
 	template<DOOM::EnumAction::Type Type>
-	inline const std::unique_ptr<DOOM::Doom::Level::Sector::AbstractAction> &	action() const	// Get action of sector
+	inline const std::unique_ptr<DOOM::AbstractAction> &	action() const	// Get action of sector
 	{
 	  // Check template parameter
 	  static_assert(Type >= 0 && Type < DOOM::EnumAction::Type::TypeNumber, "Invalid action template parameters.");
@@ -448,7 +352,7 @@ namespace DOOM
 	}
 
 	template<DOOM::EnumAction::Type Type>
-	inline std::unique_ptr<DOOM::Doom::Level::Sector::AbstractAction> &	action()	// Get/set action of sector
+	inline std::unique_ptr<DOOM::AbstractAction> &	action()	// Get/set action of sector
 	{
 	  // Check template parameter
 	  static_assert(Type >= 0 && Type < DOOM::EnumAction::Type::TypeNumber, "Invalid action template parameters.");
@@ -475,8 +379,8 @@ namespace DOOM
       public:
 	struct Block
 	{
-	  std::vector<int16_t>				linedefs;	// Indexes of linedefs in block
-	  std::list<DOOM::Doom::Level::AbstractThing *>	things;		// Things in block
+	  std::vector<int16_t>						linedefs;	// Indexes of linedefs in block
+	  std::list<std::reference_wrapper<DOOM::AbstractThing>>	things;		// Things in block
 	};
 
 	int16_t	x;	// Blockmap X origin
@@ -493,8 +397,8 @@ namespace DOOM
 
       std::pair<uint8_t, uint8_t>					episode;	// Level episode and episode's mission number
       std::reference_wrapper<const DOOM::Doom::Resources::Texture>	sky;		// Sky texture of the level
-      std::vector<std::unique_ptr<DOOM::Doom::Level::AbstractThing>>	things;		// List of things
-      std::vector<std::unique_ptr<DOOM::Doom::Level::AbstractLinedef>>	linedefs;	// List of linedefs
+      std::vector<std::unique_ptr<DOOM::AbstractThing>>			things;		// List of things
+      std::vector<std::unique_ptr<DOOM::AbstractLinedef>>		linedefs;	// List of linedefs
       std::vector<DOOM::Doom::Level::Sidedef>				sidedefs;	// List of sidedefs
       std::vector<DOOM::Doom::Level::Vertex>				vertexes;	// List of vertexes
       std::vector<DOOM::Doom::Level::Segment>				segments;	// List of segs
@@ -551,5 +455,11 @@ namespace DOOM
     void					setLevel(const std::pair<uint8_t, uint8_t> & level);	// Build specified level from WAD, return true if successful
   };
 };
+
+// Definition of class forward-declared
+#include "Doom/Action/AbstractAction.hpp"
+#include "Doom/Flat/AbstractFlat.hpp"
+#include "Doom/Linedef/AbstractLinedef.hpp"
+#include "Doom/Thing/AbstractThing.hpp"
 
 #endif

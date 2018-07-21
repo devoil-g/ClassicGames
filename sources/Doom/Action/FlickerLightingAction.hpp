@@ -3,7 +3,7 @@
 
 #include <SFML/System/Time.hpp>
 
-#include "Doom/Doom.hpp"
+#include "Doom/Action/AbstractAction.hpp"
 
 namespace DOOM
 {
@@ -11,7 +11,7 @@ namespace DOOM
     unsigned int CycleDuration = 32,
     unsigned int FlickerDuration = 4
   >
-  class FlickerLightingAction : public DOOM::Doom::Level::Sector::AbstractAction
+  class FlickerLightingAction : public DOOM::AbstractAction
   {
   private:
     int16_t	_cycle;		// Cycle duration
@@ -20,7 +20,7 @@ namespace DOOM
 
   public:
     FlickerLightingAction(DOOM::Doom & doom) :
-      DOOM::Doom::Level::Sector::AbstractAction(doom),
+      DOOM::AbstractAction(doom),
       _cycle(0),
       _flicker(0),
       _elapsed(sf::Time::Zero)

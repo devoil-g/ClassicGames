@@ -11,12 +11,16 @@ SET(GAME_DOOM_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Wad.hpp
 )
 SET(GAME_DOOM_FLAT_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Flat/AbstractFlat.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Flat/AbstractFlat.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Flat/AnimatedFlat.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Flat/AnimatedFlat.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Flat/StaticFlat.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Flat/StaticFlat.hpp
 )
 SET(GAME_DOOM_LINEDEF_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/AbstractLinedef.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/AbstractLinedef.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/NullLinedef.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/NullLinedef.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/ActionTriggerableLinedef.cpp
@@ -27,22 +31,26 @@ SET(GAME_DOOM_LINEDEF_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/StairTriggerableLinedef.hpp
 )
 SET(GAME_DOOM_SECTOR_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/BlinkLightingAction.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/BlinkLightingAction.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/CeilingLevelingAction.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/CeilingLevelingAction.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/DoorLevelingAction.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/DoorLevelingAction.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/FlickerLightingAction.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/FlickerLightingAction.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/FloorLevelingAction.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/FloorLevelingAction.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/OscillateLightingAction.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/OscillateLightingAction.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/RandomLightingAction.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Sector/RandomLightingAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/AbstractAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/AbstractAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/BlinkLightingAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/BlinkLightingAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/CeilingLevelingAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/CeilingLevelingAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/DoorLevelingAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/DoorLevelingAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/FlickerLightingAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/FlickerLightingAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/FloorLevelingAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/FloorLevelingAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/OscillateLightingAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/OscillateLightingAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/RandomLightingAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/RandomLightingAction.hpp
 )
 SET(GAME_DOOM_THING_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractThing.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractThing.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AnimatedThing.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AnimatedThing.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/NullThing.cpp

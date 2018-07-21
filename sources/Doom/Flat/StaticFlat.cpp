@@ -1,9 +1,7 @@
 #include "Doom/Flat/StaticFlat.hpp"	
 
-DOOM::StaticFlat	DOOM::StaticFlat::NullFlat;
-
 DOOM::StaticFlat::StaticFlat(DOOM::Doom & doom, DOOM::Wad::RawResources::Flat const & flat) :
-  DOOM::Doom::Resources::AbstractFlat(doom),
+  DOOM::AbstractFlat(doom),
   _flat()
 {
   // Copy raw flat

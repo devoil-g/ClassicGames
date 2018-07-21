@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "Doom/Doom.hpp"
+#include "Doom/Thing/AbstractThing.hpp"
 #include "States/DoomState.hpp"
 #include "States/StateMachine.hpp"
 #include "System/Config.hpp"
@@ -25,7 +26,7 @@ Game::DoomState::DoomState() :
   _camera.angle = 0.f;
 
   // Set player initial position
-  for (const std::unique_ptr<DOOM::Doom::Level::AbstractThing> & thing : _doom.level.things)
+  for (const std::unique_ptr<DOOM::AbstractThing> & thing : _doom.level.things)
     if (thing->type == 1)
     {
       _camera.position = thing->position;
@@ -127,7 +128,7 @@ bool	Game::DoomState::updatePlayer(sf::Time elapsed)
       }
 
       // Set new camera position
-      for (const std::unique_ptr<DOOM::Doom::Level::AbstractThing> & thing : _doom.level.things)
+      for (const std::unique_ptr<DOOM::AbstractThing> & thing : _doom.level.things)
 	if (thing->type == 1)
 	{
 	  _camera.position = thing->position;

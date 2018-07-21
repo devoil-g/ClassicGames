@@ -1,16 +1,17 @@
 #ifndef _ANIMATED_FLAT_HPP_
 #define _ANIMATED_FLAT_HPP_
 
-#include <unordered_map>
+#include <array>
+#include <vector>
 
 #include <SFML/System/Time.hpp>
 
-#include "Doom/Doom.hpp"
+#include "Doom/Flat/AbstractFlat.hpp"
 
 namespace DOOM
 {
   template<unsigned int FrameDuration = 8>
-  class AnimatedFlat : public virtual DOOM::Doom::Resources::AbstractFlat
+  class AnimatedFlat : public virtual DOOM::AbstractFlat
   {
   private:
     sf::Time					_elapsed;	// Total elapsed time
@@ -18,7 +19,7 @@ namespace DOOM
     
   public:
     AnimatedFlat(DOOM::Doom & doom, const std::vector<uint64_t> & frames) :
-      DOOM::Doom::Resources::AbstractFlat(doom),
+      DOOM::AbstractFlat(doom),
       _elapsed(),
       _flats(frames.size())
     {

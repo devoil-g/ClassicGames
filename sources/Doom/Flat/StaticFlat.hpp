@@ -1,14 +1,13 @@
 #ifndef _STATIC_FLAT_HPP_
 #define _STATIC_FLAT_HPP_
 
-#include "Doom/Doom.hpp"
+#include "Doom/Flat/AbstractFlat.hpp"
 
 namespace DOOM
 {
-  class StaticFlat : public virtual DOOM::Doom::Resources::AbstractFlat
+  class StaticFlat : public virtual DOOM::AbstractFlat
   {
-  public:
-    static DOOM::StaticFlat	NullFlat;
+    friend DOOM::AbstractFlat;	// For Null flat
 
   private:
     std::array<uint8_t, 4096>	_flat;	// Flat texture buffer

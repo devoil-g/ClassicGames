@@ -129,8 +129,8 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, int16_t index)
   if (std::isnan(left.screen) == true || std::isnan(right.screen) == true || (left.screen < 0.f && right.screen < 0.f) || (left.screen >= 1.f && right.screen >= 1.f) || (left.screen == right.screen))
     return false;
 
-  DOOM::Doom::Level::AbstractLinedef const &	linedef(*doom.level.linedefs[seg.linedef]);
-  bool						side(seg.direction == 0 ? left.screen > right.screen : left.screen < right.screen);
+  DOOM::AbstractLinedef const &	linedef(*doom.level.linedefs[seg.linedef]);
+  bool				side(seg.direction == 0 ? left.screen > right.screen : left.screen < right.screen);
 
   // Cancel if no sidedef on left side
   if (side == true && linedef.back == -1)
@@ -170,13 +170,13 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, int16_t index)
   float	right_upper_back = _horizon - (sector_back.ceiling_current - height) * right_c;
   
   // Texture Y offsets
-  float	upper_offset_y = (linedef.flag & DOOM::Doom::Level::AbstractLinedef::Flag::UpperUnpegged) ?
+  float	upper_offset_y = (linedef.flag & DOOM::AbstractLinedef::Flag::UpperUnpegged) ?
     (sidedef_front.y - (sector_front.ceiling_current - std::max(sector_front.ceiling_current, sector_back.ceiling_current))) :
     (sidedef_front.y - (sector_front.ceiling_current - std::min(sector_front.ceiling_current, sector_back.ceiling_current)) + texture_upper.height);
-  float	middle_offset_y = (linedef.flag & DOOM::Doom::Level::AbstractLinedef::Flag::LowerUnpegged) ?
+  float	middle_offset_y = (linedef.flag & DOOM::AbstractLinedef::Flag::LowerUnpegged) ?
     (sidedef_front.y - (sector_front.ceiling_current - std::max(sector_front.floor_current, sector_back.floor_current)) + texture_middle.height) :
     (sidedef_front.y - (sector_front.ceiling_current - std::min(sector_front.ceiling_current, sector_back.ceiling_current)));
-  float	lower_offset_y = (linedef.flag & DOOM::Doom::Level::AbstractLinedef::Flag::LowerUnpegged) ?
+  float	lower_offset_y = (linedef.flag & DOOM::AbstractLinedef::Flag::LowerUnpegged) ?
     (sidedef_front.y - (sector_back.floor_current - sector_front.ceiling_current)) :
     (sidedef_front.y - (sector_back.floor_current - std::max(sector_front.floor_current, sector_back.floor_current)));
 
@@ -299,7 +299,7 @@ void	DOOM::Camera::renderTexture(DOOM::Doom const & doom, DOOM::Doom::Resources:
     }
 }
 
-void	DOOM::Camera::renderFlat(DOOM::Doom const & doom, const DOOM::Doom::Resources::AbstractFlat & flat, int column, int start, int end, float altitude, int16_t light, int16_t seg)
+void	DOOM::Camera::renderFlat(DOOM::Doom const & doom, const DOOM::AbstractFlat & flat, int column, int start, int end, float altitude, int16_t light, int16_t seg)
 {
   Math::Vector<2>			direction(_screen_start + _screen * ((float)column / (float)_image.getSize().x) - position);
   const std::array<uint8_t, 4096> &	texture = flat.flat();
@@ -361,8 +361,8 @@ void	DOOM::Camera::renderSky(DOOM::Doom const & doom, int column, int start, int
 
 void	DOOM::Camera::renderThings(DOOM::Doom const & doom)
 {
-  std::list<std::pair<DOOM::Doom::Level::AbstractThing const *, float>>	things;		// List of things to render and their distance to camera
-  std::unordered_map<int16_t, float>					vertexes;	// Map of vertexes and their distance to camera
+  std::list<std::pair<DOOM::AbstractThing const *, float>>	things;		// List of things to render and their distance to camera
+  std::unordered_map<int16_t, float>				vertexes;	// Map of vertexes and their distance to camera
 
   // Pre-calculated projection factors
   Math::Vector<2>	eye_0(std::cos(angle), std::sin(angle));
@@ -370,7 +370,7 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom)
   float			eye_r(Math::Vector<2>::determinant(eye_0, eye_90));
 
   // Render every things of current level
-  for (const std::unique_ptr<DOOM::Doom::Level::AbstractThing> & thing : doom.level.things)
+  for (const std::unique_ptr<DOOM::AbstractThing> & thing : doom.level.things)
   {
     float	distance = Math::Vector<2>::determinant(thing->position - position, eye_90) / eye_r;
 
@@ -380,12 +380,12 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom)
   }
 
   // Order list of things of render
-  things.sort([](std::pair<DOOM::Doom::Level::AbstractThing const *, float> const & a, std::pair<DOOM::Doom::Level::AbstractThing const *, float> const & b) { return a.second > b.second; });
+  things.sort([](std::pair<DOOM::AbstractThing const *, float> const & a, std::pair<DOOM::AbstractThing const *, float> const & b) { return a.second > b.second; });
 
   // Render things in reverse order
-  for (std::list<std::pair<DOOM::Doom::Level::AbstractThing const *, float>>::const_iterator iterator = things.begin(); iterator != things.end(); iterator++)
+  for (std::list<std::pair<DOOM::AbstractThing const *, float>>::const_iterator iterator = things.begin(); iterator != things.end(); iterator++)
   {
-    const DOOM::Doom::Level::AbstractThing &							thing(*iterator->first);
+    const DOOM::AbstractThing &									thing(*iterator->first);
     const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	texture(thing.sprite(angle));
     
     // Compute thing position on screen
@@ -394,9 +394,9 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom)
 
     float	thing_factor = _factor / ((thing.position - position).length() / (_screen_start + _screen * thing_projection.first - position).length());
     float	first_x = thing_projection.first * _image.getSize().x + ((texture.second == false ? 0 : texture.first.get().width) - texture.first.get().left) * thing_factor;
-    float	first_y = _horizon - (((thing.properties & DOOM::Doom::Level::AbstractThing::Properties::Hanging) ? doom.level.sectors[thing_sector.first].ceiling_current + texture.first.get().height - texture.first.get().top : doom.level.sectors[thing_sector.first].floor_current + texture.first.get().top) - height) * thing_factor;
+    float	first_y = _horizon - (((thing.properties & DOOM::AbstractThing::Properties::Hanging) ? doom.level.sectors[thing_sector.first].ceiling_current + texture.first.get().height - texture.first.get().top : doom.level.sectors[thing_sector.first].floor_current + texture.first.get().top) - height) * thing_factor;
     float	second_x = thing_projection.first * _image.getSize().x + ((texture.second == false ? texture.first.get().width : 0) - texture.first.get().left) * thing_factor;
-    float	second_y = _horizon - (((thing.properties & DOOM::Doom::Level::AbstractThing::Properties::Hanging) ? doom.level.sectors[thing_sector.first].ceiling_current - texture.first.get().top : doom.level.sectors[thing_sector.first].floor_current - texture.first.get().height + texture.first.get().top) - height) * thing_factor;
+    float	second_y = _horizon - (((thing.properties & DOOM::AbstractThing::Properties::Hanging) ? doom.level.sectors[thing_sector.first].ceiling_current - texture.first.get().top : doom.level.sectors[thing_sector.first].floor_current - texture.first.get().height + texture.first.get().top) - height) * thing_factor;
 
     // Map of thing visibility against segments
     std::unordered_map<int16_t, bool>	visible;
