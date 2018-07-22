@@ -21,6 +21,8 @@ SET(GAME_DOOM_FLAT_SRCS
 SET(GAME_DOOM_LINEDEF_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/AbstractLinedef.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/AbstractLinedef.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/AbstractTriggerableLinedef.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/AbstractTriggerableLinedef.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/NullLinedef.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/NullLinedef.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/ActionTriggerableLinedef.cpp
@@ -30,7 +32,7 @@ SET(GAME_DOOM_LINEDEF_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/StairTriggerableLinedef.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/StairTriggerableLinedef.hpp
 )
-SET(GAME_DOOM_SECTOR_SRCS
+SET(GAME_DOOM_ACTION_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/AbstractAction.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/AbstractAction.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/BlinkLightingAction.cpp
@@ -104,7 +106,7 @@ SET(GAME_SRCS
 	${GAME_DOOM_SRCS}
 	${GAME_DOOM_FLAT_SRCS}
 	${GAME_DOOM_LINEDEF_SRCS}
-	${GAME_DOOM_SECTOR_SRCS}
+	${GAME_DOOM_ACTION_SRCS}
 	${GAME_DOOM_THING_SRCS}
 	${GAME_MATH_SRCS}
 	${GAME_STATES_SRCS}
@@ -125,7 +127,7 @@ SOURCE_GROUP("\\" FILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp)
 SOURCE_GROUP("Doom\\" FILES ${GAME_DOOM_SRCS})
 SOURCE_GROUP("Doom\\Flat\\" FILES ${GAME_DOOM_FLAT_SRCS})
 SOURCE_GROUP("Doom\\Linedef\\" FILES ${GAME_DOOM_LINEDEF_SRCS})
-SOURCE_GROUP("Doom\\Sector\\" FILES ${GAME_DOOM_SECTOR_SRCS})
+SOURCE_GROUP("Doom\\Action\\" FILES ${GAME_DOOM_ACTION_SRCS})
 SOURCE_GROUP("Doom\\Thing\\" FILES ${GAME_DOOM_THING_SRCS})
 SOURCE_GROUP("Math\\" FILES ${GAME_MATH_SRCS})
 SOURCE_GROUP("States\\" FILES ${GAME_STATES_SRCS})
@@ -136,14 +138,14 @@ SOURCE_GROUP("Resources\\" FILES ${GAME_RSRC})
 
 # Import SFML library
 SET(SFML_STATIC_LIBRARIES TRUE)
-FIND_PACKAGE(SFML 2 COMPONENTS system main window network graphics audio REQUIRED)
+FIND_PACKAGE(SFML 2 COMPONENTS system main system window network graphics audio REQUIRED)
 
 # Set includes directories
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/sources/)
 
 # Generate executables
 ADD_EXECUTABLE(Game ${GAME_SRCS} ${GAME_RSRC})
-TARGET_LINK_LIBRARIES(Game sfml-main sfml-window sfml-network sfml-graphics sfml-audio)
+TARGET_LINK_LIBRARIES(Game sfml-main sfml-system sfml-window sfml-network sfml-graphics sfml-audio)
 
 # Force C++11
 SET_TARGET_PROPERTIES(Game PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)

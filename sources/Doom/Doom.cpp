@@ -522,7 +522,7 @@ std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>>	DOOM::
     if (doom.resources.textures.find(frame) == doom.resources.textures.end())
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-    result.push_back(std::cref(doom.resources.textures.find(frame)->second));
+    result.push_back(doom.resources.textures.find(frame)->second);
   }
 
   // Return animation

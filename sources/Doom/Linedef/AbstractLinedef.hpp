@@ -9,6 +9,7 @@ namespace DOOM
 {
   class Doom;
 
+  // TODO: refactor linedef
   class AbstractLinedef
   {
   public:

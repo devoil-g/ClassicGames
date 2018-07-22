@@ -1,8 +1,7 @@
 #ifndef _STAIR_TRIGGERABLE_LINEDEF_HPP_
 #define _STAIR_TRIGGERABLE_LINEDEF_HPP_
 
-#include "Doom/Linedef/AbstractLinedef.hpp"
-#include "Doom/Linedef/NullLinedef.hpp"
+#include "Doom/Linedef/AbstractTriggerableLinedef.hpp"
 #include "Doom/Action/FloorLevelingAction.hpp"
 
 namespace DOOM
@@ -12,13 +11,9 @@ namespace DOOM
     DOOM::EnumAction::Speed Speed,
     unsigned int Step
   >
-  class StairTriggerableLinedef : public DOOM::AbstractLinedef
+  class StairTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, DOOM::EnumLinedef::Repeat::RepeatFalse>
   {
   private:
-    template<DOOM::EnumLinedef::Trigger _Trigger>
-    inline std::enable_if_t<(Trigger & _Trigger) == 0>	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Does nothing if wrong event triggered
-    {}
-
     inline void	triggerStair(DOOM::Doom & doom, int16_t sector_index)	// Build stairs from sector
     {
       // Does nothing if action already running
@@ -58,61 +53,31 @@ namespace DOOM
 
       } while (true);
     }
-    
-    template<DOOM::EnumLinedef::Trigger _Trigger>
-    inline std::enable_if_t<(Trigger & _Trigger) != 0>	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger event if correct event triggered
+
+    void	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// Trigger stair builder on tagged event
     {
+      // Handle error
+      if (tag == 0)
+      {
+	std::cerr << "[StairTriggerableLinedef:trigger] Warning, invalid pushed tag (" << tag << ")." << std::endl;
+	return;
+
+	// TODO: solve problem of level 20
+	throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+      }
+
       // Trigger tagged sectors
       for (unsigned int sector_index = 0; sector_index < doom.level.sectors.size(); sector_index++)
 	if (doom.level.sectors[sector_index].tag == tag)
 	  triggerStair(doom, sector_index);
-
-      // Replace current sector by a normal sector
-      for (std::unique_ptr<DOOM::AbstractLinedef> & linedef : doom.level.linedefs)
-	if (linedef.get() == this) {
-	  linedef = std::move(std::make_unique<DOOM::NullLinedef>(doom, *this));
-	  return;
-	}
-
-      // Linedef not found
-      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
     }
 
   public:
     StairTriggerableLinedef(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef) :
-      DOOM::AbstractLinedef(doom, linedef)
+      DOOM::AbstractTriggerableLinedef<Trigger, DOOM::EnumLinedef::Repeat::RepeatFalse>(doom, linedef)
     {}
 
     ~StairTriggerableLinedef() = default;
-
-    virtual void	update(DOOM::Doom & doom, sf::Time elapsed) override	// Update linedef
-    {
-      // TODO: remove this (note: may crash because of deleted instance)
-      pushed(doom, *doom.level.things.front().get());
-      switched(doom, *doom.level.things.front().get());
-      walkover(doom, *doom.level.things.front().get());
-      gunfire(doom, *doom.level.things.front().get());
-    }
-
-    virtual void	pushed(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// To call when linedef is pushed by thing
-    {
-      trigger<DOOM::EnumLinedef::Trigger::TriggerPushed>(doom, thing);
-    }
-
-    virtual void	switched(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// To call when linedef is switched (used) by thing
-    {
-      trigger<DOOM::EnumLinedef::Trigger::TriggerSwitched>(doom, thing);
-    }
-
-    virtual void	walkover(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// To call when thing walk over the linedef
-    {
-      trigger<DOOM::EnumLinedef::Trigger::TriggerWalkover>(doom, thing);
-    }
-
-    virtual void	gunfire(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// To call when thing shot the linedef
-    {
-      trigger<DOOM::EnumLinedef::Trigger::TriggerGunfire>(doom, thing);
-    }
   };
 };
 
