@@ -3,19 +3,19 @@
 
 #include <SFML/System/Time.hpp>
 
-#include "Doom/Action/AbstractAction.hpp"
+#include "Doom/Action/AbstractTypeAction.hpp"
 
 namespace DOOM
 {
   template<unsigned int Period = 32>
-  class OscillateLightingAction : public DOOM::AbstractAction
+  class OscillateLightingAction : public DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLighting>
   {
   private:
     sf::Time	_elapsed;
 
   public:
     OscillateLightingAction(DOOM::Doom & doom) :
-      DOOM::AbstractAction(doom),
+      DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLighting>(doom),
       _elapsed(sf::Time::Zero)
     {}
 

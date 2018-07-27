@@ -3,7 +3,7 @@
 
 #include <SFML/System/Time.hpp>
 
-#include "Doom/Action/AbstractAction.hpp"
+#include "Doom/Action/AbstractTypeAction.hpp"
 
 namespace DOOM
 {
@@ -11,7 +11,7 @@ namespace DOOM
     unsigned int CycleDuration = 24,
     unsigned int FlashDuration = 4
   >
-  class RandomLightingAction : public DOOM::AbstractAction
+  class RandomLightingAction : public DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLighting>
   {
   private:
     int16_t	_cycle;		// Cycle duration
@@ -20,7 +20,7 @@ namespace DOOM
 
   public:
     RandomLightingAction(DOOM::Doom & doom) :
-      DOOM::AbstractAction(doom),
+      DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLighting>(doom),
       _cycle(0),
       _flash(0),
       _elapsed(sf::Time::Zero)

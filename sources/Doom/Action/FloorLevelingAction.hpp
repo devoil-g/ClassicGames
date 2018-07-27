@@ -1,7 +1,7 @@
 #ifndef _FLOOR_LEVELING_ACTION_HPP_
 #define _FLOOR_LEVELING_ACTION_HPP_
 
-#include "Doom/Action/AbstractAction.hpp"
+#include "Doom/Action/AbstractTypeAction.hpp"
 
 namespace DOOM
 {
@@ -11,14 +11,14 @@ namespace DOOM
     DOOM::EnumAction::Crush Crush = DOOM::EnumAction::Crush::CrushFalse,
     DOOM::EnumAction::Change Change = DOOM::EnumAction::Change::ChangeNone
   >
-  class FloorLevelingAction : public DOOM::AbstractAction
+  class FloorLevelingAction : public DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling>
   {
   private:
     const float	_target;	// Floor target height
 
   public:
     FloorLevelingAction(DOOM::Doom & doom, float target) :
-      DOOM::AbstractAction(doom),
+      DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling>(doom),
       _target(target)
     {}
 

@@ -11,6 +11,9 @@ namespace DOOM
   public:
     static std::unique_ptr<DOOM::AbstractAction>	factory(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, int16_t type);	// Factory of sector action build from type
 
+  protected:
+    virtual void	remove(DOOM::Doom::Level::Sector & sector) = 0;	// Remove action from sector
+
   public:
     AbstractAction(DOOM::Doom & doom);
     virtual ~AbstractAction() = default;

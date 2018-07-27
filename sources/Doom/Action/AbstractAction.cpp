@@ -40,8 +40,10 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
     return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, 140>>(doom, std::list<DOOM::EnumAction::State>({ DOOM::EnumAction::State::StateOpen, DOOM::EnumAction::State::StateWait, DOOM::EnumAction::State::StateClose }));
 
     // Regular floor types
-  case 30: case 96:
-    break;	// TODO: Abs Shortest Lower Texture
+  case 30: case 96: {	// Abs Shortest Lower Texture
+    int16_t	height = sector.getShortestLowerTexture(doom);
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Crush::CrushFalse>>(doom, height == 0 ? +32000.f : sector.floor_base + height);
+  }
   case 58: case 92:	// Absolute 24 (up, slow)
     return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Crush::CrushFalse>>(doom, sector.floor_base + 24.f);
   case 59: case 93:
@@ -123,8 +125,6 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
     93   Floor  WR& mover slow  -  TXP up 24
     14   Floor  S1& mover slow  -  TX  up 32
     67   Floor  SR& mover slow  -  TX  up 32
-    30   Floor  W1  mover slow  -  -   up ShortestLowerTexture
-    96   Floor  WR  mover slow  -  -   up ShortestLowerTexture
     37   Floor  W1  mover slow  -  NXP down to LEF
     84   Floor  WR  mover slow  -  NXP down to LEF
     9   Floor  S1  mover slow  -  NXP donut (see note 12 above)
@@ -164,6 +164,8 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
   default:
     return nullptr;
   }
+
+  sizeof(long double);
 
   return nullptr;
 }

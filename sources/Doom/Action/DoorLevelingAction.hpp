@@ -5,7 +5,7 @@
 
 #include <SFML/System/Time.hpp>
 
-#include "Doom/Action/AbstractAction.hpp"
+#include "Doom/Action/AbstractTypeAction.hpp"
 
 namespace DOOM
 {
@@ -14,7 +14,7 @@ namespace DOOM
     unsigned int Wait = 0,
     unsigned int ForceWait = 140
   >
-  class DoorLevelingAction : public DOOM::AbstractAction
+  class DoorLevelingAction : public DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling>
   {
   private:
     std::list<DOOM::EnumAction::State>	_states;	// Door states to perform
@@ -121,7 +121,7 @@ namespace DOOM
 
   public:
     DoorLevelingAction(DOOM::Doom & doom, std::list<DOOM::EnumAction::State> && states) :
-      DOOM::AbstractAction(doom),
+      DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling>(doom),
       _states(std::move(states)),
       _elapsed(sf::Time::Zero)
     {}

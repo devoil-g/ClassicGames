@@ -35,6 +35,10 @@ SET(GAME_DOOM_LINEDEF_SRCS
 SET(GAME_DOOM_ACTION_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/AbstractAction.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/AbstractAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/AbstractStoppableAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/AbstractStoppableAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/AbstractTypeAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/AbstractTypeAction.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/BlinkLightingAction.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/BlinkLightingAction.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/CeilingLevelingAction.cpp

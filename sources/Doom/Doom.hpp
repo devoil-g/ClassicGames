@@ -370,6 +370,8 @@ namespace DOOM
 	float	getNeighborNextLowestCeiling(const DOOM::Doom & doom, float height) const;	// Get next lowest neighbor floor level from height
 	float	getNeighborNextHighestCeiling(const DOOM::Doom & doom, float height) const;	// Get next highest neighbor floor level from height
 
+	int16_t	getShortestLowerTexture(const DOOM::Doom & doom) const;	// Get shortest lower texture height on the boundary of the sector
+
 	int16_t	getNeighborLowestLight(const DOOM::Doom & doom) const;	// Get lowest neighbor light level
 	int16_t	getNeighborHighestLight(const DOOM::Doom & doom) const;	// Get highest neighbor light level
       };

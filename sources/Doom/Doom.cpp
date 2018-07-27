@@ -883,6 +883,23 @@ float	DOOM::Doom::Level::Sector::getNeighborNextHighestCeiling(const DOOM::Doom 
   return result;
 }
 
+int16_t	DOOM::Doom::Level::Sector::getShortestLowerTexture(const DOOM::Doom & doom) const
+{
+  int16_t	result = 0;
+  int16_t	index = (int16_t)(((uint64_t)this - (uint64_t)doom.level.sectors.data()) / sizeof(DOOM::Doom::Level::Sector));
+
+  // Find shortest lower texture of sector
+  for (const std::unique_ptr<DOOM::AbstractLinedef> & linedef : doom.level.linedefs)
+    if (linedef->back != -1 && linedef->front != -1) {
+      if (doom.level.sidedefs[linedef->back].sector == index)
+	result = ((result == 0) ? doom.level.sidedefs[linedef->front].lower().height : std::min(doom.level.sidedefs[linedef->front].lower().height, result));
+      else if (doom.level.sidedefs[linedef->front].sector == index)
+	result = ((result == 0) ? doom.level.sidedefs[linedef->back].lower().height : std::min(doom.level.sidedefs[linedef->back].lower().height, result));
+    }
+
+  return result;
+}
+
 int16_t	DOOM::Doom::Level::Sector::getNeighborLowestLight(const DOOM::Doom & doom) const
 {
   int16_t	result = light_base;
@@ -904,3 +921,4 @@ int16_t	DOOM::Doom::Level::Sector::getNeighborHighestLight(const DOOM::Doom & do
 
   return result;
 }
+

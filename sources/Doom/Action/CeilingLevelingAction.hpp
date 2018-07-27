@@ -1,7 +1,7 @@
 #ifndef _CEILING_LEVELING_ACTION_HPP_
 #define _CEILING_LEVELING_ACTION_HPP_
 
-#include "Doom/Action/AbstractAction.hpp"
+#include "Doom/Action/AbstractTypeAction.hpp"
 
 namespace DOOM
 {
@@ -11,14 +11,14 @@ namespace DOOM
     DOOM::EnumAction::Crush = DOOM::EnumAction::Crush::CrushFalse,
     DOOM::EnumAction::Change Change = DOOM::EnumAction::Change::ChangeNone
   >
-  class CeilingLevelingAction : public DOOM::AbstractAction
+  class CeilingLevelingAction : public DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling>
   {
   private:
     const float	_target;	// Ceiling target height
 
   public:
     CeilingLevelingAction(DOOM::Doom & doom, float target) :
-      DOOM::AbstractAction(doom),
+      DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling>(doom),
       _target(target)
     {}
 
