@@ -85,19 +85,52 @@ namespace DOOM
       SpeedTurbo = 8	// Move 8 units/tic
     };
 
-    enum State
+    enum DoorState
     {
-      StateOpen,	// Open the door
-      StateClose,	// Close the door
-      StateForceClose,	// Close the door without bouncing on thing
-      StateWait,	// Wait for the spcified time
-      StateForceWait	// Wait for a fixed time
+      DoorStateOpen,		// Open the door
+      DoorStateClose,		// Close the door
+      DoorStateForceClose,	// Close the door without bouncing on thing
+      DoorStateWait,		// Wait for the specified time
+      DoorStateForceWait	// Wait for a fixed time
+    };
+
+    enum LiftState
+    {
+      LiftStateRaise,	// Raise the lift
+      LiftStateLower,	// Lower the lift
+      LiftStateWait,	// Wait for the specified time
+      LiftStateStop	// Stop lift
+    };
+
+    enum PlatformState
+    {
+      PlatformStateRaise,	// Raise the platform
+      PlatformStateLower,	// Lower the platform
+      PlatformStateStop		// Stop platform
+    };
+
+    enum CrusherState
+    {
+      CrusherStateRaise,	// Raise the crusher
+      CrusherStateLower		// Lower the crusher
     };
 
     enum Direction
     {
       DirectionUp,	// Move upward
       DirectionDown	// Move downward
+    };
+
+    enum Repeat
+    {
+      RepeatFalse = false,
+      RepeatTrue = true
+    };
+
+    enum Silent
+    {
+      SilentFalse = false,
+      SilentTrue = true
     };
 
     enum Crush
@@ -209,7 +242,7 @@ namespace DOOM
 	static const int	FrameDuration = 8;	// Tics between two frames of animation
 
       public:
-	int16_t	x, y;	// Texture offset
+	float	x, y;	// Texture offset
 	int16_t	sector;	// Index of the sector it references
 
       private:

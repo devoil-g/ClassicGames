@@ -474,7 +474,7 @@ DOOM::Doom::Level::Vertex::Vertex(DOOM::Doom & doom, const DOOM::Wad::RawLevel::
 {}
 
 DOOM::Doom::Level::Sidedef::Sidedef(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Sidedef & sidedef) :
-  x(sidedef.x), y(sidedef.y), sector(sidedef.sector), _elapsed(),
+  x((float)sidedef.x), y((float)sidedef.y), sector(sidedef.sector), _elapsed(),
   _upper(animation(doom, sidedef.upper)),
   _lower(animation(doom, sidedef.lower)),
   _middle(animation(doom, sidedef.middle))
@@ -725,7 +725,7 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom & doom, const DOOM::Wad::RawLevel::
   case DOOM::Doom::Level::Sector::Special::Secret:
     break;	// TODO
   case DOOM::Doom::Level::Sector::Special::DoorClose:
-    action<DOOM::EnumAction::Type::TypeLeveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, 1050>>(doom, std::list<DOOM::EnumAction::State>({ DOOM::EnumAction::State::StateWait, DOOM::EnumAction::State::StateClose })));
+    action<DOOM::EnumAction::Type::TypeLeveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, 1050>>(doom, std::list<DOOM::EnumAction::DoorState>({ DOOM::EnumAction::DoorState::DoorStateWait, DOOM::EnumAction::DoorState::DoorStateClose })));
     break;
   case DOOM::Doom::Level::Sector::Special::End:
     break;	// TODO
@@ -736,7 +736,7 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom & doom, const DOOM::Wad::RawLevel::
     action<DOOM::EnumAction::Type::TypeLighting>(std::make_unique<DOOM::BlinkLightingAction<35, 5, true>>(doom));
     break;
   case DOOM::Doom::Level::Sector::Special::DoorOpen:
-    action<DOOM::EnumAction::Type::TypeLeveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, 10500>>(doom, std::list<DOOM::EnumAction::State>({ DOOM::EnumAction::State::StateWait, DOOM::EnumAction::State::StateOpen })));
+    action<DOOM::EnumAction::Type::TypeLeveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, 10500>>(doom, std::list<DOOM::EnumAction::DoorState>({ DOOM::EnumAction::DoorState::DoorStateWait, DOOM::EnumAction::DoorState::DoorStateOpen })));
     break;
   case DOOM::Doom::Level::Sector::Special::Damage20:
     damage = 20.f;

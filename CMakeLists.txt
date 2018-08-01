@@ -25,12 +25,16 @@ SET(GAME_DOOM_LINEDEF_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/AbstractTriggerableLinedef.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/NullLinedef.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/NullLinedef.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/ScrollerLinedef.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/ScrollerLinedef.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/ActionTriggerableLinedef.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/ActionTriggerableLinedef.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/LightTriggerableLinedef.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/LightTriggerableLinedef.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/StairTriggerableLinedef.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/StairTriggerableLinedef.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/StopTriggerableLinedef.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/StopTriggerableLinedef.hpp
 )
 SET(GAME_DOOM_ACTION_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/AbstractAction.cpp
@@ -43,14 +47,20 @@ SET(GAME_DOOM_ACTION_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/BlinkLightingAction.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/CeilingLevelingAction.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/CeilingLevelingAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/CrusherLevelingAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/CrusherLevelingAction.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/DoorLevelingAction.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/DoorLevelingAction.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/FlickerLightingAction.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/FlickerLightingAction.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/FloorLevelingAction.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/FloorLevelingAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/LiftLevelingAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/LiftLevelingAction.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/OscillateLightingAction.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/OscillateLightingAction.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/PlatformLevelingAction.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/PlatformLevelingAction.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/RandomLightingAction.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/RandomLightingAction.hpp
 )

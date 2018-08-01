@@ -17,25 +17,19 @@ namespace DOOM
   class DoorLevelingAction : public DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling>
   {
   private:
-    std::list<DOOM::EnumAction::State>	_states;	// Door states to perform
+    std::list<DOOM::EnumAction::DoorState>	_states;	// Door states to perform
     sf::Time				_elapsed;	// Time elapsed since begining of state
 
     sf::Time	updateOpen(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed)	// Update an openning door. Return exceding time.
     {
       const float	top = sector.getNeighborLowestCeiling(doom) - 4.f;
 
-      // Instant open if above top
-      if (sector.ceiling_current > top) {
-	sector.ceiling_current = top;
-	return elapsed;
-      }
-
       // Raise door
       sector.ceiling_current += elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds();
 
       // Compute exceding time
       if (sector.ceiling_current > top) {
-	sf::Time	exceding = sf::seconds((sector.ceiling_current - top) / Speed * DOOM::Doom::Tic.asSeconds());
+	sf::Time	exceding = std::min(sf::seconds((sector.ceiling_current - top) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
 
 	sector.ceiling_current = top;
 	return exceding;
@@ -47,16 +41,10 @@ namespace DOOM
 
     sf::Time	updateClose(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed)	// Update a closing door. Return exceding time.
     {
-      // Instant close if under floor
-      if (sector.ceiling_current < sector.floor_base) {
-	sector.ceiling_current = sector.floor_base;
-	return elapsed;
-      }
-
       // TODO: add check for things in sector
       if (false) {
-	_states.push_front(DOOM::EnumAction::State::StateForceWait);
-	_states.push_front(DOOM::EnumAction::State::StateOpen);
+	_states.push_front(DOOM::EnumAction::DoorState::DoorStateForceWait);
+	_states.push_front(DOOM::EnumAction::DoorState::DoorStateOpen);
 	return elapsed;
       }
 
@@ -65,7 +53,7 @@ namespace DOOM
 
       // Compute exceding time
       if (sector.ceiling_current < sector.floor_base) {
-	sf::Time	exceding = sf::seconds((sector.floor_base - sector.ceiling_current) / Speed * DOOM::Doom::Tic.asSeconds());
+	sf::Time	exceding = std::min(sf::seconds((sector.floor_base - sector.ceiling_current) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
 
 	sector.ceiling_current = sector.floor_base;
 	return exceding;
@@ -77,12 +65,6 @@ namespace DOOM
 
     sf::Time	updateForceClose(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed)	// Update a closing door. Don't bounce on player. head Return exceding time.
     {
-      // Instant close if under floor
-      if (sector.ceiling_current < sector.floor_base) {
-	sector.ceiling_current = sector.floor_base;
-	return elapsed;
-      }
-
       // TODO: add check for things in sector
       if (false) {
 	return elapsed;
@@ -93,7 +75,7 @@ namespace DOOM
 
       // Compute exceding time
       if (sector.ceiling_current < sector.floor_base) {
-	sf::Time	exceding = sf::seconds((sector.floor_base - sector.ceiling_current) / Speed * DOOM::Doom::Tic.asSeconds());
+	sf::Time	exceding = std::min(sf::seconds((sector.floor_base - sector.ceiling_current) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
 
 	sector.ceiling_current = sector.floor_base;
 	return exceding;
@@ -120,7 +102,7 @@ namespace DOOM
     }
 
   public:
-    DoorLevelingAction(DOOM::Doom & doom, std::list<DOOM::EnumAction::State> && states) :
+    DoorLevelingAction(DOOM::Doom & doom, std::list<DOOM::EnumAction::DoorState> && states) :
       DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling>(doom),
       _states(std::move(states)),
       _elapsed(sf::Time::Zero)
@@ -134,19 +116,19 @@ namespace DOOM
       while (_states.empty() == false) {
 	switch (_states.front())
 	{
-	case DOOM::EnumAction::State::StateOpen:
+	case DOOM::EnumAction::DoorState::DoorStateOpen:
 	  elapsed = updateOpen(doom, sector, elapsed);
 	  break;
-	case DOOM::EnumAction::State::StateClose:
+	case DOOM::EnumAction::DoorState::DoorStateClose:
 	  elapsed = updateClose(doom, sector, elapsed);
 	  break;
-	case DOOM::EnumAction::State::StateForceClose:
+	case DOOM::EnumAction::DoorState::DoorStateForceClose:
 	  elapsed = updateForceClose(doom, sector, elapsed);
 	  break;
-	case DOOM::EnumAction::State::StateWait:
+	case DOOM::EnumAction::DoorState::DoorStateWait:
 	  elapsed = updateWait(doom, sector, elapsed);
 	  break;
-	case DOOM::EnumAction::State::StateForceWait:
+	case DOOM::EnumAction::DoorState::DoorStateForceWait:
 	  elapsed = updateForceWait(doom, sector, elapsed);
 	  break;
 	default:	// Handle error (should not happen)
@@ -165,7 +147,7 @@ namespace DOOM
       // Update ceiling base value when animation ended and remove action from sector
       if (_states.empty() == true) {
 	sector.ceiling_base = sector.ceiling_current;
-	sector.action<DOOM::EnumAction::Type::TypeLeveling>().reset();
+	remove(sector);
       }
     }
   };

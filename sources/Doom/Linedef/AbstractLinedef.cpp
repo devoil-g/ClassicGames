@@ -3,7 +3,9 @@
 #include "Doom/Linedef/ActionTriggerableLinedef.hpp"
 #include "Doom/Linedef/LightTriggerableLinedef.hpp"
 #include "Doom/Linedef/StairTriggerableLinedef.hpp"
+#include "Doom/Linedef/StopTriggerableLinedef.hpp"
 #include "Doom/Linedef/NullLinedef.hpp"
+#include "Doom/Linedef/ScrollerLinedef.hpp"
 
 DOOM::AbstractLinedef::AbstractLinedef(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef) :
   start(linedef.start), end(linedef.end),
@@ -107,14 +109,20 @@ std::unique_ptr<DOOM::AbstractLinedef>	DOOM::AbstractLinedef::factory(DOOM::Doom
     return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::EnumAction::Type::TypeLeveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, DOOM::EnumLinedef::Repeat::RepeatFalse>>(doom, linedef);
   case 47:	// Gunfire once
     return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::EnumAction::Type::TypeLeveling, DOOM::EnumLinedef::Trigger::TriggerGunfire, DOOM::EnumLinedef::Repeat::RepeatFalse>>(doom, linedef);
-
+  
     // Regular crusher
   case 73: case 77:	// Walkover repeat
-    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::EnumAction::Type::TypeLeveling, DOOM::EnumLinedef::Trigger::TriggerWalkover, DOOM::EnumLinedef::Repeat::RepeatTrue>>(doom, linedef);
+     return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::EnumAction::Type::TypeLeveling, DOOM::EnumLinedef::Trigger::TriggerWalkover, DOOM::EnumLinedef::Repeat::RepeatTrue>>(doom, linedef);
   case 6: case 25: case 141:	// Walkover once
     return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::EnumAction::Type::TypeLeveling, DOOM::EnumLinedef::Trigger::TriggerWalkover, DOOM::EnumLinedef::Repeat::RepeatFalse>>(doom, linedef);
   case 49:	// Switched once
     return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::EnumAction::Type::TypeLeveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, DOOM::EnumLinedef::Repeat::RepeatFalse>>(doom, linedef);
+
+    // Stop lift or crusher
+  case 74: case 89:	// Walkover repeat
+    return std::make_unique<DOOM::StopTriggerableLinedef<DOOM::EnumAction::Type::TypeLeveling, DOOM::EnumLinedef::Trigger::TriggerWalkover, DOOM::EnumLinedef::Repeat::RepeatTrue>>(doom, linedef);
+  case 57: case 54:	// Walkover once
+    return std::make_unique<DOOM::StopTriggerableLinedef<DOOM::EnumAction::Type::TypeLeveling, DOOM::EnumLinedef::Trigger::TriggerWalkover, DOOM::EnumLinedef::Repeat::RepeatFalse>>(doom, linedef);
 
     // Regular lighting
   case 12:
@@ -148,15 +156,17 @@ std::unique_ptr<DOOM::AbstractLinedef>	DOOM::AbstractLinedef::factory(DOOM::Doom
   case 127:	// Switched once, fast, 16 step
     return std::make_unique<DOOM::StairTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerSwitched, DOOM::EnumAction::Speed::SpeedFast, 16>>(doom, linedef);
 
-    // TODO: type 54 & 89 stop perpetual platform lift (remove sector leveling action)
-    // TODO: type 57 & 74 stop crusher (remove sector leveling action)
+    // Regular scroller
+  case 48:
+    return std::make_unique<DOOM::ScrollerLinedef>(doom, linedef);
+
     // TODO: stair builder
     // TODO: exits
     // TODO: teleporters
     // TODO: donuts
-    // TODO: scrolling wall (48 left, 85 right)
-
+    
   default:	// TODO: return nullptr for error
+    std::cout << "Unknown type " << linedef.type << std::endl;
     return std::make_unique<DOOM::NullLinedef>(doom, linedef);
   }
 }

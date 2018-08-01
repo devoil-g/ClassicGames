@@ -36,7 +36,7 @@ namespace DOOM
       // Detect end of action
       if (sector.floor_current == _target) {
 	sector.floor_base = sector.floor_current;
-	sector.action<DOOM::EnumAction::Type::TypeLeveling>().reset();
+	remove(sector);
       }
     }
   };

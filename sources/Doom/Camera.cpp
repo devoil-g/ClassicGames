@@ -208,7 +208,7 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, int16_t index)
     int16_t	shaded = (int16_t)std::clamp((int)((int)light * 2 - 255 + 255 * DOOM::Camera::LightFade / distance), (int)0, (int)light);
 
     // Texture X offset
-    int		texture_offset_x = seg.offset + sidedef_front.x + (int)((seg_end - seg_start).length() * (((bool)seg.direction == side) ? seg_offset : (1.f - seg_offset)));
+    int		texture_offset_x = seg.offset + (int)(sidedef_front.x + ((seg_end - seg_start).length() * (((bool)seg.direction == side) ? seg_offset : (1.f - seg_offset))));
 
     // Draw ceiling/sky
     if (sector_front.ceiling_name == DOOM::str_to_key("F_SKY1")) {

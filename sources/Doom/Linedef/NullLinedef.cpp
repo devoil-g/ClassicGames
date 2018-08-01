@@ -8,5 +8,5 @@ DOOM::NullLinedef::NullLinedef(DOOM::Doom & doom, const DOOM::AbstractLinedef & 
   DOOM::AbstractLinedef(doom, linedef)
 {}
 
-void	DOOM::NullLinedef::update(DOOM::Doom & doom, sf::Time)
+void	DOOM::NullLinedef::update(DOOM::Doom & doom, sf::Time elapsed)
 {}

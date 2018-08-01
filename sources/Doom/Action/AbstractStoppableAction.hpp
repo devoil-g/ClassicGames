@@ -8,7 +8,7 @@ namespace DOOM
   template<DOOM::EnumAction::Type Type>
   class AbstractStoppableAction : public DOOM::AbstractTypeAction<Type>
   {
-  private:
+  protected:
     bool	_stop;
 
   public:
