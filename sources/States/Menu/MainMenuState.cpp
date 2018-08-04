@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "System/Library/FontLibrary.hpp"
 #include "States/DoomState.hpp"
 #include "States/Menu/MainMenuState.hpp"
@@ -47,10 +49,12 @@ void	Game::MainMenuState::selectDoom(Game::AbstractMenuState::Item &)
       // Load DOOM state
       return static_cast<Game::AbstractState *>(new Game::DoomState());
     }
-    catch (std::exception)
+    catch (std::exception exception)
     {
+      std::cerr << "[MainMenuState::selectDoom] Warning, failed to load file: '" << std::string(exception.what()) << "'." << std::endl;
+
       // Return an error message
-      return static_cast<Game::AbstractState *>(new Game::MessageState("Error: failed to load WAD file."));
+      return static_cast<Game::AbstractState *>(new Game::MessageState("Error: failed to load WAD file.\n"));
     }
   })));
 }

@@ -141,8 +141,8 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, int16_t index)
     std::swap(left, right);
   
   // Projection of vertexes on screen's pixels
-  int	column_start = std::max((int)(left.screen * _image.getSize().x), _horizontal.first);
-  int	column_end = std::min((int)(right.screen * _image.getSize().x + 1), _horizontal.second);
+  int	column_start = std::max((int)std::lroundf(left.screen * _image.getSize().x), _horizontal.first);
+  int	column_end = std::min((int)std::lroundf(right.screen * _image.getSize().x + 0), _horizontal.second);
 
   // Stop if nothing to draw
   if (column_start >= column_end)
@@ -213,25 +213,25 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, int16_t index)
     // Draw ceiling/sky
     if (sector_front.ceiling_name == DOOM::str_to_key("F_SKY1")) {
       if (linedef.back == -1 || sector_back.ceiling_name != DOOM::str_to_key("F_SKY1")) {
-	renderSky(doom, column, 0, (int)std::min(upper_front, upper_back), sector_front.ceiling_current, index);
-	_vertical[column].first = std::max(_vertical[column].first, (int)std::min(upper_front, upper_back));
+	renderSky(doom, column, 0, (int)std::lroundf(std::min(upper_front, upper_back)), sector_front.ceiling_current, index);
+	_vertical[column].first = std::max(_vertical[column].first, (int)std::lroundf(std::min(upper_front, upper_back)));
       }
     }
     else if (height < sector_front.ceiling_current) {
-      renderFlat(doom, sector_front.ceiling_flat, column, 0, (int)upper_front, sector_front.ceiling_current, light, index);
-      _vertical[column].first = std::max(_vertical[column].first, (int)upper_front);
+      renderFlat(doom, sector_front.ceiling_flat, column, 0, (int)std::lroundf(upper_front), sector_front.ceiling_current, light, index);
+      _vertical[column].first = std::max(_vertical[column].first, (int)std::lroundf(upper_front));
     }
 
     // Draw floor/sky
     if (sector_front.floor_name == DOOM::str_to_key("F_SKY1")) {
       if (linedef.back == -1 || sector_back.floor_name != DOOM::str_to_key("F_SKY1")) {
-	renderSky(doom, column, (int)std::max(lower_front, lower_back), _image.getSize().y, sector_front.floor_current, index);
-	_vertical[column].second = std::min(_vertical[column].second, (int)std::max(lower_front, lower_back));
+	renderSky(doom, column, (int)std::lroundf(std::max(lower_front, lower_back)), _image.getSize().y, sector_front.floor_current, index);
+	_vertical[column].second = std::min(_vertical[column].second, (int)std::lroundf(std::max(lower_front, lower_back)));
       }
     }
     else if (height > sector_front.floor_current) {
-      renderFlat(doom, sector_front.floor_flat, column, (int)lower_front, _image.getSize().y, sector_front.floor_current, light, index);
-      _vertical[column].second = std::min(_vertical[column].second, (int)lower_front);
+      renderFlat(doom, sector_front.floor_flat, column, (int)std::lroundf(lower_front), _image.getSize().y, sector_front.floor_current, light, index);
+      _vertical[column].second = std::min(_vertical[column].second, (int)std::lroundf(lower_front));
     }
 
     // Draw upper/lower/middle walls
@@ -272,7 +272,7 @@ void	DOOM::Camera::renderTexture(DOOM::Doom const & doom, DOOM::Doom::Resources:
   std::vector<DOOM::Doom::Resources::Texture::Column::Span> const &	spans(texture.columns[pixel_x].spans);
 
   // Draw column of pixels
-  for (int row = std::max(_vertical[column].first, (int)top); row < std::min((int)bottom + 1, _vertical[column].second); row++)
+  for (int row = std::max(_vertical[column].first, (int)std::lroundf(top)); row < std::min((int)std::lroundf(bottom) + 0, _vertical[column].second); row++)
     if (_image.getPixel(column, row).a == 0)
     {
       int	pixel_y(Math::Modulo<128>((int)(offset_y + std::max((height * (row - top) / (bottom - top)), 0.f))));
@@ -371,13 +371,14 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom)
 
   // Render every things of current level
   for (const std::unique_ptr<DOOM::AbstractThing> & thing : doom.level.things)
-  {
-    float	distance = Math::Vector<2>::determinant(thing->position - position, eye_90) / eye_r;
+    if (thing->sprite(0).first.get().width > 0)
+    {
+      float	distance = Math::Vector<2>::determinant(thing->position - position, eye_90) / eye_r;
 
-    // Push thing to list to render only if front of camera
-    if (distance > 0.f)
-      things.push_back({ thing.get(), distance });
-  }
+      // Push thing to list to render only if front of camera
+      if (distance > 0.f)
+	things.push_back({ thing.get(), distance });
+    }
 
   // Order list of things of render
   things.sort([](std::pair<DOOM::AbstractThing const *, float> const & a, std::pair<DOOM::AbstractThing const *, float> const & b) { return a.second > b.second; });
@@ -406,8 +407,8 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom)
     int16_t	shaded = (int16_t)std::clamp((int)((int)light * 2 - 255 + 255 * DOOM::Camera::LightFade / (thing.position - position).length()), (int)0, (int)light);
 
     // Render pixels of the sprite
-    for (int column = std::max((int)first_x, 0); column < std::min((int)second_x, (int)_image.getSize().x); column++)
-      for (int row = std::max((int)first_y, 0); row < std::min((int)second_y, (int)_image.getSize().y); row++)
+    for (int column = std::max((int)std::lroundf(first_x), 0); column < std::min((int)std::lroundf(second_x), (int)_image.getSize().x); column++)
+      for (int row = std::max((int)std::lroundf(first_y), 0); row < std::min((int)std::lroundf(second_y), (int)_image.getSize().y); row++)
       {
 	int16_t					segment_index = _sbuffer[column * _image.getSize().y + row].first;
 
@@ -444,7 +445,7 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom)
 	if (visible[segment_index] == false)
 	  continue;
 
-	int	pixel_x = (int)(std::clamp(((texture.second == false) ? (column - first_x) : (second_x - column)) / (second_x - first_x), 0.f, 0.9999f) * texture.first.get().width);
+	int	pixel_x = (int)(std::clamp(((texture.second == false) ? (column - first_x) : (second_x - column)) / (second_x - first_x), 0.f, 0.9999999f) * texture.first.get().width);
 	int	pixel_y = (int)(std::clamp((row - first_y) / (second_y - first_y), 0.f, 0.9999f) * texture.first.get().height);
 
 	for (DOOM::Doom::Resources::Texture::Column::Span const & span : texture.first.get().columns[pixel_x].spans)

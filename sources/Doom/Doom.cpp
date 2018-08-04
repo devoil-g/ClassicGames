@@ -810,7 +810,7 @@ float	DOOM::Doom::Level::Sector::getNeighborNextLowestFloor(const DOOM::Doom & d
     float	floor = doom.level.sectors[index].floor_base;
 
     if (floor < height && (std::isnan(result) == true || floor > result))
-      result = std::max(result, floor);
+      result = floor;
   }
 
   return result;
@@ -825,7 +825,7 @@ float	DOOM::Doom::Level::Sector::getNeighborNextHighestFloor(const DOOM::Doom & 
     float	floor = doom.level.sectors[index].floor_base;
 
     if (floor > height && (std::isnan(result) == true || floor < result))
-      result = std::min(result, floor);
+      result = floor;
   }
 
   return result;
@@ -862,7 +862,7 @@ float	DOOM::Doom::Level::Sector::getNeighborNextLowestCeiling(const DOOM::Doom &
     float	ceiling = doom.level.sectors[index].ceiling_base;
 
     if (ceiling < height && (std::isnan(result) == true || ceiling > result))
-      result = std::max(result, ceiling);
+      result = ceiling;
   }
 
   return result;
@@ -877,7 +877,7 @@ float	DOOM::Doom::Level::Sector::getNeighborNextHighestCeiling(const DOOM::Doom 
     float	ceiling = doom.level.sectors[index].ceiling_base;
 
     if (ceiling > height && (std::isnan(result) == true || ceiling < result))
-      result = std::min(result, ceiling);
+      result = ceiling;
   }
 
   return result;

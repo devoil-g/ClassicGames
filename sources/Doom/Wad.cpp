@@ -233,9 +233,8 @@ void	DOOM::Wad::loadResourceTexture(std::ifstream & file, DOOM::Wad::Lump const 
     // Force name format
     uppercase(name);
 
-    // Skip texture if already defined
-    if (resources.textures.find(name) != resources.textures.end())
-      continue;
+    // Reset texture
+    resources.textures.erase(name);
 
     int16_t	numpatch;
 
@@ -283,9 +282,8 @@ void	DOOM::Wad::loadResourceMenu(std::ifstream & file, DOOM::Wad::Lump const & l
 
 void	DOOM::Wad::loadResourcePatch(std::ifstream & file, DOOM::Wad::Lump const & lump, std::unordered_map<uint64_t, DOOM::Wad::RawResources::Patch> & target)
 {
-  // Cancel if patch name already registered
-  if (target.find(lump.name) != target.end())
-    return;
+  // Reset patch
+  target.erase(lump.name);
 
   // Read sprite informations
   file.seekg(lump.position, file.beg);
@@ -369,6 +367,9 @@ void	DOOM::Wad::loadResourceGenmidi(std::ifstream & file, DOOM::Wad::Lump const 
   // Check for invalid lump size
   if (lump.size != sizeof(int8_t) * 8 + sizeof(DOOM::Wad::RawResources::Genmidi) * 175)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // Clear container
+  resources.genmidis.clear();
 
   // Set position to lump data
   file.seekg(lump.position, file.beg);
@@ -527,6 +528,9 @@ void	DOOM::Wad::loadResourceDemox(std::ifstream & file, DOOM::Wad::Lump const & 
   else
     return;
 
+  // Erase existing demo records
+  resources.demos[(lump.name << 32 & 0xFF) - '0'].records.clear();
+
   while (true)
   {
     // Read first record byte
@@ -604,12 +608,18 @@ void	DOOM::Wad::loadLevelExmy(DOOM::Wad::Lump const & lump, std::pair<uint8_t, u
 {
   // Get episode and mission number from name
   level = { (uint8_t)((lump.name >> 8) & 0xFF) - '0', (uint8_t)((lump.name >> 24) & 0xFF) - '0' };
+
+  // Remove previously loaded level
+  levels.erase(level);
 }
 
 void	DOOM::Wad::loadLevelMapxy(DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> & level)
 {
   // Get episode and mission number from name
   level = { (uint8_t)((lump.name >> 24) & 0xFF) - '0', (uint8_t)((lump.name >> 32) & 0xFF) - '0' };
+
+  // Remove previously loaded level
+  levels.erase(level);
 }
 
 void	DOOM::Wad::loadLevelThings(std::ifstream & file, DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> level)

@@ -1,6 +1,7 @@
 #include "Doom/Doom.hpp"
 #include "Doom/Linedef/AbstractLinedef.hpp"
 #include "Doom/Linedef/ActionTriggerableLinedef.hpp"
+#include "Doom/Linedef/DonutTriggerableLinedef.hpp"
 #include "Doom/Linedef/LightTriggerableLinedef.hpp"
 #include "Doom/Linedef/StairTriggerableLinedef.hpp"
 #include "Doom/Linedef/StopTriggerableLinedef.hpp"
@@ -160,13 +161,12 @@ std::unique_ptr<DOOM::AbstractLinedef>	DOOM::AbstractLinedef::factory(DOOM::Doom
   case 48:
     return std::make_unique<DOOM::ScrollerLinedef>(doom, linedef);
 
-    // TODO: stair builder
-    // TODO: exits
-    // TODO: teleporters
-    // TODO: donuts
+    // Regular donut
+  case 9:
+    return std::make_unique<DOOM::DonutTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerSwitched, DOOM::EnumLinedef::Repeat::RepeatFalse>>(doom, linedef);
     
-  default:	// TODO: return nullptr for error
-    std::cout << "Unknown type " << linedef.type << std::endl;
+  default:	// Error
+    std::cout << "[AbstractLinedef::factory] Warning, unknown type '" << linedef.type << "'." << std::endl;
     return std::make_unique<DOOM::NullLinedef>(doom, linedef);
   }
 }

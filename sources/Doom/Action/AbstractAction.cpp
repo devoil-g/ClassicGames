@@ -130,10 +130,6 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
 
     /* TODO:
 
-    FLOORS
-
-    9   Floor  S1  mover slow  -  NXP donut (see note 12 above)
-
     EXIT LEVEL
 
     11   Exit  nS-  clunk -     -  -   End level, go to next level
@@ -147,6 +143,7 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
     97   Telpt  WRm tport -     -  -   Teleport
     125 * Telpt  W1m tport -     -  -   Teleport monsters only
     126 * Telpt  WRm tport -     -  -   Teleport monsters only
+
     */
 
   default:
