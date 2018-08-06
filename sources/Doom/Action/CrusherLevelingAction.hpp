@@ -61,7 +61,7 @@ namespace DOOM
     {
       // Stop action if requested
       if (_stop == true) {
-	remove(sector);
+	remove(doom, sector);
 	return;
       }
 

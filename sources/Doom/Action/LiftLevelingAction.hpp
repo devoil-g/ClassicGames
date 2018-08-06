@@ -87,7 +87,7 @@ namespace DOOM
       sector.floor_base = sector.floor_current;
 
       // Remove sector action
-      remove(sector);
+      remove(doom, sector);
 
       return sf::Time::Zero;
     }

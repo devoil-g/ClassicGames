@@ -34,11 +34,11 @@ namespace DOOM
       // Handle invalid tag
       if (tag == 0)
 	return;
-
+      
       // Trigger tagged sectors
       for (DOOM::Doom::Level::Sector & sector : doom.level.sectors)
 	if (sector.tag == tag)
-	  sector.action<Type>(doom, type);
+	  sector.action<Type>(doom, type, doom.level.sidedefs[front].sector);
     }
 
     void	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// Action of the linedef

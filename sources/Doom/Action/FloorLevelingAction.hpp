@@ -8,17 +8,17 @@ namespace DOOM
   template<
     DOOM::EnumAction::Direction Direction,
     DOOM::EnumAction::Speed Speed,
-    DOOM::EnumAction::Crush Crush = DOOM::EnumAction::Crush::CrushFalse,
-    DOOM::EnumAction::Change Change = DOOM::EnumAction::Change::ChangeNone
+    DOOM::EnumAction::Change Change = DOOM::EnumAction::Change::ChangeNone,
+    DOOM::EnumAction::Crush Crush = DOOM::EnumAction::Crush::CrushFalse
   >
-  class FloorLevelingAction : public DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling>
+  class FloorLevelingAction : public DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling, Change>
   {
   private:
     const float	_target;	// Floor target height
 
   public:
-    FloorLevelingAction(DOOM::Doom & doom, float target) :
-      DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling>(doom),
+    FloorLevelingAction(DOOM::Doom & doom, float target, int16_t model = -1) :
+      DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling, Change>(doom, model),
       _target(target)
     {}
 
@@ -36,7 +36,7 @@ namespace DOOM
       // Detect end of action
       if (sector.floor_current == _target) {
 	sector.floor_base = sector.floor_current;
-	remove(sector);
+	remove(doom, sector);
       }
     }
   };

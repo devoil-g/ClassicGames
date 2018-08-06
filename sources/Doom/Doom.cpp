@@ -765,10 +765,10 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom::Level::Sector && sector) :
   _actions(std::move(sector._actions))
 {}
 
-std::unique_ptr<DOOM::AbstractAction>	DOOM::Doom::Level::Sector::_factory(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, int16_t type)
+std::unique_ptr<DOOM::AbstractAction>	DOOM::Doom::Level::Sector::_factory(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, int16_t type, int16_t model)
 {
   // Just a relay (cycling inclusion problem)
-  return DOOM::AbstractAction::factory(doom, sector, type);
+  return DOOM::AbstractAction::factory(doom, sector, type, model);
 }
 
 void	DOOM::Doom::Level::Sector::update(DOOM::Doom & doom, sf::Time elapsed)
@@ -779,105 +779,109 @@ void	DOOM::Doom::Level::Sector::update(DOOM::Doom & doom, sf::Time elapsed)
       _actions.at(type)->update(doom, *this, elapsed);
 }
 
-float	DOOM::Doom::Level::Sector::getNeighborLowestFloor(const DOOM::Doom & doom) const
+std::pair<int16_t, float>	DOOM::Doom::Level::Sector::getNeighborLowestFloor(const DOOM::Doom & doom) const
 {
-  float	result = std::numeric_limits<float>::quiet_NaN();
+  std::pair<int16_t, float>	result = { -1, std::numeric_limits<float>::quiet_NaN() };
 
   // Find lowest neighboor floor
   for (int16_t index : _neighbors)
-    result = std::isnan(result) == true ? doom.level.sectors[index].floor_base : std::min(result, doom.level.sectors[index].floor_base);
+    if (result.first == -1 || doom.level.sectors[index].floor_base < doom.level.sectors[result.first].floor_base)
+      result = { index, doom.level.sectors[index].floor_base };
 
   return result;
 }
 
-float	DOOM::Doom::Level::Sector::getNeighborHighestFloor(const DOOM::Doom & doom) const
+std::pair<int16_t, float>	DOOM::Doom::Level::Sector::getNeighborHighestFloor(const DOOM::Doom & doom) const
 {
-  float	result = std::numeric_limits<float>::quiet_NaN();
+  std::pair<int16_t, float>	result = { -1, std::numeric_limits<float>::quiet_NaN() };
 
   // Find highest neighboor floor
   for (int16_t index : _neighbors)
-    result = std::isnan(result) == true ? doom.level.sectors[index].floor_base : std::max(result, doom.level.sectors[index].floor_base);
+    if (result.first == -1 || doom.level.sectors[index].floor_base > doom.level.sectors[result.first].floor_base)
+      result = { index, doom.level.sectors[index].floor_base };
 
   return result;
 }
 
-float	DOOM::Doom::Level::Sector::getNeighborNextLowestFloor(const DOOM::Doom & doom, float height) const
+std::pair<int16_t, float>	DOOM::Doom::Level::Sector::getNeighborNextLowestFloor(const DOOM::Doom & doom, float height) const
 {
-  float		result = std::numeric_limits<float>::quiet_NaN();
+  std::pair<int16_t, float>	result = { -1, std::numeric_limits<float>::quiet_NaN() };
 
   // Find next lowest neighboor floor
   for (int16_t index : _neighbors) {
     float	floor = doom.level.sectors[index].floor_base;
 
-    if (floor < height && (std::isnan(result) == true || floor > result))
-      result = floor;
+    if (floor < height && (result.first == -1 || floor > result.second))
+      result = { index, floor };
   }
 
   return result;
 }
 
-float	DOOM::Doom::Level::Sector::getNeighborNextHighestFloor(const DOOM::Doom & doom, float height) const
+std::pair<int16_t, float>	DOOM::Doom::Level::Sector::getNeighborNextHighestFloor(const DOOM::Doom & doom, float height) const
 {
-  float		result = std::numeric_limits<float>::quiet_NaN();
+  std::pair<int16_t, float>	result = { -1, std::numeric_limits<float>::quiet_NaN() };
 
   // Find next highest neighboor floor
   for (int16_t index : _neighbors) {
     float	floor = doom.level.sectors[index].floor_base;
 
-    if (floor > height && (std::isnan(result) == true || floor < result))
-      result = floor;
+    if (floor > height && (result.first == -1 || floor < result.second))
+      result = { index, floor };
   }
 
   return result;
 }
 
-float	DOOM::Doom::Level::Sector::getNeighborLowestCeiling(const DOOM::Doom & doom) const
+std::pair<int16_t, float>	DOOM::Doom::Level::Sector::getNeighborLowestCeiling(const DOOM::Doom & doom) const
 {
-  float	result = std::numeric_limits<float>::quiet_NaN();
+  std::pair<int16_t, float>	result = { -1, std::numeric_limits<float>::quiet_NaN() };
 
   // Find lowest neighboor ceiling
   for (int16_t index : _neighbors)
-    result = std::isnan(result) == true ? doom.level.sectors[index].ceiling_base : std::min(result, doom.level.sectors[index].ceiling_base);
+    if (result.first == -1 || doom.level.sectors[index].ceiling_base < doom.level.sectors[result.first].ceiling_base)
+      result = { index, doom.level.sectors[index].ceiling_base };
 
   return result;
 }
 
-float	DOOM::Doom::Level::Sector::getNeighborHighestCeiling(const DOOM::Doom & doom) const
+std::pair<int16_t, float>	DOOM::Doom::Level::Sector::getNeighborHighestCeiling(const DOOM::Doom & doom) const
 {
-  float	result = std::numeric_limits<float>::quiet_NaN();
+  std::pair<int16_t, float>	result = { -1, std::numeric_limits<float>::quiet_NaN() };
 
-  // Find highest neighboor ceiling
+  // Find lowest neighboor ceiling
   for (int16_t index : _neighbors)
-    result = std::isnan(result) == true ? doom.level.sectors[index].ceiling_base : std::max(result, doom.level.sectors[index].ceiling_base);
+    if (result.first == -1 || doom.level.sectors[index].ceiling_base > doom.level.sectors[result.first].ceiling_base)
+      result = { index, doom.level.sectors[index].ceiling_base };
 
   return result;
 }
 
-float	DOOM::Doom::Level::Sector::getNeighborNextLowestCeiling(const DOOM::Doom & doom, float height) const
+std::pair<int16_t, float>	DOOM::Doom::Level::Sector::getNeighborNextLowestCeiling(const DOOM::Doom & doom, float height) const
 {
-  float		result = std::numeric_limits<float>::quiet_NaN();
+  std::pair<int16_t, float>	result = { -1, std::numeric_limits<float>::quiet_NaN() };
 
   // Find next lowest neighboor ceiling
   for (int16_t index : _neighbors) {
     float	ceiling = doom.level.sectors[index].ceiling_base;
 
-    if (ceiling < height && (std::isnan(result) == true || ceiling > result))
-      result = ceiling;
+    if (ceiling < height && (result.first == -1 || ceiling > result.second))
+      result = { index, ceiling };
   }
 
   return result;
 }
 
-float	DOOM::Doom::Level::Sector::getNeighborNextHighestCeiling(const DOOM::Doom & doom, float height) const
+std::pair<int16_t, float>	DOOM::Doom::Level::Sector::getNeighborNextHighestCeiling(const DOOM::Doom & doom, float height) const
 {
-  float		result = std::numeric_limits<float>::quiet_NaN();
+  std::pair<int16_t, float>	result = { -1, std::numeric_limits<float>::quiet_NaN() };
 
   // Find next highest neighboor floor
   for (int16_t index : _neighbors) {
     float	ceiling = doom.level.sectors[index].ceiling_base;
 
-    if (ceiling > height && (std::isnan(result) == true || ceiling < result))
-      result = ceiling;
+    if (ceiling > height && (result.first == -1 || ceiling < result.second))
+      result = { index, ceiling };
   }
 
   return result;

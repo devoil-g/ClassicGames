@@ -339,12 +339,12 @@ namespace DOOM
 	int16_t	special;	// Sector special attribute
 
       protected:
-	std::vector<int16_t>	_neighbors;	// List of neighbor sectors
+	std::vector<int16_t>	_neighbors;	// List of neighbor sectors (sorted)
 
       private:
 	std::array<std::unique_ptr<DOOM::AbstractAction>, DOOM::EnumAction::Type::TypeNumber>	_actions;	// Actions on sector
 	
-	static std::unique_ptr<DOOM::AbstractAction>	_factory(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, int16_t type);	// Action factory intermediate function (cycling inclusion problem)
+	static std::unique_ptr<DOOM::AbstractAction>	_factory(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, int16_t type, int16_t model);	// Action factory intermediate function (cycling inclusion problem)
 
       public:
 	Sector(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Sector & sector);
@@ -354,14 +354,14 @@ namespace DOOM
 	void	update(DOOM::Doom & doom, sf::Time elapsed);	// Update sector
 
 	template<DOOM::EnumAction::Type Type>
-	inline void	action(DOOM::Doom & doom, int16_t type)	// Add action to sector if possible
+	inline void	action(DOOM::Doom & doom, int16_t type, int16_t model = -1)	// Add action to sector if possible
 	{
 	  // Check template parameter
 	  static_assert(Type >= 0 && Type < DOOM::EnumAction::Type::TypeNumber, "Invalid action template parameters.");
 
 	  // Push action if slot available
 	  if (_actions.at(Type).get() == nullptr)
-	    _actions.at(Type) = std::move(_factory(doom, *this, type));
+	    _actions.at(Type) = std::move(_factory(doom, *this, type, model));
 	}
 
 	template<DOOM::EnumAction::Type Type>
@@ -393,15 +393,15 @@ namespace DOOM
 	  return _actions.at(Type);
 	}
 
-	float	getNeighborLowestFloor(const DOOM::Doom & doom) const;				// Get lowest neighbor floor level
-	float	getNeighborHighestFloor(const DOOM::Doom & doom) const;				// Get highest neighbor floor level
-	float	getNeighborNextLowestFloor(const DOOM::Doom & doom, float height) const;	// Get next lowest neighbor floor level from height
-	float	getNeighborNextHighestFloor(const DOOM::Doom & doom, float height) const;	// Get next highest neighbor floor level from height
+	std::pair<int16_t, float>	getNeighborLowestFloor(const DOOM::Doom & doom) const;				// Get lowest neighbor floor level
+	std::pair<int16_t, float>	getNeighborHighestFloor(const DOOM::Doom & doom) const;				// Get highest neighbor floor level
+	std::pair<int16_t, float>	getNeighborNextLowestFloor(const DOOM::Doom & doom, float height) const;	// Get next lowest neighbor floor level from height
+	std::pair<int16_t, float>	getNeighborNextHighestFloor(const DOOM::Doom & doom, float height) const;	// Get next highest neighbor floor level from height
 
-	float	getNeighborLowestCeiling(const DOOM::Doom & doom) const;			// Get lowest neighbor floor level
-	float	getNeighborHighestCeiling(const DOOM::Doom & doom) const;			// Get highest neighbor floor level
-	float	getNeighborNextLowestCeiling(const DOOM::Doom & doom, float height) const;	// Get next lowest neighbor floor level from height
-	float	getNeighborNextHighestCeiling(const DOOM::Doom & doom, float height) const;	// Get next highest neighbor floor level from height
+	std::pair<int16_t, float>	getNeighborLowestCeiling(const DOOM::Doom & doom) const;			// Get lowest neighbor floor level
+	std::pair<int16_t, float>	getNeighborHighestCeiling(const DOOM::Doom & doom) const;			// Get highest neighbor floor level
+	std::pair<int16_t, float>	getNeighborNextLowestCeiling(const DOOM::Doom & doom, float height) const;	// Get next lowest neighbor floor level from height
+	std::pair<int16_t, float>	getNeighborNextHighestCeiling(const DOOM::Doom & doom, float height) const;	// Get next highest neighbor floor level from height
 
 	int16_t	getShortestLowerTexture(const DOOM::Doom & doom) const;	// Get shortest lower texture height on the boundary of the sector
 

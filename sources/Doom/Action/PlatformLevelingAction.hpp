@@ -5,8 +5,11 @@
 
 namespace DOOM
 {
-  template<DOOM::EnumAction::Speed Speed>
-  class PlatformLevelingAction : public DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling>
+  template<
+    DOOM::EnumAction::Speed Speed,
+    DOOM::EnumAction::Change Change = DOOM::EnumAction::Change::ChangeNone
+  >
+  class PlatformLevelingAction : public DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling, Change>
   {
   private:
     float				_target;	// Floor target height
@@ -63,14 +66,14 @@ namespace DOOM
       sector.floor_base = sector.floor_current;
 
       // Remove sector action
-      remove(sector);
+      remove(doom, sector);
 
       return sf::Time::Zero;
     }
 
   public:
-    PlatformLevelingAction(DOOM::Doom & doom, float target) :
-      DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling>(doom),
+    PlatformLevelingAction(DOOM::Doom & doom, float target, int16_t model = -1) :
+      DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling, Change>(doom, model),
       _target(target),
       _state(DOOM::EnumAction::PlatformState::PlatformStateRaise)
     {}

@@ -36,7 +36,7 @@ namespace DOOM
       // Detect end of action
       if (sector.ceiling_current == _target) {
 	sector.ceiling_base = sector.ceiling_current;
-	remove(sector);
+	remove(doom, sector);
       }
     }
   };

@@ -30,7 +30,7 @@ namespace DOOM
 	step_height += Step;
 
 	// Start step rising
-	doom.level.sectors[step_index].action<DOOM::EnumAction::Type::TypeLeveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, Speed, DOOM::EnumAction::Crush::CrushFalse>>(doom, (float)step_height));
+	doom.level.sectors[step_index].action<DOOM::EnumAction::Type::TypeLeveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, Speed>>(doom, (float)step_height));
 	
 	int16_t	step_new = -1;
 	for (const std::unique_ptr<DOOM::AbstractLinedef> & linedef : doom.level.linedefs)

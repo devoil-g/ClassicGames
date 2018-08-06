@@ -18,11 +18,11 @@ namespace DOOM
   {
   private:
     std::list<DOOM::EnumAction::DoorState>	_states;	// Door states to perform
-    sf::Time				_elapsed;	// Time elapsed since begining of state
+    sf::Time					_elapsed;	// Time elapsed since begining of state
 
     sf::Time	updateOpen(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed)	// Update an openning door. Return exceding time.
     {
-      const float	top = sector.getNeighborLowestCeiling(doom) - 4.f;
+      const float	top = sector.getNeighborLowestCeiling(doom).second - 4.f;
 
       // Raise door
       sector.ceiling_current += elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds();
@@ -147,7 +147,7 @@ namespace DOOM
       // Update ceiling base value when animation ended and remove action from sector
       if (_states.empty() == true) {
 	sector.ceiling_base = sector.ceiling_current;
-	remove(sector);
+	remove(doom, sector);
       }
     }
   };

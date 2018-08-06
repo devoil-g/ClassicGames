@@ -13,7 +13,7 @@
 DOOM::AbstractAction::AbstractAction(DOOM::Doom & doom)
 {}
 
-std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, int16_t type)
+std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, int16_t type, int16_t model)
 {
   // Generate action from type
   switch (type) {
@@ -47,56 +47,56 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
     // Regular floor types
   case 30: case 96: {	// Abs Shortest Lower Texture
     int16_t	height = sector.getShortestLowerTexture(doom);
-    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Crush::CrushFalse>>(doom, height == 0 ? +32000.f : sector.floor_base + height);
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow>>(doom, height == 0 ? +32000.f : sector.floor_base + height);
   }
   case 58: case 92:	// Absolute 24 (up, slow)
-    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Crush::CrushFalse>>(doom, sector.floor_base + 24.f);
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow>>(doom, sector.floor_base + 24.f);
   case 59: case 93:	// Absolute 24 (up, slow, TxTy)
-    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Crush::CrushFalse>>(doom, sector.floor_base + 24.f);
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::ChangeTextureType>>(doom, sector.floor_base + 24.f, model);
   case 140:	// Absolute 512 (up, slow)
-    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Crush::CrushFalse>>(doom, sector.floor_base + 512.f);
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow>>(doom, sector.floor_base + 512.f);
   case 19: case 45: case 83: case 102: {	// Highest neighboor floor (down, slow)
-    float	height = sector.getNeighborHighestFloor(doom);
-    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Crush::CrushFalse>>(doom, std::isnan(height) == true ? -32000.f : height);
+    const float	height = sector.getNeighborHighestFloor(doom).second;
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, DOOM::EnumAction::Speed::SpeedSlow>>(doom, std::isnan(height) == true ? -32000.f : height);
   }
   case 36: case 70: case 71: case 98: {	// Highest neighboor floor + 8 (down, fast)
-    float	height = sector.getNeighborHighestFloor(doom);
-    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, DOOM::EnumAction::Speed::SpeedFast, DOOM::EnumAction::Crush::CrushFalse>>(doom, (std::isnan(height) == true ? -32000.f : height) + 8.f);
+    const float	height = sector.getNeighborHighestFloor(doom).second;
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, DOOM::EnumAction::Speed::SpeedFast>>(doom, (std::isnan(height) == true ? -32000.f : height) + 8.f);
   }
   case 5: case 24: case 64: case 91: case 101: {	// Lowest sector & neighboor ceiling (up, slow)
-    float	height = sector.getNeighborLowestCeiling(doom);
-    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Crush::CrushFalse>>(doom, (std::isnan(height) == true || height > sector.ceiling_base) ? sector.ceiling_base : height);
+    const float	height = sector.getNeighborLowestCeiling(doom).second;
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow>>(doom, (std::isnan(height) == true || height > sector.ceiling_base) ? sector.ceiling_base : height);
   }
   case 55: case 56: case 65: case 94: {	// Lowest sector & neighboor ceiling - 8 (up, slow, crush)
-    float	height = sector.getNeighborLowestCeiling(doom);
-    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Crush::CrushTrue>>(doom, ((std::isnan(height) == true || height > sector.ceiling_base) ? sector.ceiling_base : height) - 8.f);
+    const float	height = sector.getNeighborLowestCeiling(doom).second;
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::ChangeNone, DOOM::EnumAction::Crush::CrushTrue>>(doom, ((std::isnan(height) == true || height > sector.ceiling_base) ? sector.ceiling_base : height) - 8.f);
   }
   case 23: case 38: case 60: case 82: {	// Lowest sector & neighboor floor (down, slow)
-    float	height = sector.getNeighborLowestFloor(doom);
-    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Crush::CrushFalse>>(doom, (std::isnan(height) == true || height > sector.floor_base) ? sector.floor_base : height);
+    const float	height = sector.getNeighborLowestFloor(doom).second;
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, DOOM::EnumAction::Speed::SpeedSlow>>(doom, (std::isnan(height) == true || height > sector.floor_base) ? sector.floor_base : height);
   }
   case 37: case 84: {	// Lowest sector & neighboor floor (down, slow, TxTy)
-    float	height = sector.getNeighborLowestFloor(doom);
-    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Crush::CrushFalse>>(doom, (std::isnan(height) == true || height > sector.floor_base) ? sector.floor_base : height);
+    const std::pair<int16_t, float>	lowest = sector.getNeighborLowestFloor(doom);
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::ChangeTextureType>>(doom, (lowest.first == -1 || lowest.second > sector.floor_base) ? sector.floor_base : lowest.second, lowest.first);
   }
   case 18: case 69: case 119: case 128: {	// Next neighboor floor (up, slow)
-    float	height = sector.getNeighborNextHighestFloor(doom, sector.floor_base);
-    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Crush::CrushFalse>>(doom, std::isnan(height) == true ? sector.floor_base : height);
+    const float	height = sector.getNeighborNextHighestFloor(doom, sector.floor_base).second;
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow>>(doom, std::isnan(height) == true ? sector.floor_base : height);
   }
   case 129: case 130: case 131: case 132: {	// Next neighboor floor (up, fast)
-    float	height = sector.getNeighborNextHighestFloor(doom, sector.floor_base);
-    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedFast, DOOM::EnumAction::Crush::CrushFalse>>(doom, std::isnan(height) == true ? sector.floor_base : height);
+    const float	height = sector.getNeighborNextHighestFloor(doom, sector.floor_base).second;
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedFast>>(doom, std::isnan(height) == true ? sector.floor_base : height);
   }
 
     // Regular ceiling types
   case 40: {	// Highest neighboor ceiling (up, slow)
-    float	height = sector.getNeighborHighestCeiling(doom);
-    return std::make_unique<DOOM::CeilingLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Crush::CrushFalse>>(doom, std::isnan(height) == true ? -32000.f : height);
+    const float	height = sector.getNeighborHighestCeiling(doom).second;
+    return std::make_unique<DOOM::CeilingLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow>>(doom, std::isnan(height) == true ? -32000.f : height);
   }
   case 41: case 43:	// Floor (down, fast)
-    return std::make_unique<DOOM::CeilingLevelingAction<DOOM::EnumAction::Direction::DirectionDown, DOOM::EnumAction::Speed::SpeedFast, DOOM::EnumAction::Crush::CrushFalse>>(doom, sector.floor_base);
+    return std::make_unique<DOOM::CeilingLevelingAction<DOOM::EnumAction::Direction::DirectionDown, DOOM::EnumAction::Speed::SpeedFast>>(doom, sector.floor_base);
   case 44: case 72:	// Floor + 8 (down, slow)
-    return std::make_unique<DOOM::CeilingLevelingAction<DOOM::EnumAction::Direction::DirectionDown, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Crush::CrushFalse>>(doom, sector.floor_base + 8.f);
+    return std::make_unique<DOOM::CeilingLevelingAction<DOOM::EnumAction::Direction::DirectionDown, DOOM::EnumAction::Speed::SpeedSlow>>(doom, sector.floor_base + 8.f);
 
     // Regular lighting
   case 17:	// Blinking
@@ -104,21 +104,28 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
 
     // Platform
   case 15: case 66:	// Raise 24 units (Tx)
-    return std::make_unique<DOOM::PlatformLevelingAction<DOOM::EnumAction::Speed::SpeedSlow>>(doom, sector.floor_base + 24.f);
+    return std::make_unique<DOOM::PlatformLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::ChangeTexture>>(doom, sector.floor_base + 24.f, model);
   case 14: case 67:	// Raise 32 units (Tx0)
-    return std::make_unique<DOOM::PlatformLevelingAction<DOOM::EnumAction::Speed::SpeedSlow>>(doom, sector.floor_base + 32.f);
+    return std::make_unique<DOOM::PlatformLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::ChangeTextureZeroed>>(doom, sector.floor_base + 32.f, model);
   case 20: case 22: case 47: case 68: case 95: {	// Raise next floor (Tx0)
-    float	height = sector.getNeighborNextHighestFloor(doom, sector.floor_base);
-    return std::make_unique<DOOM::PlatformLevelingAction<DOOM::EnumAction::Speed::SpeedSlow>>(doom, std::isnan(height) == true ? sector.floor_base : height);
+    const float	height = sector.getNeighborNextHighestFloor(doom, sector.floor_base).second;
+    return std::make_unique<DOOM::PlatformLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::ChangeTextureZeroed>>(doom, std::isnan(height) == true ? sector.floor_base : height, model);
   }
 
     // Lift
-  case 10: case 21: case 62: case 88:	// Lowest neighboor floor (slow)
-    return std::make_unique<DOOM::LiftLevelingAction<DOOM::EnumAction::Speed::SpeedSlow>>(doom, std::min(sector.getNeighborLowestFloor(doom), sector.floor_base), sector.floor_base);
-  case 120: case 121: case 122: case 123:	// Lowest neighboor floor (fast)
-    return std::make_unique<DOOM::LiftLevelingAction<DOOM::EnumAction::Speed::SpeedFast>>(doom, std::min(sector.getNeighborLowestFloor(doom), sector.floor_base), sector.floor_base);
-  case 53: case 87:	// Lowest and highest floor (perpetual, slow)
-    return std::make_unique<DOOM::LiftLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Repeat::RepeatTrue>>(doom, std::min(sector.getNeighborLowestFloor(doom), sector.floor_base), std::max(sector.getNeighborHighestFloor(doom), sector.floor_base));
+  case 10: case 21: case 62: case 88: {	// Lowest neighboor floor (slow)
+    const float	height = sector.getNeighborLowestFloor(doom).second;
+    return std::make_unique<DOOM::LiftLevelingAction<DOOM::EnumAction::Speed::SpeedSlow>>(doom, std::isnan(height) == true ? sector.floor_base : std::min(height, sector.floor_base), sector.floor_base);
+  }
+  case 120: case 121: case 122: case 123: {	// Lowest neighboor floor (fast)
+    const float	height = sector.getNeighborLowestFloor(doom).second;
+    return std::make_unique<DOOM::LiftLevelingAction<DOOM::EnumAction::Speed::SpeedFast>>(doom, std::isnan(height) == true ? sector.floor_base : std::min(height, sector.floor_base), sector.floor_base);
+  }
+  case 53: case 87: {	// Lowest and highest floor (perpetual, slow)
+    const float	height_low = sector.getNeighborLowestFloor(doom).second;
+    const float	height_high = sector.getNeighborHighestFloor(doom).second;
+    return std::make_unique<DOOM::LiftLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Repeat::RepeatTrue>>(doom, std::isnan(height_low) == true ? sector.floor_base : std::min(height_low, sector.floor_base), std::isnan(height_high) == true ? sector.floor_base : std::max(height_high, sector.floor_base));
+  }
 
     // Regular crusher ceiling
   case 6: case 77:

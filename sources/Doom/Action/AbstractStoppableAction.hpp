@@ -5,11 +5,14 @@
 
 namespace DOOM
 {
-  template<DOOM::EnumAction::Type Type>
-  class AbstractStoppableAction : public DOOM::AbstractTypeAction<Type>
+  template<
+    DOOM::EnumAction::Type Type,
+    DOOM::EnumAction::Change Change = DOOM::EnumAction::Change::ChangeNone
+  >
+  class AbstractStoppableAction : public DOOM::AbstractTypeAction<Type, Change>
   {
   protected:
-    bool	_stop;
+    bool	_stop;	// Flag for stop
 
   public:
     AbstractStoppableAction(DOOM::Doom & doom) :

@@ -74,13 +74,9 @@ namespace DOOM
 
       // Raise/lower pool
       if (pool.get().floor_base > model.get().floor_base)
-	pool.get().action<DOOM::EnumAction::Type::TypeLeveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, Speed>>(doom, model.get().floor_base));
+	pool.get().action<DOOM::EnumAction::Type::TypeLeveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, Speed, DOOM::EnumAction::Change::ChangeTexture>>(doom, model.get().floor_base, model_index));
       else
-	pool.get().action<DOOM::EnumAction::Type::TypeLeveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, Speed>>(doom, model.get().floor_base));
-
-      // Change pool texture
-      pool.get().floor_flat = model.get().floor_flat;
-      pool.get().floor_name = model.get().floor_name;
+	pool.get().action<DOOM::EnumAction::Type::TypeLeveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, Speed, DOOM::EnumAction::Change::ChangeTexture>>(doom, model.get().floor_base, model_index));
     }
 
     void	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// Trigger stair builder on tagged event
