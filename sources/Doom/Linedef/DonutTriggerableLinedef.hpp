@@ -10,13 +10,13 @@ namespace DOOM
 {
   template<
     DOOM::EnumLinedef::Trigger Trigger,
-    DOOM::EnumLinedef::Repeat Repeat,
+    bool Repeat,
     DOOM::EnumAction::Speed Speed = DOOM::EnumAction::Speed::SpeedSlow
   >
-  class DonutTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, DOOM::EnumLinedef::Repeat::RepeatFalse>
+  class DonutTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat>
   {
   private:
-    inline void	triggerDonut(DOOM::Doom & doom, int16_t pillar_index)	// Build stairs from sector
+    inline void	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing, int16_t pillar_index)	// Perform donut action
     {
       // Find pool sector
       int16_t	pool_index = -1;
@@ -68,35 +68,20 @@ namespace DOOM
 
       // Raise/lower pillar
       if (pillar.get().floor_base > model.get().floor_base)
-	pillar.get().action<DOOM::EnumAction::Type::TypeLeveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, Speed>>(doom, model.get().floor_base));
+	pillar.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, Speed>>(doom, model.get().floor_base));
       else
-	pillar.get().action<DOOM::EnumAction::Type::TypeLeveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, Speed>>(doom, model.get().floor_base));
+	pillar.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, Speed>>(doom, model.get().floor_base));
 
       // Raise/lower pool
       if (pool.get().floor_base > model.get().floor_base)
-	pool.get().action<DOOM::EnumAction::Type::TypeLeveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, Speed, DOOM::EnumAction::Change::ChangeTexture>>(doom, model.get().floor_base, model_index));
+	pool.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, Speed, DOOM::EnumAction::Change::ChangeTexture>>(doom, model.get().floor_base, model_index));
       else
-	pool.get().action<DOOM::EnumAction::Type::TypeLeveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, Speed, DOOM::EnumAction::Change::ChangeTexture>>(doom, model.get().floor_base, model_index));
-    }
-
-    void	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// Trigger stair builder on tagged event
-    {
-      // Handle error
-      if (tag == 0)
-      {
-	std::cerr << "[DonutTriggerableLinedef::trigger] Warning, invalid pushed tag (" << tag << ")." << std::endl;
-	return;
-      }
-
-      // Trigger tagged sectors
-      for (unsigned int sector_index = 0; sector_index < doom.level.sectors.size(); sector_index++)
-	if (doom.level.sectors[sector_index].tag == tag)
-	  triggerDonut(doom, sector_index);
+	pool.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, Speed, DOOM::EnumAction::Change::ChangeTexture>>(doom, model.get().floor_base, model_index));
     }
 
   public:
     DonutTriggerableLinedef(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef) :
-      DOOM::AbstractTriggerableLinedef<Trigger, DOOM::EnumLinedef::Repeat::RepeatFalse>(doom, linedef)
+      DOOM::AbstractTriggerableLinedef<Trigger, Repeat>(doom, linedef)
     {}
 
     ~DonutTriggerableLinedef() = default;

@@ -703,13 +703,13 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom & doom, const DOOM::Wad::RawLevel::
   case DOOM::Doom::Level::Sector::Special::Normal:
     break;
   case DOOM::Doom::Level::Sector::Special::LightBlinkRandom:
-    action<DOOM::EnumAction::Type::TypeLighting>(std::make_unique<DOOM::RandomLightingAction<24, 4>>(doom));
+    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::RandomLightingAction<24, 4>>(doom));
     break;
   case DOOM::Doom::Level::Sector::Special::LightBlink05:
-    action<DOOM::EnumAction::Type::TypeLighting>(std::make_unique<DOOM::BlinkLightingAction<15, 5, false>>(doom));
+    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::BlinkLightingAction<15, 5, false>>(doom));
     break;
   case DOOM::Doom::Level::Sector::Special::LightBlink10:
-    action<DOOM::EnumAction::Type::TypeLighting>(std::make_unique<DOOM::BlinkLightingAction<35, 5, false>>(doom));
+    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::BlinkLightingAction<35, 5, false>>(doom));
     break;
   case DOOM::Doom::Level::Sector::Special::Damage20Blink05:
     break;	// TODO
@@ -720,29 +720,29 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom & doom, const DOOM::Wad::RawLevel::
     damage = 5.f;
     break;
   case DOOM::Doom::Level::Sector::Special::LightOscillates:
-    action<DOOM::EnumAction::Type::TypeLighting>(std::make_unique<DOOM::OscillateLightingAction<>>(doom));
+    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::OscillateLightingAction<>>(doom));
     break;
   case DOOM::Doom::Level::Sector::Special::Secret:
     break;	// TODO
   case DOOM::Doom::Level::Sector::Special::DoorClose:
-    action<DOOM::EnumAction::Type::TypeLeveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, 1050>>(doom, std::list<DOOM::EnumAction::DoorState>({ DOOM::EnumAction::DoorState::DoorStateWait, DOOM::EnumAction::DoorState::DoorStateClose })));
+    action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitClose, DOOM::EnumAction::Speed::SpeedSlow, 1050>>(doom));
     break;
   case DOOM::Doom::Level::Sector::Special::End:
     break;	// TODO
   case DOOM::Doom::Level::Sector::Special::LightBlink05Sync:
-    action<DOOM::EnumAction::Type::TypeLighting>(std::make_unique<DOOM::BlinkLightingAction<15, 5, true>>(doom));
+    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::BlinkLightingAction<15, 5, true>>(doom));
     break;
   case DOOM::Doom::Level::Sector::Special::LightBlink10Sync:
-    action<DOOM::EnumAction::Type::TypeLighting>(std::make_unique<DOOM::BlinkLightingAction<35, 5, true>>(doom));
+    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::BlinkLightingAction<35, 5, true>>(doom));
     break;
   case DOOM::Doom::Level::Sector::Special::DoorOpen:
-    action<DOOM::EnumAction::Type::TypeLeveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, 10500>>(doom, std::list<DOOM::EnumAction::DoorState>({ DOOM::EnumAction::DoorState::DoorStateWait, DOOM::EnumAction::DoorState::DoorStateOpen })));
+    action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitOpen, DOOM::EnumAction::Speed::SpeedSlow, 10500>>(doom));
     break;
   case DOOM::Doom::Level::Sector::Special::Damage20:
     damage = 20.f;
     break;
   case DOOM::Doom::Level::Sector::Special::LightFlickers:
-    action<DOOM::EnumAction::Type::TypeLighting>(std::make_unique<DOOM::FlickerLightingAction<>>(doom));
+    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::FlickerLightingAction<>>(doom));
     break;
 
   default:
@@ -774,7 +774,7 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::Doom::Level::Sector::_factory(DOOM::
 void	DOOM::Doom::Level::Sector::update(DOOM::Doom & doom, sf::Time elapsed)
 {
   // Update sector actions
-  for (unsigned int type = 0; type < DOOM::EnumAction::Type::TypeNumber; type++)
+  for (unsigned int type = 0; type < DOOM::Doom::Level::Sector::Action::Number; type++)
     if (_actions.at(type).get() != nullptr)
       _actions.at(type)->update(doom, *this, elapsed);
 }

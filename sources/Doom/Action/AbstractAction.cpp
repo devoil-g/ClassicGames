@@ -22,27 +22,27 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
 
     // Regular and extended door types
   case 1: case 4: case 29: case 63: case 90:	// Open, wait then close (slow)
-    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, 140>>(doom, std::list<DOOM::EnumAction::DoorState>({ DOOM::EnumAction::DoorState::DoorStateOpen, DOOM::EnumAction::DoorState::DoorStateWait, DOOM::EnumAction::DoorState::DoorStateClose }));
+    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorOpenWaitClose, DOOM::EnumAction::Speed::SpeedSlow, 140>>(doom);
   case 105: case 108: case 111: case 114: case 117:	// Open, wait then close (fast)
-    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedFast, 140>>(doom, std::list<DOOM::EnumAction::DoorState>({ DOOM::EnumAction::DoorState::DoorStateOpen, DOOM::EnumAction::DoorState::DoorStateWait, DOOM::EnumAction::DoorState::DoorStateClose }));
+    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorOpenWaitClose, DOOM::EnumAction::Speed::SpeedFast, 140>>(doom);
   case 2: case 31: case 46: case 61: case 86: case 103:	// Open and stay open (slow)
-    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedSlow>>(doom, std::list<DOOM::EnumAction::DoorState>({ DOOM::EnumAction::DoorState::DoorStateOpen }));
+    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitOpen, DOOM::EnumAction::Speed::SpeedSlow, 0>>(doom);
   case 106: case 109: case 112: case 115: case 118:	// Open and stay open (fast)
-    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedFast>>(doom, std::list<DOOM::EnumAction::DoorState>({ DOOM::EnumAction::DoorState::DoorStateOpen }));
+    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitOpen, DOOM::EnumAction::Speed::SpeedFast, 0>>(doom);
   case 16: case 76: case 175: case 196:	// Close, wait then open (slow)
-    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedNormal, 1050>>(doom, std::list<DOOM::EnumAction::DoorState>({ DOOM::EnumAction::DoorState::DoorStateClose, DOOM::EnumAction::DoorState::DoorStateWait, DOOM::EnumAction::DoorState::DoorStateOpen }));
+    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorCloseWaitOpen, DOOM::EnumAction::Speed::SpeedNormal, 1050>>(doom);
   case 3: case 42: case 50: case 75:	// Close and stay close (slow)
-    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedSlow>>(doom, std::list<DOOM::EnumAction::DoorState>({ DOOM::EnumAction::DoorState::DoorStateClose }));
+    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitClose, DOOM::EnumAction::Speed::SpeedSlow, 0>>(doom);
   case 107: case 110: case 113: case 116:	// Close and stay close (fast)
-    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedFast>>(doom, std::list<DOOM::EnumAction::DoorState>({ DOOM::EnumAction::DoorState::DoorStateClose }));
+    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitClose, DOOM::EnumAction::Speed::SpeedFast, 0>>(doom);
 
     // Regular and extended locked door types
   case 32: case 33: case 34:	// Open and stay open (slow)
-    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedSlow>>(doom, std::list<DOOM::EnumAction::DoorState>({ DOOM::EnumAction::DoorState::DoorStateOpen }));
+    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitOpen, DOOM::EnumAction::Speed::SpeedSlow, 0>>(doom);
   case 99: case 133: case 134: case 135: case 136: case 137:	// Open and stay open (fast)
-    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedFast>>(doom, std::list<DOOM::EnumAction::DoorState>({ DOOM::EnumAction::DoorState::DoorStateOpen }));
+    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitOpen, DOOM::EnumAction::Speed::SpeedFast, 0>>(doom);
   case 26: case 27: case 28:	// Open, wait then close (slow)
-    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, 140>>(doom, std::list<DOOM::EnumAction::DoorState>({ DOOM::EnumAction::DoorState::DoorStateOpen, DOOM::EnumAction::DoorState::DoorStateWait, DOOM::EnumAction::DoorState::DoorStateClose }));
+    return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorOpenWaitClose, DOOM::EnumAction::Speed::SpeedSlow, 140>>(doom);
 
     // Regular floor types
   case 30: case 96: {	// Abs Shortest Lower Texture
@@ -69,7 +69,7 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
   }
   case 55: case 56: case 65: case 94: {	// Lowest sector & neighboor ceiling - 8 (up, slow, crush)
     const float	height = sector.getNeighborLowestCeiling(doom).second;
-    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::ChangeNone, DOOM::EnumAction::Crush::CrushTrue>>(doom, ((std::isnan(height) == true || height > sector.ceiling_base) ? sector.ceiling_base : height) - 8.f);
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::ChangeNone, true>>(doom, ((std::isnan(height) == true || height > sector.ceiling_base) ? sector.ceiling_base : height) - 8.f);
   }
   case 23: case 38: case 60: case 82: {	// Lowest sector & neighboor floor (down, slow)
     const float	height = sector.getNeighborLowestFloor(doom).second;
@@ -124,7 +124,7 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
   case 53: case 87: {	// Lowest and highest floor (perpetual, slow)
     const float	height_low = sector.getNeighborLowestFloor(doom).second;
     const float	height_high = sector.getNeighborHighestFloor(doom).second;
-    return std::make_unique<DOOM::LiftLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Repeat::RepeatTrue>>(doom, std::isnan(height_low) == true ? sector.floor_base : std::min(height_low, sector.floor_base), std::isnan(height_high) == true ? sector.floor_base : std::max(height_high, sector.floor_base));
+    return std::make_unique<DOOM::LiftLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, true>>(doom, std::isnan(height_low) == true ? sector.floor_base : std::min(height_low, sector.floor_base), std::isnan(height_high) == true ? sector.floor_base : std::max(height_high, sector.floor_base));
   }
 
     // Regular crusher ceiling
@@ -133,7 +133,7 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
   case 25: case 49: case 73:
     return std::make_unique<DOOM::CrusherLevelingAction<DOOM::EnumAction::Speed::SpeedSlow>>(doom);
   case 141:
-    return std::make_unique<DOOM::CrusherLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Silent::SilentTrue>>(doom);
+    return std::make_unique<DOOM::CrusherLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, true>>(doom);
 
     /* TODO:
 
@@ -162,5 +162,8 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
   return nullptr;
 }
 
-void	DOOM::AbstractAction::stop()
+void	DOOM::AbstractAction::stop(DOOM::Doom & doom, DOOM::AbstractThing & thing)
+{}
+
+void	DOOM::AbstractAction::start(DOOM::Doom & doom, DOOM::AbstractThing & thing)
 {}

@@ -30,7 +30,7 @@ Game::DoomState::DoomState() :
     if (thing->type == 1)
     {
       _camera.position = thing->position;
-      _camera.height = _doom.level.sectors[_doom.level.sector(thing->position).first].floor_current + 32.f;
+      _camera.height = _doom.level.sectors[_doom.level.sector(thing->position).first].floor_current + 41.f;
       _camera.angle = thing->angle;
       break;
     }
@@ -132,7 +132,7 @@ bool	Game::DoomState::updatePlayer(sf::Time elapsed)
 	if (thing->type == 1)
 	{
 	  _camera.position = thing->position;
-	  _camera.height = _doom.level.sectors[_doom.level.sector(thing->position).first].floor_current + 32.f;
+	  _camera.height = _doom.level.sectors[_doom.level.sector(thing->position).first].floor_current + 41.f;
 	  _camera.angle = thing->angle;
 	  break;
 	}

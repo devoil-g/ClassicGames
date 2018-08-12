@@ -16,138 +16,6 @@
 
 namespace DOOM
 {
-  namespace EnumLinedef
-  {
-    enum Trigger
-    {
-      TriggerNone = 0b0000,
-      TriggerPushed = 0b0001,
-      TriggerSwitched = 0b0010,
-      TriggerWalkover = 0b0100,
-      TriggerGunfire = 0b1000
-    };
-
-    enum Action
-    {
-      ActionLeveling,
-      ActionLighting
-    };
-
-    enum Key
-    {
-      KeyNone,
-      KeyBlue,
-      KeyRed,
-      KeyYellow,
-    };
-
-    enum Repeat
-    {
-      RepeatFalse = false,
-      RepeatTrue = true
-    };
-
-    enum Monster
-    {
-      MonsterFalse = false,
-      MonsterTrue = true
-    };
-
-    enum Light
-    {
-      Light35,
-      Light255,
-      LightMinimum,
-      LightMaximum
-    };
-
-    enum Direction
-    {
-      DirectionDown,
-      DirectionUp
-    };
-  };
-
-  namespace EnumAction
-  {
-    enum Type
-    {
-      TypeLeveling,	// Leveling action
-      TypeLighting,	// Lighting action
-      TypeNumber	// Number of type of action
-    };
-
-    enum Speed
-    {
-      SpeedSlow = 1,	// Move 1 units/tic
-      SpeedNormal = 2,	// Move 2 units/tic
-      SpeedFast = 4,	// Move 4 units/tic
-      SpeedTurbo = 8	// Move 8 units/tic
-    };
-
-    enum DoorState
-    {
-      DoorStateOpen,		// Open the door
-      DoorStateClose,		// Close the door
-      DoorStateForceClose,	// Close the door without bouncing on thing
-      DoorStateWait,		// Wait for the specified time
-      DoorStateForceWait	// Wait for a fixed time
-    };
-
-    enum LiftState
-    {
-      LiftStateRaise,	// Raise the lift
-      LiftStateLower,	// Lower the lift
-      LiftStateWait,	// Wait for the specified time
-      LiftStateStop	// Stop lift
-    };
-
-    enum PlatformState
-    {
-      PlatformStateRaise,	// Raise the platform
-      PlatformStateLower,	// Lower the platform
-      PlatformStateStop		// Stop platform
-    };
-
-    enum CrusherState
-    {
-      CrusherStateRaise,	// Raise the crusher
-      CrusherStateLower		// Lower the crusher
-    };
-
-    enum Direction
-    {
-      DirectionUp,	// Move upward
-      DirectionDown	// Move downward
-    };
-
-    enum Repeat
-    {
-      RepeatFalse = false,
-      RepeatTrue = true
-    };
-
-    enum Silent
-    {
-      SilentFalse = false,
-      SilentTrue = true
-    };
-
-    enum Crush
-    {
-      CrushFalse = false,	// Doesn't crush things
-      CrushTrue = true		// Crush things
-    };
-
-    enum Change
-    {
-      ChangeNone,		// No change
-      ChangeTexture,		// Copy texture from model
-      ChangeTextureZeroed,	// Copy texture from model and zeroed type
-      ChangeTextureType,	// Copy texture and type from model
-    };
-  }
-
   // Forward declaration of external components
   class AbstractAction;
   class AbstractFlat;
@@ -326,6 +194,13 @@ namespace DOOM
 	  Damage20 = 0x0010,		// 20 % damage per second
 	  LightFlickers = 0x0011	// Flickers randomly (fire)
 	};
+	
+	enum Action
+	{
+	  Leveling,	// Leveling action
+	  Lighting,	// Lighting action
+	  Number	// Number of type of action
+	};
 
 	uint64_t						floor_name, ceiling_name;	// Textures names
 	std::reference_wrapper<const DOOM::AbstractFlat>	floor_flat, ceiling_flat;	// Textures pointers (null if sky)
@@ -342,7 +217,7 @@ namespace DOOM
 	std::vector<int16_t>	_neighbors;	// List of neighbor sectors (sorted)
 
       private:
-	std::array<std::unique_ptr<DOOM::AbstractAction>, DOOM::EnumAction::Type::TypeNumber>	_actions;	// Actions on sector
+	std::array<std::unique_ptr<DOOM::AbstractAction>, DOOM::Doom::Level::Sector::Action::Number>	_actions;	// Actions on sector
 	
 	static std::unique_ptr<DOOM::AbstractAction>	_factory(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, int16_t type, int16_t model);	// Action factory intermediate function (cycling inclusion problem)
 
@@ -353,42 +228,42 @@ namespace DOOM
 
 	void	update(DOOM::Doom & doom, sf::Time elapsed);	// Update sector
 
-	template<DOOM::EnumAction::Type Type>
+	template<DOOM::Doom::Level::Sector::Action Type>
 	inline void	action(DOOM::Doom & doom, int16_t type, int16_t model = -1)	// Add action to sector if possible
 	{
 	  // Check template parameter
-	  static_assert(Type >= 0 && Type < DOOM::EnumAction::Type::TypeNumber, "Invalid action template parameters.");
+	  static_assert(Type >= 0 && Type < DOOM::Doom::Level::Sector::Action::Number, "Invalid action template parameters.");
 
 	  // Push action if slot available
 	  if (_actions.at(Type).get() == nullptr)
 	    _actions.at(Type) = std::move(_factory(doom, *this, type, model));
 	}
 
-	template<DOOM::EnumAction::Type Type>
+	template<DOOM::Doom::Level::Sector::Action Type>
 	inline void	action(std::unique_ptr<DOOM::AbstractAction> && action)	// Add action to sector if possible
 	{
 	  // Check template parameter
-	  static_assert(Type >= 0 && Type < DOOM::EnumAction::Type::TypeNumber, "Invalid action template parameters.");
+	  static_assert(Type >= 0 && Type < DOOM::Doom::Level::Sector::Action::Number, "Invalid action template parameters.");
 
 	  // Push action if slot available
 	  if (_actions.at(Type).get() == nullptr)
 	    _actions.at(Type) = std::move(action);
 	}
 
-	template<DOOM::EnumAction::Type Type>
+	template<DOOM::Doom::Level::Sector::Action Type>
 	inline const std::unique_ptr<DOOM::AbstractAction> &	action() const	// Get action of sector
 	{
 	  // Check template parameter
-	  static_assert(Type >= 0 && Type < DOOM::EnumAction::Type::TypeNumber, "Invalid action template parameters.");
+	  static_assert(Type >= 0 && Type < DOOM::Doom::Level::Sector::Action::Number, "Invalid action template parameters.");
 
 	  return _actions.at(Type);
 	}
 
-	template<DOOM::EnumAction::Type Type>
+	template<DOOM::Doom::Level::Sector::Action Type>
 	inline std::unique_ptr<DOOM::AbstractAction> &	action()	// Get/set action of sector
 	{
 	  // Check template parameter
-	  static_assert(Type >= 0 && Type < DOOM::EnumAction::Type::TypeNumber, "Invalid action template parameters.");
+	  static_assert(Type >= 0 && Type < DOOM::Doom::Level::Sector::Action::Number, "Invalid action template parameters.");
 
 	  return _actions.at(Type);
 	}

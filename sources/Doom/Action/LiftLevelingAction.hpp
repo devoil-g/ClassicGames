@@ -11,15 +11,23 @@ namespace DOOM
 {
   template<
     DOOM::EnumAction::Speed Speed,
-    DOOM::EnumAction::Repeat Repeat = DOOM::EnumAction::Repeat::RepeatFalse,
-    unsigned int Wait = 105
+    bool Repeat = false,
+    unsigned int TickWait = 105
   >
-  class LiftLevelingAction : public DOOM::AbstractStoppableAction<DOOM::EnumAction::Type::TypeLeveling>
+  class LiftLevelingAction : public DOOM::AbstractStoppableAction<DOOM::Doom::Level::Sector::Action::Leveling>
   {
   private:
-    const float			_low, _high;	// Low and high heigh of lift
-    DOOM::EnumAction::LiftState	_state;		// Lift current state
-    sf::Time			_elapsed;	// Elapsed time since beginning of state
+    enum State
+    {
+      Raise,	// Raise the lift
+      Lower,	// Lower the lift
+      Wait,	// Wait for the specified time
+      Stop	// Stop and remove lift
+    };
+
+    const float	_low, _high;	// Low and high heigh of lift
+    State	_state;		// Lift current state
+    sf::Time	_elapsed;	// Elapsed time since beginning of state
 
     sf::Time	updateRaise(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed)
     {
@@ -28,7 +36,7 @@ namespace DOOM
 
       // TODO: cancel if collision
       if (false) {
-	_state = DOOM::EnumAction::LiftState::LiftStateLower;
+	_state = State::Lower;
 	return elapsed;
       }
 
@@ -37,7 +45,7 @@ namespace DOOM
 	sf::Time	exceding = std::min(sf::seconds((sector.floor_current - _high) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
 
 	sector.floor_current = _high;
-	_state = (Repeat == DOOM::EnumAction::Repeat::RepeatTrue && _stop == false ? DOOM::EnumAction::LiftState::LiftStateWait : DOOM::EnumAction::LiftState::LiftStateStop);
+	_state = (Repeat == true ? State::Wait : State::Stop);
 	return exceding;
       }
       else {
@@ -55,7 +63,7 @@ namespace DOOM
 	sf::Time	exceding = std::min(sf::seconds((_low - sector.floor_current) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
 
 	sector.floor_current = _low;
-	_state = DOOM::EnumAction::LiftState::LiftStateWait;
+	_state = State::Wait;
 	return exceding;
       }
       else {
@@ -69,13 +77,13 @@ namespace DOOM
       _elapsed += elapsed;
 
       // Compute remaining time if any
-      sf::Time	exceding = std::max(_elapsed - (DOOM::Doom::Tic * (float)Wait), sf::Time::Zero);
+      sf::Time	exceding = std::max(_elapsed - (DOOM::Doom::Tic * (float)TickWait), sf::Time::Zero);
 
       // Switch to next state if wait finished
       if (exceding != sf::Time::Zero) {
 	_state = (sector.floor_current == _low ?
-	  DOOM::EnumAction::LiftState::LiftStateRaise :
-	  DOOM::EnumAction::LiftState::LiftStateLower);
+	  State::Raise :
+	  State::Lower);
       }
 
       return exceding;
@@ -94,10 +102,10 @@ namespace DOOM
 
   public:
     LiftLevelingAction(DOOM::Doom & doom, float low, float high) :
-      DOOM::AbstractStoppableAction<DOOM::EnumAction::Type::TypeLeveling>(doom),
+      DOOM::AbstractStoppableAction<DOOM::Doom::Level::Sector::Action::Leveling>(doom),
       _low(low),
       _high(high),
-      _state(DOOM::EnumAction::LiftState::LiftStateLower),
+      _state(State::Lower),
       _elapsed(sf::Time::Zero)
     {}
 
@@ -105,20 +113,23 @@ namespace DOOM
 
     void	update(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed) override	// Update door action
     {
+      if (_run == false)
+	return;
+
       // Update action states
       while (elapsed != sf::Time::Zero) {
 	switch (_state)
 	{
-	case DOOM::EnumAction::LiftState::LiftStateRaise:
+	case State::Raise:
 	  elapsed = updateRaise(doom, sector, elapsed);
 	  break;
-	case DOOM::EnumAction::LiftState::LiftStateLower:
+	case State::Lower:
 	  elapsed = updateLower(doom, sector, elapsed);
 	  break;
-	case DOOM::EnumAction::LiftState::LiftStateWait:
+	case State::Wait:
 	  elapsed = updateWait(doom, sector, elapsed);
 	  break;
-	case DOOM::EnumAction::LiftState::LiftStateStop:
+	case State::Stop:
 	  elapsed = updateStop(doom, sector, elapsed);
 	  break;
 

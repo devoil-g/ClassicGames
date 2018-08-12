@@ -5,11 +5,20 @@
 
 namespace DOOM
 {
-  template<DOOM::EnumAction::Speed Speed, DOOM::EnumAction::Silent Silent = DOOM::EnumAction::Silent::SilentFalse>
-  class CrusherLevelingAction : public DOOM::AbstractStoppableAction<DOOM::EnumAction::Type::TypeLeveling>
+  template<
+    DOOM::EnumAction::Speed Speed,
+    bool Silent = false
+  >
+  class CrusherLevelingAction : public DOOM::AbstractStoppableAction<DOOM::Doom::Level::Sector::Action::Leveling>
   {
   private:
-    DOOM::EnumAction::CrusherState	_state;		// Crusher current state
+    enum State
+    {
+      Raise,	// Raise the crusher
+      Lower	// Lower the crusher
+    };
+
+    State	_state;	// Crusher current state
 
     sf::Time	updateRaise(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed)
     {
@@ -21,7 +30,7 @@ namespace DOOM
 	sf::Time	exceding = std::min(sf::seconds((sector.ceiling_current - sector.ceiling_base) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
 
 	sector.ceiling_current = sector.ceiling_base;
-	_state = DOOM::EnumAction::CrusherState::CrusherStateLower;
+	_state = State::Lower;
 	return exceding;
       }
       else {
@@ -41,7 +50,7 @@ namespace DOOM
 	sf::Time	exceding = std::min(sf::seconds((sector.floor_base + 8.f - sector.ceiling_current) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
 
 	sector.ceiling_current = sector.floor_base + 8.f;
-	_state = DOOM::EnumAction::CrusherState::CrusherStateRaise;
+	_state = State::Raise;
 	return exceding;
       }
       else {
@@ -51,35 +60,32 @@ namespace DOOM
 
   public:
     CrusherLevelingAction(DOOM::Doom & doom) :
-      DOOM::AbstractStoppableAction<DOOM::EnumAction::Type::TypeLeveling>(doom),
-      _state(DOOM::EnumAction::CrusherState::CrusherStateLower)
+      DOOM::AbstractStoppableAction<DOOM::Doom::Level::Sector::Action::Leveling>(doom),
+      _state(State::Lower)
     {}
 
     ~CrusherLevelingAction() override = default;
 
     void	update(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed) override	// Update door action
     {
-      // Stop action if requested
-      if (_stop == true) {
-	remove(doom, sector);
+      // Don't perform action if not running
+      if (_run == false) {
 	return;
       }
 
       // Update action states
-      while (elapsed != sf::Time::Zero) {
-	switch (_state)
-	{
-	case DOOM::EnumAction::CrusherState::CrusherStateRaise:
+      while (elapsed != sf::Time::Zero)
+	switch (_state) {
+	case State::Raise:
 	  elapsed = updateRaise(doom, sector, elapsed);
 	  break;
-	case DOOM::EnumAction::CrusherState::CrusherStateLower:
+	case State::Lower:
 	  elapsed = updateLower(doom, sector, elapsed);
 	  break;
 	
 	default:	// Handle error (should not happen)
 	  throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 	}
-      }
     }
   };
 };

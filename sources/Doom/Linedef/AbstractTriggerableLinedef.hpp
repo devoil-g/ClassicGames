@@ -6,16 +6,36 @@
 
 namespace DOOM
 {
+  namespace EnumLinedef
+  {
+    enum Trigger
+    {
+      TriggerNone = 0b0000,
+      TriggerPushed = 0b0001,
+      TriggerSwitched = 0b0010,
+      TriggerWalkover = 0b0100,
+      TriggerGunfire = 0b1000
+    };
+
+    enum Key
+    {
+      KeyNone,
+      KeyBlue,
+      KeyRed,
+      KeyYellow,
+    };
+  };
+
   template<
     DOOM::EnumLinedef::Trigger Trigger,
-    DOOM::EnumLinedef::Repeat Repeat,
-    DOOM::EnumLinedef::Monster Monster = DOOM::EnumLinedef::Monster::MonsterFalse,
+    bool Repeat,
+    bool Monster = false,
     DOOM::EnumLinedef::Key Key = DOOM::EnumLinedef::Key::KeyNone
   >
   class AbstractTriggerableLinedef : public DOOM::AbstractLinedef
   {
   private:
-    virtual void	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing) = 0;	// Action of the linedef
+    virtual void	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing, int16_t sector_index) = 0;	// Action of the linedef
 
     template<DOOM::EnumLinedef::Key _Key = DOOM::EnumLinedef::Key::KeyNone>
     inline std::enable_if_t<Key == _Key, bool>	triggerKey(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// No check for key
@@ -31,21 +51,21 @@ namespace DOOM
       return true;
     }
 
-    template<DOOM::EnumLinedef::Monster _Monster = DOOM::EnumLinedef::Monster::MonsterTrue>
+    template<bool _Monster = true>
     inline std::enable_if_t<Monster == _Monster, bool>	triggerMonster(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger sector of second sidedef
     {
       // TODO: check monster & player
       return true;
     }
 
-    template<DOOM::EnumLinedef::Monster _Monster = DOOM::EnumLinedef::Monster::MonsterTrue>
+    template<bool _Monster = true>
     inline std::enable_if_t<Monster != _Monster, bool>	triggerMonster(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger sector of second sidedef
     {
       // TODO: check player
       return true;
     }
 
-    template<DOOM::EnumLinedef::Repeat _Repeat = DOOM::EnumLinedef::Repeat::RepeatTrue>
+    template<bool _Repeat = true>
     inline std::enable_if_t<Repeat != _Repeat>	triggerRepeat(DOOM::Doom & doom)	// Replace linedef with null if not repeatable
     {
       // Replace current sector by a normal sector
@@ -59,7 +79,7 @@ namespace DOOM
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
     }
 
-    template<DOOM::EnumLinedef::Repeat _Repeat = DOOM::EnumLinedef::Repeat::RepeatTrue>
+    template<bool _Repeat = true>
     inline std::enable_if_t<Repeat == _Repeat>	triggerRepeat(DOOM::Doom & doom)	// Does nothing if repeatable
     {}
 
@@ -68,24 +88,23 @@ namespace DOOM
     {
       // Handle error
       if (back == -1)
-      {
 	return;
 
-	// TODO: solve problem of level 20
-	throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-      }
-
       // Trigger sector of second sidedef
-      triggerAction(doom, doom.level.sectors[doom.level.sidedefs[back].sector]);
+      trigger(doom, thing, doom.level.sidedefs[back].sector);
     }
 
     template<DOOM::EnumLinedef::Trigger _Trigger = DOOM::EnumLinedef::Trigger::TriggerPushed>
     inline std::enable_if_t<(Trigger & _Trigger) == 0>	triggerSector(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger tagged sectors
     {
+      // Handle invalid tag
+      if (tag == 0)
+	return;
+
       // Trigger tagged sectors
-      for (DOOM::Doom::Level::Sector & sector : doom.level.sectors)
-	if (sector.tag == tag)
-	  triggerAction(doom, sector);
+      for (int16_t index = 0; index < doom.level.sectors.size(); index++)
+	if (doom.level.sectors[index].tag == tag)
+	  trigger(doom, thing, index);
     }
 
     template<DOOM::EnumLinedef::Trigger _Trigger>
@@ -104,7 +123,7 @@ namespace DOOM
 	return;
 
       // Trigger associated sector(s)
-      trigger(doom, thing);
+      triggerSector(doom, thing);
 
       // Handle non-repeatable trigger
       triggerRepeat(doom);
@@ -113,7 +132,19 @@ namespace DOOM
   public:
     AbstractTriggerableLinedef(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef) :
       DOOM::AbstractLinedef(doom, linedef)
-    {}
+    {
+      // Check for inconstitency
+      if (Trigger & DOOM::EnumLinedef::Trigger::TriggerPushed) {
+	if (back == -1)
+	  std::cerr << "[DOOM::AbstractTriggerableLinedef] Warning, no sector for action (type #" << type << ")." << std::endl;
+	if (tag != 0)
+	  std::cerr << "[DOOM::AbstractTriggerableLinedef] Warning, useless tag for sector action (type #" << type << ")." << std::endl;
+      }
+      else {
+	if (tag == 0)
+	  std::cerr << "[DOOM::AbstractTriggerableLinedef] Warning, no tag for sector action (type #" << type << ")." << std::endl;
+      }
+    }
 
     ~AbstractTriggerableLinedef() = default;
 

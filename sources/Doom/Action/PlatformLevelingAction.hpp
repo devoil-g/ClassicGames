@@ -9,12 +9,18 @@ namespace DOOM
     DOOM::EnumAction::Speed Speed,
     DOOM::EnumAction::Change Change = DOOM::EnumAction::Change::ChangeNone
   >
-  class PlatformLevelingAction : public DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling, Change>
+  class PlatformLevelingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, Change>
   {
   private:
-    float				_target;	// Floor target height
-    DOOM::EnumAction::PlatformState	_state;		// Platform current state
+    enum State
+    {
+      Raise,	// Raise the platform
+      Lower,	// Lower the platform
+      Stop	// Stop platform
+    };
 
+    float	_target;	// Floor target height
+    State	_state;		// Platform current state
 
     sf::Time	updateRaise(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed)
     {
@@ -25,7 +31,7 @@ namespace DOOM
       if (false) {
 	// Change target height to original
 	_target = sector.floor_base;
-	_state = DOOM::EnumAction::PlatformState::PlatformStateLower;
+	_state = State::Lower;
 	return elapsed;
       }
 
@@ -34,7 +40,7 @@ namespace DOOM
 	sf::Time	exceding = std::min(sf::seconds((sector.floor_current - _target) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
 
 	sector.floor_current = _target;
-	_state = DOOM::EnumAction::PlatformState::PlatformStateStop;
+	_state = State::Stop;
 	return exceding;
       }
       else {
@@ -52,7 +58,7 @@ namespace DOOM
 	sf::Time	exceding = std::min(sf::seconds((_target - sector.floor_current) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
 
 	sector.floor_current = _target;
-	_state = DOOM::EnumAction::PlatformState::PlatformStateStop;
+	_state = State::Stop;
 	return exceding;
       }
       else {
@@ -73,9 +79,9 @@ namespace DOOM
 
   public:
     PlatformLevelingAction(DOOM::Doom & doom, float target, int16_t model = -1) :
-      DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling, Change>(doom, model),
+      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, Change>(doom, model),
       _target(target),
-      _state(DOOM::EnumAction::PlatformState::PlatformStateRaise)
+      _state(State::Raise)
     {}
 
     ~PlatformLevelingAction() override = default;
@@ -86,13 +92,13 @@ namespace DOOM
       while (elapsed != sf::Time::Zero) {
 	switch (_state)
 	{
-	case DOOM::EnumAction::PlatformState::PlatformStateRaise:
+	case State::Raise:
 	  elapsed = updateRaise(doom, sector, elapsed);
 	  break;
-	case DOOM::EnumAction::PlatformState::PlatformStateLower:
+	case State::Lower:
 	  elapsed = updateLower(doom, sector, elapsed);
 	  break;
-	case DOOM::EnumAction::PlatformState::PlatformStateStop:
+	case State::Stop:
 	  elapsed = updateStop(doom, sector, elapsed);
 	  break;
 

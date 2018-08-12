@@ -4,7 +4,7 @@
 
 DOOM::Camera::Camera(unsigned int width, unsigned int height) :
   position(0.f, 0.f),
-  height(48.f),
+  height(0.f),
   angle(Math::DegToRad(0.f)),
   orientation(Math::DegToRad(0.f)),
   fov(Math::DegToRad(90.f)),
@@ -204,8 +204,8 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, int16_t index)
     float	seg_offset = std::clamp(left.seg + (right.seg - left.seg) * ((std::abs(right.distance - left.distance) < 0.1f) ? screen_offset : ((((sector_front.ceiling_current - height) * _factor / (_horizon - upper_front)) - left.distance) / (right.distance - left.distance))), 0.f, 1.f);
 
     // Compute light level according to distance TODO: improve this process
-    float	distance = (position - (seg_start + (seg_end - seg_start) * seg_offset)).length();
-    int16_t	shaded = (int16_t)std::clamp((int)((int)light * 2 - 255 + 255 * DOOM::Camera::LightFade / distance), (int)0, (int)light);
+    float	distance = (position - (seg_start + (seg_end - seg_start) * seg_offset)).length() / (_screen_start + _screen * ((float)column / (float)_image.getSize().x) - position).length();
+    int16_t	shaded = renderLight(doom, light, distance);
 
     // Texture X offset
     int		texture_offset_x = seg.offset + (int)(sidedef_front.x + ((seg_end - seg_start).length() * (((bool)seg.direction == side) ? seg_offset : (1.f - seg_offset))));
@@ -266,6 +266,12 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, int16_t index)
   return _horizontal.first == _horizontal.second;
 }
 
+int16_t	DOOM::Camera::renderLight(const DOOM::Doom & doom, int16_t light, float distance)
+{
+  // Magic formula found in a creepy forum on the dark side of the internet
+  return (int16_t)std::clamp((int)((int)light * 2 - 255 + 255 * DOOM::Camera::LightFade / distance), (int)0, (int)255);
+}
+
 void	DOOM::Camera::renderTexture(DOOM::Doom const & doom, DOOM::Doom::Resources::Texture const & texture, int column, float top, float bottom, float height, int offset_x, float offset_y, int16_t light, int16_t seg)
 {
   int									pixel_x(Math::Modulo(offset_x, texture.width));
@@ -303,6 +309,7 @@ void	DOOM::Camera::renderFlat(DOOM::Doom const & doom, const DOOM::AbstractFlat 
 {
   Math::Vector<2>			direction(_screen_start + _screen * ((float)column / (float)_image.getSize().x) - position);
   const std::array<uint8_t, 4096> &	texture = flat.flat();
+  float					distance_distortion = direction.length();
 
   for (int row = std::max(start, _vertical[column].first); row < std::min(end, _vertical[column].second); row++)
     if (_image.getPixel(column, row).a == 0)
@@ -313,8 +320,7 @@ void	DOOM::Camera::renderFlat(DOOM::Doom const & doom, const DOOM::AbstractFlat 
       Math::Vector<2>	coord(position + direction * k);
 
       // Compute light level according to distance TODO: improve this process
-      float	distance = (position - coord).length();
-      int16_t	shaded = (int16_t)std::clamp((int)((int)light * 2 - 255 + 255 * DOOM::Camera::LightFade / distance), (int)0, (int)light);
+      int16_t	shaded = renderLight(doom, light, (position - coord).length() / distance_distortion);
 
       // Get color in flat from coordinates and register segment index in seg-buffer
       _image.setPixel(column, row, doom.resources.palettes[0][doom.resources.colormaps[31 - shaded / 8][texture[(Math::Modulo<64>(64 - (int)coord.y())) * 64 + Math::Modulo<64>((int)coord.x())]]]);
@@ -333,7 +339,7 @@ void	DOOM::Camera::renderSky(DOOM::Doom const & doom, int column, int start, int
   for (int row = std::max(_vertical[column].first, start); row < std::min(end, _vertical[column].second); row++)
     if (_image.getPixel(column, row).a == 0)
     {
-      int	pixel_y = (int)((row - _horizon) * sky_factor * 0.667f) + sky.height / 2;
+      int	pixel_y = (int)std::lroundf((row - _horizon) * sky_factor * 0.72f) + sky.height / 2;
 
       // Skip pixel if outside of sky texture
       if (pixel_y < 0 || pixel_y >= sky.height)
@@ -403,8 +409,7 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom)
     std::unordered_map<int16_t, bool>	visible;
 
     // Compute light level of thing
-    int16_t	light = doom.level.sectors[thing_sector.first].light_current;
-    int16_t	shaded = (int16_t)std::clamp((int)((int)light * 2 - 255 + 255 * DOOM::Camera::LightFade / (thing.position - position).length()), (int)0, (int)light);
+    int16_t	shaded = renderLight(doom, doom.level.sectors[thing_sector.first].light_current, iterator->second);
 
     // Render pixels of the sprite
     for (int column = std::max((int)std::lroundf(first_x), 0); column < std::min((int)std::lroundf(second_x), (int)_image.getSize().x); column++)
@@ -446,7 +451,7 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom)
 	  continue;
 
 	int	pixel_x = (int)(std::clamp(((texture.second == false) ? (column - first_x) : (second_x - column)) / (second_x - first_x), 0.f, 0.9999999f) * texture.first.get().width);
-	int	pixel_y = (int)(std::clamp((row - first_y) / (second_y - first_y), 0.f, 0.9999f) * texture.first.get().height);
+	int	pixel_y = (int)(std::clamp((row - first_y) / (second_y - first_y), 0.f, 0.9999999f) * texture.first.get().height);
 
 	for (DOOM::Doom::Resources::Texture::Column::Span const & span : texture.first.get().columns[pixel_x].spans)
 	{

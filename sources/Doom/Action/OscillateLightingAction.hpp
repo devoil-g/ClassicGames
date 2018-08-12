@@ -8,14 +8,14 @@
 namespace DOOM
 {
   template<unsigned int Period = 32>
-  class OscillateLightingAction : public DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLighting>
+  class OscillateLightingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>
   {
   private:
     sf::Time	_elapsed;
 
   public:
     OscillateLightingAction(DOOM::Doom & doom) :
-      DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLighting>(doom),
+      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>(doom),
       _elapsed(sf::Time::Zero)
     {}
 

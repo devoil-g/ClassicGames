@@ -5,18 +5,31 @@
 
 namespace DOOM
 {
+  namespace EnumLinedef
+  {
+    enum Light
+    {
+      Light35,
+      Light255,
+      LightMinimum,
+      LightMaximum
+    };
+  };
+
   template<
     DOOM::EnumLinedef::Light Light,
     DOOM::EnumLinedef::Trigger Trigger,
-    DOOM::EnumLinedef::Repeat Repeat
+    bool Repeat
   >
   class LightTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat>
   {
   private:
-    inline void	triggerLight(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector)	// Perform light change on sector
+    void	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing, int16_t sector_index) override	// Perform light change on sector
     {
+      DOOM::Doom::Level::Sector &	sector = doom.level.sectors[sector_index];
+
       // Cancel if a lighting action is already running
-      if (sector.action<DOOM::EnumAction::Type::TypeLighting>().get() != nullptr)
+      if (sector.action<DOOM::Doom::Level::Sector::Action::Lighting>().get() != nullptr)
 	return;
 
       int16_t	light;
@@ -41,48 +54,6 @@ namespace DOOM
       // Set new light level of sector
       sector.light_base = light;
       sector.light_current = light;
-    }
-
-    template<DOOM::EnumLinedef::Trigger _Trigger = DOOM::EnumLinedef::Trigger::TriggerPushed>
-    inline std::enable_if_t<(Trigger & _Trigger) != 0>	triggerSector(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger sector of second sidedef
-    {
-      // Handle error
-      if (back == -1)
-      {
-	std::cerr << "[LightTriggerableLinedef:trigger] Warning, invalid pushed type (" << type << ")." << std::endl;
-	return;
-
-	// TODO: solve problem of level 20
-	throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-      }
-
-      // Trigger sector of second sidedef
-      triggerLight(doom, doom.level.sectors[_doom.level.sidedefs[back].sector]);
-    }
-
-    template<DOOM::EnumLinedef::Trigger _Trigger = DOOM::EnumLinedef::Trigger::TriggerPushed>
-    inline std::enable_if_t<(Trigger & _Trigger) == 0>	triggerSector(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger tagged sectors
-    {
-      // Handle error
-      if (tag == 0)
-      {
-	std::cerr << "[LightTriggerableLinedef:trigger] Warning, invalid pushed tag (" << tag << ")." << std::endl;
-	return;
-
-	// TODO: solve problem of level 20
-	throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-      }
-
-      // Trigger tagged sectors
-      for (DOOM::Doom::Level::Sector & sector : doom.level.sectors)
-	if (sector.tag == tag)
-	  triggerLight(doom, sector);
-    }
-
-    void	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// Action of the linedef
-    {
-      // Push action in sector(s)
-      triggerSector(doom, thing);
     }
 
   public:

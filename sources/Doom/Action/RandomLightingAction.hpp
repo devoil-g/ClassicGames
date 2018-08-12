@@ -11,7 +11,7 @@ namespace DOOM
     unsigned int CycleDuration = 24,
     unsigned int FlashDuration = 4
   >
-  class RandomLightingAction : public DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLighting>
+  class RandomLightingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>
   {
   private:
     int16_t	_cycle;		// Cycle duration
@@ -20,7 +20,7 @@ namespace DOOM
 
   public:
     RandomLightingAction(DOOM::Doom & doom) :
-      DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLighting>(doom),
+      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>(doom),
       _cycle(0),
       _flash(0),
       _elapsed(sf::Time::Zero)
@@ -44,9 +44,9 @@ namespace DOOM
 
       // Compute light value from elapsed time
       if (_elapsed < DOOM::Doom::Tic * (float)_flash)
-	sector.light_current = sector.light_base;
-      else
 	sector.light_current = sector.getNeighborLowestLight(doom);
+      else
+	sector.light_current = sector.light_base;
     }
   };
 };

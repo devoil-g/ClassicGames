@@ -5,15 +5,19 @@
 
 namespace DOOM
 {
-  template<unsigned int CycleDuration = 35, unsigned int FlashDuration = 5, bool Sync = false>
-  class BlinkLightingAction : public DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLighting>
+  template<
+    unsigned int CycleDuration = 35,
+    unsigned int FlashDuration = 5,
+    bool Sync = false
+  >
+  class BlinkLightingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>
   {
   private:
     sf::Time	_elapsed;	// Elapsed time
 
   public:
     BlinkLightingAction(DOOM::Doom & doom) :
-      DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLighting>(doom),
+      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>(doom),
       _elapsed(Sync == true ? sf::Time::Zero : DOOM::Doom::Tic * (9.f * Math::Random()))
     {}
 

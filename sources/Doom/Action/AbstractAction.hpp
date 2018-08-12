@@ -5,7 +5,23 @@
 
 namespace DOOM
 {
-  // TODO: refactor actions
+  namespace EnumAction
+  {
+    enum Speed
+    {
+      SpeedSlow = 1,	// Move 1 units/tic
+      SpeedNormal = 2,	// Move 2 units/tic
+      SpeedFast = 4,	// Move 4 units/tic
+      SpeedTurbo = 8	// Move 8 units/tic
+    };
+
+    enum Direction
+    {
+      DirectionUp,	// Move upward
+      DirectionDown	// Move downward
+    };
+  };
+
   class AbstractAction
   {
   public:
@@ -19,7 +35,9 @@ namespace DOOM
     virtual ~AbstractAction() = default;
 
     virtual void	update(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed) = 0;	// Update sector's action
-    virtual void	stop();											// Request action to stop (for lift & crusher)
+
+    virtual void	stop(DOOM::Doom & doom, DOOM::AbstractThing & thing);	// Request action to stop (for lift & crusher)
+    virtual void	start(DOOM::Doom & doom, DOOM::AbstractThing & thing);	// Request action to start or re-trigger (for door, lift & crusher)
   };
 };
 

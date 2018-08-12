@@ -5,8 +5,19 @@
 
 namespace DOOM
 {
+  namespace EnumAction
+  {
+    enum Change
+    {
+      ChangeNone,		// No change
+      ChangeTexture,		// Copy texture from model
+      ChangeTextureZeroed,	// Copy texture from model and zeroed type
+      ChangeTextureType,	// Copy texture and type from model
+    };
+  };
+
   template<
-    DOOM::EnumAction::Type Type,
+    DOOM::Doom::Level::Sector::Action Type,
     DOOM::EnumAction::Change Change = DOOM::EnumAction::Change::ChangeNone
   >
   class AbstractTypeAction : public DOOM::AbstractAction

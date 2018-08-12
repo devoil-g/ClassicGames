@@ -9,16 +9,16 @@ namespace DOOM
     DOOM::EnumAction::Direction Direction,
     DOOM::EnumAction::Speed Speed,
     DOOM::EnumAction::Change Change = DOOM::EnumAction::Change::ChangeNone,
-    DOOM::EnumAction::Crush Crush = DOOM::EnumAction::Crush::CrushFalse
+    bool Crush = false
   >
-  class FloorLevelingAction : public DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling, Change>
+  class FloorLevelingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, Change>
   {
   private:
     const float	_target;	// Floor target height
 
   public:
     FloorLevelingAction(DOOM::Doom & doom, float target, int16_t model = -1) :
-      DOOM::AbstractTypeAction<DOOM::EnumAction::Type::TypeLeveling, Change>(doom, model),
+      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, Change>(doom, model),
       _target(target)
     {}
 
