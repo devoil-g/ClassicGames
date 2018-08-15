@@ -1,5 +1,5 @@
-#ifndef _GAME_STATE_HPP_
-#define _GAME_STATE_HPP_
+#ifndef _DOOM_STATE_HPP_
+#define _DOOM_STATE_HPP_
 
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -27,7 +27,7 @@ namespace Game
     void	drawImage();	// Draw rendered image to screen
 
   public:
-    DoomState();
+    DoomState(std::array<int, 4> controllers);
     ~DoomState() override;
 
     bool	update(sf::Time) override;	// Update state

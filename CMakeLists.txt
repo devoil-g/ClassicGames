@@ -85,8 +85,6 @@ SET(GAME_STATES_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/StateMachine.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/AbstractState.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/AbstractState.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/DoomState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/DoomState.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/LoadingState.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/LoadingState.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/MessageState.cpp
@@ -95,6 +93,12 @@ SET(GAME_STATES_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/SplashState.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/StartState.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/StartState.hpp
+)
+SET(GAME_STATES_DOOM_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Doom/DoomState.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Doom/DoomState.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Doom/StartDoomState.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Doom/StartDoomState.hpp
 )
 SET(GAME_STATES_MENU_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Menu/AbstractMenuState.cpp
@@ -126,6 +130,7 @@ SET(GAME_SRCS
 	${GAME_DOOM_THING_SRCS}
 	${GAME_MATH_SRCS}
 	${GAME_STATES_SRCS}
+	${GAME_STATES_DOOM_SRCS}
 	${GAME_STATES_MENU_SRCS}
 	${GAME_SYSTEM_SRCS}
 	${GAME_SYSTEM_LIBRARY_SRCS}
@@ -147,6 +152,7 @@ SOURCE_GROUP("Doom\\Action\\" FILES ${GAME_DOOM_ACTION_SRCS})
 SOURCE_GROUP("Doom\\Thing\\" FILES ${GAME_DOOM_THING_SRCS})
 SOURCE_GROUP("Math\\" FILES ${GAME_MATH_SRCS})
 SOURCE_GROUP("States\\" FILES ${GAME_STATES_SRCS})
+SOURCE_GROUP("States\\Doom\\" FILES ${GAME_STATES_DOOM_SRCS})
 SOURCE_GROUP("States\\Menu\\" FILES ${GAME_STATES_MENU_SRCS})
 SOURCE_GROUP("System\\" FILES ${GAME_SYSTEM_SRCS})
 SOURCE_GROUP("System\\Library\\" FILES ${GAME_SYSTEM_LIBRARY_SRCS})

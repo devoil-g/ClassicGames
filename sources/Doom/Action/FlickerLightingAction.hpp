@@ -19,8 +19,8 @@ namespace DOOM
     sf::Time	_elapsed;	// Elapsed time
 
   public:
-    FlickerLightingAction(DOOM::Doom & doom) :
-      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>(doom),
+    FlickerLightingAction(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector) :
+      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>(doom, sector),
       _cycle(0),
       _flicker(0),
       _elapsed(sf::Time::Zero)

@@ -37,7 +37,7 @@ std::list<std::pair<uint8_t, uint8_t>>	DOOM::Doom::getLevel() const
   std::list<std::pair<uint8_t, uint8_t>>	list;
 
   // Build list of available levels in WAD file
-  for (std::pair<std::pair<uint8_t, uint8_t>, DOOM::Wad::RawLevel> const & level : wad.levels)
+  for (const std::pair<std::pair<uint8_t, uint8_t>, DOOM::Wad::RawLevel> & level : wad.levels)
     list.emplace_back(level.first);
 
   return list;
@@ -313,13 +313,13 @@ void	DOOM::Doom::Level::update(DOOM::Doom & doom, sf::Time elapsed)
   for (const std::unique_ptr<DOOM::AbstractThing> & thing : things)
     thing->update(doom, elapsed);
 
-  // Update level sectors
-  for (DOOM::Doom::Level::Sector & sector : sectors)
-    sector.update(doom, elapsed);
-
   // Update level linedef
   for (const std::unique_ptr<DOOM::AbstractLinedef> & linedef : linedefs)
     linedef->update(doom, elapsed);
+
+  // Update level sectors
+  for (DOOM::Doom::Level::Sector & sector : sectors)
+    sector.update(doom, elapsed);
 
   // Update level sidedef
   for (DOOM::Doom::Level::Sidedef & sidedef : sidedefs)
@@ -703,13 +703,13 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom & doom, const DOOM::Wad::RawLevel::
   case DOOM::Doom::Level::Sector::Special::Normal:
     break;
   case DOOM::Doom::Level::Sector::Special::LightBlinkRandom:
-    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::RandomLightingAction<24, 4>>(doom));
+    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::RandomLightingAction<24, 4>>(doom, *this));
     break;
   case DOOM::Doom::Level::Sector::Special::LightBlink05:
-    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::BlinkLightingAction<15, 5, false>>(doom));
+    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::BlinkLightingAction<15, 5, false>>(doom, *this));
     break;
   case DOOM::Doom::Level::Sector::Special::LightBlink10:
-    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::BlinkLightingAction<35, 5, false>>(doom));
+    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::BlinkLightingAction<35, 5, false>>(doom, *this));
     break;
   case DOOM::Doom::Level::Sector::Special::Damage20Blink05:
     break;	// TODO
@@ -720,29 +720,29 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom & doom, const DOOM::Wad::RawLevel::
     damage = 5.f;
     break;
   case DOOM::Doom::Level::Sector::Special::LightOscillates:
-    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::OscillateLightingAction<>>(doom));
+    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::OscillateLightingAction<>>(doom, *this));
     break;
   case DOOM::Doom::Level::Sector::Special::Secret:
     break;	// TODO
   case DOOM::Doom::Level::Sector::Special::DoorClose:
-    action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitClose, DOOM::EnumAction::Speed::SpeedSlow, 1050>>(doom));
+    action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitClose, DOOM::EnumAction::Speed::SpeedSlow, 1050>>(doom, *this));
     break;
   case DOOM::Doom::Level::Sector::Special::End:
     break;	// TODO
   case DOOM::Doom::Level::Sector::Special::LightBlink05Sync:
-    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::BlinkLightingAction<15, 5, true>>(doom));
+    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::BlinkLightingAction<15, 5, true>>(doom, *this));
     break;
   case DOOM::Doom::Level::Sector::Special::LightBlink10Sync:
-    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::BlinkLightingAction<35, 5, true>>(doom));
+    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::BlinkLightingAction<35, 5, true>>(doom, *this));
     break;
   case DOOM::Doom::Level::Sector::Special::DoorOpen:
-    action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitOpen, DOOM::EnumAction::Speed::SpeedSlow, 10500>>(doom));
+    action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitOpen, DOOM::EnumAction::Speed::SpeedSlow, 10500>>(doom, *this));
     break;
   case DOOM::Doom::Level::Sector::Special::Damage20:
     damage = 20.f;
     break;
   case DOOM::Doom::Level::Sector::Special::LightFlickers:
-    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::FlickerLightingAction<>>(doom));
+    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::FlickerLightingAction<>>(doom, *this));
     break;
 
   default:

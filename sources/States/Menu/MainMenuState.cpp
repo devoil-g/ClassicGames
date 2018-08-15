@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "System/Library/FontLibrary.hpp"
-#include "States/DoomState.hpp"
+#include "States/Doom/StartDoomState.hpp"
 #include "States/Menu/MainMenuState.hpp"
 #include "States/Menu/OptionsMenuState.hpp"
 #include "States/MessageState.hpp"
@@ -41,22 +41,8 @@ void	Game::MainMenuState::draw()
 
 void	Game::MainMenuState::selectDoom(Game::AbstractMenuState::Item &)
 {
-  // Go to new game menu
-  Game::StateMachine::Instance().push(new Game::LoadingState(std::async(std::launch::async, []
-  {
-    try
-    {
-      // Load DOOM state
-      return static_cast<Game::AbstractState *>(new Game::DoomState());
-    }
-    catch (std::exception exception)
-    {
-      std::cerr << "[MainMenuState::selectDoom] Warning, failed to load file: '" << std::string(exception.what()) << "'." << std::endl;
-
-      // Return an error message
-      return static_cast<Game::AbstractState *>(new Game::MessageState("Error: failed to load WAD file.\n"));
-    }
-  })));
+  // Go to DOOM menu
+  Game::StateMachine::Instance().push(new Game::StartDoomState());
 }
 
 void	Game::MainMenuState::selectOptions(Game::AbstractMenuState::Item &)

@@ -16,8 +16,8 @@ namespace DOOM
     sf::Time	_elapsed;	// Elapsed time
 
   public:
-    BlinkLightingAction(DOOM::Doom & doom) :
-      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>(doom),
+    BlinkLightingAction(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector) :
+      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>(doom, sector),
       _elapsed(Sync == true ? sf::Time::Zero : DOOM::Doom::Tic * (9.f * Math::Random()))
     {}
 

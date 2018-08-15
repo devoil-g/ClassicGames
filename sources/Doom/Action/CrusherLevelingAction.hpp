@@ -59,8 +59,8 @@ namespace DOOM
     }
 
   public:
-    CrusherLevelingAction(DOOM::Doom & doom) :
-      DOOM::AbstractStoppableAction<DOOM::Doom::Level::Sector::Action::Leveling>(doom),
+    CrusherLevelingAction(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector) :
+      DOOM::AbstractStoppableAction<DOOM::Doom::Level::Sector::Action::Leveling>(doom, sector),
       _state(State::Lower)
     {}
 

@@ -7,16 +7,16 @@ namespace DOOM
 {
   template<
     DOOM::Doom::Level::Sector::Action Type,
-    DOOM::EnumAction::Change Change = DOOM::EnumAction::Change::ChangeNone
+    DOOM::EnumAction::Change::Type ChangeType = DOOM::EnumAction::Change::Type::None
   >
-  class AbstractStoppableAction : public DOOM::AbstractTypeAction<Type, Change>
+  class AbstractStoppableAction : public DOOM::AbstractTypeAction<Type, ChangeType>
   {
   protected:
     bool	_run;	// Flag for stop
 
   public:
-    AbstractStoppableAction(DOOM::Doom & doom) :
-      AbstractTypeAction(doom),
+    AbstractStoppableAction(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector) :
+      DOOM::AbstractTypeAction<Type, ChangeType>(doom, sector),
       _run(true)
     {}
 

@@ -4,6 +4,8 @@
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
+#include <iostream>
+
 std::string const	Game::Window::DefaultTitle = "Classical Games";
 unsigned int const	Game::Window::DefaultWidth = 640;
 unsigned int const	Game::Window::DefaultHeight = 360;

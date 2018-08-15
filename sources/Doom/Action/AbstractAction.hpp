@@ -31,7 +31,7 @@ namespace DOOM
     virtual void	remove(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector) = 0;	// Remove action from sector
 
   public:
-    AbstractAction(DOOM::Doom & doom);
+    AbstractAction(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector);
     virtual ~AbstractAction() = default;
 
     virtual void	update(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed) = 0;	// Update sector's action

@@ -7,9 +7,9 @@ namespace DOOM
 {
   template<
     DOOM::EnumAction::Speed Speed,
-    DOOM::EnumAction::Change Change = DOOM::EnumAction::Change::ChangeNone
+    DOOM::EnumAction::Change::Type ChangeType = DOOM::EnumAction::Change::Type::ChangeTypeNone
   >
-  class PlatformLevelingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, Change>
+  class PlatformLevelingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType>
   {
   private:
     enum State
@@ -78,8 +78,8 @@ namespace DOOM
     }
 
   public:
-    PlatformLevelingAction(DOOM::Doom & doom, float target, int16_t model = -1) :
-      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, Change>(doom, model),
+    PlatformLevelingAction(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, float target, int16_t model = -1) :
+      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType>(doom, sector, model),
       _target(target),
       _state(State::Raise)
     {}

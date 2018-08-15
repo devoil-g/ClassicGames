@@ -14,8 +14,8 @@ namespace DOOM
     sf::Time	_elapsed;
 
   public:
-    OscillateLightingAction(DOOM::Doom & doom) :
-      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>(doom),
+    OscillateLightingAction(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector) :
+      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>(doom, sector),
       _elapsed(sf::Time::Zero)
     {}
 

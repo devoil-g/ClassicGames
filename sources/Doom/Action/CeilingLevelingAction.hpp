@@ -8,7 +8,6 @@ namespace DOOM
   template<
     DOOM::EnumAction::Direction Direction,
     DOOM::EnumAction::Speed Speed,
-    DOOM::EnumAction::Change Change = DOOM::EnumAction::Change::ChangeNone,
     bool Crush = false
   >
   class CeilingLevelingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling>
@@ -17,8 +16,8 @@ namespace DOOM
     const float	_target;	// Ceiling target height
 
   public:
-    CeilingLevelingAction(DOOM::Doom & doom, float target) :
-      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling>(doom),
+    CeilingLevelingAction(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, float target) :
+      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling>(doom, sector),
       _target(target)
     {}
 

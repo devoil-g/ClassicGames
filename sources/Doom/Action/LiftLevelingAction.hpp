@@ -101,8 +101,8 @@ namespace DOOM
     }
 
   public:
-    LiftLevelingAction(DOOM::Doom & doom, float low, float high) :
-      DOOM::AbstractStoppableAction<DOOM::Doom::Level::Sector::Action::Leveling>(doom),
+    LiftLevelingAction(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, float low, float high) :
+      DOOM::AbstractStoppableAction<DOOM::Doom::Level::Sector::Action::Leveling>(doom, sector),
       _low(low),
       _high(high),
       _state(State::Lower),
@@ -113,7 +113,7 @@ namespace DOOM
 
     void	update(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed) override	// Update door action
     {
-      if (_run == false)
+      if (Repeat == true && _run == false)
 	return;
 
       // Update action states

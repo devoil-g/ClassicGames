@@ -35,7 +35,7 @@ void	Game::StartState::draw()
   _text.setPosition(sf::Vector2f((Game::Window::Instance().window().getSize().x - _text.getLocalBounds().width) / 2.f, (Game::Window::Instance().window().getSize().y - _text.getLocalBounds().height) / 2.f));
   
   // Set text color for flickering
-  float	intensity = ::pow(1.f - (::cos(_elapsed * 4.f) + 1.f) / 2.f, 0.5f);
+  float	intensity = std::sqrtf(1.f - (std::cos(_elapsed * 4.f) + 1.f) / 2.f);
 
   _text.setFillColor(sf::Color((sf::Uint8)(255 * intensity), (sf::Uint8)(255 * intensity), (sf::Uint8)(255 * intensity)));
 

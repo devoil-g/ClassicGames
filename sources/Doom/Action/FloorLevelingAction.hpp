@@ -8,17 +8,17 @@ namespace DOOM
   template<
     DOOM::EnumAction::Direction Direction,
     DOOM::EnumAction::Speed Speed,
-    DOOM::EnumAction::Change Change = DOOM::EnumAction::Change::ChangeNone,
+    DOOM::EnumAction::Change::Type ChangeType = DOOM::EnumAction::Change::Type::None,
     bool Crush = false
   >
-  class FloorLevelingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, Change>
+  class FloorLevelingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType>
   {
   private:
     const float	_target;	// Floor target height
 
   public:
-    FloorLevelingAction(DOOM::Doom & doom, float target, int16_t model = -1) :
-      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, Change>(doom, model),
+    FloorLevelingAction(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, float target, int16_t model = -1) :
+      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType>(doom, sector, model),
       _target(target)
     {}
 

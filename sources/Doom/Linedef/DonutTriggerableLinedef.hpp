@@ -68,15 +68,15 @@ namespace DOOM
 
       // Raise/lower pillar
       if (pillar.get().floor_base > model.get().floor_base)
-	pillar.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, Speed>>(doom, model.get().floor_base));
+	pillar.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, Speed>>(doom, pillar, model.get().floor_base));
       else
-	pillar.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, Speed>>(doom, model.get().floor_base));
+	pillar.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, Speed>>(doom, pillar, model.get().floor_base));
 
       // Raise/lower pool
       if (pool.get().floor_base > model.get().floor_base)
-	pool.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, Speed, DOOM::EnumAction::Change::ChangeTexture>>(doom, model.get().floor_base, model_index));
+	pool.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, Speed, DOOM::EnumAction::Change::Type::Texture>>(doom, pool, model.get().floor_base, model_index));
       else
-	pool.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, Speed, DOOM::EnumAction::Change::ChangeTexture>>(doom, model.get().floor_base, model_index));
+	pool.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, Speed, DOOM::EnumAction::Change::Type::Texture>>(doom, pool, model.get().floor_base, model_index));
     }
 
   public:

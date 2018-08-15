@@ -2,12 +2,12 @@
 
 #include "Doom/Doom.hpp"
 #include "Doom/Thing/AbstractThing.hpp"
-#include "States/DoomState.hpp"
+#include "States/Doom/DoomState.hpp"
 #include "States/StateMachine.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
-Game::DoomState::DoomState() :
+Game::DoomState::DoomState(std::array<int, 4> controllers) :
   _elapsed(sf::seconds(0)),
   _doom(),
   _camera()

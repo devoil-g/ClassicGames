@@ -7,18 +7,28 @@ namespace DOOM
 {
   namespace EnumAction
   {
-    enum Change
+    namespace Change
     {
-      ChangeNone,		// No change
-      ChangeTexture,		// Copy texture from model
-      ChangeTextureZeroed,	// Copy texture from model and zeroed type
-      ChangeTextureType,	// Copy texture and type from model
+      enum Type
+      {
+	None,		// No change
+	Texture,	// Copy texture from model
+	TextureZeroed,	// Copy texture from model and zeroed type
+	TextureType,	// Copy texture and type from model
+      };
+
+      enum Time
+      {
+	Before,	// Apply change before action
+	After	// Apply change after action
+      };
     };
   };
 
   template<
     DOOM::Doom::Level::Sector::Action Type,
-    DOOM::EnumAction::Change Change = DOOM::EnumAction::Change::ChangeNone
+    DOOM::EnumAction::Change::Type ChangeType = DOOM::EnumAction::Change::Type::None,
+    DOOM::EnumAction::Change::Time ChangeTime = DOOM::EnumAction::Change::Time::Before
   >
   class AbstractTypeAction : public DOOM::AbstractAction
   {
@@ -46,21 +56,20 @@ namespace DOOM
       sector.damage = doom.level.sectors[_model].damage;
     }
 
-  protected:
-    void	remove(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector) override	// Remove action from sector
+    void	change(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector)
     {
       // Perform sector properties change
-      if (Change != DOOM::EnumAction::Change::ChangeNone && _model != -1)
+      if (ChangeType != DOOM::EnumAction::Change::Type::None && _model != -1)
       {
-	switch (Change) {
-	case DOOM::EnumAction::Change::ChangeTexture:
+	switch (ChangeType) {
+	case DOOM::EnumAction::Change::Type::Texture:
 	  changeTexture(doom, sector);
 	  break;
-	case DOOM::EnumAction::Change::ChangeTextureZeroed:
+	case DOOM::EnumAction::Change::Type::TextureZeroed:
 	  changeTexture(doom, sector);
 	  changeZeroed(doom, sector);
 	  break;
-	case DOOM::EnumAction::Change::ChangeTextureType:
+	case DOOM::EnumAction::Change::Type::TextureType:
 	  changeTexture(doom, sector);
 	  changeType(doom, sector);
 	  break;
@@ -69,19 +78,31 @@ namespace DOOM
 	  throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 	}
       }
+    }
+
+  protected:
+    void	remove(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector) override	// Remove action from sector
+    {
+      // Apply change to sector
+      if (ChangeTime == DOOM::EnumAction::Change::Time::After)
+	change(doom, sector);
 
       // Remove action from sector
       sector.action<Type>().reset();
     }
 
   public:
-    AbstractTypeAction(DOOM::Doom & doom, int16_t model = -1) :
-      AbstractAction(doom),
+    AbstractTypeAction(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, int16_t model = -1) :
+      DOOM::AbstractAction(doom, sector),
       _model(model)
     {
       // Warn for errors
-      if (Change != DOOM::EnumAction::Change::ChangeNone && _model == -1)
+      if (ChangeType != DOOM::EnumAction::Change::Type::None && _model == -1)
 	std::cerr << "[DOOM::AbstractTypeAction] Warning, invalid sector model for change." << std::endl;
+
+      // Apply change to sector
+      if (ChangeTime == DOOM::EnumAction::Change::Time::Before)
+	change(doom, sector);
     }
 
     virtual ~AbstractTypeAction() = default;

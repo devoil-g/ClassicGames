@@ -133,8 +133,8 @@ namespace DOOM
     }
 
   public:
-    DoorLevelingAction(DOOM::Doom & doom) :
-      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling>(doom),
+    DoorLevelingAction(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector) :
+      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling>(doom, sector),
       _states(),
       _elapsed(sf::Time::Zero)
     {
