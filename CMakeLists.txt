@@ -73,6 +73,8 @@ SET(GAME_DOOM_THING_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AnimatedThing.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/NullThing.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/NullThing.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/PlayerThing.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/PlayerThing.hpp
 )
 SET(GAME_MATH_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.cpp
@@ -95,8 +97,8 @@ SET(GAME_STATES_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/StartState.hpp
 )
 SET(GAME_STATES_DOOM_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Doom/DoomState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Doom/DoomState.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Doom/GameDoomState.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Doom/GameDoomState.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Doom/StartDoomState.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Doom/StartDoomState.hpp
 )

@@ -8,8 +8,12 @@
 #include "Doom/Action/FloorLevelingAction.hpp"
 #include "Doom/Action/OscillateLightingAction.hpp"
 #include "Doom/Action/RandomLightingAction.hpp"
+#include "Doom/Thing/PlayerThing.hpp"
 
-sf::Time const	DOOM::Doom::Tic = sf::seconds(1.f / 35.f);
+const sf::Time	DOOM::Doom::Tic = sf::seconds(1.f / 35.f);
+const unsigned int	DOOM::Doom::RenderWidth = 320;
+const unsigned int	DOOM::Doom::RenderHeight = 200;
+const float		DOOM::Doom::RenderStretching = 5.f / 4.f;
 
 DOOM::Doom::Resources::Texture const	DOOM::Doom::Resources::Texture::Null = DOOM::Doom::Resources::Texture();
 
@@ -49,6 +53,21 @@ void	DOOM::Doom::setLevel(std::pair<uint8_t, uint8_t> const & level)
   buildLevel(level);
 }
 
+void	DOOM::Doom::addPlayer(int controller)
+{
+  // Cancel if invalid controller id
+  if (controller < 0)
+    return;
+
+  // Cancel if controller already registered
+  for (const std::reference_wrapper<DOOM::PlayerThing> & player : level.players)
+    if (player.get().controller == controller)
+      return;
+  
+  // Push new player
+  level.things.push_back(std::make_unique<DOOM::PlayerThing>(*this, (int)level.players.size() + 1, controller));
+}
+
 void	DOOM::Doom::clear()
 {
   // Clear resources and current level
@@ -60,6 +79,10 @@ void	DOOM::Doom::clearResources()
 {
   // Clear level to avoid reference to deleted datas
   clearLevel();
+
+  // Force deletion of players
+  level.players.clear();
+  level.things.clear();
 
   // Clear resources data containers
   resources.palettes = std::array<DOOM::Doom::Resources::Palette, 14>();
@@ -76,6 +99,14 @@ void	DOOM::Doom::clearLevel()
   // Reset level base info
   level.episode = { 0, 0 };
   level.sky = std::ref(DOOM::Doom::Resources::Texture::Null);
+
+  // Reset level things (preserve players)
+  level.things.erase(std::remove_if(level.things.begin(), level.things.end(),
+    [](const std::unique_ptr<DOOM::AbstractThing> & thing)
+    {
+      return thing->type != -1;
+    }
+  ), level.things.end());
 
   // Reset level components
   level.things.clear();
@@ -195,7 +226,7 @@ void	DOOM::Doom::buildLevel(std::pair<uint8_t, uint8_t> const & level)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   this->level.episode = level;
-  this->level.sky = std::cref(resources.textures[0x0000000000594B53 | (((int64_t)level.first + '0') << 24)]);
+  this->level.sky = std::cref(resources.textures.find(0x0000000000594B53 | (((int64_t)level.first + '0') << 24))->second);
 
   // Build every component of resources
   try
@@ -491,7 +522,8 @@ std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>>	DOOM::
     return { DOOM::Doom::Resources::Texture::Null };
 
   // List of registered animations
-  const static std::vector<std::vector<uint64_t>>	animations = {
+  const static std::vector<std::vector<uint64_t>>	animations =
+  {
     { DOOM::str_to_key("BLODGR1"), DOOM::str_to_key("BLODGR2"), DOOM::str_to_key("BLODGR3"), DOOM::str_to_key("BLODGR4") },
   { DOOM::str_to_key("BLODRIP1"), DOOM::str_to_key("BLODRIP2"), DOOM::str_to_key("BLODRIP3"), DOOM::str_to_key("BLODRIP4") },
   { DOOM::str_to_key("FIREBLU1"), DOOM::str_to_key("FIREBLU2") },

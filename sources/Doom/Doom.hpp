@@ -21,11 +21,15 @@ namespace DOOM
   class AbstractFlat;
   class AbstractLinedef;
   class AbstractThing;
-
+  class PlayerThing;
+  
   class Doom
   {
   public:
-    static sf::Time const	Tic;
+    static sf::Time const	Tic;			// Duration of a game tic (1/35s)
+    static const unsigned int	RenderWidth;		// Default rendering width size
+    static const unsigned int	RenderHeight;		// Default rendering height size
+    static const float		RenderStretching;	// Default rendering vertical stretching
 
     struct Resources
     {
@@ -47,6 +51,9 @@ namespace DOOM
 
       class Texture
       {
+      private:
+	Texture() = default;
+
       public:
 	static const DOOM::Doom::Resources::Texture	Null;	// Empty texture
 
@@ -65,8 +72,6 @@ namespace DOOM
 	int16_t			left, top;	// Texture offset (sprite only)
 	std::vector<Column>	columns;	// Pre-computed texture from patches
 
-	//Texture(const Texture &) = default;
-	Texture() = default;
 	Texture(DOOM::Doom & doom, const DOOM::Wad::RawResources::Texture & texture);
 	Texture(DOOM::Doom & doom, const DOOM::Wad::RawResources::Patch & patch);
 	~Texture() = default;
@@ -307,6 +312,7 @@ namespace DOOM
 
       std::pair<uint8_t, uint8_t>					episode;	// Level episode and episode's mission number
       std::reference_wrapper<const DOOM::Doom::Resources::Texture>	sky;		// Sky texture of the level
+      std::vector<std::reference_wrapper<DOOM::PlayerThing>>		players;	// List of players (references to PlayerThing in things list)
       std::vector<std::unique_ptr<DOOM::AbstractThing>>			things;		// List of things
       std::vector<std::unique_ptr<DOOM::AbstractLinedef>>		linedefs;	// List of linedefs
       std::vector<DOOM::Doom::Level::Sidedef>				sidedefs;	// List of sidedefs
@@ -363,6 +369,8 @@ namespace DOOM
 
     std::list<std::pair<uint8_t, uint8_t>>	getLevel() const;					// Return list of available level in WAD
     void					setLevel(const std::pair<uint8_t, uint8_t> & level);	// Build specified level from WAD, return true if successful
+
+    void	addPlayer(int controller);	// Add player to current game
   };
 };
 

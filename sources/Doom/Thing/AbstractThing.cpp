@@ -4,10 +4,20 @@
 
 DOOM::AbstractThing::AbstractThing(DOOM::Doom & doom, DOOM::Wad::RawLevel::Thing const & thing, int16_t radius, int16_t properties) :
   position((float)thing.x, (float)thing.y),
-  height(0),
+  height(0.f),
   angle(thing.angle / 360.f * 2.f * Math::Pi),
   type(thing.type),
   flag(thing.flag),
+  radius(radius),
+  properties(properties)
+{}
+
+DOOM::AbstractThing::AbstractThing(DOOM::Doom & doom, int16_t radius, int16_t properties) :
+  position(0.f, 0.f),
+  height(0.f),
+  angle(0.f),
+  type(-1),
+  flag(0),
   radius(radius),
   properties(properties)
 {}
@@ -90,11 +100,23 @@ std::unique_ptr<DOOM::AbstractThing>	DOOM::AbstractThing::factory(DOOM::Doom & d
   case 2008:	// Shotgun shells
     return std::make_unique<DOOM::AnimatedThing<>>(doom, "SHEL", "A", thing, 20, Pickup);
 
+    // Keys
+  case 5:	// Blue keycard
+    return std::make_unique<DOOM::AnimatedThing<>>(doom, "BKEY", "AB", thing, 20, Pickup);
+  case 40:	// Blue skull key
+    return std::make_unique<DOOM::AnimatedThing<>>(doom, "BSKU", "AB", thing, 20, Pickup);
+  case 13:  	// Red keycard
+    return std::make_unique<DOOM::AnimatedThing<>>(doom, "RKEY", "AB", thing, 20, Pickup);
+  case 38:	// Red skull key
+    return std::make_unique<DOOM::AnimatedThing<>>(doom, "RSKU", "AB", thing, 20, Pickup);
+  case 6:	// Yellow keycard
+    return std::make_unique<DOOM::AnimatedThing<>>(doom, "YKEY", "AB", thing, 20, Pickup);
+  case 39:	// Yellow skull key
+    return std::make_unique<DOOM::AnimatedThing<>>(doom, "YSKU", "AB", thing, 20, Pickup);
+
     // Monsters (TODO)
 
     // Obstacles
-  case 70:	// Burning barrel
-    return std::make_unique<DOOM::AnimatedThing<>>(doom, "FCAN", "A", thing, 10, Obstacle);
   case 43:	// Burnt tree
     return std::make_unique<DOOM::AnimatedThing<>>(doom, "TRE1", "A", thing, 16, Obstacle);
   case 35:	// Candelabra

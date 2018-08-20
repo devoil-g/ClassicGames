@@ -32,11 +32,15 @@ namespace DOOM
     Math::Vector<2>	position;	// Thing position
     float		height;		// Thing height from floor (or ceiling is hanging)
     float		angle;		// Thing orientation (rad.)
-    const int16_t	type;		// Thing flags (see enum)
+    const int16_t	type;		// Thing type ID
     const int16_t	flag;		// Thing flags (see enum)
     const int16_t	radius;		// Thing radius (square box)
     const int16_t	properties;	// Thing properties (see enum)
 
+  protected:
+    AbstractThing(DOOM::Doom & doom, int16_t radius, int16_t properties);	// Special constructor for player only
+
+  public:
     AbstractThing(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing, int16_t radius, int16_t properties);
     virtual ~AbstractThing() = default;
 

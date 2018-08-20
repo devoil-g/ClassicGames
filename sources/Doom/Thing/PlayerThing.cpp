@@ -1,0 +1,163 @@
+#include "Doom/Thing/PlayerThing.hpp"
+#include "System/Window.hpp"
+
+const float	DOOM::PlayerThing::TurningSpeed = 2.f / 3.f * Math::Pi;
+const float	DOOM::PlayerThing::WalkingSpeed = 24.f;
+const float	DOOM::PlayerThing::RunningSpeed = 50.f;
+
+DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
+  DOOM::AbstractThing(doom, 16, Obstacle),
+  _running(false),
+  id(id),
+  controller(controller),
+  camera(),
+  health(0), armor(0),
+  bullet(0), shell(0), rocket(0), cell(0)
+{
+  // Check controller ID
+  if (controller < 0)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // Register player in DOOM
+  doom.level.players.push_back(std::reference_wrapper<DOOM::PlayerThing>(*this));
+
+  // Set player initial position
+  for (const std::unique_ptr<DOOM::AbstractThing> & thing : doom.level.things)
+    if (thing->type == id) {
+      position = thing->position;
+      height = doom.level.sectors[doom.level.sector(thing->position).first].floor_current + 41.f;
+      angle = thing->angle;
+      break;
+    }
+}
+
+bool	DOOM::PlayerThing::update(DOOM::Doom & doom, sf::Time elapsed)
+{
+  // TODO: update player using controller
+  if (controller == 0)
+    updateKeyboard(doom, elapsed);
+  else
+    updateController(doom, elapsed);
+
+  // Always return false as a player is never deleted
+  return false;
+}
+
+void	DOOM::PlayerThing::updateKeyboard(DOOM::Doom & doom, sf::Time elapsed)
+{
+  updateKeyboardTurn(doom, elapsed);
+  updateKeyboardMove(doom, elapsed);
+}
+
+void	DOOM::PlayerThing::updateKeyboardTurn(DOOM::Doom & doom, sf::Time elapsed)
+{
+  // Turn player
+  float	angle = 0.f;
+
+  if (Game::Window::Instance().keyboard().key(sf::Keyboard::Left) == true)	// Turn left
+    angle += 1.f;
+  if (Game::Window::Instance().keyboard().key(sf::Keyboard::Right) == true)	// Turn right
+    angle -= 1.f;
+
+  // Apply rotation to player
+  updateTurn(doom, elapsed, angle);
+}
+
+void	DOOM::PlayerThing::updateKeyboardMove(DOOM::Doom & doom, sf::Time elapsed)
+{
+  // Move player
+  Math::Vector<2>	movement(0.f, 0.f);
+
+  if (Game::Window::Instance().keyboard().key(sf::Keyboard::Z) == true)	// Move forward
+    movement += Math::Vector<2>(+1.f, 0.f);
+  if (Game::Window::Instance().keyboard().key(sf::Keyboard::S) == true)	// Move backward
+    movement += Math::Vector<2>(-1.f, 0.f);
+  if (Game::Window::Instance().keyboard().key(sf::Keyboard::Q) == true)	// Strafe left
+    movement += Math::Vector<2>(0.f, -1.f);
+  if (Game::Window::Instance().keyboard().key(sf::Keyboard::D) == true)	// Strafe right
+    movement += Math::Vector<2>(0.f, +1.f);
+
+  // Handle running
+  _running = Game::Window::Instance().keyboard().key(sf::Keyboard::LShift);
+
+  // Apply movement to player position
+  updateMove(doom, elapsed, movement);
+}
+
+void	DOOM::PlayerThing::updateController(DOOM::Doom & doom, sf::Time elapsed)
+{
+  updateControllerTurn(doom, elapsed);
+  updateControllerMove(doom, elapsed);
+}
+
+void	DOOM::PlayerThing::updateControllerTurn(DOOM::Doom & doom, sf::Time elapsed)
+{
+  // Apply rotation to player
+  updateTurn(doom, elapsed, std::fabsf(Game::Window::Instance().joystick().position(controller - 1, 4)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, 4) / 100.f : 0.f);
+}
+
+void	DOOM::PlayerThing::updateControllerMove(DOOM::Doom & doom, sf::Time elapsed)
+{
+  // Move player
+  Math::Vector<2>	movement(
+    std::fabsf(Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::Y)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::Y) / 100.f : 0.f,
+    std::fabs(Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::X)) / 100.f > 0.2f ? +Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::X) / 100.f : 0.f
+  );
+  
+  // Handle running (left stick click)
+  if (movement.length() < 0.5f)
+    _running = false;
+  if (Game::Window::Instance().joystick().button(controller - 1, 8) == true)
+    _running = true;
+
+  // Apply movement to player position
+  updateMove(doom, elapsed, movement);
+}
+
+void	DOOM::PlayerThing::updateTurn(DOOM::Doom & doom, sf::Time elapsed, float turn)
+{
+  // Apply turning angle and time to player
+  angle += turn * DOOM::PlayerThing::TurningSpeed * elapsed.asSeconds();
+
+  // Update camera
+  camera.angle = angle;
+}
+
+void	DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Vector<2> movement)
+{
+  // Limit movement
+  if (movement.length() > 1.f)
+    movement /= movement.length();
+
+  // Apply speed to movement
+  movement *= (_running == true ? DOOM::PlayerThing::RunningSpeed : DOOM::PlayerThing::WalkingSpeed) / DOOM::Doom::Tic.asSeconds();
+
+  // Apply time to movement
+  movement *= elapsed.asSeconds();
+
+  // Apply rotation to movement
+  movement = Math::Vector<2>(
+    movement.x() * std::cosf(angle) + movement.y() * std::sinf(angle),
+    movement.x() * std::sinf(angle) - movement.y() * std::cosf(angle)
+    );
+
+  // TODO: check collision
+
+  // Apply movement to current position
+  position += movement;
+  height = doom.level.sectors[doom.level.sector(position).first].floor_current + 41.f;
+
+  // Update camera
+  camera.position = position;
+  camera.height = height;
+}
+
+std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> const &	DOOM::PlayerThing::sprite(float angle) const
+{
+  static const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool>	frame = { std::ref(DOOM::Doom::Resources::Texture::Null), false };
+
+  // TODO: compute player sprite to use
+
+  // Return a default empty texture
+  return frame;
+}

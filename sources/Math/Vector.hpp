@@ -34,23 +34,13 @@ namespace Math
 	(*this)(i) = vec[i];
     };
 
-    inline float &	operator()(unsigned int c)	// Get nth component of vector
+    inline constexpr float &	operator()(unsigned int c)	// Get nth component of vector
     {
-#ifdef _DEBUG
-      if (c >= vSize)
-	throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-#endif
-
       return _vector[c];
     }
     
-    inline float	operator()(unsigned int c) const	// Get nth component of vector
+    inline constexpr float	operator()(unsigned int c) const	// Get nth component of vector
     {
-#ifdef _DEBUG
-      if (c >= vSize)
-	throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-#endif
-
       return _vector[c];
     }
 
@@ -86,6 +76,30 @@ namespace Math
     inline Math::Vector<vSize>		operator*(float c) const						// Vector multiplication
     {
       return Math::Vector<vSize>(*this) *= c;
+    }
+
+    inline Math::Vector<vSize> &	operator/=(const Math::Vector<vSize> & v)				// Vector division
+    {
+      for (unsigned int i = 0; i < vSize; i++)
+	(*this)(i) /= v(i);
+      return *this;
+    }
+
+    inline Math::Vector<vSize>		operator/(const Math::Vector<vSize> & v) const				// Vector division
+    {
+      return Math::Vector<vSize>(*this) /= v;
+    }
+
+    inline Math::Vector<vSize> &	operator/=(float c)						// Vector division
+    {
+      for (unsigned int i = 0; i < vSize; i++)
+	(*this)(i) /= c;
+      return *this;
+    }
+
+    inline Math::Vector<vSize>		operator/(float c) const						// Vector division
+    {
+      return Math::Vector<vSize>(*this) /= c;
     }
 
     inline Math::Vector<vSize> &	operator+=(const Math::Vector<vSize> & v)
@@ -189,41 +203,6 @@ namespace Math
     Math::Vector<2>	qp(origin_B - origin_A);
 
     return std::pair<float, float>(Math::Vector<2>::determinant(qp, direction_B) / rs, Math::Vector<2>::determinant(qp, direction_A) / rs);
-  }
-
-  template <unsigned int nDim>
-  bool	intersectionAabb(const Math::Vector<nDim> & origin, const Math::Vector<nDim> & direction, const Math::Vector<nDim> & minimum, const Math::Vector<nDim> & maximum)	// Test intersection between a ray and an AABB
-  {
-    float	near = std::numeric_limits<float>::min();
-    float	far = std::numeric_limits<float>::max();
-
-    // Test intersection with each dimension
-    for (unsigned int i = 0; i < nDim; i++)
-    {
-      // If ray is parallele with dimension
-      if (direction(i) == 0)
-      {
-	if (origin(i) < minimum(i) || origin(i) > maximum(i))
-	  return false;
-      }
-
-      // Test intersection
-      else
-      {
-	float	t1 = (minimum(i) - origin(i)) / direction(i);
-	float	t2 = (maximum(i) - origin(i)) / direction(i);
-	
-	if (t1 > t2) std::swap(t1, t2);
-	near = std::max(t1, near);
-	far = std::min(t2, far);
-	
-	if (near > far || far < 0)
-	  return false;
-      }
-    }
-
-    // Every test succeeded
-    return true;
   }
 };
 

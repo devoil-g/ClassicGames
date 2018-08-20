@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "States/Doom/DoomState.hpp"
+#include "States/Doom/GameDoomState.hpp"
 #include "States/Doom/StartDoomState.hpp"
 #include "States/LoadingState.hpp"
 #include "States/MessageState.hpp"
@@ -84,13 +84,19 @@ bool	Game::StartDoomState::updateRegister(const int id)
       // Get player controller list
       std::array<int, 4>	players = _players;
 
-      // Start DOOM game
+      // Load and start DOOM game
       Game::StateMachine::Instance().swap(new Game::LoadingState(std::async(std::launch::async, [players]
       {
 	try
 	{
-	  // Load DOOM state
-	  return static_cast<Game::AbstractState *>(new Game::DoomState(players));
+	  Game::GameDoomState *	state = new Game::GameDoomState();
+
+	  // Add players to the game
+	  for (int player : players)
+	    if (player != -1)
+	      state->addPlayer(player);
+
+	  return static_cast<Game::AbstractState *>(state);
 	}
 	catch (std::exception exception)
 	{
