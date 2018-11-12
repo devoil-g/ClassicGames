@@ -31,8 +31,9 @@ namespace DOOM
     static const unsigned int	RenderHeight;		// Default rendering height size
     static const float		RenderStretching;	// Default rendering vertical stretching
 
-    struct Resources
+    class Resources
     {
+    public:
       class Palette : public std::array<sf::Color, 256>
       {
       public:
@@ -87,13 +88,15 @@ namespace DOOM
 	~Sound() = default;
       };
 
-      std::array<DOOM::Doom::Resources::Palette, 14>			palettes;	// Color palettes
-      std::array<DOOM::Doom::Resources::Colormap, 34>			colormaps;	// Color brightness maps
-      std::unordered_map<uint64_t, std::unique_ptr<DOOM::AbstractFlat>>	flats;		// Map of flat (ground/ceiling texture)
-      std::unordered_map<uint64_t, DOOM::Doom::Resources::Texture>	textures;	// Map of wall textures
-      std::unordered_map<uint64_t, DOOM::Doom::Resources::Texture>	sprites;	// Map of sprites
-      std::unordered_map<uint64_t, DOOM::Doom::Resources::Texture>	menus;		// Map of menu patches
-      std::unordered_map<uint64_t, DOOM::Doom::Resources::Sound>	sounds;		// Map of sounds
+    public:
+      std::array<DOOM::Doom::Resources::Palette, 14>												palettes;	// Color palettes
+      std::array<DOOM::Doom::Resources::Colormap, 34>												colormaps;	// Color brightness maps
+      std::unordered_map<uint64_t, std::unique_ptr<DOOM::AbstractFlat>>										flats;		// Map of flat (ground/ceiling texture)
+      std::unordered_map<uint64_t, DOOM::Doom::Resources::Texture>										textures;	// Map of wall textures
+      std::unordered_map<uint64_t, DOOM::Doom::Resources::Texture>										sprites;	// Map of raw sprites (not ordered, should not be used)
+      std::unordered_map<uint64_t, std::vector<std::array<std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool>, 8>>>	animations;	// Map of sprites sorted by animation sequence and angle
+      std::unordered_map<uint64_t, DOOM::Doom::Resources::Texture>										menus;		// Map of menu patches
+      std::unordered_map<uint64_t, DOOM::Doom::Resources::Sound>										sounds;		// Map of sounds
 
       Resources() = default;
       ~Resources() = default;

@@ -2,15 +2,17 @@
 #include "System/Window.hpp"
 
 const float	DOOM::PlayerThing::TurningSpeed = 2.f / 3.f * Math::Pi;
-const float	DOOM::PlayerThing::WalkingSpeed = 24.f;
-const float	DOOM::PlayerThing::RunningSpeed = 50.f;
+const float	DOOM::PlayerThing::WalkingSpeed = 24.f / 3.f;			// 24 unit per frame (3 tics)
+const float	DOOM::PlayerThing::RunningSpeed = 50.f / 3.f;			// 50 unit per frame (3 tics)
 
 DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
   DOOM::AbstractThing(doom, 16, Obstacle),
+  _sprites(doom.resources.animations.find(DOOM::str_to_key("PLAY"))->second),
   _running(false),
   id(id),
   controller(controller),
   camera(),
+  statusbar(doom, id),
   health(0), armor(0),
   bullet(0), shell(0), rocket(0), cell(0)
 {
@@ -33,6 +35,9 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
 
 bool	DOOM::PlayerThing::update(DOOM::Doom & doom, sf::Time elapsed)
 {
+  // TODO: remove this
+  _elapsed += elapsed;
+
   // TODO: update player using controller
   if (controller == 0)
     updateKeyboard(doom, elapsed);
@@ -105,7 +110,7 @@ void	DOOM::PlayerThing::updateControllerMove(DOOM::Doom & doom, sf::Time elapsed
   );
   
   // Handle running (left stick click)
-  if (movement.length() < 0.5f)
+  if (movement.length() < 0.72f)
     _running = false;
   if (Game::Window::Instance().joystick().button(controller - 1, 8) == true)
     _running = true;
@@ -116,6 +121,9 @@ void	DOOM::PlayerThing::updateControllerMove(DOOM::Doom & doom, sf::Time elapsed
 
 void	DOOM::PlayerThing::updateTurn(DOOM::Doom & doom, sf::Time elapsed, float turn)
 {
+  // Apply sprinting to turning
+  turn *= (_running == true ? DOOM::PlayerThing::RunningSpeed / DOOM::PlayerThing::WalkingSpeed : 1.f);
+
   // Apply turning angle and time to player
   angle += turn * DOOM::PlayerThing::TurningSpeed * elapsed.asSeconds();
 
@@ -152,8 +160,11 @@ void	DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Ve
   camera.height = height;
 }
 
-std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> const &	DOOM::PlayerThing::sprite(float angle) const
+const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	DOOM::PlayerThing::sprite(float angle) const
 {
+  // TODO: remove this
+  return _sprites[(int)(_elapsed.asSeconds()) % _sprites.size()][Math::Modulo((int)(angle * 4.f / Math::Pi + 16.5f), 8)];
+
   static const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool>	frame = { std::ref(DOOM::Doom::Resources::Texture::Null), false };
 
   // TODO: compute player sprite to use

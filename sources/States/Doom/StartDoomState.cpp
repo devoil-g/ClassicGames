@@ -171,13 +171,23 @@ void	Game::StartDoomState::draw()
     0.75f + 0.25f * (std::cos(_elapsed.asSeconds() * 4.f) + 1.f) / 2.f
   );
   _spriteKeyboard.setScale(
-    (Game::Window::Instance().window().getSize().y * 0.3f) / _textureKeyboard.getSize().y,
-    (Game::Window::Instance().window().getSize().y * 0.3f) / _textureKeyboard.getSize().y
+    std::min((Game::Window::Instance().window().getSize().y * 0.3f) / _textureKeyboard.getSize().y, (Game::Window::Instance().window().getSize().x * 0.85f) / (_textureKeyboard.getSize().x * _controllers.size())),
+    std::min((Game::Window::Instance().window().getSize().y * 0.3f) / _textureKeyboard.getSize().y, (Game::Window::Instance().window().getSize().x * 0.85f) / (_textureKeyboard.getSize().x * _controllers.size()))
   );
   _spriteController.setScale(
-    (Game::Window::Instance().window().getSize().y * 0.3f) / _textureController.getSize().y,
-    (Game::Window::Instance().window().getSize().y * 0.3f) / _textureController.getSize().y
+    std::min((Game::Window::Instance().window().getSize().y * 0.3f) / _textureController.getSize().y, (Game::Window::Instance().window().getSize().x * 0.85f) / (_textureController.getSize().x * _controllers.size())),
+    std::min((Game::Window::Instance().window().getSize().y * 0.3f) / _textureController.getSize().y, (Game::Window::Instance().window().getSize().x * 0.85f) / (_textureController.getSize().x * _controllers.size()))
   );
+
+  // Set texts scale
+  for (int index = 0; index < _controllers.size(); index++) {
+    _controllers[index].setScale(1.f, 1.f);
+    if (_controllers[index].getGlobalBounds().width > Game::Window::Instance().window().getSize().x / _controllers.size() * 0.75f)
+      _controllers[index].setScale(
+	(Game::Window::Instance().window().getSize().x * 0.75f) / (_controllers[index].getGlobalBounds().width * _controllers.size()),
+	(Game::Window::Instance().window().getSize().x * 0.75f) / (_controllers[index].getGlobalBounds().width * _controllers.size())
+      );
+  }
 
   // Set texts position
   _title.setPosition(
@@ -190,8 +200,8 @@ void	Game::StartDoomState::draw()
   );
   for (int index = 0; index < _controllers.size(); index++)
     _controllers[index].setPosition(
-      Game::Window::Instance().window().getSize().x * (index * 2.f + 1.f) / (_players.size() * 2.f) - _controllers[index].getLocalBounds().width / 2.f,
-      (Game::Window::Instance().window().getSize().y - _controllers[index].getLocalBounds().height) * 12.f / 16.f
+      Game::Window::Instance().window().getSize().x * (index * 2.f + 1.f) / (_players.size() * 2.f) - _controllers[index].getGlobalBounds().width / 2.f,
+      (Game::Window::Instance().window().getSize().y - _controllers[index].getGlobalBounds().height) * 12.f / 16.f
     );
   _ready.setPosition(
     (Game::Window::Instance().window().getSize().x - _ready.getLocalBounds().width * _ready.getScale().x) / 2.f,

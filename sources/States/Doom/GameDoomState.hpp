@@ -16,6 +16,9 @@ namespace Game
 {
   class GameDoomState : public Game::AbstractState
   {
+  public:
+    static unsigned int		RenderScale;		// Scaling factor of resolution
+
   private:
     DOOM::Doom	_doom;		// Instance of current level
     sf::Image	_image;		// Target for software rendering

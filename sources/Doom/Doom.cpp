@@ -1,19 +1,15 @@
-#include <iostream>
-
 #include "Doom/Doom.hpp"
 #include "Doom/Action/BlinkLightingAction.hpp"
-#include "Doom/Action/CeilingLevelingAction.hpp"
 #include "Doom/Action/DoorLevelingAction.hpp"
 #include "Doom/Action/FlickerLightingAction.hpp"
-#include "Doom/Action/FloorLevelingAction.hpp"
 #include "Doom/Action/OscillateLightingAction.hpp"
 #include "Doom/Action/RandomLightingAction.hpp"
 #include "Doom/Thing/PlayerThing.hpp"
 
-const sf::Time	DOOM::Doom::Tic = sf::seconds(1.f / 35.f);
+const sf::Time		DOOM::Doom::Tic = sf::seconds(1.f / 35.f);
 const unsigned int	DOOM::Doom::RenderWidth = 320;
 const unsigned int	DOOM::Doom::RenderHeight = 200;
-const float		DOOM::Doom::RenderStretching = 5.f / 4.f;
+const float		DOOM::Doom::RenderStretching = 6.f / 5.f;
 
 DOOM::Doom::Resources::Texture const	DOOM::Doom::Resources::Texture::Null = DOOM::Doom::Resources::Texture();
 
@@ -22,7 +18,7 @@ void	DOOM::Doom::load(std::string const & path)
   // Clear resources
   clear();
   
-  // Load WAD file
+  // Load WAD file 
   wad.load(path);
 
   // Build resources of WAD file
@@ -171,28 +167,78 @@ void	DOOM::Doom::buildResourcesColormaps()
 void	DOOM::Doom::buildResourcesTextures()
 {
   // Load textures from WAD resources
-  for (std::pair<uint64_t, DOOM::Wad::RawResources::Texture> const & texture : wad.resources.textures)
+  for (const std::pair<uint64_t, DOOM::Wad::RawResources::Texture> & texture : wad.resources.textures)
     resources.textures.emplace(std::piecewise_construct, std::forward_as_tuple(texture.first), std::forward_as_tuple(*this, texture.second));
 }
 
 void	DOOM::Doom::buildResourcesSprites()
 {
   // Load sprites textures from WAD resources
-  for (std::pair<uint64_t, DOOM::Wad::RawResources::Patch> const & patch : wad.resources.sprites)
-    resources.sprites.emplace(std::piecewise_construct, std::forward_as_tuple(patch.first), std::forward_as_tuple(*this, patch.second));
+  for (const std::pair<uint64_t, DOOM::Wad::RawResources::Patch> & patch : wad.resources.sprites) {
+    std::string	name = DOOM::key_to_str(patch.first);
+
+    // Build sprite and get its reference
+    std::reference_wrapper<const DOOM::Doom::Resources::Texture>	sprite = std::ref(resources.sprites.emplace(std::piecewise_construct, std::forward_as_tuple(patch.first), std::forward_as_tuple(*this, patch.second)).first->second);
+
+    if (name.length() >= 6)
+    {
+      // Resize animation sequence
+      if (resources.animations[DOOM::str_to_key(name.substr(0, 4))].size() < name.at(4) - 'A' + 1)
+	resources.animations[DOOM::str_to_key(name.substr(0, 4))].resize(name.at(4) - 'A' + 1, { {
+	  { std::ref(DOOM::Doom::Resources::Texture::Null), false },
+	  { std::ref(DOOM::Doom::Resources::Texture::Null), false },
+	  { std::ref(DOOM::Doom::Resources::Texture::Null), false },
+	  { std::ref(DOOM::Doom::Resources::Texture::Null), false },
+	  { std::ref(DOOM::Doom::Resources::Texture::Null), false },
+	  { std::ref(DOOM::Doom::Resources::Texture::Null), false },
+	  { std::ref(DOOM::Doom::Resources::Texture::Null), false },
+	  { std::ref(DOOM::Doom::Resources::Texture::Null), false }
+	  } });
+
+      // Push sprite in animation sequence
+      if (name.at(5) == '0')
+	for (std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> & frame : resources.animations[DOOM::str_to_key(name.substr(0, 4))][name.at(4) - 'A'])
+	  frame = { sprite, false };
+      else
+	resources.animations[DOOM::str_to_key(name.substr(0, 4))][name.at(4) - 'A'][name.at(5) - '1'] = { sprite, false };
+    }
+
+    if (name.length() >= 8)
+    {
+      // Resize animation sequence
+      if (resources.animations[DOOM::str_to_key(name.substr(0, 4))].size() < name.at(6) - 'A' + 1)
+	resources.animations[DOOM::str_to_key(name.substr(0, 4))].resize(name.at(6) - 'A' + 1, { {
+	  { std::ref(DOOM::Doom::Resources::Texture::Null), false },
+	  { std::ref(DOOM::Doom::Resources::Texture::Null), false },
+	  { std::ref(DOOM::Doom::Resources::Texture::Null), false },
+	  { std::ref(DOOM::Doom::Resources::Texture::Null), false },
+	  { std::ref(DOOM::Doom::Resources::Texture::Null), false },
+	  { std::ref(DOOM::Doom::Resources::Texture::Null), false },
+	  { std::ref(DOOM::Doom::Resources::Texture::Null), false },
+	  { std::ref(DOOM::Doom::Resources::Texture::Null), false }
+	  } });
+
+      // Push sprite in animation sequence
+      if (name.at(7) == '0')
+	for (std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> & frame : resources.animations[DOOM::str_to_key(name.substr(0, 4))][name.at(6) - 'A'])
+	  frame = { sprite, true };
+      else
+	resources.animations[DOOM::str_to_key(name.substr(0, 4))][name.at(6) - 'A'][name.at(7) - '1'] = { sprite, true };
+    }
+  }
 }
 
 void	DOOM::Doom::buildResourcesMenus()
 {
   // Load menus textures from WAD resources
-  for (std::pair<uint64_t, DOOM::Wad::RawResources::Patch> const & menu : wad.resources.menus)
+  for (const std::pair<uint64_t, DOOM::Wad::RawResources::Patch> & menu : wad.resources.menus)
     resources.menus.emplace(std::piecewise_construct, std::forward_as_tuple(menu.first), std::forward_as_tuple(*this, menu.second));
 }
 
 void	DOOM::Doom::buildResourcesFlats()
 {
   // Load flats from WAD resources
-  for (std::pair<uint64_t, DOOM::Wad::RawResources::Flat> const & flat : wad.resources.flats)
+  for (const std::pair<uint64_t, DOOM::Wad::RawResources::Flat> & flat : wad.resources.flats)
   {
     // Convert flat from WAD
     std::unique_ptr<DOOM::AbstractFlat>	converted = DOOM::AbstractFlat::factory(*this, flat.first, flat.second);

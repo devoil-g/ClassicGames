@@ -1,6 +1,8 @@
 #ifndef _ABSTRACT_TYPE_ACTION_HPP_
 #define _ABSTRACT_TYPE_ACTION_HPP_
 
+#include <iostream>
+
 #include "Doom/Action/AbstractAction.hpp"
 
 namespace DOOM

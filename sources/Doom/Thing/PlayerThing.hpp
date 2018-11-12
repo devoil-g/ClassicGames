@@ -2,19 +2,24 @@
 #define _PLAYER_THING_HPP_
 
 #include "Doom/Camera.hpp"
+#include "Doom/Statusbar.hpp"
 #include "Doom/Thing/AbstractThing.hpp"
 
 namespace DOOM
 {
   class PlayerThing : public DOOM::AbstractThing
   {
-  private:
-    static const float	TurningSpeed;	// Turning speed (rad/s)
-    static const float	WalkingSpeed;	// Walking speed (unit/s)
-    static const float	RunningSpeed;	// Running speed (unit/s)
+    // TODO: REMOVE THIS
+    sf::Time	_elapsed;
 
   private:
-    
+    static const float	TurningSpeed;	// Turning speed (rad/s)
+    static const float	WalkingSpeed;	// Walking speed (units per frame)
+    static const float	RunningSpeed;	// Running speed (units per frame)
+
+    const std::vector<std::array<std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool>, 8>> &	_sprites;	// Player sprites
+
+  private:
     bool		_running;	// True if player is currently running
     
     void	updateKeyboard(DOOM::Doom & doom, sf::Time elapsed);		// Update using keyboard
@@ -32,6 +37,7 @@ namespace DOOM
     const int		id;		// Player ID
     const int		controller;	// Controller used by player
     DOOM::Camera	camera;		// Player camera
+    DOOM::Statusbar	statusbar;	// Player status bar
 
     int		health, armor;			// Player's current health & armor
     int		bullet, shell, rocket, cell;	// Player's ammo

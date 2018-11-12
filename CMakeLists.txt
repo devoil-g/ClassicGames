@@ -7,6 +7,8 @@ SET(GAME_DOOM_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Camera.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Doom.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Doom.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Statusbar.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Statusbar.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Wad.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Wad.hpp
 )

@@ -41,7 +41,7 @@ namespace DOOM
 
   public:
     Camera();
-    ~Camera();
+    ~Camera() = default;
 
     void	render(DOOM::Doom const & doom, sf::Image & target, sf::Rect<int16_t> rect);	// Render level using resources from camera point of view in image rect
   };

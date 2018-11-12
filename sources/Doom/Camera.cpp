@@ -12,9 +12,6 @@ DOOM::Camera::Camera() :
   fov(Math::DegToRad(90.f))
 {}
 
-DOOM::Camera::~Camera()
-{}
-
 void	DOOM::Camera::render(DOOM::Doom const & doom, sf::Image & target, sf::Rect<int16_t> rect)
 {
   // Note: target is supposed to be clear (sf::Color(0, 0, 0, 0))
@@ -282,7 +279,7 @@ void	DOOM::Camera::renderTexture(DOOM::Doom const & doom, sf::Image & target, sf
 
 	// Get color in column span, draw it and register segment index in seg-buffer
 	target.setPixel(rect.left + column, rect.top + row, doom.resources.palettes[0][doom.resources.colormaps[31 - light / 8][span.pixels[pixel_y - span.offset]]]);
-	_sbuffer[column * rect.height + row] = { seg, NAN };
+	_sbuffer[column * rect.height + row] = { seg, std::numeric_limits<float>::quiet_NaN() };
 
 	break;
       }
@@ -377,16 +374,16 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom, sf::Image & target, sf:
   for (std::list<std::pair<const DOOM::AbstractThing &, float>>::const_iterator iterator = things.begin(); iterator != things.end(); iterator++)
   {
     const DOOM::AbstractThing &									thing(iterator->first);
-    const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	texture(thing.sprite(angle));
+    const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	texture(thing.sprite(Math::Vector<2>::angle(position - thing.position) - thing.angle));
     
     // Compute thing position on screen
     std::pair<float, float>	thing_projection(Math::intersection(_screen_start, _screen, position, thing.position - position));
     std::pair<int16_t, int16_t>	thing_sector(doom.level.sector(thing.position));
 
     float	thing_factor = _factor / ((thing.position - position).length() / (_screen_start + _screen * thing_projection.first - position).length());
-    float	first_x = thing_projection.first * rect.width + ((texture.second == false ? 0 : texture.first.get().width) - texture.first.get().left) * thing_factor;
+    float	first_x = thing_projection.first * rect.width + ((texture.second == false ? -texture.first.get().left : -texture.first.get().width + texture.first.get().left)) * thing_factor;
     float	first_y = _horizon - (((thing.properties & DOOM::AbstractThing::Properties::Hanging) ? doom.level.sectors[thing_sector.first].ceiling_current + texture.first.get().height - texture.first.get().top : doom.level.sectors[thing_sector.first].floor_current + texture.first.get().top) - height) * thing_factor;
-    float	second_x = thing_projection.first * rect.width + ((texture.second == false ? texture.first.get().width : 0) - texture.first.get().left) * thing_factor;
+    float	second_x = thing_projection.first * rect.width + ((texture.second == false ? texture.first.get().width - texture.first.get().left : +texture.first.get().left)) * thing_factor;
     float	second_y = _horizon - (((thing.properties & DOOM::AbstractThing::Properties::Hanging) ? doom.level.sectors[thing_sector.first].ceiling_current - texture.first.get().top : doom.level.sectors[thing_sector.first].floor_current - texture.first.get().height + texture.first.get().top) - height) * thing_factor;
 
     // Map of thing visibility against segments
