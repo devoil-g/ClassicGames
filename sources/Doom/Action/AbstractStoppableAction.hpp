@@ -22,20 +22,32 @@ namespace DOOM
 
     virtual ~AbstractStoppableAction() = default;
 
-    void	stop(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// Request action to stop (for lift & crusher)
+    bool	stop(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// Request action to stop (for lift & crusher)
     {
       // TODO: add check of thing type ?
 
       // Set stop flag
-      _run = false;
+      if (_run == true) {
+	_run = false;
+	return true;
+      }
+      else {
+	return false;
+      }
     }
 
-    void	start(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// Request action to start (for lift & crusher)
+    bool	start(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// Request action to start (for lift & crusher)
     {
       // TODO: add check of thing type ?
 
       // Set run flag
-      _run = true;
+      if (_run == false) {
+	_run = true;
+	return true;
+      }
+      else {
+	return false;
+      }
     }
   };
 };

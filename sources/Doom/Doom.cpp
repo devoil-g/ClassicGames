@@ -403,13 +403,13 @@ void	DOOM::Doom::Level::update(DOOM::Doom & doom, sf::Time elapsed)
     sidedef.update(doom, elapsed);
 }
 
-std::pair<int16_t, int16_t>	DOOM::Doom::Level::sector(Math::Vector<2> const & position, int16_t index) const
+std::pair<int16_t, int16_t>	DOOM::Doom::Level::getSector(Math::Vector<2> const & position, int16_t index) const
 {
   // Start to search sector from top node
   if (index == -1)
-    return sector(position, (int16_t)nodes.size() - 1);
+    return getSector(position, (int16_t)nodes.size() - 1);
 
-  // Draw subsector if node ID has subsector mask
+  // Return subsector's sector if node ID has subsector mask
   if (index & 0b1000000000000000)
     return { subsectors[index & 0b0111111111111111].sector, index & 0b0111111111111111 };
 
@@ -417,9 +417,80 @@ std::pair<int16_t, int16_t>	DOOM::Doom::Level::sector(Math::Vector<2> const & po
 
   // Use derterminant to find on which side the position is
   if (Math::Vector<2>::determinant(node.direction, position - node.origin) > 0.f)
-    return sector(position, node.leftchild);
+    return getSector(position, node.leftchild);
   else
-    return sector(position, node.rightchild);
+    return getSector(position, node.rightchild);
+}
+
+std::list<int16_t>	DOOM::Doom::Level::getLinedefs(const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit) const
+{
+  std::list<int16_t>	result;
+
+  // Start to search subsector from top node
+  getLinedefsNode(result, position, direction / direction.length(), limit, (int16_t)nodes.size() - 1);
+
+  return result;
+}
+
+bool	DOOM::Doom::Level::getLinedefsNode(std::list<int16_t> & result, const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit, int16_t index) const
+{
+  // Draw subsector if node ID has subsector mask
+  if (index & 0b1000000000000000)
+    return getLinedefsSubsector(result, position, direction, limit, index & 0b0111111111111111);
+
+  DOOM::Doom::Level::Node const &	node(nodes[index]);
+
+  // Use derterminant to find on which side the position is
+  if (Math::Vector<2>::determinant(node.direction, position - node.origin) > 0.f)
+    return getLinedefsNode(result, position, direction, limit, node.leftchild) == true ||
+      (Math::Vector<2>::determinant(node.origin - position, node.direction) / Math::Vector<2>::determinant(direction, node.direction) >= 0.f && getLinedefsNode(result, position, direction, limit, node.rightchild) == true);
+  else
+    return getLinedefsNode(result, position, direction, limit, node.rightchild) == true ||
+      (Math::Vector<2>::determinant(node.origin - position, node.direction) / Math::Vector<2>::determinant(direction, node.direction) >= 0.f && getLinedefsNode(result, position, direction, limit, node.leftchild) == true);
+}
+
+
+bool	DOOM::Doom::Level::getLinedefsSubsector(std::list<int16_t> & result, const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit, int16_t index) const
+{
+  DOOM::Doom::Level::Subsector const &	subsector(subsectors[index]);
+  float					distance = -1.f;
+
+  // Render subsector segs
+  for (int16_t i = 0; i < subsector.count; i++)
+    distance = std::max(distance, getLinedefsSeg(result, position, direction, limit, subsector.index + i));
+
+  // Return true if limit has been reached
+  return distance > limit;
+}
+
+float	DOOM::Doom::Level::getLinedefsSeg(std::list<int16_t> & result, const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit, int16_t index) const
+{
+  // Get segment from level data
+  const DOOM::Doom::Level::Segment &	seg(segments[index]);
+  const DOOM::Doom::Level::Vertex &	seg_start(vertexes[seg.start]);
+  const DOOM::Doom::Level::Vertex &	seg_end(vertexes[seg.end]);
+
+  // Compute intersection of ray with segment
+  std::pair<float, float>	intersection(Math::intersection(position, direction, seg_start, seg_end - seg_start));
+
+  // Check if segment is intersected in acceptable bounds
+  if (std::isnan(intersection.first) == true || std::isnan(intersection.second) == true || intersection.first < 0.f || intersection.second < 0.f || intersection.second > 1.f)
+    return -1.f;
+
+  // Limit reached
+  if (intersection.first > limit)
+    return intersection.first;
+  
+  // Cancel if wrong side
+  if ((seg.direction == 0 && Math::Vector<2>::determinant(direction, seg_end - seg_start) > 0.f) ||
+    (seg.direction == 1 && (linedefs[seg.linedef]->back != -1 || Math::Vector<2>::determinant(direction, seg_end - seg_start) < 0.f)))
+    return -1.f;
+  
+  // Push linedef index as result
+  result.push_back(seg.linedef);
+
+  // Return segment distance
+  return intersection.first;
 }
 
 DOOM::Doom::Resources::Palette::Palette(DOOM::Doom & doom, const DOOM::Wad::RawResources::Palette & palette) :
@@ -552,9 +623,12 @@ DOOM::Doom::Level::Vertex::Vertex(DOOM::Doom & doom, const DOOM::Wad::RawLevel::
 
 DOOM::Doom::Level::Sidedef::Sidedef(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Sidedef & sidedef) :
   x((float)sidedef.x), y((float)sidedef.y), sector(sidedef.sector), _elapsed(),
-  _upper(animation(doom, sidedef.upper)),
-  _lower(animation(doom, sidedef.lower)),
-  _middle(animation(doom, sidedef.middle))
+  _upper_name(sidedef.upper),
+  _lower_name(sidedef.lower),
+  _middle_name(sidedef.middle),
+  _upper_textures(animation(doom, sidedef.upper)),
+  _lower_textures(animation(doom, sidedef.lower)),
+  _middle_textures(animation(doom, sidedef.middle))
 {
   // Check for errors
   if (sidedef.sector < 0 || sidedef.sector >= doom.wad.levels[doom.level.episode].sectors.size())
@@ -611,24 +685,70 @@ void	DOOM::Doom::Level::Sidedef::update(DOOM::Doom & doom, sf::Time elapsed)
 {
   // Add elapsed time to total
   _elapsed += elapsed;
+
+  // Re-toggle switch
+  if (_toggle > sf::Time::Zero) {
+    _toggle -= elapsed;
+
+    // Switch texture if toggle time elapsed
+    if (_toggle <= sf::Time::Zero)
+      switched(doom, sf::Time::Zero);
+  }
+}
+
+bool	DOOM::Doom::Level::Sidedef::switched(DOOM::Doom & doom, sf::Time toggle)
+{
+  // Does nothing if a toggle is already running
+  if (_toggle > sf::Time::Zero)
+    return false;
+
+  // Set toggle timer
+  _toggle = toggle;
+
+  // Call animation method to find texture set of switch
+  return switched(doom, _upper_textures, _upper_name) |
+    switched(doom, _lower_textures, _lower_name) |
+    switched(doom, _middle_textures, _middle_name);
+}
+
+bool	DOOM::Doom::Level::Sidedef::switched(DOOM::Doom & doom, std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>> & textures, uint64_t & name)
+{
+  // NOTE: the switched is performed using name convention method,
+  // switches should be hard coded
+
+  std::string	name_str = DOOM::key_to_str(name);
+
+  // Check if texture name is switchable
+  if (name_str.substr(0, 3) == "SW1")
+    name_str.at(2) = '2';
+  else if (name_str.substr(0, 3) == "SW2")
+    name_str.at(2) = '1';
+  else
+    return false;
+
+  // Find new texture set
+  name = DOOM::str_to_key(name_str);
+  textures = animation(doom, name);
+
+  return true;
 }
 
 const DOOM::Doom::Resources::Texture &	DOOM::Doom::Level::Sidedef::upper() const
 {
   // Return upper frame
-  return _upper[_elapsed.asMicroseconds() / (DOOM::Doom::Tic.asMicroseconds() * DOOM::Doom::Level::Sidedef::FrameDuration) % _upper.size()];
+  return _upper_textures[_elapsed.asMicroseconds() / (DOOM::Doom::Tic.asMicroseconds() * DOOM::Doom::Level::Sidedef::FrameDuration) % _upper_textures.size()];
 }
 
 const DOOM::Doom::Resources::Texture &	DOOM::Doom::Level::Sidedef::lower() const
 {
   // Return lower frame
-  return _lower[_elapsed.asMicroseconds() / (DOOM::Doom::Tic.asMicroseconds() * DOOM::Doom::Level::Sidedef::FrameDuration) % _lower.size()];
+  return _lower_textures[_elapsed.asMicroseconds() / (DOOM::Doom::Tic.asMicroseconds() * DOOM::Doom::Level::Sidedef::FrameDuration) % _lower_textures.size()];
 }
 
 const DOOM::Doom::Resources::Texture &	DOOM::Doom::Level::Sidedef::middle() const
 {
   // Return middle frame
-  return _middle[_elapsed.asMicroseconds() / (DOOM::Doom::Tic.asMicroseconds() * DOOM::Doom::Level::Sidedef::FrameDuration) % _middle.size()];
+  return _middle_textures[_elapsed.asMicroseconds() / (DOOM::Doom::Tic.asMicroseconds() * DOOM::Doom::Level::Sidedef::FrameDuration) % _middle_textures.size()];
 }
 
 DOOM::Doom::Level::Segment::Segment(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Segment & segment) :

@@ -88,9 +88,9 @@ bool	DOOM::Camera::renderSubsector(DOOM::Doom const & doom, sf::Image & target, 
 bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, sf::Image & target, sf::Rect<int16_t> rect, int16_t index)
 {
   // Get segment from level data
-  DOOM::Doom::Level::Segment const &	seg(doom.level.segments[index]);
-  DOOM::Doom::Level::Vertex const &	seg_start(doom.level.vertexes[seg.start]);
-  DOOM::Doom::Level::Vertex const &	seg_end(doom.level.vertexes[seg.end]);
+  const DOOM::Doom::Level::Segment &	seg(doom.level.segments[index]);
+  const DOOM::Doom::Level::Vertex &	seg_start(doom.level.vertexes[seg.start]);
+  const DOOM::Doom::Level::Vertex &	seg_end(doom.level.vertexes[seg.end]);
 
   // Compute intersection of vertexes with screen
   std::pair<float, float>	start(Math::intersection(_screen_start, _screen, position, seg_start - position));
@@ -378,7 +378,7 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom, sf::Image & target, sf:
     
     // Compute thing position on screen
     std::pair<float, float>	thing_projection(Math::intersection(_screen_start, _screen, position, thing.position - position));
-    std::pair<int16_t, int16_t>	thing_sector(doom.level.sector(thing.position));
+    std::pair<int16_t, int16_t>	thing_sector(doom.level.getSector(thing.position));
 
     float	thing_factor = _factor / ((thing.position - position).length() / (_screen_start + _screen * thing_projection.first - position).length());
     float	first_x = thing_projection.first * rect.width + ((texture.second == false ? -texture.first.get().left : -texture.first.get().width + texture.first.get().left)) * thing_factor;

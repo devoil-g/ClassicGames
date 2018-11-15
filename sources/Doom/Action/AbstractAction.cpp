@@ -162,8 +162,12 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
   return nullptr;
 }
 
-void	DOOM::AbstractAction::stop(DOOM::Doom & doom, DOOM::AbstractThing & thing)
-{}
+bool	DOOM::AbstractAction::stop(DOOM::Doom & doom, DOOM::AbstractThing & thing)
+{
+  return false;
+}
 
-void	DOOM::AbstractAction::start(DOOM::Doom & doom, DOOM::AbstractThing & thing)
-{}
+bool	DOOM::AbstractAction::start(DOOM::Doom & doom, DOOM::AbstractThing & thing)
+{
+  return false;
+}

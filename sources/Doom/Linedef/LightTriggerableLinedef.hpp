@@ -24,13 +24,13 @@ namespace DOOM
   class LightTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat>
   {
   private:
-    void	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing, int16_t sector_index) override	// Perform light change on sector
+    bool	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing, int16_t sector_index) override	// Perform light change on sector
     {
       DOOM::Doom::Level::Sector &	sector = doom.level.sectors[sector_index];
 
       // Cancel if a lighting action is already running
       if (sector.action<DOOM::Doom::Level::Sector::Action::Lighting>().get() != nullptr)
-	return;
+	return false;
 
       int16_t	light;
 
@@ -54,6 +54,8 @@ namespace DOOM
       // Set new light level of sector
       sector.light_base = light;
       sector.light_current = light;
+
+      return true;
     }
 
   public:

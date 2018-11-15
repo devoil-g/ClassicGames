@@ -38,12 +38,11 @@ namespace DOOM
     AbstractLinedef(DOOM::Doom & doom, const DOOM::AbstractLinedef & linedef);
     virtual ~AbstractLinedef() = default;
 
-    virtual void	update(DOOM::Doom & doom, sf::Time elapsed) = 0;	// Update linedef (TODO: remove this ?)
+    virtual void	update(DOOM::Doom & doom, sf::Time elapsed) = 0;	// Update linedef
 
-    virtual void	pushed(DOOM::Doom & doom, DOOM::AbstractThing & thing);		// To call when linedef is pushed by thing
-    virtual void	switched(DOOM::Doom & doom, DOOM::AbstractThing & thing);	// To call when linedef is switched (used) by thing
-    virtual void	walkover(DOOM::Doom & doom, DOOM::AbstractThing & thing);	// To call when thing walk over the linedef
-    virtual void	gunfire(DOOM::Doom & doom, DOOM::AbstractThing & thing);	// To call when thing shot the linedef
+    virtual bool	switched(DOOM::Doom & doom, DOOM::AbstractThing & thing);	// To call when linedef is switched (used) by thing, return true if an action has been executed
+    virtual bool	walkover(DOOM::Doom & doom, DOOM::AbstractThing & thing);	// To call when thing walk over the linedef, return true if an action has been executed
+    virtual bool	gunfire(DOOM::Doom & doom, DOOM::AbstractThing & thing);	// To call when thing shot the linedef, return true if an action has been executed
   };
 };
 

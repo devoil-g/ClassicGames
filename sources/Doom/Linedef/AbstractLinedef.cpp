@@ -171,14 +171,17 @@ std::unique_ptr<DOOM::AbstractLinedef>	DOOM::AbstractLinedef::factory(DOOM::Doom
   }
 }
 
-void	DOOM::AbstractLinedef::pushed(DOOM::Doom & doom, DOOM::AbstractThing & thing)
-{}
+bool	DOOM::AbstractLinedef::switched(DOOM::Doom & doom, DOOM::AbstractThing & thing)
+{
+  return false;
+}
 
-void	DOOM::AbstractLinedef::switched(DOOM::Doom & doom, DOOM::AbstractThing & thing)
-{}
+bool	DOOM::AbstractLinedef::walkover(DOOM::Doom & doom, DOOM::AbstractThing & thing)
+{
+  return false;
+}
 
-void	DOOM::AbstractLinedef::walkover(DOOM::Doom & doom, DOOM::AbstractThing & thing)
-{}
-
-void	DOOM::AbstractLinedef::gunfire(DOOM::Doom & doom, DOOM::AbstractThing & thing)
-{}
+bool	DOOM::AbstractLinedef::gunfire(DOOM::Doom & doom, DOOM::AbstractThing & thing)
+{
+  return false;
+}

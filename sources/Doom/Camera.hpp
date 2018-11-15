@@ -30,13 +30,13 @@ namespace DOOM
     float					_horizon, _factor;			// Pre-computed projection variables
     Math::Vector<2>				_screen, _screen_start, _screen_end;	// Pre-computed screen space
 
-    bool	renderNode(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect, int16_t index);																			// Render level BSP tree recursively from its root node
-    bool	renderSubsector(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect, int16_t index);																		// Iterate through seg of subsector
-    bool	renderSeg(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect, int16_t index);																			// Projection of segment on screen
+    bool	renderNode(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect, int16_t index);																				// Render level BSP tree recursively from its root node
+    bool	renderSubsector(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect, int16_t index);																			// Iterate through seg of subsector
+    bool	renderSeg(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect, int16_t index);																				// Projection of segment on screen
     int16_t	renderLight(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect, int16_t light, float distance);																	// Compute light level from light and distance
     void	renderTexture(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect, const DOOM::Doom::Resources::Texture & texture, int column, float top, float bottom, float height, int offset_x, float offset_y, int16_t light, int16_t seg);	// Draw a column from a texture
-    void	renderFlat(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect, const DOOM::AbstractFlat & flat, int column, int start, int end, float altitude, int16_t light, int16_t seg);							// Draw a column from a flat
-    void	renderSky(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect, int column, int start, int end, float altitude, int16_t seg);													// Draw a column from a sky texture
+    void	renderFlat(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect, const DOOM::AbstractFlat & flat, int column, int start, int end, float altitude, int16_t light, int16_t seg);								// Draw a column from a flat
+    void	renderSky(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect, int column, int start, int end, float altitude, int16_t seg);														// Draw a column from a sky texture
     void	renderThings(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect);																					// Draw things of current level
 
   public:

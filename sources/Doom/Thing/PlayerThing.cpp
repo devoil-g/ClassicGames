@@ -27,7 +27,7 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
   for (const std::unique_ptr<DOOM::AbstractThing> & thing : doom.level.things)
     if (thing->type == id) {
       position = thing->position;
-      height = doom.level.sectors[doom.level.sector(thing->position).first].floor_current + 41.f;
+      height = doom.level.sectors[doom.level.getSector(thing->position).first].floor_current + 41.f;
       angle = thing->angle;
       break;
     }
@@ -52,6 +52,10 @@ void	DOOM::PlayerThing::updateKeyboard(DOOM::Doom & doom, sf::Time elapsed)
 {
   updateKeyboardTurn(doom, elapsed);
   updateKeyboardMove(doom, elapsed);
+
+  // Perform a use action
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space) == true)
+    updateUse(doom, elapsed);
 }
 
 void	DOOM::PlayerThing::updateKeyboardTurn(DOOM::Doom & doom, sf::Time elapsed)
@@ -93,6 +97,10 @@ void	DOOM::PlayerThing::updateController(DOOM::Doom & doom, sf::Time elapsed)
 {
   updateControllerTurn(doom, elapsed);
   updateControllerMove(doom, elapsed);
+
+  // Perform a use action
+  if (Game::Window::Instance().joystick().buttonPressed(controller - 1, 0) == true)
+    updateUse(doom, elapsed);
 }
 
 void	DOOM::PlayerThing::updateControllerTurn(DOOM::Doom & doom, sf::Time elapsed)
@@ -153,11 +161,21 @@ void	DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Ve
 
   // Apply movement to current position
   position += movement;
-  height = doom.level.sectors[doom.level.sector(position).first].floor_current + 41.f;
+  height = doom.level.sectors[doom.level.getSector(position).first].floor_current + 41.f;
 
   // Update camera
   camera.position = position;
   camera.height = height;
+}
+
+void	DOOM::PlayerThing::updateUse(DOOM::Doom & doom, sf::Time elapsed)
+{
+  Math::Vector<2>	ray(std::cos(angle), std::sin(angle));
+
+  // Use linedef
+  // TODO: consider things as obstacles
+  for (int16_t index : doom.level.getLinedefs(position, ray, 64.f))
+    doom.level.linedefs[index]->switched(doom, *this);
 }
 
 const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	DOOM::PlayerThing::sprite(float angle) const

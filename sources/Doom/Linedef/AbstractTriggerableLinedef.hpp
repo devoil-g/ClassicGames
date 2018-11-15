@@ -35,7 +35,7 @@ namespace DOOM
   class AbstractTriggerableLinedef : public DOOM::AbstractLinedef
   {
   private:
-    virtual void	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing, int16_t sector_index) = 0;	// Action of the linedef
+    virtual bool	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing, int16_t sector_index) = 0;	// Action of the linedef
 
     template<DOOM::EnumLinedef::Key _Key = DOOM::EnumLinedef::Key::KeyNone>
     inline std::enable_if_t<Key == _Key, bool>	triggerKey(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// No check for key
@@ -84,49 +84,66 @@ namespace DOOM
     {}
 
     template<DOOM::EnumLinedef::Trigger _Trigger = DOOM::EnumLinedef::Trigger::TriggerPushed>
-    inline std::enable_if_t<(Trigger & _Trigger) != 0>	triggerSector(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger sector of second sidedef
+    inline std::enable_if_t<(Trigger & _Trigger) != 0, bool>	triggerSector(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger sector of second sidedef
     {
       // Handle error
       if (back == -1)
-	return;
+	return false;
 
       // Trigger sector of second sidedef
-      trigger(doom, thing, doom.level.sidedefs[back].sector);
+      return trigger(doom, thing, doom.level.sidedefs[back].sector);
     }
 
     template<DOOM::EnumLinedef::Trigger _Trigger = DOOM::EnumLinedef::Trigger::TriggerPushed>
-    inline std::enable_if_t<(Trigger & _Trigger) == 0>	triggerSector(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger tagged sectors
+    inline std::enable_if_t<(Trigger & _Trigger) == 0, bool>	triggerSector(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger tagged sectors
     {
       // Handle invalid tag
       if (tag == 0)
-	return;
+	return false;
+
+      bool	result = false;
 
       // Trigger tagged sectors
       for (int16_t index = 0; index < doom.level.sectors.size(); index++)
 	if (doom.level.sectors[index].tag == tag)
-	  trigger(doom, thing, index);
+	  result |= trigger(doom, thing, index);
+
+      return result;
     }
 
     template<DOOM::EnumLinedef::Trigger _Trigger>
-    inline std::enable_if_t<(Trigger & _Trigger) == 0>	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Does nothing if wrong event triggered
-    {}
+    inline std::enable_if_t<(Trigger & _Trigger) == 0, bool>	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Does nothing if wrong event triggered
+    {
+      return false;
+    }
 
     template<DOOM::EnumLinedef::Trigger _Trigger>
-    inline std::enable_if_t<(Trigger & _Trigger) != 0>	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger event if correct event triggered
+    inline std::enable_if_t<(Trigger & _Trigger) != 0, bool>	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger event if correct event triggered
     {
+      
       // Check for monster condition
       if (triggerMonster(doom, thing) == false)
-	return;
+	return false;
 
       // Check for key condition
       if (triggerKey(doom, thing) == false)
-	return;
+	return false;
 
-      // Trigger associated sector(s)
-      triggerSector(doom, thing);
+      // Trigger associated sector(s) and handle non-repeatable trigger
+      if (triggerSector(doom, thing) == false)
+	return false;
 
-      // Handle non-repeatable trigger
+      // Find which sidedef textures should be switched
+      int16_t	sidedef = ((Math::Vector<2>::determinant(doom.level.vertexes[start] - thing.position, doom.level.vertexes[end] - doom.level.vertexes[start]) < 0.f) ? front : back);
+
+      // Switch sidedef if trigger pushed or switched, definitively if not repeatable
+      if (Trigger == DOOM::EnumLinedef::Trigger::TriggerPushed || Trigger == DOOM::EnumLinedef::Trigger::TriggerSwitched && sidedef != -1)
+	doom.level.sidedefs[sidedef].switched(doom, (Repeat == false) ? (sf::Time::Zero) : (sf::seconds(DOOM::Doom::Tic.asSeconds() * 35)));
+
+      // Remove lindef if non-repeatable
       triggerRepeat(doom);
+
+      return true;
     }
 
   public:
@@ -150,31 +167,29 @@ namespace DOOM
 
     virtual void	update(DOOM::Doom & doom, sf::Time elapsed) override	// Update linedef
     {
+      return;
+
       // TODO: remove this (note: may crash because of deleted instance)
-      pushed(doom, *doom.level.things.front().get());
       switched(doom, *doom.level.things.front().get());
       walkover(doom, *doom.level.things.front().get());
       gunfire(doom, *doom.level.things.front().get());
     }
 
-    virtual void	pushed(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// To call when linedef is pushed by thing
+    virtual bool	switched(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// To call when linedef is switched (used) by thing
     {
-      trigger<DOOM::EnumLinedef::Trigger::TriggerPushed>(doom, thing);
+      // TODO: fix this (second call may crash because of deleted instance)
+      return trigger<DOOM::EnumLinedef::Trigger::TriggerPushed>(doom, thing) ||
+	trigger<DOOM::EnumLinedef::Trigger::TriggerSwitched>(doom, thing);
     }
 
-    virtual void	switched(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// To call when linedef is switched (used) by thing
+    virtual bool	walkover(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// To call when thing walk over the linedef
     {
-      trigger<DOOM::EnumLinedef::Trigger::TriggerSwitched>(doom, thing);
+      return trigger<DOOM::EnumLinedef::Trigger::TriggerWalkover>(doom, thing);
     }
 
-    virtual void	walkover(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// To call when thing walk over the linedef
+    virtual bool	gunfire(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// To call when thing shot the linedef
     {
-      trigger<DOOM::EnumLinedef::Trigger::TriggerWalkover>(doom, thing);
-    }
-
-    virtual void	gunfire(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// To call when thing shot the linedef
-    {
-      trigger<DOOM::EnumLinedef::Trigger::TriggerGunfire>(doom, thing);
+      return trigger<DOOM::EnumLinedef::Trigger::TriggerGunfire>(doom, thing);
     }
   };
 };

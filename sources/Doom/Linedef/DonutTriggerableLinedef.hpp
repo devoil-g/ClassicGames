@@ -16,7 +16,7 @@ namespace DOOM
   class DonutTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat>
   {
   private:
-    inline void	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing, int16_t pillar_index)	// Perform donut action
+    inline bool	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing, int16_t pillar_index)	// Perform donut action
     {
       // Find pool sector
       int16_t	pool_index = -1;
@@ -37,7 +37,7 @@ namespace DOOM
       // Cancel if pool not found
       if (pool_index == -1) {
 	std::cerr << "[DOOM::DonutTriggerableLinedef] Warning, pool not found." << std::endl;
-	return;
+	return false;
       }
 
       // Find model sector
@@ -59,7 +59,7 @@ namespace DOOM
       // Cancel if model not found
       if (model_index == -1) {
 	std::cerr << "[DOOM::DonutTriggerableLinedef] Warning, model not found." << std::endl;
-	return;
+	return false;
       }
 
       std::reference_wrapper<DOOM::Doom::Level::Sector>	pillar = std::ref(doom.level.sectors[pillar_index]);
@@ -77,6 +77,8 @@ namespace DOOM
 	pool.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, Speed, DOOM::EnumAction::Change::Type::Texture>>(doom, pool, model.get().floor_base, model_index));
       else
 	pool.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, Speed, DOOM::EnumAction::Change::Type::Texture>>(doom, pool, model.get().floor_base, model_index));
+
+      return true;
     }
 
   public:

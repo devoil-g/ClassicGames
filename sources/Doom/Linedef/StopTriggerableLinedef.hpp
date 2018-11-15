@@ -17,13 +17,15 @@ namespace DOOM
   class StopTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat, Monster, Key>
   {
   private:
-    void	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing, int16_t sector_index) override	// Action of the linedef
+    bool	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing, int16_t sector_index) override	// Action of the linedef
     {
       std::unique_ptr<DOOM::AbstractAction> &	action = doom.level.sectors[sector_index].action<Type>();
 
       // Request stop of sector action
       if (action.get() != nullptr)
-	action->stop(doom, thing);
+	return action->stop(doom, thing);
+      else
+	return false;
     }
 
   public:

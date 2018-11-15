@@ -14,11 +14,11 @@ namespace DOOM
   class StairTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, false>
   {
   private:
-    inline void	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing, int16_t sector_index)	// Build stairs from sector
+    inline bool	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing, int16_t sector_index)	// Build stairs from sector
     {
       // Does nothing if action already running
       if (doom.level.sectors[sector_index].action<DOOM::Doom::Level::Sector::Action::Leveling>().get() != nullptr)
-	return;
+	return false;
 
       int16_t	step_index = sector_index;
       float	step_height = doom.level.sectors[sector_index].floor_base;
@@ -49,7 +49,7 @@ namespace DOOM
 
 	// No next step found, interrupt
 	else
-	  return;
+	  return true;
 
       } while (true);
     }

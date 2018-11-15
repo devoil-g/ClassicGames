@@ -104,8 +104,9 @@ namespace DOOM
       void	update(DOOM::Doom & doom, sf::Time elapsed);	// Update resources components
     };
 
-    struct Level
+    class Level
     {
+    public:
       class Vertex : public Math::Vector<2>
       {
       public:
@@ -122,21 +123,30 @@ namespace DOOM
 	int16_t	sector;	// Index of the sector it references
 
       private:
-	sf::Time									_elapsed;	// Total elapsed time
-	std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>>	_upper;		// Pointer to upper/lower/middle textures
-	std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>>	_lower;		// Pointer to lower textures
-	std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>>	_middle;	// Pointer to middle textures
+	sf::Time	_elapsed;	// Total elapsed time
+	sf::Time	_toggle;	// Time before switch re-toggle
 
-	std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>>	animation(const DOOM::Doom & doom, uint64_t name) const;	// Return frames of animation
+	uint64_t	_upper_name;	// Upper texture name
+	uint64_t	_lower_name;	// Lower texture name
+	uint64_t	_middle_name;	// Middle texture name
+
+	std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>>	_upper_textures;	// Pointer to upper textures
+	std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>>	_lower_textures;	// Pointer to lower textures
+	std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>>	_middle_textures;	// Pointer to middle textures
+
+	bool										switched(DOOM::Doom & doom, std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>> & textures, uint64_t & name);	// Switch textures
+	std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>>	animation(const DOOM::Doom & doom, uint64_t name) const;										// Return frames of animation
 
       public:
 	Sidedef(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Sidedef & sidedef);
 	~Sidedef() = default;
 
 	void					update(DOOM::Doom & doom, sf::Time elapsed);	// Update sidedef
-	const DOOM::Doom::Resources::Texture &	upper() const;					// Return upper texture to be displayed
-	const DOOM::Doom::Resources::Texture &	lower() const;					// Return lower texture to be displayed
-	const DOOM::Doom::Resources::Texture &	middle() const;					// Return middle texture to be displayed
+	bool					switched(DOOM::Doom & doom, sf::Time toggle);	// Toggle texture switch, reversing it after time given as parameter (0 for no reverse)
+
+	const DOOM::Doom::Resources::Texture &	upper() const;	// Return upper texture to be displayed
+	const DOOM::Doom::Resources::Texture &	lower() const;	// Return lower texture to be displayed
+	const DOOM::Doom::Resources::Texture &	middle() const;	// Return middle texture to be displayed
       };
 
       class Segment
@@ -313,6 +323,12 @@ namespace DOOM
 	~Blockmap() = default;
       };
 
+    private:
+      bool	getLinedefsNode(std::list<int16_t> & result, const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit, int16_t index) const;		// Recursively find closest subsectors
+      bool	getLinedefsSubsector(std::list<int16_t> & result, const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit, int16_t index) const;	// Iterate through seg of subsector
+      float	getLinedefsSeg(std::list<int16_t> & result, const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit, int16_t index) const;		// Get intersection with sidedef
+
+    public:
       std::pair<uint8_t, uint8_t>					episode;	// Level episode and episode's mission number
       std::reference_wrapper<const DOOM::Doom::Resources::Texture>	sky;		// Sky texture of the level
       std::vector<std::reference_wrapper<DOOM::PlayerThing>>		players;	// List of players (references to PlayerThing in things list)
@@ -326,7 +342,8 @@ namespace DOOM
       std::vector<DOOM::Doom::Level::Sector>				sectors;	// List of sectors
       DOOM::Doom::Level::Blockmap					blockmap;	// Blockmap of level
 
-      std::pair<int16_t, int16_t>	sector(const Math::Vector<2> & position, int16_t index = -1) const;	// Return sector/subsector at position
+      std::pair<int16_t, int16_t>	getSector(const Math::Vector<2> & position, int16_t index = -1) const;										// Return sector/subsector at position
+      std::list<int16_t>		getLinedefs(const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit = std::numeric_limits<float>::max()) const;	// Return an ordered list of linedef index intersected by ray within distance limit
 
       Level();
       ~Level() = default;

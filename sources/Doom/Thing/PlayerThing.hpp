@@ -31,7 +31,7 @@ namespace DOOM
 
     void	updateTurn(DOOM::Doom & doom, sf::Time elapsed, float turn);			// Update player angle
     void	updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Vector<2> movement);	// Update player position
-    
+    void	updateUse(DOOM::Doom & doom, sf::Time elapsed);					// Perform use action
 
   public:
     const int		id;		// Player ID

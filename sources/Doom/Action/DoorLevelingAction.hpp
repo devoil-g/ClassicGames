@@ -198,39 +198,39 @@ namespace DOOM
       }
     }
 
-    void	start(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// Request door to re-trigger
+    bool	start(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// Request door to re-trigger
     {
       switch (Door) {
       case DOOM::EnumAction::Door::DoorOpenWaitClose:
 	switch (_states.front()) {
 	case State::Open:
 	  _states = { State::Close };
-	  break;
+	  return true;
 	case State::Close: case State::ForceClose:
 	  _states = { State::Open, State::Wait, State::Close };
-	  break;
+	  return true;
 	case State::Wait: case State::ForceWait:
 	  _states.pop_front();
-	  break;
+	  return true;
 	}
-	break;
+	return false;
       case DOOM::EnumAction::Door::DoorCloseWaitOpen:
 	switch (_states.front()) {
 	case State::Open:
 	  _states = { State::Close, State::Wait, State::Open };
-	  break;
+	  return true;
 	case State::Close: case State::ForceClose:
 	  _states = { State::Open };
-	  break;
+	  return true;
 	case State::Wait: case State::ForceWait:
 	  _states.pop_front();
-	  break;
+	  return true;
 	}
-	break;
+	return false;
       case DOOM::EnumAction::Door::DoorWaitOpen:
-	break;
+	return false;
       case DOOM::EnumAction::Door::DoorWaitClose:
-	break;
+	return false;
       default:
 	throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
       }

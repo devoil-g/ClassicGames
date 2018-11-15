@@ -11,7 +11,7 @@ namespace DOOM
 {
   class Doom;
 
-  template<unsigned int FrameDuration = 8>
+  template<unsigned int FrameDuration = 6>
   class AnimatedThing : public virtual DOOM::AbstractThing
   {
   private:
