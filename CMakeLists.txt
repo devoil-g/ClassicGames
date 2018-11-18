@@ -71,6 +71,8 @@ SET(GAME_DOOM_ACTION_SRCS
 SET(GAME_DOOM_THING_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractThing.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractThing.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractPhysicThing.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractPhysicThing.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AnimatedThing.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AnimatedThing.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/NullThing.cpp

@@ -24,7 +24,7 @@ DOOM::AbstractThing::AbstractThing(DOOM::Doom & doom, int16_t radius, int16_t pr
 
 bool	DOOM::AbstractThing::update(DOOM::Doom & doom, sf::Time)
 {
-  // Do nothing
+  // Does nothing
   return false;
 }
 

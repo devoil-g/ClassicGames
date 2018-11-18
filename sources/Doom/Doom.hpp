@@ -342,8 +342,8 @@ namespace DOOM
       std::vector<DOOM::Doom::Level::Sector>				sectors;	// List of sectors
       DOOM::Doom::Level::Blockmap					blockmap;	// Blockmap of level
 
-      std::pair<int16_t, int16_t>	getSector(const Math::Vector<2> & position, int16_t index = -1) const;										// Return sector/subsector at position
-      std::list<int16_t>		getLinedefs(const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit = std::numeric_limits<float>::max()) const;	// Return an ordered list of linedef index intersected by ray within distance limit
+      std::pair<int16_t, int16_t>	getSector(const Math::Vector<2> & position, int16_t index = -1) const;						// Return sector/subsector at position
+      std::list<int16_t>		getLinedefs(const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit = 1.f) const;	// Return an ordered list of linedef index intersected by ray within distance limit
 
       Level();
       ~Level() = default;

@@ -3,11 +3,11 @@
 
 #include "Doom/Camera.hpp"
 #include "Doom/Statusbar.hpp"
-#include "Doom/Thing/AbstractThing.hpp"
+#include "Doom/Thing/AbstractPhysicsThing.hpp"
 
 namespace DOOM
 {
-  class PlayerThing : public DOOM::AbstractThing
+  class PlayerThing : public DOOM::AbstractPhysicsThing<50>
   {
     // TODO: REMOVE THIS
     sf::Time	_elapsed;

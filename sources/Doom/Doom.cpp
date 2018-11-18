@@ -427,7 +427,7 @@ std::list<int16_t>	DOOM::Doom::Level::getLinedefs(const Math::Vector<2> & positi
   std::list<int16_t>	result;
 
   // Start to search subsector from top node
-  getLinedefsNode(result, position, direction / direction.length(), limit, (int16_t)nodes.size() - 1);
+  getLinedefsNode(result, position, direction, limit, (int16_t)nodes.size() - 1);
 
   return result;
 }

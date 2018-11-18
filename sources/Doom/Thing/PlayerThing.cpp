@@ -2,11 +2,11 @@
 #include "System/Window.hpp"
 
 const float	DOOM::PlayerThing::TurningSpeed = 2.f / 3.f * Math::Pi;
-const float	DOOM::PlayerThing::WalkingSpeed = 24.f / 3.f;			// 24 unit per frame (3 tics)
-const float	DOOM::PlayerThing::RunningSpeed = 50.f / 3.f;			// 50 unit per frame (3 tics)
+const float	DOOM::PlayerThing::WalkingSpeed = 24.f;			// 24 unit per frame (3 tics)
+const float	DOOM::PlayerThing::RunningSpeed = 50.f;			// 50 unit per frame (3 tics)
 
 DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
-  DOOM::AbstractThing(doom, 16, Obstacle),
+  DOOM::AbstractPhysicsThing<50>(doom, 16, Obstacle),
   _sprites(doom.resources.animations.find(DOOM::str_to_key("PLAY"))->second),
   _running(false),
   id(id),
@@ -142,14 +142,15 @@ void	DOOM::PlayerThing::updateTurn(DOOM::Doom & doom, sf::Time elapsed, float tu
 void	DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Vector<2> movement)
 {
   // Limit movement
-  if (movement.length() > 1.f)
-    movement /= movement.length();
+  movement.x() = std::clamp(movement.x(), -1.f, +1.f);
+  movement.y() = std::clamp(movement.y(), -1.f, +1.f);
 
   // Apply speed to movement
-  movement *= (_running == true ? DOOM::PlayerThing::RunningSpeed : DOOM::PlayerThing::WalkingSpeed) / DOOM::Doom::Tic.asSeconds();
+  movement.x() *= (_running == true ? DOOM::PlayerThing::RunningSpeed : DOOM::PlayerThing::WalkingSpeed) * 1.f;
+  movement.y() *= (_running == true ? DOOM::PlayerThing::RunningSpeed : DOOM::PlayerThing::WalkingSpeed) * 0.8f;
 
   // Apply time to movement
-  movement *= elapsed.asSeconds();
+  // movement *= elapsed.asSeconds();
 
   // Apply rotation to movement
   movement = Math::Vector<2>(
@@ -157,10 +158,9 @@ void	DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Ve
     movement.x() * std::sinf(angle) - movement.y() * std::cosf(angle)
     );
 
-  // TODO: check collision
-
   // Apply movement to current position
-  position += movement;
+  DOOM::AbstractPhysicsThing<50>::thrust(elapsed, movement);
+  DOOM::AbstractPhysicsThing<50>::update(doom, elapsed);
   height = doom.level.sectors[doom.level.getSector(position).first].floor_current + 41.f;
 
   // Update camera
