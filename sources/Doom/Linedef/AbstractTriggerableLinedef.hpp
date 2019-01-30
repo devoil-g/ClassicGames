@@ -134,7 +134,7 @@ namespace DOOM
 	return false;
 
       // Find which sidedef textures should be switched
-      int16_t	sidedef = ((Math::Vector<2>::determinant(doom.level.vertexes[start] - thing.position, doom.level.vertexes[end] - doom.level.vertexes[start]) < 0.f) ? front : back);
+      int16_t	sidedef = ((Math::Vector<2>::determinant(doom.level.vertexes[start] - thing.position.convert<2>(), doom.level.vertexes[end] - doom.level.vertexes[start]) < 0.f) ? front : back);
 
       // Switch sidedef if trigger pushed or switched, definitively if not repeatable
       if (Trigger == DOOM::EnumLinedef::Trigger::TriggerPushed || Trigger == DOOM::EnumLinedef::Trigger::TriggerSwitched && sidedef != -1)

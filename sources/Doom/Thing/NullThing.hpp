@@ -1,17 +1,20 @@
 #ifndef _NULL_THING_HPP_
 #define _NULL_THING_HPP_
 
-#include "Doom/Thing/AbstractThing.hpp"
+#include "Doom/Thing/AbstractNoneAnimationThing.hpp"
+#include "Doom/Thing/AbstractNonePhysicsThing.hpp"
 
 namespace DOOM
 {
-  class NullThing : public virtual DOOM::AbstractThing
+  class NullThing : public DOOM::AbstractNonePhysicsThing, public DOOM::AbstractNoneAnimationThing
   {    
   public:
     NullThing(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing);
     virtual ~NullThing() = default;
 
-    const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	sprite(float angle) const override;	// Return sprite to be displayed
+    using DOOM::AbstractNoneAnimationThing::update;
+    using DOOM::AbstractNoneAnimationThing::sprite;
+    using DOOM::AbstractNonePhysicsThing::thrust;
   };
 };
 

@@ -34,6 +34,24 @@ namespace Math
 	(*this)(i) = vec[i];
     };
 
+    template<unsigned int wSize>
+    inline Math::Vector<wSize> &	convert()	// Cast current vector to a lower dimension
+    {
+      // Check that requested dimension is valid
+      static_assert(wSize > 0 && wSize <= vSize, "Invalid vector convertion parameters.");
+
+      return *reinterpret_cast<Math::Vector<wSize> *>(this);
+    }
+
+    template<unsigned int wSize>
+    inline const Math::Vector<wSize> &	convert() const	// Cast current vector to a lower dimension
+    {
+      // Check that requested dimension is valid
+      static_assert(wSize > 0 && wSize <= vSize, "Invalid vector convertion parameters.");
+
+      return *reinterpret_cast<const Math::Vector<wSize> *>(this);
+    }
+
     inline constexpr float &	operator()(unsigned int c)	// Get nth component of vector
     {
       return _vector[c];
@@ -53,6 +71,11 @@ namespace Math
     inline float	y() const { return (*this)(1); }	// Get second component of vector
     inline float	z() const { return (*this)(2); }	// Get third component of vector
     inline float	w() const { return (*this)(2); }	// Get fourth component of vector
+
+    inline Math::Vector<vSize> &	operator==(const Math::Vector<vSize> & v)				// Vector multiplication
+    {
+      return (memcmp(this->_vector, v->_vector, vSize * sizeof(float)) == 0) ? true : false;
+    }
 
     inline Math::Vector<vSize> &	operator*=(const Math::Vector<vSize> & v)				// Vector multiplication
     {

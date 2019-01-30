@@ -131,7 +131,8 @@ namespace Game
     void	create(const sf::VideoMode &, sf::Uint32, const sf::ContextSettings &);	// (Re)create window with parameters
     void	taskbar(WindowFlag);							// Set taskbar status (Windows 7+ only)
     void	taskbar(WindowFlag, double);						// Set taskbar progress (Windows 7+ only)
-
+    void	transparency(sf::Uint8 transparency);					// Set window global transparency
+    
     inline sf::RenderWindow &			window() { return _window; };		// Get SFML window
     inline const Game::Window::Mouse &		mouse() const { return _mouse; };	// Get mouse informations
     inline const Game::Window::Keyboard &	keyboard() const { return _keyboard; };	// Get keyboard informations

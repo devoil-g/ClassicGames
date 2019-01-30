@@ -4,8 +4,6 @@
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
-#include <iostream>
-
 std::string const	Game::Window::DefaultTitle = "Classical Games";
 unsigned int const	Game::Window::DefaultWidth = 640;
 unsigned int const	Game::Window::DefaultHeight = 480;
@@ -25,7 +23,7 @@ Game::Window::Window()
   CoInitialize(nullptr);
   CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (void **)&_taskbar);
   if (_taskbar == nullptr)
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());  
 #endif
 }
 
@@ -124,12 +122,21 @@ bool		Game::Window::update(sf::Time elapsed)
 
 void		Game::Window::create(sf::VideoMode const & video, sf::Uint32 style, sf::ContextSettings const & context)
 {
+#ifdef _WIN32
+  COLORREF	pcrKey = RGB(0, 0, 0);
+  BYTE		pbAlpha = 255;
+  DWORD		pdwFlags = 0;
+
+  // Save actual window transparency configuration
+  GetLayeredWindowAttributes(_window.getSystemHandle(), &pcrKey, &pbAlpha, &pdwFlags);
+#endif
+
   // Create window with parameters
   _window.create(video, Game::Window::DefaultTitle, style, context);
 
   // Activate V-sync (limit fps)
   _window.setVerticalSyncEnabled(Game::Window::VerticalSync);
-
+  
   // Disabled key repeate
   _window.setKeyRepeatEnabled(false);
 
@@ -140,6 +147,15 @@ void		Game::Window::create(sf::VideoMode const & video, sf::Uint32 style, sf::Co
 
   // Set window icon
   _window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+
+#ifdef _WIN32
+  // Initialize window transparency
+  SetWindowLongPtr(_window.getSystemHandle(), GWL_EXSTYLE, GetWindowLongPtr(_window.getSystemHandle(), GWL_EXSTYLE) | WS_EX_LAYERED);
+
+  if (SetLayeredWindowAttributes(_window.getSystemHandle(), pcrKey, pbAlpha, pdwFlags) == FALSE)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  RedrawWindow(_window.getSystemHandle(), NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+#endif
 }
 
 void		Game::Window::taskbar(Game::Window::WindowFlag flag)
@@ -162,5 +178,14 @@ void		Game::Window::taskbar(Game::Window::WindowFlag flag, double progress)
 
 #ifdef _WIN32
   _taskbar->SetProgressValue(_window.getSystemHandle(), (ULONGLONG)(progress * 1000), 1000);
+#endif
+}
+
+void		Game::Window::transparency(sf::Uint8 transparency)
+{
+#ifdef _WIN32
+  if (SetLayeredWindowAttributes(_window.getSystemHandle(), RGB(0, 0, 0), 255 - transparency, LWA_ALPHA) == FALSE)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  RedrawWindow(_window.getSystemHandle(), NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
 #endif
 }

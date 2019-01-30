@@ -1,12 +1,14 @@
 #include "Doom/Thing/PlayerThing.hpp"
 #include "System/Window.hpp"
 
+const float	DOOM::PlayerThing::VerticalLimit = Math::DegToRad(22.5f);
 const float	DOOM::PlayerThing::TurningSpeed = 2.f / 3.f * Math::Pi;
 const float	DOOM::PlayerThing::WalkingSpeed = 24.f;			// 24 unit per frame (3 tics)
 const float	DOOM::PlayerThing::RunningSpeed = 50.f;			// 50 unit per frame (3 tics)
 
 DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
-  DOOM::AbstractPhysicsThing<50>(doom, 16, Obstacle),
+  DOOM::AbstractThing(doom, 56, 16, Obstacle),
+  DOOM::AbstractDynamicPhysicsThing<50>(doom, 56, 16, Obstacle),
   _sprites(doom.resources.animations.find(DOOM::str_to_key("PLAY"))->second),
   _running(false),
   id(id),
@@ -27,7 +29,6 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
   for (const std::unique_ptr<DOOM::AbstractThing> & thing : doom.level.things)
     if (thing->type == id) {
       position = thing->position;
-      height = doom.level.sectors[doom.level.getSector(thing->position).first].floor_current + 41.f;
       angle = thing->angle;
       break;
     }
@@ -61,15 +62,21 @@ void	DOOM::PlayerThing::updateKeyboard(DOOM::Doom & doom, sf::Time elapsed)
 void	DOOM::PlayerThing::updateKeyboardTurn(DOOM::Doom & doom, sf::Time elapsed)
 {
   // Turn player
-  float	angle = 0.f;
+  float	horizontal = 0.f;
+  float	vertical = 0.f;
 
   if (Game::Window::Instance().keyboard().key(sf::Keyboard::Left) == true)	// Turn left
-    angle += 1.f;
+    horizontal += 1.f;
   if (Game::Window::Instance().keyboard().key(sf::Keyboard::Right) == true)	// Turn right
-    angle -= 1.f;
+    horizontal -= 1.f;
+
+  if (Game::Window::Instance().keyboard().key(sf::Keyboard::Up) == true)	// Turn up
+    vertical += 1.f;
+  if (Game::Window::Instance().keyboard().key(sf::Keyboard::Down) == true)	// Turn down
+    vertical -= 1.f;
 
   // Apply rotation to player
-  updateTurn(doom, elapsed, angle);
+  updateTurn(doom, elapsed, horizontal, vertical);
 }
 
 void	DOOM::PlayerThing::updateKeyboardMove(DOOM::Doom & doom, sf::Time elapsed)
@@ -106,7 +113,10 @@ void	DOOM::PlayerThing::updateController(DOOM::Doom & doom, sf::Time elapsed)
 void	DOOM::PlayerThing::updateControllerTurn(DOOM::Doom & doom, sf::Time elapsed)
 {
   // Apply rotation to player
-  updateTurn(doom, elapsed, std::fabsf(Game::Window::Instance().joystick().position(controller - 1, 4)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, 4) / 100.f : 0.f);
+  updateTurn(doom, elapsed,
+    std::fabsf(Game::Window::Instance().joystick().position(controller - 1, 4)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, 4) / 100.f : 0.f,
+    std::fabsf(Game::Window::Instance().joystick().position(controller - 1, 5)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, 5) / 100.f : 0.f
+  );
 }
 
 void	DOOM::PlayerThing::updateControllerMove(DOOM::Doom & doom, sf::Time elapsed)
@@ -127,14 +137,17 @@ void	DOOM::PlayerThing::updateControllerMove(DOOM::Doom & doom, sf::Time elapsed
   updateMove(doom, elapsed, movement);
 }
 
-void	DOOM::PlayerThing::updateTurn(DOOM::Doom & doom, sf::Time elapsed, float turn)
+void	DOOM::PlayerThing::updateTurn(DOOM::Doom & doom, sf::Time elapsed, float horizontal, float vertical)
 {
   // Apply sprinting to turning
-  turn *= (_running == true ? DOOM::PlayerThing::RunningSpeed / DOOM::PlayerThing::WalkingSpeed : 1.f);
+  horizontal *= (_running == true ? DOOM::PlayerThing::RunningSpeed / DOOM::PlayerThing::WalkingSpeed : 1.f);
 
   // Apply turning angle and time to player
-  angle += turn * DOOM::PlayerThing::TurningSpeed * elapsed.asSeconds();
+  angle += horizontal * DOOM::PlayerThing::TurningSpeed * elapsed.asSeconds();
 
+  // TODO: Lock vertical angle if maximum reached to avoid shaking
+  camera.orientation += (DOOM::PlayerThing::VerticalLimit * vertical - camera.orientation) * (1.f - std::pow(0.1f, elapsed.asSeconds()));
+  
   // Update camera
   camera.angle = angle;
 }
@@ -159,13 +172,13 @@ void	DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Ve
     );
 
   // Apply movement to current position
-  DOOM::AbstractPhysicsThing<50>::thrust(elapsed, movement);
-  DOOM::AbstractPhysicsThing<50>::update(doom, elapsed);
-  height = doom.level.sectors[doom.level.getSector(position).first].floor_current + 41.f;
+  DOOM::AbstractDynamicPhysicsThing<50>::thrust(movement * elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
+  DOOM::AbstractDynamicPhysicsThing<50>::update(doom, elapsed);
+  position.z() = doom.level.sectors[doom.level.getSector(position.convert<2>()).first].floor_current;
 
   // Update camera
   camera.position = position;
-  camera.height = height;
+  camera.position.z() += 41.1f;
 }
 
 void	DOOM::PlayerThing::updateUse(DOOM::Doom & doom, sf::Time elapsed)
@@ -174,14 +187,15 @@ void	DOOM::PlayerThing::updateUse(DOOM::Doom & doom, sf::Time elapsed)
 
   // Use linedef
   // TODO: consider things as obstacles
-  for (int16_t index : doom.level.getLinedefs(position, ray, 64.f))
+  for (int16_t index : doom.level.getLinedefs(position.convert<2>(), ray, 64.f))
     doom.level.linedefs[index]->switched(doom, *this);
 }
 
 const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	DOOM::PlayerThing::sprite(float angle) const
 {
   // TODO: remove this
-  return _sprites[(int)(_elapsed.asSeconds()) % _sprites.size()][Math::Modulo((int)(angle * 4.f / Math::Pi + 16.5f), 8)];
+  return _sprites[(int)(_elapsed.asSeconds() * 4) % 4][Math::Modulo<8>((int)(angle * 4.f / Math::Pi + 16.5f))];
+  return _sprites[(int)(_elapsed.asSeconds()) % _sprites.size()][Math::Modulo<8>((int)(angle * 4.f / Math::Pi + 16.5f))];
 
   static const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool>	frame = { std::ref(DOOM::Doom::Resources::Texture::Null), false };
 

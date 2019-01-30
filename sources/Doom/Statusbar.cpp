@@ -69,7 +69,7 @@ void	DOOM::Statusbar::renderBackground(const DOOM::Doom & doom, sf::Image & targ
 {
   const DOOM::Doom::Resources::Texture &	background = doom.resources.menus.find(DOOM::str_to_key("STBAR"))->second;
   const DOOM::Doom::Resources::Texture &	background_arms = doom.resources.menus.find(DOOM::str_to_key("STARMS"))->second;
-  const DOOM::Doom::Resources::Texture &	background_face = doom.level.players.size() == 1 ? DOOM::Doom::Resources::Texture::Null : doom.resources.menus.find(DOOM::str_to_key(std::string("STFB") + (char)('0' + Math::Modulo(id - 1, 4))))->second;
+  const DOOM::Doom::Resources::Texture &	background_face = doom.level.players.size() == 1 ? DOOM::Doom::Resources::Texture::Null : doom.resources.menus.find(DOOM::str_to_key(std::string("STFB") + (char)('0' + Math::Modulo<4>(id - 1))))->second;
 
   // Draw statusbar background
   renderTexture(doom, target, rect, background, 0, 0);

@@ -16,8 +16,7 @@ namespace DOOM
   public:
     static const unsigned int	LightFade = 84;	// Light distance diminishing factor
 
-    Math::Vector<2>	position;	// Camera position
-    float		height;		// Camera Z position
+    Math::Vector<3>	position;	// Camera position
     float		angle;		// Camera angle [rad]
     float		orientation;	// Camera looking up/down angle [rad]
     float		fov;		// Camera field of view [rad]

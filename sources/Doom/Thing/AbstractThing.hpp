@@ -5,6 +5,8 @@
 
 namespace DOOM
 {
+  class PlayerThing;
+
   class AbstractThing
   {
   public:
@@ -29,23 +31,25 @@ namespace DOOM
       Pickup = 0x0010		// Pickup, player can pick the thing up by walking over it
     };
 
-    Math::Vector<2>	position;	// Thing position
-    float		height;		// Thing height from floor (or ceiling is hanging)
+    Math::Vector<3>	position;	// Thing position
     float		angle;		// Thing orientation (rad.)
+
+    const int16_t	height;		// Thing height
     const int16_t	type;		// Thing type ID
     const int16_t	flag;		// Thing flags (see enum)
     const int16_t	radius;		// Thing radius (square box)
     const int16_t	properties;	// Thing properties (see enum)
 
   protected:
-    AbstractThing(DOOM::Doom & doom, int16_t radius, int16_t properties);	// Special constructor for player only
+    AbstractThing(DOOM::Doom & doom, int16_t height, int16_t radius, int16_t properties);	// Special constructor for player only
 
   public:
-    AbstractThing(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing, int16_t radius, int16_t properties);
+    AbstractThing(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing, int16_t height, int16_t radius, int16_t properties);
     virtual ~AbstractThing() = default;
 
-    virtual bool											update(DOOM::Doom & doom, sf::Time elapsed);	// Update thing, return true if thing should be deleted
-    virtual const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	sprite(float angle) const = 0;			// Return sprite to be displayed
+    virtual bool											update(DOOM::Doom & doom, sf::Time elapsed) = 0;	// Update thing, return true if thing should be deleted
+    virtual void											thrust(const Math::Vector<2> & acceleration) = 0;	// Apply acceleration to thing
+    virtual const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	sprite(float angle) const = 0;				// Return sprite to be displayed
   };
 };
 

@@ -30,8 +30,9 @@ void			Game::StateMachine::run()
   {
     sf::Time		elapsed = clock.restart();
 
-    // Return if update return true
-    if (Game::Window::Instance().update(elapsed) || _states.front()->update(elapsed))
+    // Stop if update return true
+    if (Game::Window::Instance().update(elapsed) == true ||
+      _states.front()->update(elapsed) == true)
       return;
 
     // Draw image

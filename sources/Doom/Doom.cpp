@@ -282,9 +282,9 @@ void	DOOM::Doom::buildLevel(std::pair<uint8_t, uint8_t> const & level)
     buildLevelLinedefs();
     buildLevelSidedefs();
     buildLevelSubsectors();
-    buildLevelThings();
     buildLevelSegments();
     buildLevelNodes();
+    buildLevelThings();
     buildLevelBlockmap();
   }
   catch (std::exception e)
@@ -850,6 +850,17 @@ DOOM::Doom::Level::Blockmap::Blockmap(DOOM::Doom & doom, const DOOM::Wad::RawLev
     if (index >= blockmap.blocklist.size() || blockmap.blocklist[index] != (int16_t)0xFFFF)
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
   }
+}
+
+int	DOOM::Doom::Level::Blockmap::index(const Math::Vector<2> & position) const
+{
+  // Check if position out of bound
+  if (position.x() < x || position.x() >= x + 128 * column ||
+    position.y() < y || position.y() >= y + 128 * row)
+    return -1;
+
+  // Compute position index in blockmap
+  return ((int)position.y() - y) / 128 * column + ((int)position.x() - x) / 128;
 }
 
 DOOM::Doom::Level::Sector::Sector(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Sector & sector) :

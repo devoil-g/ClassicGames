@@ -152,7 +152,7 @@ namespace DOOM
       class Segment
       {
       public:
-	int16_t	start, end;	// Start/end segment vertexes indexes
+	int16_t	start, end;	// Start/end vertexes indexes
 	float	angle;		// Segment angle (rad.)
 	int16_t	linedef;	// Segment linedef index
 	int16_t	direction;	// 0 (same as linedef) or 1 (opposite of linedef)
@@ -321,6 +321,8 @@ namespace DOOM
 	Blockmap() = default;
 	Blockmap(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Blockmap & blockmap);
 	~Blockmap() = default;
+
+	int	index(const Math::Vector<2> & position) const;	// Get index of block at given position
       };
 
     private:

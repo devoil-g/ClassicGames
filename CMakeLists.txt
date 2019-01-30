@@ -71,14 +71,24 @@ SET(GAME_DOOM_ACTION_SRCS
 SET(GAME_DOOM_THING_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractThing.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractThing.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractPhysicThing.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractPhysicThing.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AnimatedThing.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AnimatedThing.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/DecorationThing.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/DecorationThing.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/NullThing.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/NullThing.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/PlayerThing.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/PlayerThing.hpp
+
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractDynamicAnimationThing.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractDynamicAnimationThing.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractNoneAnimationThing.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractNoneAnimationThing.hpp
+
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractDynamicPhysicsThing.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractDynamicPhysicsThing.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractStaticPhysicsThing.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractStaticPhysicsThing.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractNonePhysicsThing.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractNonePhysicsThing.hpp
 )
 SET(GAME_MATH_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.cpp

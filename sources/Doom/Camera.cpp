@@ -2,11 +2,8 @@
 
 #include "Doom/Camera.hpp"
 
-#include <iostream>
-
 DOOM::Camera::Camera() :
-  position(0.f, 0.f),
-  height(0.f),
+  position(0.f, 0.f, 0.f),
   angle(Math::DegToRad(0.f)),
   orientation(Math::DegToRad(0.f)),
   fov(Math::DegToRad(90.f))
@@ -31,8 +28,8 @@ void	DOOM::Camera::render(DOOM::Doom const & doom, sf::Image & target, sf::Rect<
   _factor = (float)rect.height / (2.f * _fov2_tan * ((float)rect.height / (float)rect.width));
 
   // Pre-compute screen coordinates
-  _screen_start = Math::Vector<2>(std::cos(angle) - _fov2_tan * std::sin(angle), std::sin(angle) + _fov2_tan * std::cos(angle)) + position;
-  _screen_end = Math::Vector<2>(std::cos(angle) + _fov2_tan * std::sin(angle), std::sin(angle) - _fov2_tan * std::cos(angle)) + position;
+  _screen_start = Math::Vector<2>(std::cos(angle) - _fov2_tan * std::sin(angle), std::sin(angle) + _fov2_tan * std::cos(angle)) + position.convert<2>();
+  _screen_end = Math::Vector<2>(std::cos(angle) + _fov2_tan * std::sin(angle), std::sin(angle) - _fov2_tan * std::cos(angle)) + position.convert<2>();
   _screen = _screen_end - _screen_start;
 
   // Draw level walls and flats from BSP root node
@@ -65,12 +62,12 @@ bool	DOOM::Camera::renderNode(DOOM::Doom const & doom, sf::Image & target, sf::R
   DOOM::Doom::Level::Node const &	node(doom.level.nodes[index]);
 
   // Use derterminant to find which side should be rendered first
-  if (Math::Vector<2>::determinant(node.direction, position - node.origin) > 0.f)
+  if (Math::Vector<2>::determinant(node.direction, position.convert<2>() - node.origin) > 0.f)
     return renderNode(doom, target, rect, node.leftchild) == true ||
-    ((Math::Vector<2>::determinant(node.origin - position, node.direction) / Math::Vector<2>::determinant(_screen_start - position, node.direction) >= 0.f || Math::Vector<2>::determinant(node.origin - position, node.direction) / Math::Vector<2>::determinant(_screen_end - position, node.direction) >= 0.f) && renderNode(doom, target, rect, node.rightchild) == true);
+    ((Math::Vector<2>::determinant(node.origin - position.convert<2>(), node.direction) / Math::Vector<2>::determinant(_screen_start - position.convert<2>(), node.direction) >= 0.f || Math::Vector<2>::determinant(node.origin - position.convert<2>(), node.direction) / Math::Vector<2>::determinant(_screen_end - position.convert<2>(), node.direction) >= 0.f) && renderNode(doom, target, rect, node.rightchild) == true);
   else
     return renderNode(doom, target, rect, node.rightchild) == true ||
-    ((Math::Vector<2>::determinant(node.origin - position, node.direction) / Math::Vector<2>::determinant(_screen_start - position, node.direction) >= 0.f || Math::Vector<2>::determinant(node.origin - position, node.direction) / Math::Vector<2>::determinant(_screen_end - position, node.direction) >= 0.f) && renderNode(doom, target, rect, node.leftchild) == true);
+    ((Math::Vector<2>::determinant(node.origin - position.convert<2>(), node.direction) / Math::Vector<2>::determinant(_screen_start - position.convert<2>(), node.direction) >= 0.f || Math::Vector<2>::determinant(node.origin - position.convert<2>(), node.direction) / Math::Vector<2>::determinant(_screen_end - position.convert<2>(), node.direction) >= 0.f) && renderNode(doom, target, rect, node.leftchild) == true);
 }
 
 bool	DOOM::Camera::renderSubsector(DOOM::Doom const & doom, sf::Image & target, sf::Rect<int16_t> rect, int16_t index)
@@ -93,18 +90,18 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, sf::Image & target, sf::Re
   const DOOM::Doom::Level::Vertex &	seg_end(doom.level.vertexes[seg.end]);
 
   // Compute intersection of vertexes with screen
-  std::pair<float, float>	start(Math::intersection(_screen_start, _screen, position, seg_start - position));
-  std::pair<float, float>	end(Math::intersection(_screen_start, _screen, position, seg_end - position));
+  std::pair<float, float>	start(Math::intersection(_screen_start, _screen, position.convert<2>(), seg_start - position.convert<2>()));
+  std::pair<float, float>	end(Math::intersection(_screen_start, _screen, position.convert<2>(), seg_end - position.convert<2>()));
   std::pair<float, float>	intermediate(Math::intersection(_screen_start, _screen, seg_start, seg_end - seg_start));
 
   // Find a valid pair of vertexes
   struct Projection { float screen, seg, distance; };
   Projection	left = (std::isnan(start.first) == true || start.second < 0.f) ?
     Projection({ intermediate.first, intermediate.second, 1.f }) :
-    Projection({ start.first, 0.f, (seg_start - position).length() / (_screen_start + _screen * start.first - position).length() });
+    Projection({ start.first, 0.f, (seg_start - position.convert<2>()).length() / (_screen_start + _screen * start.first - position.convert<2>()).length() });
   Projection	right = (std::isnan(end.first) == true || end.second < 0.f) ?
     Projection({ intermediate.first, intermediate.second, 1.f }) :
-    Projection({ end.first, 1.f, (seg_end - position).length() / (_screen_start + _screen * end.first - position).length() });
+    Projection({ end.first, 1.f, (seg_end - position.convert<2>()).length() / (_screen_start + _screen * end.first - position.convert<2>()).length() });
   
   // Check if valid vertexes are out of screen
   if (std::isnan(left.screen) == true || std::isnan(right.screen) == true || (left.screen < 0.f && right.screen < 0.f) || (left.screen >= 1.f && right.screen >= 1.f) || (left.screen == right.screen))
@@ -141,14 +138,14 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, sf::Image & target, sf::Re
   // Y projection of first and second vertexes
   float	left_c = _factor / left.distance;
   float	right_c = _factor / right.distance;
-  float	left_lower_front = _horizon - (sector_front.floor_current - height) * left_c;
-  float	left_lower_back = _horizon - (sector_back.floor_current - height) * left_c;
-  float	left_upper_front = _horizon - (sector_front.ceiling_current - height) * left_c;
-  float	left_upper_back = _horizon - (sector_back.ceiling_current - height) * left_c;
-  float	right_lower_front = _horizon - (sector_front.floor_current - height) * right_c;
-  float	right_lower_back = _horizon - (sector_back.floor_current - height) * right_c;
-  float	right_upper_front = _horizon - (sector_front.ceiling_current - height) * right_c;
-  float	right_upper_back = _horizon - (sector_back.ceiling_current - height) * right_c;
+  float	left_lower_front = _horizon - (sector_front.floor_current - position.z()) * left_c;
+  float	left_lower_back = _horizon - (sector_back.floor_current - position.z()) * left_c;
+  float	left_upper_front = _horizon - (sector_front.ceiling_current - position.z()) * left_c;
+  float	left_upper_back = _horizon - (sector_back.ceiling_current - position.z()) * left_c;
+  float	right_lower_front = _horizon - (sector_front.floor_current - position.z()) * right_c;
+  float	right_lower_back = _horizon - (sector_back.floor_current - position.z()) * right_c;
+  float	right_upper_front = _horizon - (sector_front.ceiling_current - position.z()) * right_c;
+  float	right_upper_back = _horizon - (sector_back.ceiling_current - position.z()) * right_c;
   
   // Texture Y offsets
   float	upper_offset_y = (linedef.flag & DOOM::AbstractLinedef::Flag::UpperUnpegged) ?
@@ -182,10 +179,10 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, sf::Image & target, sf::Re
 
     // TODO: solve nan values
     // Projection segment offset
-    float	seg_offset = std::clamp(left.seg + (right.seg - left.seg) * ((std::abs(right.distance - left.distance) < 0.1f) ? screen_offset : ((((sector_front.ceiling_current - height) * _factor / (_horizon - upper_front)) - left.distance) / (right.distance - left.distance))), 0.f, 1.f);
+    float	seg_offset = std::clamp(left.seg + (right.seg - left.seg) * ((std::abs(right.distance - left.distance) < 0.1f) ? screen_offset : ((((sector_front.ceiling_current - position.z()) * _factor / (_horizon - upper_front)) - left.distance) / (right.distance - left.distance))), 0.f, 1.f);
 
     // Compute light level according to distance TODO: improve this process
-    float	distance = (position - (seg_start + (seg_end - seg_start) * seg_offset)).length() / (_screen_start + _screen * ((float)column / (float)rect.width) - position).length();
+    float	distance = (position.convert<2>() - (seg_start + (seg_end - seg_start) * seg_offset)).length() / (_screen_start + _screen * ((float)column / (float)rect.width) - position.convert<2>()).length();
     int16_t	shaded = renderLight(doom, target, rect, light, distance);
 
     // Texture X offset
@@ -198,7 +195,7 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, sf::Image & target, sf::Re
 	_vertical[column].first = std::max(_vertical[column].first, (int)std::lroundf(std::min(upper_front, upper_back)));
       }
     }
-    else if (height < sector_front.ceiling_current) {
+    else if (position.z() < sector_front.ceiling_current) {
       renderFlat(doom, target, rect, sector_front.ceiling_flat, column, 0, (int)std::lroundf(upper_front), sector_front.ceiling_current, light, index);
       _vertical[column].first = std::max(_vertical[column].first, (int)std::lroundf(upper_front));
     }
@@ -210,7 +207,7 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, sf::Image & target, sf::Re
 	_vertical[column].second = std::min(_vertical[column].second, (int)std::lroundf(std::max(lower_front, lower_back)));
       }
     }
-    else if (height > sector_front.floor_current) {
+    else if (position.z() > sector_front.floor_current) {
       renderFlat(doom, target, rect, sector_front.floor_flat, column, (int)std::lroundf(lower_front), rect.height, sector_front.floor_current, light, index);
       _vertical[column].second = std::min(_vertical[column].second, (int)std::lroundf(lower_front));
     }
@@ -288,23 +285,23 @@ void	DOOM::Camera::renderTexture(DOOM::Doom const & doom, sf::Image & target, sf
 
 void	DOOM::Camera::renderFlat(DOOM::Doom const & doom, sf::Image & target, sf::Rect<int16_t> rect, const DOOM::AbstractFlat & flat, int column, int start, int end, float altitude, int16_t light, int16_t seg)
 {
-  Math::Vector<2>			direction(_screen_start + _screen * ((float)column / (float)rect.width) - position);
+  Math::Vector<2>			direction(_screen_start + _screen * ((float)column / (float)rect.width) - position.convert<2>());
   const std::array<uint8_t, 4096> &	texture = flat.flat();
   float					distance_distortion = direction.length();
 
   for (int row = std::max(start, _vertical[column].first); row < std::min(end, _vertical[column].second); row++)
     if (target.getPixel(rect.left + column, rect.top + row).a == 0)
     {
-      float	k = std::abs((altitude - height) / (2.f * _fov2_tan * (0.5f - (row - _horizon + rect.height / 2.f) / (float)rect.height) * (rect.height / (float)rect.width)));
+      float	k = std::abs((altitude - position.z()) / (2.f * _fov2_tan * (0.5f - (row - _horizon + rect.height / 2.f) / (float)rect.height) * (rect.height / (float)rect.width)));
 
       // Get grid coordinates
-      Math::Vector<2>	coord(position + direction * k);
+      Math::Vector<2>	coord(position.convert<2>() + direction * k);
 
       // Compute light level according to distance TODO: improve this process
-      int16_t	shaded = renderLight(doom, target, rect, light, (position - coord).length() / distance_distortion);
+      int16_t	shaded = renderLight(doom, target, rect, light, (position.convert<2>() - coord).length() / distance_distortion);
 
       // Get color in flat from coordinates and register segment index in seg-buffer
-      target.setPixel(rect.left + column, rect.top + row, doom.resources.palettes[0][doom.resources.colormaps[31 - shaded / 8][texture[(Math::Modulo<64>(64 - (int)coord.y())) * 64 + Math::Modulo<64>((int)coord.x())]]]);
+      target.setPixel(rect.left + column, rect.top + row, doom.resources.palettes[0][doom.resources.colormaps[31 - shaded / 8][texture[(Math::Modulo<64>(64 - (int)coord.y())) * 64 + Math::Modulo<64>((int)coord.x() - 1)]]]);
       _sbuffer[column * rect.height + row] = { seg, altitude };
     }
 }
@@ -312,7 +309,7 @@ void	DOOM::Camera::renderFlat(DOOM::Doom const & doom, sf::Image & target, sf::R
 void	DOOM::Camera::renderSky(DOOM::Doom const & doom, sf::Image & target, sf::Rect<int16_t> rect, int column, int start, int end, float altitude, int16_t seg)
 {
   DOOM::Doom::Resources::Texture const &				sky(doom.level.sky);
-  Math::Vector<2>							direction(_screen_start + _screen * ((float)column / (float)rect.width) - position);
+  Math::Vector<2>							direction(_screen_start + _screen * ((float)column / (float)rect.width) - position.convert<2>());
   int									pixel_x(Math::Modulo((int)(Math::Vector<2>::angle(Math::Vector<2>(1.f, 0.f), direction) * (Math::Vector<2>::determinant(Math::Vector<2>(1.f, 0.f), direction) > 0 ? +1.f : -1.f) * 4.f / (2.f * Math::Pi) * sky.width), sky.width));
   std::vector<DOOM::Doom::Resources::Texture::Column::Span> const &	spans(sky.columns[pixel_x].spans);
   float									sky_factor(_screen.length() * 2.f * sky.width / (rect.width * direction.length() * Math::Pi));
@@ -360,7 +357,7 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom, sf::Image & target, sf:
   for (const std::unique_ptr<DOOM::AbstractThing> & thing : doom.level.things)
     if (thing->sprite(0).first.get().width > 0)
     {
-      float	distance = Math::Vector<2>::determinant(thing->position - position, eye_90) / eye_r;
+      float	distance = Math::Vector<2>::determinant(thing->position.convert<2>() - position.convert<2>(), eye_90) / eye_r;
 
       // Push thing to list to render only if front of camera
       if (distance > 1.f)
@@ -374,17 +371,17 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom, sf::Image & target, sf:
   for (std::list<std::pair<const DOOM::AbstractThing &, float>>::const_iterator iterator = things.begin(); iterator != things.end(); iterator++)
   {
     const DOOM::AbstractThing &									thing(iterator->first);
-    const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	texture(thing.sprite(Math::Vector<2>::angle(position - thing.position) - thing.angle));
+    const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	texture(thing.sprite(Math::Vector<2>::angle(position.convert<2>() - thing.position.convert<2>()) - thing.angle));
     
     // Compute thing position on screen
-    std::pair<float, float>	thing_projection(Math::intersection(_screen_start, _screen, position, thing.position - position));
-    std::pair<int16_t, int16_t>	thing_sector(doom.level.getSector(thing.position));
+    std::pair<float, float>	thing_projection(Math::intersection(_screen_start, _screen, position.convert<2>(), thing.position.convert<2>() - position.convert<2>()));
+    std::pair<int16_t, int16_t>	thing_sector(doom.level.getSector(thing.position.convert<2>()));
 
-    float	thing_factor = _factor / ((thing.position - position).length() / (_screen_start + _screen * thing_projection.first - position).length());
+    float	thing_factor = _factor / ((thing.position.convert<2>() - position.convert<2>()).length() / (_screen_start + _screen * thing_projection.first - position.convert<2>()).length());
     float	first_x = thing_projection.first * rect.width + ((texture.second == false ? -texture.first.get().left : -texture.first.get().width + texture.first.get().left)) * thing_factor;
-    float	first_y = _horizon - (((thing.properties & DOOM::AbstractThing::Properties::Hanging) ? doom.level.sectors[thing_sector.first].ceiling_current + texture.first.get().height - texture.first.get().top : doom.level.sectors[thing_sector.first].floor_current + texture.first.get().top) - height) * thing_factor;
+    float	first_y = _horizon - (((thing.properties & DOOM::AbstractThing::Properties::Hanging) ? thing.position.z() + texture.first.get().height - texture.first.get().top : thing.position.z() + texture.first.get().top) - position.z()) * thing_factor;
     float	second_x = thing_projection.first * rect.width + ((texture.second == false ? texture.first.get().width - texture.first.get().left : +texture.first.get().left)) * thing_factor;
-    float	second_y = _horizon - (((thing.properties & DOOM::AbstractThing::Properties::Hanging) ? doom.level.sectors[thing_sector.first].ceiling_current - texture.first.get().top : doom.level.sectors[thing_sector.first].floor_current - texture.first.get().height + texture.first.get().top) - height) * thing_factor;
+    float	second_y = _horizon - (((thing.properties & DOOM::AbstractThing::Properties::Hanging) ? thing.position.z() - texture.first.get().top : thing.position.z() - texture.first.get().height + texture.first.get().top) - position.z()) * thing_factor;
 
     // Map of thing visibility against segments
     std::unordered_map<int16_t, bool>	visible;
@@ -405,9 +402,9 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom, sf::Image & target, sf:
 
 	  // Compute vertexes distances if not already registered
 	  if (vertexes.find(segment.start) == vertexes.end())
-	    vertexes[segment.start] = Math::Vector<2>::determinant(doom.level.vertexes[segment.start] - position, eye_90) / eye_r;
+	    vertexes[segment.start] = Math::Vector<2>::determinant(doom.level.vertexes[segment.start] - position.convert<2>(), eye_90) / eye_r;
 	  if (vertexes.find(segment.end) == vertexes.end())
-	    vertexes[segment.end] = Math::Vector<2>::determinant(doom.level.vertexes[segment.end] - position, eye_90) / eye_r;
+	    vertexes[segment.end] = Math::Vector<2>::determinant(doom.level.vertexes[segment.end] - position.convert<2>(), eye_90) / eye_r;
 
 	  // Test segment if not already in visibility map
 	  if (visible.find(segment_index) == visible.end())
@@ -420,9 +417,9 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom, sf::Image & target, sf:
 	    else
 	    {
 	      // Compute intersection of segment with eye-thing vector
-	      std::pair<float, float>		intersection(Math::intersection(position, thing.position - position, doom.level.vertexes[segment.start], doom.level.vertexes[segment.end] - doom.level.vertexes[segment.start]));
+	      std::pair<float, float>		intersection(Math::intersection(position.convert<2>(), thing.position.convert<2>() - position.convert<2>(), doom.level.vertexes[segment.start], doom.level.vertexes[segment.end] - doom.level.vertexes[segment.start]));
 
-	      visible[segment_index] = (intersection.first < 0.f || intersection.first > 1.f);
+	      visible[segment_index] = (std::isnan(intersection.first) == true || intersection.first < 0.f || intersection.first > 1.f);
 	    }
 	  }
 	}
