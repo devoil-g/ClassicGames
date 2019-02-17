@@ -78,6 +78,11 @@ SET(GAME_DOOM_THING_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/PlayerThing.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/PlayerThing.hpp
 
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractNonePickupThing.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractNonePickupThing.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractStaticPickupThing.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractStaticPickupThing.hpp
+	
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractDynamicAnimationThing.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractDynamicAnimationThing.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractNoneAnimationThing.cpp

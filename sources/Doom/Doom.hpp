@@ -307,8 +307,8 @@ namespace DOOM
       public:
 	struct Block
 	{
-	  std::vector<int16_t>						linedefs;	// Indexes of linedefs in block
-	  std::list<std::reference_wrapper<DOOM::AbstractThing>>	things;		// Things in block
+	  std::vector<int16_t>					linedefs;	// Indexes of linedefs in block
+	  std::set<std::reference_wrapper<DOOM::AbstractThing>>	things;		// Things in block
 	};
 
 	int16_t	x;	// Blockmap X origin
@@ -323,6 +323,11 @@ namespace DOOM
 	~Blockmap() = default;
 
 	int	index(const Math::Vector<2> & position) const;	// Get index of block at given position
+
+	void	addThing(DOOM::AbstractThing & thing, const Math::Vector<2> & position);						// Add thing to blockmap
+	void	moveThing(DOOM::AbstractThing & thing, const Math::Vector<2> & old_position, const Math::Vector<2> & new_position);	// Update thing position in blockmap
+	void	removeThing(DOOM::AbstractThing & thing, const Math::Vector<2> & position);						// Remove thing from blockmap
+
       };
 
     private:
@@ -334,7 +339,7 @@ namespace DOOM
       std::pair<uint8_t, uint8_t>					episode;	// Level episode and episode's mission number
       std::reference_wrapper<const DOOM::Doom::Resources::Texture>	sky;		// Sky texture of the level
       std::vector<std::reference_wrapper<DOOM::PlayerThing>>		players;	// List of players (references to PlayerThing in things list)
-      std::vector<std::unique_ptr<DOOM::AbstractThing>>			things;		// List of things
+      std::list<std::unique_ptr<DOOM::AbstractThing>>			things;		// List of things
       std::vector<std::unique_ptr<DOOM::AbstractLinedef>>		linedefs;	// List of linedefs
       std::vector<DOOM::Doom::Level::Sidedef>				sidedefs;	// List of sidedefs
       std::vector<DOOM::Doom::Level::Vertex>				vertexes;	// List of vertexes
@@ -394,6 +399,12 @@ namespace DOOM
 
     void	addPlayer(int controller);	// Add player to current game
   };
+};
+
+namespace std
+{
+  // Define comparison of Thing ref to build a std::set
+  bool	operator<(const std::reference_wrapper<DOOM::AbstractThing> & left, const std::reference_wrapper<DOOM::AbstractThing> & right);
 };
 
 // Definition of class forward-declared

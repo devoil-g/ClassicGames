@@ -9,6 +9,7 @@ const float	DOOM::PlayerThing::RunningSpeed = 50.f;			// 50 unit per frame (3 ti
 DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
   DOOM::AbstractThing(doom, 56, 16, Obstacle),
   DOOM::AbstractDynamicPhysicsThing<50>(doom, 56, 16, Obstacle),
+  DOOM::AbstractNonePickupThing(doom, 56, 16, Obstacle),
   _sprites(doom.resources.animations.find(DOOM::str_to_key("PLAY"))->second),
   _running(false),
   id(id),
@@ -145,7 +146,7 @@ void	DOOM::PlayerThing::updateTurn(DOOM::Doom & doom, sf::Time elapsed, float ho
   // Apply turning angle and time to player
   angle += horizontal * DOOM::PlayerThing::TurningSpeed * elapsed.asSeconds();
 
-  // TODO: Lock vertical angle if maximum reached to avoid shaking
+  // Handle vertical angle
   camera.orientation += (DOOM::PlayerThing::VerticalLimit * vertical - camera.orientation) * (1.f - std::pow(0.1f, elapsed.asSeconds()));
   
   // Update camera

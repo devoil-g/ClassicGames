@@ -284,8 +284,8 @@ void	DOOM::Doom::buildLevel(std::pair<uint8_t, uint8_t> const & level)
     buildLevelSubsectors();
     buildLevelSegments();
     buildLevelNodes();
-    buildLevelThings();
     buildLevelBlockmap();
+    buildLevelThings();
   }
   catch (std::exception e)
   {
@@ -369,6 +369,10 @@ void	DOOM::Doom::buildLevelThings()
     else
       level.things.emplace_back(std::move(converted));
   }
+
+  // Set player in blockmap
+  for (std::reference_wrapper<DOOM::PlayerThing> & player : level.players)
+    level.blockmap.addThing(player.get(), player.get().position.convert<2>());
 }
 
 void	DOOM::Doom::buildLevelBlockmap()
@@ -387,8 +391,15 @@ void	DOOM::Doom::Resources::update(DOOM::Doom & doom, sf::Time elapsed)
 void	DOOM::Doom::Level::update(DOOM::Doom & doom, sf::Time elapsed)
 {
   // Update level things
-  for (const std::unique_ptr<DOOM::AbstractThing> & thing : things)
-    thing->update(doom, elapsed);
+  for (std::list<std::unique_ptr<DOOM::AbstractThing>>::iterator iterator = things.begin(); iterator != things.end(); )
+    // Remove thing if update return true
+    if (iterator->get()->update(doom, elapsed) == true) {
+      blockmap.removeThing(*iterator->get(), iterator->get()->position.convert<2>());
+      iterator = things.erase(iterator);
+    }
+    else {
+      iterator++;
+    }
 
   // Update level linedef
   for (const std::unique_ptr<DOOM::AbstractLinedef> & linedef : linedefs)
@@ -863,6 +874,45 @@ int	DOOM::Doom::Level::Blockmap::index(const Math::Vector<2> & position) const
   return ((int)position.y() - y) / 128 * column + ((int)position.x() - x) / 128;
 }
 
+void	DOOM::Doom::Level::Blockmap::addThing(DOOM::AbstractThing & thing, const Math::Vector<2> & position)
+{
+  std::set<int>	thing_blocks;
+
+  // Get blocks of thing
+  thing_blocks.insert(index(Math::Vector<2>(position.x() - thing.radius, position.y() - thing.radius)));
+  thing_blocks.insert(index(Math::Vector<2>(position.x() - thing.radius, position.y() + thing.radius)));
+  thing_blocks.insert(index(Math::Vector<2>(position.x() + thing.radius, position.y() - thing.radius)));
+  thing_blocks.insert(index(Math::Vector<2>(position.x() + thing.radius, position.y() + thing.radius)));
+
+  // Insert thing in blocks
+  for (int index : thing_blocks)
+    if (index != -1)
+      blocks[index].things.insert(std::ref(thing));
+}
+
+void	DOOM::Doom::Level::Blockmap::moveThing(DOOM::AbstractThing & thing, const Math::Vector<2> & old_position, const Math::Vector<2> & new_position)
+{
+  // Remove and insert thing of blockmap
+  removeThing(thing, old_position);
+  addThing(thing, new_position);
+}
+
+void	DOOM::Doom::Level::Blockmap::removeThing(DOOM::AbstractThing & thing, const Math::Vector<2> & position)
+{
+  std::set<int>	thing_blocks;
+
+  // Get blocks of thing
+  thing_blocks.insert(index(Math::Vector<2>(position.x() - thing.radius, position.y() - thing.radius)));
+  thing_blocks.insert(index(Math::Vector<2>(position.x() - thing.radius, position.y() + thing.radius)));
+  thing_blocks.insert(index(Math::Vector<2>(position.x() + thing.radius, position.y() - thing.radius)));
+  thing_blocks.insert(index(Math::Vector<2>(position.x() + thing.radius, position.y() + thing.radius)));
+
+  // Remove thing from blocks
+  for (int index : thing_blocks)
+    if (index != -1)
+      blocks[index].things.erase(std::ref(thing));
+}
+
 DOOM::Doom::Level::Sector::Sector(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Sector & sector) :
   floor_name(sector.floor_texture),
   ceiling_name(sector.ceiling_texture),
@@ -1135,3 +1185,11 @@ int16_t	DOOM::Doom::Level::Sector::getNeighborHighestLight(const DOOM::Doom & do
   return result;
 }
 
+namespace std
+{
+  // Define comparison of Thing ref to build a std::set
+  bool	operator<(const std::reference_wrapper<DOOM::AbstractThing> & left, const std::reference_wrapper<DOOM::AbstractThing> & right)
+  {
+    return &left.get() < &right.get();
+  }
+}

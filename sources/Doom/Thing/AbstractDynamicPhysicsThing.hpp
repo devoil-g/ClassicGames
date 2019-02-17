@@ -2,6 +2,7 @@
 #define _ABSTRACT_DYNAMIC_PHYSICS_THING_HPP_
 
 #include "Doom/Doom.hpp"
+#include "Doom/Thing/AbstractThing.hpp"
 #include "Math/Vector.hpp"
 
 namespace DOOM
@@ -12,7 +13,7 @@ namespace DOOM
   private:
     Math::Vector<2>	_thrust;	// Thrust vector (unit/tic)
 
-    std::set<int16_t>	moveLinedefs(DOOM::Doom & doom, const Math::Vector<2> & movement)	// Return set of intersectable linedef indexes
+    std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing>>>	moveLinedefsThings(DOOM::Doom & doom, const Math::Vector<2> & movement)	// Return set of intersectable linedef indexes
     {
       std::set<int16_t>	blocks;
 
@@ -28,16 +29,19 @@ namespace DOOM
       blocks.insert(doom.level.blockmap.index(Math::Vector<2>(position.x() + movement.x() + (float)radius, position.y() + movement.y() - (float)radius)));
       blocks.insert(doom.level.blockmap.index(Math::Vector<2>(position.x() + movement.x() + (float)radius, position.y() + movement.y() + (float)radius)));
 
-      std::set<int16_t>	linedefs;
+      std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing>>>	linedefs_things;
 
       // Get index of linedefs to test againt position
       for (int16_t block_index : blocks)
-	if (block_index != -1)
-	  for (int16_t linedef_index : doom.level.blockmap.blocks[block_index].linedefs)
-	    linedefs.insert(linedef_index);
+	if (block_index != -1) {
+	  const DOOM::Doom::Level::Blockmap::Block &	block = doom.level.blockmap.blocks[block_index];
+
+	  linedefs_things.first.insert(block.linedefs.begin(), block.linedefs.end());
+	  linedefs_things.second.insert(block.things.begin(), block.things.end());
+	}
 
       // Return set of intersectable linedef
-      return linedefs;
+      return linedefs_things;
     }
 
     std::pair<float, Math::Vector<2>>	moveVertex(DOOM::Doom & doom, const Math::Vector<2> & movement, int16_t vertex_index, int16_t ignored_index)	// Return intersection of movement with linedef (coef. along movement / normal vector)
@@ -60,9 +64,9 @@ namespace DOOM
       // Check if vertex is already in bounding box
       if ((vertex - position.convert<2>()).length() <= radius)
 	return { 0.f, position.convert<2>() - vertex };
-      
+
       // Intersect bounding circle with vertex
-      float	a = std::pow(movement.x(), 2) + std::pow(movement.x(), 2);
+      float	a = std::pow(movement.x(), 2) + std::pow(movement.y(), 2);
       float	b = -2.f * ((vertex.x() - position.x()) * movement.x() + (vertex.y() - position.y()) * movement.y());
       float	c = std::pow(vertex.x() - position.x(), 2) + std::pow(vertex.y() - position.y(), 2);
       float	delta = std::pow(b, 2) - 4.f * a * c;
@@ -193,7 +197,51 @@ namespace DOOM
 	return { intersection.first, linedef_normal };
     }
 
-    void	move(DOOM::Doom & doom, sf::Time elapsed, int depth = 0, int16_t linedef_ignored = -1)
+    std::pair<float, Math::Vector<2>>	moveThing(DOOM::Doom & doom, const Math::Vector<2> & movement, const DOOM::AbstractThing & thing, const DOOM::AbstractThing * ignored)	// Return intersection of movement with thing (coef. along movement / normal vector)
+    {
+      // Check if linedef is ignored
+      if (&thing == this || &thing == ignored || (thing.properties & DOOM::AbstractThing::Obstacle) == 0)
+	return { 1.f, Math::Vector<2>() };
+
+      Math::Vector<2>	initial(position.convert<2>() - thing.position.convert<2>());
+
+      // Check for initial collision
+      if (initial.length() < (float)(radius + thing.radius)) {
+	if (Math::Vector<2>::cos(movement, initial) < 0.f)
+	  return { 0.f, initial / initial.length() };
+	else
+	  return { 1.f, Math::Vector<2>() };
+      }
+
+      float	a = std::pow(movement.x(), 2) + std::pow(movement.y(), 2);
+      float	b = 2.f * (movement.x() * (position.x() - thing.position.x()) + movement.y() * (position.y() - thing.position.y()));
+      float	c = std::pow(position.x() - thing.position.x(), 2) + std::pow(position.y() - thing.position.y(), 2) + std::pow((float)radius + (float)thing.radius, 2);
+      float	delta = std::pow(b, 2) - 4.f * a * c;
+
+      // No intersection found
+      if (delta <= 0.f)
+	return { 1.f, Math::Vector<2>() };
+
+      // Compute intersections
+      float	s0 = (-b - std::sqrt(delta)) / (2.f * a);
+      float	s1 = (-b + std::sqrt(delta)) / (2.f * a);
+
+      // Return smaller solution
+      if (s0 >= 0.f && s0 < 1.f) {
+	Math::Vector<2>	normal = position.convert<2>() + movement * s0 - thing.position.convert<2>();
+
+	return { s0, normal / normal.length() };
+      }
+      else if (s1 >= 0.f && s1 < 1.f) {
+	Math::Vector<2>	normal = position.convert<2>() + movement * s1 - thing.position.convert<2>();
+
+	return { s1, normal / normal.length() };
+      }
+      else
+	return { 1.f, Math::Vector<2>() };
+    }
+
+    void	move(DOOM::Doom & doom, sf::Time elapsed, int depth = 0, int16_t linedef_ignored = -1, const DOOM::AbstractThing *thing_ignored = nullptr)
     {
       // NOTE: glitch might happen if radius > 128
       // TODO: recode this using square bounding box
@@ -207,53 +255,103 @@ namespace DOOM
 	return;
       }
 
-      // Get intersectable linedefs
-      std::set<int16_t>	linedefs = moveLinedefs(doom, movement);
+      // Get intersectable linedefs and things
+      std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing>>>	linedefs_things = moveLinedefsThings(doom, movement);
 
-      int16_t		closest_index = -1;
-      float		closest_distance = 1.f;
-      Math::Vector<2>	closest_normal = Math::Vector<2>();
+      int16_t				closest_linedef = -1;
+      const DOOM::AbstractThing *	closest_thing = nullptr;
+      float				closest_distance = 1.f;
+      Math::Vector<2>			closest_normal = Math::Vector<2>();
 
       // Check collision with linedefs
-      for (int16_t linedef_index : linedefs) {
+      for (int16_t linedef_index : linedefs_things.first) {
 	std::pair<float, Math::Vector<2>>	intersection = moveLinedef(doom, movement, linedef_index, linedef_ignored);
 
 	// Get nearest linedef
 	if (intersection.first < closest_distance) {
-	  closest_index = linedef_index;
+	  closest_linedef = linedef_index;
+	  closest_thing = nullptr;
 	  closest_distance = intersection.first;
 	  closest_normal = intersection.second;
 	}
       }
 
-      // TODO: Check collision with things
+      // Check collision with things
+      for (const std::reference_wrapper<DOOM::AbstractThing> & thing : linedefs_things.second) {
+	std::pair<float, Math::Vector<2>>	intersection = moveThing(doom, movement, thing.get(), thing_ignored);
 
+	// Get nearest linedef
+	if (intersection.first < closest_distance) {
+	  closest_linedef = -1;
+	  closest_thing = &thing.get();
+	  closest_distance = intersection.first;
+	  closest_normal = intersection.second;
+	}
+      }
+
+      // Walkover linedefs
+      for (int16_t linedef_index : linedefs_things.first) {
+	// Ignore linedef if collided or ignored
+	if (linedef_index == closest_linedef || linedef_index == linedef_ignored)
+	  continue;
+
+	DOOM::AbstractLinedef	&linedef = *doom.level.linedefs[linedef_index].get();
+
+	// Compute intersection of movement with linedef
+	std::pair<float, float>	intersection = Math::intersection(
+	  doom.level.vertexes[linedef.start],
+	  doom.level.vertexes[linedef.end] - doom.level.vertexes[linedef.start],
+	  position.convert<2>(),
+	  movement * closest_distance);
+
+	// Walkover linedef if intersected
+	if (intersection.first >= 0.f && intersection.first <= 1.f &&
+	  intersection.second >= 0.f && intersection.second <= 1.f)
+	  linedef.walkover(doom, *this);
+      }
+
+      // Pickup things
+      for (const std::reference_wrapper<DOOM::AbstractThing> & thing : linedefs_things.second) {
+	// Ignore things if collided or ignored
+	if (&thing.get() == closest_thing || &thing.get() == thing_ignored)
+	  continue;
+
+	// Pickup thing if destination is in thing area
+	if ((position.convert<2>() + movement * closest_distance - thing.get().position.convert<2>()).length() < thing.get().radius + radius)
+	  thing.get().pickup(doom, *this);
+      }
+      
       // Move player to closest obstacle or full movement if none found
-      position.x() += movement.x() * closest_distance;
-      position.y() += movement.y() * closest_distance;
+      doom.level.blockmap.moveThing(*this, position.convert<2>(), position.convert<2>() += movement * closest_distance);
 
       // Re-compute movement if obstable found
-      if (closest_index != -1) {
+      if (closest_linedef != -1 || closest_thing != nullptr) {
 	Math::Vector<2>	closest_direction = Math::Vector<2>(+closest_normal.y(), -closest_normal.x());
 
-	// Slide against currently collisioned walls (change movement and thrust)
+	// Slide against currently collisioned walls/things (change movement and thrust)
 	_thrust = closest_direction / closest_direction.length() * _thrust.length() * Math::Vector<2>::cos(_thrust, closest_direction);
 
-	// Attempt new move, ignoring collided linedef
-	move(doom, elapsed * (1.f - closest_distance), depth + 1, closest_index);
+	// Attempt new move, ignoring collided linedef/thing
+	move(doom, elapsed * (1.f - closest_distance), depth + 1, closest_linedef, closest_thing);
       }
     }
 
   protected:
     AbstractDynamicPhysicsThing(DOOM::Doom & doom, int16_t height, int16_t radius, int16_t properties) :	// Special constructor for player only
       DOOM::AbstractThing(doom, height, radius, properties)
-    {}
+    {
+      // Add thing to blockmap
+      doom.level.blockmap.addThing(*this, position.convert<2>());
+    }
 
   public:
     AbstractDynamicPhysicsThing(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing, int16_t height, int16_t radius, int16_t properties) :
       DOOM::AbstractThing(doom, thing, height, radius, properties),
       _thrust()
-    {}
+    {
+      // Add thing to blockmap
+      doom.level.blockmap.addThing(*this, position.convert<2>());
+    }
      
     virtual ~AbstractDynamicPhysicsThing() = default;
 

@@ -5,8 +5,6 @@
 
 namespace DOOM
 {
-  class PlayerThing;
-
   class AbstractThing
   {
   public:
@@ -47,8 +45,10 @@ namespace DOOM
     AbstractThing(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing, int16_t height, int16_t radius, int16_t properties);
     virtual ~AbstractThing() = default;
 
+    virtual void	thrust(const Math::Vector<2> & acceleration) = 0;		// Apply acceleration to thing
+    virtual void	pickup(DOOM::Doom & doom, DOOM::AbstractThing & monster) = 0;	// Pick up thing
+
     virtual bool											update(DOOM::Doom & doom, sf::Time elapsed) = 0;	// Update thing, return true if thing should be deleted
-    virtual void											thrust(const Math::Vector<2> & acceleration) = 0;	// Apply acceleration to thing
     virtual const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	sprite(float angle) const = 0;				// Return sprite to be displayed
   };
 };

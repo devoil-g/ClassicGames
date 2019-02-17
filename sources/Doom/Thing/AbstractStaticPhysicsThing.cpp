@@ -3,7 +3,10 @@
 DOOM::AbstractStaticPhysicsThing::AbstractStaticPhysicsThing(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing, int16_t height, int16_t radius, int16_t properties) :
   DOOM::AbstractThing(doom, thing, height, radius, properties),
   _sector(doom.level.getSector(position.convert<2>()).first)
-{}
+{
+  // Add thing to blockmap
+  doom.level.blockmap.addThing(*this, position.convert<2>());
+}
 
 DOOM::AbstractStaticPhysicsThing::~AbstractStaticPhysicsThing() = default;
 

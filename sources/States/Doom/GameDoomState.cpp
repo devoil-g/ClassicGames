@@ -21,7 +21,7 @@ Game::GameDoomState::GameDoomState() :
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Load level
-  _doom.setLevel(*std::next(_doom.getLevel().cbegin()));
+  _doom.setLevel(_doom.getLevel().front());
 }
 
 bool	Game::GameDoomState::update(sf::Time elapsed)

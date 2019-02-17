@@ -45,11 +45,11 @@ std::unique_ptr<DOOM::AbstractLinedef>	DOOM::AbstractLinedef::factory(DOOM::Doom
   case 114: case 116: case 42: case 115: case 63: case 61:	// Switched repeatable
     return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, true>>(doom, linedef);
   case 2: case 3: case 110: case 108: case 109: case 16:	// Walkover once
-    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, false>>(doom, linedef);
+    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerWalkover, false>>(doom, linedef);
   case 4:	// Walkover once (monster)
-    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, false, true>>(doom, linedef);
+    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerWalkover, false, true>>(doom, linedef);
   case 106: case 107: case 75: case 105: case 86: case 90: case 76:	// Walkover repeatable
-    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, true>>(doom, linedef);
+    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerWalkover, true>>(doom, linedef);
 
     // Regular locked door types
   case 32:	// Pushed once (blue)
