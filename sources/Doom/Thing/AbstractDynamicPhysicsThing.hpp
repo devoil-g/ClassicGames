@@ -11,7 +11,8 @@ namespace DOOM
   class AbstractDynamicPhysicsThing : public virtual DOOM::AbstractThing
   {
   private:
-    Math::Vector<2>	_thrust;	// Thrust vector (unit/tic)
+    Math::Vector<3>	_thrust;	// Thrust vector (unit/tic)
+    float		_gravity;	// Current gravity
 
     std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing>>>	moveLinedefsThings(DOOM::Doom & doom, const Math::Vector<2> & movement)	// Return set of intersectable linedef indexes
     {
@@ -31,7 +32,7 @@ namespace DOOM
 
       std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing>>>	linedefs_things;
 
-      // Get index of linedefs to test againt position
+      // Get index of linedefs to test against position
       for (int16_t block_index : blocks)
 	if (block_index != -1) {
 	  const DOOM::Doom::Level::Blockmap::Block &	block = doom.level.blockmap.blocks[block_index];
@@ -247,11 +248,11 @@ namespace DOOM
       // TODO: recode this using square bounding box
 
       // Limit movement to 30 units per tics
-      Math::Vector<2>	movement = ((_thrust.length() > 30.f) ? (_thrust * 30.f / _thrust.length()) : _thrust) * elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds();
+      Math::Vector<2>	movement = ((_thrust.convert<2>().length() > 30.f) ? (_thrust.convert<2>() * 30.f / _thrust.convert<2>().length()) : _thrust.convert<2>()) * elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds();
 
       // Stop if maximum recursion depth reach
       if (depth > 4 || (movement.x() == 0.f && movement.y() == 0.f)) {
-	_thrust = Math::Vector<2>(0.f, 0.f);
+	_thrust.convert<2>() = Math::Vector<2>(0.f, 0.f);
 	return;
       }
 
@@ -322,14 +323,15 @@ namespace DOOM
       }
       
       // Move player to closest obstacle or full movement if none found
-      doom.level.blockmap.moveThing(*this, position.convert<2>(), position.convert<2>() += movement * closest_distance);
+      if (closest_distance > 0.f)
+	doom.level.blockmap.moveThing(*this, position.convert<2>(), position.convert<2>() += movement * closest_distance);
 
       // Re-compute movement if obstable found
       if (closest_linedef != -1 || closest_thing != nullptr) {
 	Math::Vector<2>	closest_direction = Math::Vector<2>(+closest_normal.y(), -closest_normal.x());
 
 	// Slide against currently collisioned walls/things (change movement and thrust)
-	_thrust = closest_direction / closest_direction.length() * _thrust.length() * Math::Vector<2>::cos(_thrust, closest_direction);
+	_thrust.convert<2>() = closest_direction / closest_direction.length() * _thrust.convert<2>().length() * Math::Vector<2>::cos(_thrust.convert<2>(), closest_direction);
 
 	// Attempt new move, ignoring collided linedef/thing
 	move(doom, elapsed * (1.f - closest_distance), depth + 1, closest_linedef, closest_thing);
@@ -338,7 +340,9 @@ namespace DOOM
 
   protected:
     AbstractDynamicPhysicsThing(DOOM::Doom & doom, int16_t height, int16_t radius, int16_t properties) :	// Special constructor for player only
-      DOOM::AbstractThing(doom, height, radius, properties)
+      DOOM::AbstractThing(doom, height, radius, properties),
+      _thrust(),
+      _gravity(-1.f)
     {
       // Add thing to blockmap
       doom.level.blockmap.addThing(*this, position.convert<2>());
@@ -347,7 +351,8 @@ namespace DOOM
   public:
     AbstractDynamicPhysicsThing(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing, int16_t height, int16_t radius, int16_t properties) :
       DOOM::AbstractThing(doom, thing, height, radius, properties),
-      _thrust()
+      _thrust(),
+      _gravity(-1.f)
     {
       // Add thing to blockmap
       doom.level.blockmap.addThing(*this, position.convert<2>());
@@ -358,7 +363,7 @@ namespace DOOM
     virtual void	thrust(const Math::Vector<2> & acceleration) override	// Apply acceleration to thing
     {
       // Apply thrust vector to player based on acceleration and elapsed time (1.5625 is a magic number ?)
-      _thrust += acceleration / (float)Mass * 1.5625f;
+      _thrust.convert<2>() += acceleration / (float)Mass * 1.5625f;
     }
 
     virtual bool	update(DOOM::Doom & doom, sf::Time elapsed) override	// Update thing physics
@@ -367,14 +372,34 @@ namespace DOOM
       // TODO: should we implement speed limitation as engine support any speed ?
 
       // Does nothing if no movements
-      if (std::fabsf(_thrust.x()) < 0.001f && std::fabsf(_thrust.y()) < 0.001f)
-	return false;
+      if (std::fabsf(_thrust.x()) > 0.001f || std::fabsf(_thrust.y()) > 0.001f) {
+	// Compute movement with collision
+	move(doom, elapsed);
 
-      // Actual checks, calculations, and movements
-      move(doom, elapsed);
+	// Apply friction slowdown to player for next tic (hard coded drag factor of 0.90625)
+	_thrust.convert<2>() *= std::powf(0.90625f, elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
+      }
 
-      // Apply friction slowdown to player for next tic (hard coded drag factor of 0.90625)
-      _thrust *= std::powf(0.90625f, elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
+      std::set<int16_t>	sectors = doom.level.getSector(*this);
+      float		floor = std::numeric_limits<int16_t>().min();
+
+      // Get target floor height
+      if (sectors.empty() == true)
+	floor = 0.f;
+      else
+	for (int16_t sector : sectors)
+	  if (doom.level.sectors[sector].floor_current > floor)
+	    floor = doom.level.sectors[sector].floor_current;
+
+      // Apply gravity
+      _thrust.z() += _gravity / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds();
+      position.z() += _thrust.z() / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds();
+
+      // Limit fall to current floor
+      if (position.z() <= floor) {
+	position.z() = floor;
+	_thrust.z() = 0.f;
+      }
 
       return false;
     }

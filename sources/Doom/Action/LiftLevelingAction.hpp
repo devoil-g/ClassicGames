@@ -31,7 +31,7 @@ namespace DOOM
 
     sf::Time	updateRaise(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed)
     {
-      // Raise door
+      // Raise floor
       sector.floor_current += elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds();
 
       // TODO: cancel if collision
@@ -55,7 +55,7 @@ namespace DOOM
 
     sf::Time	updateLower(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed)
     {
-      // Lower door
+      // Lower floor
       sector.floor_current -= elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds();
 
       // Compute exceding time

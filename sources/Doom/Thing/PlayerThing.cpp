@@ -175,7 +175,7 @@ void	DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Ve
   // Apply movement to current position
   DOOM::AbstractDynamicPhysicsThing<50>::thrust(movement * elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
   DOOM::AbstractDynamicPhysicsThing<50>::update(doom, elapsed);
-  position.z() = doom.level.sectors[doom.level.getSector(position.convert<2>()).first].floor_current;
+  //position.z() = doom.level.sectors[doom.level.getSector(position.convert<2>()).first].floor_current;
 
   // Update camera
   camera.position = position;

@@ -414,6 +414,55 @@ void	DOOM::Doom::Level::update(DOOM::Doom & doom, sf::Time elapsed)
     sidedef.update(doom, elapsed);
 }
 
+std::set<int16_t>	DOOM::Doom::Level::getSector(const DOOM::AbstractThing & thing) const
+{
+  std::set<int16_t>	result;
+
+  // Get sector at thing central position
+  result.insert(getSector(thing.position.convert<2>()).first);
+
+  // Return nothing if thing is outside of level
+  if (*result.cbegin() == -1)
+    return {};
+
+  // Get near linedef using blockmap
+  std::set<int16_t>	blocks;
+  std::set<int16_t>	linedefs;
+
+  // Get blocks thing stand in
+  blocks.insert(blockmap.index(Math::Vector<2>(thing.position.x() - (float)thing.radius, thing.position.y() - (float)thing.radius)));
+  blocks.insert(blockmap.index(Math::Vector<2>(thing.position.x() - (float)thing.radius, thing.position.y() + (float)thing.radius)));
+  blocks.insert(blockmap.index(Math::Vector<2>(thing.position.x() + (float)thing.radius, thing.position.y() - (float)thing.radius)));
+  blocks.insert(blockmap.index(Math::Vector<2>(thing.position.x() + (float)thing.radius, thing.position.y() + (float)thing.radius)));
+
+  // Get index of linedefs to test againt position
+  for (int16_t block_index : blocks)
+    if (block_index != -1) {
+      const DOOM::Doom::Level::Blockmap::Block &	block = blockmap.blocks[block_index];
+
+      linedefs.insert(block.linedefs.begin(), block.linedefs.end());
+    }
+
+  // Check for intersection with each linedef
+  for (int16_t linedef_index : linedefs) {
+    const DOOM::AbstractLinedef &	linedef = *this->linedefs[linedef_index].get();
+    const DOOM::Doom::Level::Vertex &	linedef_start = vertexes[linedef.start];
+    const DOOM::Doom::Level::Vertex &	linedef_end = vertexes[linedef.end];
+
+    // Get closest point to thing along linedef
+    float	s = std::clamp(-((linedef_start.x() - thing.position.x()) * (linedef_end.x() - linedef_start.x()) + (linedef_start.y() - thing.position.y()) * (linedef_end.y() - linedef_start.y())) / (std::pow(linedef_end.x() - linedef_start.x(), 2) + std::pow(linedef_end.y() - linedef_start.y(), 2)), 0.f, 1.f);
+
+    // Add linedef sectors to result if intersecting with thing bounds
+    if ((linedef_start + (linedef_end - linedef_start) * s - thing.position.convert<2>()).length() < thing.radius - 1.f) {
+      result.insert(sidedefs[linedef.front].sector);
+      if (linedef.back != -1)
+	result.insert(sidedefs[linedef.back].sector);
+    }      
+  }
+
+  return result;
+}
+
 std::pair<int16_t, int16_t>	DOOM::Doom::Level::getSector(Math::Vector<2> const & position, int16_t index) const
 {
   // Start to search sector from top node
