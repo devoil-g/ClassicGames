@@ -7,9 +7,9 @@ const float	DOOM::PlayerThing::WalkingSpeed = 24.f;			// 24 unit per frame (3 ti
 const float	DOOM::PlayerThing::RunningSpeed = 50.f;			// 50 unit per frame (3 tics)
 
 DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
-  DOOM::AbstractThing(doom, 56, 16, Obstacle),
-  DOOM::AbstractDynamicPhysicsThing<50>(doom, 56, 16, Obstacle),
-  DOOM::AbstractNonePickupThing(doom, 56, 16, Obstacle),
+  DOOM::AbstractThing(doom, 56, 16, Obstacle | Monster),
+  DOOM::AbstractDynamicPhysicsThing<50>(doom, 56, 16, Obstacle | Monster),
+  DOOM::AbstractNonePickupThing(doom, 56, 16, Obstacle | Monster),
   _sprites(doom.resources.animations.find(DOOM::str_to_key("PLAY"))->second),
   _running(false),
   id(id),

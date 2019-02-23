@@ -553,6 +553,46 @@ float	DOOM::Doom::Level::getLinedefsSeg(std::list<int16_t> & result, const Math:
   return intersection.first;
 }
 
+std::list<std::reference_wrapper<DOOM::AbstractThing>>	DOOM::Doom::Level::getThings(const DOOM::Doom::Level::Sector & sector, int16_t properties) const
+{
+  std::set<DOOM::AbstractThing *>	things;
+
+  // Iterate blocks of sectors
+  for (int block_index : blockmap.sectors.find(&sector)->second) {
+    const DOOM::Doom::Level::Blockmap::Block &	block = blockmap.blocks[block_index];
+
+    // Check if things have correct properties before testing gaint linedefs
+    for (const std::reference_wrapper<DOOM::AbstractThing> & thing : block.things) {
+      if ((thing.get().properties & properties) == properties && things.find(&(thing.get())) == things.end()) {
+	for (int16_t linedef_index : blockmap.blocks[block_index].linedefs) {
+	  const DOOM::AbstractLinedef &	linedef = *linedefs[linedef_index].get();
+
+	  // Only test thing against linedef of sector
+	  if (&sectors[sidedefs[linedef.front].sector] == &sector || (linedef.back != -1 && &sectors[sidedefs[linedef.back].sector] == &sector)) {
+	    const DOOM::Doom::Level::Vertex &	linedef_start = vertexes[linedef.start];
+	    const DOOM::Doom::Level::Vertex &	linedef_end = vertexes[linedef.end];
+
+	    // Get closest point to thing along linedef
+	    float	s = std::clamp(-((linedef_start.x() - thing.get().position.x()) * (linedef_end.x() - linedef_start.x()) + (linedef_start.y() - thing.get().position.y()) * (linedef_end.y() - linedef_start.y())) / (std::pow(linedef_end.x() - linedef_start.x(), 2) + std::pow(linedef_end.y() - linedef_start.y(), 2)), 0.f, 1.f);
+
+	    // Add linedef sectors to result if intersecting with thing bounds
+	    if ((linedef_start + (linedef_end - linedef_start) * s - thing.get().position.convert<2>()).length() < thing.get().radius - 1.f)
+	      things.insert(&(thing.get()));
+	  }
+	}
+      }
+    }
+  }
+
+  std::list<std::reference_wrapper<DOOM::AbstractThing>>	result;
+
+  // Convert things set to reference list
+  for (DOOM::AbstractThing * thing : things)
+    result.push_back(*thing);
+
+  return result;
+}
+
 DOOM::Doom::Resources::Palette::Palette(DOOM::Doom & doom, const DOOM::Wad::RawResources::Palette & palette) :
   std::array<sf::Color, 256>()
 {
@@ -879,7 +919,8 @@ DOOM::Doom::Level::Blockmap::Blockmap(DOOM::Doom & doom, const DOOM::Wad::RawLev
   x(blockmap.x),
   y(blockmap.y),
   column(blockmap.column),
-  row(blockmap.row)
+  row(blockmap.row),
+  blocks()
 {
   // Load blockmap from WAD
   for (const uint16_t offset : blockmap.offset)
@@ -910,6 +951,13 @@ DOOM::Doom::Level::Blockmap::Blockmap(DOOM::Doom & doom, const DOOM::Wad::RawLev
     if (index >= blockmap.blocklist.size() || blockmap.blocklist[index] != (int16_t)0xFFFF)
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
   }
+
+  // Build sectors to block indexes map
+  for (int16_t sector_index = 0; sector_index < doom.level.sectors.size(); sector_index++)
+    for (int16_t block_index = 0; block_index < blocks.size(); block_index++)
+      for (int16_t linedef_index : blocks[block_index].linedefs)
+	if (doom.level.sidedefs[doom.level.linedefs[linedef_index].get()->front].sector == sector_index || (doom.level.linedefs[linedef_index].get()->back != -1 && doom.level.sidedefs[doom.level.linedefs[linedef_index].get()->back].sector == sector_index))
+	  sectors[&doom.level.sectors[sector_index]].insert(block_index);
 }
 
 int	DOOM::Doom::Level::Blockmap::index(const Math::Vector<2> & position) const

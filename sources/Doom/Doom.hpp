@@ -316,7 +316,8 @@ namespace DOOM
 	int16_t	column;	// Number of column in blockmap
 	int16_t	row;	// Number of row in blockmap
 
-	std::vector<Block>	blocks;	// Blockmap
+	std::vector<Block>							blocks;		// Blockmap
+	std::unordered_map<const DOOM::Doom::Level::Sector *, std::set<int>>	sectors;	// Index of blocks of each sector
 
 	Blockmap() = default;
 	Blockmap(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Blockmap & blockmap);
@@ -327,7 +328,6 @@ namespace DOOM
 	void	addThing(DOOM::AbstractThing & thing, const Math::Vector<2> & position);						// Add thing to blockmap
 	void	moveThing(DOOM::AbstractThing & thing, const Math::Vector<2> & old_position, const Math::Vector<2> & new_position);	// Update thing position in blockmap
 	void	removeThing(DOOM::AbstractThing & thing, const Math::Vector<2> & position);						// Remove thing from blockmap
-
       };
 
     private:
@@ -349,9 +349,10 @@ namespace DOOM
       std::vector<DOOM::Doom::Level::Sector>				sectors;	// List of sectors
       DOOM::Doom::Level::Blockmap					blockmap;	// Blockmap of level
 
-      std::set<int16_t>			getSector(const DOOM::AbstractThing & thing) const;								// Return sector indexes that thing is over
-      std::pair<int16_t, int16_t>	getSector(const Math::Vector<2> & position, int16_t index = -1) const;						// Return sector/subsector at position
-      std::list<int16_t>		getLinedefs(const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit = 1.f) const;	// Return an ordered list of linedef index intersected by ray within distance limit
+      std::set<int16_t>						getSector(const DOOM::AbstractThing & thing) const;								// Return sector indexes that thing is over
+      std::pair<int16_t, int16_t>				getSector(const Math::Vector<2> & position, int16_t index = -1) const;						// Return sector/subsector at position
+      std::list<int16_t>					getLinedefs(const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit = 1.f) const;	// Return an ordered list of linedef index intersected by ray within distance limit
+      std::list<std::reference_wrapper<DOOM::AbstractThing>>	getThings(const DOOM::Doom::Level::Sector & sector, int16_t properties) const;					// Return things in sector with corresponding properties
 
       Level();
       ~Level() = default;

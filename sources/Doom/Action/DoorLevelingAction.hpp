@@ -63,8 +63,15 @@ namespace DOOM
 
     sf::Time	updateClose(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed)	// Update a closing door. Return exceding time.
     {
-      // TODO: add check for things in sector
-      if (false) {
+      float	obstacle = std::numeric_limits<float>::lowest();
+
+      // Get highest obstacle
+      for (const std::reference_wrapper<DOOM::AbstractThing> & thing : doom.level.getThings(sector, DOOM::AbstractThing::Monster))
+	if (thing.get().position.z() + thing.get().height > obstacle)
+	  obstacle = thing.get().position.z() + thing.get().height;
+
+      // Check for obstacles
+      if (sector.ceiling_current - elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds() < obstacle) {
 	switch (Door) {
 	case DOOM::EnumAction::Door::DoorOpenWaitClose:
 	  _states = { State::Noop, State::Open, State::ForceWait, State::Close };
@@ -76,7 +83,14 @@ namespace DOOM
 	  throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 	}
 	
-	return elapsed;
+	if (sector.ceiling_current < obstacle)
+	  return elapsed;
+	else {
+	  sf::Time	exceding = std::min(sf::seconds((sector.ceiling_current - obstacle) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
+
+	  sector.ceiling_current = obstacle;
+	  return exceding;
+	}
       }
 
       // Lower door
@@ -96,6 +110,19 @@ namespace DOOM
 
     sf::Time	updateForceClose(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed)	// Update a closing door. Don't bounce on player. head Return exceding time.
     {
+      float	obstacle = std::numeric_limits<float>::lowest();
+
+      // Get highest obstacle
+      for (const std::reference_wrapper<DOOM::AbstractThing> & thing : doom.level.getThings(sector, DOOM::AbstractThing::Monster))
+	if (thing.get().position.z() + thing.get().height > obstacle)
+	  obstacle = thing.get().position.z() + thing.get().height;
+
+      // Check for obstacles
+      if (sector.ceiling_current - elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds() < obstacle) {
+	sector.ceiling_current = obstacle;
+	return sf::Time::Zero;
+      }
+
       // TODO: add check for things in sector
       if (false) {
 	return elapsed;

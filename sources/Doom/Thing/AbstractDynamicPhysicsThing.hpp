@@ -63,13 +63,13 @@ namespace DOOM
 	return { 1.f, Math::Vector<2>() };
 
       // Check if vertex is already in bounding box
-      if ((vertex - position.convert<2>()).length() <= radius)
-	return { 0.f, position.convert<2>() - vertex };
+      if (normal.length() <= radius)
+	return { 0.f, normal / normal.length() };
 
       // Intersect bounding circle with vertex
       float	a = std::pow(movement.x(), 2) + std::pow(movement.y(), 2);
       float	b = -2.f * ((vertex.x() - position.x()) * movement.x() + (vertex.y() - position.y()) * movement.y());
-      float	c = std::pow(vertex.x() - position.x(), 2) + std::pow(vertex.y() - position.y(), 2);
+      float	c = std::pow(vertex.x() - position.x(), 2) + std::pow(vertex.y() - position.y(), 2) - std::pow((float)radius, 2);
       float	delta = std::pow(b, 2) - 4.f * a * c;
 
       // No intersection found
@@ -82,9 +82,9 @@ namespace DOOM
 
       // Return smaller solution
       if (s0 >= 0.f && s0 < 1.f)
-	return { s0, normal };
+	return { s0, normal / normal.length() };
       else if (s1 >= 0.f && s1 < 1.f)
-	return { s1, normal };
+	return { s1, normal / normal.length() };
       else
 	return { 1.f, Math::Vector<2>() };
     }
@@ -103,7 +103,7 @@ namespace DOOM
       DOOM::Doom::Level::Sidedef &	sidedef_back = doom.level.sidedefs[sidedef_back_index];
       
       // Can't move if texture in middle section of sidedef
-      if (sidedef_front.middle().width != 0)
+      if (sidedef_front.middle().width != 0 && sidedef_back.middle().width != 0)
 	return false;
 
       DOOM::Doom::Level::Sector &	sector_front = doom.level.sectors[sidedef_front.sector];
@@ -341,7 +341,7 @@ namespace DOOM
   protected:
     AbstractDynamicPhysicsThing(DOOM::Doom & doom, int16_t height, int16_t radius, int16_t properties) :	// Special constructor for player only
       DOOM::AbstractThing(doom, height, radius, properties),
-      _thrust(),
+      _thrust(0.f, 0.f, -1.f),
       _gravity(-1.f)
     {
       // Add thing to blockmap
@@ -351,7 +351,7 @@ namespace DOOM
   public:
     AbstractDynamicPhysicsThing(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing, int16_t height, int16_t radius, int16_t properties) :
       DOOM::AbstractThing(doom, thing, height, radius, properties),
-      _thrust(),
+      _thrust(0.f, 0.f, -1.f),
       _gravity(-1.f)
     {
       // Add thing to blockmap
@@ -398,7 +398,7 @@ namespace DOOM
       // Limit fall to current floor
       if (position.z() <= floor) {
 	position.z() = floor;
-	_thrust.z() = 0.f;
+	_thrust.z() = _gravity;
       }
 
       return false;
