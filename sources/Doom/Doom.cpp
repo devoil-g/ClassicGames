@@ -390,17 +390,6 @@ void	DOOM::Doom::Resources::update(DOOM::Doom & doom, sf::Time elapsed)
 
 void	DOOM::Doom::Level::update(DOOM::Doom & doom, sf::Time elapsed)
 {
-  // Update level things
-  for (std::list<std::unique_ptr<DOOM::AbstractThing>>::iterator iterator = things.begin(); iterator != things.end(); )
-    // Remove thing if update return true
-    if (iterator->get()->update(doom, elapsed) == true) {
-      blockmap.removeThing(*iterator->get(), iterator->get()->position.convert<2>());
-      iterator = things.erase(iterator);
-    }
-    else {
-      iterator++;
-    }
-
   // Update level linedef
   for (const std::unique_ptr<DOOM::AbstractLinedef> & linedef : linedefs)
     linedef->update(doom, elapsed);
@@ -412,6 +401,17 @@ void	DOOM::Doom::Level::update(DOOM::Doom & doom, sf::Time elapsed)
   // Update level sidedef
   for (DOOM::Doom::Level::Sidedef & sidedef : sidedefs)
     sidedef.update(doom, elapsed);
+
+  // Update level things
+  for (std::list<std::unique_ptr<DOOM::AbstractThing>>::iterator iterator = things.begin(); iterator != things.end(); )
+    // Remove thing if update return true
+    if (iterator->get()->update(doom, elapsed) == true) {
+      blockmap.removeThing(*iterator->get(), iterator->get()->position.convert<2>());
+      iterator = things.erase(iterator);
+    }
+    else {
+      iterator++;
+    }
 }
 
 std::set<int16_t>	DOOM::Doom::Level::getSector(const DOOM::AbstractThing & thing) const

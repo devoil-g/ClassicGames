@@ -25,7 +25,7 @@ namespace DOOM
       Stop	// Stop and remove lift
     };
 
-    const float	_low, _high;	// Low and high heigh of lift
+    const float	_low, _high;	// Low and high height of lift
     State	_state;		// Lift current state
     sf::Time	_elapsed;	// Elapsed time since beginning of state
 
