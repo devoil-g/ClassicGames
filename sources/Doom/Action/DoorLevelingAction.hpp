@@ -114,8 +114,7 @@ namespace DOOM
 
       // Get highest obstacle
       for (const std::reference_wrapper<DOOM::AbstractThing> & thing : doom.level.getThings(sector, DOOM::AbstractThing::Monster))
-	if (thing.get().position.z() + thing.get().height > obstacle)
-	  obstacle = thing.get().position.z() + thing.get().height;
+	obstacle = std::max(obstacle, thing.get().position.z() + thing.get().height);
 
       // Check for obstacles
       if (sector.ceiling_current - elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds() < obstacle) {

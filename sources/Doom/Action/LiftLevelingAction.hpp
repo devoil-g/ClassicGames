@@ -5,8 +5,6 @@
 
 #include "Doom/Action/AbstractStoppableAction.hpp"
 
-#include <iostream>
-
 namespace DOOM
 {
   template<
@@ -31,14 +29,30 @@ namespace DOOM
 
     sf::Time	updateRaise(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed)
     {
+      float	obstacle = std::numeric_limits<float>::max();
+
+      // Get lowest obstacle
+      for (const std::reference_wrapper<DOOM::AbstractThing> & thing : doom.level.getThings(sector, DOOM::AbstractThing::Monster))
+	for (int16_t sector_index : doom.level.getSector(thing.get()))
+	  obstacle = std::min(obstacle, doom.level.sectors[sector_index].ceiling_current - thing.get().height);
+
+      // Handle collision with obstacle
+      if (sector.floor_current + elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds() > obstacle) {
+	if (sector.floor_current > obstacle) {
+	  _state = State::Lower;
+	  return elapsed;
+	}
+	else {
+	  sf::Time	exceding = std::min(sf::seconds((obstacle - sector.floor_current) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
+
+	  sector.floor_current = obstacle;
+	  _state = State::Lower;
+	  return exceding;
+	}
+      }
+
       // Raise floor
       sector.floor_current += elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds();
-
-      // TODO: cancel if collision
-      if (false) {
-	_state = State::Lower;
-	return elapsed;
-      }
 
       // Compute exceding time
       if (sector.floor_current > _high) {
@@ -55,6 +69,8 @@ namespace DOOM
 
     sf::Time	updateLower(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed)
     {
+      // TODO: lower things that stand on the ground of the sector
+
       // Lower floor
       sector.floor_current -= elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds();
 
