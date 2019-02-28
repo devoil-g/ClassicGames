@@ -29,6 +29,7 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
   // Set player initial position
   for (const std::unique_ptr<DOOM::AbstractThing> & thing : doom.level.things)
     if (thing->type == id) {
+      doom.level.blockmap.moveThing(*this, position.convert<2>(), thing->position.convert<2>());
       position = thing->position;
       angle = thing->angle;
       break;

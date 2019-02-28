@@ -190,7 +190,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/sources/)
 ADD_EXECUTABLE(Game ${GAME_SRCS} ${GAME_RSRC})
 TARGET_LINK_LIBRARIES(Game sfml-main sfml-system sfml-window sfml-network sfml-graphics sfml-audio)
 
-# Force C++11
+# Force C++17
 SET_TARGET_PROPERTIES(Game PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)
 
 # Specific OS commands

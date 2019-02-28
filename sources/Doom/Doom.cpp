@@ -564,6 +564,13 @@ std::list<std::reference_wrapper<DOOM::AbstractThing>>	DOOM::Doom::Level::getThi
     // Check if things have correct properties before testing gaint linedefs
     for (const std::reference_wrapper<DOOM::AbstractThing> & thing : block.things) {
       if ((thing.get().properties & properties) == properties && things.find(&(thing.get())) == things.end()) {
+	// Check if things center stand in sector
+	if (&sectors[getSector(thing.get().position.convert<2>()).first] == &sector) {
+	  things.insert(&(thing.get()));
+	  continue;
+	}
+
+	// Test if thing bounds intersect with a linedef of the sector
 	for (int16_t linedef_index : blockmap.blocks[block_index].linedefs) {
 	  const DOOM::AbstractLinedef &	linedef = *linedefs[linedef_index].get();
 
