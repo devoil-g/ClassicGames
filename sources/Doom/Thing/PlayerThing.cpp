@@ -179,6 +179,7 @@ void	DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Ve
   //position.z() = doom.level.sectors[doom.level.getSector(position.convert<2>()).first].floor_current;
 
   // Update camera
+  // TODO: add head bobbing
   camera.position = position;
   camera.position.z() += 41.1f;
 }
@@ -196,8 +197,7 @@ void	DOOM::PlayerThing::updateUse(DOOM::Doom & doom, sf::Time elapsed)
 const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	DOOM::PlayerThing::sprite(float angle) const
 {
   // TODO: remove this
-  return _sprites[(int)(_elapsed.asSeconds() * 4) % 4][Math::Modulo<8>((int)(angle * 4.f / Math::Pi + 16.5f))];
-  return _sprites[(int)(_elapsed.asSeconds()) % _sprites.size()][Math::Modulo<8>((int)(angle * 4.f / Math::Pi + 16.5f))];
+  return _sprites[(int)(_elapsed.asSeconds() * 4) % 4][Math::Modulo<8>((int)((std::fmodf(angle, Math::Pi * 2.f) + Math::Pi * 2.f) * 4.f / Math::Pi + 16.5f))];
 
   static const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool>	frame = { std::ref(DOOM::Doom::Resources::Texture::Null), false };
 

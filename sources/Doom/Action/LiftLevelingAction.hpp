@@ -69,22 +69,37 @@ namespace DOOM
 
     sf::Time	updateLower(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed)
     {
-      // TODO: lower things that stand on the ground of the sector
+      sf::Time	remaining = sf::Time::Zero;
 
       // Lower floor
-      sector.floor_current -= elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds();
+      float	floor_new = sector.floor_current - elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds();
 
       // Compute exceding time
-      if (sector.floor_current < _low) {
-	sf::Time	exceding = std::min(sf::seconds((_low - sector.floor_current) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
-
-	sector.floor_current = _low;
+      if (floor_new < _low) {
+	remaining = std::min(sf::seconds((_low - floor_new) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
+	floor_new = _low;
 	_state = State::Wait;
-	return exceding;
       }
-      else {
-	return sf::Time::Zero;
-      }
+      
+      // Lower things that stand on the ground of the sector
+      for (const std::reference_wrapper<DOOM::AbstractThing> & thing : doom.level.getThings(sector, DOOM::AbstractThing::Properties::Monster))
+	if ((thing.get().properties & DOOM::AbstractThing::Properties::Hanging) == 0 && thing.get().position.z() == sector.floor_current) {
+	  float	floor_next = std::numeric_limits<float>::lowest();
+
+	  // Find next lower floor
+	  for (int16_t sector_index : doom.level.getSector(thing.get())) {
+	    const DOOM::Doom::Level::Sector & sector_current = doom.level.sectors[sector_index];
+
+	    if (&sector_current != &sector)
+	      floor_next = std::max(floor_next, sector_current.floor_current);
+	  }
+
+	  // Move thing to new floor position
+	  thing.get().position.z() = std::max(floor_next, floor_new);
+	}
+
+      sector.floor_current = floor_new;
+      return remaining;
     }
 
     sf::Time	updateWait(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed)

@@ -31,7 +31,9 @@ namespace DOOM
 	std::min(sector.floor_current + Speed / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds(), _target) :
 	std::max(sector.floor_current - Speed / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds(), _target);
 
-      // TODO: apply crushing
+      if (Crush == true) {
+	// TODO: apply crushing
+      }
 
       // Detect end of action
       if (sector.floor_current == _target) {

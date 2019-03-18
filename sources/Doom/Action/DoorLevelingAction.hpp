@@ -172,7 +172,7 @@ namespace DOOM
 	{ DOOM::EnumAction::Door::DoorWaitClose, { State::Wait, State::ForceClose } }
       };
 
-      std::unordered_map<DOOM::EnumAction::Door, std::list<State>>::const_iterator	iterator = states.find(Door);
+      const std::unordered_map<DOOM::EnumAction::Door, std::list<State>>::const_iterator	iterator = states.find(Door);
 
       // Check for errors
       if (iterator != states.end())

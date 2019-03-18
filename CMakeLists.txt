@@ -181,14 +181,14 @@ SOURCE_GROUP("Resources\\" FILES ${GAME_RSRC})
 
 # Import SFML library
 SET(SFML_STATIC_LIBRARIES TRUE)
-FIND_PACKAGE(SFML 2 COMPONENTS system main system window network graphics audio REQUIRED)
+FIND_PACKAGE(SFML 2.5 COMPONENTS system window network graphics audio REQUIRED)
 
 # Set includes directories
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/sources/)
 
 # Generate executables
 ADD_EXECUTABLE(Game ${GAME_SRCS} ${GAME_RSRC})
-TARGET_LINK_LIBRARIES(Game sfml-main sfml-system sfml-window sfml-network sfml-graphics sfml-audio)
+TARGET_LINK_LIBRARIES(Game sfml-system sfml-window sfml-network sfml-graphics sfml-audio)
 
 # Force C++17
 SET_TARGET_PROPERTIES(Game PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)

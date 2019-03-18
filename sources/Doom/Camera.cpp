@@ -11,7 +11,7 @@ DOOM::Camera::Camera() :
 
 void	DOOM::Camera::render(DOOM::Doom const & doom, sf::Image & target, sf::Rect<int16_t> rect)
 {
-  // Note: target is supposed to be clear (sf::Color(0, 0, 0, 0))
+  // NOTE: target is expected to be clear (sf::Color(0, 0, 0, 0))
 
   // Cancel if nothing to render
   if (doom.level.nodes.size() == 0)
