@@ -45,6 +45,7 @@ namespace DOOM
     AbstractThing(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing, int16_t height, int16_t radius, int16_t properties);
     virtual ~AbstractThing() = default;
 
+    virtual void	teleport(DOOM::Doom & doom, const Math::Vector<2> & destination, float angle) = 0;	// Apply acceleration to thing
     virtual void	thrust(const Math::Vector<2> & acceleration) = 0;		// Apply acceleration to thing
     virtual void	pickup(DOOM::Doom & doom, DOOM::AbstractThing & monster) = 0;	// Pick up thing
 

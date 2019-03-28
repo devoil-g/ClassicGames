@@ -19,17 +19,25 @@ namespace DOOM
 
     enum Key
     {
-      KeyNone,
-      KeyBlue,
-      KeyRed,
-      KeyYellow,
+      KeyNone = 0b0000,
+      KeyBlue = 0b0001,
+      KeyRed = 0b0010,
+      KeyYellow = 0b0100,
+    };
+
+    enum Target
+    {
+      TargetNone = 0b0000,
+      TargetPlayer = 0b0001,
+      TargetMonster = 0b0010,
+      TargetPlayerMonster = 0b0011
     };
   };
 
   template<
     DOOM::EnumLinedef::Trigger Trigger,
     bool Repeat,
-    bool Monster = false,
+    DOOM::EnumLinedef::Target Target = DOOM::EnumLinedef::Target::TargetPlayer,
     DOOM::EnumLinedef::Key Key = DOOM::EnumLinedef::Key::KeyNone
   >
   class AbstractTriggerableLinedef : public DOOM::AbstractLinedef
@@ -48,20 +56,6 @@ namespace DOOM
     inline std::enable_if_t<Key != _Key, bool>	triggerKey(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Check if player has the correct key
     {
       // TODO: check key
-      return true;
-    }
-
-    template<bool _Monster = true>
-    inline std::enable_if_t<Monster == _Monster, bool>	triggerMonster(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger sector of second sidedef
-    {
-      // TODO: check monster & player
-      return true;
-    }
-
-    template<bool _Monster = true>
-    inline std::enable_if_t<Monster != _Monster, bool>	triggerMonster(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger sector of second sidedef
-    {
-      // TODO: check player
       return true;
     }
 
@@ -120,9 +114,9 @@ namespace DOOM
     template<DOOM::EnumLinedef::Trigger _Trigger>
     inline std::enable_if_t<(Trigger & _Trigger) != 0, bool>	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger event if correct event triggered
     {
-      
       // Check for monster condition
-      if (triggerMonster(doom, thing) == false)
+      if (!(((Target & DOOM::EnumLinedef::Target::TargetPlayer) && (thing.type == -1)) ||
+	((Target & DOOM::EnumLinedef::Target::TargetMonster) && (thing.properties & DOOM::AbstractThing::Properties::Monster))))
 	return false;
 
       // Check for key condition

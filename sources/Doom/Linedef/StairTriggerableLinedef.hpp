@@ -31,7 +31,7 @@ namespace DOOM
 
 	// Start step rising
 	doom.level.sectors[step_index].action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, Speed>>(doom, doom.level.sectors[step_index], (float)step_height));
-	
+
 	int16_t	step_new = -1;
 	for (const std::unique_ptr<DOOM::AbstractLinedef> & linedef : doom.level.linedefs)
 	  if (linedef->front != -1 && linedef->back != -1 &&

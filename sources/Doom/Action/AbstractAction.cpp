@@ -144,20 +144,11 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
     52   Exit  nW-  clunk -     -  -   End level, go to next level
     124 * Exit  nW-  clunk -     -  -   End level, go to secret level
 
-    TELEPORT
-
-    39   Telpt  W1m tport -     -  -   Teleport
-    97   Telpt  WRm tport -     -  -   Teleport
-    125 * Telpt  W1m tport -     -  -   Teleport monsters only
-    126 * Telpt  WRm tport -     -  -   Teleport monsters only
-
     */
 
   default:
     return nullptr;
   }
-
-  sizeof(long double);
 
   return nullptr;
 }

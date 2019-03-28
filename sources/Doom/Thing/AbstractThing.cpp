@@ -120,7 +120,7 @@ std::unique_ptr<DOOM::AbstractThing>	DOOM::AbstractThing::factory(DOOM::Doom & d
   case 28:	// Five skulls "shish kebab"
     return std::make_unique<DOOM::DecorationThing<>>(doom, "POL2", "A", thing, 16, 16, Obstacle);
   case 42:	// Floating skull
-    return std::make_unique<DOOM::DecorationThing<>>(doom, "KSKU", "ABC", thing, 16, 16, Obstacle);
+    return std::make_unique<DOOM::DecorationThing<>>(doom, "FSKU", "ABC", thing, 16, 16, Obstacle);
   case 2028:	// Floor lamp
     return std::make_unique<DOOM::DecorationThing<>>(doom, "COLU", "A", thing, 16, 16, Obstacle);
   case 53:	// Hanging leg

@@ -563,7 +563,7 @@ std::list<std::reference_wrapper<DOOM::AbstractThing>>	DOOM::Doom::Level::getThi
 
     // Check if things have correct properties before testing gaint linedefs
     for (const std::reference_wrapper<DOOM::AbstractThing> & thing : block.things) {
-      if ((thing.get().properties & properties) == properties && things.find(&(thing.get())) == things.end()) {
+      if (((thing.get().properties & properties) == properties || properties == 0) && things.find(&(thing.get())) == things.end()) {
 	// Check if things center stand in sector
 	if (&sectors[getSector(thing.get().position.convert<2>()).first] == &sector) {
 	  things.insert(&(thing.get()));

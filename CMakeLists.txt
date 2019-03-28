@@ -39,6 +39,8 @@ SET(GAME_DOOM_LINEDEF_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/StairTriggerableLinedef.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/StopTriggerableLinedef.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/StopTriggerableLinedef.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/TeleporterTriggerableLinedef.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/TeleporterTriggerableLinedef.hpp
 )
 SET(GAME_DOOM_ACTION_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Action/AbstractAction.cpp

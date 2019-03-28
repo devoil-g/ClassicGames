@@ -37,15 +37,6 @@ DOOM::Statusbar::Statusbar(const DOOM::Doom & doom, int id) :
   for (int index = 0; index < 4; index++)
     if (doom.resources.menus.find(DOOM::str_to_key(std::string("STFB") + (char)('0' + index))) == doom.resources.menus.end())
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-  
-  std::list<std::string>    penis;
-  for (const std::pair<uint64_t, DOOM::Doom::Resources::Texture> & pair : doom.resources.menus)
-    if (DOOM::key_to_str(pair.first).substr(0, 3) == "STF")
-      penis.push_back(DOOM::key_to_str(pair.first));
-
-  penis.sort();
-  for (const std::string & str : penis)
-    printf("%s\n", str.c_str());
 }
 
 void	DOOM::Statusbar::update(sf::Time elapsed)

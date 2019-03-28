@@ -20,6 +20,11 @@ bool	DOOM::AbstractStaticPhysicsThing::update(DOOM::Doom & doom, sf::Time elapse
   return false;
 }
 
+void	DOOM::AbstractStaticPhysicsThing::teleport(DOOM::Doom & doom, const Math::Vector<2> & destination, float angle)
+{
+  // Does nothing
+}
+
 void	DOOM::AbstractStaticPhysicsThing::thrust(const Math::Vector<2> & acceleration)
 {
   // Does nothing, acceleration is ignored as thing is static

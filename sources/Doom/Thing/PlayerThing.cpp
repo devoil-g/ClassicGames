@@ -59,6 +59,10 @@ void	DOOM::PlayerThing::updateKeyboard(DOOM::Doom & doom, sf::Time elapsed)
   // Perform a use action
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space) == true)
     updateUse(doom, elapsed);
+
+  // Perform a fire action
+  if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Left) == true)
+    updateFire(doom, elapsed);
 }
 
 void	DOOM::PlayerThing::updateKeyboardTurn(DOOM::Doom & doom, sf::Time elapsed)
@@ -110,6 +114,10 @@ void	DOOM::PlayerThing::updateController(DOOM::Doom & doom, sf::Time elapsed)
   // Perform a use action
   if (Game::Window::Instance().joystick().buttonPressed(controller - 1, 0) == true)
     updateUse(doom, elapsed);
+
+  // Perform a fire action
+  if (Game::Window::Instance().joystick().buttonPressed(controller - 1, 1) == true)
+    updateFire(doom, elapsed);
 }
 
 void	DOOM::PlayerThing::updateControllerTurn(DOOM::Doom & doom, sf::Time elapsed)
@@ -190,8 +198,20 @@ void	DOOM::PlayerThing::updateUse(DOOM::Doom & doom, sf::Time elapsed)
 
   // Use linedef
   // TODO: consider things as obstacles
+  // TODO: stop at first obstacle
   for (int16_t index : doom.level.getLinedefs(position.convert<2>(), ray, 64.f))
     doom.level.linedefs[index]->switched(doom, *this);
+}
+
+void	DOOM::PlayerThing::updateFire(DOOM::Doom & doom, sf::Time elapsed)
+{
+  Math::Vector<2>	ray(std::cos(angle), std::sin(angle));
+
+  // Use linedef
+  // TODO: consider things as obstacles
+  // TODO: stop at first obstacle
+  for (int16_t index : doom.level.getLinedefs(position.convert<2>(), ray, std::numeric_limits<float>::max()))
+    doom.level.linedefs[index]->gunfire(doom, *this);
 }
 
 const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	DOOM::PlayerThing::sprite(float angle) const

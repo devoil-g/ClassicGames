@@ -360,6 +360,21 @@ namespace DOOM
      
     virtual ~AbstractDynamicPhysicsThing() = default;
 
+    virtual void	teleport(DOOM::Doom & doom, const Math::Vector<2> & destination, float orientation) override	// Apply acceleration to thing
+    {
+      // Cancel thrust
+      _thrust = Math::Vector<3>();
+
+      // Update thing position and angle
+      doom.level.blockmap.moveThing(*this, position.convert<2>(), destination);
+      position.convert<2>() = destination;
+      angle = orientation;
+
+      // Update thing vertical position
+      // TODO: angle floating objects
+      position.z() = doom.level.sectors[doom.level.getSector(destination).first].floor_current;
+    }
+
     virtual void	thrust(const Math::Vector<2> & acceleration) override	// Apply acceleration to thing
     {
       // Apply thrust vector to player based on acceleration and elapsed time (1.5625 is a magic number ?)

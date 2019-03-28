@@ -11,10 +11,10 @@ namespace DOOM
     DOOM::Doom::Level::Sector::Action Type,
     DOOM::EnumLinedef::Trigger Trigger,
     bool Repeat,
-    bool Monster = false,
+    DOOM::EnumLinedef::Target Target = DOOM::EnumLinedef::Target::TargetPlayer,
     DOOM::EnumLinedef::Key Key = DOOM::EnumLinedef::Key::KeyNone
   >
-  class StopTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat, Monster, Key>
+  class StopTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat, Target, Key>
   {
   private:
     bool	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing, int16_t sector_index) override	// Action of the linedef
@@ -30,7 +30,7 @@ namespace DOOM
 
   public:
     StopTriggerableLinedef(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef) :
-      DOOM::AbstractTriggerableLinedef<Trigger, Repeat, Monster, Key>(doom, linedef)
+      DOOM::AbstractTriggerableLinedef<Trigger, Repeat, Target, Key>(doom, linedef)
     {}
 
     ~StopTriggerableLinedef() = default;
