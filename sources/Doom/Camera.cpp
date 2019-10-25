@@ -6,7 +6,10 @@ DOOM::Camera::Camera() :
   position(0.f, 0.f, 0.f),
   angle(Math::DegToRad(0.f)),
   orientation(Math::DegToRad(0.f)),
-  fov(Math::DegToRad(90.f))
+  fov(Math::DegToRad(90.f)),
+  _factor(0.f),
+  _fov2_tan(0.f),
+  _horizon(0.f)
 {}
 
 void	DOOM::Camera::render(DOOM::Doom const & doom, sf::Image & target, sf::Rect<int16_t> rect)
@@ -181,7 +184,7 @@ bool	DOOM::Camera::renderSeg(DOOM::Doom const & doom, sf::Image & target, sf::Re
     // Projection segment offset
     float	seg_offset = std::clamp(left.seg + (right.seg - left.seg) * ((std::abs(right.distance - left.distance) < 0.1f) ? screen_offset : ((((sector_front.ceiling_current - position.z()) * _factor / (_horizon - upper_front)) - left.distance) / (right.distance - left.distance))), 0.f, 1.f);
 
-    // Compute light level according to distance TODO: improve this process
+    // Compute light level according to distance TODO: improve this process?
     float	distance = (position.convert<2>() - (seg_start + (seg_end - seg_start) * seg_offset)).length() / (_screen_start + _screen * ((float)column / (float)rect.width) - position.convert<2>()).length();
     int16_t	shaded = renderLight(doom, target, rect, light, distance);
 
@@ -297,7 +300,7 @@ void	DOOM::Camera::renderFlat(DOOM::Doom const & doom, sf::Image & target, sf::R
       // Get grid coordinates
       Math::Vector<2>	coord(position.convert<2>() + direction * k);
 
-      // Compute light level according to distance TODO: improve this process
+      // Compute light level according to distance TODO: improve this process?
       int16_t	shaded = renderLight(doom, target, rect, light, (position.convert<2>() - coord).length() / distance_distortion);
 
       // Get color in flat from coordinates and register segment index in seg-buffer
@@ -355,7 +358,7 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom, sf::Image & target, sf:
 
   // Render every things of current level
   for (const std::unique_ptr<DOOM::AbstractThing> & thing : doom.level.things)
-    if (thing->sprite(0).first.get().width > 0)
+    if (thing->sprite(doom, 0).first.get().width > 0) // TODO: angle parameter if thing->sprite() ?
     {
       float	distance = Math::Vector<2>::determinant(thing->position.convert<2>() - position.convert<2>(), eye_90) / eye_r;
 
@@ -371,7 +374,7 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom, sf::Image & target, sf:
   for (std::list<std::pair<const DOOM::AbstractThing &, float>>::const_iterator iterator = things.begin(); iterator != things.end(); iterator++)
   {
     const DOOM::AbstractThing &									thing(iterator->first);
-    const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	texture(thing.sprite(Math::Vector<2>::angle(position.convert<2>() - thing.position.convert<2>()) - thing.angle));
+    const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	texture(thing.sprite(doom, Math::Vector<2>::angle(position.convert<2>() - thing.position.convert<2>()) - thing.angle));
     
     // Compute thing position on screen
     std::pair<float, float>	thing_projection(Math::intersection(_screen_start, _screen, position.convert<2>(), thing.position.convert<2>() - position.convert<2>()));
@@ -379,9 +382,9 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom, sf::Image & target, sf:
 
     float	thing_factor = _factor / ((thing.position.convert<2>() - position.convert<2>()).length() / (_screen_start + _screen * thing_projection.first - position.convert<2>()).length());
     float	first_x = thing_projection.first * rect.width + ((texture.second == false ? -texture.first.get().left : -texture.first.get().width + texture.first.get().left)) * thing_factor;
-    float	first_y = _horizon - (((thing.properties & DOOM::AbstractThing::Properties::Hanging) ? thing.position.z() + texture.first.get().height - texture.first.get().top : thing.position.z() + texture.first.get().top) - position.z()) * thing_factor;
+    float	first_y = _horizon - ((thing.position.z() + texture.first.get().top) - position.z()) * thing_factor;
     float	second_x = thing_projection.first * rect.width + ((texture.second == false ? texture.first.get().width - texture.first.get().left : +texture.first.get().left)) * thing_factor;
-    float	second_y = _horizon - (((thing.properties & DOOM::AbstractThing::Properties::Hanging) ? thing.position.z() - texture.first.get().top : thing.position.z() - texture.first.get().height + texture.first.get().top) - position.z()) * thing_factor;
+    float	second_y = _horizon - ((thing.position.z() - texture.first.get().height + texture.first.get().top) - position.z()) * thing_factor;
 
     // Map of thing visibility against segments
     std::unordered_map<int16_t, bool>	visible;

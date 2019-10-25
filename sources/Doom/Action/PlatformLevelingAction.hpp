@@ -7,9 +7,10 @@ namespace DOOM
 {
   template<
     DOOM::EnumAction::Speed Speed,
-    DOOM::EnumAction::Change::Type ChangeType = DOOM::EnumAction::Change::Type::None
+    DOOM::EnumAction::Change::Type ChangeType = DOOM::EnumAction::Change::Type::None,
+    DOOM::EnumAction::Change::Time ChangeTime = DOOM::EnumAction::Change::Time::Before
   >
-  class PlatformLevelingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType>
+  class PlatformLevelingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>
   {
   private:
     enum State
@@ -27,9 +28,10 @@ namespace DOOM
       float	obstacle = std::numeric_limits<float>::max();
 
       // Get lowest obstacle
-      for (const std::reference_wrapper<DOOM::AbstractThing> & thing : doom.level.getThings(sector, DOOM::AbstractThing::Monster))
-	for (int16_t sector_index : doom.level.getSector(thing.get()))
-	  obstacle = std::min(obstacle, doom.level.sectors[sector_index].ceiling_current - thing.get().height);
+      // TODO: is shootable enough to identify a monster ?
+      for (const std::reference_wrapper<DOOM::AbstractThing> & thing : doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable))
+	for (int16_t sector_index : doom.level.getSectors(thing.get().position.convert<2>(), thing.get().attributs.radius / 2.f))
+	  obstacle = std::min(obstacle, doom.level.sectors[sector_index].ceiling_current - thing.get().attributs.height);
 
       // Handle collision with obstacle, changing target height to original
       if (sector.floor_current + elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds() > obstacle) {
@@ -79,12 +81,13 @@ namespace DOOM
       }
 
       // Lower things that stand on the ground of the sector
-      for (const std::reference_wrapper<DOOM::AbstractThing> & thing : doom.level.getThings(sector, DOOM::AbstractThing::Properties::Monster))
-	if ((thing.get().properties & DOOM::AbstractThing::Properties::Hanging) == 0 && thing.get().position.z() == sector.floor_current) {
+      // TODO: is Shootable enough to identify a monster ?
+      for (const std::reference_wrapper<DOOM::AbstractThing> & thing : doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable))
+	if ((thing.get().attributs.properties & DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling) == 0 && thing.get().position.z() == sector.floor_current) {
 	  float	floor_next = std::numeric_limits<float>::lowest();
 
 	  // Find next lower floor
-	  for (int16_t sector_index : doom.level.getSector(thing.get())) {
+	  for (int16_t sector_index : doom.level.getSectors(thing.get().position.convert<2>(), thing.get().attributs.radius / 2.f)) {
 	    const DOOM::Doom::Level::Sector & sector_current = doom.level.sectors[sector_index];
 
 	    if (&sector_current != &sector)
@@ -112,7 +115,7 @@ namespace DOOM
 
   public:
     PlatformLevelingAction(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, float target, int16_t model = -1) :
-      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType>(doom, sector, model),
+      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>(doom, sector, model),
       _target(target),
       _state(State::Raise)
     {}

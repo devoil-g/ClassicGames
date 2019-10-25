@@ -23,16 +23,38 @@ namespace Game
   {}
 };
 
+#include <vector>
+
 int	main(int argc, char ** argv)
 {
-  try
-  {
+  std::vector<int> toto;
+
+  toto.push_back(3);
+
+  int& zizi = toto[0];
+
+  toto.push_back(3);
+  toto.push_back(4);
+  toto.push_back(5);
+
+  zizi = 0;
+  printf("%d\n", toto[0]);
+
+  system("PAUSE");
+
+  return 0;
+
 #ifdef __linux__
-    // Initializes Xlib support for concurrent threads
-    if (XInitThreads() == 0)
-      throw std::runtime_error("XInitThreads() failed.");
+  // Initializes Xlib support for concurrent threads
+  if (XInitThreads() == 0)
+  {
+    std::cerr << "XInitThreads() failed." << std::endl;
+    return EXIT_FAILURE;
+  }
 #endif
 
+  try
+  {
     Game::initialize(argc, argv);
     Game::help();
 

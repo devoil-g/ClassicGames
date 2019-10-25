@@ -29,7 +29,7 @@ namespace DOOM
 
   inline std::string	key_to_str(const uint64_t key)
   {
-    char	str[9] = { 0 };
+    char	str[sizeof(uint64_t) + 1] = { 0 };
 
     // Copy key in string (ignore warning of std::strncpy)
 #pragma warning(suppress:4996)

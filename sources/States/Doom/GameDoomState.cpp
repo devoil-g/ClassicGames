@@ -17,11 +17,11 @@ Game::GameDoomState::GameDoomState() :
   _doom.load(Game::Config::ExecutablePath + "assets/levels/doom.wad");
 
   // Check that at least one level is available
-  if (_doom.getLevel().empty() == true)
+  if (_doom.getLevels().empty() == true)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Load level
-  _doom.setLevel({ 3, 5 });
+  _doom.setLevel({ 1, 1 });
 }
 
 bool	Game::GameDoomState::update(sf::Time elapsed)

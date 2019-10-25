@@ -1,1 +1,0 @@
-#include "Doom/Thing/DecorationThing.hpp"

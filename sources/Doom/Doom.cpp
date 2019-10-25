@@ -32,7 +32,7 @@ void	DOOM::Doom::update(sf::Time elapsed)
   level.update(*this, elapsed);
 }
 
-std::list<std::pair<uint8_t, uint8_t>>	DOOM::Doom::getLevel() const
+std::list<std::pair<uint8_t, uint8_t>>	DOOM::Doom::getLevels() const
 {
   std::list<std::pair<uint8_t, uint8_t>>	list;
 
@@ -95,14 +95,6 @@ void	DOOM::Doom::clearLevel()
   // Reset level base info
   level.episode = { 0, 0 };
   level.sky = std::ref(DOOM::Doom::Resources::Texture::Null);
-
-  // Reset level things (preserve players)
-  level.things.erase(std::remove_if(level.things.begin(), level.things.end(),
-    [](const std::unique_ptr<DOOM::AbstractThing> & thing)
-    {
-      return thing->type != -1;
-    }
-  ), level.things.end());
 
   // Reset level components
   level.things.clear();
@@ -414,12 +406,12 @@ void	DOOM::Doom::Level::update(DOOM::Doom & doom, sf::Time elapsed)
     }
 }
 
-std::set<int16_t>	DOOM::Doom::Level::getSector(const DOOM::AbstractThing & thing) const
+std::set<int16_t>	DOOM::Doom::Level::getSectors(const Math::Vector<2> & position, float radius) const
 {
   std::set<int16_t>	result;
 
   // Get sector at thing central position
-  result.insert(getSector(thing.position.convert<2>()).first);
+  result.insert(getSector(position).first);
 
   // Return nothing if thing is outside of level
   if (*result.cbegin() == -1)
@@ -430,10 +422,10 @@ std::set<int16_t>	DOOM::Doom::Level::getSector(const DOOM::AbstractThing & thing
   std::set<int16_t>	linedefs;
 
   // Get blocks thing stand in
-  blocks.insert(blockmap.index(Math::Vector<2>(thing.position.x() - (float)thing.radius, thing.position.y() - (float)thing.radius)));
-  blocks.insert(blockmap.index(Math::Vector<2>(thing.position.x() - (float)thing.radius, thing.position.y() + (float)thing.radius)));
-  blocks.insert(blockmap.index(Math::Vector<2>(thing.position.x() + (float)thing.radius, thing.position.y() - (float)thing.radius)));
-  blocks.insert(blockmap.index(Math::Vector<2>(thing.position.x() + (float)thing.radius, thing.position.y() + (float)thing.radius)));
+  blocks.insert(blockmap.index(Math::Vector<2>(position.x() - radius, position.y() - radius)));
+  blocks.insert(blockmap.index(Math::Vector<2>(position.x() - radius, position.y() + radius)));
+  blocks.insert(blockmap.index(Math::Vector<2>(position.x() + radius, position.y() - radius)));
+  blocks.insert(blockmap.index(Math::Vector<2>(position.x() + radius, position.y() + radius)));
 
   // Get index of linedefs to test againt position
   for (int16_t block_index : blocks)
@@ -450,10 +442,10 @@ std::set<int16_t>	DOOM::Doom::Level::getSector(const DOOM::AbstractThing & thing
     const DOOM::Doom::Level::Vertex &	linedef_end = vertexes[linedef.end];
 
     // Get closest point to thing along linedef
-    float	s = std::clamp(-((linedef_start.x() - thing.position.x()) * (linedef_end.x() - linedef_start.x()) + (linedef_start.y() - thing.position.y()) * (linedef_end.y() - linedef_start.y())) / (std::pow(linedef_end.x() - linedef_start.x(), 2) + std::pow(linedef_end.y() - linedef_start.y(), 2)), 0.f, 1.f);
+    float	s = std::clamp(-((linedef_start.x() - position.x()) * (linedef_end.x() - linedef_start.x()) + (linedef_start.y() - position.y()) * (linedef_end.y() - linedef_start.y())) / (std::pow(linedef_end.x() - linedef_start.x(), 2) + std::pow(linedef_end.y() - linedef_start.y(), 2)), 0.f, 1.f);
 
     // Add linedef sectors to result if intersecting with thing bounds
-    if ((linedef_start + (linedef_end - linedef_start) * s - thing.position.convert<2>()).length() < thing.radius - 1.f) {
+    if ((linedef_start + (linedef_end - linedef_start) * s - position).length() < radius) {
       result.insert(sidedefs[linedef.front].sector);
       if (linedef.back != -1)
 	result.insert(sidedefs[linedef.back].sector);
@@ -553,7 +545,7 @@ float	DOOM::Doom::Level::getLinedefsSeg(std::list<int16_t> & result, const Math:
   return intersection.first;
 }
 
-std::list<std::reference_wrapper<DOOM::AbstractThing>>	DOOM::Doom::Level::getThings(const DOOM::Doom::Level::Sector & sector, int16_t properties) const
+std::list<std::reference_wrapper<DOOM::AbstractThing>>	DOOM::Doom::Level::getThings(const DOOM::Doom::Level::Sector & sector, DOOM::Enum::ThingProperty properties) const
 {
   std::set<DOOM::AbstractThing *>	things;
 
@@ -563,7 +555,7 @@ std::list<std::reference_wrapper<DOOM::AbstractThing>>	DOOM::Doom::Level::getThi
 
     // Check if things have correct properties before testing gaint linedefs
     for (const std::reference_wrapper<DOOM::AbstractThing> & thing : block.things) {
-      if (((thing.get().properties & properties) == properties || properties == 0) && things.find(&(thing.get())) == things.end()) {
+      if ((thing.get().attributs.properties & properties) == properties && things.find(&(thing.get())) == things.end()) {
 	// Check if things center stand in sector
 	if (&sectors[getSector(thing.get().position.convert<2>()).first] == &sector) {
 	  things.insert(&(thing.get()));
@@ -583,7 +575,7 @@ std::list<std::reference_wrapper<DOOM::AbstractThing>>	DOOM::Doom::Level::getThi
 	    float	s = std::clamp(-((linedef_start.x() - thing.get().position.x()) * (linedef_end.x() - linedef_start.x()) + (linedef_start.y() - thing.get().position.y()) * (linedef_end.y() - linedef_start.y())) / (std::pow(linedef_end.x() - linedef_start.x(), 2) + std::pow(linedef_end.y() - linedef_start.y(), 2)), 0.f, 1.f);
 
 	    // Add linedef sectors to result if intersecting with thing bounds
-	    if ((linedef_start + (linedef_end - linedef_start) * s - thing.get().position.convert<2>()).length() < thing.get().radius - 1.f)
+	    if ((linedef_start + (linedef_end - linedef_start) * s - thing.get().position.convert<2>()).length() < thing.get().attributs.radius - 1.f)
 	      things.insert(&(thing.get()));
 	  }
 	}
@@ -694,7 +686,7 @@ DOOM::Doom::Resources::Texture::Texture(DOOM::Doom & doom, const DOOM::Wad::RawR
 
 DOOM::Doom::Resources::Sound::Sound(DOOM::Doom & doom, const DOOM::Wad::RawResources::Sound & raw) :
   buffer(),
-  sound()
+  sound(buffer)
 {
   std::vector<int16_t>	converted;
 
@@ -706,8 +698,9 @@ DOOM::Doom::Resources::Sound::Sound(DOOM::Doom & doom, const DOOM::Wad::RawResou
   if (buffer.loadFromSamples(converted.data(), raw.samples, 1, raw.rate) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
+  // NOTE: this should not be useful as we associate the soundbuffer in the initializer list
   // Attribute soundbuffer to sound
-  sound.setBuffer(buffer);
+  // sound.setBuffer(buffer);
 }
 
 DOOM::Doom::Level::Level() :
@@ -983,10 +976,10 @@ void	DOOM::Doom::Level::Blockmap::addThing(DOOM::AbstractThing & thing, const Ma
   std::set<int>	thing_blocks;
 
   // Get blocks of thing
-  thing_blocks.insert(index(Math::Vector<2>(position.x() - thing.radius, position.y() - thing.radius)));
-  thing_blocks.insert(index(Math::Vector<2>(position.x() - thing.radius, position.y() + thing.radius)));
-  thing_blocks.insert(index(Math::Vector<2>(position.x() + thing.radius, position.y() - thing.radius)));
-  thing_blocks.insert(index(Math::Vector<2>(position.x() + thing.radius, position.y() + thing.radius)));
+  thing_blocks.insert(index(Math::Vector<2>(position.x() - thing.attributs.radius, position.y() - thing.attributs.radius)));
+  thing_blocks.insert(index(Math::Vector<2>(position.x() - thing.attributs.radius, position.y() + thing.attributs.radius)));
+  thing_blocks.insert(index(Math::Vector<2>(position.x() + thing.attributs.radius, position.y() - thing.attributs.radius)));
+  thing_blocks.insert(index(Math::Vector<2>(position.x() + thing.attributs.radius, position.y() + thing.attributs.radius)));
 
   // Insert thing in blocks
   for (int index : thing_blocks)
@@ -1006,10 +999,10 @@ void	DOOM::Doom::Level::Blockmap::removeThing(DOOM::AbstractThing & thing, const
   std::set<int>	thing_blocks;
 
   // Get blocks of thing
-  thing_blocks.insert(index(Math::Vector<2>(position.x() - thing.radius, position.y() - thing.radius)));
-  thing_blocks.insert(index(Math::Vector<2>(position.x() - thing.radius, position.y() + thing.radius)));
-  thing_blocks.insert(index(Math::Vector<2>(position.x() + thing.radius, position.y() - thing.radius)));
-  thing_blocks.insert(index(Math::Vector<2>(position.x() + thing.radius, position.y() + thing.radius)));
+  thing_blocks.insert(index(Math::Vector<2>(position.x() - thing.attributs.radius, position.y() - thing.attributs.radius)));
+  thing_blocks.insert(index(Math::Vector<2>(position.x() - thing.attributs.radius, position.y() + thing.attributs.radius)));
+  thing_blocks.insert(index(Math::Vector<2>(position.x() + thing.attributs.radius, position.y() - thing.attributs.radius)));
+  thing_blocks.insert(index(Math::Vector<2>(position.x() + thing.attributs.radius, position.y() + thing.attributs.radius)));
 
   // Remove thing from blocks
   for (int index : thing_blocks)
@@ -1075,7 +1068,9 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom & doom, const DOOM::Wad::RawLevel::
     action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::BlinkLightingAction<35, 5, false>>(doom, *this));
     break;
   case DOOM::Doom::Level::Sector::Special::Damage20Blink05:
-    break;	// TODO
+    action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::BlinkLightingAction<15, 5, false>>(doom, *this));
+    damage = 20.f;
+    break;
   case DOOM::Doom::Level::Sector::Special::Damage10:
     damage = 10.f;
     break;

@@ -2,6 +2,7 @@
 #include "Doom/Linedef/AbstractLinedef.hpp"
 #include "Doom/Linedef/ActionTriggerableLinedef.hpp"
 #include "Doom/Linedef/DonutTriggerableLinedef.hpp"
+#include "Doom/Linedef/ExitLinedef.hpp"
 #include "Doom/Linedef/LightTriggerableLinedef.hpp"
 #include "Doom/Linedef/StairTriggerableLinedef.hpp"
 #include "Doom/Linedef/StopTriggerableLinedef.hpp"
@@ -103,7 +104,7 @@ std::unique_ptr<DOOM::AbstractLinedef>	DOOM::AbstractLinedef::factory(DOOM::Doom
     // Regular platform lift
   case 87: case 88: case 95: case 120:	// Walkover repeat
     return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerWalkover, true>>(doom, linedef);
-  case 10: case 22: case 53: case 121:	// Walkover one
+  case 10: case 22: case 53: case 121:	// Walkover once
     return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerWalkover, false>>(doom, linedef);
   case 62: case 66: case 67: case 68: case 123:	// Switched repeat
     return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, true>>(doom, linedef);
@@ -166,7 +167,7 @@ std::unique_ptr<DOOM::AbstractLinedef>	DOOM::AbstractLinedef::factory(DOOM::Doom
   case 9:
     return std::make_unique<DOOM::DonutTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerSwitched, false>>(doom, linedef);
     
-    // Teleporer
+    // Teleporter
   case 39:	// Walkover once
     return std::make_unique<DOOM::TeleporterTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerWalkover, false, DOOM::EnumLinedef::Target::TargetPlayerMonster>>(doom, linedef);
   case 97:	// Walkover repeat
@@ -175,6 +176,20 @@ std::unique_ptr<DOOM::AbstractLinedef>	DOOM::AbstractLinedef::factory(DOOM::Doom
     return std::make_unique<DOOM::TeleporterTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerWalkover, false, DOOM::EnumLinedef::Target::TargetMonster>>(doom, linedef);
   case 126:	// Walkover repeat, monters only
     return std::make_unique<DOOM::TeleporterTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerWalkover, true, DOOM::EnumLinedef::Target::TargetMonster>>(doom, linedef);
+
+    // Exit
+  case 11:	// Switched, normal
+    return std::make_unique<DOOM::ExitLinedef<DOOM::EnumLinedef::Exit::ExitNormal, DOOM::EnumLinedef::Trigger::TriggerSwitched>>(doom, linedef);
+  case 52:	// Walkover, normal
+    return std::make_unique<DOOM::ExitLinedef<DOOM::EnumLinedef::Exit::ExitNormal, DOOM::EnumLinedef::Trigger::TriggerWalkover>>(doom, linedef);
+  case 197:	// Gunfire, normal
+    return std::make_unique<DOOM::ExitLinedef<DOOM::EnumLinedef::Exit::ExitNormal, DOOM::EnumLinedef::Trigger::TriggerGunfire>>(doom, linedef);
+  case 51:	// Switched, secret
+    return std::make_unique<DOOM::ExitLinedef<DOOM::EnumLinedef::Exit::ExitSecret, DOOM::EnumLinedef::Trigger::TriggerSwitched>>(doom, linedef);
+  case 124:	// Walkover, secret
+    return std::make_unique<DOOM::ExitLinedef<DOOM::EnumLinedef::Exit::ExitSecret, DOOM::EnumLinedef::Trigger::TriggerWalkover>>(doom, linedef);
+  case 198:	// Gunfire, secret
+    return std::make_unique<DOOM::ExitLinedef<DOOM::EnumLinedef::Exit::ExitSecret, DOOM::EnumLinedef::Trigger::TriggerGunfire>>(doom, linedef);
 
   default:	// Error
     std::cout << "[AbstractLinedef::factory] Warning, unknown type '" << linedef.type << "'." << std::endl;

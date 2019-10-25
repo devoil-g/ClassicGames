@@ -7,17 +7,13 @@ const float	DOOM::PlayerThing::WalkingSpeed = 24.f;			// 24 unit per frame (3 ti
 const float	DOOM::PlayerThing::RunningSpeed = 50.f;			// 50 unit per frame (3 tics)
 
 DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
-  DOOM::AbstractThing(doom, 56, 16, Obstacle | Monster),
-  DOOM::AbstractDynamicPhysicsThing<50>(doom, 56, 16, Obstacle | Monster),
-  DOOM::AbstractNonePickupThing(doom, 56, 16, Obstacle | Monster),
-  _sprites(doom.resources.animations.find(DOOM::str_to_key("PLAY"))->second),
+  DOOM::AbstractThing(doom, DOOM::Enum::ThingType::ThingType_PLAYER, 0.f, 0.f, 0.f),
   _running(false),
   id(id),
   controller(controller),
   camera(),
   statusbar(doom, id),
-  health(0), armor(0),
-  bullet(0), shell(0), rocket(0), cell(0)
+  armor(DOOM::Enum::Armor::ArmorSecurity)
 {
   // Check controller ID
   if (controller < 0)
@@ -28,7 +24,7 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
 
   // Set player initial position
   for (const std::unique_ptr<DOOM::AbstractThing> & thing : doom.level.things)
-    if (thing->type == id) {
+    if (thing->attributs.id == id) {
       doom.level.blockmap.moveThing(*this, position.convert<2>(), thing->position.convert<2>());
       position = thing->position;
       angle = thing->angle;
@@ -41,11 +37,18 @@ bool	DOOM::PlayerThing::update(DOOM::Doom & doom, sf::Time elapsed)
   // TODO: remove this
   _elapsed += elapsed;
 
-  // TODO: update player using controller
+  // Update player using controller
   if (controller == 0)
     updateKeyboard(doom, elapsed);
   else
     updateController(doom, elapsed);
+
+  // Update core components and physics
+  DOOM::AbstractThing::update(doom, elapsed);
+
+  // Update camera position
+  camera.position = position;
+  camera.position.z() += 41.1f;
 
   // Always return false as a player is never deleted
   return false;
@@ -182,14 +185,7 @@ void	DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Ve
     );
 
   // Apply movement to current position
-  DOOM::AbstractDynamicPhysicsThing<50>::thrust(movement * elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
-  DOOM::AbstractDynamicPhysicsThing<50>::update(doom, elapsed);
-  //position.z() = doom.level.sectors[doom.level.getSector(position.convert<2>()).first].floor_current;
-
-  // Update camera
-  // TODO: add head bobbing
-  camera.position = position;
-  camera.position.z() += 41.1f;
+  thrust(Math::Vector<3>(movement.x(), movement.y(), 0.f) * elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
 }
 
 void	DOOM::PlayerThing::updateUse(DOOM::Doom & doom, sf::Time elapsed)
@@ -198,9 +194,9 @@ void	DOOM::PlayerThing::updateUse(DOOM::Doom & doom, sf::Time elapsed)
 
   // Use linedef
   // TODO: consider things as obstacles
-  // TODO: stop at first obstacle
   for (int16_t index : doom.level.getLinedefs(position.convert<2>(), ray, 64.f))
-    doom.level.linedefs[index]->switched(doom, *this);
+    if (doom.level.linedefs[index]->switched(doom, *this) == true)
+      break;
 }
 
 void	DOOM::PlayerThing::updateFire(DOOM::Doom & doom, sf::Time elapsed)
@@ -209,20 +205,96 @@ void	DOOM::PlayerThing::updateFire(DOOM::Doom & doom, sf::Time elapsed)
 
   // Use linedef
   // TODO: consider things as obstacles
-  // TODO: stop at first obstacle
   for (int16_t index : doom.level.getLinedefs(position.convert<2>(), ray, std::numeric_limits<float>::max()))
-    doom.level.linedefs[index]->gunfire(doom, *this);
+    if (doom.level.linedefs[index]->gunfire(doom, *this) == true)
+      break;
 }
 
-const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	DOOM::PlayerThing::sprite(float angle) const
+/*
+bool	DOOM::PlayerThing::pickupAmmo(DOOM::Enum::Ammo type, unsigned int number)
 {
-  // TODO: remove this
-  return _sprites[(int)(_elapsed.asSeconds() * 4) % 4][Math::Modulo<8>((int)((std::fmodf(angle, Math::Pi * 2.f) + Math::Pi * 2.f) * 4.f / Math::Pi + 16.5f))];
+  // Pickup ammuntions if limit not reached
+  if (statusbar.ammos[type] < statusbar.maximum[type]) {
+    statusbar.ammos[type] = std::min(statusbar.ammos[type] + number, statusbar.maximum[type]);
+    return true;
+  }
 
-  static const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool>	frame = { std::ref(DOOM::Doom::Resources::Texture::Null), false };
-
-  // TODO: compute player sprite to use
-
-  // Return a default empty texture
-  return frame;
+  // Ignore if limit reached
+  else {
+    return false;
+  }
 }
+
+bool	DOOM::PlayerThing::pickupWeapon(DOOM::Enum::Weapon type)
+{
+  // Pickup arm if not already in inventory
+  if (statusbar.weapons[type] == false) {
+    statusbar.weapons[type] = true;
+    return true;
+  }
+
+  // Ignore if limit reached
+  else {
+    return false;
+  }
+}
+
+bool	DOOM::PlayerThing::pickupKey(DOOM::Enum::KeyType type, DOOM::Enum::KeyColor color)
+{
+  // Pickup key if none of this color is owned
+  if (statusbar.keys[color] == DOOM::Enum::KeyType::KeyTypeNone) {
+    statusbar.keys[color] = type;
+    return true;
+  }
+
+  // Ignore if limit reached
+  else {
+    return false;
+  }
+}
+
+bool	DOOM::PlayerThing::pickupHealth(unsigned int number, unsigned int limit)
+{
+  // Pickup health if limit not reached
+  if (statusbar.health < limit) {
+    statusbar.health = std::min(statusbar.health + number, limit);
+    return true;
+  }
+
+  // Ignore if limit reached
+  else {
+  return false;
+  }
+}
+
+bool	DOOM::PlayerThing::pickupArmor(DOOM::Enum::Armor type, unsigned int number, unsigned int limit)
+{
+  // Pickup armor if limit not reached
+  if (statusbar.armor < limit) {
+    statusbar.armor = std::min(statusbar.armor + number, limit);
+    if (type != DOOM::Enum::Armor::ArmorNone)
+      armor = type;
+    return true;
+  }
+
+  // Ignore if limit reached
+  else {
+    return false;
+  }
+}
+
+bool	DOOM::PlayerThing::pickupBackpack(const std::array<unsigned int, DOOM::Enum::Ammo::AmmoCount> & capacity)
+{
+  bool	improved = false;
+
+  // Pickup backpack if capacity can be improved
+  for (unsigned int index = 0; index < DOOM::Enum::Ammo::AmmoCount; index++) {
+    if (statusbar.maximum[index] < capacity[index]) {
+      statusbar.maximum[index] = capacity[index];
+      improved = true;
+    }
+  }
+
+  return improved;
+}
+*/

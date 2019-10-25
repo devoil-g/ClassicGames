@@ -115,8 +115,9 @@ namespace DOOM
     inline std::enable_if_t<(Trigger & _Trigger) != 0, bool>	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing)	// Trigger event if correct event triggered
     {
       // Check for monster condition
-      if (!(((Target & DOOM::EnumLinedef::Target::TargetPlayer) && (thing.type == -1)) ||
-	((Target & DOOM::EnumLinedef::Target::TargetMonster) && (thing.properties & DOOM::AbstractThing::Properties::Monster))))
+      // TODO: -1 is not used by player only
+      if (!(((Target & DOOM::EnumLinedef::Target::TargetPlayer) && (thing.attributs.id == -1)) ||
+	((Target & DOOM::EnumLinedef::Target::TargetMonster) && (thing.attributs.properties & DOOM::Enum::ThingProperty::ThingProperty_Shootable))))
 	return false;
 
       // Check for key condition
@@ -131,7 +132,7 @@ namespace DOOM
       int16_t	sidedef = ((Math::Vector<2>::determinant(doom.level.vertexes[start] - thing.position.convert<2>(), doom.level.vertexes[end] - doom.level.vertexes[start]) < 0.f) ? front : back);
 
       // Switch sidedef if trigger pushed or switched, definitively if not repeatable
-      if (Trigger == DOOM::EnumLinedef::Trigger::TriggerPushed || Trigger == DOOM::EnumLinedef::Trigger::TriggerSwitched && sidedef != -1)
+      if (_Trigger == DOOM::EnumLinedef::Trigger::TriggerPushed || _Trigger == DOOM::EnumLinedef::Trigger::TriggerSwitched && sidedef != -1)
 	doom.level.sidedefs[sidedef].switched(doom, (Repeat == false) ? (sf::Time::Zero) : (sf::seconds(DOOM::Doom::Tic.asSeconds() * 35)));
 
       // Remove lindef if non-repeatable
@@ -160,18 +161,10 @@ namespace DOOM
     ~AbstractTriggerableLinedef() = default;
 
     virtual void	update(DOOM::Doom & doom, sf::Time elapsed) override	// Update linedef
-    {
-      return;
-
-      // TODO: remove this (note: may crash because of deleted instance)
-      switched(doom, *doom.level.things.front().get());
-      walkover(doom, *doom.level.things.front().get());
-      gunfire(doom, *doom.level.things.front().get());
-    }
+    {}
 
     virtual bool	switched(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// To call when linedef is switched (used) by thing
     {
-      // TODO: fix this (second call may crash because of deleted instance)
       return trigger<DOOM::EnumLinedef::Trigger::TriggerPushed>(doom, thing) ||
 	trigger<DOOM::EnumLinedef::Trigger::TriggerSwitched>(doom, thing);
     }

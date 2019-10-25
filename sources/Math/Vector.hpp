@@ -1,6 +1,7 @@
 #ifndef _VECTOR_HPP_
 #define _VECTOR_HPP_
 
+#include <array>
 #include <string>
 
 #include "Math/Math.hpp"
@@ -11,7 +12,7 @@ namespace Math
   class Vector
   {
   private:
-    float	_vector[vSize];
+    std::array<float, vSize>	_vector;
 
   public:
     Vector() :
@@ -20,8 +21,6 @@ namespace Math
       // Compilation time error if invalid vector size
       static_assert(vSize > 0, "Invalid vector size.");
     };
-
-    ~Vector() {};
 
     template<typename ... Floats>
     Vector(Floats... args)
@@ -33,6 +32,8 @@ namespace Math
       for (unsigned int i = 0; i < vSize; i++)
 	(*this)(i) = vec[i];
     };
+
+    ~Vector() = default;
 
     template<unsigned int wSize>
     inline Math::Vector<wSize> &	convert()	// Cast current vector to a lower dimension

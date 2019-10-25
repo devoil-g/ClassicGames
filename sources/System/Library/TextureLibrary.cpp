@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "System/Library/TextureLibrary.hpp"
 #include "System/Config.hpp"
 

@@ -3,23 +3,16 @@
 
 #include "Doom/Camera.hpp"
 #include "Doom/Statusbar.hpp"
-#include "Doom/Thing/AbstractDynamicPhysicsThing.hpp"
-#include "Doom/Thing/AbstractNonePickupThing.hpp"
 
 namespace DOOM
 {
-  class PlayerThing : public DOOM::AbstractDynamicPhysicsThing<50>, public DOOM::AbstractNonePickupThing
+  class PlayerThing : public DOOM::AbstractThing
   {
-    // TODO: REMOVE THIS
-    sf::Time	_elapsed;
-
   private:
     static const float	VerticalLimit;	// Maximum vertical angle of camera
     static const float	TurningSpeed;	// Turning speed (rad/s)
     static const float	WalkingSpeed;	// Walking speed (units per frame)
     static const float	RunningSpeed;	// Running speed (units per frame)
-
-    const std::vector<std::array<std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool>, 8>> &	_sprites;	// Player sprites
 
   private:
     bool	_running;	// True if player is currently running
@@ -41,15 +34,12 @@ namespace DOOM
     const int		controller;	// Controller used by player
     DOOM::Camera	camera;		// Player camera
     DOOM::Statusbar	statusbar;	// Player status bar
-
-    int		health, armor;			// Player's current health & armor
-    int		bullet, shell, rocket, cell;	// Player's ammo
+    DOOM::Enum::Armor	armor;		// Player armor type
 
     PlayerThing(DOOM::Doom & doom, int id, int controller);
     ~PlayerThing() = default;
 
-    bool											update(DOOM::Doom & doom, sf::Time elapsed) override;	// Update player using controller, alway return false as a player thing is never deleted
-    const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	sprite(float angle) const;				// Return sprite to be displayed
+    bool	update(DOOM::Doom & doom, sf::Time elapsed) override;	// Update player using controller, alway return false as a player thing is never deleted
   };
 };
 

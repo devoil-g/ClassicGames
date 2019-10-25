@@ -17,9 +17,6 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
 {
   // Generate action from type
   switch (type) {
-
-    // TODO: Tx, Tx0, TxTy
-
     // Regular and extended door types
   case 1: case 4: case 29: case 63: case 90:	// Open, wait then close (normal)
     return std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorOpenWaitClose, DOOM::EnumAction::Speed::SpeedNormal, 140>>(doom, sector);
@@ -52,7 +49,7 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
   case 58: case 92:	// Absolute 24 (up, slow)
     return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow>>(doom, sector, sector.floor_base + 24.f);
   case 59: case 93:	// Absolute 24 (up, slow, TxTy)
-    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::TextureType>>(doom, sector, sector.floor_base + 24.f, model);
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::Type::TextureType, DOOM::EnumAction::Change::Time::After>>(doom, sector, sector.floor_base + 24.f, model);
   case 140:	// Absolute 512 (up, normal)
     return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedNormal>>(doom, sector, sector.floor_base + 512.f);
   case 19: case 45: case 83: case 102: {	// Highest neighboor floor (down, slow)
@@ -69,7 +66,7 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
   }
   case 55: case 56: case 65: case 94: {	// Lowest sector & neighboor ceiling - 8 (up, slow, crush)
     const float	height = sector.getNeighborLowestCeiling(doom).second;
-    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::None, true>>(doom, sector, ((std::isnan(height) == true || height > sector.ceiling_base) ? sector.ceiling_base : height) - 8.f);
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::Type::None, DOOM::EnumAction::Change::Time::Before, true>>(doom, sector, ((std::isnan(height) == true || height > sector.ceiling_base) ? sector.ceiling_base : height) - 8.f);
   }
   case 23: case 38: case 60: case 82: {	// Lowest sector & neighboor floor (down, slow)
     const float	height = sector.getNeighborLowestFloor(doom).second;
@@ -77,7 +74,7 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
   }
   case 37: case 84: {	// Lowest sector & neighboor floor (down, slow, TxTy)
     const std::pair<int16_t, float>	lowest = sector.getNeighborLowestFloor(doom);
-    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::TextureType>>(doom, sector, (lowest.first == -1 || lowest.second > sector.floor_base) ? sector.floor_base : lowest.second, lowest.first);
+    return std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::Type::TextureType, DOOM::EnumAction::Change::Time::After>>(doom, sector, (lowest.first == -1 || lowest.second > sector.floor_base) ? sector.floor_base : lowest.second, lowest.first);
   }
   case 18: case 69: case 119: case 128: {	// Next neighboor floor (up, slow)
     const float	height = sector.getNeighborNextHighestFloor(doom, sector.floor_base).second;
@@ -104,12 +101,12 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
 
     // Platform
   case 15: case 66:	// Raise 24 units (Tx, slow)
-    return std::make_unique<DOOM::PlatformLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::Texture>>(doom, sector, sector.floor_base + 24.f, model);
+    return std::make_unique<DOOM::PlatformLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::Type::Texture, DOOM::EnumAction::Change::Time::After>>(doom, sector, sector.floor_base + 24.f, model);
   case 14: case 67:	// Raise 32 units (Tx0, slow)
-    return std::make_unique<DOOM::PlatformLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::TextureZeroed>>(doom, sector, sector.floor_base + 32.f, model);
+    return std::make_unique<DOOM::PlatformLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::Type::TextureZeroed, DOOM::EnumAction::Change::Time::After>>(doom, sector, sector.floor_base + 32.f, model);
   case 20: case 22: case 47: case 68: case 95: {	// Raise next floor (Tx0, slow)
     const float	height = sector.getNeighborNextHighestFloor(doom, sector.floor_base).second;
-    return std::make_unique<DOOM::PlatformLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::TextureZeroed>>(doom, sector, std::isnan(height) == true ? sector.floor_base : height, model);
+    return std::make_unique<DOOM::PlatformLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, DOOM::EnumAction::Change::Type::TextureZeroed, DOOM::EnumAction::Change::Time::Before>>(doom, sector, std::isnan(height) == true ? sector.floor_base : height, model);
   }
 
     // Lift
@@ -134,17 +131,6 @@ std::unique_ptr<DOOM::AbstractAction>	DOOM::AbstractAction::factory(DOOM::Doom &
     return std::make_unique<DOOM::CrusherLevelingAction<DOOM::EnumAction::Speed::SpeedSlow>>(doom, sector);
   case 141:
     return std::make_unique<DOOM::CrusherLevelingAction<DOOM::EnumAction::Speed::SpeedSlow, true>>(doom, sector);
-
-    /* TODO:
-
-    EXIT LEVEL
-
-    11   Exit  nS-  clunk -     -  -   End level, go to next level
-    51   Exit  nS-  clunk -     -  -   End level, go to secret level
-    52   Exit  nW-  clunk -     -  -   End level, go to next level
-    124 * Exit  nW-  clunk -     -  -   End level, go to secret level
-
-    */
 
   default:
     return nullptr;

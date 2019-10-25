@@ -10,9 +10,9 @@ DOOM::Statusbar::Statusbar(const DOOM::Doom & doom, int id) :
   ammo(0),
   health(0),
   armor(0),
-  arms({ false }),
-  keys({ None }),
-  ammos({ 0 }),
+  weapons({ false }),
+  keys({ DOOM::Enum::KeyType::KeyTypeNone }),
+  ammos({ 0, 0, 0, 0 }),
   maximum({ 200, 50, 50, 300 })
 {
   // Check if statusbar background, minus and percent symbol textures are loaded
@@ -49,7 +49,7 @@ void	DOOM::Statusbar::render(const DOOM::Doom & doom, sf::Image & target, sf::Re
   renderBackground(doom, target, rect);
   renderAmmo(doom, target, rect);
   renderHealth(doom, target, rect);
-  renderArms(doom, target, rect);
+  renderWeapons(doom, target, rect);
   renderFace(doom, target, rect);
   renderArmor(doom, target, rect);
   renderKey(doom, target, rect);
@@ -81,15 +81,15 @@ void	DOOM::Statusbar::renderHealth(const DOOM::Doom & doom, sf::Image & target, 
   renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key("STTPRCNT"))->second, 90, 3);
 }
 
-void	DOOM::Statusbar::renderArms(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect) const
+void	DOOM::Statusbar::renderWeapons(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect) const
 {
   // Draw arms numbers if small grey/yellow digits
-  renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key(arms.at(0) == true ? "STYSNUM2" : "STGNUM2"))->second, 111, 4);
-  renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key(arms.at(1) == true ? "STYSNUM3" : "STGNUM3"))->second, 123, 4);
-  renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key(arms.at(2) == true ? "STYSNUM4" : "STGNUM4"))->second, 135, 4);
-  renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key(arms.at(3) == true ? "STYSNUM5" : "STGNUM5"))->second, 111, 14);
-  renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key(arms.at(4) == true ? "STYSNUM6" : "STGNUM6"))->second, 123, 14);
-  renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key(arms.at(5) == true ? "STYSNUM7" : "STGNUM7"))->second, 135, 14);
+  renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key(weapons.at(0) == true ? "STYSNUM2" : "STGNUM2"))->second, 111, 4);
+  renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key(weapons.at(1) == true ? "STYSNUM3" : "STGNUM3"))->second, 123, 4);
+  renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key(weapons.at(2) == true ? "STYSNUM4" : "STGNUM4"))->second, 135, 4);
+  renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key(weapons.at(3) == true ? "STYSNUM5" : "STGNUM5"))->second, 111, 14);
+  renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key(weapons.at(4) == true ? "STYSNUM6" : "STGNUM6"))->second, 123, 14);
+  renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key(weapons.at(5) == true ? "STYSNUM7" : "STGNUM7"))->second, 135, 14);
 }
 
 void	DOOM::Statusbar::renderFace(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect) const
@@ -107,7 +107,7 @@ void	DOOM::Statusbar::renderArmor(const DOOM::Doom & doom, sf::Image & target, s
 void	DOOM::Statusbar::renderKey(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect) const
 {
   for (int index = 0; index < keys.size(); index++) {
-    if (keys.at(index) != None)
+    if (keys.at(index) != DOOM::Enum::KeyType::KeyTypeNone)
       renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key(std::string("STKEYS") + (char)('0' + index + (keys.at(index) - 1) * 3)))->second, 239, 4 + index * 10 - (keys.at(index) - 1));
   }
 

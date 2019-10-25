@@ -33,12 +33,12 @@ Game::Window::~Window()
 bool		Game::Window::update(sf::Time elapsed)
 {
   // Clear inputs pressed/released maps
-  std::fill(_mouse._pressed, _mouse._pressed + sf::Mouse::ButtonCount, false);
-  std::fill(_mouse._released, _mouse._released + sf::Mouse::ButtonCount, false);
-  std::fill(_keyboard._pressed, _keyboard._pressed + sf::Keyboard::KeyCount, false);
-  std::fill(_keyboard._released, _keyboard._released + sf::Keyboard::KeyCount, false);
-  std::fill(&_joystick._pressed[0][0], &_joystick._pressed[0][0] + (sf::Joystick::Count * sf::Joystick::ButtonCount), false);
-  std::fill(&_joystick._released[0][0], &_joystick._released[0][0] + (sf::Joystick::Count * sf::Joystick::ButtonCount), false);
+  _mouse._pressed.fill(false);
+  _mouse._released.fill(false);
+  _keyboard._pressed.fill(false);
+  _keyboard._released.fill(false);
+  _joystick._pressed.fill(std::array<bool, sf::Joystick::ButtonCount>());
+  _joystick._released.fill(std::array<bool, sf::Joystick::ButtonCount>());
 
   // Reset keyboard input text
   _keyboard._text.clear();

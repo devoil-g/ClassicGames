@@ -1,6 +1,7 @@
 #ifndef _WINDOW_HPP_
 #define _WINDOW_HPP_
 
+#include <array>
 #include <string>
 
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -31,11 +32,11 @@ namespace Game
       friend class Game::Window;
 
     private:
-      sf::Vector2i	_position, _relative;							// Mouse position
-      int		_wheel;									// Mouse wheel ticks since last update
-      bool		_pressed[sf::Mouse::ButtonCount], _released[sf::Mouse::ButtonCount];	// Maps of pressed/released mouse button
+      sf::Vector2i				_position, _relative;	// Mouse position
+      int					_wheel;			// Mouse wheel ticks since last update
+      std::array<bool, sf::Mouse::ButtonCount>	_pressed, _released;	// Maps of pressed/released mouse button
 
-      inline Mouse() {};
+      inline Mouse() : _position(), _relative(), _wheel(), _pressed(), _released() {};
       inline ~Mouse() {};
 
     public:
@@ -53,10 +54,10 @@ namespace Game
       friend class Game::Window;
 
     private:
-      std::wstring	_text;
-      bool		_pressed[sf::Keyboard::KeyCount], _released[sf::Keyboard::KeyCount];	// Maps of pressed/released keyboard key
+      std::wstring					_text;			// Buffer of text typed
+      std::array<bool, sf::Keyboard::KeyCount>		_pressed, _released;	// Maps of pressed/released keyboard key
 
-      inline Keyboard() {};
+      inline Keyboard() : _text(), _pressed(), _released() {};
       inline ~Keyboard() {};
 
     public:
@@ -73,10 +74,10 @@ namespace Game
     private:
       static float const	DeadZone;	// Dead zone of joysticks
 
-      float	_position[sf::Joystick::Count][sf::Joystick::AxisCount], _relative[sf::Joystick::Count][sf::Joystick::AxisCount];	// Joystick position
-      bool	_pressed[sf::Joystick::Count][sf::Joystick::ButtonCount], _released[sf::Joystick::Count][sf::Joystick::ButtonCount];	// Maps of pressed/released joystick key
+      std::array<std::array<float, sf::Joystick::AxisCount>, sf::Joystick::Count>	_position, _relative;	// Joystick position
+      std::array<std::array<bool, sf::Joystick::ButtonCount>, sf::Joystick::Count>	_pressed, _released;	// Maps of pressed/released joystick key
 
-      inline Joystick() {};
+      inline Joystick() : _position(), _relative(), _pressed(), _released() {};
       inline ~Joystick() {};
 
     public:

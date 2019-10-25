@@ -74,9 +74,9 @@ namespace DOOM
 
       // Raise/lower pool
       if (pool.get().floor_base > model.get().floor_base)
-	pool.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, Speed, DOOM::EnumAction::Change::Type::Texture>>(doom, pool, model.get().floor_base, model_index));
+	pool.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionDown, Speed, DOOM::EnumAction::Change::Type::Texture, DOOM::EnumAction::Change::Time::Before>>(doom, pool, model.get().floor_base, model_index));
       else
-	pool.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, Speed, DOOM::EnumAction::Change::Type::Texture>>(doom, pool, model.get().floor_base, model_index));
+	pool.get().action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::FloorLevelingAction<DOOM::EnumAction::Direction::DirectionUp, Speed, DOOM::EnumAction::Change::Type::Texture, DOOM::EnumAction::Change::Time::After>>(doom, pool, model.get().floor_base, model_index));
 
       return true;
     }

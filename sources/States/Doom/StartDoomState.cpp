@@ -107,7 +107,6 @@ bool	Game::StartDoomState::updateRegister(const int id)
 	}
       })));
 
-      // TODO: launch new game
       return false;
     }
 

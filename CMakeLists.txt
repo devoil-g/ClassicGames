@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0.2)
-PROJECT(Doom++)
+PROJECT(ClassicGames)
 
 # Set game sources
 SET(GAME_DOOM_SRCS
@@ -33,6 +33,8 @@ SET(GAME_DOOM_LINEDEF_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/ActionTriggerableLinedef.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/DonutTriggerableLinedef.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/DonutTriggerableLinedef.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/ExitLinedef.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/ExitLinedef.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/LightTriggerableLinedef.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/LightTriggerableLinedef.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Linedef/StairTriggerableLinedef.cpp
@@ -73,29 +75,8 @@ SET(GAME_DOOM_ACTION_SRCS
 SET(GAME_DOOM_THING_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractThing.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractThing.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/DecorationThing.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/DecorationThing.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/NullThing.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/NullThing.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/PlayerThing.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/PlayerThing.hpp
-
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractNonePickupThing.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractNonePickupThing.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractStaticPickupThing.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractStaticPickupThing.hpp
-	
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractDynamicAnimationThing.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractDynamicAnimationThing.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractNoneAnimationThing.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractNoneAnimationThing.hpp
-
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractDynamicPhysicsThing.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractDynamicPhysicsThing.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractStaticPhysicsThing.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractStaticPhysicsThing.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractNonePhysicsThing.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/AbstractNonePhysicsThing.hpp
 )
 SET(GAME_MATH_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.cpp

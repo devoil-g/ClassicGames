@@ -16,6 +16,233 @@
 
 namespace DOOM
 {
+  namespace Enum
+  {
+    enum Weapon
+    {
+      WeaponPistol = 0,
+      WeaponShotgun = 1,
+      WeaponChaingun = 2,
+      WeaponRocketLauncher = 3,
+      WeaponPlasmaGun = 4,
+      WeaponBFG9000 = 5,
+      WeaponChainsaw = 6,
+      WeaponSuperShotgun = 7,
+      WeaponCount
+    };
+
+    enum KeyColor
+    {
+      KeyColorBlue = 0,
+      KeyColorYellow = 1,
+      KeyColorRed = 2,
+      KeyColorCount
+    };
+
+    enum KeyType
+    {
+      KeyTypeNone,
+      KeyTypeKeycard,
+      KeyTypeSkullkey
+    };
+
+    enum Ammo
+    {
+      AmmoBullets = 0,
+      AmmoShells = 1,
+      AmmoRockets = 2,
+      AmmoCells = 3,
+      AmmoCount
+    };
+
+    enum Armor
+    {
+      ArmorNone = 0,
+      ArmorSecurity = 3,
+      ArmorMega = 2
+    };
+
+    enum ThingType
+    {
+      ThingType_PLAYER,		// -1
+      ThingType_POSSESSED,	// Former Human Trooper
+      ThingType_SHOTGUY,	// Former Human Sergeant
+      ThingType_VILE,		// Arch-vile
+      ThingType_FIRE,		// -1
+      ThingType_UNDEAD,		// Revenant
+      ThingType_TRACER,		// -1
+      ThingType_SMOKE,		// -1
+      ThingType_FATSO,		// Mancubus
+      ThingType_FATSHOT,	// -1
+      ThingType_CHAINGUY,	// Chaingunner
+      ThingType_TROOP,		// Imp
+      ThingType_SERGEANT,	// Demon
+      ThingType_SHADOWS,	// Spectre
+      ThingType_HEAD,		// Cacodemon
+      ThingType_BRUISER,	// Baron of Hell
+      ThingType_BRUISERSHOT,	// -1
+      ThingType_KNIGHT,		// Hell Knight
+      ThingType_SKULL,		// Lost Soul
+      ThingType_SPIDER,		// Spider Mastermind
+      ThingType_BABY,		// Arachnotron
+      ThingType_CYBORG,		// Cyberdemon
+      ThingType_PAIN,		// Pain elemental
+      ThingType_WOLFSS,		// Wolfenstein SS
+      ThingType_KEEN,		// Commander Keen
+      ThingType_BOSSBRAIN,	// Boss brain
+      ThingType_BOSSSPIT,	// Boss spawn shooter
+      ThingType_BOSSTARGET,	// Boss spawn spot
+      ThingType_SPAWNSHOT,	// -1
+      ThingType_SPAWNFIRE,	// -1
+      ThingType_BARREL,		// Barrel
+      ThingType_TROOPSHOT,	// -1
+      ThingType_HEADSHOT,	// -1
+      ThingType_ROCKET,		// -1
+      ThingType_PLASMA,		// -1
+      ThingType_BFG,		// -1
+      ThingType_ARACHPLAZ,	// -1
+      ThingType_PUFF,		// -1
+      ThingType_BLOOD,		// -1
+      ThingType_TFOG,		// -1
+      ThingType_IFOG,		// -1
+      ThingType_TELEPORTMAN,	// Teleport landing
+      ThingType_EXTRABFG,	// -1
+      ThingType_MISC0,		// Green armor
+      ThingType_MISC1,		// Blue armor
+      ThingType_MISC2,		// Health potion
+      ThingType_MISC3,		// Spiritual armor
+      ThingType_MISC4,		// Blue keycard
+      ThingType_MISC5,		// Red keycard
+      ThingType_MISC6,		// Yellow keycard
+      ThingType_MISC7,		// Yellow skull key
+      ThingType_MISC8,		// Red skull key
+      ThingType_MISC9,		// Blue skull key
+      ThingType_MISC10,		// Stimpack
+      ThingType_MISC11,		// Medikit
+      ThingType_MISC12,		// Soul sphere
+      ThingType_INV,		// Invulnerability
+      ThingType_MISC13,		// Berserk
+      ThingType_INS,		// Invisibility
+      ThingType_MISC14,		// Radiation suit
+      ThingType_MISC15,		// Computer map
+      ThingType_MISC16,		// Light amplification visor
+      ThingType_MEGA,		// Megasphere
+      ThingType_CLIP,		// Ammo clip
+      ThingType_MISC17,		// Box of ammo
+      ThingType_MISC18,		// Rocket
+      ThingType_MISC19,		// Box of rockets
+      ThingType_MISC20,		// Cell charge
+      ThingType_MISC21,		// Cell charge pack
+      ThingType_MISC22,		// Shotgun shells
+      ThingType_MISC23,		// Box of shells
+      ThingType_MISC24,		// Backpack
+      ThingType_MISC25,		// BFG 9000
+      ThingType_CHAINGUN,	// Chaingun
+      ThingType_MISC26,		// Chainsaw
+      ThingType_MISC27,		// Rocket launcher
+      ThingType_MISC28,		// Plasma rifle
+      ThingType_SHOTGUN,	// Shotgun
+      ThingType_SUPERSHOTGUN,	// Super shotgun
+      ThingType_MISC29,		// Tall techno floor lamp
+      ThingType_MISC30,		// Short techno floor lamp
+      ThingType_MISC31,		// Floor lamp
+      ThingType_MISC32,		// Tall green pillar
+      ThingType_MISC33,		// Short green pillar
+      ThingType_MISC34,		// Tall red pillar
+      ThingType_MISC35,		// Short red pillar
+      ThingType_MISC36,		// Short red pillar with skull
+      ThingType_MISC37,		// Short green pillar with beating heart
+      ThingType_MISC38,		// Evil eye
+      ThingType_MISC39,		// Floating skull
+      ThingType_MISC40,		// Burnt tree
+      ThingType_MISC41,		// Tall blue firestick
+      ThingType_MISC42,		// Tall green firestick
+      ThingType_MISC43,		// Tall red firestick
+      ThingType_MISC44,		// Short blue firestick
+      ThingType_MISC45,		// Short green firestick
+      ThingType_MISC46,		// Short red firestick
+      ThingType_MISC47,		// Stalagmite
+      ThingType_MISC48,		// Tall techno pillar
+      ThingType_MISC49,		// Candle
+      ThingType_MISC50,		// Candelabra
+      ThingType_MISC51,		// Hanging victim, twitching
+      ThingType_MISC52,		// Hanging victim, arms out
+      ThingType_MISC53,		// Hanging victim, one-legged
+      ThingType_MISC54,		// Hanging pair of legs
+      ThingType_MISC55,		// Hanging leg
+      ThingType_MISC56,		// Hanging victim, arms out
+      ThingType_MISC57,		// Hanging pair of legs
+      ThingType_MISC58,		// Hanging victim, one-legged
+      ThingType_MISC59,		// Hanging leg
+      ThingType_MISC60,		// Hanging victim, twitching
+      ThingType_MISC61,		// Dead cacodemon
+      ThingType_MISC62,		// Dead player
+      ThingType_MISC63,		// Dead former human
+      ThingType_MISC64,		// Dead demon
+      ThingType_MISC65,		// Dead lost soul (invisible)
+      ThingType_MISC66,		// Dead imp
+      ThingType_MISC67,		// Dead former sergeant
+      ThingType_MISC68,		// Bloody mess
+      ThingType_MISC69,		// Bloody mess
+      ThingType_MISC70,		// Five skull "shish kebab"
+      ThingType_MISC71,		// Pool of blood and flesh
+      ThingType_MISC72,		// Skull on a pole
+      ThingType_MISC73,		// Pile of shulls and candles
+      ThingType_MISC74,		// Impaled human
+      ThingType_MISC75,		// Twitching impaled human
+      ThingType_MISC76,		// Large brown tree
+      ThingType_MISC77,		// Burning barrel
+      ThingType_MISC78,		// Hanging victim, guts removed
+      ThingType_MISC79,		// Hanging victim, guts and brain removed
+      ThingType_MISC80,		// Hanging torso, looking down
+      ThingType_MISC81,		// Hanging torso, open skull
+      ThingType_MISC82,		// Hanging torso, looking up
+      ThingType_MISC83,		// Hanging torso, brain removed
+      ThingType_MISC84,		// Pool of blood
+      ThingType_MISC85,		// Pool of blood
+      ThingType_MISC86,		// Pool of brains
+      ThingType_PLAYER_SPAWN1,	// Player 1 spawn
+      ThingType_PLAYER_SPAWN2,	// Player 2 spawn
+      ThingType_PLAYER_SPAWN3,	// Player 3 spawn
+      ThingType_PLAYER_SPAWN4,	// Player 4 spawn
+      ThingType_PLAYER_SPAWNDM,	// Death match spawn
+      ThingType_Number
+    };
+
+    enum ThingProperty
+    {
+      ThingProperty_None = 0x00000000,		// Nothing
+      ThingProperty_Special = 0x00000001,	// Call P_SpecialThing when touched.
+      ThingProperty_Solid = 0x00000002,		// Blocks.	
+      ThingProperty_Shootable = 0x00000004,	// Can be hit.
+      ThingProperty_NoSector = 0x00000008,	// Don't use the sector links (invisible but touchable).
+      ThingProperty_NoBlockmap = 0x00000010,	// Don't use the blocklinks (inert but displayable)
+      ThingProperty_Ambush = 0x00000020,	// Not to be activated by sound, deaf monster.
+      ThingProperty_JustHit = 0x00000040,	// Will try to attack right back.
+      ThingProperty_JustAttacked = 0x00000080,	// Will take at least one step before attacking.
+      ThingProperty_SpawnCeiling = 0x00000100,	// On level spawning (initial position), hang from ceiling instead of stand on floor.
+      ThingProperty_NoGravity = 0x00000200,	// Don't apply gravity (every tic), that is, object will float, keeping current height or changing it actively.
+      ThingProperty_DropOff = 0x00000400,	// Movement flags. This allows jumps from high places.
+      ThingProperty_PickUp = 0x00000800,	// For players, will pick up items.
+      ThingProperty_NoClip = 0x00001000,	// Player cheat. ???
+      ThingProperty_Slide = 0x00002000,		// Player: keep info about sliding along walls.
+      ThingProperty_Float = 0x00004000,		// Allow moves to any height, no gravity. For active floaters, e.g. cacodemons, pain elementals.
+      ThingProperty_Teleport = 0x00008000,	// Don't cross lines ??? or look at heights on teleport.
+      ThingProperty_Missile = 0x00010000,	// Don't hit same species, explode on block. Player missiles as well as fireballs of various kinds.
+      ThingProperty_Dropped = 0x00020000,	// Dropped by a demon, not level spawned. E.g. ammo clips dropped by dying former humans.
+      ThingProperty_Shadow = 0x00040000,	// Use fuzzy draw (shadow demons or spectres), temporary player invisibility powerup.
+      ThingProperty_NoBlood = 0x00080000,	// Flag: don't bleed when shot (use puff), barrels and shootable furniture shall not bleed.
+      ThingProperty_Corpse = 0x00100000,	// Don't stop moving halfway off a step, that is, have dead bodies slide down all the way.
+      ThingProperty_InFloat = 0x00200000,	// Floating to a height for a move, ??? don't auto float to target's height.
+      ThingProperty_CountKill = 0x00400000,	// On kill, count this enemy object towards intermission kill total. Happy gathering.
+      ThingProperty_CountItem = 0x00800000,	// On picking up, count this item object towards intermission item total.
+      ThingProperty_SkullFly = 0x01000000,	// Special handling: skull in flight. Neither a cacodemon nor a missile.
+      ThingProperty_NoTDMatch = 0x02000000,	// Don't spawn this object in death match mode (e.g. key cards).
+      ThingProperty_Translation = 0x02000000,	// Player sprites in multiplayer modes are modified using an internal color lookup table for re-indexing. 0x4 0x8 or 0xc, use a translation table for player colormaps.
+      ThingProperty_TransShift = 26		// Hmm ???.
+    };
+  };
+
   // Forward declaration of external components
   class AbstractAction;
   class AbstractFlat;
@@ -80,6 +307,121 @@ namespace DOOM
 
       class Sound
       {
+      public:
+	enum EnumSound
+	{
+	  Sound_None,
+	  Sound_pistol,
+	  Sound_shotgn,
+	  Sound_sgcock,
+	  Sound_dshtgn,
+	  Sound_dbopn,
+	  Sound_dbcls,
+	  Sound_dbload,
+	  Sound_plasma,
+	  Sound_bfg,
+	  Sound_sawup,
+	  Sound_sawidl,
+	  Sound_sawful,
+	  Sound_sawhit,
+	  Sound_rlaunc,
+	  Sound_rxplod,
+	  Sound_firsht,
+	  Sound_firxpl,
+	  Sound_pstart,
+	  Sound_pstop,
+	  Sound_doropn,
+	  Sound_dorcls,
+	  Sound_stnmov,
+	  Sound_swtchn,
+	  Sound_swtchx,
+	  Sound_plpain,
+	  Sound_dmpain,
+	  Sound_popain,
+	  Sound_vipain,
+	  Sound_mnpain,
+	  Sound_pepain,
+	  Sound_slop,
+	  Sound_itemup,
+	  Sound_wpnup,
+	  Sound_oof,
+	  Sound_telept,
+	  Sound_posit1,
+	  Sound_posit2,
+	  Sound_posit3,
+	  Sound_bgsit1,
+	  Sound_bgsit2,
+	  Sound_sgtsit,
+	  Sound_cacsit,
+	  Sound_brssit,
+	  Sound_cybsit,
+	  Sound_spisit,
+	  Sound_bspsit,
+	  Sound_kntsit,
+	  Sound_vilsit,
+	  Sound_mansit,
+	  Sound_pesit,
+	  Sound_sklatk,
+	  Sound_sgtatk,
+	  Sound_skepch,
+	  Sound_vilatk,
+	  Sound_claw,
+	  Sound_skeswg,
+	  Sound_pldeth,
+	  Sound_pdiehi,
+	  Sound_podth1,
+	  Sound_podth2,
+	  Sound_podth3,
+	  Sound_bgdth1,
+	  Sound_bgdth2,
+	  Sound_sgtdth,
+	  Sound_cacdth,
+	  Sound_skldth,
+	  Sound_brsdth,
+	  Sound_cybdth,
+	  Sound_spidth,
+	  Sound_bspdth,
+	  Sound_vildth,
+	  Sound_kntdth,
+	  Sound_pedth,
+	  Sound_skedth,
+	  Sound_posact,
+	  Sound_bgact,
+	  Sound_dmact,
+	  Sound_bspact,
+	  Sound_bspwlk,
+	  Sound_vilact,
+	  Sound_noway,
+	  Sound_barexp,
+	  Sound_punch,
+	  Sound_hoof,
+	  Sound_metal,
+	  Sound_chgun,
+	  Sound_tink,
+	  Sound_bdopn,
+	  Sound_bdcls,
+	  Sound_itmbk,
+	  Sound_flame,
+	  Sound_flamst,
+	  Sound_getpow,
+	  Sound_bospit,
+	  Sound_boscub,
+	  Sound_bossit,
+	  Sound_bospn,
+	  Sound_bosdth,
+	  Sound_manatk,
+	  Sound_mandth,
+	  Sound_sssit,
+	  Sound_ssdth,
+	  Sound_keenpn,
+	  Sound_keendt,
+	  Sound_skeact,
+	  Sound_skesit,
+	  Sound_skeatk,
+	  Sound_radio,
+	  Sound_Number
+	};
+
       public:
 	sf::SoundBuffer	buffer;	// Sound buffer
 	sf::Sound	sound;	// Actual sound to be played
@@ -349,10 +691,10 @@ namespace DOOM
       std::vector<DOOM::Doom::Level::Sector>				sectors;	// List of sectors
       DOOM::Doom::Level::Blockmap					blockmap;	// Blockmap of level
 
-      std::set<int16_t>						getSector(const DOOM::AbstractThing & thing) const;								// Return sector indexes that thing is over
+      std::set<int16_t>						getSectors(const Math::Vector<2> & position, float radius) const;						// Return sector indexes that thing (position and radius) is over
       std::pair<int16_t, int16_t>				getSector(const Math::Vector<2> & position, int16_t index = -1) const;						// Return sector/subsector at position
       std::list<int16_t>					getLinedefs(const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit = 1.f) const;	// Return an ordered list of linedef index intersected by ray within distance limit
-      std::list<std::reference_wrapper<DOOM::AbstractThing>>	getThings(const DOOM::Doom::Level::Sector & sector, int16_t properties) const;					// Return things in sector with corresponding properties
+      std::list<std::reference_wrapper<DOOM::AbstractThing>>	getThings(const DOOM::Doom::Level::Sector & sector, DOOM::Enum::ThingProperty properties) const;		// Return things in sector with corresponding properties
 
       Level();
       ~Level() = default;
@@ -396,7 +738,7 @@ namespace DOOM
     void	load(const std::string & file);	// Load WAD file and build resources
     void	update(sf::Time elapsed);	// Update current level and resources
 
-    std::list<std::pair<uint8_t, uint8_t>>	getLevel() const;					// Return list of available level in WAD
+    std::list<std::pair<uint8_t, uint8_t>>	getLevels() const;					// Return list of available level in WAD
     void					setLevel(const std::pair<uint8_t, uint8_t> & level);	// Build specified level from WAD, return true if successful
 
     void	addPlayer(int controller);	// Add player to current game
