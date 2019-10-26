@@ -147,13 +147,13 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_BFE2, 2, true, 8, nullptr, State_BFGEXP4 },		// State_BFGEXP3
   DOOM::AbstractThing::State{ Sprite_BFE2, 3, true, 8, nullptr, State_None },			// State_BFGEXP4
   DOOM::AbstractThing::State{ Sprite_MISL, 1, true, 8, &A_Explode, State_EXPLODE2 },		// State_EXPLODE1
-  DOOM::AbstractThing::State{ Sprite_MISL, 3, true, 6, nullptr, State_EXPLODE3 },		// State_EXPLODE2
+  DOOM::AbstractThing::State{ Sprite_MISL, 2, true, 6, nullptr, State_EXPLODE3 },		// State_EXPLODE2
   DOOM::AbstractThing::State{ Sprite_MISL, 3, true, 4, nullptr, State_None },			// State_EXPLODE3
   DOOM::AbstractThing::State{ Sprite_TFOG, 0, true, 6, nullptr, State_TFOG01 },			// State_TFOG
   DOOM::AbstractThing::State{ Sprite_TFOG, 1, true, 6, nullptr, State_TFOG02 },			// State_TFOG01
   DOOM::AbstractThing::State{ Sprite_TFOG, 0, true, 6, nullptr, State_TFOG2 },			// State_TFOG02
   DOOM::AbstractThing::State{ Sprite_TFOG, 1, true, 6, nullptr, State_TFOG3 },			// State_TFOG2
-  DOOM::AbstractThing::State{ Sprite_TFOG, 3, true, 6, nullptr, State_TFOG4 },			// State_TFOG3
+  DOOM::AbstractThing::State{ Sprite_TFOG, 2, true, 6, nullptr, State_TFOG4 },			// State_TFOG3
   DOOM::AbstractThing::State{ Sprite_TFOG, 3, true, 6, nullptr, State_TFOG5 },			// State_TFOG4
   DOOM::AbstractThing::State{ Sprite_TFOG, 4, true, 6, nullptr, State_TFOG6 },			// State_TFOG5
   DOOM::AbstractThing::State{ Sprite_TFOG, 5, true, 6, nullptr, State_TFOG7 },			// State_TFOG6
@@ -165,13 +165,13 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_IFOG, 1, true, 6, nullptr, State_IFOG02 },			// State_IFOG01
   DOOM::AbstractThing::State{ Sprite_IFOG, 0, true, 6, nullptr, State_IFOG2 },			// State_IFOG02
   DOOM::AbstractThing::State{ Sprite_IFOG, 1, true, 6, nullptr, State_IFOG3 },			// State_IFOG2
-  DOOM::AbstractThing::State{ Sprite_IFOG, 3, true, 6, nullptr, State_IFOG4 },			// State_IFOG3
+  DOOM::AbstractThing::State{ Sprite_IFOG, 2, true, 6, nullptr, State_IFOG4 },			// State_IFOG3
   DOOM::AbstractThing::State{ Sprite_IFOG, 3, true, 6, nullptr, State_IFOG5 },			// State_IFOG4
   DOOM::AbstractThing::State{ Sprite_IFOG, 4, true, 6, nullptr, State_None },			// State_IFOG5
   DOOM::AbstractThing::State{ Sprite_PLAY, 0, false, -1, nullptr, State_None },			// State_PLAY
   DOOM::AbstractThing::State{ Sprite_PLAY, 0, false, 4, nullptr, State_PLAY_RUN2 },		// State_PLAY_RUN1
   DOOM::AbstractThing::State{ Sprite_PLAY, 1, false, 4, nullptr, State_PLAY_RUN3 },		// State_PLAY_RUN2
-  DOOM::AbstractThing::State{ Sprite_PLAY, 3, false, 4, nullptr, State_PLAY_RUN4 },		// State_PLAY_RUN3
+  DOOM::AbstractThing::State{ Sprite_PLAY, 2, false, 4, nullptr, State_PLAY_RUN4 },		// State_PLAY_RUN3
   DOOM::AbstractThing::State{ Sprite_PLAY, 3, false, 4, nullptr, State_PLAY_RUN1 },		// State_PLAY_RUN4
   DOOM::AbstractThing::State{ Sprite_PLAY, 4, false, 12, nullptr, State_PLAY },			// State_PLAY_ATK1
   DOOM::AbstractThing::State{ Sprite_PLAY, 5, true, 6, nullptr, State_PLAY_ATK1 },		// State_PLAY_ATK2
@@ -199,8 +199,8 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_POSS, 0, false, 4, &A_Chase, State_POSS_RUN3 },		// State_POSS_RUN2
   DOOM::AbstractThing::State{ Sprite_POSS, 1, false, 4, &A_Chase, State_POSS_RUN4 },		// State_POSS_RUN3
   DOOM::AbstractThing::State{ Sprite_POSS, 1, false, 4, &A_Chase, State_POSS_RUN5 },		// State_POSS_RUN4
-  DOOM::AbstractThing::State{ Sprite_POSS, 3, false, 4, &A_Chase, State_POSS_RUN6 },		// State_POSS_RUN5
-  DOOM::AbstractThing::State{ Sprite_POSS, 3, false, 4, &A_Chase, State_POSS_RUN7 },		// State_POSS_RUN6
+  DOOM::AbstractThing::State{ Sprite_POSS, 2, false, 4, &A_Chase, State_POSS_RUN6 },		// State_POSS_RUN5
+  DOOM::AbstractThing::State{ Sprite_POSS, 2, false, 4, &A_Chase, State_POSS_RUN7 },		// State_POSS_RUN6
   DOOM::AbstractThing::State{ Sprite_POSS, 3, false, 4, &A_Chase, State_POSS_RUN8 },		// State_POSS_RUN7
   DOOM::AbstractThing::State{ Sprite_POSS, 3, false, 4, &A_Chase, State_POSS_RUN1 },		// State_POSS_RUN8
   DOOM::AbstractThing::State{ Sprite_POSS, 4, false, 10, &A_FaceTarget, State_POSS_ATK2 },	// State_POSS_ATK1
@@ -232,8 +232,8 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_SPOS, 0, false, 3, &A_Chase, State_SPOS_RUN3 },		// State_SPOS_RUN2
   DOOM::AbstractThing::State{ Sprite_SPOS, 1, false, 3, &A_Chase, State_SPOS_RUN4 },		// State_SPOS_RUN3
   DOOM::AbstractThing::State{ Sprite_SPOS, 1, false, 3, &A_Chase, State_SPOS_RUN5 },		// State_SPOS_RUN4
-  DOOM::AbstractThing::State{ Sprite_SPOS, 3, false, 3, &A_Chase, State_SPOS_RUN6 },		// State_SPOS_RUN5
-  DOOM::AbstractThing::State{ Sprite_SPOS, 3, false, 3, &A_Chase, State_SPOS_RUN7 },		// State_SPOS_RUN6
+  DOOM::AbstractThing::State{ Sprite_SPOS, 2, false, 3, &A_Chase, State_SPOS_RUN6 },		// State_SPOS_RUN5
+  DOOM::AbstractThing::State{ Sprite_SPOS, 2, false, 3, &A_Chase, State_SPOS_RUN7 },		// State_SPOS_RUN6
   DOOM::AbstractThing::State{ Sprite_SPOS, 3, false, 3, &A_Chase, State_SPOS_RUN8 },		// State_SPOS_RUN7
   DOOM::AbstractThing::State{ Sprite_SPOS, 3, false, 3, &A_Chase, State_SPOS_RUN1 },		// State_SPOS_RUN8
   DOOM::AbstractThing::State{ Sprite_SPOS, 4, false, 10, &A_FaceTarget, State_SPOS_ATK2 },	// State_SPOS_ATK1
@@ -266,8 +266,8 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_VILE, 0, false, 2, &A_VileChase, State_VILE_RUN3 },	// State_VILE_RUN2
   DOOM::AbstractThing::State{ Sprite_VILE, 1, false, 2, &A_VileChase, State_VILE_RUN4 },	// State_VILE_RUN3
   DOOM::AbstractThing::State{ Sprite_VILE, 1, false, 2, &A_VileChase, State_VILE_RUN5 },	// State_VILE_RUN4
-  DOOM::AbstractThing::State{ Sprite_VILE, 3, false, 2, &A_VileChase, State_VILE_RUN6 },	// State_VILE_RUN5
-  DOOM::AbstractThing::State{ Sprite_VILE, 3, false, 2, &A_VileChase, State_VILE_RUN7 },	// State_VILE_RUN6
+  DOOM::AbstractThing::State{ Sprite_VILE, 2, false, 2, &A_VileChase, State_VILE_RUN6 },	// State_VILE_RUN5
+  DOOM::AbstractThing::State{ Sprite_VILE, 2, false, 2, &A_VileChase, State_VILE_RUN7 },	// State_VILE_RUN6
   DOOM::AbstractThing::State{ Sprite_VILE, 3, false, 2, &A_VileChase, State_VILE_RUN8 },	// State_VILE_RUN7
   DOOM::AbstractThing::State{ Sprite_VILE, 3, false, 2, &A_VileChase, State_VILE_RUN9 },	// State_VILE_RUN8
   DOOM::AbstractThing::State{ Sprite_VILE, 4, false, 2, &A_VileChase, State_VILE_RUN10 },	// State_VILE_RUN9
@@ -304,15 +304,15 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_FIRE, 1, true, 2, &A_Fire, State_FIRE3 },			// State_FIRE2
   DOOM::AbstractThing::State{ Sprite_FIRE, 0, true, 2, &A_Fire, State_FIRE4 },			// State_FIRE3
   DOOM::AbstractThing::State{ Sprite_FIRE, 1, true, 2, &A_Fire, State_FIRE5 },			// State_FIRE4
-  DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 2, &A_FireCrackle, State_FIRE6 },		// State_FIRE5
+  DOOM::AbstractThing::State{ Sprite_FIRE, 2, true, 2, &A_FireCrackle, State_FIRE6 },		// State_FIRE5
   DOOM::AbstractThing::State{ Sprite_FIRE, 1, true, 2, &A_Fire, State_FIRE7 },			// State_FIRE6
-  DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 2, &A_Fire, State_FIRE8 },			// State_FIRE7
+  DOOM::AbstractThing::State{ Sprite_FIRE, 2, true, 2, &A_Fire, State_FIRE8 },			// State_FIRE7
   DOOM::AbstractThing::State{ Sprite_FIRE, 1, true, 2, &A_Fire, State_FIRE9 },			// State_FIRE8
-  DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 2, &A_Fire, State_FIRE10 },			// State_FIRE9
+  DOOM::AbstractThing::State{ Sprite_FIRE, 2, true, 2, &A_Fire, State_FIRE10 },			// State_FIRE9
   DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 2, &A_Fire, State_FIRE11 },			// State_FIRE10
-  DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 2, &A_Fire, State_FIRE12 },			// State_FIRE11
+  DOOM::AbstractThing::State{ Sprite_FIRE, 2, true, 2, &A_Fire, State_FIRE12 },			// State_FIRE11
   DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 2, &A_Fire, State_FIRE13 },			// State_FIRE12
-  DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 2, &A_Fire, State_FIRE14 },			// State_FIRE13
+  DOOM::AbstractThing::State{ Sprite_FIRE, 2, true, 2, &A_Fire, State_FIRE14 },			// State_FIRE13
   DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 2, &A_Fire, State_FIRE15 },			// State_FIRE14
   DOOM::AbstractThing::State{ Sprite_FIRE, 4, true, 2, &A_Fire, State_FIRE16 },			// State_FIRE15
   DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 2, &A_Fire, State_FIRE17 },			// State_FIRE16
@@ -331,23 +331,23 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_FIRE, 6, true, 2, &A_Fire, State_FIRE30 },			// State_FIRE29
   DOOM::AbstractThing::State{ Sprite_FIRE, 7, true, 2, &A_Fire, State_None },			// State_FIRE30
   DOOM::AbstractThing::State{ Sprite_PUFF, 1, false, 4, nullptr, State_SMOKE2 },		// State_SMOKE1
-  DOOM::AbstractThing::State{ Sprite_PUFF, 3, false, 4, nullptr, State_SMOKE3 },		// State_SMOKE2
+  DOOM::AbstractThing::State{ Sprite_PUFF, 2, false, 4, nullptr, State_SMOKE3 },		// State_SMOKE2
   DOOM::AbstractThing::State{ Sprite_PUFF, 1, false, 4, nullptr, State_SMOKE4 },		// State_SMOKE3
-  DOOM::AbstractThing::State{ Sprite_PUFF, 3, false, 4, nullptr, State_SMOKE5 },		// State_SMOKE4
+  DOOM::AbstractThing::State{ Sprite_PUFF, 2, false, 4, nullptr, State_SMOKE5 },		// State_SMOKE4
   DOOM::AbstractThing::State{ Sprite_PUFF, 3, false, 4, nullptr, State_None },			// State_SMOKE5
   DOOM::AbstractThing::State{ Sprite_FATB, 0, true, 2, &A_Tracer, State_TRACER2 },		// State_TRACER
   DOOM::AbstractThing::State{ Sprite_FATB, 1, true, 2, &A_Tracer, State_TRACER },		// State_TRACER2
   DOOM::AbstractThing::State{ Sprite_FBXP, 0, true, 8, nullptr, State_TRACEEXP2 },		// State_TRACEEXP1
   DOOM::AbstractThing::State{ Sprite_FBXP, 1, true, 6, nullptr, State_TRACEEXP3 },		// State_TRACEEXP2
-  DOOM::AbstractThing::State{ Sprite_FBXP, 3, true, 4, nullptr, State_None },			// State_TRACEEXP3
+  DOOM::AbstractThing::State{ Sprite_FBXP, 2, true, 4, nullptr, State_None },			// State_TRACEEXP3
   DOOM::AbstractThing::State{ Sprite_SKEL, 0, false, 10, &A_Look, State_SKEL_STND2 },		// State_SKEL_STND
   DOOM::AbstractThing::State{ Sprite_SKEL, 1, false, 10, &A_Look, State_SKEL_STND },		// State_SKEL_STND2
   DOOM::AbstractThing::State{ Sprite_SKEL, 0, false, 2, &A_Chase, State_SKEL_RUN2 },		// State_SKEL_RUN1
   DOOM::AbstractThing::State{ Sprite_SKEL, 0, false, 2, &A_Chase, State_SKEL_RUN3 },		// State_SKEL_RUN2
   DOOM::AbstractThing::State{ Sprite_SKEL, 1, false, 2, &A_Chase, State_SKEL_RUN4 },		// State_SKEL_RUN3
   DOOM::AbstractThing::State{ Sprite_SKEL, 1, false, 2, &A_Chase, State_SKEL_RUN5 },		// State_SKEL_RUN4
-  DOOM::AbstractThing::State{ Sprite_SKEL, 3, false, 2, &A_Chase, State_SKEL_RUN6 },		// State_SKEL_RUN5
-  DOOM::AbstractThing::State{ Sprite_SKEL, 3, false, 2, &A_Chase, State_SKEL_RUN7 },		// State_SKEL_RUN6
+  DOOM::AbstractThing::State{ Sprite_SKEL, 2, false, 2, &A_Chase, State_SKEL_RUN6 },		// State_SKEL_RUN5
+  DOOM::AbstractThing::State{ Sprite_SKEL, 2, false, 2, &A_Chase, State_SKEL_RUN7 },		// State_SKEL_RUN6
   DOOM::AbstractThing::State{ Sprite_SKEL, 3, false, 2, &A_Chase, State_SKEL_RUN8 },		// State_SKEL_RUN7
   DOOM::AbstractThing::State{ Sprite_SKEL, 3, false, 2, &A_Chase, State_SKEL_RUN9 },		// State_SKEL_RUN8
   DOOM::AbstractThing::State{ Sprite_SKEL, 4, false, 2, &A_Chase, State_SKEL_RUN10 },		// State_SKEL_RUN9
@@ -379,7 +379,7 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_MANF, 0, true, 4, nullptr, State_FATSHOT2 },		// State_FATSHOT1
   DOOM::AbstractThing::State{ Sprite_MANF, 1, true, 4, nullptr, State_FATSHOT1 },		// State_FATSHOT2
   DOOM::AbstractThing::State{ Sprite_MISL, 1, true, 8, nullptr, State_FATSHOTX2 },		// State_FATSHOTX1
-  DOOM::AbstractThing::State{ Sprite_MISL, 3, true, 6, nullptr, State_FATSHOTX3 },		// State_FATSHOTX2
+  DOOM::AbstractThing::State{ Sprite_MISL, 2, true, 6, nullptr, State_FATSHOTX3 },		// State_FATSHOTX2
   DOOM::AbstractThing::State{ Sprite_MISL, 3, true, 4, nullptr, State_None },			// State_FATSHOTX3
   DOOM::AbstractThing::State{ Sprite_FATT, 0, false, 15, &A_Look, State_FATT_STND2 },		// State_FATT_STND
   DOOM::AbstractThing::State{ Sprite_FATT, 1, false, 15, &A_Look, State_FATT_STND },		// State_FATT_STND2
@@ -387,8 +387,8 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_FATT, 0, false, 4, &A_Chase, State_FATT_RUN3 },		// State_FATT_RUN2
   DOOM::AbstractThing::State{ Sprite_FATT, 1, false, 4, &A_Chase, State_FATT_RUN4 },		// State_FATT_RUN3
   DOOM::AbstractThing::State{ Sprite_FATT, 1, false, 4, &A_Chase, State_FATT_RUN5 },		// State_FATT_RUN4
-  DOOM::AbstractThing::State{ Sprite_FATT, 3, false, 4, &A_Chase, State_FATT_RUN6 },		// State_FATT_RUN5
-  DOOM::AbstractThing::State{ Sprite_FATT, 3, false, 4, &A_Chase, State_FATT_RUN7 },		// State_FATT_RUN6
+  DOOM::AbstractThing::State{ Sprite_FATT, 2, false, 4, &A_Chase, State_FATT_RUN6 },		// State_FATT_RUN5
+  DOOM::AbstractThing::State{ Sprite_FATT, 2, false, 4, &A_Chase, State_FATT_RUN7 },		// State_FATT_RUN6
   DOOM::AbstractThing::State{ Sprite_FATT, 3, false, 4, &A_Chase, State_FATT_RUN8 },		// State_FATT_RUN7
   DOOM::AbstractThing::State{ Sprite_FATT, 3, false, 4, &A_Chase, State_FATT_RUN9 },		// State_FATT_RUN8
   DOOM::AbstractThing::State{ Sprite_FATT, 4, false, 4, &A_Chase, State_FATT_RUN10 },		// State_FATT_RUN9
@@ -431,8 +431,8 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_CPOS, 0, false, 3, &A_Chase, State_CPOS_RUN3 },		// State_CPOS_RUN2
   DOOM::AbstractThing::State{ Sprite_CPOS, 1, false, 3, &A_Chase, State_CPOS_RUN4 },		// State_CPOS_RUN3
   DOOM::AbstractThing::State{ Sprite_CPOS, 1, false, 3, &A_Chase, State_CPOS_RUN5 },		// State_CPOS_RUN4
-  DOOM::AbstractThing::State{ Sprite_CPOS, 3, false, 3, &A_Chase, State_CPOS_RUN6 },		// State_CPOS_RUN5
-  DOOM::AbstractThing::State{ Sprite_CPOS, 3, false, 3, &A_Chase, State_CPOS_RUN7 },		// State_CPOS_RUN6
+  DOOM::AbstractThing::State{ Sprite_CPOS, 2, false, 3, &A_Chase, State_CPOS_RUN6 },		// State_CPOS_RUN5
+  DOOM::AbstractThing::State{ Sprite_CPOS, 2, false, 3, &A_Chase, State_CPOS_RUN7 },		// State_CPOS_RUN6
   DOOM::AbstractThing::State{ Sprite_CPOS, 3, false, 3, &A_Chase, State_CPOS_RUN8 },		// State_CPOS_RUN7
   DOOM::AbstractThing::State{ Sprite_CPOS, 3, false, 3, &A_Chase, State_CPOS_RUN1 },		// State_CPOS_RUN8
   DOOM::AbstractThing::State{ Sprite_CPOS, 4, false, 10, &A_FaceTarget, State_CPOS_ATK2 },	// State_CPOS_ATK1
@@ -467,8 +467,8 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_TROO, 0, false, 3, &A_Chase, State_TROO_RUN3 },		// State_TROO_RUN2
   DOOM::AbstractThing::State{ Sprite_TROO, 1, false, 3, &A_Chase, State_TROO_RUN4 },		// State_TROO_RUN3
   DOOM::AbstractThing::State{ Sprite_TROO, 1, false, 3, &A_Chase, State_TROO_RUN5 },		// State_TROO_RUN4
-  DOOM::AbstractThing::State{ Sprite_TROO, 3, false, 3, &A_Chase, State_TROO_RUN6 },		// State_TROO_RUN5
-  DOOM::AbstractThing::State{ Sprite_TROO, 3, false, 3, &A_Chase, State_TROO_RUN7 },		// State_TROO_RUN6
+  DOOM::AbstractThing::State{ Sprite_TROO, 2, false, 3, &A_Chase, State_TROO_RUN6 },		// State_TROO_RUN5
+  DOOM::AbstractThing::State{ Sprite_TROO, 2, false, 3, &A_Chase, State_TROO_RUN7 },		// State_TROO_RUN6
   DOOM::AbstractThing::State{ Sprite_TROO, 3, false, 3, &A_Chase, State_TROO_RUN8 },		// State_TROO_RUN7
   DOOM::AbstractThing::State{ Sprite_TROO, 3, false, 3, &A_Chase, State_TROO_RUN1 },		// State_TROO_RUN8
   DOOM::AbstractThing::State{ Sprite_TROO, 4, false, 8, &A_FaceTarget, State_TROO_ATK2 },	// State_TROO_ATK1
@@ -500,8 +500,8 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_SARG, 0, false, 2, &A_Chase, State_SARG_RUN3 },		// State_SARG_RUN2
   DOOM::AbstractThing::State{ Sprite_SARG, 1, false, 2, &A_Chase, State_SARG_RUN4 },		// State_SARG_RUN3
   DOOM::AbstractThing::State{ Sprite_SARG, 1, false, 2, &A_Chase, State_SARG_RUN5 },		// State_SARG_RUN4
-  DOOM::AbstractThing::State{ Sprite_SARG, 3, false, 2, &A_Chase, State_SARG_RUN6 },		// State_SARG_RUN5
-  DOOM::AbstractThing::State{ Sprite_SARG, 3, false, 2, &A_Chase, State_SARG_RUN7 },		// State_SARG_RUN6
+  DOOM::AbstractThing::State{ Sprite_SARG, 2, false, 2, &A_Chase, State_SARG_RUN6 },		// State_SARG_RUN5
+  DOOM::AbstractThing::State{ Sprite_SARG, 2, false, 2, &A_Chase, State_SARG_RUN7 },		// State_SARG_RUN6
   DOOM::AbstractThing::State{ Sprite_SARG, 3, false, 2, &A_Chase, State_SARG_RUN8 },		// State_SARG_RUN7
   DOOM::AbstractThing::State{ Sprite_SARG, 3, false, 2, &A_Chase, State_SARG_RUN1 },		// State_SARG_RUN8
   DOOM::AbstractThing::State{ Sprite_SARG, 4, false, 8, &A_FaceTarget, State_SARG_ATK2 },	// State_SARG_ATK1
@@ -524,7 +524,7 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_HEAD, 0, false, 10, &A_Look, State_HEAD_STND },		// State_HEAD_STND
   DOOM::AbstractThing::State{ Sprite_HEAD, 0, false, 3, &A_Chase, State_HEAD_RUN1 },		// State_HEAD_RUN1
   DOOM::AbstractThing::State{ Sprite_HEAD, 1, false, 5, &A_FaceTarget, State_HEAD_ATK2 },	// State_HEAD_ATK1
-  DOOM::AbstractThing::State{ Sprite_HEAD, 3, false, 5, &A_FaceTarget, State_HEAD_ATK3 },	// State_HEAD_ATK2
+  DOOM::AbstractThing::State{ Sprite_HEAD, 2, false, 5, &A_FaceTarget, State_HEAD_ATK3 },	// State_HEAD_ATK2
   DOOM::AbstractThing::State{ Sprite_HEAD, 3, true, 5, &A_HeadAttack, State_HEAD_RUN1 },	// State_HEAD_ATK3
   DOOM::AbstractThing::State{ Sprite_HEAD, 4, false, 3, nullptr, State_HEAD_PAIN2 },		// State_HEAD_PAIN
   DOOM::AbstractThing::State{ Sprite_HEAD, 4, false, 3, &A_Pain, State_HEAD_PAIN3 },		// State_HEAD_PAIN2
@@ -543,7 +543,7 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_HEAD, 6, false, 8, nullptr, State_HEAD_RUN1 },		// State_HEAD_RAISE6
   DOOM::AbstractThing::State{ Sprite_BAL7, 0, true, 4, nullptr, State_BRBALL2 },		// State_BRBALL1
   DOOM::AbstractThing::State{ Sprite_BAL7, 1, true, 4, nullptr, State_BRBALL1 },		// State_BRBALL2
-  DOOM::AbstractThing::State{ Sprite_BAL7, 3, true, 6, nullptr, State_BRBALLX2 },		// State_BRBALLX1
+  DOOM::AbstractThing::State{ Sprite_BAL7, 2, true, 6, nullptr, State_BRBALLX2 },		// State_BRBALLX1
   DOOM::AbstractThing::State{ Sprite_BAL7, 3, true, 6, nullptr, State_BRBALLX3 },		// State_BRBALLX2
   DOOM::AbstractThing::State{ Sprite_BAL7, 4, true, 6, nullptr, State_None },			// State_BRBALLX3
   DOOM::AbstractThing::State{ Sprite_BOSS, 0, false, 10, &A_Look, State_BOSS_STND2 },		// State_BOSS_STND
@@ -552,8 +552,8 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_BOSS, 0, false, 3, &A_Chase, State_BOSS_RUN3 },		// State_BOSS_RUN2
   DOOM::AbstractThing::State{ Sprite_BOSS, 1, false, 3, &A_Chase, State_BOSS_RUN4 },		// State_BOSS_RUN3
   DOOM::AbstractThing::State{ Sprite_BOSS, 1, false, 3, &A_Chase, State_BOSS_RUN5 },		// State_BOSS_RUN4
-  DOOM::AbstractThing::State{ Sprite_BOSS, 3, false, 3, &A_Chase, State_BOSS_RUN6 },		// State_BOSS_RUN5
-  DOOM::AbstractThing::State{ Sprite_BOSS, 3, false, 3, &A_Chase, State_BOSS_RUN7 },		// State_BOSS_RUN6
+  DOOM::AbstractThing::State{ Sprite_BOSS, 2, false, 3, &A_Chase, State_BOSS_RUN6 },		// State_BOSS_RUN5
+  DOOM::AbstractThing::State{ Sprite_BOSS, 2, false, 3, &A_Chase, State_BOSS_RUN7 },		// State_BOSS_RUN6
   DOOM::AbstractThing::State{ Sprite_BOSS, 3, false, 3, &A_Chase, State_BOSS_RUN8 },		// State_BOSS_RUN7
   DOOM::AbstractThing::State{ Sprite_BOSS, 3, false, 3, &A_Chase, State_BOSS_RUN1 },		// State_BOSS_RUN8
   DOOM::AbstractThing::State{ Sprite_BOSS, 4, false, 8, &A_FaceTarget, State_BOSS_ATK2 },	// State_BOSS_ATK1
@@ -581,8 +581,8 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_BOS2, 0, false, 3, &A_Chase, State_BOS2_RUN3 },		// State_BOS2_RUN2
   DOOM::AbstractThing::State{ Sprite_BOS2, 1, false, 3, &A_Chase, State_BOS2_RUN4 },		// State_BOS2_RUN3
   DOOM::AbstractThing::State{ Sprite_BOS2, 1, false, 3, &A_Chase, State_BOS2_RUN5 },		// State_BOS2_RUN4
-  DOOM::AbstractThing::State{ Sprite_BOS2, 3, false, 3, &A_Chase, State_BOS2_RUN6 },		// State_BOS2_RUN5
-  DOOM::AbstractThing::State{ Sprite_BOS2, 3, false, 3, &A_Chase, State_BOS2_RUN7 },		// State_BOS2_RUN6
+  DOOM::AbstractThing::State{ Sprite_BOS2, 2, false, 3, &A_Chase, State_BOS2_RUN6 },		// State_BOS2_RUN5
+  DOOM::AbstractThing::State{ Sprite_BOS2, 2, false, 3, &A_Chase, State_BOS2_RUN7 },		// State_BOS2_RUN6
   DOOM::AbstractThing::State{ Sprite_BOS2, 3, false, 3, &A_Chase, State_BOS2_RUN8 },		// State_BOS2_RUN7
   DOOM::AbstractThing::State{ Sprite_BOS2, 3, false, 3, &A_Chase, State_BOS2_RUN1 },		// State_BOS2_RUN8
   DOOM::AbstractThing::State{ Sprite_BOS2, 4, false, 8, &A_FaceTarget, State_BOS2_ATK2 },	// State_BOS2_ATK1
@@ -608,9 +608,9 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_SKUL, 1, true, 10, &A_Look, State_SKULL_STND },		// State_SKULL_STND2
   DOOM::AbstractThing::State{ Sprite_SKUL, 0, true, 6, &A_Chase, State_SKULL_RUN2 },		// State_SKULL_RUN1
   DOOM::AbstractThing::State{ Sprite_SKUL, 1, true, 6, &A_Chase, State_SKULL_RUN1 },		// State_SKULL_RUN2
-  DOOM::AbstractThing::State{ Sprite_SKUL, 3, true, 10, &A_FaceTarget, State_SKULL_ATK2 },	// State_SKULL_ATK1
+  DOOM::AbstractThing::State{ Sprite_SKUL, 2, true, 10, &A_FaceTarget, State_SKULL_ATK2 },	// State_SKULL_ATK1
   DOOM::AbstractThing::State{ Sprite_SKUL, 3, true, 4, &A_SkullAttack, State_SKULL_ATK3 },	// State_SKULL_ATK2
-  DOOM::AbstractThing::State{ Sprite_SKUL, 3, true, 4, nullptr, State_SKULL_ATK4 },		// State_SKULL_ATK3
+  DOOM::AbstractThing::State{ Sprite_SKUL, 2, true, 4, nullptr, State_SKULL_ATK4 },		// State_SKULL_ATK3
   DOOM::AbstractThing::State{ Sprite_SKUL, 3, true, 4, nullptr, State_SKULL_ATK3 },		// State_SKULL_ATK4
   DOOM::AbstractThing::State{ Sprite_SKUL, 4, true, 3, nullptr, State_SKULL_PAIN2 },		// State_SKULL_PAIN
   DOOM::AbstractThing::State{ Sprite_SKUL, 4, true, 3, &A_Pain, State_SKULL_RUN1 },		// State_SKULL_PAIN2
@@ -626,8 +626,8 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_SPID, 0, false, 3, &A_Chase, State_SPID_RUN3 },		// State_SPID_RUN2
   DOOM::AbstractThing::State{ Sprite_SPID, 1, false, 3, &A_Chase, State_SPID_RUN4 },		// State_SPID_RUN3
   DOOM::AbstractThing::State{ Sprite_SPID, 1, false, 3, &A_Chase, State_SPID_RUN5 },		// State_SPID_RUN4
-  DOOM::AbstractThing::State{ Sprite_SPID, 3, false, 3, &A_Metal, State_SPID_RUN6 },		// State_SPID_RUN5
-  DOOM::AbstractThing::State{ Sprite_SPID, 3, false, 3, &A_Chase, State_SPID_RUN7 },		// State_SPID_RUN6
+  DOOM::AbstractThing::State{ Sprite_SPID, 2, false, 3, &A_Metal, State_SPID_RUN6 },		// State_SPID_RUN5
+  DOOM::AbstractThing::State{ Sprite_SPID, 2, false, 3, &A_Chase, State_SPID_RUN7 },		// State_SPID_RUN6
   DOOM::AbstractThing::State{ Sprite_SPID, 3, false, 3, &A_Chase, State_SPID_RUN8 },		// State_SPID_RUN7
   DOOM::AbstractThing::State{ Sprite_SPID, 3, false, 3, &A_Chase, State_SPID_RUN9 },		// State_SPID_RUN8
   DOOM::AbstractThing::State{ Sprite_SPID, 4, false, 3, &A_Metal, State_SPID_RUN10 },		// State_SPID_RUN9
@@ -658,8 +658,8 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_BSPI, 0, false, 3, &A_Chase, State_BSPI_RUN3 },		// State_BSPI_RUN2
   DOOM::AbstractThing::State{ Sprite_BSPI, 1, false, 3, &A_Chase, State_BSPI_RUN4 },		// State_BSPI_RUN3
   DOOM::AbstractThing::State{ Sprite_BSPI, 1, false, 3, &A_Chase, State_BSPI_RUN5 },		// State_BSPI_RUN4
-  DOOM::AbstractThing::State{ Sprite_BSPI, 3, false, 3, &A_Chase, State_BSPI_RUN6 },		// State_BSPI_RUN5
-  DOOM::AbstractThing::State{ Sprite_BSPI, 3, false, 3, &A_Chase, State_BSPI_RUN7 },		// State_BSPI_RUN6
+  DOOM::AbstractThing::State{ Sprite_BSPI, 2, false, 3, &A_Chase, State_BSPI_RUN6 },		// State_BSPI_RUN5
+  DOOM::AbstractThing::State{ Sprite_BSPI, 2, false, 3, &A_Chase, State_BSPI_RUN7 },		// State_BSPI_RUN6
   DOOM::AbstractThing::State{ Sprite_BSPI, 3, false, 3, &A_BabyMetal, State_BSPI_RUN8 },	// State_BSPI_RUN7
   DOOM::AbstractThing::State{ Sprite_BSPI, 3, false, 3, &A_Chase, State_BSPI_RUN9 },		// State_BSPI_RUN8
   DOOM::AbstractThing::State{ Sprite_BSPI, 4, false, 3, &A_Chase, State_BSPI_RUN10 },		// State_BSPI_RUN9
@@ -690,7 +690,7 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_APLS, 1, true, 5, nullptr, State_ARACH_PLAZ },		// State_ARACH_PLAZ2
   DOOM::AbstractThing::State{ Sprite_APBX, 0, true, 5, nullptr, State_ARACH_PLEX2 },		// State_ARACH_PLEX
   DOOM::AbstractThing::State{ Sprite_APBX, 1, true, 5, nullptr, State_ARACH_PLEX3 },		// State_ARACH_PLEX2
-  DOOM::AbstractThing::State{ Sprite_APBX, 3, true, 5, nullptr, State_ARACH_PLEX4 },		// State_ARACH_PLEX3
+  DOOM::AbstractThing::State{ Sprite_APBX, 2, true, 5, nullptr, State_ARACH_PLEX4 },		// State_ARACH_PLEX3
   DOOM::AbstractThing::State{ Sprite_APBX, 3, true, 5, nullptr, State_ARACH_PLEX5 },		// State_ARACH_PLEX4
   DOOM::AbstractThing::State{ Sprite_APBX, 4, true, 5, nullptr, State_None },			// State_ARACH_PLEX5
   DOOM::AbstractThing::State{ Sprite_CYBR, 0, false, 10, &A_Look, State_CYBER_STND2 },		// State_CYBER_STND
@@ -699,8 +699,8 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_CYBR, 0, false, 3, &A_Chase, State_CYBER_RUN3 },		// State_CYBER_RUN2
   DOOM::AbstractThing::State{ Sprite_CYBR, 1, false, 3, &A_Chase, State_CYBER_RUN4 },		// State_CYBER_RUN3
   DOOM::AbstractThing::State{ Sprite_CYBR, 1, false, 3, &A_Chase, State_CYBER_RUN5 },		// State_CYBER_RUN4
-  DOOM::AbstractThing::State{ Sprite_CYBR, 3, false, 3, &A_Chase, State_CYBER_RUN6 },		// State_CYBER_RUN5
-  DOOM::AbstractThing::State{ Sprite_CYBR, 3, false, 3, &A_Chase, State_CYBER_RUN7 },		// State_CYBER_RUN6
+  DOOM::AbstractThing::State{ Sprite_CYBR, 2, false, 3, &A_Chase, State_CYBER_RUN6 },		// State_CYBER_RUN5
+  DOOM::AbstractThing::State{ Sprite_CYBR, 2, false, 3, &A_Chase, State_CYBER_RUN7 },		// State_CYBER_RUN6
   DOOM::AbstractThing::State{ Sprite_CYBR, 3, false, 3, &A_Metal, State_CYBER_RUN8 },		// State_CYBER_RUN7
   DOOM::AbstractThing::State{ Sprite_CYBR, 3, false, 3, &A_Chase, State_CYBER_RUN1 },		// State_CYBER_RUN8
   DOOM::AbstractThing::State{ Sprite_CYBR, 4, false, 6, &A_FaceTarget, State_CYBER_ATK2 },	// State_CYBER_ATK1
@@ -725,8 +725,8 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_PAIN, 0, false, 3, &A_Chase, State_PAIN_RUN3 },		// State_PAIN_RUN2
   DOOM::AbstractThing::State{ Sprite_PAIN, 1, false, 3, &A_Chase, State_PAIN_RUN4 },		// State_PAIN_RUN3
   DOOM::AbstractThing::State{ Sprite_PAIN, 1, false, 3, &A_Chase, State_PAIN_RUN5 },		// State_PAIN_RUN4
-  DOOM::AbstractThing::State{ Sprite_PAIN, 3, false, 3, &A_Chase, State_PAIN_RUN6 },		// State_PAIN_RUN5
-  DOOM::AbstractThing::State{ Sprite_PAIN, 3, false, 3, &A_Chase, State_PAIN_RUN1 },		// State_PAIN_RUN6
+  DOOM::AbstractThing::State{ Sprite_PAIN, 2, false, 3, &A_Chase, State_PAIN_RUN6 },		// State_PAIN_RUN5
+  DOOM::AbstractThing::State{ Sprite_PAIN, 2, false, 3, &A_Chase, State_PAIN_RUN1 },		// State_PAIN_RUN6
   DOOM::AbstractThing::State{ Sprite_PAIN, 3, false, 5, &A_FaceTarget, State_PAIN_ATK2 },	// State_PAIN_ATK1
   DOOM::AbstractThing::State{ Sprite_PAIN, 4, false, 5, &A_FaceTarget, State_PAIN_ATK3 },	// State_PAIN_ATK2
   DOOM::AbstractThing::State{ Sprite_PAIN, 5, true, 5, &A_FaceTarget, State_PAIN_ATK4 },	// State_PAIN_ATK3
@@ -751,8 +751,8 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_SSWV, 0, false, 3, &A_Chase, State_SSWV_RUN3 },		// State_SSWV_RUN2
   DOOM::AbstractThing::State{ Sprite_SSWV, 1, false, 3, &A_Chase, State_SSWV_RUN4 },		// State_SSWV_RUN3
   DOOM::AbstractThing::State{ Sprite_SSWV, 1, false, 3, &A_Chase, State_SSWV_RUN5 },		// State_SSWV_RUN4
-  DOOM::AbstractThing::State{ Sprite_SSWV, 3, false, 3, &A_Chase, State_SSWV_RUN6 },		// State_SSWV_RUN5
-  DOOM::AbstractThing::State{ Sprite_SSWV, 3, false, 3, &A_Chase, State_SSWV_RUN7 },		// State_SSWV_RUN6
+  DOOM::AbstractThing::State{ Sprite_SSWV, 2, false, 3, &A_Chase, State_SSWV_RUN6 },		// State_SSWV_RUN5
+  DOOM::AbstractThing::State{ Sprite_SSWV, 2, false, 3, &A_Chase, State_SSWV_RUN7 },		// State_SSWV_RUN6
   DOOM::AbstractThing::State{ Sprite_SSWV, 3, false, 3, &A_Chase, State_SSWV_RUN8 },		// State_SSWV_RUN7
   DOOM::AbstractThing::State{ Sprite_SSWV, 3, false, 3, &A_Chase, State_SSWV_RUN1 },		// State_SSWV_RUN8
   DOOM::AbstractThing::State{ Sprite_SSWV, 4, false, 10, &A_FaceTarget, State_SSWV_ATK2 },	// State_SSWV_ATK1
@@ -785,7 +785,7 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_KEEN, 0, false, -1, nullptr, State_KEENSTND },		// State_KEENSTND
   DOOM::AbstractThing::State{ Sprite_KEEN, 0, false, 6, nullptr, State_COMMKEEN2 },		// State_COMMKEEN
   DOOM::AbstractThing::State{ Sprite_KEEN, 1, false, 6, nullptr, State_COMMKEEN3 },		// State_COMMKEEN2
-  DOOM::AbstractThing::State{ Sprite_KEEN, 3, false, 6, &A_Scream, State_COMMKEEN4 },		// State_COMMKEEN3
+  DOOM::AbstractThing::State{ Sprite_KEEN, 2, false, 6, &A_Scream, State_COMMKEEN4 },		// State_COMMKEEN3
   DOOM::AbstractThing::State{ Sprite_KEEN, 3, false, 6, nullptr, State_COMMKEEN5 },		// State_COMMKEEN4
   DOOM::AbstractThing::State{ Sprite_KEEN, 4, false, 6, nullptr, State_COMMKEEN6 },		// State_COMMKEEN5
   DOOM::AbstractThing::State{ Sprite_KEEN, 5, false, 6, nullptr, State_COMMKEEN7 },		// State_COMMKEEN6
@@ -808,18 +808,18 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_SSWV, 0, false, 150, &A_BrainSpit, State_BRAINEYE1 },	// State_BRAINEYE1
   DOOM::AbstractThing::State{ Sprite_BOSF, 0, true, 3, &A_SpawnSound, State_SPAWN2 },		// State_SPAWN1
   DOOM::AbstractThing::State{ Sprite_BOSF, 1, true, 3, &A_SpawnFly, State_SPAWN3 },		// State_SPAWN2
-  DOOM::AbstractThing::State{ Sprite_BOSF, 3, true, 3, &A_SpawnFly, State_SPAWN4 },		// State_SPAWN3
+  DOOM::AbstractThing::State{ Sprite_BOSF, 2, true, 3, &A_SpawnFly, State_SPAWN4 },		// State_SPAWN3
   DOOM::AbstractThing::State{ Sprite_BOSF, 3, true, 3, &A_SpawnFly, State_SPAWN1 },		// State_SPAWN4
   DOOM::AbstractThing::State{ Sprite_FIRE, 0, true, 4, &A_Fire, State_SPAWNFIRE2 },		// State_SPAWNFIRE1
   DOOM::AbstractThing::State{ Sprite_FIRE, 1, true, 4, &A_Fire, State_SPAWNFIRE3 },		// State_SPAWNFIRE2
-  DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 4, &A_Fire, State_SPAWNFIRE4 },		// State_SPAWNFIRE3
+  DOOM::AbstractThing::State{ Sprite_FIRE, 2, true, 4, &A_Fire, State_SPAWNFIRE4 },		// State_SPAWNFIRE3
   DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 4, &A_Fire, State_SPAWNFIRE5 },		// State_SPAWNFIRE4
   DOOM::AbstractThing::State{ Sprite_FIRE, 4, true, 4, &A_Fire, State_SPAWNFIRE6 },		// State_SPAWNFIRE5
   DOOM::AbstractThing::State{ Sprite_FIRE, 5, true, 4, &A_Fire, State_SPAWNFIRE7 },		// State_SPAWNFIRE6
   DOOM::AbstractThing::State{ Sprite_FIRE, 6, true, 4, &A_Fire, State_SPAWNFIRE8 },		// State_SPAWNFIRE7
   DOOM::AbstractThing::State{ Sprite_FIRE, 7, true, 4, &A_Fire, State_None },			// State_SPAWNFIRE8
   DOOM::AbstractThing::State{ Sprite_MISL, 1, true, 10, nullptr, State_BRAINEXPLODE2 },		// State_BRAINEXPLODE1
-  DOOM::AbstractThing::State{ Sprite_MISL, 3, true, 10, nullptr, State_BRAINEXPLODE3 },		// State_BRAINEXPLODE2
+  DOOM::AbstractThing::State{ Sprite_MISL, 2, true, 10, nullptr, State_BRAINEXPLODE3 },		// State_BRAINEXPLODE2
   DOOM::AbstractThing::State{ Sprite_MISL, 3, true, 10, &A_BrainExplode, State_None },		// State_BRAINEXPLODE3
   DOOM::AbstractThing::State{ Sprite_ARM1, 0, false, 6, nullptr, State_ARM1A },			// State_ARM1
   DOOM::AbstractThing::State{ Sprite_ARM1, 1, true, 7, nullptr, State_ARM1 },			// State_ARM1A
@@ -829,23 +829,23 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_BAR1, 1, false, 6, nullptr, State_BAR1 },			// State_BAR2
   DOOM::AbstractThing::State{ Sprite_BEXP, 0, true, 5, nullptr, State_BEXP2 },			// State_BEXP
   DOOM::AbstractThing::State{ Sprite_BEXP, 1, true, 5, &A_Scream, State_BEXP3 },		// State_BEXP2
-  DOOM::AbstractThing::State{ Sprite_BEXP, 3, true, 5, nullptr, State_BEXP4 },			// State_BEXP3
+  DOOM::AbstractThing::State{ Sprite_BEXP, 2, true, 5, nullptr, State_BEXP4 },			// State_BEXP3
   DOOM::AbstractThing::State{ Sprite_BEXP, 3, true, 10, &A_Explode, State_BEXP5 },		// State_BEXP4
   DOOM::AbstractThing::State{ Sprite_BEXP, 4, true, 10, nullptr, State_None },			// State_BEXP5
   DOOM::AbstractThing::State{ Sprite_FCAN, 0, true, 4, nullptr, State_BBAR2 },			// State_BBAR1
   DOOM::AbstractThing::State{ Sprite_FCAN, 1, true, 4, nullptr, State_BBAR3 },			// State_BBAR2
-  DOOM::AbstractThing::State{ Sprite_FCAN, 3, true, 4, nullptr, State_BBAR1 },			// State_BBAR3
+  DOOM::AbstractThing::State{ Sprite_FCAN, 2, true, 4, nullptr, State_BBAR1 },			// State_BBAR3
   DOOM::AbstractThing::State{ Sprite_BON1, 0, false, 6, nullptr, State_BON1A },			// State_BON1
   DOOM::AbstractThing::State{ Sprite_BON1, 1, false, 6, nullptr, State_BON1B },			// State_BON1A
-  DOOM::AbstractThing::State{ Sprite_BON1, 3, false, 6, nullptr, State_BON1C },			// State_BON1B
+  DOOM::AbstractThing::State{ Sprite_BON1, 2, false, 6, nullptr, State_BON1C },			// State_BON1B
   DOOM::AbstractThing::State{ Sprite_BON1, 3, false, 6, nullptr, State_BON1D },			// State_BON1C
-  DOOM::AbstractThing::State{ Sprite_BON1, 3, false, 6, nullptr, State_BON1E },			// State_BON1D
+  DOOM::AbstractThing::State{ Sprite_BON1, 2, false, 6, nullptr, State_BON1E },			// State_BON1D
   DOOM::AbstractThing::State{ Sprite_BON1, 1, false, 6, nullptr, State_BON1 },			// State_BON1E
   DOOM::AbstractThing::State{ Sprite_BON2, 0, false, 6, nullptr, State_BON2A },			// State_BON2
   DOOM::AbstractThing::State{ Sprite_BON2, 1, false, 6, nullptr, State_BON2B },			// State_BON2A
-  DOOM::AbstractThing::State{ Sprite_BON2, 3, false, 6, nullptr, State_BON2C },			// State_BON2B
+  DOOM::AbstractThing::State{ Sprite_BON2, 2, false, 6, nullptr, State_BON2C },			// State_BON2B
   DOOM::AbstractThing::State{ Sprite_BON2, 3, false, 6, nullptr, State_BON2D },			// State_BON2C
-  DOOM::AbstractThing::State{ Sprite_BON2, 3, false, 6, nullptr, State_BON2E },			// State_BON2D
+  DOOM::AbstractThing::State{ Sprite_BON2, 2, false, 6, nullptr, State_BON2E },			// State_BON2D
   DOOM::AbstractThing::State{ Sprite_BON2, 1, false, 6, nullptr, State_BON2 },			// State_BON2E
   DOOM::AbstractThing::State{ Sprite_BKEY, 0, false, 10, nullptr, State_BKEY2 },		// State_BKEY
   DOOM::AbstractThing::State{ Sprite_BKEY, 1, true, 10, nullptr, State_BKEY },			// State_BKEY2
@@ -863,29 +863,29 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_MEDI, 0, false, -1, nullptr, State_None },			// State_MEDI
   DOOM::AbstractThing::State{ Sprite_SOUL, 0, true, 6, nullptr, State_SOUL2 },			// State_SOUL
   DOOM::AbstractThing::State{ Sprite_SOUL, 1, true, 6, nullptr, State_SOUL3 },			// State_SOUL2
-  DOOM::AbstractThing::State{ Sprite_SOUL, 3, true, 6, nullptr, State_SOUL4 },			// State_SOUL3
+  DOOM::AbstractThing::State{ Sprite_SOUL, 2, true, 6, nullptr, State_SOUL4 },			// State_SOUL3
   DOOM::AbstractThing::State{ Sprite_SOUL, 3, true, 6, nullptr, State_SOUL5 },			// State_SOUL4
-  DOOM::AbstractThing::State{ Sprite_SOUL, 3, true, 6, nullptr, State_SOUL6 },			// State_SOUL5
+  DOOM::AbstractThing::State{ Sprite_SOUL, 2, true, 6, nullptr, State_SOUL6 },			// State_SOUL5
   DOOM::AbstractThing::State{ Sprite_SOUL, 1, true, 6, nullptr, State_SOUL },			// State_SOUL6
   DOOM::AbstractThing::State{ Sprite_PINV, 0, true, 6, nullptr, State_PINV2 },			// State_PINV
   DOOM::AbstractThing::State{ Sprite_PINV, 1, true, 6, nullptr, State_PINV3 },			// State_PINV2
-  DOOM::AbstractThing::State{ Sprite_PINV, 3, true, 6, nullptr, State_PINV4 },			// State_PINV3
+  DOOM::AbstractThing::State{ Sprite_PINV, 2, true, 6, nullptr, State_PINV4 },			// State_PINV3
   DOOM::AbstractThing::State{ Sprite_PINV, 3, true, 6, nullptr, State_PINV },			// State_PINV4
   DOOM::AbstractThing::State{ Sprite_PSTR, 0, true, -1, nullptr, State_None },			// State_PSTR
   DOOM::AbstractThing::State{ Sprite_PINS, 0, true, 6, nullptr, State_PINS2 },			// State_PINS
   DOOM::AbstractThing::State{ Sprite_PINS, 1, true, 6, nullptr, State_PINS3 },			// State_PINS2
-  DOOM::AbstractThing::State{ Sprite_PINS, 3, true, 6, nullptr, State_PINS4 },			// State_PINS3
+  DOOM::AbstractThing::State{ Sprite_PINS, 2, true, 6, nullptr, State_PINS4 },			// State_PINS3
   DOOM::AbstractThing::State{ Sprite_PINS, 3, true, 6, nullptr, State_PINS },			// State_PINS4
   DOOM::AbstractThing::State{ Sprite_MEGA, 0, true, 6, nullptr, State_MEGA2 },			// State_MEGA
   DOOM::AbstractThing::State{ Sprite_MEGA, 1, true, 6, nullptr, State_MEGA3 },			// State_MEGA2
-  DOOM::AbstractThing::State{ Sprite_MEGA, 3, true, 6, nullptr, State_MEGA4 },			// State_MEGA3
+  DOOM::AbstractThing::State{ Sprite_MEGA, 2, true, 6, nullptr, State_MEGA4 },			// State_MEGA3
   DOOM::AbstractThing::State{ Sprite_MEGA, 3, true, 6, nullptr, State_MEGA },			// State_MEGA4
   DOOM::AbstractThing::State{ Sprite_SUIT, 0, true, -1, nullptr, State_None },			// State_SUIT
   DOOM::AbstractThing::State{ Sprite_PMAP, 0, true, 6, nullptr, State_PMAP2 },			// State_PMAP
   DOOM::AbstractThing::State{ Sprite_PMAP, 1, true, 6, nullptr, State_PMAP3 },			// State_PMAP2
-  DOOM::AbstractThing::State{ Sprite_PMAP, 3, true, 6, nullptr, State_PMAP4 },			// State_PMAP3
+  DOOM::AbstractThing::State{ Sprite_PMAP, 2, true, 6, nullptr, State_PMAP4 },			// State_PMAP3
   DOOM::AbstractThing::State{ Sprite_PMAP, 3, true, 6, nullptr, State_PMAP5 },			// State_PMAP4
-  DOOM::AbstractThing::State{ Sprite_PMAP, 3, true, 6, nullptr, State_PMAP6 },			// State_PMAP5
+  DOOM::AbstractThing::State{ Sprite_PMAP, 2, true, 6, nullptr, State_PMAP6 },			// State_PMAP5
   DOOM::AbstractThing::State{ Sprite_PMAP, 1, true, 6, nullptr, State_PMAP },			// State_PMAP6
   DOOM::AbstractThing::State{ Sprite_PVIS, 0, true, 6, nullptr, State_PVIS2 },			// State_PVIS
   DOOM::AbstractThing::State{ Sprite_PVIS, 1, false, 6, nullptr, State_PVIS },			// State_PVIS2
@@ -909,7 +909,7 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_SMT2, 0, false, -1, nullptr, State_None },			// State_STALAG
   DOOM::AbstractThing::State{ Sprite_GOR1, 0, false, 10, nullptr, State_BLOODYTWITCH2 },	// State_BLOODYTWITCH
   DOOM::AbstractThing::State{ Sprite_GOR1, 1, false, 15, nullptr, State_BLOODYTWITCH3 },	// State_BLOODYTWITCH2
-  DOOM::AbstractThing::State{ Sprite_GOR1, 3, false, 8, nullptr, State_BLOODYTWITCH4 },		// State_BLOODYTWITCH3
+  DOOM::AbstractThing::State{ Sprite_GOR1, 2, false, 8, nullptr, State_BLOODYTWITCH4 },		// State_BLOODYTWITCH3
   DOOM::AbstractThing::State{ Sprite_GOR1, 1, false, 6, nullptr, State_BLOODYTWITCH },		// State_BLOODYTWITCH4
   DOOM::AbstractThing::State{ Sprite_PLAY, 13, false, -1, nullptr, State_None },		// State_DEADTORSO
   DOOM::AbstractThing::State{ Sprite_PLAY, 18, false, -1, nullptr, State_None },		// State_DEADBOTTOM
@@ -938,36 +938,36 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_ELEC, 0, false, -1, nullptr, State_None },			// State_TECHPILLAR
   DOOM::AbstractThing::State{ Sprite_CEYE, 0, true, 6, nullptr, State_EVILEYE2 },		// State_EVILEYE
   DOOM::AbstractThing::State{ Sprite_CEYE, 1, true, 6, nullptr, State_EVILEYE3 },		// State_EVILEYE2
-  DOOM::AbstractThing::State{ Sprite_CEYE, 3, true, 6, nullptr, State_EVILEYE4 },		// State_EVILEYE3
+  DOOM::AbstractThing::State{ Sprite_CEYE, 2, true, 6, nullptr, State_EVILEYE4 },		// State_EVILEYE3
   DOOM::AbstractThing::State{ Sprite_CEYE, 1, true, 6, nullptr, State_EVILEYE },		// State_EVILEYE4
   DOOM::AbstractThing::State{ Sprite_FSKU, 0, true, 6, nullptr, State_FLOATSKULL2 },		// State_FLOATSKULL
   DOOM::AbstractThing::State{ Sprite_FSKU, 1, true, 6, nullptr, State_FLOATSKULL3 },		// State_FLOATSKULL2
-  DOOM::AbstractThing::State{ Sprite_FSKU, 3, true, 6, nullptr, State_FLOATSKULL },		// State_FLOATSKULL3
+  DOOM::AbstractThing::State{ Sprite_FSKU, 2, true, 6, nullptr, State_FLOATSKULL },		// State_FLOATSKULL3
   DOOM::AbstractThing::State{ Sprite_COL5, 0, false, 14, nullptr, State_HEARTCOL2 },		// State_HEARTCOL
   DOOM::AbstractThing::State{ Sprite_COL5, 1, false, 14, nullptr, State_HEARTCOL },		// State_HEARTCOL2
   DOOM::AbstractThing::State{ Sprite_TBLU, 0, true, 4, nullptr, State_BLUETORCH2 },		// State_BLUETORCH
   DOOM::AbstractThing::State{ Sprite_TBLU, 1, true, 4, nullptr, State_BLUETORCH3 },		// State_BLUETORCH2
-  DOOM::AbstractThing::State{ Sprite_TBLU, 3, true, 4, nullptr, State_BLUETORCH4 },		// State_BLUETORCH3
+  DOOM::AbstractThing::State{ Sprite_TBLU, 2, true, 4, nullptr, State_BLUETORCH4 },		// State_BLUETORCH3
   DOOM::AbstractThing::State{ Sprite_TBLU, 3, true, 4, nullptr, State_BLUETORCH },		// State_BLUETORCH4
   DOOM::AbstractThing::State{ Sprite_TGRN, 0, true, 4, nullptr, State_GREENTORCH2 },		// State_GREENTORCH
   DOOM::AbstractThing::State{ Sprite_TGRN, 1, true, 4, nullptr, State_GREENTORCH3 },		// State_GREENTORCH2
-  DOOM::AbstractThing::State{ Sprite_TGRN, 3, true, 4, nullptr, State_GREENTORCH4 },		// State_GREENTORCH3
+  DOOM::AbstractThing::State{ Sprite_TGRN, 2, true, 4, nullptr, State_GREENTORCH4 },		// State_GREENTORCH3
   DOOM::AbstractThing::State{ Sprite_TGRN, 3, true, 4, nullptr, State_GREENTORCH },		// State_GREENTORCH4
   DOOM::AbstractThing::State{ Sprite_TRED, 0, true, 4, nullptr, State_REDTORCH2 },		// State_REDTORCH
   DOOM::AbstractThing::State{ Sprite_TRED, 1, true, 4, nullptr, State_REDTORCH3 },		// State_REDTORCH2
-  DOOM::AbstractThing::State{ Sprite_TRED, 3, true, 4, nullptr, State_REDTORCH4 },		// State_REDTORCH3
+  DOOM::AbstractThing::State{ Sprite_TRED, 2, true, 4, nullptr, State_REDTORCH4 },		// State_REDTORCH3
   DOOM::AbstractThing::State{ Sprite_TRED, 3, true, 4, nullptr, State_REDTORCH },		// State_REDTORCH4
   DOOM::AbstractThing::State{ Sprite_SMBT, 0, true, 4, nullptr, State_BTORCHSHRT2 },		// State_BTORCHSHRT
   DOOM::AbstractThing::State{ Sprite_SMBT, 1, true, 4, nullptr, State_BTORCHSHRT3 },		// State_BTORCHSHRT2
-  DOOM::AbstractThing::State{ Sprite_SMBT, 3, true, 4, nullptr, State_BTORCHSHRT4 },		// State_BTORCHSHRT3
+  DOOM::AbstractThing::State{ Sprite_SMBT, 2, true, 4, nullptr, State_BTORCHSHRT4 },		// State_BTORCHSHRT3
   DOOM::AbstractThing::State{ Sprite_SMBT, 3, true, 4, nullptr, State_BTORCHSHRT },		// State_BTORCHSHRT4
   DOOM::AbstractThing::State{ Sprite_SMGT, 0, true, 4, nullptr, State_GTORCHSHRT2 },		// State_GTORCHSHRT
   DOOM::AbstractThing::State{ Sprite_SMGT, 1, true, 4, nullptr, State_GTORCHSHRT3 },		// State_GTORCHSHRT2
-  DOOM::AbstractThing::State{ Sprite_SMGT, 3, true, 4, nullptr, State_GTORCHSHRT4 },		// State_GTORCHSHRT3
+  DOOM::AbstractThing::State{ Sprite_SMGT, 2, true, 4, nullptr, State_GTORCHSHRT4 },		// State_GTORCHSHRT3
   DOOM::AbstractThing::State{ Sprite_SMGT, 3, true, 4, nullptr, State_GTORCHSHRT },		// State_GTORCHSHRT4
   DOOM::AbstractThing::State{ Sprite_SMRT, 0, true, 4, nullptr, State_RTORCHSHRT2 },		// State_RTORCHSHRT
   DOOM::AbstractThing::State{ Sprite_SMRT, 1, true, 4, nullptr, State_RTORCHSHRT3 },		// State_RTORCHSHRT2
-  DOOM::AbstractThing::State{ Sprite_SMRT, 3, true, 4, nullptr, State_RTORCHSHRT4 },		// State_RTORCHSHRT3
+  DOOM::AbstractThing::State{ Sprite_SMRT, 2, true, 4, nullptr, State_RTORCHSHRT4 },		// State_RTORCHSHRT3
   DOOM::AbstractThing::State{ Sprite_SMRT, 3, true, 4, nullptr, State_RTORCHSHRT },		// State_RTORCHSHRT4
   DOOM::AbstractThing::State{ Sprite_HDB1, 0, false, -1, nullptr, State_None },			// State_HANGNOGUTS
   DOOM::AbstractThing::State{ Sprite_HDB2, 0, false, -1, nullptr, State_None },			// State_HANGBNOBRAIN
@@ -980,11 +980,11 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_BRS1, 0, false, -1, nullptr, State_None },			// State_BRAINSTEM
   DOOM::AbstractThing::State{ Sprite_TLMP, 0, true, 4, nullptr, State_TECHLAMP2 },		// State_TECHLAMP
   DOOM::AbstractThing::State{ Sprite_TLMP, 1, true, 4, nullptr, State_TECHLAMP3 },		// State_TECHLAMP2
-  DOOM::AbstractThing::State{ Sprite_TLMP, 3, true, 4, nullptr, State_TECHLAMP4 },		// State_TECHLAMP3
+  DOOM::AbstractThing::State{ Sprite_TLMP, 2, true, 4, nullptr, State_TECHLAMP4 },		// State_TECHLAMP3
   DOOM::AbstractThing::State{ Sprite_TLMP, 3, true, 4, nullptr, State_TECHLAMP },		// State_TECHLAMP4
   DOOM::AbstractThing::State{ Sprite_TLP2, 0, true, 4, nullptr, State_TECH2LAMP2 },		// State_TECH2LAMP
   DOOM::AbstractThing::State{ Sprite_TLP2, 1, true, 4, nullptr, State_TECH2LAMP3 },		// State_TECH2LAMP2
-  DOOM::AbstractThing::State{ Sprite_TLP2, 3, true, 4, nullptr, State_TECH2LAMP4 },		// State_TECH2LAMP3
+  DOOM::AbstractThing::State{ Sprite_TLP2, 2, true, 4, nullptr, State_TECH2LAMP4 },		// State_TECH2LAMP3
   DOOM::AbstractThing::State{ Sprite_TLP2, 3, true, 4, nullptr, State_TECH2LAMP }		// State_TECH2LAMP4
 };
 
