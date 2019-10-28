@@ -1,0 +1,51 @@
+#include <iostream>
+#include <stdexcept>
+
+#include "System/Sound.hpp"
+
+Game::Sound::Reference::Reference(sf::Sound & sound, int & lock) :
+  _lock(lock), sound(sound)
+{
+  // Lock instance
+  _lock++;
+}
+
+Game::Sound::Reference::~Reference()
+{
+  // Release instance
+  _lock--;
+
+  // Error if no reference is held on a looping sound
+  if (_lock <= 0 && sound.getLoop() == true)
+    std::cout << "[Game::Sound]: Warning, no reference held on looping sound." << std::endl;
+}
+
+Game::Sound::Sound()
+  : _sounds()
+{}
+
+Game::Sound::~Sound()
+{}
+
+bool		Game::Sound::update(sf::Time elapsed)
+{
+  // Does nothing
+  return false;
+}
+
+Game::Sound::Reference	Game::Sound::get()
+{
+  // Find an available sound in cache
+  for (std::pair<sf::Sound, int>& sound : _sounds)
+    if (sound.second == 0 && sound.first.getStatus() == sf::Sound::Status::Stopped)
+      return Game::Sound::Reference(sound.first, sound.second);
+
+  // Check if internal limit has been reached
+  if (_sounds.size() + 1 > Game::Sound::MaxSound)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // Push a new sound in buffer
+  _sounds.emplace_back();
+
+  return Game::Sound::Reference(_sounds.back().first, _sounds.back().second);
+}
