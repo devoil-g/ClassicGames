@@ -1,7 +1,7 @@
 #ifndef _SOUND_HPP_
 #define _SOUND_HPP_
 
-#include <vector>
+#include <list>
 
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
@@ -28,7 +28,7 @@ namespace Game
 
     static const int	MaxSound = 256;	// Maximum number of soundss
     
-    std::vector<std::pair<sf::Sound, int>>	_sounds;	// Sound instances
+    std::list<std::pair<sf::Sound, int>>	_sounds;	// Sound instances
 
   public:
     Sound();

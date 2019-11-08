@@ -1,7 +1,14 @@
 #include "Doom/Doom.hpp"
 #include "Doom/Thing/AbstractThing.hpp"
+#include "Doom/Thing/PlayerThing.hpp"
+#include "System/Sound.hpp"
 
-const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>	DOOM::AbstractThing::_sprites = {
+const float	DOOM::AbstractThing::MeleeRange = 64.f;
+const float	DOOM::AbstractThing::MissileRange = 32.f * 64.f;
+const float	DOOM::AbstractThing::FloatSpeed = 4.f;
+
+const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>	DOOM::AbstractThing::_sprites =
+{
   "TROO", "SHTG", "PUNG", "PISG", "PISF", "SHTF", "SHT2", "CHGG", "CHGF", "MISG",
   "MISF", "SAWG", "PLSG", "PLSF", "BFGG", "BFGF", "BLUD", "PUFF", "BAL1", "BAL2",
   "PLSS", "PLSE", "MISL", "BFS1", "BFE1", "BFE2", "TFOG", "IFOG", "PLAY", "POSS",
@@ -18,7 +25,8 @@ const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>	D
   "HDB4", "HDB5", "HDB6", "POB1", "POB2", "BRS1", "TLMP", "TLP2"
 };
 
-const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::State_Number>	DOOM::AbstractThing::_states = {
+const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::State_Number>	DOOM::AbstractThing::_states =
+{
   DOOM::AbstractThing::State{ Sprite_TROO, 0, false, -1, nullptr, State_None },			// State_None
   DOOM::AbstractThing::State{ Sprite_SHTG, 4, false, 0, &A_Light0, State_None },		// State_LIGHTDONE
   DOOM::AbstractThing::State{ Sprite_PUNG, 0, false, 1, &A_WeaponReady, State_PUNCH },		// State_PUNCH
@@ -1000,7 +1008,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     56,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_PickUp | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_PickUp | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
 
     State_PLAY,		// state_spawn
     State_PLAY_RUN1,	// state_see
@@ -1027,7 +1035,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     56,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_POSS_STND,	// state_spawn
     State_POSS_RUN1,	// state_see
@@ -1054,7 +1062,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     56,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_SPOS_STND,	// state_spawn
     State_SPOS_RUN1,	// state_see
@@ -1081,7 +1089,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     56,		// height
     500,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_VILE_STND,	// state_spawn
     State_VILE_RUN1,	// state_see
@@ -1108,7 +1116,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_FIRE1,	// state_spawn
     State_None,		// state_see
@@ -1135,7 +1143,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     66,		// height
     500,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_SKEL_STND,	// state_spawn
     State_SKEL_RUN1,	// state_see
@@ -1162,7 +1170,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     8,		// height
     100,	// mass
     10,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_TRACER,	// state_spawn
     State_None,		// state_see
@@ -1189,7 +1197,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_SMOKE1,	// state_spawn
     State_None,		// state_see
@@ -1216,7 +1224,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     64,		// height
     1000,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_FATT_STND,	// state_spawn
     State_FATT_RUN1,	// state_see
@@ -1243,7 +1251,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     8,		// height
     100,	// mass
     8,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_FATSHOT1,	// state_spawn
     State_None,		// state_see
@@ -1270,7 +1278,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     56,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_CPOS_STND,	// state_spawn
     State_CPOS_RUN1,	// state_see
@@ -1297,7 +1305,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     56,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_TROO_STND,	// state_spawn
     State_TROO_RUN1,	// state_see
@@ -1324,7 +1332,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     56,		// height
     400,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_SARG_STND,	// state_spawn
     State_SARG_RUN1,	// state_see
@@ -1351,7 +1359,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     56,		// height
     400,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Shadow | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Shadow | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_SARG_STND,	// state_spawn
     State_SARG_RUN1,	// state_see
@@ -1378,7 +1386,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     56,		// height
     400,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_NoGravity | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_NoGravity | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_HEAD_STND,	// state_spawn
     State_HEAD_RUN1,	// state_see
@@ -1405,7 +1413,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     64,		// height
     1000,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_BOSS_STND,	// state_spawn
     State_BOSS_RUN1,	// state_see
@@ -1432,7 +1440,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     8,		// height
     100,	// mass
     8,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_BRBALL1,	// state_spawn
     State_None,		// state_see
@@ -1459,7 +1467,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     64,		// height
     1000,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_BOS2_STND,	// state_spawn
     State_BOS2_RUN1,	// state_see
@@ -1486,7 +1494,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     56,		// height
     50,		// mass
     3,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_SKULL_STND,	// state_spawn
     State_SKULL_RUN1,	// state_see
@@ -1513,7 +1521,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     100,	// height
     1000,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_SPID_STND,	// state_spawn
     State_SPID_RUN1,	// state_see
@@ -1540,7 +1548,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     64,		// height
     600,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_BSPI_STND,	// state_spawn
     State_BSPI_SIGHT,	// state_see
@@ -1567,7 +1575,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     110,	// height
     1000,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_CYBER_STND,	// state_spawn
     State_CYBER_RUN1,	// state_see
@@ -1594,7 +1602,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     56,		// height
     400,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_NoGravity | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_NoGravity | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_PAIN_STND,	// state_spawn
     State_PAIN_RUN1,	// state_see
@@ -1621,7 +1629,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     56,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_SSWV_STND,	// state_spawn
     State_SSWV_RUN1,	// state_see
@@ -1648,7 +1656,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     72,		// height
     10000000,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
 
     State_KEENSTND,	// state_spawn
     State_None,		// state_see
@@ -1675,7 +1683,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     10000000,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable),	// properties
 
     State_BRAIN,	// state_spawn
     State_None,		// state_see
@@ -1702,7 +1710,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     32,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector),	// properties
 
     State_BRAINEYE,	// state_spawn
     State_BRAINEYESEE,	// state_see
@@ -1729,7 +1737,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     32,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector),	// properties
 
     State_None,		// state_spawn
     State_None,		// state_see
@@ -1756,7 +1764,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     32,		// height
     100,	// mass
     3,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity | DOOM::Enum::ThingProperty::ThingProperty_NoClip,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity | DOOM::Enum::ThingProperty::ThingProperty_NoClip),	// properties
 
     State_SPAWN1,	// state_spawn
     State_None,		// state_see
@@ -1783,7 +1791,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_SPAWNFIRE1,	// state_spawn
     State_None,		// state_see
@@ -1810,7 +1818,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     42,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_NoBlood,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_NoBlood),	// properties
 
     State_BAR1,		// state_spawn
     State_None,		// state_see
@@ -1837,7 +1845,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     8,		// height
     100,	// mass
     3,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_TBALL1,	// state_spawn
     State_None,		// state_see
@@ -1864,7 +1872,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     8,		// height
     100,	// mass
     5,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_RBALL1,	// state_spawn
     State_None,		// state_see
@@ -1891,7 +1899,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     8,		// height
     100,	// mass
     20,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_ROCKET,	// state_spawn
     State_None,		// state_see
@@ -1918,7 +1926,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     8,		// height
     100,	// mass
     5,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_PLASBALL,	// state_spawn
     State_None,		// state_see
@@ -1945,7 +1953,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     8,		// height
     100,	// mass
     100,	// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_BFGSHOT,	// state_spawn
     State_None,		// state_see
@@ -1972,7 +1980,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     8,		// height
     100,	// mass
     5,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_ARACH_PLAZ,	// state_spawn
     State_None,		// state_see
@@ -1999,7 +2007,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_PUFF1,	// state_spawn
     State_None,		// state_see
@@ -2026,7 +2034,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap),	// properties
 
     State_BLOOD1,	// state_spawn
     State_None,		// state_see
@@ -2053,7 +2061,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_TFOG,		// state_spawn
     State_None,		// state_see
@@ -2080,7 +2088,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_IFOG,		// state_spawn
     State_None,		// state_see
@@ -2107,7 +2115,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector),	// properties
 
     State_None,		// state_spawn
     State_None,		// state_see
@@ -2134,7 +2142,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_BFGEXP,	// state_spawn
     State_None,		// state_see
@@ -2161,7 +2169,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_ARM1,		// state_spawn
     State_None,		// state_see
@@ -2188,7 +2196,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_ARM2,		// state_spawn
     State_None,		// state_see
@@ -2215,7 +2223,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
 
     State_BON1,		// state_spawn
     State_None,		// state_see
@@ -2242,7 +2250,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
 
     State_BON2,		// state_spawn
     State_None,		// state_see
@@ -2269,7 +2277,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
 
     State_BKEY,		// state_spawn
     State_None,		// state_see
@@ -2296,7 +2304,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
 
     State_RKEY,		// state_spawn
     State_None,		// state_see
@@ -2323,7 +2331,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
 
     State_YKEY,		// state_spawn
     State_None,		// state_see
@@ -2350,7 +2358,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
 
     State_YSKULL,	// state_spawn
     State_None,		// state_see
@@ -2377,7 +2385,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
 
     State_RSKULL,	// state_spawn
     State_None,		// state_see
@@ -2404,7 +2412,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
 
     State_BSKULL,	// state_spawn
     State_None,		// state_see
@@ -2431,7 +2439,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_STIM,		// state_spawn
     State_None,		// state_see
@@ -2458,7 +2466,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_MEDI,		// state_spawn
     State_None,		// state_see
@@ -2485,7 +2493,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
 
     State_STIM,		// state_spawn
     State_None,		// state_see
@@ -2512,7 +2520,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
 
     State_PINV,		// state_spawn
     State_None,		// state_see
@@ -2539,7 +2547,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
 
     State_PSTR,		// state_spawn
     State_None,		// state_see
@@ -2566,7 +2574,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
 
     State_PINS,		// state_spawn
     State_None,		// state_see
@@ -2593,7 +2601,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_SUIT,		// state_spawn
     State_None,		// state_see
@@ -2620,7 +2628,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
 
     State_PMAP,		// state_spawn
     State_None,		// state_see
@@ -2647,7 +2655,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
 
     State_PVIS,		// state_spawn
     State_None,		// state_see
@@ -2674,7 +2682,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
 
     State_MEGA,		// state_spawn
     State_None,		// state_see
@@ -2701,7 +2709,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_CLIP,		// state_spawn
     State_None,		// state_see
@@ -2728,7 +2736,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_AMMO,		// state_spawn
     State_None,		// state_see
@@ -2755,7 +2763,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_ROCK,		// state_spawn
     State_None,		// state_see
@@ -2782,7 +2790,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_BROK,		// state_spawn
     State_None,		// state_see
@@ -2809,7 +2817,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_CELL,		// state_spawn
     State_None,		// state_see
@@ -2836,7 +2844,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_CELP,		// state_spawn
     State_None,		// state_see
@@ -2863,7 +2871,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_SHEL,		// state_spawn
     State_None,		// state_see
@@ -2890,7 +2898,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_SBOX,		// state_spawn
     State_None,		// state_see
@@ -2917,7 +2925,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_BPAK,		// state_spawn
     State_None,		// state_see
@@ -2944,7 +2952,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_BFUG,		// state_spawn
     State_None,		// state_see
@@ -2971,7 +2979,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_MGUN,		// state_spawn
     State_None,		// state_see
@@ -2998,7 +3006,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_CSAW,		// state_spawn
     State_None,		// state_see
@@ -3025,7 +3033,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_LAUN,		// state_spawn
     State_None,		// state_see
@@ -3052,7 +3060,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_PLAS,		// state_spawn
     State_None,		// state_see
@@ -3079,7 +3087,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_SHOT,		// state_spawn
     State_None,		// state_see
@@ -3106,7 +3114,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Special,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
 
     State_SHOT2,	// state_spawn
     State_None,		// state_see
@@ -3133,7 +3141,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_TECHLAMP,	// state_spawn
     State_None,		// state_see
@@ -3160,7 +3168,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_TECH2LAMP,	// state_spawn
     State_None,		// state_see
@@ -3187,7 +3195,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_COLU,		// state_spawn
     State_None,		// state_see
@@ -3214,7 +3222,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_TALLGRNCOL,	// state_spawn
     State_None,		// state_see
@@ -3241,7 +3249,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_SHRTGRNCOL,	// state_spawn
     State_None,		// state_see
@@ -3268,7 +3276,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_TALLREDCOL,	// state_spawn
     State_None,		// state_see
@@ -3295,7 +3303,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_SHRTREDCOL,	// state_spawn
     State_None,		// state_see
@@ -3322,7 +3330,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_SKULLCOL,	// state_spawn
     State_None,		// state_see
@@ -3349,7 +3357,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_HEARTCOL,	// state_spawn
     State_None,		// state_see
@@ -3376,7 +3384,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_EVILEYE,	// state_spawn
     State_None,		// state_see
@@ -3403,7 +3411,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_FLOATSKULL,	// state_spawn
     State_None,		// state_see
@@ -3430,7 +3438,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_TORCHTREE,	// state_spawn
     State_None,		// state_see
@@ -3457,7 +3465,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_BLUETORCH,	// state_spawn
     State_None,		// state_see
@@ -3484,7 +3492,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_GREENTORCH,	// state_spawn
     State_None,		// state_see
@@ -3511,7 +3519,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_REDTORCH,	// state_spawn
     State_None,		// state_see
@@ -3538,7 +3546,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_BTORCHSHRT,	// state_spawn
     State_None,		// state_see
@@ -3565,7 +3573,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_GTORCHSHRT,	// state_spawn
     State_None,		// state_see
@@ -3592,7 +3600,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_RTORCHSHRT,	// state_spawn
     State_None,		// state_see
@@ -3619,7 +3627,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_STALAGTITE,	// state_spawn
     State_None,		// state_see
@@ -3646,7 +3654,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_TECHPILLAR,	// state_spawn
     State_None,		// state_see
@@ -3673,7 +3681,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_None,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
 
     State_CANDLESTIK,	// state_spawn
     State_None,		// state_see
@@ -3700,7 +3708,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_CANDELABRA,	// state_spawn
     State_None,		// state_see
@@ -3727,7 +3735,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     68,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_BLOODYTWITCH,	// state_spawn
     State_None,		// state_see
@@ -3754,7 +3762,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     84,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_MEAT2,	// state_spawn
     State_None,		// state_see
@@ -3781,7 +3789,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     84,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_MEAT3,	// state_spawn
     State_None,		// state_see
@@ -3808,7 +3816,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     68,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_MEAT4,	// state_spawn
     State_None,		// state_see
@@ -3835,7 +3843,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     52,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_MEAT5,	// state_spawn
     State_None,		// state_see
@@ -3862,7 +3870,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     84,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_MEAT2,	// state_spawn
     State_None,		// state_see
@@ -3889,7 +3897,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     68,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_MEAT4,	// state_spawn
     State_None,		// state_see
@@ -3916,7 +3924,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     52,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_MEAT3,	// state_spawn
     State_None,		// state_see
@@ -3943,7 +3951,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     52,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_MEAT5,	// state_spawn
     State_None,		// state_see
@@ -3970,7 +3978,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     68,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_BLOODYTWITCH,	// state_spawn
     State_None,		// state_see
@@ -3997,7 +4005,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_None,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
 
     State_HEAD_DIE6,	// state_spawn
     State_None,		// state_see
@@ -4024,7 +4032,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_None,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
 
     State_PLAY_DIE7,	// state_spawn
     State_None,		// state_see
@@ -4051,7 +4059,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_None,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
 
     State_POSS_DIE5,	// state_spawn
     State_None,		// state_see
@@ -4078,7 +4086,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_None,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
 
     State_SARG_DIE6,	// state_spawn
     State_None,		// state_see
@@ -4105,7 +4113,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_None,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
 
     State_SKULL_DIE6,	// state_spawn
     State_None,		// state_see
@@ -4132,7 +4140,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_None,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
 
     State_TROO_DIE5,	// state_spawn
     State_None,		// state_see
@@ -4159,7 +4167,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_None,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
 
     State_SPOS_DIE5,	// state_spawn
     State_None,		// state_see
@@ -4186,7 +4194,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_None,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
 
     State_PLAY_XDIE9,	// state_spawn
     State_None,		// state_see
@@ -4213,7 +4221,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_None,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
 
     State_PLAY_XDIE9,	// state_spawn
     State_None,		// state_see
@@ -4240,7 +4248,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_HEADSONSTICK,	// state_spawn
     State_None,		// state_see
@@ -4267,7 +4275,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_None,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
 
     State_GIBS,		// state_spawn
     State_None,		// state_see
@@ -4294,7 +4302,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_HEADONASTICK,	// state_spawn
     State_None,		// state_see
@@ -4321,7 +4329,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_HEADCANDLES,	// state_spawn
     State_None,		// state_see
@@ -4348,7 +4356,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_DEADSTICK,	// state_spawn
     State_None,		// state_see
@@ -4375,7 +4383,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_LIVESTICK,	// state_spawn
     State_None,		// state_see
@@ -4402,7 +4410,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_BIGTREE,	// state_spawn
     State_None,		// state_see
@@ -4429,7 +4437,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
 
     State_BBAR1,	// state_spawn
     State_None,		// state_see
@@ -4456,7 +4464,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     88,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_HANGNOGUTS,	// state_spawn
     State_None,		// state_see
@@ -4483,7 +4491,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     88,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_HANGBNOBRAIN,	// state_spawn
     State_None,		// state_see
@@ -4510,7 +4518,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     64,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_HANGTLOOKDN,	// state_spawn
     State_None,		// state_see
@@ -4537,7 +4545,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     64,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_HANGTSKULL,	// state_spawn
     State_None,		// state_see
@@ -4564,7 +4572,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     64,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_HANGTLOOKUP,	// state_spawn
     State_None,		// state_see
@@ -4591,7 +4599,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     64,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
 
     State_HANGTNOBRAIN,	// state_spawn
     State_None,		// state_see
@@ -4618,7 +4626,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap),	// properties
 
     State_COLONGIBS,	// state_spawn
     State_None,		// state_see
@@ -4645,7 +4653,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap),	// properties
 
     State_SMALLPOOL,	// state_spawn
     State_None,		// state_see
@@ -4672,7 +4680,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap),	// properties
 
     State_BRAINSTEM,	// state_spawn
     State_None,		// state_see
@@ -4699,7 +4707,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
 
     State_None,		// state_spawn
     State_None,		// state_see
@@ -4726,7 +4734,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
 
     State_None,		// state_spawn
     State_None,		// state_see
@@ -4753,7 +4761,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
 
     State_None,		// state_spawn
     State_None,		// state_see
@@ -4780,7 +4788,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
 
     State_None,		// state_spawn
     State_None,		// state_see
@@ -4807,7 +4815,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     16,		// height
     100,	// mass
     0,		// damage
-    DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch,	// properties
+    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
 
     State_None,		// state_spawn
     State_None,		// state_see
@@ -4830,17 +4838,24 @@ DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Wad::RawLevel::Thing 
   DOOM::AbstractThing(
     doom,
     (DOOM::Enum::ThingType)std::distance(_attributs.cbegin(), std::find_if(_attributs.cbegin(), _attributs.cend(), [thing](const Attributs& attributs) { return attributs.id == thing.type; })),
+    (DOOM::Enum::ThingFlag)thing.flag,
     (float)thing.x,
     (float)thing.y,
     thing.angle / 360.f * 2.f * Math::Pi)
 {}
 
-DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type, float x, float y, float angle) :
+DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type, DOOM::Enum::ThingFlag flags, float x, float y, float angle) :
   position(x, y, 0.f),
   angle(angle),
+  type(type),
   attributs(_attributs[type]),
+  flags((DOOM::Enum::ThingProperty)(attributs.properties | ((flags & DOOM::Enum::ThingFlag::FlagAmbush) ? DOOM::Enum::ThingProperty::ThingProperty_Ambush : DOOM::Enum::ThingProperty::ThingProperty_None))),
+  health(attributs.spawnhealth),
+  reactiontime(attributs.reactiontime),
+  move_direction(Direction::DirectionNone),
+  move_count(0),
   _thrust(0.f, 0.f, 0.f),
-  _gravity(attributs.properties & (DOOM::Enum::ThingProperty::ThingProperty_NoGravity) ? 0.f : -1.f),
+  _gravity((this->flags & DOOM::Enum::ThingProperty::ThingProperty_NoGravity) ? 0.f : -1.f),
   _state(attributs.state_spawn),
   _elapsed(sf::Time::Zero)
 {
@@ -4849,7 +4864,7 @@ DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type,
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Add thing to blockmap
-  if (!(attributs.properties & DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap))
+  if (!(this->flags & DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap))
     doom.level.blockmap.addThing(*this, position.convert<2>());
 
   std::set<int16_t>	sectors = doom.level.getSectors(position.convert<2>(), attributs.radius / 2.f);
@@ -4868,7 +4883,7 @@ DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type,
     }
 
   // Set thing spawn Z position
-  position.z() = (attributs.properties & (DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling) ? ceiling - attributs.height : floor);
+  position.z() = (this->flags & (DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling) ? ceiling - attributs.height : floor);
 }
 
 bool	DOOM::AbstractThing::update(DOOM::Doom& doom, sf::Time elapsed)
@@ -4879,11 +4894,7 @@ bool	DOOM::AbstractThing::update(DOOM::Doom& doom, sf::Time elapsed)
   while (_states[_state].duration != -1 && _elapsed >= DOOM::Doom::Tic * (sf::Int64)_states[_state].duration) {
     // Skip to next state
     _elapsed -= DOOM::Doom::Tic * (sf::Int64)_states[_state].duration;
-    _state = _states[_state].next;
-
-    // Call state callback
-    if (_states[_state].action != nullptr)
-      std::invoke(_states[_state].action, this);
+    setState(doom, _states[_state].next);
   }
 
   // Update physics of thing
@@ -4921,99 +4932,474 @@ void	DOOM::AbstractThing::thrust(const Math::Vector<3> & acceleration)
   _thrust += acceleration / (float)attributs.mass * 3.125f;
 }
 
-const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	DOOM::AbstractThing::sprite(const DOOM::Doom & doom, float angle) const
+DOOM::AbstractThing::Sprite	DOOM::AbstractThing::sprite(const DOOM::Doom & doom, float angle) const
 {
   static const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool>	frame = { std::ref(DOOM::Doom::Resources::Texture::Null), false };
 
   // Return a default empty texture if no state
   if (_state == DOOM::AbstractThing::ThingState::State_None)
-    return frame;
+    return { DOOM::Doom::Resources::Texture::Null, false, false };
 
   std::unordered_map<uint64_t, std::vector<std::array<std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool>, 8>>>::const_iterator	iterator = doom.resources.animations.find(DOOM::str_to_key(_sprites[_states[_state].sprite]));
 
   // Cancel if sequence or frame not found
   if (iterator == doom.resources.animations.cend() || iterator->second.size() < _states[_state].frame)
-    return frame;
+    return { DOOM::Doom::Resources::Texture::Null, false, false };
 
-  return iterator->second[_states[_state].frame][Math::Modulo<8>((int)((std::fmodf(angle, Math::Pi * 2.f) + Math::Pi * 2.f) * 4.f / Math::Pi + 16.5f))];
+  const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool>& texture = iterator->second[_states[_state].frame][Math::Modulo<8>((int)((std::fmodf(angle, Math::Pi * 2.f) + Math::Pi * 2.f) * 4.f / Math::Pi + 16.5f))];
+
+  return { texture.first.get(), texture.second, _states[_state].brightness };
 }
 
-void	DOOM::AbstractThing::A_Light0() {}
-void	DOOM::AbstractThing::A_WeaponReady() {}
-void	DOOM::AbstractThing::A_Lower() {}
-void	DOOM::AbstractThing::A_Raise() {}
-void	DOOM::AbstractThing::A_Punch() {}
-void	DOOM::AbstractThing::A_ReFire() {}
-void	DOOM::AbstractThing::A_FirePistol() {}
-void	DOOM::AbstractThing::A_Light1() {}
-void	DOOM::AbstractThing::A_FireShotgun() {}
-void	DOOM::AbstractThing::A_Light2() {}
-void	DOOM::AbstractThing::A_FireShotgun2() {}
-void	DOOM::AbstractThing::A_CheckReload() {}
-void	DOOM::AbstractThing::A_OpenShotgun2() {}
-void	DOOM::AbstractThing::A_LoadShotgun2() {}
-void	DOOM::AbstractThing::A_CloseShotgun2() {}
-void	DOOM::AbstractThing::A_FireCGun() {}
-void	DOOM::AbstractThing::A_GunFlash() {}
-void	DOOM::AbstractThing::A_FireMissile() {}
-void	DOOM::AbstractThing::A_Saw() {}
-void	DOOM::AbstractThing::A_FirePlasma() {}
-void	DOOM::AbstractThing::A_BFGsound() {} 
-void	DOOM::AbstractThing::A_FireBFG() {}
-void	DOOM::AbstractThing::A_BFGSpray() {}
-void	DOOM::AbstractThing::A_Explode() {}
-void	DOOM::AbstractThing::A_Pain() {}
-void	DOOM::AbstractThing::A_PlayerScream() {}
-void	DOOM::AbstractThing::A_Fall() {}
-void	DOOM::AbstractThing::A_XScream() {}
-void	DOOM::AbstractThing::A_Look() {}
-void	DOOM::AbstractThing::A_Chase() {}
-void	DOOM::AbstractThing::A_FaceTarget() {}
-void	DOOM::AbstractThing::A_PosAttack() {}
-void	DOOM::AbstractThing::A_Scream() {}
-void	DOOM::AbstractThing::A_SPosAttack() {}
-void	DOOM::AbstractThing::A_VileChase() {}
-void	DOOM::AbstractThing::A_VileStart() {}
-void	DOOM::AbstractThing::A_VileTarget() {}
-void	DOOM::AbstractThing::A_VileAttack() {}
-void	DOOM::AbstractThing::A_StartFire() {}
-void	DOOM::AbstractThing::A_Fire() {}
-void	DOOM::AbstractThing::A_FireCrackle() {}
-void	DOOM::AbstractThing::A_Tracer() {}
-void	DOOM::AbstractThing::A_SkelWhoosh() {}
-void	DOOM::AbstractThing::A_SkelFist() {}
-void	DOOM::AbstractThing::A_SkelMissile() {}
-void	DOOM::AbstractThing::A_FatRaise() {}
-void	DOOM::AbstractThing::A_FatAttack1() {}
-void	DOOM::AbstractThing::A_FatAttack2() {}
-void	DOOM::AbstractThing::A_FatAttack3() {}
-void	DOOM::AbstractThing::A_BossDeath() {}
-void	DOOM::AbstractThing::A_CPosAttack() {}
-void	DOOM::AbstractThing::A_CPosRefire() {}
-void	DOOM::AbstractThing::A_TroopAttack() {}
-void	DOOM::AbstractThing::A_SargAttack() {}
-void	DOOM::AbstractThing::A_HeadAttack() {}
-void	DOOM::AbstractThing::A_BruisAttack() {}
-void	DOOM::AbstractThing::A_SkullAttack() {}
-void	DOOM::AbstractThing::A_Metal() {}
-void	DOOM::AbstractThing::A_SpidRefire() {}
-void	DOOM::AbstractThing::A_BabyMetal() {}
-void	DOOM::AbstractThing::A_BspiAttack() {}
-void	DOOM::AbstractThing::A_Hoof() {}
-void	DOOM::AbstractThing::A_CyberAttack() {}
-void	DOOM::AbstractThing::A_PainAttack() {}
-void	DOOM::AbstractThing::A_PainDie() {}
-void	DOOM::AbstractThing::A_KeenDie() {}
-void	DOOM::AbstractThing::A_BrainPain() {}
-void	DOOM::AbstractThing::A_BrainScream() {}
-void	DOOM::AbstractThing::A_BrainDie() {}
-void	DOOM::AbstractThing::A_BrainAwake() {}
-void	DOOM::AbstractThing::A_BrainSpit() {}
-void	DOOM::AbstractThing::A_SpawnSound() {}
-void	DOOM::AbstractThing::A_SpawnFly() {}
-void	DOOM::AbstractThing::A_BrainExplode() {}
+void	DOOM::AbstractThing::A_Light0(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_WeaponReady(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_Lower(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_Raise(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_Punch(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_ReFire(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_FirePistol(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_Light1(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_FireShotgun(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_Light2(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_FireShotgun2(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_CheckReload(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_OpenShotgun2(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_LoadShotgun2(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_CloseShotgun2(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_FireCGun(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_GunFlash(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_FireMissile(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_Saw(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_FirePlasma(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_BFGsound(DOOM::Doom & doom) {} 
+void	DOOM::AbstractThing::A_FireBFG(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_BFGSpray(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_Explode(DOOM::Doom & doom) {}
+void	DOOM::AbstractThing::A_VileChase(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_VileTarget(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_VileAttack(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_Fire(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_Tracer(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_SkelMissile(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_FatRaise(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_FatAttack1(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_FatAttack2(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_FatAttack3(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_BossDeath(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_SkullAttack(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_PainAttack(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_PainDie(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_KeenDie(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_BrainScream(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_BrainDie(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_BrainAwake(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_BrainSpit(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_BrainExplode(DOOM::Doom& doom) {}
 
-void DOOM::AbstractThing::updatePhysics(DOOM::Doom& doom, sf::Time elapsed)
+void	DOOM::AbstractThing::A_Fall(DOOM::Doom& doom)
+{
+  // Thing is on ground, it can be walked over
+  flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_Solid);
+}
+
+void	DOOM::AbstractThing::A_Pain(DOOM::Doom& doom)
+{
+  doom.sound(attributs.sound_pain, position);
+}
+
+void	DOOM::AbstractThing::A_XScream(DOOM::Doom& doom)
+{
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_slop, position);
+}
+
+void	DOOM::AbstractThing::A_PlayerScream(DOOM::Doom& doom)
+{
+  // If the player dies with less than -50% without gibbing, special sound
+  doom.sound(health < -50 ? DOOM::Doom::Resources::Sound::EnumSound::Sound_pdiehi : DOOM::Doom::Resources::Sound::EnumSound::Sound_pldeth, position);
+}
+
+void	DOOM::AbstractThing::A_SpawnFly(DOOM::Doom& doom)
+{
+/*
+  // Wait end of reaction time
+  reactiontime += -1;
+  if (reactiontime != 0)
+    return;
+
+  // Spawn teleport fog
+  DOOM::AbstractThing&	fog = P_SpawnMobj(_target->position, DOOM::Enum::ThingType::ThingType_SPAWNFIRE);
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_telept, fog.position);
+
+  static const std::array<std::pair<int, DOOM::Enum::ThingType>, 11>	monsters =
+  {
+    std::pair<int, DOOM::Enum::ThingType>{ 50, DOOM::Enum::ThingType::ThingType_TROOP },
+    std::pair<int, DOOM::Enum::ThingType>{ 90, DOOM::Enum::ThingType::ThingType_SERGEANT },
+    std::pair<int, DOOM::Enum::ThingType>{ 120, DOOM::Enum::ThingType::ThingType_SHADOWS },
+    std::pair<int, DOOM::Enum::ThingType>{ 130, DOOM::Enum::ThingType::ThingType_PAIN },
+    std::pair<int, DOOM::Enum::ThingType>{ 160, DOOM::Enum::ThingType::ThingType_HEAD },
+    std::pair<int, DOOM::Enum::ThingType>{ 162, DOOM::Enum::ThingType::ThingType_VILE },
+    std::pair<int, DOOM::Enum::ThingType>{ 172, DOOM::Enum::ThingType::ThingType_UNDEAD },
+    std::pair<int, DOOM::Enum::ThingType>{ 192, DOOM::Enum::ThingType::ThingType_BABY },
+    std::pair<int, DOOM::Enum::ThingType>{ 222, DOOM::Enum::ThingType::ThingType_FATSO },
+    std::pair<int, DOOM::Enum::ThingType>{ 246, DOOM::Enum::ThingType::ThingType_KNIGHT },
+    std::pair<int, DOOM::Enum::ThingType>{ 256, DOOM::Enum::ThingType::ThingType_BRUISER }
+  };
+
+  // Randomly select monster to spawn
+  int			r = std::rand() % 256;
+  DOOM::Enum::ThingType	type = std::find_if(monsters.cbegin(), monsters.cend(), [r](const std::pair<int, DOOM::Enum::ThingType>& monster) { return (r % 256) < monster.first; })->second;
+
+  // Spawn new monster
+  DOOM::AbstractThing&	monster = P_SpawnMobj(_target->position, type);
+  if (monster.P_LookForPlayers(doom, true) == true)
+    monster.setState(doom, monster.attributs.state_see);
+
+  // Telefrag anything in this spot
+  monster.P_TeleportMove(doom, monster.position);
+
+  // Remove seft (spawn cube)
+  P_RemoveMobj();
+*/
+}
+
+void	DOOM::AbstractThing::A_SpawnSound(DOOM::Doom& doom)
+{
+  // Travelling cube sound
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_boscub, position);
+  A_SpawnFly(doom);
+}
+
+void	DOOM::AbstractThing::A_SkelFist(DOOM::Doom& doom)
+{
+/*
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Melee attack
+  if (P_CheckMeleeRange(doom) == true) {
+    doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_skepch, position);
+    P_DamageMobJ(doom, _target, this, this, (std::rand() % 10 + 1) * 6);
+  }
+*/
+}
+
+void	DOOM::AbstractThing::A_SkelWhoosh(DOOM::Doom& doom)
+{
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Whoosh!
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_skeswg, position);
+}
+
+void	DOOM::AbstractThing::A_BruisAttack(DOOM::Doom& doom)
+{
+/*
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Melee attack
+  if (P_CheckMeleeRange(doom) == true) {
+    doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_claw, position);
+    P_DamageMobJ(doom, _target, this, this, (std::rand() % 8 + 1) * 10);
+  }
+
+  // Range attack
+  else
+    P_SpawnMissile(doom, _target, DOOM::Enum::ThingType::ThingType_BRUISERSHOT);
+*/
+}
+
+void	DOOM::AbstractThing::A_CyberAttack(DOOM::Doom& doom)
+{
+/*
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Range attack
+  P_SpawnMissile(doom, _target, DOOM::Enum::ThingType::ThingType_ROCKET);
+*/
+}
+
+void	DOOM::AbstractThing::A_HeadAttack(DOOM::Doom& doom)
+{
+/*
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Melee attack
+  if (P_CheckMeleeRange(doom) == true)
+    P_DamageMobJ(doom, _target, this, this, (std::rand() % 6 + 1) * 10);
+
+  // Range attack
+  else
+    P_SpawnMissile(doom, _target, DOOM::Enum::ThingType::ThingType_HEADSHOT);
+*/
+}
+
+void	DOOM::AbstractThing::A_SargAttack(DOOM::Doom& doom)
+{
+/*
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Melee attack
+  if (P_CheckMeleeRange(doom) == true)
+    P_DamageMobJ(doom, _target, this, this, (std::rand() % 10 + 1) * 4);
+*/
+}
+
+void	DOOM::AbstractThing::A_TroopAttack(DOOM::Doom& doom)
+{
+/*
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Melee attack
+  if (P_CheckMeleeRange(doom) == true) {
+    doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_claw, position);
+    P_DamageMobJ(doom, _target, this, this, (std::rand() % 8 + 1) * 3);
+  }
+
+  // Range attack
+  else
+    P_SpawnMissile(doom, _target, DOOM::Enum::ThingType::ThingType_TROOPSHOT);
+*/
+}
+
+void	DOOM::AbstractThing::A_BspiAttack(DOOM::Doom& doom)
+{
+/*
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Launch a missile
+  P_SpawnMissile(doom, _target, DOOM::Enum::ThingType::ThingType_ARACHPLAZ);
+*/
+}
+
+void	DOOM::AbstractThing::A_CPosAttack(DOOM::Doom& doom)
+{
+/*
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Play pistol sound
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_shotgn, position);
+
+  float	atk_angle = angle + std::pow(Math::Random(), 2) * Math::Pi / 8.f;
+  float	atk_slope = P_AimLineAttack(doom, angle, AbstractThing::MissileRange);
+  int	atk_damage = (std::rand() % 5 + 1) * 3;
+
+  // Attack
+  P_LineAttack(doom, atk_angle, AbstractThing::MissileRange, atk_slope, atk_damage);
+*/
+}
+
+void	DOOM::AbstractThing::A_SPosAttack(DOOM::Doom& doom)
+{
+/*
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Play pistol sound
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_shotgn, position);
+
+  float	atk_slope = P_AimLineAttack(doom, angle, Abstracthing::MissileRange);
+
+  // 3 attacks
+  // NOTE: should we randomize slope angle too ? the original game didn't
+  for (int i = 0; i < 3; i++) {
+    float	atk_angle = angle + std::pow(Math::Random(), 2) * Math::Pi / 8.f;
+    int		atk_damage = (std::rand() % 5 + 1) * 3;
+
+    P_LineAttack(doom, atk_angle, AbstractThing::MissileRange, atk_slope, atk_damage);
+  }
+*/
+}
+
+void	DOOM::AbstractThing::A_PosAttack(DOOM::Doom& doom)
+{
+/*
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Play pistol sound
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol, position);
+
+  float	atk_angle = angle + std::pow(Math::Random(), 2) * Math::Pi / 8.f;
+  float	atk_slope = P_AimLineAttack(doom, angle, AbstractThing::MissileRange);
+  int	atk_damage = (std::rand() % 5 + 1) * 3;
+
+  // Attack
+  P_LineAttack(doom, atk_angle, AbstractThing::MissileRange, atk_slope, atk_damage);
+*/
+}
+
+void	DOOM::AbstractThing::A_FaceTarget(DOOM::Doom & doom)
+{
+  // Stop if no target
+  if (_target == nullptr)
+    return;
+
+  // Remove ambush flag
+  flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_Ambush);
+
+  angle = Math::Vector<2>::angle(_target->position.convert<2>() - position.convert<2>());
+
+  // If thing is invisible, randomize angle
+  if (flags & DOOM::Enum::ThingProperty::ThingProperty_Shadow)
+    angle += std::pow(Math::Random(), 2) * Math::Pi / 4.f;
+}
+
+void	DOOM::AbstractThing::A_Scream(DOOM::Doom& doom)
+{
+  DOOM::Doom::Resources::Sound::EnumSound	sound;
+
+  switch (attributs.sound_death) {
+    // No death sound
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_None :
+    return;
+
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_podth1:
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_podth2:
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_podth3:
+    sound = (DOOM::Doom::Resources::Sound::EnumSound)(DOOM::Doom::Resources::Sound::EnumSound::Sound_podth1 + std::rand() % 3);
+    break;
+
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_bgdth1:
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_bgdth2:
+    sound = (DOOM::Doom::Resources::Sound::EnumSound)(DOOM::Doom::Resources::Sound::EnumSound::Sound_bgdth1 + std::rand() % 2);
+    break;
+
+  default:
+    sound = attributs.sound_death;
+    break;
+  }
+
+  // Full volume for bosses
+  if (type == DOOM::Enum::ThingType::ThingType_SPIDER || type == DOOM::Enum::ThingType::ThingType_CYBORG)
+    doom.sound(sound);
+  else
+    doom.sound(sound, position);
+}
+
+void	DOOM::AbstractThing::A_VileStart(DOOM::Doom & doom)
+{
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_vilatk, position);
+}
+
+void	DOOM::AbstractThing::A_StartFire(DOOM::Doom & doom)
+{
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_flamst, position);
+  A_Fire(doom);
+}
+
+void	DOOM::AbstractThing::A_FireCrackle(DOOM::Doom & doom)
+{
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_flame, position);
+  A_Fire(doom);
+}
+
+void	DOOM::AbstractThing::A_CPosRefire(DOOM::Doom & doom)
+{
+  // Keep firing unless target got out of sight
+  A_FaceTarget(doom);
+
+  if (std::rand() % 256 < 40)
+    return;
+
+  if (_target == nullptr || _target->health <= 0 || P_CheckSight(doom, *_target) == false)
+    setState(doom, attributs.state_see);
+}
+
+void	DOOM::AbstractThing::A_Metal(DOOM::Doom & doom)
+{
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_metal, position);
+  A_Chase(doom);
+}
+
+void	DOOM::AbstractThing::A_SpidRefire(DOOM::Doom & doom)
+{
+  A_FaceTarget(doom);
+
+  if (std::rand() % 256 < 10)
+    return;
+
+  if (_target == nullptr || _target->health <= 0 || P_CheckSight(doom, *_target) == false)
+    setState(doom, attributs.state_see);
+}
+
+void	DOOM::AbstractThing::A_BabyMetal(DOOM::Doom & doom)
+{
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_bspwlk, position);
+  A_Chase(doom);
+}
+
+void	DOOM::AbstractThing::A_Hoof(DOOM::Doom & doom)
+{
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_hoof, position);
+  A_Chase(doom);
+}
+
+void	DOOM::AbstractThing::A_BrainPain(DOOM::Doom & doom)
+{
+  // Emit pain sound
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_bospn);
+}
+
+void	DOOM::AbstractThing::setState(DOOM::Doom & doom, DOOM::AbstractThing::ThingState state)
+{
+  // Set new state
+  _state = state;
+
+  // Call state callback
+  if (_states[_state].action != nullptr)
+    std::invoke(_states[_state].action, this, doom);
+}
+
+void	DOOM::AbstractThing::updatePhysics(DOOM::Doom& doom, sf::Time elapsed)
 {
   // Compute physics if minimal thrust
   if (std::fabsf(_thrust.x()) > 0.001f || std::fabsf(_thrust.y()) > 0.001f) {
@@ -5064,7 +5450,7 @@ void DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed
   }
 
   //   Check collision with things
-  if (attributs.properties & DOOM::Enum::ThingProperty::ThingProperty_Solid)
+  if (flags & DOOM::Enum::ThingProperty::ThingProperty_Solid)
     for (const std::reference_wrapper<DOOM::AbstractThing>& thing : linedefs_things.second) {
       std::pair<float, Math::Vector<2>>	intersection = updatePhysicsThrustThing(doom, movement, thing.get(), thing_ignored);
 
@@ -5101,7 +5487,7 @@ void DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed
   // Pickup things
   for (const std::reference_wrapper<DOOM::AbstractThing>& thing : linedefs_things.second) {
     // Ignore things if collided or ignored
-    if (&thing.get() == closest_thing || &thing.get() == thing_ignored || (thing.get().attributs.properties & DOOM::Enum::ThingProperty::ThingProperty_PickUp) == 0)
+    if (&thing.get() == closest_thing || &thing.get() == thing_ignored || (thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_PickUp) == 0)
       continue;
 
     // Pickup thing if destination is in thing area
@@ -5114,7 +5500,7 @@ void DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed
   // Move player to closest obstacle or full movement if none found
   if (closest_distance > 0.f) {
     Math::Vector<2>	destination = position.convert<2>() + movement * closest_distance;
-    if (!(attributs.properties & DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap))
+    if (!(flags & DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap))
       doom.level.blockmap.moveThing(*this, position.convert<2>(), destination);
     position.convert<2>() = destination;
   }
@@ -5212,9 +5598,9 @@ std::pair<float, Math::Vector<2>>	DOOM::AbstractThing::updatePhysicsThrustLinede
   if (linedef_index == ignored_index)
     return { 1.f, Math::Vector<2>() };
 
-  DOOM::AbstractLinedef&	linedef = *doom.level.linedefs[linedef_index];
-  DOOM::Doom::Level::Vertex&	linedef_start = doom.level.vertexes[linedef.start];
-  DOOM::Doom::Level::Vertex&	linedef_end = doom.level.vertexes[linedef.end];
+  const DOOM::AbstractLinedef&		linedef = *doom.level.linedefs[linedef_index];
+  const DOOM::Doom::Level::Vertex&	linedef_start = doom.level.vertexes[linedef.start];
+  const DOOM::Doom::Level::Vertex&	linedef_end = doom.level.vertexes[linedef.end];
 
   /*
   // Check if linedef is colinear to ignored linedef
@@ -5254,7 +5640,8 @@ std::pair<float, Math::Vector<2>>	DOOM::AbstractThing::updatePhysicsThrustLinede
     return { 1.f, Math::Vector<2>() };
 
   // TODO: check if intersection should be ignored using front and back sidedef
-  if ((linedef.flag & DOOM::AbstractLinedef::Flag::Impassible) == 0 &&
+  if (!(linedef.flag & DOOM::AbstractLinedef::Flag::Impassible) &&
+    !((linedef.flag & DOOM::AbstractLinedef::Flag::BlockMonsters) && (flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable) && type != DOOM::Enum::ThingType::ThingType_PLAYER) &&
     updatePhysicsThrustSidedefs(doom, sidedef_front_index, sidedef_back_index) == true)
     return { 1.f, Math::Vector<2>() };
 
@@ -5287,10 +5674,14 @@ std::pair<float, Math::Vector<2>>	DOOM::AbstractThing::updatePhysicsThrustLinede
 std::pair<float, Math::Vector<2>>	DOOM::AbstractThing::updatePhysicsThrustThing(DOOM::Doom& doom, const Math::Vector<2>& movement, const DOOM::AbstractThing& thing, const DOOM::AbstractThing* ignored)
 {
   // Check if linedef is ignored
-  if (&thing == this || &thing == ignored || (thing.attributs.properties & DOOM::Enum::ThingProperty::ThingProperty_Solid) == 0)
+  if (&thing == this || &thing == ignored || (thing.flags & DOOM::Enum::ThingProperty::ThingProperty_Solid) == 0)
     return { 1.f, Math::Vector<2>() };
 
   Math::Vector<2>	initial(position.convert<2>() - thing.position.convert<2>());
+
+  // Check if thing is above or below
+  if (thing.position.z() + thing.attributs.height <= position.z() || thing.position.z() > position.z() + attributs.height)
+    return { 1.f, Math::Vector<2>() };
 
   // Check for initial collision
   if (initial.length() < (float)(attributs.radius + thing.attributs.radius)) {
@@ -5366,29 +5757,569 @@ void	DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elapse
   float			ceiling = std::numeric_limits<int16_t>().max();
 
   // Get target floor and ceiling height
-  if (sectors.empty() == true)
+  if (sectors.empty() == true) {
     floor = 0.f;
+    ceiling = 0.f;
+  }
   else
     for (int16_t sector : sectors) {
-      if (doom.level.sectors[sector].floor_current > floor)
-	floor = doom.level.sectors[sector].floor_current;
-      if (doom.level.sectors[sector].ceiling_current < ceiling)
-	ceiling = doom.level.sectors[sector].ceiling_current;
+      floor = std::max(floor, doom.level.sectors[sector].floor_current);
+      ceiling = std::min(ceiling, doom.level.sectors[sector].ceiling_current);
     }
 
-  // Apply gravity
+  // Walk on things
+  for (const DOOM::AbstractThing& thing : doom.level.getThings(position.convert<2>(), attributs.radius - 1.f)) {
+    if (&thing != this && thing.flags & DOOM::Enum::ThingProperty::ThingProperty_Solid) {
+      if (thing.position.z() + thing.attributs.height <= position.z())
+	floor = std::max(floor, thing.position.z() + thing.attributs.height);
+      if (thing.position.z() >= position.z() + attributs.height)
+	ceiling = std::min(ceiling, position.z() + attributs.height);
+    }
+  }
+
+  // Compute gravity
   _thrust.z() += _gravity / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds();
-  position.z() += _thrust.z() / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds();
 
-  // Limit fall to highest floor
+  // Raise thing if below the floor
   if (position.z() <= floor) {
-    position.z() = floor;
-    _thrust.z() = _gravity; // NOTE: should we reset _thrust.z() to 0 ?
+    position.z() = std::min(floor, position.z() + std::max(_thrust.z(), (floor - position.z()) / 2.f + 2.f) / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
+    _thrust.z() = std::max(_thrust.z(), 0.f);
+  }
+  // Lower thing is upper than the ceiling (limit to floor)
+  else if (position.z() >= ceiling - attributs.height) {
+    position.z() = std::max(std::max(ceiling - attributs.height, floor), position.z() + std::min(_thrust.z(), (position.z() - (ceiling - attributs.height)) / 2.f - 2.f) / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
+    _thrust.z() = std::min(_thrust.z(), 0.f);
+  }
+  // Normal gravity
+  else {
+    position.z() = std::max(floor, position.z() + _thrust.z() / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
+    if (position.z() == floor)
+      _thrust.z() = std::max(_thrust.z(), 0.f);
+  }
+}
+
+void	DOOM::AbstractThing::A_Look(DOOM::Doom& doom)
+{
+  // Reset target and threshold, any shot will wake up
+  _target = nullptr;
+  _target_threshold = 0;
+
+  // Ambush mode, only look for players
+  if (flags & DOOM::Enum::ThingProperty::ThingProperty_Ambush) {
+    if (P_LookForPlayers(doom) == false)
+      return;
   }
 
-  // Limit raise to lowest ceiling
-  if (position.z() >= ceiling - attributs.height) {
-    position.z() = ceiling - attributs.height;
-    _thrust.z() = _gravity; // NOTE: should we reset _thrust.z() to 0 ?
+  // Target noise emitter
+  else {
+    DOOM::AbstractThing* sound_target = doom.level.sectors[doom.level.getSector(position.convert<2>()).first].sound_target;
+
+    // Check valid target
+    if (sound_target != nullptr && sound_target->flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable)
+      _target = sound_target;
+
+    // Look for a player to target if no sound target
+    else if (P_LookForPlayers(doom) == false)
+      return;
   }
+
+  // Select sound to play
+  DOOM::Doom::Resources::Sound::EnumSound sound;
+
+  switch (attributs.sound_see)
+  {
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_posit1:
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_posit2:
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_posit3:
+    sound = (DOOM::Doom::Resources::Sound::EnumSound)(DOOM::Doom::Resources::Sound::EnumSound::Sound_posit1 + std::rand() % 3);
+    break;
+
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_bgsit1:
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_bgsit2:
+    sound = (DOOM::Doom::Resources::Sound::EnumSound)(DOOM::Doom::Resources::Sound::EnumSound::Sound_bgsit1 + std::rand() % 2);
+    break;
+
+  default:
+    sound = attributs.sound_see;
+    break;
+  }
+
+  // Full volume for bosses
+  if (type == DOOM::Enum::ThingType::ThingType_SPIDER || type == DOOM::Enum::ThingType::ThingType_CYBORG)
+    doom.sound(sound);
+  else
+    doom.sound(sound, position);
+
+  // Set chase state
+  setState(doom, attributs.state_see);
+}
+
+void	DOOM::AbstractThing::A_Chase(DOOM::Doom& doom)
+{
+    // Decrement reaction time
+    if (reactiontime > 0)
+      reactiontime += -1;
+
+    // Update target threshold
+    if (_target_threshold > 0) {
+      if (_target == nullptr || _target->health <= 0)
+	_target_threshold = 0;
+      else
+	_target_threshold += -1;
+    }
+
+    // Turn toward movement direction
+    if (move_direction != Direction::DirectionNone) {
+      angle = Math::Modulo(angle, 2.f * Math::Pi);
+
+      int thing_direction = (int)(angle / (2.f * Math::Pi / Direction::DirectionNumber));
+
+      if (thing_direction != move_direction) {
+	if (Math::Modulo<Direction::DirectionNumber>(thing_direction - move_direction) < Direction::DirectionNumber / 2)
+	  angle -= Math::Pi / 4.f;
+	else
+	  angle += Math::Pi / 4.f;
+      }
+    }
+
+    // Look for new target if necessary
+    if (_target == nullptr || !(_target->flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable)) {
+      if (P_LookForPlayers(doom, true) == true)
+	return;
+
+      // Change to spawn state
+      setState(doom, attributs.state_spawn);
+      return;
+    }
+
+    // Do not attack twice in a row
+    if (flags & DOOM::Enum::ThingProperty::ThingProperty_JustAttacked) {
+      flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_JustAttacked);
+
+      if (true) // TODO: check if current game skill is Nightmare!
+	P_NewChaseDir(doom);
+
+      return;
+    }
+
+    // Check for melee attack
+    if (attributs.state_melee != DOOM::AbstractThing::ThingState::State_None && P_CheckMeleeRange(doom) == true) {
+      doom.sound(attributs.sound_attack, position);
+
+      // Change to melee state
+      setState(doom, attributs.state_melee);
+      return;
+    }
+
+    // Check for missile attack
+    if (attributs.state_missile != DOOM::AbstractThing::ThingState::State_None &&
+      true && // TODO: check if current game skill is Nightmare!
+      move_count == 0 &&
+      P_CheckMissileRange(doom) == true) {
+      setState(doom, attributs.state_missile);
+      flags = (DOOM::Enum::ThingProperty)(flags | DOOM::Enum::ThingProperty::ThingProperty_JustAttacked);
+      return;
+    }
+
+    // Possibly choose another target
+    if (doom.level.players.size() > 1 &&
+      _target_threshold == 0 &&
+      P_CheckSight(doom, *_target) == false &&
+      P_LookForPlayers(doom, true) == true) {
+      return;
+    }
+
+    // Chase towards player
+    move_count += -1;
+    if (move_count < 0 || P_Move(doom) == false)
+      P_NewChaseDir(doom);
+
+    // Make active sound
+    if (std::rand() % 256 < 3)
+      doom.sound(attributs.sound_active, position);
+}
+
+bool	DOOM::AbstractThing::P_LookForPlayers(DOOM::Doom& doom, bool full)
+{
+  // Reset target
+  _target = nullptr;
+  _target_threshold = 0;
+
+  // Check every player in game
+  for (DOOM::PlayerThing& player : doom.level.players) {
+    // Player is dead
+    if (player.health <= 0)
+      continue;
+
+    // Player is out of sight
+    if (P_CheckSight(doom, player) == false)
+      continue;
+
+    // Player is behind and not too close
+    if (full == false &&
+      Math::Vector<2>::angle(Math::Vector<2>(std::cos(angle), std::sin(angle)), player.position.convert<2>() - position.convert<2>()) > Math::Pi / 2.f &&
+      (position - player.position).length() > DOOM::AbstractThing::MeleeRange)
+      continue;
+
+    // Target found
+    _target = &player;
+    return true;
+  }
+
+  // No target found
+  return false;
+}
+
+bool	DOOM::AbstractThing::P_CheckSight(DOOM::Doom& doom, const DOOM::AbstractThing& target)
+{
+  float	target_bottom = target.position.z();
+  float	target_top = target.position.z() + target.attributs.height;
+
+  // Check every linedefs between thing and target
+  for (int16_t linedef_index : doom.level.getLinedefs(position.convert<2>(), target.position.convert<2>() - position.convert<2>())) {
+    DOOM::AbstractLinedef&	linedef = *doom.level.linedefs[linedef_index];
+
+    // Stop immediatly if linedef is impassible
+    if (linedef.flag & DOOM::AbstractLinedef::Flag::Impassible)
+      return false;
+
+    // Can't see outside the map
+    if (linedef.front == -1 || linedef.back == -1)
+      return false;
+
+    const float	sector_bottom = std::max(doom.level.sectors[doom.level.sidedefs[linedef.front].sector].floor_current, linedef.back != -1 ? doom.level.sectors[doom.level.sidedefs[linedef.back].sector].floor_current : std::numeric_limits<float>::lowest());
+    const float	sector_top = std::min(doom.level.sectors[doom.level.sidedefs[linedef.front].sector].ceiling_current, linedef.back != -1 ? doom.level.sectors[doom.level.sidedefs[linedef.back].sector].ceiling_current : std::numeric_limits<float>::max());
+    const float	distance = Math::intersection(
+      position.convert<2>(), target.position.convert<2>() - position.convert<2>(),
+      doom.level.vertexes[linedef.start], doom.level.vertexes[linedef.end] - doom.level.vertexes[linedef.start]).first;
+
+    target_bottom = std::max(target_bottom, (sector_bottom - (position.z() + 0.75f * attributs.height)) / distance + (position.z() + 0.75f * attributs.height));
+    target_top = std::min(target_top, (sector_top - (position.z() + 0.75f * attributs.height)) / distance + (position.z() + 0.75f * attributs.height));
+
+    // Cancel if view is obstructed
+    if (target_bottom >= target_top)
+      return false;
+  }
+
+  // Line of sight
+  return true;
+}
+
+bool	DOOM::AbstractThing::P_CheckMeleeRange(DOOM::Doom& doom)
+{
+  // Cancel if no target
+  if (_target == nullptr)
+    return false;
+
+  float	distance = (position.convert<2>() - _target->position.convert<2>()).length();
+
+  // Cancel if not at range
+  if (distance >= DOOM::AbstractThing::MeleeRange - 20.f + _target->attributs.radius)
+    return false;
+
+  // Cancel if target is not in sight
+  if (P_CheckSight(doom, *_target) == false)
+    return false;
+
+  return true;
+}
+
+bool	DOOM::AbstractThing::P_CheckMissileRange(DOOM::Doom& doom)
+{
+  // Cancel if no target
+  if (_target == nullptr)
+    return false;
+
+  // Check is target is visible
+  if (P_CheckSight(doom, *_target) == false)
+    return false;
+
+  // The target just hit the enemy, so fight back!
+  if (flags & DOOM::Enum::ThingProperty::ThingProperty_JustHit) {
+    flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_JustHit);
+    return true;
+  }
+
+  // Wait reaction time
+  if (reactiontime > 0)
+    return false;
+
+  // The probability of firing depends on the distance, the closer we are the higher the chance of firing.
+  float	distance = (position.convert<2>() - _target->position.convert<2>()).length();
+
+  // Higher chance if no melee attack
+  if (attributs.state_melee == DOOM::AbstractThing::ThingState::State_None)
+    distance += -128.f;
+
+  // Vile can't attack from far
+  if (type == DOOM::Enum::ThingType::ThingType_VILE && distance > 14 * 64.f)
+    return false;
+
+  // Undead close for fist attack
+  if (type == DOOM::Enum::ThingType::ThingType_UNDEAD) {
+    if (distance < 3 * 64.f)
+      return false;
+    distance /= 2.f;
+  }
+
+  // Higher chance for these monsters
+  if (type == DOOM::Enum::ThingType::ThingType_CYBORG || type == DOOM::Enum::ThingType::ThingType_SPIDER || type == DOOM::Enum::ThingType::ThingType_SKULL)
+    distance /= 2.f;
+
+  // Limit the distance, higher max for Cyborg
+  distance = std::min(distance, (type == DOOM::Enum::ThingType::ThingType_CYBORG) ? 160.f : 200.f);
+
+  // Roll the dice
+  return (std::rand() % 256) >= distance;
+}
+
+void	DOOM::AbstractThing::P_NewChaseDir(DOOM::Doom& doom)
+{
+  // Error if no target
+  if (_target == nullptr)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  DOOM::AbstractThing::Direction	move_old = move_direction;
+  DOOM::AbstractThing::Direction	move_opposite = (DOOM::AbstractThing::Direction)(move_direction == DOOM::AbstractThing::Direction::DirectionNone ? DOOM::AbstractThing::Direction::DirectionNone : ((move_direction + DOOM::AbstractThing::Direction::DirectionNumber / 2) % DOOM::AbstractThing::Direction::DirectionNumber));
+  Math::Vector<2>			delta = _target->position.convert<2>() - position.convert<2>();
+
+  DOOM::AbstractThing::Direction	move_x = DOOM::AbstractThing::Direction::DirectionNone;
+  DOOM::AbstractThing::Direction	move_y = DOOM::AbstractThing::Direction::DirectionNone;
+
+  if (delta.x() > +10.f)
+    move_x = Direction::DirectionEast;
+  else if (delta.x() < -10.f)
+    move_x = Direction::DirectionWest;
+
+  if (delta.y() > +10.f)
+    move_y = Direction::DirectionNorth;
+  else if (delta.y() < -10.f)
+    move_y = Direction::DirectionSouth;
+
+  // Try direct route
+  if (move_x != Direction::DirectionNone && move_y != Direction::DirectionNone) {
+    move_direction = move_x == Direction::DirectionEast ?
+      (move_y == Direction::DirectionNorth ? Direction::DirectionNorthEast : Direction::DirectionSouthEast) :
+      (move_y == Direction::DirectionNorth ? Direction::DirectionNorthWest : Direction::DirectionSouthWest);
+
+    if (move_direction != move_opposite && P_TryWalk(doom) == true) {
+      return;
+    }
+  }
+
+  // Try other direction
+  if (std::rand() % 256 > 200 || std::abs(delta.x()) < std::abs(delta.y()))
+    std::swap(move_x, move_y);
+
+  if (move_x == move_opposite)
+    move_x = Direction::DirectionNone;
+  if (move_y == move_opposite)
+    move_y = Direction::DirectionNone;
+
+  // Either moved forward of attacked
+  if (move_x != Direction::DirectionNone) {
+    move_direction = move_x;
+    if (P_TryWalk(doom) == true) {
+      return;
+    }
+  }
+  if (move_y != Direction::DirectionNone) {
+    move_direction = move_y;
+    if (P_TryWalk(doom) == true) {
+      return;
+    }
+  }
+
+  // There is no direct path to the player, so pick another direction
+  if (move_old != Direction::DirectionNone) {
+    move_direction = move_old;
+    if (P_TryWalk(doom) == true) {
+      return;
+    }
+  }
+
+  // Randomly determine direction of search
+  if (std::rand() % 2 == 0) {
+    for (Direction dir = Direction::DirectionEast; dir <= Direction::DirectionSouthEast; dir = (Direction)(dir + 1)) {
+      if (dir != move_opposite) {
+	move_direction = dir;
+	if (P_TryWalk(doom) == true) {
+	  return;
+	}
+      }
+    }
+  }
+  else {
+    for (Direction dir = Direction::DirectionSouthEast; dir >= Direction::DirectionEast; dir = (Direction)(dir - 1)) {
+      if (dir != move_opposite) {
+	move_direction = dir;
+	if (P_TryWalk(doom) == true) {
+	  return;
+	}
+      }
+    }
+  }
+
+  // Lastly, try the opposite direction
+  if (move_opposite != Direction::DirectionNone) {
+    move_direction = move_opposite;
+    if (P_TryWalk(doom) == true) {
+      return;
+    }
+  }
+
+  // We cannot move
+  move_direction = Direction::DirectionNone;
+}
+
+bool	DOOM::AbstractThing::P_TryWalk(DOOM::Doom& doom)
+{
+  // Attempt move
+  if (P_Move(doom) == true) {
+    move_count = std::rand() % 16;
+    return true;
+  }
+
+  return false;
+}
+
+bool	DOOM::AbstractThing::P_TryMove(DOOM::Doom& doom, const Math::Vector<2>& position)
+{
+  // Solid wall or thing
+  if (P_CheckPosition(doom, position) == false)
+    return false;
+
+  if (!(flags & DOOM::Enum::ThingProperty::ThingProperty_NoClip)) {
+    float target_floor = std::numeric_limits<float>::lowest();
+    float target_ceiling = std::numeric_limits<float>::max();
+
+    // Find target floor and ceiling height
+    for (int16_t sector_index : doom.level.getSectors(position, attributs.radius / 2.f)) {
+      target_floor = std::max(target_floor, doom.level.sectors[sector_index].floor_current);
+      target_ceiling = std::min(target_ceiling, doom.level.sectors[sector_index].ceiling_current);
+    }
+
+    // Doesn't fit
+    if (target_ceiling - target_floor < attributs.height)
+      return false;
+
+    // Must lower itself to fit
+    if (!(flags & DOOM::Enum::ThingProperty::ThingProperty_Teleport) &&
+      target_ceiling - this->position.z() < attributs.height)
+      return false;
+
+    // Too big step up
+    if (!(flags & DOOM::Enum::ThingProperty::ThingProperty_Teleport) &&
+      target_floor - this->position.z() > 24.f)
+      return false;
+
+    // Don't stand over a dropoff
+    if (!(flags & (DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_Float)) &&
+      (target_floor - this->position.z() < -24.f) || (doom.level.sectors[doom.level.getSector(position).first].floor_current - this->position.z() < -24.f))
+      return false;
+  }
+
+  if (!(flags & DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap))
+    doom.level.blockmap.moveThing(*this, this->position.convert<2>(), position);
+
+  // Walkover linedef
+  for (int16_t linedef_index : doom.level.getLinedefs(this->position.convert<2>(), position - this->position.convert<2>()))
+    doom.level.linedefs[linedef_index]->walkover(doom, *this);
+
+  // Move thing
+  this->position.convert<2>() = position;
+
+  return true;
+}
+
+bool	DOOM::AbstractThing::P_CheckPosition(DOOM::Doom& doom, const Math::Vector<2>& position)
+{
+  // Check collision with things
+  for (const std::reference_wrapper<DOOM::AbstractThing> & thing : doom.level.getThings(position, attributs.radius)) {
+    if (&(thing.get()) != this &&
+      (thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Solid) &&
+      (thing.get().position.convert<2>() - position).length() < thing.get().attributs.radius + attributs.radius)
+      return false;
+  }
+
+  // Check collision with linedefs
+  for (int16_t linedef_index : doom.level.getLinedefs(position, attributs.radius)) {
+    const DOOM::AbstractLinedef&	linedef = *doom.level.linedefs[linedef_index];
+
+    // One sided line
+    if (linedef.back == -1)
+      return false;
+
+    if (!(flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)) {
+      // Explicitely block monster
+      if (linedef.flag & DOOM::AbstractLinedef::Flag::Impassible)
+	return false;
+
+      // Block monster only
+      if (linedef.flag & DOOM::AbstractLinedef::Flag::BlockMonsters && (flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable) && type != DOOM::Enum::ThingType::ThingType_PLAYER)
+	return false;
+    }
+  }
+
+  return true;
+}
+
+bool	DOOM::AbstractThing::P_Move(DOOM::Doom& doom)
+{
+  // Cancel if no direction
+  if (move_direction == Direction::DirectionNone) {
+    return false;
+  }
+
+  static const std::array<Math::Vector<2>, Direction::DirectionNumber>	move_vectors =
+  {
+    Math::Vector<2>(std::cos(Math::Pi * 0.f), std::sin(Math::Pi * 0.f)),
+    Math::Vector<2>(std::cos(Math::Pi * 0.25f), std::sin(Math::Pi * 0.25f)),
+    Math::Vector<2>(std::cos(Math::Pi * 0.5f), std::sin(Math::Pi * 0.5f)),
+    Math::Vector<2>(std::cos(Math::Pi * 0.75f), std::sin(Math::Pi * 0.75f)),
+    Math::Vector<2>(std::cos(Math::Pi * 1.f), std::sin(Math::Pi * 1.f)),
+    Math::Vector<2>(std::cos(Math::Pi * 1.25f), std::sin(Math::Pi * 1.25f)),
+    Math::Vector<2>(std::cos(Math::Pi * 1.5f), std::sin(Math::Pi * 1.5f)),
+    Math::Vector<2>(std::cos(Math::Pi * 1.75f), std::sin(Math::Pi * 1.75f))
+  };
+
+  Math::Vector<2>						move_position = position.convert<2>() + (move_vectors[move_direction] * attributs.speed);
+
+  if (P_TryMove(doom, move_position) == false) {
+    // Floating things
+    if (flags & DOOM::Enum::ThingProperty::ThingProperty_Float && P_CheckPosition(doom, move_position) == true) {
+      float target_floor = std::numeric_limits<float>::lowest();
+      float target_ceiling = std::numeric_limits<float>::max();
+
+      // Find target floor and ceiling height
+      for (int16_t sector_index : doom.level.getSectors(position.convert<2>() + (move_vectors[move_direction] * attributs.speed), attributs.radius / 2.f)) {
+	target_floor = std::max(target_floor, doom.level.sectors[sector_index].floor_current);
+	target_ceiling = std::min(target_ceiling, doom.level.sectors[sector_index].ceiling_current);
+      }
+
+      if (target_ceiling - target_floor >= attributs.height) {
+	if (position.z() < target_floor)
+	  position.z() += DOOM::AbstractThing::FloatSpeed;
+	else
+	  position.z() -= DOOM::AbstractThing::FloatSpeed;
+
+	flags = (DOOM::Enum::ThingProperty)(flags | DOOM::Enum::ThingProperty::ThingProperty_InFloat);
+	return true;
+      }
+    }
+
+    move_direction = Direction::DirectionNone;
+    
+    // Try to open a door
+    bool	switched = false;
+    for (int16_t linedef_index : doom.level.getLinedefs(move_position, attributs.radius))
+      switched |= doom.level.linedefs[linedef_index]->switched(doom, *this);
+    
+    return switched;
+  }
+  else {
+    flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_InFloat);
+  }
+
+  return true;
 }

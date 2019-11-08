@@ -5,11 +5,124 @@
 #include "Doom/Action/OscillateLightingAction.hpp"
 #include "Doom/Action/RandomLightingAction.hpp"
 #include "Doom/Thing/PlayerThing.hpp"
+#include "System/Sound.hpp"
 
 const sf::Time		DOOM::Doom::Tic = sf::seconds(1.f / 35.f);
 const unsigned int	DOOM::Doom::RenderWidth = 320;
 const unsigned int	DOOM::Doom::RenderHeight = 200;
 const float		DOOM::Doom::RenderStretching = 6.f / 5.f;
+
+const std::array<DOOM::Doom::Resources::Sound::SoundInfo, DOOM::Doom::Resources::Sound::EnumSound::Sound_Number>	DOOM::Doom::Resources::Sound::sound_info = {
+  DOOM::Doom::Resources::Sound::SoundInfo{ "None", false,  0, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "PISTOL", false, 64, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SHOTGN", false, 64, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SGCOCK", false, 64, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "DSHTGN", false, 64, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "DBOPN", false, 64, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "DBCLS", false, 64, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "DBLOAD", false, 64, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "PLASMA", false, 64, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BFG", false, 64, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SAWUP", false, 64, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SAWIDL", false, 118, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SAWFUL", false, 64, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SAWHIT", false, 64, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "RLAUNC", false, 64, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "RXPLOD", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "FIRSHT", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "FIRXPL", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "PSTART", false, 100, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "PSTOP", false, 100, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "DOROPN", false, 100, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "DORCLS", false, 100, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "STNMOV", false, 119, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SWTCHN", false, 78, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SWTCHX", false, 78, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "PLPAIN", false, 96, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "DMPAIN", false, 96, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "POPAIN", false, 96, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "VIPAIN", false, 96, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "MNPAIN", false, 96, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "PEPAIN", false, 96, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SLOP", false, 78, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "ITEMUP", true, 78, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "WPNUP", true, 78, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "OOF", false, 96, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "TELEPT", false, 32, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "POSIT1", true, 98, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "POSIT2", true, 98, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "POSIT3", true, 98, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BGSIT1", true, 98, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BGSIT2", true, 98, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SGTSIT", true, 98, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "CACSIT", true, 98, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BRSSIT", true, 94, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "CYBSIT", true, 92, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SPISIT", true, 90, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BSPSIT", true, 90, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "KNTSIT", true, 90, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "VILSIT", true, 90, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "MANSIT", true, 90, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "PESIT", true, 90, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SKLATK", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SGTATK", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SKEPCH", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "VILATK", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "CLAW", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SKESWG", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "PLDETH", false, 32, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "PDIEHI", false, 32, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "PODTH1", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "PODTH2", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "PODTH3", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BGDTH1", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BGDTH2", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SGTDTH", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "CACDTH", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SKLDTH", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BRSDTH", false, 32, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "CYBDTH", false, 32, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SPIDTH", false, 32, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BSPDTH", false, 32, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "VILDTH", false, 32, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "KNTDTH", false, 32, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "PEDTH", false, 32, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SKEDTH", false, 32, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "POSACT", true, 120, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BGACT", true, 120, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "DMACT", true, 120, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BSPACT", true, 100, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BSPWLK", true, 100, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "VILACT", true, 100, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "NOWAY", false, 78, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BAREXP", false, 60, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "PUNCH", false, 64, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "HOOF", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "METAL", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "CHGUN", false, 64, DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol, 150, 0 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "TINK", false, 60, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BDOPN", false, 100, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BDCLS", false, 100, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "ITMBK", false, 100, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "FLAME", false, 32, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "FLAMST", false, 32, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "GETPOW", false, 60, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BOSPIT", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BOSCUB", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BOSSIT", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BOSPN", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "BOSDTH", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "MANATK", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "MANDTH", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SSSIT", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SSDTH", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "KEENPN", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "KEENDT", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SKEACT", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SKESIT", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "SKEATK", false, 70, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
+  DOOM::Doom::Resources::Sound::SoundInfo{ "RADIO", false, 60, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 }
+};
 
 DOOM::Doom::Resources::Texture const	DOOM::Doom::Resources::Texture::Null = DOOM::Doom::Resources::Texture();
 
@@ -30,6 +143,26 @@ void	DOOM::Doom::update(sf::Time elapsed)
   // Update components
   resources.update(*this, elapsed);
   level.update(*this, elapsed);
+
+  // Sound centered on the player in single player
+  if (level.players.size() == 1) {
+    sf::Listener::setPosition(
+      level.players.front().get().position.x(),
+      level.players.front().get().position.y(),
+      level.players.front().get().position.z());
+    sf::Listener::setDirection(
+      std::cos(level.players.front().get().angle),
+      std::sin(level.players.front().get().angle),
+      std::tan(level.players.front().get().camera.orientation));
+    sf::Listener::setUpVector(0.f, 0.f, 1.f);
+  }
+
+  // Sound zero centred in multiplayer
+  else {
+    sf::Listener::setPosition(0.f, 0.f, 0.f);
+    sf::Listener::setDirection(1.f, 0.f, 0.f);
+    sf::Listener::setUpVector(0.f, 0.f, 1.f);
+  }
 }
 
 std::list<std::pair<uint8_t, uint8_t>>	DOOM::Doom::getLevels() const
@@ -62,6 +195,65 @@ void	DOOM::Doom::addPlayer(int controller)
   
   // Push new player
   level.things.push_back(std::make_unique<DOOM::PlayerThing>(*this, (int)level.players.size() + 1, controller));
+}
+
+void	DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound)
+{
+  // Does nothing if no sound
+  if (sound == DOOM::Doom::Resources::Sound::EnumSound::Sound_None)
+    return;
+
+  std::unordered_map<uint64_t, DOOM::Doom::Resources::Sound>::const_iterator	iterator = resources.sounds.find(DOOM::str_to_key(DOOM::Doom::Resources::Sound::sound_info[sound].name));
+
+  // Cancel if no sound found
+  if (iterator == resources.sounds.cend())
+    return;
+
+  Game::Sound::Reference	ref = Game::Sound::Instance().get();
+
+  // Play sound
+  ref.sound.setBuffer(iterator->second.buffer);
+  ref.sound.play();
+}
+
+void	DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound, const Math::Vector<3> & position)
+{
+  // Does nothing if no sound
+  if (sound == DOOM::Doom::Resources::Sound::EnumSound::Sound_None)
+    return;
+
+  std::unordered_map<uint64_t, DOOM::Doom::Resources::Sound>::const_iterator	iterator = resources.sounds.find(DOOM::str_to_key(std::string("DS") + DOOM::Doom::Resources::Sound::sound_info[sound].name));
+
+  // Cancel if no sound found
+  if (iterator == resources.sounds.cend())
+    return;
+
+  Game::Sound::Reference	ref = Game::Sound::Instance().get();
+
+  // Set sound properties
+  // NOTE: a sound should be heard from a maximum distance of 1200 units
+  ref.sound.setBuffer(iterator->second.buffer);
+  ref.sound.setAttenuation(3.2f);
+  ref.sound.setMinDistance(256.f);
+  ref.sound.setRelativeToListener(true);
+
+  // Single player
+  if (level.players.size() == 1) {
+    ref.sound.setPosition(position.x(), position.y(), position.z());
+  }
+
+  // Multiplayer
+  else {
+    float	distance = std::numeric_limits<float>::max();
+
+    // Get smallest distance from a player
+    for (const DOOM::PlayerThing & player : level.players)
+      distance = std::min(distance, (player.position - position).length());
+
+    ref.sound.setPosition(distance, 0.f, 0.f);
+  }
+
+  ref.sound.play();
 }
 
 void	DOOM::Doom::clear()
@@ -351,16 +543,17 @@ void	DOOM::Doom::buildLevelThings()
 {
   // Load level's things from WAD
   for (DOOM::Wad::RawLevel::Thing const & thing : wad.levels[level.episode].things)
-  {
-    // Convert thing from WAD
-    std::unique_ptr<DOOM::AbstractThing>	converted = DOOM::AbstractThing::factory(*this, thing);
+    if (thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel45) // TODO: Filter thing with difficulty here
+    {
+      // Convert thing from WAD
+      std::unique_ptr<DOOM::AbstractThing>	converted = DOOM::AbstractThing::factory(*this, thing);
 
-    // Check for error
-    if (converted.get() == nullptr)
-      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-    else
-      level.things.emplace_back(std::move(converted));
-  }
+      // Check for error
+      if (converted.get() == nullptr)
+	throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+      else
+	level.things.emplace_back(std::move(converted));
+    }
 
   // Set player in blockmap
   for (std::reference_wrapper<DOOM::PlayerThing> & player : level.players)
@@ -545,6 +738,81 @@ float	DOOM::Doom::Level::getLinedefsSeg(std::list<int16_t> & result, const Math:
   return intersection.first;
 }
 
+std::set<int16_t>	DOOM::Doom::Level::getLinedefs(const Math::Vector<2>& position, float radius) const
+{
+  std::set<int16_t>	blocks;
+
+  // Get blockmap index at position, using the four corners
+  blocks.insert(blockmap.index(Math::Vector<2>(position.x() - (float)radius, position.y() - (float)radius)));
+  blocks.insert(blockmap.index(Math::Vector<2>(position.x() - (float)radius, position.y() + (float)radius)));
+  blocks.insert(blockmap.index(Math::Vector<2>(position.x() + (float)radius, position.y() - (float)radius)));
+  blocks.insert(blockmap.index(Math::Vector<2>(position.x() + (float)radius, position.y() + (float)radius)));
+
+  std::set<int16_t>	linedefs;
+
+  // Get index of linedefs to test against position
+  for (int16_t block_index : blocks)
+    if (block_index != -1) {
+      const DOOM::Doom::Level::Blockmap::Block& block = blockmap.blocks[block_index];
+
+      linedefs.insert(block.linedefs.begin(), block.linedefs.end());
+    }
+
+  // Only keep intersected linedef
+  for (std::set<int16_t>::iterator iterator = linedefs.begin(); iterator != linedefs.end();) {
+    const DOOM::AbstractLinedef&	linedef = *this->linedefs[*iterator];
+    const DOOM::Doom::Level::Vertex&	linedef_start = vertexes[linedef.start];
+    const DOOM::Doom::Level::Vertex&	linedef_end = vertexes[linedef.end];
+    Math::Vector<2>			linedef_direction = linedef_end - linedef_start;
+    Math::Vector<2>			linedef_normal(+linedef_direction.y(), -linedef_direction.x());
+
+    std::pair<float, float>		intersection = Math::intersection(position, linedef_normal / linedef_normal.length(), linedef_start, linedef_direction);
+
+    if ((std::abs(intersection.first) < radius && intersection.second > 0.f && intersection.second < 1.f) ||
+      (position - vertexes[linedef.start]).length() < radius ||
+      (position - vertexes[linedef.end]).length() < radius)
+      iterator++;
+    else
+      iterator = linedefs.erase(iterator);
+  }
+  
+
+  // Return set of intersectable linedef
+  return linedefs;
+}
+
+std::set<std::reference_wrapper<DOOM::AbstractThing>>	DOOM::Doom::Level::getThings(const Math::Vector<2>& position, float radius) const
+{
+  std::set<int16_t>	blocks;
+
+  // Get blockmap index at position, using the four corners
+  blocks.insert(blockmap.index(Math::Vector<2>(position.x() - (float)radius, position.y() - (float)radius)));
+  blocks.insert(blockmap.index(Math::Vector<2>(position.x() - (float)radius, position.y() + (float)radius)));
+  blocks.insert(blockmap.index(Math::Vector<2>(position.x() + (float)radius, position.y() - (float)radius)));
+  blocks.insert(blockmap.index(Math::Vector<2>(position.x() + (float)radius, position.y() + (float)radius)));
+
+  std::set<std::reference_wrapper<DOOM::AbstractThing>>	things;
+
+  // Get index of linedefs to test against position
+  for (int16_t block_index : blocks)
+    if (block_index != -1) {
+      const DOOM::Doom::Level::Blockmap::Block& block = blockmap.blocks[block_index];
+
+      things.insert(block.things.begin(), block.things.end());
+    }
+
+  // Only keep intersected things
+  for (std::set<std::reference_wrapper<DOOM::AbstractThing>>::iterator iterator = things.begin(); iterator != things.end();) {
+    if ((position - iterator->get().position.convert<2>()).length() < radius + iterator->get().attributs.radius)
+      iterator++;
+    else
+      iterator = things.erase(iterator);
+  }
+
+  // Return set of intersectable things
+  return things;
+}
+
 std::list<std::reference_wrapper<DOOM::AbstractThing>>	DOOM::Doom::Level::getThings(const DOOM::Doom::Level::Sector & sector, DOOM::Enum::ThingProperty properties) const
 {
   std::set<DOOM::AbstractThing *>	things;
@@ -685,8 +953,7 @@ DOOM::Doom::Resources::Texture::Texture(DOOM::Doom & doom, const DOOM::Wad::RawR
 }
 
 DOOM::Doom::Resources::Sound::Sound(DOOM::Doom & doom, const DOOM::Wad::RawResources::Sound & raw) :
-  buffer(),
-  sound(buffer)
+  buffer()
 {
   std::vector<int16_t>	converted;
 
@@ -697,10 +964,6 @@ DOOM::Doom::Resources::Sound::Sound(DOOM::Doom & doom, const DOOM::Wad::RawResou
   // Load sound buffer (mono)
   if (buffer.loadFromSamples(converted.data(), raw.samples, 1, raw.rate) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-  // NOTE: this should not be useful as we associate the soundbuffer in the initializer list
-  // Attribute soundbuffer to sound
-  // sound.setBuffer(buffer);
 }
 
 DOOM::Doom::Level::Level() :
@@ -1010,7 +1273,7 @@ void	DOOM::Doom::Level::Blockmap::removeThing(DOOM::AbstractThing & thing, const
       blocks[index].things.erase(std::ref(thing));
 }
 
-DOOM::Doom::Level::Sector::Sector(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Sector & sector) :
+DOOM::Doom::Level::Sector::Sector(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Sector& sector) :
   floor_name(sector.floor_texture),
   ceiling_name(sector.ceiling_texture),
   floor_flat(DOOM::AbstractFlat::Null),
@@ -1021,6 +1284,7 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom & doom, const DOOM::Wad::RawLevel::
   damage(0.f),
   tag(sector.tag),
   special(sector.special),
+  sound_target(nullptr),
   _neighbors(),
   _actions()
 {
@@ -1119,6 +1383,7 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom::Level::Sector && sector) :
   damage(sector.damage),
   tag(sector.tag),
   special(sector.special),
+  sound_target(sector.sound_target),
   _neighbors(std::move(sector._neighbors)),
   _actions(std::move(sector._actions))
 {}

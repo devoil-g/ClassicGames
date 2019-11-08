@@ -34,8 +34,7 @@ namespace DOOM
     inline std::enable_if_t<(Trigger& _Trigger) != 0, bool>	trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing)	// Trigger event if correct event triggered
     {
       // Check if thing is a player
-      // TODO: -1 is not used by player only
-      if (thing.attributs.id != -1)
+      if (thing.type != DOOM::Enum::ThingType::ThingType_PLAYER)
 	return false;
 
       // TODO: push level transition state

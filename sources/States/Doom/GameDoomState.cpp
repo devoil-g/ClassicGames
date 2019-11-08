@@ -8,6 +8,8 @@
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
+#include "System/Sound.hpp"
+
 unsigned int		Game::GameDoomState::RenderScale = 1;
 
 Game::GameDoomState::GameDoomState() :
@@ -21,7 +23,7 @@ Game::GameDoomState::GameDoomState() :
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Load level
-  _doom.setLevel({ 3, 4 });
+  _doom.setLevel({ 1, 1 });
 }
 
 bool	Game::GameDoomState::update(sf::Time elapsed)

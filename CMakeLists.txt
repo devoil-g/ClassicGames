@@ -115,6 +115,8 @@ SET(GAME_STATES_MENU_SRCS
 SET(GAME_SYSTEM_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Config.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Config.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Sound.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Sound.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Window.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Window.hpp
 )

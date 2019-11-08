@@ -43,6 +43,13 @@ namespace Math
     return r < 0 ? r + n : r;
   };
 
+  inline float	Modulo(float i, float n)	// Return the positive modulo i of n
+  {
+    float	r = i - (int)(i / n) * i;
+
+    return r < 0.f ? r + n : r;
+  };
+
   inline float	RadToDeg(float r) { return (r * 180) / Math::Pi; };	// Convert radian (* accuracy) to degree
   inline float	DegToRad(float r) { return (r * Math::Pi) / 180; };	// Convert degree to radian (* accuracy)
 

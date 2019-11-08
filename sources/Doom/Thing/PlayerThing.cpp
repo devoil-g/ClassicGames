@@ -7,7 +7,7 @@ const float	DOOM::PlayerThing::WalkingSpeed = 24.f;			// 24 unit per frame (3 ti
 const float	DOOM::PlayerThing::RunningSpeed = 50.f;			// 50 unit per frame (3 tics)
 
 DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
-  DOOM::AbstractThing(doom, DOOM::Enum::ThingType::ThingType_PLAYER, 0.f, 0.f, 0.f),
+  DOOM::AbstractThing(doom, DOOM::Enum::ThingType::ThingType_PLAYER, DOOM::Enum::ThingFlag::FlagNone, 0.f, 0.f, 0.f),
   _running(false),
   id(id),
   controller(controller),
@@ -34,9 +34,6 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
 
 bool	DOOM::PlayerThing::update(DOOM::Doom & doom, sf::Time elapsed)
 {
-  // TODO: remove this
-  _elapsed += elapsed;
-
   // Update player using controller
   if (controller == 0)
     updateKeyboard(doom, elapsed);
@@ -49,6 +46,9 @@ bool	DOOM::PlayerThing::update(DOOM::Doom & doom, sf::Time elapsed)
   // Update camera position
   camera.position = position;
   camera.position.z() += 41.1f;
+
+  // Update status bar (TODO: complete this)
+  statusbar.health = health;
 
   // Always return false as a player is never deleted
   return false;

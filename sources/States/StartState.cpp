@@ -6,7 +6,7 @@
 #include "System/Window.hpp"
 
 Game::StartState::StartState()
-  : _elapsed(0.f), _text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf"))
+  : _elapsed(0.f), _text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf"), 128)
 {}
 
 Game::StartState::~StartState()
@@ -23,6 +23,7 @@ bool	Game::StartState::update(sf::Time elapsed)
   {
     _elapsed = 0.f;
     Game::StateMachine::Instance().push(new Game::MainMenuState());
+    return false;
   }
 
   return false;
@@ -31,8 +32,10 @@ bool	Game::StartState::update(sf::Time elapsed)
 void	Game::StartState::draw()
 {
   // Set text position to the center of the screen
-  _text.setCharacterSize(Game::Window::Instance().window().getSize().y / 8);
-  _text.setPosition(sf::Vector2f((Game::Window::Instance().window().getSize().x - _text.getLocalBounds().width) / 2.f, (Game::Window::Instance().window().getSize().y - _text.getLocalBounds().height) / 2.f));
+  float	scale = std::min((Game::Window::Instance().window().getSize().x * 2.f / 3.f) / _text.getLocalBounds().width, (Game::Window::Instance().window().getSize().y / 3.f) / _text.getLocalBounds().height);
+
+  _text.setScale(scale, scale);
+  _text.setPosition(sf::Vector2f((Game::Window::Instance().window().getSize().x - _text.getGlobalBounds().width) / 2.f, (Game::Window::Instance().window().getSize().y - _text.getGlobalBounds().height) / 2.f));
   
   // Set text color for flickering
   float	intensity = std::sqrtf(1.f - (std::cos(_elapsed * 4.f) + 1.f) / 2.f);

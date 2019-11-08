@@ -62,7 +62,7 @@ namespace DOOM
     template<bool _Repeat = true>
     inline std::enable_if_t<Repeat != _Repeat>	triggerRepeat(DOOM::Doom & doom)	// Replace linedef with null if not repeatable
     {
-      // Replace current sector by a normal sector
+      // Replace current linedef by a normal linedef
       for (std::unique_ptr<DOOM::AbstractLinedef> & linedef : doom.level.linedefs)
 	if (linedef.get() == this) {
 	  linedef = std::make_unique<DOOM::NullLinedef>(doom, *this);
@@ -116,8 +116,8 @@ namespace DOOM
     {
       // Check for monster condition
       // TODO: -1 is not used by player only
-      if (!(((Target & DOOM::EnumLinedef::Target::TargetPlayer) && (thing.attributs.id == -1)) ||
-	((Target & DOOM::EnumLinedef::Target::TargetMonster) && (thing.attributs.properties & DOOM::Enum::ThingProperty::ThingProperty_Shootable))))
+      if (!(((Target & DOOM::EnumLinedef::Target::TargetPlayer) && (thing.type == DOOM::Enum::ThingType::ThingType_PLAYER)) ||
+	((Target & DOOM::EnumLinedef::Target::TargetMonster) && (thing.type != DOOM::Enum::ThingType::ThingType_PLAYER) && (thing.attributs.properties & DOOM::Enum::ThingProperty::ThingProperty_Shootable))))
 	return false;
 
       // Check for key condition

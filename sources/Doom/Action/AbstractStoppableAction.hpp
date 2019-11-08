@@ -25,6 +25,8 @@ namespace DOOM
     bool	stop(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// Request action to stop (for lift & crusher)
     {
       // TODO: add check of thing type ?
+      if (thing.type != DOOM::Enum::ThingType::ThingType_PLAYER)
+	return true;
 
       // Set stop flag
       if (_run == true) {
@@ -39,6 +41,8 @@ namespace DOOM
     bool	start(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// Request action to start (for lift & crusher)
     {
       // TODO: add check of thing type ?
+      if (thing.type != DOOM::Enum::ThingType::ThingType_PLAYER)
+	return true;
 
       // Set run flag
       if (_run == false) {

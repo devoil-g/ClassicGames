@@ -62,7 +62,7 @@ namespace DOOM
       ArmorMega = 2
     };
 
-    enum ThingType
+    enum ThingType : int16_t
     {
       ThingType_PLAYER,		// -1
       ThingType_POSSESSED,	// Former Human Trooper
@@ -209,7 +209,17 @@ namespace DOOM
       ThingType_Number
     };
 
-    enum ThingProperty
+    enum ThingFlag : int16_t
+    {
+      FlagNone = 0x0000,
+      FlagSkillLevel12 = 0x0001,	// Active on skill level 1 & 2
+      FlagSkillLevel3 = 0x0002,		// Active on skill level 3
+      FlagSkillLevel45 = 0x0004,	// Active on skill level 4 & 5
+      FlagAmbush = 0x0008,		// Monster is in ambush mode
+      FlagMultiplayer = 0x0010,		// Only active in multiplayer mode
+    };
+
+    enum ThingProperty : int32_t
     {
       ThingProperty_None = 0x00000000,		// Nothing
       ThingProperty_Special = 0x00000001,	// Call P_SpecialThing when touched.
@@ -422,9 +432,20 @@ namespace DOOM
 	  Sound_Number
 	};
 
+	struct SoundInfo
+	{
+	  std::string	name;		// Sound name
+	  bool		singularity;	// Sound singularity (only one at a time)
+	  int		priority;	// Sound priority
+	  EnumSound	link;		// Referenced sound if a link
+	  int		pitch;		// Pitch if a link
+	  int		volume;		// Volume if a link
+	};
+
+	static const std::array<SoundInfo, Sound_Number>	sound_info;
+
       public:
 	sf::SoundBuffer	buffer;	// Sound buffer
-	sf::Sound	sound;	// Actual sound to be played
 
 	Sound(DOOM::Doom & doom, const DOOM::Wad::RawResources::Sound & sound);
 	~Sound() = default;
@@ -573,6 +594,8 @@ namespace DOOM
 	int16_t	tag;		// Sector/linedef tag
 	int16_t	special;	// Sector special attribute
 
+	DOOM::AbstractThing *	sound_target;	// Last sound emitter
+
       protected:
 	std::vector<int16_t>	_neighbors;	// List of neighbor sectors (sorted)
 
@@ -693,8 +716,10 @@ namespace DOOM
 
       std::set<int16_t>						getSectors(const Math::Vector<2> & position, float radius) const;						// Return sector indexes that thing (position and radius) is over
       std::pair<int16_t, int16_t>				getSector(const Math::Vector<2> & position, int16_t index = -1) const;						// Return sector/subsector at position
-      std::list<int16_t>					getLinedefs(const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit = 1.f) const;	// Return an ordered list of linedef index intersected by ray within distance limit
+      std::list<int16_t>					getLinedefs(const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit = 1.f) const;	// Return an ordered list of linedef index intersected by ray within distance limit
+      std::set<int16_t>						getLinedefs(const Math::Vector<2>& position, float radius) const;						// Return a list of linedef index at a position/radius
       std::list<std::reference_wrapper<DOOM::AbstractThing>>	getThings(const DOOM::Doom::Level::Sector & sector, DOOM::Enum::ThingProperty properties) const;		// Return things in sector with corresponding properties
+      std::set<std::reference_wrapper<DOOM::AbstractThing>>	getThings(const Math::Vector<2>& position, float radius) const;							// Return things at given position / radius
 
       Level();
       ~Level() = default;
@@ -742,6 +767,9 @@ namespace DOOM
     void					setLevel(const std::pair<uint8_t, uint8_t> & level);	// Build specified level from WAD, return true if successful
 
     void	addPlayer(int controller);	// Add player to current game
+
+    void	sound(DOOM::Doom::Resources::Sound::EnumSound sound);					// Play a sound
+    void	sound(DOOM::Doom::Resources::Sound::EnumSound sound, const Math::Vector<3> & position);	// Play a sound relatively to a position
   };
 };
 

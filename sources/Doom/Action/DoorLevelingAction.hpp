@@ -223,6 +223,9 @@ namespace DOOM
 
     bool	start(DOOM::Doom & doom, DOOM::AbstractThing & thing) override	// Request door to re-trigger
     {
+      if (thing.type != DOOM::Enum::ThingType::ThingType_PLAYER)
+	return true;
+
       switch (Door) {
       case DOOM::EnumAction::Door::DoorOpenWaitClose:
 	switch (_states.front()) {

@@ -29,17 +29,15 @@ Game::Sound::~Sound()
 
 bool		Game::Sound::update(sf::Time elapsed)
 {
+  // Remove unreferenced and not playing sounds
+  _sounds.remove_if([](const std::pair<sf::Sound, int>& pair) { return pair.second == 0 && pair.first.getStatus() == sf::Sound::Status::Stopped; });
+  
   // Does nothing
   return false;
 }
 
 Game::Sound::Reference	Game::Sound::get()
 {
-  // Find an available sound in cache
-  for (std::pair<sf::Sound, int>& sound : _sounds)
-    if (sound.second == 0 && sound.first.getStatus() == sf::Sound::Status::Stopped)
-      return Game::Sound::Reference(sound.first, sound.second);
-
   // Check if internal limit has been reached
   if (_sounds.size() + 1 > Game::Sound::MaxSound)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());

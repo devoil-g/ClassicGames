@@ -2,6 +2,7 @@
 
 #include "States/StateMachine.hpp"
 #include "System/Window.hpp"
+#include "System/Sound.hpp"
 
 Game::StateMachine::StateMachine()
 {
@@ -32,6 +33,7 @@ void			Game::StateMachine::run()
 
     // Stop if update return true
     if (Game::Window::Instance().update(elapsed) == true ||
+      Game::Sound::Instance().update(elapsed) == true ||
       _states.front()->update(elapsed) == true)
       return;
 

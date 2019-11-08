@@ -320,7 +320,7 @@ void	DOOM::Camera::renderSky(DOOM::Doom const & doom, sf::Image & target, sf::Re
   for (int row = std::max(_vertical[column].first, start); row < std::min(end, _vertical[column].second); row++)
     if (target.getPixel(rect.left + column, rect.top + row).a == 0)
     {
-      int	pixel_y = (int)std::lroundf((row - _horizon) * sky_factor * 0.72f) + sky.height / 2;
+      int	pixel_y = (int)std::lroundf((row - _horizon) * sky_factor * 0.75f) + sky.height / 2;
 
       // Skip pixel if outside of sky texture
       if (pixel_y < 0 || pixel_y >= sky.height)
@@ -358,7 +358,7 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom, sf::Image & target, sf:
 
   // Render every things of current level
   for (const std::unique_ptr<DOOM::AbstractThing> & thing : doom.level.things)
-    if (thing->sprite(doom, 0).first.get().width > 0) // TODO: angle parameter if thing->sprite() ?
+    if (thing->sprite(doom, 0).texture.width > 0) // TODO: angle parameter if thing->sprite() ?
     {
       float	distance = Math::Vector<2>::determinant(thing->position.convert<2>() - position.convert<2>(), eye_90) / eye_r;
 
@@ -373,24 +373,24 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom, sf::Image & target, sf:
   // Render things in reverse order
   for (std::list<std::pair<const DOOM::AbstractThing &, float>>::const_iterator iterator = things.begin(); iterator != things.end(); iterator++)
   {
-    const DOOM::AbstractThing &									thing(iterator->first);
-    const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool> &	texture(thing.sprite(doom, Math::Vector<2>::angle(position.convert<2>() - thing.position.convert<2>()) - thing.angle));
+    const DOOM::AbstractThing &		thing(iterator->first);
+    const DOOM::AbstractThing::Sprite &	sprite(thing.sprite(doom, Math::Vector<2>::angle(position.convert<2>() - thing.position.convert<2>()) - thing.angle));
     
     // Compute thing position on screen
     std::pair<float, float>	thing_projection(Math::intersection(_screen_start, _screen, position.convert<2>(), thing.position.convert<2>() - position.convert<2>()));
     std::pair<int16_t, int16_t>	thing_sector(doom.level.getSector(thing.position.convert<2>()));
 
     float	thing_factor = _factor / ((thing.position.convert<2>() - position.convert<2>()).length() / (_screen_start + _screen * thing_projection.first - position.convert<2>()).length());
-    float	first_x = thing_projection.first * rect.width + ((texture.second == false ? -texture.first.get().left : -texture.first.get().width + texture.first.get().left)) * thing_factor;
-    float	first_y = _horizon - ((thing.position.z() + texture.first.get().top) - position.z()) * thing_factor;
-    float	second_x = thing_projection.first * rect.width + ((texture.second == false ? texture.first.get().width - texture.first.get().left : +texture.first.get().left)) * thing_factor;
-    float	second_y = _horizon - ((thing.position.z() - texture.first.get().height + texture.first.get().top) - position.z()) * thing_factor;
+    float	first_x = thing_projection.first * rect.width + ((sprite.mirror == false ? -sprite.texture.left : -sprite.texture.width + sprite.texture.left)) * thing_factor;
+    float	first_y = _horizon - ((thing.position.z() + sprite.texture.top) - position.z()) * thing_factor;
+    float	second_x = thing_projection.first * rect.width + ((sprite.mirror == false ? sprite.texture.width - sprite.texture.left : +sprite.texture.left)) * thing_factor;
+    float	second_y = _horizon - ((thing.position.z() - sprite.texture.height + sprite.texture.top) - position.z()) * thing_factor;
 
     // Map of thing visibility against segments
     std::unordered_map<int16_t, bool>	visible;
 
     // Compute light level of thing
-    int16_t	shaded = renderLight(doom, target, rect, doom.level.sectors[thing_sector.first].light_current, iterator->second);
+    int16_t	shaded = sprite.full_brightness == true ? 255 : renderLight(doom, target, rect, doom.level.sectors[thing_sector.first].light_current, iterator->second);
 
     // Render pixels of the sprite
     for (int column = std::max((int)std::lroundf(first_x), 0); column < std::min((int)std::lroundf(second_x), (int)rect.width); column++)
@@ -431,10 +431,10 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom, sf::Image & target, sf:
 	if (visible[segment_index] == false)
 	  continue;
 
-	int	pixel_x = (int)(std::clamp(((texture.second == false) ? (column - first_x) : (second_x - column)) / (second_x - first_x), 0.f, 0.9999999f) * texture.first.get().width);
-	int	pixel_y = (int)(std::clamp((row - first_y) / (second_y - first_y), 0.f, 0.9999999f) * texture.first.get().height);
+	int	pixel_x = (int)(std::clamp(((sprite.mirror == false) ? (column - first_x) : (second_x - column)) / (second_x - first_x), 0.f, 0.9999999f) * sprite.texture.width);
+	int	pixel_y = (int)(std::clamp((row - first_y) / (second_y - first_y), 0.f, 0.9999999f) * sprite.texture.height);
 
-	for (DOOM::Doom::Resources::Texture::Column::Span const & span : texture.first.get().columns[pixel_x].spans)
+	for (DOOM::Doom::Resources::Texture::Column::Span const & span : sprite.texture.columns[pixel_x].spans)
 	{
 	  // Interrupt if pixel missed
 	  if (span.offset > pixel_y)
