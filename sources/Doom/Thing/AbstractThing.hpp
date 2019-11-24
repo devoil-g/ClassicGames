@@ -350,6 +350,7 @@ namespace DOOM
     void	P_NewChaseDir(DOOM::Doom& doom);					// Find a new direction to chase target.
     bool	P_TryMove(DOOM::Doom& doom, const Math::Vector<2>& position);		// Attempt to move thing to a new position, crossing special lines unless property Teleport is set.
     bool	P_TryWalk(DOOM::Doom& doom);						// Attempt to move thing in its direction. If blocked if either a wall or a thing, return false. If move is either clear or blocked only by a door, return true and sets (and open the door).
+    float	P_AimLineAttack(DOOM::Doom& doom, float angle, float distance);		// Compute attack vertical angle
 
     void	setState(DOOM::Doom & doom, DOOM::AbstractThing::ThingState state);	// Switch state
 

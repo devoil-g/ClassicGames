@@ -4857,7 +4857,9 @@ DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type,
   _thrust(0.f, 0.f, 0.f),
   _gravity((this->flags & DOOM::Enum::ThingProperty::ThingProperty_NoGravity) ? 0.f : -1.f),
   _state(attributs.state_spawn),
-  _elapsed(sf::Time::Zero)
+  _elapsed(sf::Time::Zero),
+  _target(nullptr),
+  _target_threshold(0)
 {
   // Cancel if type is invalid 
   if (type < 0 || type >= DOOM::Enum::ThingType::ThingType_Number)
@@ -4934,8 +4936,6 @@ void	DOOM::AbstractThing::thrust(const Math::Vector<3> & acceleration)
 
 DOOM::AbstractThing::Sprite	DOOM::AbstractThing::sprite(const DOOM::Doom & doom, float angle) const
 {
-  static const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool>	frame = { std::ref(DOOM::Doom::Resources::Texture::Null), false };
-
   // Return a default empty texture if no state
   if (_state == DOOM::AbstractThing::ThingState::State_None)
     return { DOOM::Doom::Resources::Texture::Null, false, false };
@@ -4996,28 +4996,6 @@ void	DOOM::AbstractThing::A_BrainAwake(DOOM::Doom& doom) {}
 void	DOOM::AbstractThing::A_BrainSpit(DOOM::Doom& doom) {}
 void	DOOM::AbstractThing::A_BrainExplode(DOOM::Doom& doom) {}
 
-void	DOOM::AbstractThing::A_Fall(DOOM::Doom& doom)
-{
-  // Thing is on ground, it can be walked over
-  flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_Solid);
-}
-
-void	DOOM::AbstractThing::A_Pain(DOOM::Doom& doom)
-{
-  doom.sound(attributs.sound_pain, position);
-}
-
-void	DOOM::AbstractThing::A_XScream(DOOM::Doom& doom)
-{
-  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_slop, position);
-}
-
-void	DOOM::AbstractThing::A_PlayerScream(DOOM::Doom& doom)
-{
-  // If the player dies with less than -50% without gibbing, special sound
-  doom.sound(health < -50 ? DOOM::Doom::Resources::Sound::EnumSound::Sound_pdiehi : DOOM::Doom::Resources::Sound::EnumSound::Sound_pldeth, position);
-}
-
 void	DOOM::AbstractThing::A_SpawnFly(DOOM::Doom& doom)
 {
 /*
@@ -5062,13 +5040,6 @@ void	DOOM::AbstractThing::A_SpawnFly(DOOM::Doom& doom)
 */
 }
 
-void	DOOM::AbstractThing::A_SpawnSound(DOOM::Doom& doom)
-{
-  // Travelling cube sound
-  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_boscub, position);
-  A_SpawnFly(doom);
-}
-
 void	DOOM::AbstractThing::A_SkelFist(DOOM::Doom& doom)
 {
 /*
@@ -5085,19 +5056,6 @@ void	DOOM::AbstractThing::A_SkelFist(DOOM::Doom& doom)
     P_DamageMobJ(doom, _target, this, this, (std::rand() % 10 + 1) * 6);
   }
 */
-}
-
-void	DOOM::AbstractThing::A_SkelWhoosh(DOOM::Doom& doom)
-{
-  // Cancel if no target
-  if (_target == nullptr)
-    return;
-
-  // Face target
-  A_FaceTarget(doom);
-
-  // Whoosh!
-  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_skeswg, position);
 }
 
 void	DOOM::AbstractThing::A_BruisAttack(DOOM::Doom& doom)
@@ -5253,140 +5211,6 @@ void	DOOM::AbstractThing::A_SPosAttack(DOOM::Doom& doom)
     P_LineAttack(doom, atk_angle, AbstractThing::MissileRange, atk_slope, atk_damage);
   }
 */
-}
-
-void	DOOM::AbstractThing::A_PosAttack(DOOM::Doom& doom)
-{
-/*
-  // Cancel if no target
-  if (_target == nullptr)
-    return;
-
-  // Face target
-  A_FaceTarget(doom);
-
-  // Play pistol sound
-  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol, position);
-
-  float	atk_angle = angle + std::pow(Math::Random(), 2) * Math::Pi / 8.f;
-  float	atk_slope = P_AimLineAttack(doom, angle, AbstractThing::MissileRange);
-  int	atk_damage = (std::rand() % 5 + 1) * 3;
-
-  // Attack
-  P_LineAttack(doom, atk_angle, AbstractThing::MissileRange, atk_slope, atk_damage);
-*/
-}
-
-void	DOOM::AbstractThing::A_FaceTarget(DOOM::Doom & doom)
-{
-  // Stop if no target
-  if (_target == nullptr)
-    return;
-
-  // Remove ambush flag
-  flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_Ambush);
-
-  angle = Math::Vector<2>::angle(_target->position.convert<2>() - position.convert<2>());
-
-  // If thing is invisible, randomize angle
-  if (flags & DOOM::Enum::ThingProperty::ThingProperty_Shadow)
-    angle += std::pow(Math::Random(), 2) * Math::Pi / 4.f;
-}
-
-void	DOOM::AbstractThing::A_Scream(DOOM::Doom& doom)
-{
-  DOOM::Doom::Resources::Sound::EnumSound	sound;
-
-  switch (attributs.sound_death) {
-    // No death sound
-  case DOOM::Doom::Resources::Sound::EnumSound::Sound_None :
-    return;
-
-  case DOOM::Doom::Resources::Sound::EnumSound::Sound_podth1:
-  case DOOM::Doom::Resources::Sound::EnumSound::Sound_podth2:
-  case DOOM::Doom::Resources::Sound::EnumSound::Sound_podth3:
-    sound = (DOOM::Doom::Resources::Sound::EnumSound)(DOOM::Doom::Resources::Sound::EnumSound::Sound_podth1 + std::rand() % 3);
-    break;
-
-  case DOOM::Doom::Resources::Sound::EnumSound::Sound_bgdth1:
-  case DOOM::Doom::Resources::Sound::EnumSound::Sound_bgdth2:
-    sound = (DOOM::Doom::Resources::Sound::EnumSound)(DOOM::Doom::Resources::Sound::EnumSound::Sound_bgdth1 + std::rand() % 2);
-    break;
-
-  default:
-    sound = attributs.sound_death;
-    break;
-  }
-
-  // Full volume for bosses
-  if (type == DOOM::Enum::ThingType::ThingType_SPIDER || type == DOOM::Enum::ThingType::ThingType_CYBORG)
-    doom.sound(sound);
-  else
-    doom.sound(sound, position);
-}
-
-void	DOOM::AbstractThing::A_VileStart(DOOM::Doom & doom)
-{
-  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_vilatk, position);
-}
-
-void	DOOM::AbstractThing::A_StartFire(DOOM::Doom & doom)
-{
-  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_flamst, position);
-  A_Fire(doom);
-}
-
-void	DOOM::AbstractThing::A_FireCrackle(DOOM::Doom & doom)
-{
-  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_flame, position);
-  A_Fire(doom);
-}
-
-void	DOOM::AbstractThing::A_CPosRefire(DOOM::Doom & doom)
-{
-  // Keep firing unless target got out of sight
-  A_FaceTarget(doom);
-
-  if (std::rand() % 256 < 40)
-    return;
-
-  if (_target == nullptr || _target->health <= 0 || P_CheckSight(doom, *_target) == false)
-    setState(doom, attributs.state_see);
-}
-
-void	DOOM::AbstractThing::A_Metal(DOOM::Doom & doom)
-{
-  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_metal, position);
-  A_Chase(doom);
-}
-
-void	DOOM::AbstractThing::A_SpidRefire(DOOM::Doom & doom)
-{
-  A_FaceTarget(doom);
-
-  if (std::rand() % 256 < 10)
-    return;
-
-  if (_target == nullptr || _target->health <= 0 || P_CheckSight(doom, *_target) == false)
-    setState(doom, attributs.state_see);
-}
-
-void	DOOM::AbstractThing::A_BabyMetal(DOOM::Doom & doom)
-{
-  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_bspwlk, position);
-  A_Chase(doom);
-}
-
-void	DOOM::AbstractThing::A_Hoof(DOOM::Doom & doom)
-{
-  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_hoof, position);
-  A_Chase(doom);
-}
-
-void	DOOM::AbstractThing::A_BrainPain(DOOM::Doom & doom)
-{
-  // Emit pain sound
-  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_bospn);
 }
 
 void	DOOM::AbstractThing::setState(DOOM::Doom & doom, DOOM::AbstractThing::ThingState state)
@@ -6011,10 +5835,8 @@ bool	DOOM::AbstractThing::P_CheckMeleeRange(DOOM::Doom& doom)
   if (_target == nullptr)
     return false;
 
-  float	distance = (position.convert<2>() - _target->position.convert<2>()).length();
-
   // Cancel if not at range
-  if (distance >= DOOM::AbstractThing::MeleeRange - 20.f + _target->attributs.radius)
+  if ((position.convert<2>() - _target->position.convert<2>()).length() >= DOOM::AbstractThing::MeleeRange - 20.f + _target->attributs.radius)
     return false;
 
   // Cancel if target is not in sight
@@ -6215,7 +6037,7 @@ bool	DOOM::AbstractThing::P_TryMove(DOOM::Doom& doom, const Math::Vector<2>& pos
 
     // Don't stand over a dropoff
     if (!(flags & (DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_Float)) &&
-      (target_floor - this->position.z() < -24.f) || (doom.level.sectors[doom.level.getSector(position).first].floor_current - this->position.z() < -24.f))
+      (target_floor - this->position.z() < -24.f) || (doom.level.sectors[doom.level.getSector(position).first].floor_current - doom.level.sectors[doom.level.getSector(this->position.convert<2>()).first].floor_current < -24.f))
       return false;
   }
 
@@ -6322,4 +6144,185 @@ bool	DOOM::AbstractThing::P_Move(DOOM::Doom& doom)
   }
 
   return true;
+}
+
+void	DOOM::AbstractThing::A_Hoof(DOOM::Doom& doom)
+{
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_hoof, position);
+  A_Chase(doom);
+}
+
+void	DOOM::AbstractThing::A_BrainPain(DOOM::Doom& doom)
+{
+  // Emit pain sound
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_bospn);
+}
+
+void	DOOM::AbstractThing::A_Scream(DOOM::Doom& doom)
+{
+  DOOM::Doom::Resources::Sound::EnumSound	sound;
+
+  switch (attributs.sound_death) {
+    // No death sound
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_None:
+    return;
+
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_podth1:
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_podth2:
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_podth3:
+    sound = (DOOM::Doom::Resources::Sound::EnumSound)(DOOM::Doom::Resources::Sound::EnumSound::Sound_podth1 + std::rand() % 3);
+    break;
+
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_bgdth1:
+  case DOOM::Doom::Resources::Sound::EnumSound::Sound_bgdth2:
+    sound = (DOOM::Doom::Resources::Sound::EnumSound)(DOOM::Doom::Resources::Sound::EnumSound::Sound_bgdth1 + std::rand() % 2);
+    break;
+
+  default:
+    sound = attributs.sound_death;
+    break;
+  }
+
+  // Full volume for bosses
+  if (type == DOOM::Enum::ThingType::ThingType_SPIDER || type == DOOM::Enum::ThingType::ThingType_CYBORG)
+    doom.sound(sound);
+  else
+    doom.sound(sound, position);
+}
+
+void	DOOM::AbstractThing::A_VileStart(DOOM::Doom& doom)
+{
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_vilatk, position);
+}
+
+void	DOOM::AbstractThing::A_StartFire(DOOM::Doom& doom)
+{
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_flamst, position);
+  A_Fire(doom);
+}
+
+void	DOOM::AbstractThing::A_FireCrackle(DOOM::Doom& doom)
+{
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_flame, position);
+  A_Fire(doom);
+}
+
+void	DOOM::AbstractThing::A_CPosRefire(DOOM::Doom& doom)
+{
+  // Keep firing unless target got out of sight
+  A_FaceTarget(doom);
+
+  if (std::rand() % 256 < 40)
+    return;
+
+  if (_target == nullptr || _target->health <= 0 || P_CheckSight(doom, *_target) == false)
+    setState(doom, attributs.state_see);
+}
+
+void	DOOM::AbstractThing::A_Metal(DOOM::Doom& doom)
+{
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_metal, position);
+  A_Chase(doom);
+}
+
+void	DOOM::AbstractThing::A_SpidRefire(DOOM::Doom& doom)
+{
+  A_FaceTarget(doom);
+
+  if (std::rand() % 256 < 10)
+    return;
+
+  if (_target == nullptr || _target->health <= 0 || P_CheckSight(doom, *_target) == false)
+    setState(doom, attributs.state_see);
+}
+
+void	DOOM::AbstractThing::A_BabyMetal(DOOM::Doom& doom)
+{
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_bspwlk, position);
+  A_Chase(doom);
+}
+
+void	DOOM::AbstractThing::A_FaceTarget(DOOM::Doom& doom)
+{
+  // Stop if no target
+  if (_target == nullptr)
+    return;
+
+  // Remove ambush flag
+  flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_Ambush);
+
+  angle = Math::Vector<2>::angle(_target->position.convert<2>() - position.convert<2>());
+
+  // If thing is invisible, randomize angle
+  if (flags & DOOM::Enum::ThingProperty::ThingProperty_Shadow)
+    angle += std::pow(Math::Random(), 2) * Math::Pi / 4.f;
+}
+
+void	DOOM::AbstractThing::A_SkelWhoosh(DOOM::Doom& doom)
+{
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Whoosh!
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_skeswg, position);
+}
+
+void	DOOM::AbstractThing::A_PlayerScream(DOOM::Doom& doom)
+{
+  // If the player dies with less than -50% without gibbing, special sound
+  doom.sound(health < -50 ? DOOM::Doom::Resources::Sound::EnumSound::Sound_pdiehi : DOOM::Doom::Resources::Sound::EnumSound::Sound_pldeth, position);
+}
+
+void	DOOM::AbstractThing::A_SpawnSound(DOOM::Doom& doom)
+{
+  // Travelling cube sound
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_boscub, position);
+  A_SpawnFly(doom);
+}
+
+void	DOOM::AbstractThing::A_Fall(DOOM::Doom& doom)
+{
+  // Thing is on ground, it can be walked over
+  flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_Solid);
+}
+
+void	DOOM::AbstractThing::A_Pain(DOOM::Doom& doom)
+{
+  doom.sound(attributs.sound_pain, position);
+}
+
+void	DOOM::AbstractThing::A_XScream(DOOM::Doom& doom)
+{
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_slop, position);
+}
+
+void	DOOM::AbstractThing::A_PosAttack(DOOM::Doom& doom)
+{
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Play pistol sound
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol, position);
+
+  float	atk_angle = angle + std::pow(Math::Random(), 2) * Math::Pi / 8.f;
+  float	atk_slope = P_AimLineAttack(doom, angle, AbstractThing::MissileRange);
+  int	atk_damage = (std::rand() % 5 + 1) * 3;
+
+  // Attack
+  //P_LineAttack(doom, atk_angle, AbstractThing::MissileRange, atk_slope, atk_damage);
+}
+
+float	DOOM::AbstractThing::P_AimLineAttack(DOOM::Doom& doom, float angle, float distance)
+{
+  //if (P_PathTraverse(doom, position.convert<2>(), Math::Vector<2>(std::cos(angle), std::sin(angle))* distance))
+    ;
+  return 0.f;
 }
