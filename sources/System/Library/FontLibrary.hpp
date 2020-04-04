@@ -1,5 +1,4 @@
-#ifndef _FONT_LIBRARY_HPP_
-#define _FONT_LIBRARY_HPP_
+#pragma once
 
 #include <string>
 
@@ -16,10 +15,8 @@ namespace Game
     ~FontLibrary() override;
 
   public:
-    inline static Game::FontLibrary &	Instance() { static Game::FontLibrary singleton; return singleton; };	// Return unique instance (singleton)
+    inline static Game::FontLibrary&  Instance() { static Game::FontLibrary singleton; return singleton; }; // Return unique instance (singleton)
 
-    void	load(std::string const &) override;	// Load a font in the library
+    void  load(std::string const&) override;  // Load a font in the library
   };
-};
-
-#endif
+}

@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Doom/Doom.hpp"
 #include "Doom/Thing/AbstractThing.hpp"
 #include "Doom/Thing/PlayerThing.hpp"
@@ -6,6 +8,7 @@
 const float	DOOM::AbstractThing::MeleeRange = 64.f;
 const float	DOOM::AbstractThing::MissileRange = 32.f * 64.f;
 const float	DOOM::AbstractThing::FloatSpeed = 4.f;
+const int	DOOM::AbstractThing::TargetThreshold = 100;
 
 const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>	DOOM::AbstractThing::_sprites =
 {
@@ -198,9 +201,9 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_PLAY, 17, false, 5, nullptr, State_PLAY_XDIE5 },		// State_PLAY_XDIE4
   DOOM::AbstractThing::State{ Sprite_PLAY, 18, false, 5, nullptr, State_PLAY_XDIE6 },		// State_PLAY_XDIE5
   DOOM::AbstractThing::State{ Sprite_PLAY, 19, false, 5, nullptr, State_PLAY_XDIE7 },		// State_PLAY_XDIE6
-  DOOM::AbstractThing::State{ Sprite_PLAY, 30, false, 5, nullptr, State_PLAY_XDIE8 },		// State_PLAY_XDIE7
-  DOOM::AbstractThing::State{ Sprite_PLAY, 31, false, 5, nullptr, State_PLAY_XDIE9 },		// State_PLAY_XDIE8
-  DOOM::AbstractThing::State{ Sprite_PLAY, 32, false, -1, nullptr, State_None },		// State_PLAY_XDIE9
+  DOOM::AbstractThing::State{ Sprite_PLAY, 20, false, 5, nullptr, State_PLAY_XDIE8 },		// State_PLAY_XDIE7
+  DOOM::AbstractThing::State{ Sprite_PLAY, 21, false, 5, nullptr, State_PLAY_XDIE9 },		// State_PLAY_XDIE8
+  DOOM::AbstractThing::State{ Sprite_PLAY, 22, false, -1, nullptr, State_None },		// State_PLAY_XDIE9
   DOOM::AbstractThing::State{ Sprite_POSS, 0, false, 10, &A_Look, State_POSS_STND2 },		// State_POSS_STND
   DOOM::AbstractThing::State{ Sprite_POSS, 1, false, 10, &A_Look, State_POSS_STND },		// State_POSS_STND2
   DOOM::AbstractThing::State{ Sprite_POSS, 0, false, 4, &A_Chase, State_POSS_RUN2 },		// State_POSS_RUN1
@@ -229,7 +232,7 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_POSS, 17, false, 5, nullptr, State_POSS_XDIE7 },		// State_POSS_XDIE6
   DOOM::AbstractThing::State{ Sprite_POSS, 18, false, 5, nullptr, State_POSS_XDIE8 },		// State_POSS_XDIE7
   DOOM::AbstractThing::State{ Sprite_POSS, 19, false, 5, nullptr, State_POSS_XDIE9 },		// State_POSS_XDIE8
-  DOOM::AbstractThing::State{ Sprite_POSS, 30, false, -1, nullptr, State_None },		// State_POSS_XDIE9
+  DOOM::AbstractThing::State{ Sprite_POSS, 20, false, -1, nullptr, State_None },		// State_POSS_XDIE9
   DOOM::AbstractThing::State{ Sprite_POSS, 10, false, 5, nullptr, State_POSS_RAISE2 },		// State_POSS_RAISE1
   DOOM::AbstractThing::State{ Sprite_POSS, 9, false, 5, nullptr, State_POSS_RAISE3 },		// State_POSS_RAISE2
   DOOM::AbstractThing::State{ Sprite_POSS, 8, false, 5, nullptr, State_POSS_RAISE4 },		// State_POSS_RAISE3
@@ -262,7 +265,7 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_SPOS, 17, false, 5, nullptr, State_SPOS_XDIE7 },		// State_SPOS_XDIE6
   DOOM::AbstractThing::State{ Sprite_SPOS, 18, false, 5, nullptr, State_SPOS_XDIE8 },		// State_SPOS_XDIE7
   DOOM::AbstractThing::State{ Sprite_SPOS, 19, false, 5, nullptr, State_SPOS_XDIE9 },		// State_SPOS_XDIE8
-  DOOM::AbstractThing::State{ Sprite_SPOS, 30, false, -1, nullptr, State_None },		// State_SPOS_XDIE9
+  DOOM::AbstractThing::State{ Sprite_SPOS, 20, false, -1, nullptr, State_None },		// State_SPOS_XDIE9
   DOOM::AbstractThing::State{ Sprite_SPOS, 11, false, 5, nullptr, State_SPOS_RAISE2 },		// State_SPOS_RAISE1
   DOOM::AbstractThing::State{ Sprite_SPOS, 10, false, 5, nullptr, State_SPOS_RAISE3 },		// State_SPOS_RAISE2
   DOOM::AbstractThing::State{ Sprite_SPOS, 9, false, 5, nullptr, State_SPOS_RAISE4 },		// State_SPOS_RAISE3
@@ -302,12 +305,12 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_VILE, 17, false, 7, &A_Scream, State_VILE_DIE3 },		// State_VILE_DIE2
   DOOM::AbstractThing::State{ Sprite_VILE, 18, false, 7, &A_Fall, State_VILE_DIE4 },		// State_VILE_DIE3
   DOOM::AbstractThing::State{ Sprite_VILE, 19, false, 7, nullptr, State_VILE_DIE5 },		// State_VILE_DIE4
-  DOOM::AbstractThing::State{ Sprite_VILE, 30, false, 7, nullptr, State_VILE_DIE6 },		// State_VILE_DIE5
-  DOOM::AbstractThing::State{ Sprite_VILE, 31, false, 7, nullptr, State_VILE_DIE7 },		// State_VILE_DIE6
-  DOOM::AbstractThing::State{ Sprite_VILE, 32, false, 7, nullptr, State_VILE_DIE8 },		// State_VILE_DIE7
-  DOOM::AbstractThing::State{ Sprite_VILE, 33, false, 5, nullptr, State_VILE_DIE9 },		// State_VILE_DIE8
-  DOOM::AbstractThing::State{ Sprite_VILE, 34, false, 5, nullptr, State_VILE_DIE10 },		// State_VILE_DIE9
-  DOOM::AbstractThing::State{ Sprite_VILE, 35, false, -1, nullptr, State_None },		// State_VILE_DIE10
+  DOOM::AbstractThing::State{ Sprite_VILE, 20, false, 7, nullptr, State_VILE_DIE6 },		// State_VILE_DIE5
+  DOOM::AbstractThing::State{ Sprite_VILE, 21, false, 7, nullptr, State_VILE_DIE7 },		// State_VILE_DIE6
+  DOOM::AbstractThing::State{ Sprite_VILE, 22, false, 7, nullptr, State_VILE_DIE8 },		// State_VILE_DIE7
+  DOOM::AbstractThing::State{ Sprite_VILE, 23, false, 5, nullptr, State_VILE_DIE9 },		// State_VILE_DIE8
+  DOOM::AbstractThing::State{ Sprite_VILE, 24, false, 5, nullptr, State_VILE_DIE10 },		// State_VILE_DIE9
+  DOOM::AbstractThing::State{ Sprite_VILE, 25, false, -1, nullptr, State_None },		// State_VILE_DIE10
   DOOM::AbstractThing::State{ Sprite_FIRE, 0, true, 2, &A_StartFire, State_FIRE2 },		// State_FIRE1
   DOOM::AbstractThing::State{ Sprite_FIRE, 1, true, 2, &A_Fire, State_FIRE3 },			// State_FIRE2
   DOOM::AbstractThing::State{ Sprite_FIRE, 0, true, 2, &A_Fire, State_FIRE4 },			// State_FIRE3
@@ -496,7 +499,7 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_TROO, 17, false, 5, nullptr, State_TROO_XDIE6 },		// State_TROO_XDIE5
   DOOM::AbstractThing::State{ Sprite_TROO, 18, false, 5, nullptr, State_TROO_XDIE7 },		// State_TROO_XDIE6
   DOOM::AbstractThing::State{ Sprite_TROO, 19, false, 5, nullptr, State_TROO_XDIE8 },		// State_TROO_XDIE7
-  DOOM::AbstractThing::State{ Sprite_TROO, 30, false, -1, nullptr, State_None },		// State_TROO_XDIE8
+  DOOM::AbstractThing::State{ Sprite_TROO, 20, false, -1, nullptr, State_None },		// State_TROO_XDIE8
   DOOM::AbstractThing::State{ Sprite_TROO, 12, false, 8, nullptr, State_TROO_RAISE2 },		// State_TROO_RAISE1
   DOOM::AbstractThing::State{ Sprite_TROO, 11, false, 8, nullptr, State_TROO_RAISE3 },		// State_TROO_RAISE2
   DOOM::AbstractThing::State{ Sprite_TROO, 10, false, 6, nullptr, State_TROO_RAISE4 },		// State_TROO_RAISE3
@@ -783,8 +786,8 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_SSWV, 17, false, 5, nullptr, State_SSWV_XDIE6 },		// State_SSWV_XDIE5
   DOOM::AbstractThing::State{ Sprite_SSWV, 18, false, 5, nullptr, State_SSWV_XDIE7 },		// State_SSWV_XDIE6
   DOOM::AbstractThing::State{ Sprite_SSWV, 19, false, 5, nullptr, State_SSWV_XDIE8 },		// State_SSWV_XDIE7
-  DOOM::AbstractThing::State{ Sprite_SSWV, 30, false, 5, nullptr, State_SSWV_XDIE9 },		// State_SSWV_XDIE8
-  DOOM::AbstractThing::State{ Sprite_SSWV, 31, false, -1, nullptr, State_None },		// State_SSWV_XDIE9
+  DOOM::AbstractThing::State{ Sprite_SSWV, 20, false, 5, nullptr, State_SSWV_XDIE9 },		// State_SSWV_XDIE8
+  DOOM::AbstractThing::State{ Sprite_SSWV, 21, false, -1, nullptr, State_None },		// State_SSWV_XDIE9
   DOOM::AbstractThing::State{ Sprite_SSWV, 12, false, 5, nullptr, State_SSWV_RAISE2 },		// State_SSWV_RAISE1
   DOOM::AbstractThing::State{ Sprite_SSWV, 11, false, 5, nullptr, State_SSWV_RAISE3 },		// State_SSWV_RAISE2
   DOOM::AbstractThing::State{ Sprite_SSWV, 10, false, 5, nullptr, State_SSWV_RAISE4 },		// State_SSWV_RAISE3
@@ -1193,8 +1196,8 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     8,		// reactiontime
     0,		// painchance
     0,		// speed
-    20,		// radius
-    16,		// height
+    0,		// radius
+    1,		// height
     100,	// mass
     0,		// damage
     (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
@@ -4851,9 +4854,11 @@ DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type,
   attributs(_attributs[type]),
   flags((DOOM::Enum::ThingProperty)(attributs.properties | ((flags & DOOM::Enum::ThingFlag::FlagAmbush) ? DOOM::Enum::ThingProperty::ThingProperty_Ambush : DOOM::Enum::ThingProperty::ThingProperty_None))),
   health(attributs.spawnhealth),
+  height(attributs.height),
   reactiontime(attributs.reactiontime),
   move_direction(Direction::DirectionNone),
   move_count(0),
+  _remove(false),
   _thrust(0.f, 0.f, 0.f),
   _gravity((this->flags & DOOM::Enum::ThingProperty::ThingProperty_NoGravity) ? 0.f : -1.f),
   _state(attributs.state_spawn),
@@ -4885,7 +4890,7 @@ DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type,
     }
 
   // Set thing spawn Z position
-  position.z() = (this->flags & (DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling) ? ceiling - attributs.height : floor);
+  position.z() = (this->flags & (DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling) ? ceiling - height : floor);
 }
 
 bool	DOOM::AbstractThing::update(DOOM::Doom& doom, sf::Time elapsed)
@@ -4902,7 +4907,8 @@ bool	DOOM::AbstractThing::update(DOOM::Doom& doom, sf::Time elapsed)
   // Update physics of thing
   updatePhysics(doom, elapsed);
 
-  return false;
+  // Return remove flag
+  return _remove;
 }
 
 std::unique_ptr<DOOM::AbstractThing>	DOOM::AbstractThing::factory(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing)
@@ -4974,7 +4980,6 @@ void	DOOM::AbstractThing::A_FirePlasma(DOOM::Doom & doom) {}
 void	DOOM::AbstractThing::A_BFGsound(DOOM::Doom & doom) {} 
 void	DOOM::AbstractThing::A_FireBFG(DOOM::Doom & doom) {}
 void	DOOM::AbstractThing::A_BFGSpray(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_Explode(DOOM::Doom & doom) {}
 void	DOOM::AbstractThing::A_VileChase(DOOM::Doom& doom) {}
 void	DOOM::AbstractThing::A_VileTarget(DOOM::Doom& doom) {}
 void	DOOM::AbstractThing::A_VileAttack(DOOM::Doom& doom) {}
@@ -5040,24 +5045,6 @@ void	DOOM::AbstractThing::A_SpawnFly(DOOM::Doom& doom)
 */
 }
 
-void	DOOM::AbstractThing::A_SkelFist(DOOM::Doom& doom)
-{
-/*
-  // Cancel if no target
-  if (_target == nullptr)
-    return;
-
-  // Face target
-  A_FaceTarget(doom);
-
-  // Melee attack
-  if (P_CheckMeleeRange(doom) == true) {
-    doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_skepch, position);
-    P_DamageMobJ(doom, _target, this, this, (std::rand() % 10 + 1) * 6);
-  }
-*/
-}
-
 void	DOOM::AbstractThing::A_BruisAttack(DOOM::Doom& doom)
 {
 /*
@@ -5112,25 +5099,8 @@ void	DOOM::AbstractThing::A_HeadAttack(DOOM::Doom& doom)
 */
 }
 
-void	DOOM::AbstractThing::A_SargAttack(DOOM::Doom& doom)
-{
-/*
-  // Cancel if no target
-  if (_target == nullptr)
-    return;
-
-  // Face target
-  A_FaceTarget(doom);
-
-  // Melee attack
-  if (P_CheckMeleeRange(doom) == true)
-    P_DamageMobJ(doom, _target, this, this, (std::rand() % 10 + 1) * 4);
-*/
-}
-
 void	DOOM::AbstractThing::A_TroopAttack(DOOM::Doom& doom)
 {
-/*
   // Cancel if no target
   if (_target == nullptr)
     return;
@@ -5141,13 +5111,12 @@ void	DOOM::AbstractThing::A_TroopAttack(DOOM::Doom& doom)
   // Melee attack
   if (P_CheckMeleeRange(doom) == true) {
     doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_claw, position);
-    P_DamageMobJ(doom, _target, this, this, (std::rand() % 8 + 1) * 3);
+    _target->damage(doom, *this, (std::rand() % 8 + 1) * 3);
   }
 
   // Range attack
   else
-    P_SpawnMissile(doom, _target, DOOM::Enum::ThingType::ThingType_TROOPSHOT);
-*/
+    P_SpawnMissile(doom, DOOM::Enum::ThingType::ThingType_TROOPSHOT);
 }
 
 void	DOOM::AbstractThing::A_BspiAttack(DOOM::Doom& doom)
@@ -5159,62 +5128,20 @@ void	DOOM::AbstractThing::A_BspiAttack(DOOM::Doom& doom)
 
   // Face target
   A_FaceTarget(doom);
-
+    
   // Launch a missile
   P_SpawnMissile(doom, _target, DOOM::Enum::ThingType::ThingType_ARACHPLAZ);
 */
 }
 
-void	DOOM::AbstractThing::A_CPosAttack(DOOM::Doom& doom)
-{
-/*
-  // Cancel if no target
-  if (_target == nullptr)
-    return;
-
-  // Face target
-  A_FaceTarget(doom);
-
-  // Play pistol sound
-  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_shotgn, position);
-
-  float	atk_angle = angle + std::pow(Math::Random(), 2) * Math::Pi / 8.f;
-  float	atk_slope = P_AimLineAttack(doom, angle, AbstractThing::MissileRange);
-  int	atk_damage = (std::rand() % 5 + 1) * 3;
-
-  // Attack
-  P_LineAttack(doom, atk_angle, AbstractThing::MissileRange, atk_slope, atk_damage);
-*/
-}
-
-void	DOOM::AbstractThing::A_SPosAttack(DOOM::Doom& doom)
-{
-/*
-  // Cancel if no target
-  if (_target == nullptr)
-    return;
-
-  // Face target
-  A_FaceTarget(doom);
-
-  // Play pistol sound
-  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_shotgn, position);
-
-  float	atk_slope = P_AimLineAttack(doom, angle, Abstracthing::MissileRange);
-
-  // 3 attacks
-  // NOTE: should we randomize slope angle too ? the original game didn't
-  for (int i = 0; i < 3; i++) {
-    float	atk_angle = angle + std::pow(Math::Random(), 2) * Math::Pi / 8.f;
-    int		atk_damage = (std::rand() % 5 + 1) * 3;
-
-    P_LineAttack(doom, atk_angle, AbstractThing::MissileRange, atk_slope, atk_damage);
-  }
-*/
-}
-
 void	DOOM::AbstractThing::setState(DOOM::Doom & doom, DOOM::AbstractThing::ThingState state)
 {
+  // Remove thing
+  if (state == DOOM::AbstractThing::ThingState::State_None) {
+    _remove = true;
+    return;
+  }
+
   // Set new state
   _state = state;
 
@@ -5230,8 +5157,9 @@ void	DOOM::AbstractThing::updatePhysics(DOOM::Doom& doom, sf::Time elapsed)
     // Compute movement with collision
     updatePhysicsThrust(doom, elapsed);
 
-    // Apply friction slowdown to player for next tic (hard coded drag factor of 0.90625)
-    _thrust.convert<2>() *= std::powf(0.90625f, elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
+    // Apply friction slowdown to thing (except missiles) for next tic (hard coded drag factor of 0.90625)
+    if (!(flags & DOOM::Enum::ThingProperty::ThingProperty_Missile))
+      _thrust.convert<2>() *= std::powf(0.90625f, elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
   }
 
   // Update gravity
@@ -5274,9 +5202,13 @@ void DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed
   }
 
   //   Check collision with things
-  if (flags & DOOM::Enum::ThingProperty::ThingProperty_Solid)
+  if ((flags & DOOM::Enum::ThingProperty::ThingProperty_Solid) || (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile))
     for (const std::reference_wrapper<DOOM::AbstractThing>& thing : linedefs_things.second) {
       std::pair<float, Math::Vector<2>>	intersection = updatePhysicsThrustThing(doom, movement, thing.get(), thing_ignored);
+
+      // Ignore missile emitter
+      if ((flags & DOOM::Enum::ThingProperty::ThingProperty_Missile) && &thing.get() == _target)
+        continue;
 
       // Get nearest linedef
       if (intersection.first < closest_distance) {
@@ -5336,8 +5268,13 @@ void DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed
     // Slide against currently collisioned walls/things (change movement and thrust)
     _thrust.convert<2>() = closest_direction / closest_direction.length() * _thrust.convert<2>().length() * Math::Vector<2>::cos(_thrust.convert<2>(), closest_direction);
 
+    // Explode if thing is a missile
+    if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
+      P_ExplodeMissile(doom);
+
     // Attempt new move, ignoring collided linedef/thing
-    updatePhysicsThrust(doom, elapsed * (1.f - closest_distance), depth + 1, closest_linedef, closest_thing);
+    else
+      updatePhysicsThrust(doom, elapsed * (1.f - closest_distance), depth + 1, closest_linedef, closest_thing);
   }
 }
 
@@ -5366,7 +5303,7 @@ bool	DOOM::AbstractThing::updatePhysicsThrustSidedefs(DOOM::Doom& doom, int16_t 
     return false;
 
   // Check if there is enough space between sector to move
-  if (sector_back.ceiling_current - std::max(position.z(), sector_back.floor_current) >= attributs.height)
+  if (sector_back.ceiling_current - std::max(position.z(), sector_back.floor_current) >= height)
     return true;
 
   return false;
@@ -5426,25 +5363,6 @@ std::pair<float, Math::Vector<2>>	DOOM::AbstractThing::updatePhysicsThrustLinede
   const DOOM::Doom::Level::Vertex&	linedef_start = doom.level.vertexes[linedef.start];
   const DOOM::Doom::Level::Vertex&	linedef_end = doom.level.vertexes[linedef.end];
 
-  /*
-  // Check if linedef is colinear to ignored linedef
-  if (ignored_index != -1) {
-    DOOM::AbstractLinedef &		ignored = *doom.level.linedefs[ignored_index];
-    DOOM::Doom::Level::Vertex &	ignored_start = doom.level.vertexes[ignored.start];
-    DOOM::Doom::Level::Vertex &	ignored_end = doom.level.vertexes[ignored.end];
-
-    // Linedef equation a.X + b.Y + c = 0
-    float	linedef_a = linedef_start.y() - linedef_end.y();
-    float	linedef_b = linedef_end.x() - linedef_start.x();
-    float	linedef_c = linedef_start.x() * linedef_end.y() - linedef_start.y() * linedef_end.x();
-
-    // Check if both vertexes of ignored linedef belong to linedef
-    if (linedef_a * ignored_start.x() + linedef_b * ignored_start.y() + linedef_c == 0.f &&
-      linedef_a * ignored_end.x() + linedef_b * ignored_end.y() + linedef_c == 0.f)
-      return { 1.f, Math::Vector<2>() };
-  }
-  */
-
   Math::Vector<2>	linedef_direction = linedef_end - linedef_start;
   Math::Vector<2>	linedef_normal(+linedef_direction.y(), -linedef_direction.x());
   int16_t		sidedef_front_index = linedef.front;
@@ -5463,7 +5381,7 @@ std::pair<float, Math::Vector<2>>	DOOM::AbstractThing::updatePhysicsThrustLinede
   if (Math::Vector<2>::cos(movement, linedef_normal) > 0.f)
     return { 1.f, Math::Vector<2>() };
 
-  // TODO: check if intersection should be ignored using front and back sidedef
+  // Check if intersection should be ignored using front and back sidedef
   if (!(linedef.flag & DOOM::AbstractLinedef::Flag::Impassible) &&
     !((linedef.flag & DOOM::AbstractLinedef::Flag::BlockMonsters) && (flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable) && type != DOOM::Enum::ThingType::ThingType_PLAYER) &&
     updatePhysicsThrustSidedefs(doom, sidedef_front_index, sidedef_back_index) == true)
@@ -5504,7 +5422,7 @@ std::pair<float, Math::Vector<2>>	DOOM::AbstractThing::updatePhysicsThrustThing(
   Math::Vector<2>	initial(position.convert<2>() - thing.position.convert<2>());
 
   // Check if thing is above or below
-  if (thing.position.z() + thing.attributs.height <= position.z() || thing.position.z() > position.z() + attributs.height)
+  if (thing.position.z() + thing.height <= position.z() || thing.position.z() > position.z() + attributs.height)
     return { 1.f, Math::Vector<2>() };
 
   // Check for initial collision
@@ -5594,31 +5512,57 @@ void	DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elapse
   // Walk on things
   for (const DOOM::AbstractThing& thing : doom.level.getThings(position.convert<2>(), attributs.radius - 1.f)) {
     if (&thing != this && thing.flags & DOOM::Enum::ThingProperty::ThingProperty_Solid) {
-      if (thing.position.z() + thing.attributs.height <= position.z())
-	floor = std::max(floor, thing.position.z() + thing.attributs.height);
-      if (thing.position.z() >= position.z() + attributs.height)
-	ceiling = std::min(ceiling, position.z() + attributs.height);
+      if (thing.position.z() + thing.height <= position.z())
+	floor = std::max(floor, thing.position.z() + thing.height);
+      if (thing.position.z() >= position.z() + height)
+	ceiling = std::min(ceiling, position.z() + height);
     }
   }
 
   // Compute gravity
   _thrust.z() += _gravity / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds();
 
+  // TODO: delete missile if colliding with sky
+
   // Raise thing if below the floor
-  if (position.z() <= floor) {
+  if (position.z() < floor) {
     position.z() = std::min(floor, position.z() + std::max(_thrust.z(), (floor - position.z()) / 2.f + 2.f) / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
     _thrust.z() = std::max(_thrust.z(), 0.f);
+
+    // Explode missile if colliding with floor
+    if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
+      P_ExplodeMissile(doom);
   }
   // Lower thing is upper than the ceiling (limit to floor)
-  else if (position.z() >= ceiling - attributs.height) {
-    position.z() = std::max(std::max(ceiling - attributs.height, floor), position.z() + std::min(_thrust.z(), (position.z() - (ceiling - attributs.height)) / 2.f - 2.f) / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
+  else if (position.z() > ceiling - height) {
+    position.z() = std::max(std::max(ceiling - height, floor), position.z() + std::min(_thrust.z(), ((ceiling - attributs.height) - position.z()) / 2.f + 2.f) / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
     _thrust.z() = std::min(_thrust.z(), 0.f);
+
+    // Explode missile if colliding with ceiling
+    if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
+      P_ExplodeMissile(doom);
   }
   // Normal gravity
-  else {
+  else if (_thrust.z() < 0.f) {
     position.z() = std::max(floor, position.z() + _thrust.z() / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
-    if (position.z() == floor)
-      _thrust.z() = std::max(_thrust.z(), 0.f);
+    if (position.z() == floor) {
+      _thrust.z() = 0.f;
+
+      // Explode missile if colliding with floor
+      if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
+        P_ExplodeMissile(doom);
+    }
+  }
+  // Reverse gravity
+  else if (_thrust.z() > 0.f) {
+    position.z() = std::min(std::max(ceiling - height, floor), position.z() + _thrust.z() / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
+    if (position.z() == ceiling - height) {
+      _thrust.z() = 0.f;
+
+      // Explode missile if colliding with floor
+      if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
+        P_ExplodeMissile(doom);
+    }
   }
 }
 
@@ -5639,8 +5583,10 @@ void	DOOM::AbstractThing::A_Look(DOOM::Doom& doom)
     DOOM::AbstractThing* sound_target = doom.level.sectors[doom.level.getSector(position.convert<2>()).first].sound_target;
 
     // Check valid target
-    if (sound_target != nullptr && sound_target->flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable)
+    if (sound_target != nullptr && sound_target->flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable) {
       _target = sound_target;
+      _target_threshold = DOOM::AbstractThing::TargetThreshold;
+    }
 
     // Look for a player to target if no sound target
     else if (P_LookForPlayers(doom) == false)
@@ -5696,7 +5642,7 @@ void	DOOM::AbstractThing::A_Chase(DOOM::Doom& doom)
     if (move_direction != Direction::DirectionNone) {
       angle = Math::Modulo(angle, 2.f * Math::Pi);
 
-      int thing_direction = (int)(angle / (2.f * Math::Pi / Direction::DirectionNumber));
+      int thing_direction = (int)Math::Modulo<Direction::DirectionNumber>(0.5f + angle / (2.f * Math::Pi / Direction::DirectionNumber));
 
       if (thing_direction != move_direction) {
 	if (Math::Modulo<Direction::DirectionNumber>(thing_direction - move_direction) < Direction::DirectionNumber / 2)
@@ -5787,6 +5733,7 @@ bool	DOOM::AbstractThing::P_LookForPlayers(DOOM::Doom& doom, bool full)
 
     // Target found
     _target = &player;
+    _target_threshold = DOOM::AbstractThing::TargetThreshold;
     return true;
   }
 
@@ -5796,37 +5743,8 @@ bool	DOOM::AbstractThing::P_LookForPlayers(DOOM::Doom& doom, bool full)
 
 bool	DOOM::AbstractThing::P_CheckSight(DOOM::Doom& doom, const DOOM::AbstractThing& target)
 {
-  float	target_bottom = target.position.z();
-  float	target_top = target.position.z() + target.attributs.height;
-
-  // Check every linedefs between thing and target
-  for (int16_t linedef_index : doom.level.getLinedefs(position.convert<2>(), target.position.convert<2>() - position.convert<2>())) {
-    DOOM::AbstractLinedef&	linedef = *doom.level.linedefs[linedef_index];
-
-    // Stop immediatly if linedef is impassible
-    if (linedef.flag & DOOM::AbstractLinedef::Flag::Impassible)
-      return false;
-
-    // Can't see outside the map
-    if (linedef.front == -1 || linedef.back == -1)
-      return false;
-
-    const float	sector_bottom = std::max(doom.level.sectors[doom.level.sidedefs[linedef.front].sector].floor_current, linedef.back != -1 ? doom.level.sectors[doom.level.sidedefs[linedef.back].sector].floor_current : std::numeric_limits<float>::lowest());
-    const float	sector_top = std::min(doom.level.sectors[doom.level.sidedefs[linedef.front].sector].ceiling_current, linedef.back != -1 ? doom.level.sectors[doom.level.sidedefs[linedef.back].sector].ceiling_current : std::numeric_limits<float>::max());
-    const float	distance = Math::intersection(
-      position.convert<2>(), target.position.convert<2>() - position.convert<2>(),
-      doom.level.vertexes[linedef.start], doom.level.vertexes[linedef.end] - doom.level.vertexes[linedef.start]).first;
-
-    target_bottom = std::max(target_bottom, (sector_bottom - (position.z() + 0.75f * attributs.height)) / distance + (position.z() + 0.75f * attributs.height));
-    target_top = std::min(target_top, (sector_top - (position.z() + 0.75f * attributs.height)) / distance + (position.z() + 0.75f * attributs.height));
-
-    // Cancel if view is obstructed
-    if (target_bottom >= target_top)
-      return false;
-  }
-
-  // Line of sight
-  return true;
+  // Test if an attack angle is available
+  return !std::isnan(P_AimLineAttack(doom, target));
 }
 
 bool	DOOM::AbstractThing::P_CheckMeleeRange(DOOM::Doom& doom)
@@ -6022,12 +5940,12 @@ bool	DOOM::AbstractThing::P_TryMove(DOOM::Doom& doom, const Math::Vector<2>& pos
     }
 
     // Doesn't fit
-    if (target_ceiling - target_floor < attributs.height)
+    if (target_ceiling - target_floor < height)
       return false;
 
     // Must lower itself to fit
     if (!(flags & DOOM::Enum::ThingProperty::ThingProperty_Teleport) &&
-      target_ceiling - this->position.z() < attributs.height)
+      target_ceiling - this->position.z() < height)
       return false;
 
     // Too big step up
@@ -6045,8 +5963,8 @@ bool	DOOM::AbstractThing::P_TryMove(DOOM::Doom& doom, const Math::Vector<2>& pos
     doom.level.blockmap.moveThing(*this, this->position.convert<2>(), position);
 
   // Walkover linedef
-  for (int16_t linedef_index : doom.level.getLinedefs(this->position.convert<2>(), position - this->position.convert<2>()))
-    doom.level.linedefs[linedef_index]->walkover(doom, *this);
+  for (const std::pair<float, int16_t>& linedef_index : doom.level.getLinedefs(this->position.convert<2>(), position - this->position.convert<2>()))
+    doom.level.linedefs[linedef_index.second]->walkover(doom, *this);
 
   // Move thing
   this->position.convert<2>() = position;
@@ -6119,7 +6037,7 @@ bool	DOOM::AbstractThing::P_Move(DOOM::Doom& doom)
 	target_ceiling = std::min(target_ceiling, doom.level.sectors[sector_index].ceiling_current);
       }
 
-      if (target_ceiling - target_floor >= attributs.height) {
+      if (target_ceiling - target_floor >= height) {
 	if (position.z() < target_floor)
 	  position.z() += DOOM::AbstractThing::FloatSpeed;
 	else
@@ -6312,17 +6230,444 @@ void	DOOM::AbstractThing::A_PosAttack(DOOM::Doom& doom)
   // Play pistol sound
   doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol, position);
 
-  float	atk_angle = angle + std::pow(Math::Random(), 2) * Math::Pi / 8.f;
-  float	atk_slope = P_AimLineAttack(doom, angle, AbstractThing::MissileRange);
+  float target_height = P_AimLineAttack(doom, *_target);
+  float atk_slope;
+
+  if (std::isnan(target_height) == true)
+    atk_slope = 0.f;
+  else
+    atk_slope = std::atan((target_height - (position.z() + height * 0.5f)) / (_target->position.convert<2>() - position.convert<2>()).length());
+
+  atk_slope += std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f;
+
+  float	atk_angle = angle + std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f;
   int	atk_damage = (std::rand() % 5 + 1) * 3;
 
   // Attack
-  //P_LineAttack(doom, atk_angle, AbstractThing::MissileRange, atk_slope, atk_damage);
+  P_LineAttack(doom, AbstractThing::MissileRange, Math::Vector<3>(position.x(), position.y(), position.z() + height / 2.f), Math::Vector<3>(std::cos(atk_angle), std::sin(atk_angle), std::tan(atk_slope)), atk_damage);
 }
 
-float	DOOM::AbstractThing::P_AimLineAttack(DOOM::Doom& doom, float angle, float distance)
+void	DOOM::AbstractThing::A_SPosAttack(DOOM::Doom& doom)
 {
-  //if (P_PathTraverse(doom, position.convert<2>(), Math::Vector<2>(std::cos(angle), std::sin(angle))* distance))
-    ;
-  return 0.f;
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Play pistol sound
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_shotgn, position);
+
+  float target_height = P_AimLineAttack(doom, *_target);
+  float slope;
+
+  if (std::isnan(target_height) == true)
+    slope = 0.f;
+  else
+    slope = std::atan((target_height - (position.z() + height * 0.5f)) / (_target->position.convert<2>() - position.convert<2>()).length());
+
+  // 3 attacks
+  // NOTE: should we randomize slope angle too ? the original game didn't
+  for (int i = 0; i < 3; i++) {
+    float               atk_angle = angle + std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f;
+    float               atk_slope = slope + std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f;
+    Math::Vector<3>	atk_shot(std::cos(atk_angle), std::sin(atk_angle), std::tan(atk_slope));
+    int	                atk_damage = (std::rand() % 5 + 1) * 3;
+
+    // Attack
+    P_LineAttack(doom, AbstractThing::MissileRange, position + Math::Vector<3>(0.f, 0.f, height * 0.5f), atk_shot, atk_damage);
+  }
+}
+
+void	DOOM::AbstractThing::A_CPosAttack(DOOM::Doom& doom)
+{
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Play pistol sound
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_shotgn, position);
+
+  float	atk_angle = angle + std::pow(Math::Random(), 2) * Math::Pi / 8.f;
+  int	atk_damage = (std::rand() % 5 + 1) * 3;
+  float target_height = P_AimLineAttack(doom, *_target);
+  float atk_slope = (std::isnan(target_height) == true ? 0.f : std::atan((target_height - (position.z() + height * 0.5f)) / (_target->position.convert<2>() - position.convert<2>()).length())) + std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f;
+
+  // Attack
+  P_LineAttack(doom, AbstractThing::MissileRange, Math::Vector<3>(position.x(), position.y(), position.z() + height / 2.f), Math::Vector<3>(std::cos(atk_angle), std::sin(atk_angle), std::tan(atk_slope)), atk_damage);
+}
+
+float	DOOM::AbstractThing::P_AimLineAttack(DOOM::Doom& doom, const DOOM::AbstractThing& target)
+{
+  float	target_bottom = target.position.z();
+  float	target_top = target.position.z() + target.height;
+
+  // Check every linedefs between thing and target
+  for (const std::pair<float, int16_t>& linedef_index : doom.level.getLinedefs(position.convert<2>(), target.position.convert<2>() - position.convert<2>())) {
+    DOOM::AbstractLinedef& linedef = *doom.level.linedefs[linedef_index.second];
+
+    // Stop immediatly if linedef is impassible
+    if (linedef.flag & DOOM::AbstractLinedef::Flag::Impassible)
+      return std::numeric_limits<float>::quiet_NaN();
+
+    // Can't see outside the map
+    if (linedef.front == -1 || linedef.back == -1)
+      return std::numeric_limits<float>::quiet_NaN();
+
+    const float	sector_bottom = std::max(doom.level.sectors[doom.level.sidedefs[linedef.front].sector].floor_current, linedef.back != -1 ? doom.level.sectors[doom.level.sidedefs[linedef.back].sector].floor_current : std::numeric_limits<float>::lowest());
+    const float	sector_top = std::min(doom.level.sectors[doom.level.sidedefs[linedef.front].sector].ceiling_current, linedef.back != -1 ? doom.level.sectors[doom.level.sidedefs[linedef.back].sector].ceiling_current : std::numeric_limits<float>::max());
+    
+    target_bottom = std::max(target_bottom, (sector_bottom - (position.z() + 0.75f * height)) / linedef_index.first + (position.z() + 0.75f * attributs.height));
+    target_top = std::min(target_top, (sector_top - (position.z() + 0.75f * height)) / linedef_index.first + (position.z() + 0.75f * attributs.height));
+
+    // Cancel if view is obstructed
+    if (target_bottom >= target_top)
+      return std::numeric_limits<float>::quiet_NaN();
+  }
+
+  // Line of sight
+  return (target_bottom + target_top) / 2.f;
+}
+
+void	DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const Math::Vector<3>& atk_origin, const Math::Vector<3>& atk_direction, int atk_damage)
+{
+  std::list<std::pair<float, int16_t>>						linedefs_list = doom.level.getLinedefs(atk_origin.convert<2>(), atk_direction.convert<2>(), atk_range);
+  std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>	things_list = doom.level.getThings(atk_origin.convert<2>(), atk_direction.convert<2>(), atk_range);
+  float                                                                         sector = std::numeric_limits<float>::max();
+
+  // Find first shootable thing
+  while (things_list.empty() == false)
+    // TODO: intersection only partially checked, check shoot from above or under
+    if (&things_list.front().second.get() != this &&
+      things_list.front().second.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable &&
+      things_list.front().second.get().health > 0 &&
+      atk_origin.z() + atk_direction.z() * things_list.front().first >= things_list.front().second.get().position.z() &&
+      atk_origin.z() + atk_direction.z() * things_list.front().first <= things_list.front().second.get().position.z() + things_list.front().second.get().height)
+      break;
+    else
+      things_list.pop_front();
+
+  // Find first shootable linedef
+  while (linedefs_list.empty() == false) {
+    DOOM::AbstractLinedef& linedef = *doom.level.linedefs[linedefs_list.front().second].get();
+    const DOOM::Doom::Level::Vertex& linedef_start = doom.level.vertexes[linedef.start];
+    const DOOM::Doom::Level::Vertex& linedef_end = doom.level.vertexes[linedef.end];
+
+    Math::Vector<2>	linedef_direction = linedef_end - linedef_start;
+    int16_t		sidedef_front_index = linedef.front;
+    int16_t		sidedef_back_index = linedef.back;
+
+    // Swap sidedef if on left side
+    if (Math::Vector<2>::cos(atk_origin.convert<2>() - linedef_start, Math::Vector<2>(+linedef_direction.y(), -linedef_direction.x())) < 0.f) {
+      std::swap(sidedef_front_index, sidedef_back_index);
+    }
+
+    // No intersection from outside the map
+    if (sidedef_front_index == -1) {
+      linedefs_list.pop_front();
+      continue;
+    }
+
+    DOOM::Doom::Level::Sidedef& sidedef_front = doom.level.sidedefs[sidedef_front_index];
+    DOOM::Doom::Level::Sector& sector_front = doom.level.sectors[sidedef_front.sector];
+
+    float height = atk_origin.z() + atk_direction.z() * linedefs_list.front().first;
+
+    if (atk_direction.z() != 0.f) {
+      // Intersection with floor
+      if (height < sector_front.floor_current) {
+        sector = (sector_front.floor_current - atk_origin.z()) / atk_direction.z();
+        break;
+      }
+      // Intersection with ceiling
+      if (height > sector_front.ceiling_current) {
+        sector = (sector_front.ceiling_current - atk_origin.z()) / atk_direction.z();
+        break;
+      }
+    }
+
+    // Impassible wall
+    if (sidedef_back_index == -1) {
+      break;
+    }
+
+    DOOM::Doom::Level::Sidedef& sidedef_back = doom.level.sidedefs[sidedef_back_index];
+    DOOM::Doom::Level::Sector& sector_back = doom.level.sectors[sidedef_back.sector];
+
+    // Intersection with lower of upper wall
+    if (height < sector_back.floor_current || height > sector_back.ceiling_current) {
+      break;
+    }
+    
+    // Intersection with middle texture
+    if (sidedef_front.middle().height != 0) {
+      break;
+    }
+
+    // No intersection with linedef
+    linedefs_list.pop_front();
+  }
+
+  // Shoot sector floor or ceiling
+  if (sector != std::numeric_limits<float>::max() &&
+    (things_list.empty() || things_list.front().first > sector) &&
+    (linedefs_list.empty() || linedefs_list.front().first > sector)) {
+    Math::Vector<2> smoke(atk_origin.convert<2>() + atk_direction.convert<2>() * sector);
+
+    // Spawn smoke puff and set its height
+    doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, DOOM::Enum::ThingType::ThingType_SMOKE, DOOM::Enum::ThingFlag::FlagNone, smoke.x(), smoke.y(), 0.f));
+    doom.level.things.back()->position.z() = atk_origin.z() + atk_direction.z() * sector;
+    doom.level.things.back()->_thrust.z() = +1.f;
+  }
+
+  // Shoot thing
+  else if (things_list.empty() == false && (linedefs_list.empty() == true || things_list.front().first < linedefs_list.front().first)) {
+    things_list.front().second.get().damage(doom, *this, atk_damage);
+  }
+
+  // Shoot linedef
+  else if (linedefs_list.empty() == false && (things_list.empty() == true || linedefs_list.front().first < things_list.front().first)) {
+    DOOM::AbstractLinedef& linedef = *doom.level.linedefs[linedefs_list.front().second].get();
+
+    // Gunfire trigger
+    linedef.gunfire(doom, *this);
+    
+    Math::Vector<2> linedef_direction = doom.level.vertexes[linedef.end] - doom.level.vertexes[linedef.start];
+    Math::Vector<2> linedef_normal(Math::Vector<2>(+linedef_direction.y(), -linedef_direction.x()) / linedef_direction.length());
+
+    if (Math::Vector<2>::cos(linedef_normal, atk_direction.convert<2>()) > 0.f)
+      linedef_normal *= -1.f;
+
+    Math::Vector<2> smoke(atk_origin.convert<2>() + atk_direction.convert<2>() * linedefs_list.front().first + linedef_normal);
+
+    // Spawn smoke puff and set its height
+    doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, DOOM::Enum::ThingType::ThingType_SMOKE, DOOM::Enum::ThingFlag::FlagNone, smoke.x(), smoke.y(), 0.f));
+    doom.level.things.back()->position.z() = atk_origin.z() + atk_direction.z() * linedefs_list.front().first;
+    doom.level.things.back()->_thrust.z() = +1.f;
+  }
+}
+
+void	DOOM::AbstractThing::P_LineSwitch(DOOM::Doom& doom, float swc_range, const Math::Vector<3>& swc_origin, const Math::Vector<3>& swc_direction)
+{
+  std::list<std::pair<float, int16_t>>						linedefs_list = doom.level.getLinedefs(swc_origin.convert<2>(), swc_direction.convert<2>(), swc_range);
+  std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>	things_list = doom.level.getThings(swc_origin.convert<2>(), swc_direction.convert<2>(), swc_range);
+  float                                                                         sector = std::numeric_limits<float>::max();
+
+  // Find first solid thing
+  while (things_list.empty() == false)
+    // TODO: intersection only partially checked, check shoot from above or under
+    if (&things_list.front().second.get() != this &&
+      things_list.front().second.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Solid &&
+      swc_origin.z() + swc_direction.z() * things_list.front().first >= things_list.front().second.get().position.z() &&
+      swc_origin.z() + swc_direction.z() * things_list.front().first <= things_list.front().second.get().position.z() + things_list.front().second.get().height)
+      break;
+    else
+      things_list.pop_front();
+
+  // Find first intersected linedef or floor/ceiling
+  while (linedefs_list.empty() == false) {
+    DOOM::AbstractLinedef& linedef = *doom.level.linedefs[linedefs_list.front().second].get();
+    const DOOM::Doom::Level::Vertex& linedef_start = doom.level.vertexes[linedef.start];
+    const DOOM::Doom::Level::Vertex& linedef_end = doom.level.vertexes[linedef.end];
+
+    Math::Vector<2>	linedef_direction = linedef_end - linedef_start;
+    int16_t		sidedef_front_index = linedef.front;
+    int16_t		sidedef_back_index = linedef.back;
+
+    // Swap sidedef if on left side
+    if (Math::Vector<2>::cos(swc_origin.convert<2>() - linedef_start, Math::Vector<2>(+linedef_direction.y(), -linedef_direction.x())) < 0.f) {
+      std::swap(sidedef_front_index, sidedef_back_index);
+    }
+
+    // No intersection from outside the map
+    if (sidedef_front_index == -1) {
+      linedefs_list.pop_front();
+      continue;
+    }
+
+    DOOM::Doom::Level::Sidedef& sidedef_front = doom.level.sidedefs[sidedef_front_index];
+    DOOM::Doom::Level::Sector& sector_front = doom.level.sectors[sidedef_front.sector];
+
+    float intersection = swc_origin.z() + swc_direction.z() * linedefs_list.front().first;
+
+    if (swc_direction.z() != 0.f) {
+      // Intersection with floor
+      if (intersection < sector_front.floor_current) {
+        sector = (sector_front.floor_current - swc_origin.z()) / swc_direction.z();
+        break;
+      }
+      // Intersection with ceiling
+      if (intersection > sector_front.ceiling_current) {
+        sector = (sector_front.ceiling_current - swc_origin.z()) / swc_direction.z();
+        break;
+      }
+    }
+
+    // Impassible wall
+    if (sidedef_back_index == -1) {
+      break;
+    }
+
+    DOOM::Doom::Level::Sidedef& sidedef_back = doom.level.sidedefs[sidedef_back_index];
+    DOOM::Doom::Level::Sector& sector_back = doom.level.sectors[sidedef_back.sector];
+
+    // Intersection with lower of upper wall
+    if (intersection < sector_back.floor_current || intersection > sector_back.ceiling_current) {
+      break;
+    }
+
+    // Intersection with middle texture
+    if (sidedef_front.middle().height != 0) {
+      break;
+    }
+
+    // No intersection with linedef
+    linedefs_list.pop_front();
+  }
+
+  // Does nothing if floor/ceiling intersected
+  if (sector != std::numeric_limits<float>::max() &&
+    (things_list.empty() || things_list.front().first > sector) &&
+    (linedefs_list.empty() || linedefs_list.front().first > sector)) {
+    return;
+  }
+
+  // Does nothing if thing intersected
+  else if (things_list.empty() == false && (linedefs_list.empty() == true || things_list.front().first < linedefs_list.front().first)) {
+    return;
+  }
+
+  // Shoot linedef
+  else if (linedefs_list.empty() == false && (things_list.empty() == true || linedefs_list.front().first < things_list.front().first)) {
+    DOOM::AbstractLinedef& linedef = *doom.level.linedefs[linedefs_list.front().second].get();
+
+    Math::Vector<2> linedef_direction = doom.level.vertexes[linedef.end] - doom.level.vertexes[linedef.start];
+    Math::Vector<2> linedef_normal(Math::Vector<2>(+linedef_direction.y(), -linedef_direction.x()) / linedef_direction.length());
+
+    // Does nothing if on left side of linedef
+    if (Math::Vector<2>::cos(linedef_normal, swc_direction.convert<2>()) > 0.f)
+      return;
+
+    // Switch linedef
+    linedef.switched(doom, *this);
+  }
+}
+
+void	DOOM::AbstractThing::A_SargAttack(DOOM::Doom& doom)
+{
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Melee attack
+  if (P_CheckMeleeRange(doom) == true)
+    _target->damage(doom, *this, (std::rand() % 10 + 1) * 4);
+}
+
+void	DOOM::AbstractThing::A_SkelFist(DOOM::Doom& doom)
+{
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Melee attack
+  if (P_CheckMeleeRange(doom) == true) {
+    doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_skepch, position);
+    _target->damage(doom, *this, (std::rand() % 10 + 1) * 6);
+  }
+}
+
+void    DOOM::AbstractThing::P_SpawnMissile(DOOM::Doom& doom, DOOM::Enum::ThingType type)
+{
+  // Does nothing if no target
+  if (_target == nullptr)
+    return;
+
+  float           target_height = P_AimLineAttack(doom, *_target);
+  float           atk_slope = std::isnan(target_height) == true ? 0.f : std::atan((target_height - (position.z() + height * 0.5f)) / (_target->position.convert<2>() - position.convert<2>()).length()) + ((_target->flags & DOOM::Enum::ThingProperty::ThingProperty_Shadow) ? std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f : 0);
+  float	          atk_angle = Math::Vector<2>::angle((_target->position.convert<2>() - position.convert<2>())) + ((_target->flags & DOOM::Enum::ThingProperty::ThingProperty_Shadow) ? std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f : 0);
+  Math::Vector<3> direction(std::cos(atk_angle), std::sin(atk_angle), std::tan(atk_slope));
+
+  doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, type, DOOM::Enum::ThingFlag::FlagNone, position.x() + std::cos(atk_angle) * attributs.radius / 2.f, position.y() + std::sin(atk_angle) * attributs.radius / 2.f, atk_angle));
+  doom.level.things.back()->position.z() = position.z() + 32.f;
+  doom.level.things.back()->_thrust = direction * (doom.level.things.back()->attributs.speed / direction.length());
+  doom.level.things.back()->_target = this;
+
+  doom.sound(doom.level.things.back()->attributs.sound_see, doom.level.things.back()->position);
+}
+
+void	DOOM::AbstractThing::A_Explode(DOOM::Doom& doom)
+{
+  
+  puts("penis");
+}
+
+void    DOOM::AbstractThing::P_ExplodeMissile(DOOM::Doom& doom)
+{
+  // Stop missile
+  _thrust = Math::Vector<3>(0.f, 0.f, 0.f);
+
+  // Disable missile flag
+  flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_Missile);
+
+  // Play death sound
+  doom.sound(attributs.sound_death, position);
+
+  // Change state to death
+  setState(doom, attributs.state_death);
+
+  // Randomly shorten first frame of animation
+  _elapsed += DOOM::Doom::Tic * (float)(std::rand() % 4);
+}
+
+void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, int damage)
+{
+  // Cancel if already dead
+  if (health <= 0)
+    return;
+
+  // Deal damage
+  health -= damage;
+
+  // Thing killed
+  if (health <= 0) {
+    // Remove some flags
+    flags = (DOOM::Enum::ThingProperty)(flags & ~(DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_SkullFly));
+    if (type != DOOM::Enum::ThingType::ThingType_SKULL)
+      flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_NoGravity);
+
+    // Add corpse flags
+    flags = (DOOM::Enum::ThingProperty)(flags | DOOM::Enum::ThingProperty::ThingProperty_Corpse | DOOM::Enum::ThingProperty::ThingProperty_DropOff);
+
+    // Reduce height
+    height /= 4;
+  }
+
+  // Change target
+  if (_target_threshold <= 0) {
+    _target = &attacker;
+    _target_threshold = 100;
+  }
+
+  // Gibs monster
+  if (attributs.state_xdeath != DOOM::AbstractThing::ThingState::State_None && health < -attributs.spawnhealth)
+    setState(doom, attributs.state_xdeath);
+
+  // Kill monster
+  else if (attributs.state_death != DOOM::AbstractThing::ThingState::State_None && health <= 0)
+    setState(doom, attributs.state_death);
+
+  // Start pain state
+  else if (attributs.state_pain != DOOM::AbstractThing::ThingState::State_None && std::rand() % 256 < attributs.painchance)
+    setState(doom, attributs.state_pain);
 }

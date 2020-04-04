@@ -1,5 +1,4 @@
-#ifndef _ABSTRACT_THING_HPP_
-#define _ABSTRACT_THING_HPP_
+#pragma once
 
 #include "Doom/Doom.hpp"
 #include "Doom/Statusbar.hpp"
@@ -166,18 +165,18 @@ namespace DOOM
       State_TECH2LAMP, State_TECH2LAMP2, State_TECH2LAMP3, State_TECH2LAMP4,
       State_Number
     };
-    
+
     class State
     {
     public:
-      typedef void(DOOM::AbstractThing::* Action)(DOOM::Doom &);
+      typedef void(DOOM::AbstractThing::* Action)(DOOM::Doom&);
 
-      DOOM::AbstractThing::ThingSprite	sprite;		// Sprite sequence to use
-      int				frame;		// Frame of sprite to display
-      bool				brightness;	// True if thing should be displayed at full brightness
-      int				duration;	// Duration of the state
-      Action				action;		// Action to be taken at the start of the state (nullptr if none)
-      DOOM::AbstractThing::ThingState	next;		// Index of the next state
+      DOOM::AbstractThing::ThingSprite  sprite;     // Sprite sequence to use
+      int                               frame;      // Frame of sprite to display
+      bool                              brightness; // True if thing should be displayed at full brightness
+      int                               duration;   // Duration of the state
+      Action                            action;     // Action to be taken at the start of the state (nullptr if none)
+      DOOM::AbstractThing::ThingState   next;       // Index of the next state
 
       State() = default;
       ~State() = default;
@@ -186,55 +185,59 @@ namespace DOOM
     class Attributs
     {
     public:
-      int			id;		// Thing ID
-      int			spawnhealth;	// Health points at spawn
-      int			reactiontime;	// Reaction time of monster (tics)
-      int			painchance;	// Chance of a pain state after damage (/255)
-      int			speed;		// Units/frame (3 tics)
-      int			radius;		// Thing's radius
-      int			height;		// Thing's height
-      int			mass;		// Thing's mass
-      int			damage;		// ???
-      DOOM::Enum::ThingProperty	properties;	// Properties of thing
+      int                       id;           // Thing ID
+      int                       spawnhealth;  // Health points at spawn
+      int                       reactiontime; // Reaction time of monster (tics)
+      int                       painchance;   // Chance of a pain state after damage (/255)
+      int                       speed;        // Units/frame (3 tics)
+      int                       radius;       // Thing's radius
+      int                       height;       // Thing's height
+      int                       mass;         // Thing's mass
+      int                       damage;       // ???
+      DOOM::Enum::ThingProperty properties;   // Properties of thing
 
       // States of thing
-      DOOM::AbstractThing::ThingState	state_spawn;
-      DOOM::AbstractThing::ThingState	state_see;
-      DOOM::AbstractThing::ThingState	state_pain;
-      DOOM::AbstractThing::ThingState	state_melee;
-      DOOM::AbstractThing::ThingState	state_missile;
-      DOOM::AbstractThing::ThingState	state_death;
-      DOOM::AbstractThing::ThingState	state_xdeath;
-      DOOM::AbstractThing::ThingState	state_raise;
+      DOOM::AbstractThing::ThingState state_spawn;
+      DOOM::AbstractThing::ThingState state_see;
+      DOOM::AbstractThing::ThingState state_pain;
+      DOOM::AbstractThing::ThingState state_melee;
+      DOOM::AbstractThing::ThingState state_missile;
+      DOOM::AbstractThing::ThingState state_death;
+      DOOM::AbstractThing::ThingState state_xdeath;
+      DOOM::AbstractThing::ThingState state_raise;
 
       // Sounds of thing
-      DOOM::Doom::Resources::Sound::EnumSound	sound_see;
-      DOOM::Doom::Resources::Sound::EnumSound	sound_attack;
-      DOOM::Doom::Resources::Sound::EnumSound	sound_pain;
-      DOOM::Doom::Resources::Sound::EnumSound	sound_death;
-      DOOM::Doom::Resources::Sound::EnumSound	sound_active;
-      
+      DOOM::Doom::Resources::Sound::EnumSound sound_see;
+      DOOM::Doom::Resources::Sound::EnumSound sound_attack;
+      DOOM::Doom::Resources::Sound::EnumSound sound_pain;
+      DOOM::Doom::Resources::Sound::EnumSound sound_death;
+      DOOM::Doom::Resources::Sound::EnumSound sound_active;
+
       Attributs() = default;
       ~Attributs() = default;
     };
 
-    static const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>		_sprites;	// Table of thing sprites
-    static const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::State_Number>	_states;	// Table of thing states
-    static const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingType_Number>	_attributs;	// Table of thing attributs
+    static const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>               _sprites;   // Table of thing sprites
+    static const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::State_Number>  _states;    // Table of thing states
+    static const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingType_Number>    _attributs; // Table of thing attributs
 
     // Constant values
-    static const float	MeleeRange;
-    static const float	MissileRange;
-    static const float	FloatSpeed;
+    static const float  MeleeRange;
+    static const float  MissileRange;
+    static const float  FloatSpeed;
+    static const int    TargetThreshold;
 
   public:
-    static std::unique_ptr<DOOM::AbstractThing>	factory(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing);	// Thing factory
+    static std::unique_ptr<DOOM::AbstractThing> factory(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Thing& thing); // Thing factory
 
-    Math::Vector<3>				position;	// Thing position
-    float					angle;		// Thing orientation (rad.)
-    const DOOM::Enum::ThingType			type;		// Thing type
-    const DOOM::AbstractThing::Attributs &	attributs;	// Attributs of thing
-    DOOM::Enum::ThingProperty			flags;		// Thing properties (from attributs + ambush + justattacked)
+    Math::Vector<3>                       position;   // Thing position
+    float                                 angle;      // Thing orientation (rad.)
+    const DOOM::Enum::ThingType           type;       // Thing type
+    const DOOM::AbstractThing::Attributs& attributs;  // Attributs of thing
+    DOOM::Enum::ThingProperty             flags;      // Thing properties (from attributs + ambush + justattacked)
+
+    int health; // Thing health points
+    int height; // Thing height
 
   protected:
     enum Direction
@@ -251,136 +254,142 @@ namespace DOOM
       DirectionNumber
     };
 
-    int		health;		// Thing health points
-    int		reactiontime;	// Thing reaction time counter
-    Direction	move_direction;	// Movement direction
-    int		move_count;	// When 0, select a new direction
+    int       reactiontime;   // Thing reaction time counter
+    Direction move_direction; // Movement direction
+    int       move_count;     // When 0, select a new direction
 
-    Math::Vector<3>			_thrust;	// Thrust applied on thing
-    float				_gravity;	// Gravity applied on thing
-    DOOM::AbstractThing::ThingState	_state;		// Current state of thing
-    sf::Time				_elapsed;	// Elapsed time since beginning of state
+    bool                            _remove;  // True if thing should be deleted
+    Math::Vector<3>                 _thrust;  // Thrust applied on thing
+    float                           _gravity; // Gravity applied on thing
+    DOOM::AbstractThing::ThingState _state;   // Current state of thing
+    sf::Time                        _elapsed; // Elapsed time since beginning of state
 
-    DOOM::AbstractThing *		_target;		// Thing targeted
-    int					_target_threshold;	// Time focusing exclusively on target
+    DOOM::AbstractThing*  _target;            // Thing targeted or missile emitter
+    int                   _target_threshold;  // Time focusing exclusively on target
 
-  private:
-    void	A_Light0(DOOM::Doom & doom);
-    void	A_WeaponReady(DOOM::Doom & doom);
-    void	A_Lower(DOOM::Doom & doom);
-    void	A_Raise(DOOM::Doom & doom);
-    void	A_Punch(DOOM::Doom & doom);
-    void	A_ReFire(DOOM::Doom & doom);
-    void	A_FirePistol(DOOM::Doom & doom);
-    void	A_Light1(DOOM::Doom & doom);
-    void	A_FireShotgun(DOOM::Doom & doom);
-    void	A_Light2(DOOM::Doom & doom);
-    void	A_FireShotgun2(DOOM::Doom & doom);
-    void	A_CheckReload(DOOM::Doom & doom);
-    void	A_OpenShotgun2(DOOM::Doom & doom);
-    void	A_LoadShotgun2(DOOM::Doom & doom);
-    void	A_CloseShotgun2(DOOM::Doom & doom);
-    void	A_FireCGun(DOOM::Doom & doom);
-    void	A_GunFlash(DOOM::Doom & doom);
-    void	A_FireMissile(DOOM::Doom & doom);
-    void	A_Saw(DOOM::Doom & doom);
-    void	A_FirePlasma(DOOM::Doom & doom);
-    void	A_BFGsound(DOOM::Doom & doom);
-    void	A_FireBFG(DOOM::Doom & doom);
-    void	A_BFGSpray(DOOM::Doom & doom);
-    void	A_Explode(DOOM::Doom & doom);
-    void	A_Pain(DOOM::Doom & doom);
-    void	A_PlayerScream(DOOM::Doom & doom);
-    void	A_Fall(DOOM::Doom & doom);
-    void	A_XScream(DOOM::Doom & doom);
-    void	A_FaceTarget(DOOM::Doom & doom);
-    void	A_PosAttack(DOOM::Doom & doom);
-    void	A_Scream(DOOM::Doom & doom);
-    void	A_SPosAttack(DOOM::Doom & doom);
-    void	A_VileChase(DOOM::Doom & doom);
-    void	A_VileStart(DOOM::Doom & doom);
-    void	A_VileTarget(DOOM::Doom & doom);
-    void	A_VileAttack(DOOM::Doom & doom);
-    void	A_StartFire(DOOM::Doom & doom);
-    void	A_Fire(DOOM::Doom & doom);
-    void	A_FireCrackle(DOOM::Doom & doom);
-    void	A_Tracer(DOOM::Doom & doom);
-    void	A_SkelWhoosh(DOOM::Doom & doom);
-    void	A_SkelFist(DOOM::Doom & doom);
-    void	A_SkelMissile(DOOM::Doom & doom);
-    void	A_FatRaise(DOOM::Doom & doom);
-    void	A_FatAttack1(DOOM::Doom & doom);
-    void	A_FatAttack2(DOOM::Doom & doom);
-    void	A_FatAttack3(DOOM::Doom & doom);
-    void	A_BossDeath(DOOM::Doom & doom);
-    void	A_CPosAttack(DOOM::Doom & doom);
-    void	A_CPosRefire(DOOM::Doom & doom);
-    void	A_TroopAttack(DOOM::Doom & doom);
-    void	A_SargAttack(DOOM::Doom & doom);
-    void	A_HeadAttack(DOOM::Doom & doom);
-    void	A_BruisAttack(DOOM::Doom & doom);
-    void	A_SkullAttack(DOOM::Doom & doom);
-    void	A_Metal(DOOM::Doom & doom);
-    void	A_SpidRefire(DOOM::Doom & doom);
-    void	A_BabyMetal(DOOM::Doom & doom);
-    void	A_BspiAttack(DOOM::Doom & doom);
-    void	A_Hoof(DOOM::Doom & doom);
-    void	A_CyberAttack(DOOM::Doom & doom);
-    void	A_PainAttack(DOOM::Doom & doom);
-    void	A_PainDie(DOOM::Doom & doom);
-    void	A_KeenDie(DOOM::Doom & doom);
-    void	A_BrainPain(DOOM::Doom & doom);
-    void	A_BrainScream(DOOM::Doom & doom);
-    void	A_BrainDie(DOOM::Doom & doom);
-    void	A_BrainAwake(DOOM::Doom & doom);
-    void	A_BrainSpit(DOOM::Doom & doom);
-    void	A_SpawnSound(DOOM::Doom & doom);
-    void	A_SpawnFly(DOOM::Doom & doom);
-    void	A_BrainExplode(DOOM::Doom & doom);
+  protected:
+    void  A_Light0(DOOM::Doom& doom);
+    void  A_WeaponReady(DOOM::Doom& doom);
+    void  A_Lower(DOOM::Doom& doom);
+    void  A_Raise(DOOM::Doom& doom);
+    void  A_Punch(DOOM::Doom& doom);
+    void  A_ReFire(DOOM::Doom& doom);
+    void  A_FirePistol(DOOM::Doom& doom);
+    void  A_Light1(DOOM::Doom& doom);
+    void  A_FireShotgun(DOOM::Doom& doom);
+    void  A_Light2(DOOM::Doom& doom);
+    void  A_FireShotgun2(DOOM::Doom& doom);
+    void  A_CheckReload(DOOM::Doom& doom);
+    void  A_OpenShotgun2(DOOM::Doom& doom);
+    void  A_LoadShotgun2(DOOM::Doom& doom);
+    void  A_CloseShotgun2(DOOM::Doom& doom);
+    void  A_FireCGun(DOOM::Doom& doom);
+    void  A_GunFlash(DOOM::Doom& doom);
+    void  A_FireMissile(DOOM::Doom& doom);
+    void  A_Saw(DOOM::Doom& doom);
+    void  A_FirePlasma(DOOM::Doom& doom);
+    void  A_BFGsound(DOOM::Doom& doom);
+    void  A_FireBFG(DOOM::Doom& doom);
+    void  A_BFGSpray(DOOM::Doom& doom);
+    void  A_Explode(DOOM::Doom& doom);
+    void  A_Pain(DOOM::Doom& doom);
+    void  A_PlayerScream(DOOM::Doom& doom);
+    void  A_Fall(DOOM::Doom& doom);
+    void  A_XScream(DOOM::Doom& doom);
+    void  A_FaceTarget(DOOM::Doom& doom);
+    void  A_PosAttack(DOOM::Doom& doom);
+    void  A_Scream(DOOM::Doom& doom);
+    void  A_SPosAttack(DOOM::Doom& doom);
+    void  A_VileChase(DOOM::Doom& doom);
+    void  A_VileStart(DOOM::Doom& doom);
+    void  A_VileTarget(DOOM::Doom& doom);
+    void  A_VileAttack(DOOM::Doom& doom);
+    void  A_StartFire(DOOM::Doom& doom);
+    void  A_Fire(DOOM::Doom& doom);
+    void  A_FireCrackle(DOOM::Doom& doom);
+    void  A_Tracer(DOOM::Doom& doom);
+    void  A_SkelWhoosh(DOOM::Doom& doom);
+    void  A_SkelFist(DOOM::Doom& doom);
+    void  A_SkelMissile(DOOM::Doom& doom);
+    void  A_FatRaise(DOOM::Doom& doom);
+    void  A_FatAttack1(DOOM::Doom& doom);
+    void  A_FatAttack2(DOOM::Doom& doom);
+    void  A_FatAttack3(DOOM::Doom& doom);
+    void  A_BossDeath(DOOM::Doom& doom);
+    void  A_CPosAttack(DOOM::Doom& doom);
+    void  A_CPosRefire(DOOM::Doom& doom);
+    void  A_TroopAttack(DOOM::Doom& doom);
+    void  A_SargAttack(DOOM::Doom& doom);
+    void  A_HeadAttack(DOOM::Doom& doom);
+    void  A_BruisAttack(DOOM::Doom& doom);
+    void  A_SkullAttack(DOOM::Doom& doom);
+    void  A_Metal(DOOM::Doom& doom);
+    void  A_SpidRefire(DOOM::Doom& doom);
+    void  A_BabyMetal(DOOM::Doom& doom);
+    void  A_BspiAttack(DOOM::Doom& doom);
+    void  A_Hoof(DOOM::Doom& doom);
+    void  A_CyberAttack(DOOM::Doom& doom);
+    void  A_PainAttack(DOOM::Doom& doom);
+    void  A_PainDie(DOOM::Doom& doom);
+    void  A_KeenDie(DOOM::Doom& doom);
+    void  A_BrainPain(DOOM::Doom& doom);
+    void  A_BrainScream(DOOM::Doom& doom);
+    void  A_BrainDie(DOOM::Doom& doom);
+    void  A_BrainAwake(DOOM::Doom& doom);
+    void  A_BrainSpit(DOOM::Doom& doom);
+    void  A_SpawnSound(DOOM::Doom& doom);
+    void  A_SpawnFly(DOOM::Doom& doom);
+    void  A_BrainExplode(DOOM::Doom& doom);
 
-    void	A_Look(DOOM::Doom& doom);	// Default look action, try to find a target before running.
-    void	A_Chase(DOOM::Doom& doom);	// Default movement action, move to target.
+    void  A_Look(DOOM::Doom& doom);   // Default look action, try to find a target before running.
+    void  A_Chase(DOOM::Doom& doom);  // Default movement action, move to target.
 
-    bool	P_CheckSight(DOOM::Doom& doom, const DOOM::AbstractThing& target);	// Check if target is in the line of sight of thing.
-    bool	P_CheckMeleeRange(DOOM::Doom& doom);					// Return true if a melee attack can be performed.
-    bool	P_CheckMissileRange(DOOM::Doom& doom);					// Return true if a missile attack can be performed.
-    bool	P_CheckPosition(DOOM::Doom& doom, const Math::Vector<2>& position);	// Check destination position against linedefs and other things.
-    bool	P_LookForPlayers(DOOM::Doom& doom, bool full = false);			// Find a player to target. Return true if target found. If full is false, only look 180 degree in front.
-    bool	P_Move(DOOM::Doom& doom);						// Move in the current direction, return false if the move is blocked.
-    void	P_NewChaseDir(DOOM::Doom& doom);					// Find a new direction to chase target.
-    bool	P_TryMove(DOOM::Doom& doom, const Math::Vector<2>& position);		// Attempt to move thing to a new position, crossing special lines unless property Teleport is set.
-    bool	P_TryWalk(DOOM::Doom& doom);						// Attempt to move thing in its direction. If blocked if either a wall or a thing, return false. If move is either clear or blocked only by a door, return true and sets (and open the door).
-    float	P_AimLineAttack(DOOM::Doom& doom, float angle, float distance);		// Compute attack vertical angle
+    // TODO: merge these methods
+    float P_AimLineAttack(DOOM::Doom& doom, const DOOM::AbstractThing& target);                                                                     // Compute visible height of target, NaN if target is not visible
+    bool  P_CheckSight(DOOM::Doom& doom, const DOOM::AbstractThing& target);                                                                        // Check if target is in the line of sight of thing.
+    bool  P_CheckMeleeRange(DOOM::Doom& doom);                                                                                                      // Return true if a melee attack can be performed.
+    bool  P_CheckMissileRange(DOOM::Doom& doom);                                                                                                    // Return true if a missile attack can be performed.
+    bool  P_CheckPosition(DOOM::Doom& doom, const Math::Vector<2>& position);                                                                       // Check destination position against linedefs and other things.
+    bool  P_LookForPlayers(DOOM::Doom& doom, bool full = false);                                                                                    // Find a player to target. Return true if target found. If full is false, only look 180 degree in front.
+    bool  P_Move(DOOM::Doom& doom);                                                                                                                 // Move in the current direction, return false if the move is blocked.
+    void  P_NewChaseDir(DOOM::Doom& doom);                                                                                                          // Find a new direction to chase target.
+    bool  P_TryMove(DOOM::Doom& doom, const Math::Vector<2>& position);                                                                             // Attempt to move thing to a new position, crossing special lines unless property Teleport is set.
+    bool  P_TryWalk(DOOM::Doom& doom);                                                                                                              // Attempt to move thing in its direction. If blocked if either a wall or a thing, return false. If move is either clear or blocked only by a door, return true and sets (and open the door).
+    void  P_LineAttack(DOOM::Doom& doom, float atk_range, const Math::Vector<3>& atk_origin, const Math::Vector<3>& atk_direction, int atk_damage); // Compute an attack from current 
+    void  P_LineSwitch(DOOM::Doom& doom, float swc_range, const Math::Vector<3>& swc_origin, const Math::Vector<3>& swc_direction);                 // Switch the first non obstructed linedef in range 
+    void  P_SpawnMissile(DOOM::Doom& doom, DOOM::Enum::ThingType type);                                                                             // Spawn a missile from thing to target
+    void  P_ExplodeMissile(DOOM::Doom& doom);                                                                                                       // Destroy missile
+    void  P_RadiusAttack(DOOM::Doom& doom, int damage);                                                                                             // Blast damage from current thing position
 
-    void	setState(DOOM::Doom & doom, DOOM::AbstractThing::ThingState state);	// Switch state
+    void  setState(DOOM::Doom& doom, DOOM::AbstractThing::ThingState state);  // Switch state
 
-    void										updatePhysics(DOOM::Doom & doom, sf::Time elapsed);														// Update physics of thing
-    void										updatePhysicsThrust(DOOM::Doom & doom, sf::Time elapsed, int depth = 0, int16_t linedef_ignored = -1, const DOOM::AbstractThing* thing_ignored = nullptr);	// Update thrust component of thing
-    bool										updatePhysicsThrustSidedefs(DOOM::Doom & doom, int16_t sidedef_front_index, int16_t sidedef_back_index);							// Return true if thing can move through sidedefs
-    std::pair<float, Math::Vector<2>>							updatePhysicsThrustVertex(DOOM::Doom & doom, const Math::Vector<2>& movement, int16_t vertex_index, int16_t ignored_index);					// Return intersection of movement with vertex (coef. along movement / normal vector)
-    std::pair<float, Math::Vector<2>>							updatePhysicsThrustLinedef(DOOM::Doom & doom, const Math::Vector<2> & movement, int16_t linedef_index, int16_t ignored_index);					// Return intersection of movement with linedef (coef. along movement / normal vector)
-    std::pair<float, Math::Vector<2>>							updatePhysicsThrustThing(DOOM::Doom & doom, const Math::Vector<2> & movement, const DOOM::AbstractThing & thing, const DOOM::AbstractThing * ignored);		// Return intersection of movement with thing (coef. along movement / normal vector)
-    std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing>>>	updatePhysicsThrustLinedefsThings(DOOM::Doom & doom, const Math::Vector<2> & movement);										// Return set of intersectable linedef indexes
-    void										updatePhysicsGravity(DOOM::Doom & doom, sf::Time elapsed);													// Update gravity component of thing
+    virtual void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, int damage);  // Receive attack from attacker
+
+    void                                                                                updatePhysics(DOOM::Doom& doom, sf::Time elapsed);                                                                                                        // Update physics of thing
+    void                                                                                updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed, int depth = 0, int16_t linedef_ignored = -1, const DOOM::AbstractThing* thing_ignored = nullptr); // Update thrust component of thing
+    bool                                                                                updatePhysicsThrustSidedefs(DOOM::Doom& doom, int16_t sidedef_front_index, int16_t sidedef_back_index);                                                   // Return true if thing can move through sidedefs
+    std::pair<float, Math::Vector<2>>                                                   updatePhysicsThrustVertex(DOOM::Doom& doom, const Math::Vector<2>& movement, int16_t vertex_index, int16_t ignored_index);                                // Return intersection of movement with vertex (coef. along movement / normal vector)
+    std::pair<float, Math::Vector<2>>                                                   updatePhysicsThrustLinedef(DOOM::Doom& doom, const Math::Vector<2>& movement, int16_t linedef_index, int16_t ignored_index);                              // Return intersection of movement with linedef (coef. along movement / normal vector)
+    std::pair<float, Math::Vector<2>>                                                   updatePhysicsThrustThing(DOOM::Doom& doom, const Math::Vector<2>& movement, const DOOM::AbstractThing& thing, const DOOM::AbstractThing* ignored);        // Return intersection of movement with thing (coef. along movement / normal vector)
+    std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing>>> updatePhysicsThrustLinedefsThings(DOOM::Doom& doom, const Math::Vector<2>& movement);                                                                     // Return set of intersectable linedef indexes
+    void                                                                                updatePhysicsGravity(DOOM::Doom& doom, sf::Time elapsed);                                                                                                 // Update gravity component of thing
 
   public:
-    AbstractThing(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing);
-    AbstractThing(DOOM::Doom & doom, DOOM::Enum::ThingType type, DOOM::Enum::ThingFlag flags, float x, float y, float angle);
+    AbstractThing(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Thing& thing);
+    AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type, DOOM::Enum::ThingFlag flags, float x, float y, float angle);
     virtual ~AbstractThing() = default;
 
-    void	teleport(DOOM::Doom & doom, const Math::Vector<2> & destination, float angle);	// Teleport thing to position (reset physics)
-    void	thrust(const Math::Vector<3> & acceleration);					// Apply acceleration to thing
-    
+    void  teleport(DOOM::Doom& doom, const Math::Vector<2>& destination, float angle);  // Teleport thing to position (reset physics)
+    void  thrust(const Math::Vector<3>& acceleration);                                  // Apply acceleration to thing
+
     struct Sprite
     {
-      const DOOM::Doom::Resources::Texture &	texture;
-      bool					mirror;
-      bool					full_brightness;
+      const DOOM::Doom::Resources::Texture& texture;
+      bool                                  mirror;
+      bool                                  full_brightness;
     };
 
-    virtual bool		update(DOOM::Doom & doom, sf::Time elapsed);		// Update thing, return true if thing should be deleted
-    DOOM::AbstractThing::Sprite	sprite(const DOOM::Doom & doom, float angle) const;	// Return sprite to be displayed
+    virtual bool                update(DOOM::Doom& doom, sf::Time elapsed);         // Update thing, return true if thing should be deleted
+    DOOM::AbstractThing::Sprite sprite(const DOOM::Doom& doom, float angle) const;  // Return sprite to be displayed
   };
-};
-
-#endif
+}

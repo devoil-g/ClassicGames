@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Doom/Thing/PlayerThing.hpp"
 #include "System/Window.hpp"
 
@@ -30,6 +32,13 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
       angle = thing->angle;
       break;
     }
+
+  // Update camera position
+  camera.position = position;
+  camera.position.z() += height * 0.73f;
+
+  // TODO: remove this
+  health = 1000000;
 }
 
 bool	DOOM::PlayerThing::update(DOOM::Doom & doom, sf::Time elapsed)
@@ -45,7 +54,7 @@ bool	DOOM::PlayerThing::update(DOOM::Doom & doom, sf::Time elapsed)
 
   // Update camera position
   camera.position = position;
-  camera.position.z() += 41.1f;
+  camera.position.z() += height * 0.73f;
 
   // Update status bar (TODO: complete this)
   statusbar.health = health;
@@ -64,7 +73,7 @@ void	DOOM::PlayerThing::updateKeyboard(DOOM::Doom & doom, sf::Time elapsed)
     updateUse(doom, elapsed);
 
   // Perform a fire action
-  if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Left) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space) == true)
     updateFire(doom, elapsed);
 }
 
@@ -190,24 +199,13 @@ void	DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Ve
 
 void	DOOM::PlayerThing::updateUse(DOOM::Doom & doom, sf::Time elapsed)
 {
-  Math::Vector<2>	ray(std::cos(angle), std::sin(angle));
-
-  // Use linedef
-  // TODO: consider things as obstacles
-  for (int16_t index : doom.level.getLinedefs(position.convert<2>(), ray, 64.f))
-    if (doom.level.linedefs[index]->switched(doom, *this) == true)
-      break;
+  P_LineSwitch(doom, 1000.f, position + Math::Vector<3>(0.f, 0.f, height / 2.f), Math::Vector<3>(std::cos(angle), std::sin(angle), std::tan(camera.orientation)));
 }
 
 void	DOOM::PlayerThing::updateFire(DOOM::Doom & doom, sf::Time elapsed)
 {
-  Math::Vector<2>	ray(std::cos(angle), std::sin(angle));
-
-  // Use linedef
-  // TODO: consider things as obstacles
-  for (int16_t index : doom.level.getLinedefs(position.convert<2>(), ray, std::numeric_limits<float>::max()))
-    if (doom.level.linedefs[index]->gunfire(doom, *this) == true)
-      break;
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol, position);
+  P_LineAttack(doom, 1000.f, position + Math::Vector<3>(0.f, 0.f, height / 2.f), Math::Vector<3>(std::cos(angle), std::sin(angle), std::tan(camera.orientation)), 1000);
 }
 
 /*

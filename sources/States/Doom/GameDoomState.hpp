@@ -1,5 +1,4 @@
-#ifndef _GAME_DOOM_STATE_HPP_
-#define _GAME_DOOM_STATE_HPP_
+#pragma once
 
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -11,29 +10,27 @@
 #include "States/AbstractState.hpp"
 #include "States/LoadingState.hpp"
 #include "Math/Vector.hpp"
-  
+
 namespace Game
 {
   class GameDoomState : public Game::AbstractState
   {
   public:
-    static unsigned int		RenderScale;		// Scaling factor of resolution
+    static unsigned int RenderScale;  // Scaling factor of resolution
 
   private:
-    DOOM::Doom	_doom;		// Instance of current level
-    sf::Image	_image;		// Target for software rendering
-    sf::Texture	_texture;	// Image in graphic memory
-    sf::Sprite	_sprite;	// Display rendered texture
+    DOOM::Doom  _doom;    // Instance of current level
+    sf::Image   _image;   // Target for software rendering
+    sf::Texture _texture; // Image in graphic memory
+    sf::Sprite  _sprite;  // Display rendered texture
 
   public:
     GameDoomState();
     ~GameDoomState() override = default;
 
-    bool	update(sf::Time elapsed) override;	// Update state
-    void	draw() override;			// Draw state
+    bool  update(sf::Time elapsed) override;  // Update state
+    void  draw() override;                    // Draw state
 
-    void	addPlayer(int controller);	// Add player to the game
+    void  addPlayer(int controller);  // Add player to the game
   };
-};
-
-#endif
+}

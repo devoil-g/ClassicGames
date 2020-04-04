@@ -1,5 +1,4 @@
-#ifndef _RANDOM_LIGHTING_ACTION_HPP_
-#define _RANDOM_LIGHTING_ACTION_HPP_
+#pragma once
 
 #include <SFML/System/Time.hpp>
 
@@ -11,15 +10,15 @@ namespace DOOM
     unsigned int CycleDuration = 24,
     unsigned int FlashDuration = 4
   >
-  class RandomLightingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>
+    class RandomLightingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>
   {
   private:
-    int16_t	_cycle;		// Cycle duration
-    int16_t	_flash;		// Flicker duration
-    sf::Time	_elapsed;	// Elapsed time
+    int16_t   _cycle;   // Cycle duration
+    int16_t   _flash;   // Flicker duration
+    sf::Time  _elapsed; // Elapsed time
 
   public:
-    RandomLightingAction(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector) :
+    RandomLightingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector) :
       DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>(doom, sector),
       _cycle(0),
       _flash(0),
@@ -30,25 +29,23 @@ namespace DOOM
 
     ~RandomLightingAction() override = default;
 
-    virtual void	update(DOOM::Doom & doom, DOOM::Doom::Level::Sector & sector, sf::Time elapsed) override	// Update light sector
+    virtual void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) override  // Update light sector
     {
       // Update elapsed time
       _elapsed += elapsed;
 
       // Regenerate random parameter
-      while (_elapsed > DOOM::Doom::Tic * (float)_cycle) {
-	_elapsed -= DOOM::Doom::Tic * (float)_cycle;
-	_cycle = (int16_t)(Math::Random() * CycleDuration) + (FlashDuration * 4) + 1;
-	_flash = (int16_t)(Math::Random() * FlashDuration) + 1;
+      while (_elapsed > DOOM::Doom::Tic* (float)_cycle) {
+        _elapsed -= DOOM::Doom::Tic * (float)_cycle;
+        _cycle = (int16_t)(Math::Random() * CycleDuration) + (FlashDuration * 4) + 1;
+        _flash = (int16_t)(Math::Random() * FlashDuration) + 1;
       }
 
       // Compute light value from elapsed time
       if (_elapsed < DOOM::Doom::Tic * (float)_flash)
-	sector.light_current = sector.getNeighborLowestLight(doom);
+        sector.light_current = sector.getNeighborLowestLight(doom);
       else
-	sector.light_current = sector.light_base;
+        sector.light_current = sector.light_base;
     }
   };
-};
-
-#endif
+}

@@ -104,7 +104,7 @@ void	Game::GameDoomState::draw()
     for (int x = 0; x < grid.first; x++)
       if (y * grid.first + x < _doom.level.players.size()) {
 	tasks.push_back(std::async(std::launch::async, [this, grid, x, y] {
-	  _doom.level.players[y * grid.first + x].get().camera.render(_doom, _image, sf::Rect<int16_t>(x * DOOM::Doom::RenderWidth * Game::GameDoomState::RenderScale, y * DOOM::Doom::RenderHeight * Game::GameDoomState::RenderScale, DOOM::Doom::RenderWidth * Game::GameDoomState::RenderScale, (DOOM::Doom::RenderHeight - 32) * Game::GameDoomState::RenderScale), 0);
+	  _doom.level.players[y * grid.first + x].get().camera.render(_doom, _image, sf::Rect<int16_t>(x * DOOM::Doom::RenderWidth * Game::GameDoomState::RenderScale, y * DOOM::Doom::RenderHeight * Game::GameDoomState::RenderScale, DOOM::Doom::RenderWidth * Game::GameDoomState::RenderScale, (DOOM::Doom::RenderHeight - 32) * Game::GameDoomState::RenderScale), DOOM::Camera::Special::Normal, 0);
 	  _doom.level.players[y * grid.first + x].get().statusbar.render(_doom, _image, sf::Rect<int16_t>(x * DOOM::Doom::RenderWidth * Game::GameDoomState::RenderScale, ((y + 1) * DOOM::Doom::RenderHeight - 32) * Game::GameDoomState::RenderScale, DOOM::Doom::RenderWidth * Game::GameDoomState::RenderScale, 32 * Game::GameDoomState::RenderScale));
 	}));
       }

@@ -1,5 +1,4 @@
-#ifndef _EXIT_LINEDEF_HPP_
-#define _EXIT_LINEDEF_HPP_
+#pragma once
 
 #include "Doom/Linedef/AbstractLinedef.hpp"
 #include "Doom/Linedef/AbstractTriggerableLinedef.hpp"
@@ -25,13 +24,13 @@ namespace DOOM
   {
   private:
     template<DOOM::EnumLinedef::Trigger _Trigger>
-    inline std::enable_if_t<(Trigger& _Trigger) == 0, bool>	trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing)	// Does nothing if wrong event triggered
+    inline std::enable_if_t<(Trigger& _Trigger) == 0, bool> trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing) // Does nothing if wrong event triggered
     {
       return false;
     }
 
     template<DOOM::EnumLinedef::Trigger _Trigger>
-    inline std::enable_if_t<(Trigger& _Trigger) != 0, bool>	trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing)	// Trigger event if correct event triggered
+    inline std::enable_if_t<(Trigger& _Trigger) != 0, bool> trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing) // Trigger event if correct event triggered
     {
       // Check if thing is a player
       if (thing.type != DOOM::Enum::ThingType::ThingType_PLAYER)
@@ -57,25 +56,23 @@ namespace DOOM
 
     ~ExitLinedef() = default;
 
-    virtual void	update(DOOM::Doom& doom, sf::Time elapsed) override	// Update linedef
+    virtual void  update(DOOM::Doom& doom, sf::Time elapsed) override // Update linedef
     {}
 
-    virtual bool	switched(DOOM::Doom& doom, DOOM::AbstractThing& thing) override	// To call when linedef is switched (used) by thing
+    virtual bool  switched(DOOM::Doom& doom, DOOM::AbstractThing& thing) override // To call when linedef is switched (used) by thing
     {
       return trigger<DOOM::EnumLinedef::Trigger::TriggerPushed>(doom, thing) ||
 	trigger<DOOM::EnumLinedef::Trigger::TriggerSwitched>(doom, thing);
     }
 
-    virtual bool	walkover(DOOM::Doom& doom, DOOM::AbstractThing& thing) override	// To call when thing walk over the linedef
+    virtual bool  walkover(DOOM::Doom& doom, DOOM::AbstractThing& thing) override // To call when thing walk over the linedef
     {
       return trigger<DOOM::EnumLinedef::Trigger::TriggerWalkover>(doom, thing);
     }
 
-    virtual bool	gunfire(DOOM::Doom& doom, DOOM::AbstractThing& thing) override	// To call when thing shot the linedef
+    virtual bool  gunfire(DOOM::Doom& doom, DOOM::AbstractThing& thing) override  // To call when thing shot the linedef
     {
       return trigger<DOOM::EnumLinedef::Trigger::TriggerGunfire>(doom, thing);
     }
   };
 };
-
-#endif

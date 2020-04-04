@@ -1,5 +1,4 @@
-#ifndef _TEXTURE_LIBRARY_HPP_
-#define _TEXTURE_LIBRARY_HPP_
+#pragma once
 
 #include <string>
 
@@ -16,10 +15,8 @@ namespace Game
     ~TextureLibrary() override;
 
   public:
-    inline static Game::TextureLibrary &	Instance() { static Game::TextureLibrary singleton; return singleton; };	// Return unique instance (singleton)
+    inline static Game::TextureLibrary& Instance() { static Game::TextureLibrary singleton; return singleton; };  // Return unique instance (singleton)
 
-    void	load(std::string const &) override;	// Load a texture in the library
+    void  load(std::string const&) override;  // Load a texture in the library
   };
-};
-
-#endif
+}

@@ -1,5 +1,4 @@
-#ifndef _SCROLLER_LINEDEF_HPP_
-#define _SCROLLER_LINEDEF_HPP_
+#pragma once
 
 #include "Doom/Linedef/AbstractLinedef.hpp"
 
@@ -9,18 +8,16 @@ namespace DOOM
   class ScrollerLinedef : public DOOM::AbstractLinedef
   {
   public:
-    ScrollerLinedef(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef) :
+    ScrollerLinedef(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Linedef& linedef) :
       DOOM::AbstractLinedef(doom, linedef)
     {}
 
     ~ScrollerLinedef() override = default;
 
-    void	update(DOOM::Doom & doom, sf::Time elapsed) override	// Update linedef
+    void  update(DOOM::Doom& doom, sf::Time elapsed) override // Update linedef
     {
       // Scroll sidedef texture using offset
       doom.level.sidedefs[front].x += elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds() * Speed;
     }
   };
-};
-
-#endif
+}

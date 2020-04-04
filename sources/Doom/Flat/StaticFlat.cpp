@@ -1,6 +1,6 @@
 #include "Doom/Flat/StaticFlat.hpp"	
 
-DOOM::StaticFlat::StaticFlat(DOOM::Doom & doom, DOOM::Wad::RawResources::Flat const & flat) :
+DOOM::StaticFlat::StaticFlat(DOOM::Doom& doom, DOOM::Wad::RawResources::Flat const& flat) :
   DOOM::AbstractFlat(doom),
   _flat()
 {
@@ -8,7 +8,7 @@ DOOM::StaticFlat::StaticFlat(DOOM::Doom & doom, DOOM::Wad::RawResources::Flat co
   std::memcpy(_flat.data(), flat.texture, sizeof(DOOM::Wad::RawResources::Flat::texture));
 }
 
-std::array<uint8_t, 4096> const &	DOOM::StaticFlat::flat() const
+std::array<uint8_t, 4096> const& DOOM::StaticFlat::flat() const
 {
   // Return flat
   return _flat;

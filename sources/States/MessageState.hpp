@@ -1,5 +1,4 @@
-#ifndef _MESSAGE_STATE_HPP_
-#define _MESSAGE_STATE_HPP_
+#pragma once
 
 #include <string>
 
@@ -12,17 +11,15 @@ namespace Game
   class MessageState : public Game::AbstractState
   {
   private:
-    sf::Text	_message;	// Message to display
-    sf::Text	_return;	// Return button
-    int		_selected;	// Index of selected menu (-1 for no selection)
+    sf::Text  _message;   // Message to display
+    sf::Text  _return;    // Return button
+    int       _selected;  // Index of selected menu (-1 for no selection)
 
   public:
-    MessageState(std::string const &);
+    MessageState(std::string const&);
     ~MessageState();
 
-    bool	update(sf::Time) override;	// Update state
-    void	draw() override;		// Draw state
+    bool  update(sf::Time) override;  // Update state
+    void  draw() override;            // Draw state
   };
-};
-
-#endif
+}

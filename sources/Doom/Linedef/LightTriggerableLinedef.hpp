@@ -1,5 +1,4 @@
-#ifndef _LIGHT_TRIGGERABLE_LINEDEF_HPP_
-#define _LIGHT_TRIGGERABLE_LINEDEF_HPP_
+#pragma once
 
 #include "Doom/Linedef/AbstractTriggerableLinedef.hpp"
 
@@ -21,16 +20,16 @@ namespace DOOM
     DOOM::EnumLinedef::Trigger Trigger,
     bool Repeat
   >
-  class LightTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat>
+    class LightTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat>
   {
   private:
-    bool	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing, int16_t sector_index) override	// Perform light change on sector
+    bool  trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing, int16_t sector_index) override  // Perform light change on sector
     {
-      DOOM::Doom::Level::Sector &	sector = doom.level.sectors[sector_index];
+      DOOM::Doom::Level::Sector& sector = doom.level.sectors[sector_index];
 
       // Cancel if a lighting action is already running
       if (sector.action<DOOM::Doom::Level::Sector::Action::Lighting>().get() != nullptr)
-	return false;
+        return false;
 
       int16_t	light;
 
@@ -38,17 +37,17 @@ namespace DOOM
       switch (Light)
       {
       case DOOM::EnumLinedef::Light::Light35:
-	light = 35;
-	break;
+        light = 35;
+        break;
       case DOOM::EnumLinedef::Light::Light255:
-	light = 255;
-	break;
+        light = 255;
+        break;
       case DOOM::EnumLinedef::Light::LightMinimum:
-	light = sector.getNeighborLowestLight(doom);
-	break;
+        light = sector.getNeighborLowestLight(doom);
+        break;
       case DOOM::EnumLinedef::Light::LightMaximum:
-	light = sector.getNeighborHighestLight(doom);
-	break;
+        light = sector.getNeighborHighestLight(doom);
+        break;
       }
 
       // Set new light level of sector
@@ -59,12 +58,10 @@ namespace DOOM
     }
 
   public:
-    LightTriggerableLinedef(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef) :
+    LightTriggerableLinedef(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Linedef& linedef) :
       DOOM::AbstractTriggerableLinedef<Trigger, Repeat>(doom, linedef)
     {}
 
     ~LightTriggerableLinedef() = default;
   };
-};
-
-#endif
+}

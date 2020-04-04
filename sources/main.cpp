@@ -7,9 +7,9 @@
 #include "System/Window.hpp"
 
 #ifdef _WIN32
-#include <windows.h>
+# include <windows.h>
 #else
-#include <X11/Xlib.h>
+# include <X11/Xlib.h>
 #endif
 
 namespace Game
@@ -25,8 +25,7 @@ namespace Game
 
 int	main(int argc, char ** argv)
 {
-  try
-  {
+  try {
 #ifdef __linux__
     // Initializes Xlib support for concurrent threads
     if (XInitThreads() == 0)
@@ -40,8 +39,7 @@ int	main(int argc, char ** argv)
     Game::StateMachine::Instance().push(new Game::SplashState());
     Game::StateMachine::Instance().run();
   }
-  catch (std::exception e)
-  {
+  catch (std::exception e) {
     std::cerr << "[Runtime Error]: " << e.what() << std::endl;
 
 #ifdef _WIN32

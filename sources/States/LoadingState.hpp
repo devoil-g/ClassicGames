@@ -1,5 +1,4 @@
-#ifndef _LOADING_STATE_HPP_
-#define _LOADING_STATE_HPP_
+#pragma once
 
 #include <functional>
 #include <future>
@@ -15,17 +14,15 @@ namespace Game
   class LoadingState : public Game::AbstractState
   {
   private:
-    std::future<Game::AbstractState *>	_loader;	// Load task returing new state when completed
-    sf::Text				_text;		// Loading text
-    float				_elapsed;	// Time elapsed
+    std::future<Game::AbstractState*> _loader;  // Load task returing new state when completed
+    sf::Text                          _text;    // Loading text
+    float                             _elapsed; // Time elapsed
 
   public:
-    LoadingState(std::future<Game::AbstractState *> &&);
+    LoadingState(std::future<Game::AbstractState*>&&);
     ~LoadingState();
 
-    bool	update(sf::Time) override;	// Update menu state
-    void	draw() override;		// Draw menu state
+    bool  update(sf::Time) override;  // Update menu state
+    void  draw() override;            // Draw menu state
   };
-};
-
-#endif
+}

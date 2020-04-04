@@ -1,5 +1,4 @@
-#ifndef _ACTION_TRIGGERABLE_LINEDEF_HPP_
-#define _ACTION_TRIGGERABLE_LINEDEF_HPP_
+#pragma once
 
 #include "Doom/Linedef/AbstractTriggerableLinedef.hpp"
 
@@ -12,33 +11,31 @@ namespace DOOM
     DOOM::EnumLinedef::Target Target = DOOM::EnumLinedef::Target::TargetPlayer,
     DOOM::EnumLinedef::Key Key = DOOM::EnumLinedef::Key::KeyNone
   >
-  class ActionTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat, Target, Key>
+    class ActionTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat, Target, Key>
   {
   private:
-    bool	trigger(DOOM::Doom & doom, DOOM::AbstractThing & thing, int16_t sector_index) override	// Action of the linedef
+    bool  trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing, int16_t sector_index) override  // Action of the linedef
     {
-      std::unique_ptr<DOOM::AbstractAction> &	action = doom.level.sectors[sector_index].action<Type>();
+      std::unique_ptr<DOOM::AbstractAction>& action = doom.level.sectors[sector_index].action<Type>();
 
       // Push action in sector or trigger current action
       if (action.get() == nullptr) {
-	doom.level.sectors[sector_index].action<Type>(doom, type, doom.level.sidedefs[front].sector);
-	return true;
+        doom.level.sectors[sector_index].action<Type>(doom, type, doom.level.sidedefs[front].sector);
+        return true;
       }
       else if (Trigger == DOOM::EnumLinedef::Trigger::TriggerPushed) {
-	return action->start(doom, thing);
+        return action->start(doom, thing);
       }
       else {
-	return false;
+        return false;
       }
     }
 
   public:
-    ActionTriggerableLinedef(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Linedef & linedef) :
+    ActionTriggerableLinedef(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Linedef& linedef) :
       DOOM::AbstractTriggerableLinedef<Trigger, Repeat, Target, Key>(doom, linedef)
     {}
 
     ~ActionTriggerableLinedef() = default;
   };
-};
-
-#endif
+}

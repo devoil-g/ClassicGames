@@ -667,17 +667,19 @@ std::pair<int16_t, int16_t>	DOOM::Doom::Level::getSector(Math::Vector<2> const &
     return getSector(position, node.rightchild);
 }
 
-std::list<int16_t>	DOOM::Doom::Level::getLinedefs(const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit) const
+std::list<std::pair<float, int16_t>>	DOOM::Doom::Level::getLinedefs(const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit) const
 {
-  std::list<int16_t>	result;
+  std::list<std::pair<float, int16_t>>	result;
 
   // Start to search subsector from top node
   getLinedefsNode(result, position, direction, limit, (int16_t)nodes.size() - 1);
 
+  result.sort([](const std::pair<float, int16_t>& a, const std::pair<float, int16_t>& b) { return a.first < b.first; });
+
   return result;
 }
 
-bool	DOOM::Doom::Level::getLinedefsNode(std::list<int16_t> & result, const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit, int16_t index) const
+bool	DOOM::Doom::Level::getLinedefsNode(std::list<std::pair<float, int16_t>> & result, const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit, int16_t index) const
 {
   // Draw subsector if node ID has subsector mask
   if (index & 0b1000000000000000)
@@ -695,7 +697,7 @@ bool	DOOM::Doom::Level::getLinedefsNode(std::list<int16_t> & result, const Math:
 }
 
 
-bool	DOOM::Doom::Level::getLinedefsSubsector(std::list<int16_t> & result, const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit, int16_t index) const
+bool	DOOM::Doom::Level::getLinedefsSubsector(std::list<std::pair<float, int16_t>> & result, const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit, int16_t index) const
 {
   DOOM::Doom::Level::Subsector const &	subsector(subsectors[index]);
   float					distance = -1.f;
@@ -708,7 +710,7 @@ bool	DOOM::Doom::Level::getLinedefsSubsector(std::list<int16_t> & result, const 
   return distance > limit;
 }
 
-float	DOOM::Doom::Level::getLinedefsSeg(std::list<int16_t> & result, const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit, int16_t index) const
+float	DOOM::Doom::Level::getLinedefsSeg(std::list<std::pair<float, int16_t>> & result, const Math::Vector<2> & position, const Math::Vector<2> & direction, float limit, int16_t index) const
 {
   // Get segment from level data
   const DOOM::Doom::Level::Segment &	seg(segments[index]);
@@ -726,13 +728,8 @@ float	DOOM::Doom::Level::getLinedefsSeg(std::list<int16_t> & result, const Math:
   if (intersection.first > limit)
     return intersection.first;
   
-  // Cancel if wrong side
-  if ((seg.direction == 0 && Math::Vector<2>::determinant(direction, seg_end - seg_start) > 0.f) ||
-    (seg.direction == 1 && (linedefs[seg.linedef]->back != -1 || Math::Vector<2>::determinant(direction, seg_end - seg_start) < 0.f)))
-    return -1.f;
-  
   // Push linedef index as result
-  result.push_back(seg.linedef);
+  result.push_back({ intersection.first, seg.linedef });
 
   // Return segment distance
   return intersection.first;
@@ -856,6 +853,42 @@ std::list<std::reference_wrapper<DOOM::AbstractThing>>	DOOM::Doom::Level::getThi
   // Convert things set to reference list
   for (DOOM::AbstractThing * thing : things)
     result.push_back(*thing);
+
+  return result;
+}
+
+std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>	DOOM::Doom::Level::getThings(const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit) const
+{
+  // TODO: optimize this
+  std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>  result;
+
+  // Test every things
+  for (const std::unique_ptr<DOOM::AbstractThing>& thing : things)
+  {
+    float a = std::pow(direction.x(), 2) + std::pow(direction.y(), 2);
+    float b = 2.f * (((position.x() - thing->position.x()) * direction.x()) + (position.y() - thing->position.y()) * direction.y());
+    float c = std::pow((position.x() - thing->position.x()), 2) + std::pow((position.y() - thing->position.y()), 2) - std::pow(thing->attributs.radius, 2);
+
+    float delta = std::pow(b, 2) - 4.f * a * c;
+
+    if (delta < 0)
+      continue;
+
+    float x1 = (-b - std::sqrt(delta)) / (2.f * a);
+    if (x1 >= 0.f && x1 <= limit) {
+      result.push_back({ x1, *thing.get() });
+      continue;
+    }
+
+    float x2 = (-b - std::sqrt(delta)) / (2.f * a);
+    if (x2 >= 0.f && x2 <= limit) {
+      result.push_back({ x2, *thing.get() });
+      continue;
+    }
+  }
+  
+  // Sort list of things by distance
+  result.sort([](const std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>& a, const std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>& b) { return a.first < b.first; });
 
   return result;
 }
