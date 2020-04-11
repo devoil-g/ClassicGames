@@ -155,6 +155,7 @@ void	DOOM::Doom::update(sf::Time elapsed)
       std::sin(level.players.front().get().angle),
       std::tan(level.players.front().get().camera.orientation));
     sf::Listener::setUpVector(0.f, 0.f, 1.f);
+    sf::Listener::setGlobalVolume(100.f);
   }
 
   // Sound zero centred in multiplayer
@@ -162,6 +163,7 @@ void	DOOM::Doom::update(sf::Time elapsed)
     sf::Listener::setPosition(0.f, 0.f, 0.f);
     sf::Listener::setDirection(1.f, 0.f, 0.f);
     sf::Listener::setUpVector(0.f, 0.f, 1.f);
+    sf::Listener::setGlobalVolume(100.f);
   }
 }
 
@@ -203,7 +205,7 @@ void	DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound)
   if (sound == DOOM::Doom::Resources::Sound::EnumSound::Sound_None)
     return;
 
-  std::unordered_map<uint64_t, DOOM::Doom::Resources::Sound>::const_iterator	iterator = resources.sounds.find(DOOM::str_to_key(DOOM::Doom::Resources::Sound::sound_info[sound].name));
+  std::unordered_map<uint64_t, DOOM::Doom::Resources::Sound>::const_iterator	iterator = resources.sounds.find(DOOM::str_to_key(std::string("DS") + DOOM::Doom::Resources::Sound::sound_info[sound].name));
 
   // Cancel if no sound found
   if (iterator == resources.sounds.cend())
@@ -213,6 +215,7 @@ void	DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound)
 
   // Play sound
   ref.sound.setBuffer(iterator->second.buffer);
+  ref.sound.setRelativeToListener(true);
   ref.sound.play();
 }
 
@@ -233,9 +236,9 @@ void	DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound, const Math
   // Set sound properties
   // NOTE: a sound should be heard from a maximum distance of 1200 units
   ref.sound.setBuffer(iterator->second.buffer);
+  ref.sound.setRelativeToListener(false);
   ref.sound.setAttenuation(3.2f);
   ref.sound.setMinDistance(256.f);
-  ref.sound.setRelativeToListener(true);
 
   // Single player
   if (level.players.size() == 1) {
@@ -867,7 +870,7 @@ std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>	DOOM::D
   {
     float a = std::pow(direction.x(), 2) + std::pow(direction.y(), 2);
     float b = 2.f * (((position.x() - thing->position.x()) * direction.x()) + (position.y() - thing->position.y()) * direction.y());
-    float c = std::pow((position.x() - thing->position.x()), 2) + std::pow((position.y() - thing->position.y()), 2) - std::pow(thing->attributs.radius, 2);
+    float c = std::pow((position.x() - thing->position.x()), 2) + std::pow((position.y() - thing->position.y()), 2) - std::pow((float)thing->attributs.radius, 2);
 
     float delta = std::pow(b, 2) - 4.f * a * c;
 

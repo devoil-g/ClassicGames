@@ -9,6 +9,7 @@ const float	DOOM::AbstractThing::MeleeRange = 64.f;
 const float	DOOM::AbstractThing::MissileRange = 32.f * 64.f;
 const float	DOOM::AbstractThing::FloatSpeed = 4.f;
 const int	DOOM::AbstractThing::TargetThreshold = 100;
+const int	DOOM::AbstractThing::MaxRadius = 32;
 
 const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>	DOOM::AbstractThing::_sprites =
 {
@@ -5183,10 +5184,10 @@ void DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed
   // Get intersectable linedefs and things
   std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing>>>	linedefs_things = updatePhysicsThrustLinedefsThings(doom, movement);
 
-  int16_t			closest_linedef = -1;
-  const DOOM::AbstractThing *	closest_thing = nullptr;
-  float				closest_distance = 1.f;
-  Math::Vector<2>		closest_normal = Math::Vector<2>();
+  int16_t               closest_linedef = -1;
+  DOOM::AbstractThing*  closest_thing = nullptr;
+  float                 closest_distance = 1.f;
+  Math::Vector<2>       closest_normal = Math::Vector<2>();
 
   // Check collision with linedefs
   for (int16_t linedef_index : linedefs_things.first) {
@@ -5210,7 +5211,7 @@ void DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed
       if ((flags & DOOM::Enum::ThingProperty::ThingProperty_Missile) && &thing.get() == _target)
         continue;
 
-      // Get nearest linedef
+      // Get nearest thing
       if (intersection.first < closest_distance) {
 	closest_linedef = -1;
 	closest_thing = &thing.get();
@@ -5269,8 +5270,12 @@ void DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed
     _thrust.convert<2>() = closest_direction / closest_direction.length() * _thrust.convert<2>().length() * Math::Vector<2>::cos(_thrust.convert<2>(), closest_direction);
 
     // Explode if thing is a missile
-    if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
-      P_ExplodeMissile(doom);
+    if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile) {
+      if (closest_thing != nullptr)
+        P_ExplodeMissile(doom, *closest_thing);
+      else
+        P_ExplodeMissile(doom);
+    }
 
     // Attempt new move, ignoring collided linedef/thing
     else
@@ -5642,7 +5647,7 @@ void	DOOM::AbstractThing::A_Chase(DOOM::Doom& doom)
     if (move_direction != Direction::DirectionNone) {
       angle = Math::Modulo(angle, 2.f * Math::Pi);
 
-      int thing_direction = (int)Math::Modulo<Direction::DirectionNumber>(0.5f + angle / (2.f * Math::Pi / Direction::DirectionNumber));
+      int thing_direction = Math::Modulo<Direction::DirectionNumber>((int)(0.5f + angle / (2.f * Math::Pi / Direction::DirectionNumber)));
 
       if (thing_direction != move_direction) {
 	if (Math::Modulo<Direction::DirectionNumber>(thing_direction - move_direction) < Direction::DirectionNumber / 2)
@@ -5975,15 +5980,15 @@ bool	DOOM::AbstractThing::P_TryMove(DOOM::Doom& doom, const Math::Vector<2>& pos
 bool	DOOM::AbstractThing::P_CheckPosition(DOOM::Doom& doom, const Math::Vector<2>& position)
 {
   // Check collision with things
-  for (const std::reference_wrapper<DOOM::AbstractThing> & thing : doom.level.getThings(position, attributs.radius)) {
+  for (const std::reference_wrapper<DOOM::AbstractThing> & thing : doom.level.getThings(position, (float)attributs.radius)) {
     if (&(thing.get()) != this &&
       (thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Solid) &&
-      (thing.get().position.convert<2>() - position).length() < thing.get().attributs.radius + attributs.radius)
+      (thing.get().position.convert<2>() - position).length() < (float)(thing.get().attributs.radius + attributs.radius))
       return false;
   }
 
   // Check collision with linedefs
-  for (int16_t linedef_index : doom.level.getLinedefs(position, attributs.radius)) {
+  for (int16_t linedef_index : doom.level.getLinedefs(position, (float)attributs.radius)) {
     const DOOM::AbstractLinedef&	linedef = *doom.level.linedefs[linedef_index];
 
     // One sided line
@@ -6023,7 +6028,7 @@ bool	DOOM::AbstractThing::P_Move(DOOM::Doom& doom)
     Math::Vector<2>(std::cos(Math::Pi * 1.75f), std::sin(Math::Pi * 1.75f))
   };
 
-  Math::Vector<2>						move_position = position.convert<2>() + (move_vectors[move_direction] * attributs.speed);
+  Math::Vector<2> move_position = position.convert<2>() + (move_vectors[move_direction] * (float)attributs.speed);
 
   if (P_TryMove(doom, move_position) == false) {
     // Floating things
@@ -6032,7 +6037,7 @@ bool	DOOM::AbstractThing::P_Move(DOOM::Doom& doom)
       float target_ceiling = std::numeric_limits<float>::max();
 
       // Find target floor and ceiling height
-      for (int16_t sector_index : doom.level.getSectors(position.convert<2>() + (move_vectors[move_direction] * attributs.speed), attributs.radius / 2.f)) {
+      for (int16_t sector_index : doom.level.getSectors(position.convert<2>() + (move_vectors[move_direction] * (float)attributs.speed), attributs.radius / 2.f)) {
 	target_floor = std::max(target_floor, doom.level.sectors[sector_index].floor_current);
 	target_ceiling = std::min(target_ceiling, doom.level.sectors[sector_index].ceiling_current);
       }
@@ -6052,7 +6057,7 @@ bool	DOOM::AbstractThing::P_Move(DOOM::Doom& doom)
     
     // Try to open a door
     bool	switched = false;
-    for (int16_t linedef_index : doom.level.getLinedefs(move_position, attributs.radius))
+    for (int16_t linedef_index : doom.level.getLinedefs(move_position, (float)attributs.radius))
       switched |= doom.level.linedefs[linedef_index]->switched(doom, *this);
     
     return switched;
@@ -6608,8 +6613,7 @@ void    DOOM::AbstractThing::P_SpawnMissile(DOOM::Doom& doom, DOOM::Enum::ThingT
 
 void	DOOM::AbstractThing::A_Explode(DOOM::Doom& doom)
 {
-  
-  puts("penis");
+  P_RadiusAttack(doom, _target != nullptr ? *_target : *this, 128);
 }
 
 void    DOOM::AbstractThing::P_ExplodeMissile(DOOM::Doom& doom)
@@ -6630,14 +6634,67 @@ void    DOOM::AbstractThing::P_ExplodeMissile(DOOM::Doom& doom)
   _elapsed += DOOM::Doom::Tic * (float)(std::rand() % 4);
 }
 
-void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, int damage)
+void    DOOM::AbstractThing::P_ExplodeMissile(DOOM::Doom& doom, DOOM::AbstractThing& target)
+{
+  // Explode missile
+  P_ExplodeMissile(doom);
+
+  // Ignore non-shootable things
+  if (!(target.flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable))
+    return;
+
+  // Ignore missile emitter
+  if (_target == &target)
+    return;
+
+  // Don't hit the same species as originator, except for player
+  if (_target->type == target.type && _target->type != DOOM::Enum::ThingType::ThingType_PLAYER)
+    return;
+
+  // Knight and Bruiser are of the same species
+  if ((_target->type == DOOM::Enum::ThingType::ThingType_KNIGHT && target.type == DOOM::Enum::ThingType::ThingType_BRUISER) ||
+    (_target->type == DOOM::Enum::ThingType::ThingType_BRUISER && target.type == DOOM::Enum::ThingType::ThingType_KNIGHT))
+    return;
+
+  // Damage target
+  target.damage(doom, *this, *_target, (std::rand() % 8 + 1) * attributs.damage);
+}
+
+void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, int damage)
 {
   // Cancel if already dead
   if (health <= 0)
     return;
 
+  // Take half damage in baby mode
+  // TODO: check baby mode
+  if (false)
+    damage /= 2;
+
   // Deal damage
   health -= damage;
+
+  // Reset flying skull thrust
+  if (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly)
+    _thrust = Math::Vector<3>();
+
+  // Ignore thrust if thing is cheating or is attacked by player chainsaw
+  // TDOO: check player chainsaw
+  if (!(flags & DOOM::Enum::ThingProperty::ThingProperty_NoClip) &&
+    (attacker.type != DOOM::Enum::ThingType::ThingType_PLAYER || true)) {
+    float angle = Math::Vector<2>::angle(position.convert<2>() - attacker.position.convert<2>());
+    float push = (float)damage * 4.f;
+
+    // Sometimes fall foward when killed
+    if (damage < 40 && health <= 0 && position.z() - attacker.position.z() > 64 && (std::rand() % 2 == 1)) {
+      angle += Math::Pi;
+      push *= 4.f;
+    }
+
+    // Apply thrust
+    thrust(Math::Vector<3>(std::cos(angle), std::sin(angle), 0.f) * push);
+  }
+
 
   // Thing killed
   if (health <= 0) {
@@ -6655,7 +6712,7 @@ void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker
 
   // Change target
   if (_target_threshold <= 0) {
-    _target = &attacker;
+    _target = &origin;
     _target_threshold = 100;
   }
 
@@ -6670,4 +6727,46 @@ void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker
   // Start pain state
   else if (attributs.state_pain != DOOM::AbstractThing::ThingState::State_None && std::rand() % 256 < attributs.painchance)
     setState(doom, attributs.state_pain);
+}
+
+void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, int dmg)
+{
+  // The attacker is also the origin
+  damage(doom, attacker, attacker, dmg);
+}
+
+void  DOOM::AbstractThing::P_RadiusAttack(DOOM::Doom& doom, DOOM::AbstractThing& source, int damage)
+{
+  // NOTE: we are using true distance instead of X/Y distance to compute damages
+  float distance = (float)(damage + DOOM::AbstractThing::MaxRadius);
+  std::set<std::reference_wrapper<DOOM::AbstractThing>> things;
+  
+  // Get blocks of block in radius
+  for (float x = position.x() - distance; x <= position.x() + distance; x += 128.f)
+    for (float y = position.y() - distance; y <= position.y() + distance; y += 128.f) {
+      int block_index = doom.level.blockmap.index(Math::Vector<2>(x, y));
+
+      if (block_index == -1)
+        continue;
+
+      things.insert(doom.level.blockmap.blocks[block_index].things.begin(), doom.level.blockmap.blocks[block_index].things.end());
+    }
+  
+  // Attempt to damage things
+  for (const std::reference_wrapper<DOOM::AbstractThing>& thing : things) {
+    // Ignore non shootable and Cybord/Spider boss
+    if (!(thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable) ||
+      thing.get().type == DOOM::Enum::ThingType::ThingType_CYBORG || 
+      thing.get().type == DOOM::Enum::ThingType::ThingType_SPIDER)
+      continue;
+
+    int distance = std::max(0, (int)(position.convert<2>() - thing.get().position.convert<2>()).length() - thing.get().attributs.radius);
+
+    // Thing too far away or not visible
+    if (distance >= damage || P_CheckSight(doom, thing.get()) == false)
+      continue;
+
+    // Damage thing
+    thing.get().damage(doom, *this, source, damage - distance);
+  }
 }

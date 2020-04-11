@@ -1,9 +1,14 @@
 #include <stdexcept>
 #include <iostream>
 #include <thread>
+#include <locale>
+#include <codecvt>
 
 #ifdef _WIN32
-#include <windows.h>
+# include <windows.h>
+#else
+# include <unistd.h>
+# include <linux/limits.h>
 #endif
 
 #include "System/Config.hpp"
@@ -17,12 +22,11 @@ namespace Game
   };
 };
 
-void		Game::Config::initialize(int argc, char **argv)
+void		Game::Config::initialize(int argc, char** argv)
 {
 #ifdef _WIN32
   HMODULE	handle;
-  WCHAR		path[MAX_PATH];
-  std::wstring	result;
+  WCHAR		path[MAX_PATH] = { 0 };
 
   // This error should never happen...
   handle = GetModuleHandle(nullptr);
@@ -30,29 +34,23 @@ void		Game::Config::initialize(int argc, char **argv)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   GetModuleFileNameW(handle, path, MAX_PATH);
-  result = std::wstring(path).substr(0, std::wstring(path).find_last_of('\\'));
-
-  Game::Config::ExecutablePath = std::string(result.begin(), result.end()) + std::string("\\");
+  Game::Config::ExecutablePath = std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t>().to_bytes(std::wstring(path).substr(0, std::wstring(path).find_last_of('\\') + 1));
 #else
-  // This error should never happen...
-  if (argc < 1)
+  char path[PATH_MAX + 1] = { 0 };
+
+  // Find executable path from /proc/self/exe
+  if (readlink("/proc/self/exe", path, sizeof(path) - 1) == -1)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-  if (std::string(argv[0]).find_last_of('/') == std::string::npos)
-    RT::Config::ExecutablePath = std::string(".");
-  else
-    RT::Config::ExecutablePath = std::string(argv[0]).substr(0, std::string(argv[0]).find_last_of('/'));
-
-  RT::Config::ExecutablePath += std::string("/");
+  
+  Game::Config::ExecutablePath = std::string(path).substr(0, std::string(path).find_last_of('/') + 1);
 #endif
 
-  // Using C++11 to detect maximum of thread concurrency.
+  // Detect maximum of thread concurrency.
   Game::Config::ThreadNumber = std::thread::hardware_concurrency();
 
   // If failed...
-  if (Game::Config::ThreadNumber == 0)
-  {
+  if (Game::Config::ThreadNumber == 0) {
     Game::Config::ThreadNumber = 1;
-    std::cerr << "Error: failed to detect maximum of concurrency thread." << std::endl;
+    std::cerr << "[Game::Config]: Warning, failed to detect maximum of concurrency thread." << std::endl;
   }
 }

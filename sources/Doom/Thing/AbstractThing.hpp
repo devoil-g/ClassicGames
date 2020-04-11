@@ -193,7 +193,7 @@ namespace DOOM
       int                       radius;       // Thing's radius
       int                       height;       // Thing's height
       int                       mass;         // Thing's mass
-      int                       damage;       // ???
+      int                       damage;       // Thing damage multiplier (missiles)
       DOOM::Enum::ThingProperty properties;   // Properties of thing
 
       // States of thing
@@ -226,6 +226,7 @@ namespace DOOM
     static const float  MissileRange;
     static const float  FloatSpeed;
     static const int    TargetThreshold;
+    static const int    MaxRadius;
 
   public:
     static std::unique_ptr<DOOM::AbstractThing> factory(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Thing& thing); // Thing factory
@@ -359,11 +360,13 @@ namespace DOOM
     void  P_LineSwitch(DOOM::Doom& doom, float swc_range, const Math::Vector<3>& swc_origin, const Math::Vector<3>& swc_direction);                 // Switch the first non obstructed linedef in range 
     void  P_SpawnMissile(DOOM::Doom& doom, DOOM::Enum::ThingType type);                                                                             // Spawn a missile from thing to target
     void  P_ExplodeMissile(DOOM::Doom& doom);                                                                                                       // Destroy missile
-    void  P_RadiusAttack(DOOM::Doom& doom, int damage);                                                                                             // Blast damage from current thing position
+    void  P_ExplodeMissile(DOOM::Doom& doom, DOOM::AbstractThing& target);                                                                          // Destroy missile on a target
+    void  P_RadiusAttack(DOOM::Doom& doom, DOOM::AbstractThing& source, int damage);                                                                // Blast damage from current thing position
 
     void  setState(DOOM::Doom& doom, DOOM::AbstractThing::ThingState state);  // Switch state
 
-    virtual void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, int damage);  // Receive attack from attacker
+    virtual void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, int damage); // Receive attack from attacker caused by origin
+    virtual void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, int damage);                              // Receive attack from attacker
 
     void                                                                                updatePhysics(DOOM::Doom& doom, sf::Time elapsed);                                                                                                        // Update physics of thing
     void                                                                                updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed, int depth = 0, int16_t linedef_ignored = -1, const DOOM::AbstractThing* thing_ignored = nullptr); // Update thrust component of thing

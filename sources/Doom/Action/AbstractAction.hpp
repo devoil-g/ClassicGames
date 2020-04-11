@@ -39,5 +39,3 @@ namespace DOOM
     virtual bool  start(DOOM::Doom& doom, DOOM::AbstractThing& thing);  // Request action to start or re-trigger (for door, lift & crusher), return true if an action has been started
   };
 };
-
-#endif

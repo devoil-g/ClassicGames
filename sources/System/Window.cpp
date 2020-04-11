@@ -12,8 +12,8 @@ sf::Time const		Game::Window::FpsRefresh = sf::seconds(1.f);
 bool const		Game::Window::VerticalSync = true;
 float const		Game::Window::Joystick::DeadZone = 20.f;
 
-Game::Window::Window()
-  : _window(), _mouse(), _keyboard(), _joystick(), _elapsed(), _tick()
+Game::Window::Window() :
+  _window(), _mouse(), _keyboard(), _joystick(), _elapsed(), _tick()
 {
   // Create window with default parameters
   create(sf::VideoMode(Game::Window::DefaultWidth, Game::Window::DefaultHeight), sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close, sf::ContextSettings(24, 8, Game::Window::DefaultAntialiasing, 4, 4));

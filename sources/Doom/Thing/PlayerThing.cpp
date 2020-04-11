@@ -3,10 +3,10 @@
 #include "Doom/Thing/PlayerThing.hpp"
 #include "System/Window.hpp"
 
-const float	DOOM::PlayerThing::VerticalLimit = Math::DegToRad(22.5f);
-const float	DOOM::PlayerThing::TurningSpeed = 2.f / 3.f * Math::Pi;
-const float	DOOM::PlayerThing::WalkingSpeed = 24.f;			// 24 unit per frame (3 tics)
-const float	DOOM::PlayerThing::RunningSpeed = 50.f;			// 50 unit per frame (3 tics)
+const float	DOOM::PlayerThing::VerticalLimit = Math::DegToRad(22.5f); // 
+const float	DOOM::PlayerThing::TurningSpeed = 2.f / 3.f * Math::Pi;   // 
+const float	DOOM::PlayerThing::WalkingSpeed = 24.f;			  // 24 unit per frame (3 tics)
+const float	DOOM::PlayerThing::RunningSpeed = 50.f;			  // 50 unit per frame (3 tics)
 
 DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
   DOOM::AbstractThing(doom, DOOM::Enum::ThingType::ThingType_PLAYER, DOOM::Enum::ThingFlag::FlagNone, 0.f, 0.f, 0.f),
@@ -38,7 +38,7 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
   camera.position.z() += height * 0.73f;
 
   // TODO: remove this
-  health = 1000000;
+  health = 999;
 }
 
 bool	DOOM::PlayerThing::update(DOOM::Doom & doom, sf::Time elapsed)
@@ -199,13 +199,13 @@ void	DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Ve
 
 void	DOOM::PlayerThing::updateUse(DOOM::Doom & doom, sf::Time elapsed)
 {
-  P_LineSwitch(doom, 1000.f, position + Math::Vector<3>(0.f, 0.f, height / 2.f), Math::Vector<3>(std::cos(angle), std::sin(angle), std::tan(camera.orientation)));
+  P_LineSwitch(doom, 64.f, position + Math::Vector<3>(0.f, 0.f, height / 2.f), Math::Vector<3>(std::cos(angle), std::sin(angle), std::tan(camera.orientation)));
 }
 
 void	DOOM::PlayerThing::updateFire(DOOM::Doom & doom, sf::Time elapsed)
 {
-  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol, position);
-  P_LineAttack(doom, 1000.f, position + Math::Vector<3>(0.f, 0.f, height / 2.f), Math::Vector<3>(std::cos(angle), std::sin(angle), std::tan(camera.orientation)), 1000);
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol);
+  P_LineAttack(doom, 1000.f, position + Math::Vector<3>(0.f, 0.f, height / 2.f), Math::Vector<3>(std::cos(angle), std::sin(angle), std::tan(camera.orientation)), 5 + std::rand() % 11);
 }
 
 /*
