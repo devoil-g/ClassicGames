@@ -225,8 +225,10 @@ namespace DOOM
     static const float  MeleeRange;
     static const float  MissileRange;
     static const float  FloatSpeed;
+    static const float  SkullSpeed;
     static const int    TargetThreshold;
     static const int    MaxRadius;
+    static const float  FatSpread;
 
   public:
     static std::unique_ptr<DOOM::AbstractThing> factory(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Thing& thing); // Thing factory
@@ -331,6 +333,7 @@ namespace DOOM
     void  A_Hoof(DOOM::Doom& doom);
     void  A_CyberAttack(DOOM::Doom& doom);
     void  A_PainAttack(DOOM::Doom& doom);
+    void  A_PainShootSkull(DOOM::Doom& doom, float orientation);  // Spawn a lost soul and launch it at the target
     void  A_PainDie(DOOM::Doom& doom);
     void  A_KeenDie(DOOM::Doom& doom);
     void  A_BrainPain(DOOM::Doom& doom);

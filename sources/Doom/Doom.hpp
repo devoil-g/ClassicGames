@@ -17,6 +17,15 @@ namespace DOOM
 {
   namespace Enum
   {
+    enum Gamemode
+    {
+      GamemodeShareware,    // DOOM 1 shareware, E1, M9
+      GamemodeRegistered,   // DOOM 1 registered, E3, M27
+      GamemodeCommercial,   // DOOM 2 retail, E1 M34
+      GamemodeRetail,       // DOOM 1 retail, E4, M36
+      GamemodeIndetermined  // Well, no IWAD found
+    };
+
     enum Weapon
     {
       WeaponPistol = 0,
@@ -753,12 +762,13 @@ namespace DOOM
     void  buildLevelBlockmap();                                 // Build level's blockmap from WAD file
 
   public:
-    Doom() = default;
+    Doom();
     ~Doom() = default;
 
     DOOM::Wad             wad;        // File holding WAD datas
     DOOM::Doom::Resources resources;  // Resources built from WAD
     DOOM::Doom::Level     level;      // Current level datas build from WAD
+    DOOM::Enum::Gamemode  gamemode;   // Current game mode
 
     void  load(const std::string& file);  // Load WAD file and build resources
     void  update(sf::Time elapsed);       // Update current level and resources

@@ -126,6 +126,10 @@ const std::array<DOOM::Doom::Resources::Sound::SoundInfo, DOOM::Doom::Resources:
 
 DOOM::Doom::Resources::Texture const	DOOM::Doom::Resources::Texture::Null = DOOM::Doom::Resources::Texture();
 
+DOOM::Doom::Doom() :
+  wad(), resources(), level(), gamemode(DOOM::Enum::Gamemode::GamemodeIndetermined)
+{}
+
 void	DOOM::Doom::load(std::string const & path)
 {
   // Clear resources
@@ -133,6 +137,9 @@ void	DOOM::Doom::load(std::string const & path)
   
   // Load WAD file 
   wad.load(path);
+
+  // TODO: detect game mode
+  gamemode = DOOM::Enum::Gamemode::GamemodeRegistered;
 
   // Build resources of WAD file
   buildResources();

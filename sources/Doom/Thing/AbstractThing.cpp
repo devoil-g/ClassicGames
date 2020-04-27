@@ -8,8 +8,10 @@
 const float	DOOM::AbstractThing::MeleeRange = 64.f;
 const float	DOOM::AbstractThing::MissileRange = 32.f * 64.f;
 const float	DOOM::AbstractThing::FloatSpeed = 4.f;
+const float	DOOM::AbstractThing::SkullSpeed = 20.f;
 const int	DOOM::AbstractThing::TargetThreshold = 100;
 const int	DOOM::AbstractThing::MaxRadius = 32;
+const float     DOOM::AbstractThing::FatSpread = Math::Pi / 16.f;
 
 const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>	DOOM::AbstractThing::_sprites =
 {
@@ -4958,61 +4960,16 @@ DOOM::AbstractThing::Sprite	DOOM::AbstractThing::sprite(const DOOM::Doom & doom,
   return { texture.first.get(), texture.second, _states[_state].brightness };
 }
 
-void	DOOM::AbstractThing::A_Light0(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_WeaponReady(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_Lower(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_Raise(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_Punch(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_ReFire(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_FirePistol(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_Light1(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_FireShotgun(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_Light2(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_FireShotgun2(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_CheckReload(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_OpenShotgun2(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_LoadShotgun2(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_CloseShotgun2(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_FireCGun(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_GunFlash(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_FireMissile(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_Saw(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_FirePlasma(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_BFGsound(DOOM::Doom & doom) {} 
-void	DOOM::AbstractThing::A_FireBFG(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_BFGSpray(DOOM::Doom & doom) {}
-void	DOOM::AbstractThing::A_VileChase(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_VileTarget(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_VileAttack(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_Fire(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_Tracer(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_SkelMissile(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_FatRaise(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_FatAttack1(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_FatAttack2(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_FatAttack3(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_BossDeath(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_SkullAttack(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_PainAttack(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_PainDie(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_KeenDie(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_BrainScream(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_BrainDie(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_BrainAwake(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_BrainSpit(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_BrainExplode(DOOM::Doom& doom) {}
-
 void	DOOM::AbstractThing::A_SpawnFly(DOOM::Doom& doom)
 {
-/*
   // Wait end of reaction time
   reactiontime += -1;
   if (reactiontime != 0)
     return;
 
   // Spawn teleport fog
-  DOOM::AbstractThing&	fog = P_SpawnMobj(_target->position, DOOM::Enum::ThingType::ThingType_SPAWNFIRE);
-  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_telept, fog.position);
+  doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, DOOM::Enum::ThingType::ThingType_SPAWNFIRE, DOOM::Enum::ThingFlag::FlagNone, _target->position.x(), _target->position.y(), 0.f));
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_telept, _target->position);
 
   static const std::array<std::pair<int, DOOM::Enum::ThingType>, 11>	monsters =
   {
@@ -5034,21 +4991,19 @@ void	DOOM::AbstractThing::A_SpawnFly(DOOM::Doom& doom)
   DOOM::Enum::ThingType	type = std::find_if(monsters.cbegin(), monsters.cend(), [r](const std::pair<int, DOOM::Enum::ThingType>& monster) { return (r % 256) < monster.first; })->second;
 
   // Spawn new monster
-  DOOM::AbstractThing&	monster = P_SpawnMobj(_target->position, type);
-  if (monster.P_LookForPlayers(doom, true) == true)
-    monster.setState(doom, monster.attributs.state_see);
+  doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, type, DOOM::Enum::ThingFlag::FlagNone, _target->position.x(), _target->position.y(), 0.f));
+  if (doom.level.things.back()->P_LookForPlayers(doom, true) == true)
+    doom.level.things.back()->setState(doom, doom.level.things.back()->attributs.state_see);
 
   // Telefrag anything in this spot
-  monster.P_TeleportMove(doom, monster.position);
+  doom.level.things.back()->teleport(doom, doom.level.things.back()->position.convert<2>(), doom.level.things.back()->angle);
 
   // Remove seft (spawn cube)
-  P_RemoveMobj();
-*/
+  setState(doom, State_None);
 }
 
 void	DOOM::AbstractThing::A_BruisAttack(DOOM::Doom& doom)
 {
-/*
   // Cancel if no target
   if (_target == nullptr)
     return;
@@ -5056,18 +5011,16 @@ void	DOOM::AbstractThing::A_BruisAttack(DOOM::Doom& doom)
   // Melee attack
   if (P_CheckMeleeRange(doom) == true) {
     doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_claw, position);
-    P_DamageMobJ(doom, _target, this, this, (std::rand() % 8 + 1) * 10);
+    _target->damage(doom, *this, (std::rand() % 8 + 1) * 10);
   }
 
   // Range attack
   else
-    P_SpawnMissile(doom, _target, DOOM::Enum::ThingType::ThingType_BRUISERSHOT);
-*/
+    P_SpawnMissile(doom, DOOM::Enum::ThingType::ThingType_BRUISERSHOT);
 }
 
 void	DOOM::AbstractThing::A_CyberAttack(DOOM::Doom& doom)
 {
-/*
   // Cancel if no target
   if (_target == nullptr)
     return;
@@ -5076,13 +5029,11 @@ void	DOOM::AbstractThing::A_CyberAttack(DOOM::Doom& doom)
   A_FaceTarget(doom);
 
   // Range attack
-  P_SpawnMissile(doom, _target, DOOM::Enum::ThingType::ThingType_ROCKET);
-*/
+  P_SpawnMissile(doom, DOOM::Enum::ThingType::ThingType_ROCKET);
 }
 
 void	DOOM::AbstractThing::A_HeadAttack(DOOM::Doom& doom)
 {
-/*
   // Cancel if no target
   if (_target == nullptr)
     return;
@@ -5092,12 +5043,11 @@ void	DOOM::AbstractThing::A_HeadAttack(DOOM::Doom& doom)
 
   // Melee attack
   if (P_CheckMeleeRange(doom) == true)
-    P_DamageMobJ(doom, _target, this, this, (std::rand() % 6 + 1) * 10);
+    _target->damage(doom, *this, (std::rand() % 6 + 1) * 10);
 
   // Range attack
   else
-    P_SpawnMissile(doom, _target, DOOM::Enum::ThingType::ThingType_HEADSHOT);
-*/
+    P_SpawnMissile(doom, DOOM::Enum::ThingType::ThingType_HEADSHOT);
 }
 
 void	DOOM::AbstractThing::A_TroopAttack(DOOM::Doom& doom)
@@ -5122,7 +5072,6 @@ void	DOOM::AbstractThing::A_TroopAttack(DOOM::Doom& doom)
 
 void	DOOM::AbstractThing::A_BspiAttack(DOOM::Doom& doom)
 {
-/*
   // Cancel if no target
   if (_target == nullptr)
     return;
@@ -5131,8 +5080,7 @@ void	DOOM::AbstractThing::A_BspiAttack(DOOM::Doom& doom)
   A_FaceTarget(doom);
     
   // Launch a missile
-  P_SpawnMissile(doom, _target, DOOM::Enum::ThingType::ThingType_ARACHPLAZ);
-*/
+  P_SpawnMissile(doom, DOOM::Enum::ThingType::ThingType_ARACHPLAZ);
 }
 
 void	DOOM::AbstractThing::setState(DOOM::Doom & doom, DOOM::AbstractThing::ThingState state)
@@ -6479,9 +6427,9 @@ void	DOOM::AbstractThing::P_LineSwitch(DOOM::Doom& doom, float swc_range, const 
     const DOOM::Doom::Level::Vertex& linedef_start = doom.level.vertexes[linedef.start];
     const DOOM::Doom::Level::Vertex& linedef_end = doom.level.vertexes[linedef.end];
 
-    Math::Vector<2>	linedef_direction = linedef_end - linedef_start;
-    int16_t		sidedef_front_index = linedef.front;
-    int16_t		sidedef_back_index = linedef.back;
+    Math::Vector<2> linedef_direction = linedef_end - linedef_start;
+    int16_t         sidedef_front_index = linedef.front;
+    int16_t         sidedef_back_index = linedef.back;
 
     // Swap sidedef if on left side
     if (Math::Vector<2>::cos(swc_origin.convert<2>() - linedef_start, Math::Vector<2>(+linedef_direction.y(), -linedef_direction.x())) < 0.f) {
@@ -6549,7 +6497,6 @@ void	DOOM::AbstractThing::P_LineSwitch(DOOM::Doom& doom, float swc_range, const 
   // Shoot linedef
   else if (linedefs_list.empty() == false && (things_list.empty() == true || linedefs_list.front().first < things_list.front().first)) {
     DOOM::AbstractLinedef& linedef = *doom.level.linedefs[linedefs_list.front().second].get();
-
     Math::Vector<2> linedef_direction = doom.level.vertexes[linedef.end] - doom.level.vertexes[linedef.start];
     Math::Vector<2> linedef_normal(Math::Vector<2>(+linedef_direction.y(), -linedef_direction.x()) / linedef_direction.length());
 
@@ -6683,7 +6630,7 @@ void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker
   if (!(flags & DOOM::Enum::ThingProperty::ThingProperty_NoClip) &&
     (attacker.type != DOOM::Enum::ThingType::ThingType_PLAYER || true)) {
     float angle = Math::Vector<2>::angle(position.convert<2>() - attacker.position.convert<2>());
-    float push = (float)damage * 4.f;
+    float push = (float)(damage * 2);
 
     // Sometimes fall foward when killed
     if (damage < 40 && health <= 0 && position.z() - attacker.position.z() > 64 && (std::rand() % 2 == 1)) {
@@ -6770,3 +6717,335 @@ void  DOOM::AbstractThing::P_RadiusAttack(DOOM::Doom& doom, DOOM::AbstractThing&
     thing.get().damage(doom, *this, source, damage - distance);
   }
 }
+
+void	DOOM::AbstractThing::A_SkelMissile(DOOM::Doom& doom)
+{
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Space missile higher
+  position.z() += 16.f;
+  P_SpawnMissile(doom, DOOM::Enum::ThingType::ThingType_TRACER);
+  position.z() -= 16.f;
+}
+
+void	DOOM::AbstractThing::A_SkullAttack(DOOM::Doom& doom)
+{
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Force skullfly flag
+  flags = (DOOM::Enum::ThingProperty)(flags | DOOM::Enum::ThingProperty::ThingProperty_SkullFly);
+
+  // Scream and face target
+  doom.sound(attributs.sound_attack, position);
+  A_FaceTarget(doom);
+
+  // Rush to target
+  _thrust = Math::Vector<3>();
+  thrust(Math::Vector<3>(
+    std::cos(angle) / DOOM::AbstractThing::SkullSpeed,
+    std::sin(angle) / DOOM::AbstractThing::SkullSpeed,
+    (_target->position.z() + (float)_target->height / 2.f - position.z()) / std::max(1.f, (_target->position.convert<2>() - position.convert<2>()).length() / DOOM::AbstractThing::SkullSpeed)));
+}
+
+void    DOOM::AbstractThing::A_PainAttack(DOOM::Doom& doom)
+{
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Shoot skull to target
+  A_FaceTarget(doom);
+  A_PainShootSkull(doom, angle);
+}
+
+void    DOOM::AbstractThing::A_PainDie(DOOM::Doom& doom)
+{
+  // Transform to corpse
+  A_Fall(doom);
+
+  // Shoot skull in various directions
+  A_PainShootSkull(doom, angle + 1.f * Math::Pi / 2.f);
+  A_PainShootSkull(doom, angle + 2.f * Math::Pi / 2.f);
+  A_PainShootSkull(doom, angle + 3.f * Math::Pi / 2.f);
+}
+
+void    DOOM::AbstractThing::A_PainShootSkull(DOOM::Doom& doom, float orientation)
+{
+  // Limit to 20 skull on the level
+  if (std::count_if(doom.level.things.begin(), doom.level.things.end(), [](const std::unique_ptr<DOOM::AbstractThing>& thing) { return thing->type == DOOM::Enum::ThingType::ThingType_SKULL; }) > 20)
+    return;
+
+  float prestep = 4.f + 3.f * (attributs.radius + _attributs[DOOM::Enum::ThingType::ThingType_SKULL].radius) / 2.f;
+
+  doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom,
+    DOOM::Enum::ThingType::ThingType_SKULL,
+    DOOM::Enum::ThingFlag::FlagNone,
+    position.x() + std::cos(orientation) * prestep,
+    position.y() + std::sin(orientation) * prestep,
+    0.f));
+  doom.level.things.back()->position.z() = position.z() + 8.f;
+
+  // Kill if no room for new skull
+  if (doom.level.things.back()->P_TryMove(doom, doom.level.things.back()->position.convert<2>()) == false) {
+    doom.level.things.back()->damage(doom, *this, 10000);
+  }
+
+  // Attack target
+  else {
+    doom.level.things.back()->_target = _target;
+    doom.level.things.back()->A_SkullAttack(doom);
+  }
+  
+}
+
+void    DOOM::AbstractThing::A_KeenDie(DOOM::Doom& doom)
+{
+  A_Fall(doom);
+
+  // Scan the remaining monsters to see if all Keens are dead
+  for (const std::unique_ptr<DOOM::AbstractThing>& thing : doom.level.things)
+    if (thing->type == type && thing->health > 0)
+      return;
+
+  // Lower floor to lowest neighbor
+  for (DOOM::Doom::Level::Sector& sector : doom.level.sectors)
+    if (sector.tag == 666)
+      sector.action<DOOM::Doom::Level::Sector::Action::Leveling>(doom, 23);
+}
+
+void    DOOM::AbstractThing::A_BossDeath(DOOM::Doom& doom)
+{
+  // Check if boss level
+  if (doom.gamemode == DOOM::Enum::Gamemode::GamemodeCommercial) {
+    if (doom.level.episode.second != 7)
+      return;
+    if (type != DOOM::Enum::ThingType::ThingType_FATSO &&
+      type != DOOM::Enum::ThingType::ThingType_BABY)
+      return;
+  }
+  else {
+    switch (doom.level.episode.first) {
+    case 1:
+      if (doom.level.episode.second != 8 || type != DOOM::Enum::ThingType::ThingType_BRUISER)
+        return;
+      break;
+    case 2:
+      if (doom.level.episode.second != 8 || type != DOOM::Enum::ThingType::ThingType_CYBORG)
+        return;
+      break;
+    case 3:
+      if (doom.level.episode.second != 8 || type != DOOM::Enum::ThingType::ThingType_SPIDER)
+        return;
+      break;
+    case 4:
+      switch (doom.level.episode.second) {
+      case 6:
+        if (type != DOOM::Enum::ThingType::ThingType_CYBORG)
+          return;
+        break;
+      case 8:
+        if (type != DOOM::Enum::ThingType::ThingType_SPIDER)
+          return;
+        break;
+      default:
+        return;
+        break;
+      }
+      break;
+    default:
+      break;
+    }
+  }
+
+  // Make sure there is a player alive for victory
+  int max_health = 0;
+  for (const DOOM::PlayerThing& player : doom.level.players)
+    max_health = std::max(max_health, player.health);
+  if (max_health <= 0)
+    return;
+
+  // Scan remaining things to see if all bosses are dead
+  for (const std::unique_ptr<DOOM::AbstractThing>& thing : doom.level.things)
+    if (thing->type == type && thing->health > 0)
+      return;
+
+  // Victory!
+  if (doom.gamemode == DOOM::Enum::Gamemode::GamemodeCommercial) {
+    if (type == DOOM::Enum::ThingType::ThingType_FATSO) {
+      for (DOOM::Doom::Level::Sector& sector : doom.level.sectors)
+        if (sector.tag == 666)
+          sector.action<DOOM::Doom::Level::Sector::Action::Leveling>(doom, 23);
+      return;
+    }
+    if (type == DOOM::Enum::ThingType::ThingType_BABY) {
+      for (DOOM::Doom::Level::Sector& sector : doom.level.sectors)
+        if (sector.tag == 667)
+          sector.action<DOOM::Doom::Level::Sector::Action::Leveling>(doom, 30); // NOTE: is this the correct action ? source code says "raisetoTexture"
+      return;
+    }
+  }
+  else {
+    if (doom.level.episode.first == 1) {
+      for (DOOM::Doom::Level::Sector& sector : doom.level.sectors)
+        if (sector.tag == 666)
+          sector.action<DOOM::Doom::Level::Sector::Action::Leveling>(doom, 23);
+      return;
+    }
+    if (doom.level.episode.first == 4) {
+      if (doom.level.episode.first == 6) {
+        for (DOOM::Doom::Level::Sector& sector : doom.level.sectors)
+          if (sector.tag == 666)
+            sector.action<DOOM::Doom::Level::Sector::Action::Leveling>(doom, 106); // NOTE: is this the correct action ? source code says "blazeOpen"
+        return;
+      }
+      if (doom.level.episode.first == 8) {
+        for (DOOM::Doom::Level::Sector& sector : doom.level.sectors)
+          if (sector.tag == 666)
+            sector.action<DOOM::Doom::Level::Sector::Action::Leveling>(doom, 23);
+        return;
+      }
+    }
+  }
+
+  // TODO: Exit level, go to next level
+}
+
+void    DOOM::AbstractThing::A_BrainScream(DOOM::Doom& doom)
+{
+  // Spawn random explosion around brain
+  for (float x = position.x() - 196.f; x < position.x() + 320.f; x += 8.f) {
+    doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom,
+      DOOM::Enum::ThingType::ThingType_ROCKET,
+      DOOM::Enum::ThingFlag::FlagNone,
+      x,
+      position.y() - 320.f,
+      0.f));
+    doom.level.things.back()->position.z() = 128.f + (std::rand() % 256) * 2;
+    doom.level.things.back()->thrust(Math::Vector<3>(0.f, 0.f, (std::rand() % 256) * 512.f));
+    doom.level.things.back()->setState(doom, DOOM::AbstractThing::ThingState::State_BRAINEXPLODE1);
+    doom.level.things.back()->_elapsed += sf::seconds(DOOM::Doom::Tic.asSeconds() * std::min(_states[DOOM::AbstractThing::ThingState::State_BRAINEXPLODE1].duration - 1, (std::rand() % 8)));
+  }
+  
+  // Scream
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_bosdth);
+}
+
+void	DOOM::AbstractThing::A_BrainExplode(DOOM::Doom& doom)
+{
+  // Spawn an explosion
+  doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom,
+    DOOM::Enum::ThingType::ThingType_ROCKET,
+    DOOM::Enum::ThingFlag::FlagNone,
+    position.x() + (std::rand() % 256 - std::rand() % 256) / 32.f,
+    position.y(),
+    0.f));
+  doom.level.things.back()->position.z() = 128.f + (std::rand() % 256) * 2;
+  doom.level.things.back()->thrust(Math::Vector<3>(0.f, 0.f, (std::rand() % 256) * 512.f));
+  doom.level.things.back()->setState(doom, DOOM::AbstractThing::ThingState::State_BRAINEXPLODE1);
+  doom.level.things.back()->_elapsed += sf::seconds(DOOM::Doom::Tic.asSeconds() * std::min(_states[DOOM::AbstractThing::ThingState::State_BRAINEXPLODE1].duration - 1, (std::rand() % 8)));
+}
+
+void	DOOM::AbstractThing::A_BrainDie(DOOM::Doom& doom)
+{
+  // TODO: Exit level, go to next level
+}
+
+void	DOOM::AbstractThing::A_FatRaise(DOOM::Doom& doom)
+{
+  // Faace target and scream
+  A_FaceTarget(doom);
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_manatk, position);
+}
+
+void	DOOM::AbstractThing::A_FatAttack1(DOOM::Doom& doom)
+{
+  // Does nothing if no target
+  if (_target == nullptr)
+    return;
+
+  A_FaceTarget(doom);
+
+  // Deviation
+  angle += DOOM::AbstractThing::FatSpread;
+
+  P_SpawnMissile(doom, DOOM::Enum::ThingType::ThingType_FATSHOT);
+  doom.level.things.back()->angle += DOOM::AbstractThing::FatSpread;
+  doom.level.things.back()->_thrust.x() = doom.level.things.back()->attributs.speed * std::cos(doom.level.things.back()->angle);
+  doom.level.things.back()->_thrust.y() = doom.level.things.back()->attributs.speed * std::sin(doom.level.things.back()->angle);
+}
+
+void	DOOM::AbstractThing::A_FatAttack2(DOOM::Doom& doom)
+{
+  // Does nothing if no target
+  if (_target == nullptr)
+    return;
+
+  A_FaceTarget(doom);
+
+  // Opposite deviation
+  angle -= DOOM::AbstractThing::FatSpread;
+
+  P_SpawnMissile(doom, DOOM::Enum::ThingType::ThingType_FATSHOT);
+  doom.level.things.back()->angle -= 2.f * DOOM::AbstractThing::FatSpread;
+  doom.level.things.back()->_thrust.x() = doom.level.things.back()->attributs.speed * std::cos(doom.level.things.back()->angle);
+  doom.level.things.back()->_thrust.y() = doom.level.things.back()->attributs.speed * std::sin(doom.level.things.back()->angle);
+}
+
+void	DOOM::AbstractThing::A_FatAttack3(DOOM::Doom& doom)
+{
+  // Does nothing if no target
+  if (_target == nullptr)
+    return;
+
+  A_FaceTarget(doom);
+
+  // Spawn first missile
+  P_SpawnMissile(doom, DOOM::Enum::ThingType::ThingType_FATSHOT);
+  doom.level.things.back()->angle -= DOOM::AbstractThing::FatSpread / 2.f;
+  doom.level.things.back()->_thrust.x() = doom.level.things.back()->attributs.speed * std::cos(doom.level.things.back()->angle);
+  doom.level.things.back()->_thrust.y() = doom.level.things.back()->attributs.speed * std::sin(doom.level.things.back()->angle);
+
+  // Spawn second missile
+  P_SpawnMissile(doom, DOOM::Enum::ThingType::ThingType_FATSHOT);
+  doom.level.things.back()->angle += DOOM::AbstractThing::FatSpread / 2.f;
+  doom.level.things.back()->_thrust.x() = doom.level.things.back()->attributs.speed * std::cos(doom.level.things.back()->angle);
+  doom.level.things.back()->_thrust.y() = doom.level.things.back()->attributs.speed * std::sin(doom.level.things.back()->angle);
+}
+
+void	DOOM::AbstractThing::A_WeaponReady(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_Lower(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_Raise(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_Punch(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_ReFire(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_FirePistol(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_FireShotgun(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_FireShotgun2(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_CheckReload(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_OpenShotgun2(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_LoadShotgun2(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_CloseShotgun2(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_FireCGun(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_GunFlash(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_FireMissile(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_Saw(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_FirePlasma(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_BFGsound(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_FireBFG(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_BFGSpray(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_VileChase(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_VileTarget(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_VileAttack(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_Fire(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_Tracer(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_BrainAwake(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_BrainSpit(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_Light0(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_Light1(DOOM::Doom& doom) {}
+void	DOOM::AbstractThing::A_Light2(DOOM::Doom& doom) {}
