@@ -4,11 +4,11 @@
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
-Game::MessageState::MessageState(std::string const & message)
-  : _message(message, Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")), _return("Return", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")), _selected(-1)
-{}
-
-Game::MessageState::~MessageState()
+Game::MessageState::MessageState(Game::StateMachine& machine, std::string const & message) :
+  Game::AbstractState(machine),
+  _message(message, Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
+  _return("Return", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
+  _selected(-1)
 {}
 
 bool	Game::MessageState::update(sf::Time elapsed)
@@ -18,7 +18,7 @@ bool	Game::MessageState::update(sf::Time elapsed)
     Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Escape) ||
     Game::Window::Instance().joystick().buttonPressed(0, 1))
   {
-    Game::StateMachine::Instance().pop();
+    _machine.pop();
     return false;
   }
 
@@ -46,7 +46,7 @@ bool	Game::MessageState::update(sf::Time elapsed)
     Game::Window::Instance().joystick().buttonPressed(0, 0) == true)
     && _selected == 0)
   {
-    Game::StateMachine::Instance().pop();
+    _machine.pop();
     return false;
   }
 

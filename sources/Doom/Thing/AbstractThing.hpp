@@ -368,6 +368,8 @@ namespace DOOM
 
     void  setState(DOOM::Doom& doom, DOOM::AbstractThing::ThingState state);  // Switch state
 
+    virtual bool  pickup(DOOM::Doom& doom, DOOM::AbstractThing& item); // Try to pick-up item, return true if item shall be deleted
+
     virtual void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, int damage); // Receive attack from attacker caused by origin
     virtual void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, int damage);                              // Receive attack from attacker
 
@@ -397,5 +399,7 @@ namespace DOOM
 
     virtual bool                update(DOOM::Doom& doom, sf::Time elapsed);         // Update thing, return true if thing should be deleted
     DOOM::AbstractThing::Sprite sprite(const DOOM::Doom& doom, float angle) const;  // Return sprite to be displayed
+
+    virtual bool  key(DOOM::Enum::KeyColor color) const;  // Return true thing thing has the key (default: false)
   };
 }

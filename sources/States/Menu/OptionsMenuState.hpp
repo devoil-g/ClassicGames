@@ -17,8 +17,8 @@ namespace Game
     void  selectReturn(Game::AbstractMenuState::Item&);       // Return to main menu
 
   public:
-    OptionsMenuState();
-    ~OptionsMenuState();
+    OptionsMenuState(Game::StateMachine& machine);
+    ~OptionsMenuState() override = default;
 
     bool  update(sf::Time) override;  // Update state
     void  draw() override;            // Draw state

@@ -25,7 +25,7 @@ namespace Game
     sf::Sprite  _sprite;  // Display rendered texture
 
   public:
-    GameDoomState();
+    GameDoomState(Game::StateMachine& machine, const std::vector<int>& players);
     ~GameDoomState() override = default;
 
     bool  update(sf::Time elapsed) override;  // Update state

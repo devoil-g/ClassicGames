@@ -26,8 +26,8 @@ namespace Game
     bool  updateUnregister(const int id); // Unregister ID in player list, return false if not registered
     
   public:
-    StartDoomState();
-    ~StartDoomState() override;
+    StartDoomState(Game::StateMachine& machine);
+    ~StartDoomState() override = default;
 
     bool  update(sf::Time elapsed) override;  // Update state
     void  draw() override;                    // Draw state

@@ -16,14 +16,6 @@ namespace DOOM
       TriggerGunfire = 0b1000
     };
 
-    enum Key
-    {
-      KeyNone = 0b0000,
-      KeyBlue = 0b0001,
-      KeyRed = 0b0010,
-      KeyYellow = 0b0100,
-    };
-
     enum Target
     {
       TargetNone = 0b0000,
@@ -37,25 +29,25 @@ namespace DOOM
     DOOM::EnumLinedef::Trigger Trigger,
     bool Repeat,
     DOOM::EnumLinedef::Target Target = DOOM::EnumLinedef::Target::TargetPlayer,
-    DOOM::EnumLinedef::Key Key = DOOM::EnumLinedef::Key::KeyNone
+    DOOM::Enum::KeyColor Key = DOOM::Enum::KeyColor::KeyColorNone
   >
     class AbstractTriggerableLinedef : public DOOM::AbstractLinedef
   {
   private:
     virtual bool  trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing, int16_t sector_index) = 0;  // Action of the linedef
 
-    template<DOOM::EnumLinedef::Key _Key = DOOM::EnumLinedef::Key::KeyNone>
+    template<DOOM::Enum::KeyColor _Key = DOOM::Enum::KeyColor::KeyColorNone>
     inline std::enable_if_t<Key == _Key, bool>  triggerKey(DOOM::Doom& doom, DOOM::AbstractThing& thing)  // No check for key
     {
       // No need for check
       return true;
     }
 
-    template<DOOM::EnumLinedef::Key _Key = DOOM::EnumLinedef::Key::KeyNone>
+    template<DOOM::Enum::KeyColor _Key = DOOM::Enum::KeyColor::KeyColorNone>
     inline std::enable_if_t<Key != _Key, bool>  triggerKey(DOOM::Doom& doom, DOOM::AbstractThing& thing)  // Check if player has the correct key
     {
-      // TODO: check key
-      return true;
+      // Check if thing has the key
+      return thing.key(Key);
     }
 
     template<bool _Repeat = true>

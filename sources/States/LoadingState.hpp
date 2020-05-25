@@ -14,12 +14,11 @@ namespace Game
   class LoadingState : public Game::AbstractState
   {
   private:
-    std::future<Game::AbstractState*> _loader;  // Load task returing new state when completed
-    sf::Text                          _text;    // Loading text
-    float                             _elapsed; // Time elapsed
+    sf::Text    _text;    // Loading text
+    float       _elapsed; // Time elapsed
 
   public:
-    LoadingState(std::future<Game::AbstractState*>&&);
+    LoadingState(Game::StateMachine& machine);
     ~LoadingState();
 
     bool  update(sf::Time) override;  // Update menu state

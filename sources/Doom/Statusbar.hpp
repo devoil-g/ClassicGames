@@ -33,6 +33,8 @@ namespace DOOM
 
   public:
     Statusbar(const DOOM::Doom& doom, int id);
+    Statusbar() = delete;
+    Statusbar(const Statusbar&) = delete;
     ~Statusbar() = default;
 
     void  update(sf::Time elapsed);                                                         // Update statusbar

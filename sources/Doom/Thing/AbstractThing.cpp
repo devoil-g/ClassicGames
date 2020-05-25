@@ -5153,6 +5153,10 @@ void DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed
   //   Check collision with things
   if ((flags & DOOM::Enum::ThingProperty::ThingProperty_Solid) || (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile))
     for (const std::reference_wrapper<DOOM::AbstractThing>& thing : linedefs_things.second) {
+      // Thing has already been removed
+      if (thing.get()._remove == true)
+        continue;
+
       std::pair<float, Math::Vector<2>>	intersection = updatePhysicsThrustThing(doom, movement, thing.get(), thing_ignored);
 
       // Ignore missile emitter
@@ -5190,17 +5194,17 @@ void DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed
   }
 
   // Pickup things
-  for (const std::reference_wrapper<DOOM::AbstractThing>& thing : linedefs_things.second) {
-    // Ignore things if collided or ignored
-    if (&thing.get() == closest_thing || &thing.get() == thing_ignored || (thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_PickUp) == 0)
-      continue;
+  if ((flags & DOOM::Enum::ThingProperty::ThingProperty_PickUp) != 0)
+    for (const std::reference_wrapper<DOOM::AbstractThing>& thing : linedefs_things.second) {
+      // Ignore thing if collided or ignored or already removed
+      if (&thing.get() == closest_thing || &thing.get() == thing_ignored || (thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Special) == 0 || thing.get()._remove == true)
+        continue;
 
-    // Pickup thing if destination is in thing area
-    if ((position.convert<2>() + movement * closest_distance - thing.get().position.convert<2>()).length() < thing.get().attributs.radius + attributs.radius) {
-      // TODO: implement pickup
-      // thing.get().pickup(doom, *this);
+      // Pickup thing if destination is in thing area
+      if ((position.convert<2>() + movement * closest_distance - thing.get().position.convert<2>()).length() < thing.get().attributs.radius + attributs.radius) {
+        thing.get()._remove = pickup(doom, thing);
+      }
     }
-  }
 
   // Move player to closest obstacle or full movement if none found
   if (closest_distance > 0.f) {
@@ -5519,7 +5523,13 @@ void	DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elapse
   }
 }
 
-void	DOOM::AbstractThing::A_Look(DOOM::Doom& doom)
+bool  DOOM::AbstractThing::pickup(DOOM::Doom& doom, DOOM::AbstractThing& item)
+{
+  // Does nothing, AbstractThing don't pick-up items
+  return false;
+}
+
+void  DOOM::AbstractThing::A_Look(DOOM::Doom& doom)
 {
   // Reset target and threshold, any shot will wake up
   _target = nullptr;
@@ -5769,6 +5779,7 @@ bool	DOOM::AbstractThing::P_CheckMissileRange(DOOM::Doom& doom)
 void	DOOM::AbstractThing::P_NewChaseDir(DOOM::Doom& doom)
 {
   // Error if no target
+  // TODO: we crashed once here
   if (_target == nullptr)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
@@ -6619,7 +6630,7 @@ void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker
     damage /= 2;
 
   // Deal damage
-  health -= damage;
+  health = std::max(0, health - damage);
 
   // Reset flying skull thrust
   if (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly)
@@ -6680,6 +6691,12 @@ void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker
 {
   // The attacker is also the origin
   damage(doom, attacker, attacker, dmg);
+}
+
+bool  DOOM::AbstractThing::key(DOOM::Enum::KeyColor color) const
+{
+  // Thing does have keys
+  return false;
 }
 
 void  DOOM::AbstractThing::P_RadiusAttack(DOOM::Doom& doom, DOOM::AbstractThing& source, int damage)
@@ -7019,6 +7036,19 @@ void	DOOM::AbstractThing::A_FatAttack3(DOOM::Doom& doom)
   doom.level.things.back()->_thrust.y() = doom.level.things.back()->attributs.speed * std::sin(doom.level.things.back()->angle);
 }
 
+void	DOOM::AbstractThing::A_VileChase(DOOM::Doom& doom)
+{
+  // TODO: finish this!
+
+  if (move_direction != DOOM::AbstractThing::Direction::DirectionNone) {
+    // Check for corpse to raise
+    float vile_x;
+  }
+
+  // Return to normal attack
+  A_Chase(doom);
+}
+
 void	DOOM::AbstractThing::A_WeaponReady(DOOM::Doom& doom) {}
 void	DOOM::AbstractThing::A_Lower(DOOM::Doom& doom) {}
 void	DOOM::AbstractThing::A_Raise(DOOM::Doom& doom) {}
@@ -7039,7 +7069,6 @@ void	DOOM::AbstractThing::A_FirePlasma(DOOM::Doom& doom) {}
 void	DOOM::AbstractThing::A_BFGsound(DOOM::Doom& doom) {}
 void	DOOM::AbstractThing::A_FireBFG(DOOM::Doom& doom) {}
 void	DOOM::AbstractThing::A_BFGSpray(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_VileChase(DOOM::Doom& doom) {}
 void	DOOM::AbstractThing::A_VileTarget(DOOM::Doom& doom) {}
 void	DOOM::AbstractThing::A_VileAttack(DOOM::Doom& doom) {}
 void	DOOM::AbstractThing::A_Fire(DOOM::Doom& doom) {}

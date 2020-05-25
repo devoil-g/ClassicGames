@@ -17,8 +17,8 @@ namespace Game
     void  selectExit(Game::AbstractMenuState::Item&);     // Exit game
 
   public:
-    MainMenuState();
-    ~MainMenuState();
+    MainMenuState(Game::StateMachine& machine);
+    ~MainMenuState() override = default;
 
     bool  update(sf::Time) override;  // Update state
     void  draw() override;            // Draw state

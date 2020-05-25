@@ -12,8 +12,8 @@ namespace Game
     sf::Sprite  _sprite;  // Sprite containing application logo
 
   public:
-    SplashState();
-    ~SplashState() override;
+    SplashState(Game::StateMachine& machine);
+    ~SplashState() override = default;
 
     bool  update(sf::Time) override;  // Update state
     void  draw() override;            // Draw state

@@ -4,37 +4,25 @@
 #include "System/Window.hpp"
 #include "System/Library/FontLibrary.hpp"
 
-Game::LoadingState::LoadingState(std::future<Game::AbstractState *> && loader)
-  : _loader(std::move(loader)), _text("Loading", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf"), 1), _elapsed(0.f)
+Game::LoadingState::LoadingState(Game::StateMachine& machine) :
+  Game::AbstractState(machine),
+  _text("Loading", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf"), 1),
+  _elapsed(0.f)
 {
   // Set taskbar status to flickering
   Game::Window::Instance().taskbar(Game::Window::WindowFlag::Indeterminate);
 }
 
 Game::LoadingState::~LoadingState()
-{}
+{
+  // Reset taskbar status
+  Game::Window::Instance().taskbar(Game::Window::WindowFlag::NoProgress);
+}
 
 bool	Game::LoadingState::update(sf::Time elapsed)
 {
   // Get elasped time
   _elapsed += elapsed.asSeconds();
-
-  // Check if loading task has completed
-  if (_loader.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
-  {
-    Game::AbstractState *	state = _loader.get();
-
-    // Swap current state with loaded one if valid
-    if (state != nullptr)
-      Game::StateMachine::Instance().swap(state);
-    else
-      Game::StateMachine::Instance().pop();
-
-    // Reset taskbar status
-    Game::Window::Instance().taskbar(Game::Window::WindowFlag::NoProgress);
-
-    return false;
-  }
 
   std::string	text("Loading");
 

@@ -9,8 +9,8 @@
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
-Game::MainMenuState::MainMenuState()
-  : Game::AbstractMenuState()
+Game::MainMenuState::MainMenuState(Game::StateMachine& machine) :
+  Game::AbstractMenuState(machine)
 {
   // Get menu font
   sf::Font const &	font = Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf");
@@ -23,9 +23,6 @@ Game::MainMenuState::MainMenuState()
     Game::AbstractMenuState::Item("Exit", font, std::function<void(Game::AbstractMenuState::Item &)>(std::bind(&Game::MainMenuState::selectExit, this, std::placeholders::_1)))
   };
 }
-
-Game::MainMenuState::~MainMenuState()
-{}
 
 bool	Game::MainMenuState::update(sf::Time elapsed)
 {
@@ -42,18 +39,18 @@ void	Game::MainMenuState::draw()
 void	Game::MainMenuState::selectDoom(Game::AbstractMenuState::Item &)
 {
   // Go to DOOM menu
-  Game::StateMachine::Instance().push(new Game::StartDoomState());
+  _machine.push<Game::StartDoomState>();
 }
 
 void	Game::MainMenuState::selectOptions(Game::AbstractMenuState::Item &)
 {
   // Go to option menu
-  Game::StateMachine::Instance().push(new Game::OptionsMenuState());
+  _machine.push<Game::OptionsMenuState>();
 }
 
 void	Game::MainMenuState::selectExit(Game::AbstractMenuState::Item &)
 {
   // Exit application
-  Game::StateMachine::Instance().pop();
-  Game::StateMachine::Instance().pop();
+  _machine.pop();
+  _machine.pop();
 }

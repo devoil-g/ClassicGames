@@ -10,15 +10,13 @@
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
-Game::SplashState::SplashState() :
+Game::SplashState::SplashState(Game::StateMachine& machine) :
+  Game::AbstractState(machine),
   _elapsed(-1.f)
 {
   // Load texture as sprite
   _sprite = sf::Sprite(Game::TextureLibrary::Instance().get(Game::Config::ExecutablePath + "assets/textures/splashscreen.png"));
 }
-
-Game::SplashState::~SplashState()
-{}
 
 bool	Game::SplashState::update(sf::Time elapsed)
 {
@@ -35,7 +33,7 @@ bool	Game::SplashState::update(sf::Time elapsed)
 
   // End splash screen
   if (_elapsed >= 5.f)
-    Game::StateMachine::Instance().swap(new Game::StartState());
+    _machine.swap<Game::StartState>();
 
   return false;
 }

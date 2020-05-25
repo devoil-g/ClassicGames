@@ -31,7 +31,7 @@ namespace Game
     int               _selected;  // Index of selected menu (-1 for no selection)
 
   public:
-    AbstractMenuState();
+    AbstractMenuState(Game::StateMachine& machine);
     virtual ~AbstractMenuState() = 0;
 
     virtual bool  update(sf::Time) override;  // Update menu state

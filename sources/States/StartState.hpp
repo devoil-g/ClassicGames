@@ -13,8 +13,8 @@ namespace Game
     sf::Text  _text;
 
   public:
-    StartState();
-    ~StartState();
+    StartState(Game::StateMachine& machine);
+    ~StartState() override = default;
 
     bool  update(sf::Time) override;  // Update state
     void  draw() override;            // Draw state

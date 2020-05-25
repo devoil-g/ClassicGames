@@ -12,7 +12,8 @@
 
 unsigned int		Game::GameDoomState::RenderScale = 1;
 
-Game::GameDoomState::GameDoomState() :
+Game::GameDoomState::GameDoomState(Game::StateMachine& machine, const std::vector<int>& players) :
+  Game::AbstractState(machine),
   _doom()
 {
   // Load WAD
@@ -24,6 +25,10 @@ Game::GameDoomState::GameDoomState() :
 
   // Load level
   _doom.setLevel({ 1, 2 });
+
+  // Add players
+  for (int player : players)
+    _doom.addPlayer(player);
 }
 
 bool	Game::GameDoomState::update(sf::Time elapsed)
@@ -31,7 +36,7 @@ bool	Game::GameDoomState::update(sf::Time elapsed)
   // Return to previous menu
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Escape) == true)
   {
-    Game::StateMachine::Instance().pop();
+    _machine.pop();
     return false;
   }
 

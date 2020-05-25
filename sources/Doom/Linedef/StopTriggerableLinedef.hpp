@@ -11,7 +11,7 @@ namespace DOOM
     DOOM::EnumLinedef::Trigger Trigger,
     bool Repeat,
     DOOM::EnumLinedef::Target Target = DOOM::EnumLinedef::Target::TargetPlayer,
-    DOOM::EnumLinedef::Key Key = DOOM::EnumLinedef::Key::KeyNone
+    DOOM::Enum::KeyColor Key = DOOM::Enum::KeyColor::KeyColorNone
   >
     class StopTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat, Target, Key>
   {

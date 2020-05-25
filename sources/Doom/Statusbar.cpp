@@ -99,7 +99,7 @@ void	DOOM::Statusbar::renderFace(const DOOM::Doom & doom, sf::Image & target, sf
 
 void	DOOM::Statusbar::renderArmor(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect) const
 {
-  // Draw health in big red digits
+  // Draw armor in big red digits
   renderDecimal(doom, target, rect, "STTNUM", armor, 221, 3);
   renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key("STTPRCNT"))->second, 221, 3);
 }

@@ -55,29 +55,29 @@ std::unique_ptr<DOOM::AbstractLinedef>	DOOM::AbstractLinedef::factory(DOOM::Doom
 
     // Regular locked door types
   case 32:	// Pushed once (blue)
-    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerPushed, false, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::EnumLinedef::Key::KeyBlue>>(doom, linedef);
+    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerPushed, false, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::Enum::KeyColor::KeyColorBlue>>(doom, linedef);
   case 33:	// Pushed once (red)
-    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerPushed, false, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::EnumLinedef::Key::KeyRed>>(doom, linedef);
+    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerPushed, false, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::Enum::KeyColor::KeyColorRed>>(doom, linedef);
   case 34:	// Pushed once (yellow)
-    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerPushed, false, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::EnumLinedef::Key::KeyYellow>>(doom, linedef);
+    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerPushed, false, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::Enum::KeyColor::KeyColorYellow>>(doom, linedef);
   case 26:	// Pushed repeatable (blue)
-    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerPushed, true, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::EnumLinedef::Key::KeyBlue>>(doom, linedef);
+    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerPushed, true, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::Enum::KeyColor::KeyColorBlue>>(doom, linedef);
   case 27:	// Pushed repeatable (yellow)
-    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerPushed, true, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::EnumLinedef::Key::KeyYellow>>(doom, linedef);
+    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerPushed, true, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::Enum::KeyColor::KeyColorYellow>>(doom, linedef);
   case 28:	// Pushed repeatable (red)
-    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerPushed, true, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::EnumLinedef::Key::KeyRed>>(doom, linedef);
+    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerPushed, true, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::Enum::KeyColor::KeyColorRed>>(doom, linedef);
   case 133:	// Switched once (blue)
-    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, false, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::EnumLinedef::Key::KeyBlue>>(doom, linedef);
+    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, false, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::Enum::KeyColor::KeyColorBlue>>(doom, linedef);
   case 135:	// Switched once (red)
-    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, false, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::EnumLinedef::Key::KeyRed>>(doom, linedef);
+    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, false, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::Enum::KeyColor::KeyColorRed>>(doom, linedef);
   case 137:	// Switched once (yellow)
-    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, false, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::EnumLinedef::Key::KeyYellow>>(doom, linedef);
+    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, false, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::Enum::KeyColor::KeyColorYellow>>(doom, linedef);
   case 99:	// Switched repeatable (blue)
-    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, true, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::EnumLinedef::Key::KeyBlue>>(doom, linedef);
+    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, true, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::Enum::KeyColor::KeyColorBlue>>(doom, linedef);
   case 134:	// Switched repeatable (red)
-    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, true, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::EnumLinedef::Key::KeyRed>>(doom, linedef);
+    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, true, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::Enum::KeyColor::KeyColorRed>>(doom, linedef);
   case 136:	// Switched repeatable (yellow)
-    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, true, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::EnumLinedef::Key::KeyYellow>>(doom, linedef);
+    return std::make_unique<DOOM::ActionTriggerableLinedef<DOOM::Doom::Level::Sector::Action::Leveling, DOOM::EnumLinedef::Trigger::TriggerSwitched, true, DOOM::EnumLinedef::Target::TargetPlayer, DOOM::Enum::KeyColor::KeyColorYellow>>(doom, linedef);
 
     // Regular floor types
   case 82: case 83: case 84: case 91: case 92: case 93: case 96: case 98: case 128: case 129:	// Walkover repeat

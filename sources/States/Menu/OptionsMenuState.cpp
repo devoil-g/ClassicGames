@@ -4,8 +4,8 @@
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
-Game::OptionsMenuState::OptionsMenuState()
-  : Game::AbstractMenuState()
+Game::OptionsMenuState::OptionsMenuState(Game::StateMachine& machine) :
+  Game::AbstractMenuState(machine)
 {
   // Get menu font
   sf::Font const &	font = Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf");
@@ -31,9 +31,6 @@ Game::OptionsMenuState::OptionsMenuState()
     Game::AbstractMenuState::Item(returnText, font, std::function<void(Game::AbstractMenuState::Item &)>(std::bind(&Game::OptionsMenuState::selectReturn, this, std::placeholders::_1)))
   };
 }
-
-Game::OptionsMenuState::~OptionsMenuState()
-{}
 
 bool	Game::OptionsMenuState::update(sf::Time elapsed)
 {
@@ -112,5 +109,5 @@ void	Game::OptionsMenuState::selectAntialiasing(Game::AbstractMenuState::Item & 
 void	Game::OptionsMenuState::selectReturn(Game::AbstractMenuState::Item &)
 {
   // Return to main menu
-  Game::StateMachine::Instance().pop();
+  _machine.pop();
 }

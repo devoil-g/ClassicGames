@@ -41,6 +41,7 @@ namespace DOOM
 
     enum KeyColor
     {
+      KeyColorNone = -1,
       KeyColorBlue = 0,
       KeyColorYellow = 1,
       KeyColorRed = 2,
@@ -66,8 +67,8 @@ namespace DOOM
     enum Armor
     {
       ArmorNone = 0,
-      ArmorSecurity = 3,
-      ArmorMega = 2
+      ArmorSecurity = 100,
+      ArmorMega = 200
     };
 
     enum ThingType : int16_t

@@ -5,11 +5,10 @@
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
-Game::StartState::StartState()
-  : _elapsed(0.f), _text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf"), 128)
-{}
-
-Game::StartState::~StartState()
+Game::StartState::StartState(Game::StateMachine& machine) :
+  Game::AbstractState(machine),
+  _elapsed(0.f),
+  _text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf"), 128)
 {}
 
 bool	Game::StartState::update(sf::Time elapsed)
@@ -22,7 +21,7 @@ bool	Game::StartState::update(sf::Time elapsed)
     Game::Window::Instance().joystick().buttonPressed(0, 0) == true || Game::Window::Instance().joystick().buttonPressed(0, 7) == true)
   {
     _elapsed = 0.f;
-    Game::StateMachine::Instance().push(new Game::MainMenuState());
+    _machine.push<Game::MainMenuState>();
     return false;
   }
 

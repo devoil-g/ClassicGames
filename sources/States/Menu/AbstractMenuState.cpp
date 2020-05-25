@@ -2,12 +2,13 @@
 #include "States/StateMachine.hpp"
 #include "System/Window.hpp"
 
-Game::AbstractMenuState::AbstractMenuState()
-  : _menu(), _selected(-1)
+Game::AbstractMenuState::AbstractMenuState(Game::StateMachine& machine) :
+  Game::AbstractState(machine),
+  _menu(),
+  _selected(-1)
 {}
 
-Game::AbstractMenuState::~AbstractMenuState()
-{}
+Game::AbstractMenuState::~AbstractMenuState() = default;
 
 bool	Game::AbstractMenuState::update(sf::Time elapsed)
 {
@@ -16,7 +17,7 @@ bool	Game::AbstractMenuState::update(sf::Time elapsed)
     Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Escape) ||
     Game::Window::Instance().joystick().buttonPressed(0, 1))
   {
-    Game::StateMachine::Instance().pop();
+    _machine.pop();
     return false;
   }
 

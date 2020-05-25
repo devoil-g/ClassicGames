@@ -4,88 +4,47 @@
 #include "System/Window.hpp"
 #include "System/Sound.hpp"
 
-Game::StateMachine::StateMachine()
+Game::StateMachine::StateMachine() :
+  Game::AbstractState(*this)
 {
-  // Push default state
-  push(new Game::StateMachine::DefaultState());
+  // NOTE: the machine is referencing itself, shoud we do this ?
 }
 
-Game::StateMachine::~StateMachine()
+void  Game::StateMachine::pop()
 {
-  // Clear remaining states
-  while (!_states.empty())
-  {
-    // Avoid to delete twice the same pointer
-    if (std::find(_states.begin(), _states.end(), _states.front()) == _states.end())
-      delete _states.front();
-
-    _states.pop_front();
-  }
-}
-
-void			Game::StateMachine::run()
-{
-  sf::Clock		clock;
-  
-  while (Game::Window::Instance().window().isOpen())
-  {
-    sf::Time		elapsed = clock.restart();
-
-    // Stop if update return true
-    if (Game::Window::Instance().update(elapsed) == true ||
-      Game::Sound::Instance().update(elapsed) == true ||
-      _states.front()->update(elapsed) == true)
-      return;
-
-    // Draw image
-    Game::Window::Instance().window().clear();
-    _states.front()->draw();
-
-    // Display image
-    Game::Window::Instance().window().display();
-  }
-}
-
-void			Game::StateMachine::swap(Game::AbstractState * state)
-{
-  _lock.lock();
-
-  // Check for invalid parameter
-  assert(state != nullptr);
-
-  // Swap current state
-  pop();
-  push(state);
-
-  _lock.unlock();
-}
-
-void			Game::StateMachine::push(Game::AbstractState * state)
-{
-  _lock.lock();
-
-  // Check for invalid parameter
-  assert(state != nullptr);
-
-  // Push state in stack
-  _states.push_front(state);
-  
-  _lock.unlock();
-}
-
-void			Game::StateMachine::pop()
-{
-  _lock.lock();
+  // Thread-lock the machine
+  std::unique_lock  lock(_lock);
 
   // Check if stack not empty
-  assert(_states.size() > 1);
-
-  // Delete current state only if already in stack
-  if (std::find(std::next(_states.begin()), _states.end(), _states.front()) == _states.end())
-    delete _states.front();
+  if (_states.empty() == true)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Pop state
-  _states.pop_front();
+  _states.pop();
+}
 
-  _lock.unlock();
+bool  Game::StateMachine::update(sf::Time elapsed)
+{
+  // Thread-lock the machine
+  std::unique_lock  lock(_lock);
+
+  // Check if stack not empty
+  if (_states.empty() == true)
+    return true;
+
+  // Update top state
+  return _states.top()->update(elapsed);
+}
+
+void  Game::StateMachine::draw()
+{
+  // Thread-lock the machine
+  std::unique_lock  lock(_lock);
+
+  // Check if stack not empty
+  if (_states.empty() == true)
+    return;
+
+  // Draw front state
+  _states.top()->draw();
 }

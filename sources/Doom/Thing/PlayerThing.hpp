@@ -28,6 +28,15 @@ namespace DOOM
     void  updateUse(DOOM::Doom& doom, sf::Time elapsed);                                    // Perform use action
     void  updateFire(DOOM::Doom& doom, sf::Time elapsed);                                   // Perform gunfire action
 
+    bool  pickup(DOOM::Doom& doom, DOOM::AbstractThing& item) override;
+
+    bool  pickupArmor(DOOM::Enum::Armor type);
+    bool  pickupArmor(DOOM::Enum::Armor type, unsigned int quantity);
+    bool  pickupHealth(unsigned int quantity);
+    bool  pickupKey(DOOM::Enum::KeyColor color, DOOM::Enum::KeyType type);
+
+    void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, int damage) override;  // Damage player, taking shield into account
+
   public:
     const int         id;         // Player ID
     const int         controller; // Controller used by player
@@ -39,5 +48,7 @@ namespace DOOM
     ~PlayerThing() = default;
 
     bool  update(DOOM::Doom& doom, sf::Time elapsed) override;  // Update player using controller, alway return false as a player thing is never deleted
+
+    bool  key(DOOM::Enum::KeyColor color) const override; // Return true if player has the key
   };
 }

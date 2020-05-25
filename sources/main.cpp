@@ -5,6 +5,7 @@
 #include "States/StateMachine.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
+#include "System/Sound.hpp"
 
 #ifdef _WIN32
 # include <windows.h>
@@ -21,7 +22,36 @@ namespace Game
 
   void	help()
   {}
+
+  void  run()
+  {
+    Game::StateMachine  game;
+    sf::Clock		clock;
+
+    // Push initial state
+    game.push<Game::SplashState>();
+
+    // Run the game !
+    while (Game::Window::Instance().window().isOpen())
+    {
+      sf::Time		elapsed = clock.restart();
+
+      // Stop if update return true
+      if (Game::Window::Instance().update(elapsed) == true ||
+        Game::Sound::Instance().update(elapsed) == true ||
+        game.update(elapsed) == true)
+        return;
+
+      // Draw image
+      Game::Window::Instance().window().clear();
+      game.draw();
+
+      // Display image
+      Game::Window::Instance().window().display();
+    }
+  }
 };
+
 
 int	main(int argc, char ** argv)
 {
@@ -34,10 +64,7 @@ int	main(int argc, char ** argv)
 
     Game::initialize(argc, argv);
     Game::help();
-
-    // Push initial state in state machine here
-    Game::StateMachine::Instance().push(new Game::SplashState());
-    Game::StateMachine::Instance().run();
+    Game::run();
   }
   catch (std::exception e) {
     std::cerr << "[Runtime Error]: " << e.what() << std::endl;

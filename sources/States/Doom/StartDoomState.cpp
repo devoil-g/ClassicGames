@@ -10,7 +10,8 @@
 #include "System/Window.hpp"
 
 
-Game::StartDoomState::StartDoomState() :
+Game::StartDoomState::StartDoomState(Game::StateMachine& machine) :
+  Game::AbstractState(machine),
   _players({ -1, -1, -1, -1 }),
   _title("DOOM", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
   _subtitle("Select your controller", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
@@ -36,9 +37,6 @@ Game::StartDoomState::StartDoomState() :
   _spriteKeyboard.setTexture(_textureKeyboard, true);
   _spriteController.setTexture(_textureController, true);
 }
-
-Game::StartDoomState::~StartDoomState()
-{}
 
 bool	Game::StartDoomState::update(sf::Time elapsed)
 {
@@ -82,30 +80,28 @@ bool	Game::StartDoomState::updateRegister(const int id)
   for (int player : _players)
     if (player == id) {
       // Get player controller list
-      std::array<int, 4>	players = _players;
+      std::vector<int>  players;
+      for (int player : _players)
+        if (player != -1)
+          players.push_back(player);
+      
+      // Push loading screen
+      _machine.push<Game::LoadingState>();
+      
+      Game::StateMachine& machine = _machine;
 
-      // Load and start DOOM game
-      Game::StateMachine::Instance().swap(new Game::LoadingState(std::async(std::launch::async, [players]
-      {
-	try
-	{
-	  Game::GameDoomState *	state = new Game::GameDoomState();
-
-	  // Add players to the game
-	  for (int player : players)
-	    if (player != -1)
-	      state->addPlayer(player);
-
-	  return static_cast<Game::AbstractState *>(state);
-	}
-	catch (std::exception exception)
-	{
-	  std::cerr << "[MainMenuState::selectDoom] Warning, failed to load file: '" << std::string(exception.what()) << "'." << std::endl;
-
-	  // Return an error message
-	  return static_cast<Game::AbstractState *>(new Game::MessageState("Error: failed to load WAD file.\n"));
-	}
-      })));
+      // Start to load DOOM game
+      std::thread([players, &machine]() {
+        try
+        {
+          machine.swap<Game::GameDoomState>(players);
+        }
+        catch (std::exception exception)
+        {
+          std::cerr << "[StartDoomState::updateRegister] Warning, failed to load file: '" << std::string(exception.what()) << "'." << std::endl;
+          machine.swap<Game::MessageState>("Error: failed to load WAD file.\n");
+        }
+      }).detach();
 
       return false;
     }
@@ -131,7 +127,7 @@ bool	Game::StartDoomState::updateUnregister(const int id)
     }
 
   // Player is not registered, go to previous menu
-  Game::StateMachine::Instance().pop();
+  _machine.pop();
   return false;
 }
 

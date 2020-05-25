@@ -1,4 +1,6 @@
 #include <iostream>
+#include <functional>
+#include <unordered_map>
 
 #include "Doom/Thing/PlayerThing.hpp"
 #include "System/Window.hpp"
@@ -15,7 +17,7 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
   controller(controller),
   camera(),
   statusbar(doom, id),
-  armor(DOOM::Enum::Armor::ArmorSecurity)
+  armor(DOOM::Enum::Armor::ArmorNone)
 {
   // Check controller ID
   if (controller < 0)
@@ -36,9 +38,6 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
   // Update camera position
   camera.position = position;
   camera.position.z() += height * 0.73f;
-
-  // TODO: remove this
-  health = 999;
 }
 
 bool	DOOM::PlayerThing::update(DOOM::Doom & doom, sf::Time elapsed)
@@ -296,3 +295,143 @@ bool	DOOM::PlayerThing::pickupBackpack(const std::array<unsigned int, DOOM::Enum
   return improved;
 }
 */
+
+bool  DOOM::PlayerThing::pickup(DOOM::Doom& doom, DOOM::AbstractThing& item)
+{
+  // Map of pick-upable items
+  static const std::unordered_map<DOOM::Enum::ThingType, std::function<bool(DOOM::PlayerThing&)>> items = {
+    { DOOM::Enum::ThingType::ThingType_MISC0, [](DOOM::PlayerThing& player) { return player.pickupArmor(DOOM::Enum::Armor::ArmorSecurity); } },                                         // Green armor
+    { DOOM::Enum::ThingType::ThingType_MISC1, [](DOOM::PlayerThing& player) { return player.pickupArmor(DOOM::Enum::Armor::ArmorMega); } },                                             // Blue armor
+    { DOOM::Enum::ThingType::ThingType_MISC2, [](DOOM::PlayerThing& player) { return player.pickupHealth(1); } },                                                                       // Health potion
+    { DOOM::Enum::ThingType::ThingType_MISC3, [](DOOM::PlayerThing& player) { return player.pickupArmor(DOOM::Enum::Armor::ArmorSecurity, 1); } },                                      // Spiritual armor
+    { DOOM::Enum::ThingType::ThingType_MISC4, [](DOOM::PlayerThing& player) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorBlue, DOOM::Enum::KeyType::KeyTypeKeycard); } },    // Blue keycard
+    { DOOM::Enum::ThingType::ThingType_MISC5, [](DOOM::PlayerThing& player) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorRed, DOOM::Enum::KeyType::KeyTypeKeycard); } },     // Red keycard
+    { DOOM::Enum::ThingType::ThingType_MISC6, [](DOOM::PlayerThing& player) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorYellow, DOOM::Enum::KeyType::KeyTypeKeycard); } },  // Yellow keycard
+    { DOOM::Enum::ThingType::ThingType_MISC7, [](DOOM::PlayerThing& player) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorYellow, DOOM::Enum::KeyType::KeyTypeSkullkey); } }, // Yellow skull key
+    { DOOM::Enum::ThingType::ThingType_MISC8, [](DOOM::PlayerThing& player) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorRed, DOOM::Enum::KeyType::KeyTypeSkullkey); } },    // Red skull key
+    { DOOM::Enum::ThingType::ThingType_MISC9, [](DOOM::PlayerThing& player) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorBlue, DOOM::Enum::KeyType::KeyTypeSkullkey); } },   // Blue skull key
+  };
+
+  /* TODO:
+    ThingType_MISC10,         // Stimpack
+    ThingType_MISC11,         // Medikit
+    ThingType_MISC12,         // Soul sphere
+    ThingType_INV,            // Invulnerability
+    ThingType_MISC13,         // Berserk
+    ThingType_INS,            // Invisibility
+    ThingType_MISC14,         // Radiation suit
+    ThingType_MISC15,         // Computer map
+    ThingType_MISC16,         // Light amplification visor
+    ThingType_MEGA,           // Megasphere
+    ThingType_CLIP,           // Ammo clip
+    ThingType_MISC17,         // Box of ammo
+    ThingType_MISC18,         // Rocket
+    ThingType_MISC19,         // Box of rockets
+    ThingType_MISC20,         // Cell charge
+    ThingType_MISC21,         // Cell charge pack
+    ThingType_MISC22,         // Shotgun shells
+    ThingType_MISC23,         // Box of shells
+    ThingType_MISC24,         // Backpack
+    ThingType_MISC25,         // BFG 9000
+    ThingType_CHAINGUN,       // Chaingun
+    ThingType_MISC26,         // Chainsaw
+    ThingType_MISC27,         // Rocket launcher
+    ThingType_MISC28,         // Plasma rifle
+    ThingType_SHOTGUN,        // Shotgun
+    ThingType_SUPERSHOTGUN,   // Super shotgun
+  */
+
+  auto  iterator = items.find(item.type);
+
+  // Pick-up item if known
+  if (iterator != items.end())
+    return iterator->second(*this);
+  else
+    return false;
+}
+
+bool  DOOM::PlayerThing::pickupKey(DOOM::Enum::KeyColor color, DOOM::Enum::KeyType type)
+{
+  // Add key to player
+  statusbar.keys[color] = type;
+
+  // TODO: don't remove card if multiplayer
+  if (false)
+    return false;
+
+  return true;
+}
+
+bool  DOOM::PlayerThing::pickupHealth(unsigned int quantity)
+{
+  // Does not pickup if already full
+  if (health >= 200)
+    return false;
+
+  // Add health
+  health = std::min(health + quantity, (unsigned int)200);
+
+  return true;
+}
+
+bool  DOOM::PlayerThing::pickupArmor(DOOM::Enum::Armor type, unsigned int quantity)
+{
+  // Does not pickup if already full
+  if (statusbar.armor >= DOOM::Enum::Armor::ArmorMega)
+    return false;
+
+  // Add armor
+  statusbar.armor = std::min(statusbar.armor + quantity, (unsigned int)DOOM::Enum::Armor::ArmorMega);
+
+  // Apply new armor type if better
+  if (armor < type)
+    armor = type;
+
+  return true;
+}
+
+bool  DOOM::PlayerThing::pickupArmor(DOOM::Enum::Armor type)
+{
+  // Does not pickup if already full
+  if (statusbar.armor >= type)
+    return false;
+
+  // Set new armor
+  armor = type;
+  statusbar.armor = type;
+
+  // Remove item
+  return true;
+}
+
+void  DOOM::PlayerThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, int damage)
+{
+  int protection = 0;
+
+  // Compute protection
+  switch (armor) {
+  case DOOM::Enum::Armor::ArmorSecurity:
+    protection = std::min((int)statusbar.armor, damage / 3);
+    break;
+  case DOOM::Enum::Armor::ArmorMega:
+    protection = std::min((int)statusbar.armor, damage / 2);
+    break;
+  default:
+    protection = 0;
+    break;
+  }
+
+  // Remove protection from armor
+  statusbar.armor -= protection;
+  if (statusbar.armor == 0)
+    armor = DOOM::Enum::Armor::ArmorNone;
+
+  // Apply remaining damage
+  DOOM::AbstractThing::damage(doom, attacker, origin, damage - protection);
+}
+
+bool  DOOM::PlayerThing::key(DOOM::Enum::KeyColor color) const
+{
+  // Check if player has a keycard or a skullkey of given color
+  return statusbar.keys[color] != DOOM::Enum::KeyType::KeyTypeNone;
+}
