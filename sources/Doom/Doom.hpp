@@ -39,6 +39,15 @@ namespace DOOM
       WeaponCount
     };
 
+    enum Ammo
+    {
+      AmmoBullet = 0,
+      AmmoShell = 1,
+      AmmoRocket = 2,
+      AmmoCell = 3,
+      AmmoCount
+    };
+
     enum KeyColor
     {
       KeyColorNone = -1,
@@ -53,15 +62,6 @@ namespace DOOM
       KeyTypeNone,
       KeyTypeKeycard,
       KeyTypeSkullkey
-    };
-
-    enum Ammo
-    {
-      AmmoBullets = 0,
-      AmmoShells = 1,
-      AmmoRockets = 2,
-      AmmoCells = 3,
-      AmmoCount
     };
 
     enum Armor

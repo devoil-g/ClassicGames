@@ -299,39 +299,39 @@ bool	DOOM::PlayerThing::pickupBackpack(const std::array<unsigned int, DOOM::Enum
 bool  DOOM::PlayerThing::pickup(DOOM::Doom& doom, DOOM::AbstractThing& item)
 {
   // Map of pick-upable items
-  static const std::unordered_map<DOOM::Enum::ThingType, std::function<bool(DOOM::PlayerThing&)>> items = {
-    { DOOM::Enum::ThingType::ThingType_MISC0, [](DOOM::PlayerThing& player) { return player.pickupArmor(DOOM::Enum::Armor::ArmorSecurity); } },                                         // Green armor
-    { DOOM::Enum::ThingType::ThingType_MISC1, [](DOOM::PlayerThing& player) { return player.pickupArmor(DOOM::Enum::Armor::ArmorMega); } },                                             // Blue armor
-    { DOOM::Enum::ThingType::ThingType_MISC2, [](DOOM::PlayerThing& player) { return player.pickupHealth(1); } },                                                                       // Health potion
-    { DOOM::Enum::ThingType::ThingType_MISC3, [](DOOM::PlayerThing& player) { return player.pickupArmor(DOOM::Enum::Armor::ArmorSecurity, 1); } },                                      // Spiritual armor
-    { DOOM::Enum::ThingType::ThingType_MISC4, [](DOOM::PlayerThing& player) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorBlue, DOOM::Enum::KeyType::KeyTypeKeycard); } },    // Blue keycard
-    { DOOM::Enum::ThingType::ThingType_MISC5, [](DOOM::PlayerThing& player) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorRed, DOOM::Enum::KeyType::KeyTypeKeycard); } },     // Red keycard
-    { DOOM::Enum::ThingType::ThingType_MISC6, [](DOOM::PlayerThing& player) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorYellow, DOOM::Enum::KeyType::KeyTypeKeycard); } },  // Yellow keycard
-    { DOOM::Enum::ThingType::ThingType_MISC7, [](DOOM::PlayerThing& player) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorYellow, DOOM::Enum::KeyType::KeyTypeSkullkey); } }, // Yellow skull key
-    { DOOM::Enum::ThingType::ThingType_MISC8, [](DOOM::PlayerThing& player) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorRed, DOOM::Enum::KeyType::KeyTypeSkullkey); } },    // Red skull key
-    { DOOM::Enum::ThingType::ThingType_MISC9, [](DOOM::PlayerThing& player) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorBlue, DOOM::Enum::KeyType::KeyTypeSkullkey); } },   // Blue skull key
+  static const std::unordered_map<DOOM::Enum::ThingType, std::function<bool(DOOM::PlayerThing&, DOOM::AbstractThing&)>> items = {
+    { DOOM::Enum::ThingType::ThingType_MISC0, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupArmor(DOOM::Enum::Armor::ArmorSecurity); } },                                                                      // Green armor
+    { DOOM::Enum::ThingType::ThingType_MISC1, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupArmor(DOOM::Enum::Armor::ArmorMega); } },                                                                          // Blue armor
+    { DOOM::Enum::ThingType::ThingType_MISC2, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupHealth(1, 200); } },                                                                                               // Health potion
+    { DOOM::Enum::ThingType::ThingType_MISC3, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupArmor(DOOM::Enum::Armor::ArmorSecurity, 1); } },                                                                   // Spiritual armor
+    { DOOM::Enum::ThingType::ThingType_MISC4, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorBlue, DOOM::Enum::KeyType::KeyTypeKeycard); } },                                 // Blue keycard
+    { DOOM::Enum::ThingType::ThingType_MISC5, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorRed, DOOM::Enum::KeyType::KeyTypeKeycard); } },                                  // Red keycard
+    { DOOM::Enum::ThingType::ThingType_MISC6, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorYellow, DOOM::Enum::KeyType::KeyTypeKeycard); } },                               // Yellow keycard
+    { DOOM::Enum::ThingType::ThingType_MISC7, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorYellow, DOOM::Enum::KeyType::KeyTypeSkullkey); } },                              // Yellow skull key
+    { DOOM::Enum::ThingType::ThingType_MISC8, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorRed, DOOM::Enum::KeyType::KeyTypeSkullkey); } },                                 // Red skull key
+    { DOOM::Enum::ThingType::ThingType_MISC9, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupKey(DOOM::Enum::KeyColor::KeyColorBlue, DOOM::Enum::KeyType::KeyTypeSkullkey); } },                                // Blue skull key
+    { DOOM::Enum::ThingType::ThingType_MISC10, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupHealth(10, 100); } },                                                                                             // Stimpack
+    { DOOM::Enum::ThingType::ThingType_MISC11, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupHealth(25, 100); } },                                                                                             // Medikit
+    { DOOM::Enum::ThingType::ThingType_MISC12, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupHealth(100, 200); } },                                                                                            // Soul sphere
+    { DOOM::Enum::ThingType::ThingType_MEGA, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupHealth(200, 200) | player.pickupArmor(DOOM::Enum::Armor::ArmorMega); } },                                           // Soul sphere
+    { DOOM::Enum::ThingType::ThingType_CLIP, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupAmmo(DOOM::Enum::Ammo::AmmoBullet, (item.flags & DOOM::Enum::ThingProperty::ThingProperty_Dropped) ? 5 : 10); } },  // Ammo clip
+    { DOOM::Enum::ThingType::ThingType_MISC17, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupAmmo(DOOM::Enum::Ammo::AmmoBullet, 50); } },                                                                      // Box of ammo
+    { DOOM::Enum::ThingType::ThingType_MISC18, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupAmmo(DOOM::Enum::Ammo::AmmoRocket, 1); } },                                                                       // Rocket
+    { DOOM::Enum::ThingType::ThingType_MISC19, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupAmmo(DOOM::Enum::Ammo::AmmoRocket, 1); } },                                                                       // Box of rockets
+    { DOOM::Enum::ThingType::ThingType_MISC20, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupAmmo(DOOM::Enum::Ammo::AmmoCell, 20); } },                                                                        // Cell charge
+    { DOOM::Enum::ThingType::ThingType_MISC21, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupAmmo(DOOM::Enum::Ammo::AmmoCell, 100); } },                                                                       // Cell charge pack
+    { DOOM::Enum::ThingType::ThingType_MISC22, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupAmmo(DOOM::Enum::Ammo::AmmoShell, 4); } },                                                                        // Shotgun shells
+    { DOOM::Enum::ThingType::ThingType_MISC23, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupAmmo(DOOM::Enum::Ammo::AmmoShell, 20); } },                                                                       // Box of shells
+    { DOOM::Enum::ThingType::ThingType_MISC24, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupBackpack(); } },                                                                                                  // Backpack
   };
 
   /* TODO:
-    ThingType_MISC10,         // Stimpack
-    ThingType_MISC11,         // Medikit
-    ThingType_MISC12,         // Soul sphere
     ThingType_INV,            // Invulnerability
     ThingType_MISC13,         // Berserk
     ThingType_INS,            // Invisibility
     ThingType_MISC14,         // Radiation suit
     ThingType_MISC15,         // Computer map
     ThingType_MISC16,         // Light amplification visor
-    ThingType_MEGA,           // Megasphere
-    ThingType_CLIP,           // Ammo clip
-    ThingType_MISC17,         // Box of ammo
-    ThingType_MISC18,         // Rocket
-    ThingType_MISC19,         // Box of rockets
-    ThingType_MISC20,         // Cell charge
-    ThingType_MISC21,         // Cell charge pack
-    ThingType_MISC22,         // Shotgun shells
-    ThingType_MISC23,         // Box of shells
-    ThingType_MISC24,         // Backpack
     ThingType_MISC25,         // BFG 9000
     ThingType_CHAINGUN,       // Chaingun
     ThingType_MISC26,         // Chainsaw
@@ -345,9 +345,46 @@ bool  DOOM::PlayerThing::pickup(DOOM::Doom& doom, DOOM::AbstractThing& item)
 
   // Pick-up item if known
   if (iterator != items.end())
-    return iterator->second(*this);
-  else
+    return iterator->second(*this, item);
+  else {
+    std::cerr << "[DOOM::PlayerThing] Warning, pickup type '" << item.type << "' not supported." << std::endl;
     return false;
+  }
+}
+
+bool  DOOM::PlayerThing::pickupAmmo(DOOM::Enum::Ammo type, unsigned int quantity)
+{
+  // Don't pickup if already full
+  if (statusbar.ammos[type] >= statusbar.maximum[type])
+    return false;
+
+  statusbar.ammos[type] = std::min(statusbar.maximum[type], statusbar.ammos[type] + quantity);
+  return true;
+}
+
+bool  DOOM::PlayerThing::pickupBackpack()
+{
+  bool  backpack = false;
+
+  // Increase ammo count
+  if (statusbar.maximum[DOOM::Enum::Ammo::AmmoBullet] != 400 ||
+    statusbar.maximum[DOOM::Enum::Ammo::AmmoShell] != 100 ||
+    statusbar.maximum[DOOM::Enum::Ammo::AmmoRocket] != 100 ||
+    statusbar.maximum[DOOM::Enum::Ammo::AmmoCell] != 600) {
+    statusbar.maximum[DOOM::Enum::Ammo::AmmoBullet] = 400;
+    statusbar.maximum[DOOM::Enum::Ammo::AmmoShell] = 100;
+    statusbar.maximum[DOOM::Enum::Ammo::AmmoRocket] = 100;
+    statusbar.maximum[DOOM::Enum::Ammo::AmmoCell] = 600;
+    backpack = true;
+  }
+
+  // TODO: pickup double in "I'm Too Young To Die" and "Nightmare!" skill levels
+  // Pickup ammos
+  return backpack |
+    pickupAmmo(DOOM::Enum::Ammo::AmmoBullet, 10) |
+    pickupAmmo(DOOM::Enum::Ammo::AmmoShell, 4) |
+    pickupAmmo(DOOM::Enum::Ammo::AmmoRocket, 1) |
+    pickupAmmo(DOOM::Enum::Ammo::AmmoCell, 20);
 }
 
 bool  DOOM::PlayerThing::pickupKey(DOOM::Enum::KeyColor color, DOOM::Enum::KeyType type)
@@ -362,14 +399,14 @@ bool  DOOM::PlayerThing::pickupKey(DOOM::Enum::KeyColor color, DOOM::Enum::KeyTy
   return true;
 }
 
-bool  DOOM::PlayerThing::pickupHealth(unsigned int quantity)
+bool  DOOM::PlayerThing::pickupHealth(unsigned int quantity, unsigned int maximum)
 {
   // Does not pickup if already full
-  if (health >= 200)
+  if (health >= (int)maximum)
     return false;
 
   // Add health
-  health = std::min(health + quantity, (unsigned int)200);
+  health = std::min(health + quantity, maximum);
 
   return true;
 }
@@ -393,7 +430,7 @@ bool  DOOM::PlayerThing::pickupArmor(DOOM::Enum::Armor type, unsigned int quanti
 bool  DOOM::PlayerThing::pickupArmor(DOOM::Enum::Armor type)
 {
   // Does not pickup if already full
-  if (statusbar.armor >= type)
+  if (statusbar.armor >= (unsigned int)type)
     return false;
 
   // Set new armor
