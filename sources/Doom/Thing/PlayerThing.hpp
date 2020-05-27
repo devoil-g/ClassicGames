@@ -36,6 +36,7 @@ namespace DOOM
     bool  pickupKey(DOOM::Enum::KeyColor color, DOOM::Enum::KeyType type);
     bool  pickupBackpack();
     bool  pickupAmmo(DOOM::Enum::Ammo type, unsigned int quantity);
+    bool  pickupWeapon(DOOM::Enum::Weapon type);
 
     void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, int damage) override;  // Damage player, taking shield into account
 
