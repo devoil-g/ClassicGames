@@ -24,7 +24,7 @@ Game::GameDoomState::GameDoomState(Game::StateMachine& machine, const std::vecto
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Load level
-  _doom.setLevel({ 1, 2 });
+  _doom.setLevel({ 1, 3 });
 
   // Add players
   for (int player : players)
@@ -109,8 +109,10 @@ void	Game::GameDoomState::draw()
     for (int x = 0; x < grid.first; x++)
       if (y * grid.first + x < _doom.level.players.size()) {
 	tasks.push_back(std::async(std::launch::async, [this, grid, x, y] {
-	  _doom.level.players[y * grid.first + x].get().camera.render(_doom, _image, sf::Rect<int16_t>(x * DOOM::Doom::RenderWidth * Game::GameDoomState::RenderScale, y * DOOM::Doom::RenderHeight * Game::GameDoomState::RenderScale, DOOM::Doom::RenderWidth * Game::GameDoomState::RenderScale, (DOOM::Doom::RenderHeight - 32) * Game::GameDoomState::RenderScale), DOOM::Camera::Special::Normal, 0);
-	  _doom.level.players[y * grid.first + x].get().statusbar.render(_doom, _image, sf::Rect<int16_t>(x * DOOM::Doom::RenderWidth * Game::GameDoomState::RenderScale, ((y + 1) * DOOM::Doom::RenderHeight - 32) * Game::GameDoomState::RenderScale, DOOM::Doom::RenderWidth * Game::GameDoomState::RenderScale, 32 * Game::GameDoomState::RenderScale));
+          DOOM::PlayerThing&  player = _doom.level.players[y * grid.first + x];
+
+	  player.camera.render(_doom, _image, sf::Rect<int16_t>(x * DOOM::Doom::RenderWidth * Game::GameDoomState::RenderScale, y * DOOM::Doom::RenderHeight * Game::GameDoomState::RenderScale, DOOM::Doom::RenderWidth * Game::GameDoomState::RenderScale, (DOOM::Doom::RenderHeight - 32) * Game::GameDoomState::RenderScale), player.cameraMode(), player.cameraPalette());
+	  player.statusbar.render(_doom, _image, sf::Rect<int16_t>(x * DOOM::Doom::RenderWidth * Game::GameDoomState::RenderScale, ((y + 1) * DOOM::Doom::RenderHeight - 32) * Game::GameDoomState::RenderScale, DOOM::Doom::RenderWidth * Game::GameDoomState::RenderScale, 32 * Game::GameDoomState::RenderScale));
 	}));
       }
 
