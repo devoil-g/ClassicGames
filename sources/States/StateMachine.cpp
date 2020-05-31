@@ -43,7 +43,7 @@ bool  Game::StateMachine::update(sf::Time elapsed)
     return true;
 
   // Update top state
-  return _states.top()->update(elapsed);
+  return _states.top()->update(elapsed) || _states.empty();
 }
 
 void  Game::StateMachine::draw()
