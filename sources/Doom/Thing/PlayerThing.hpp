@@ -21,6 +21,7 @@ namespace DOOM
     sf::Time          _light;           // Remaining time of light amplification visor
     sf::Time          _radiation;       // Remaining time of radiation suit
     bool              _berserk;         // Berserker enabled flag
+    bool              _map;             // Computer map enabled flag
 
     void  updateKeyboard(DOOM::Doom& doom, sf::Time elapsed);       // Update using keyboard
     void  updateKeyboardTurn(DOOM::Doom& doom, sf::Time elapsed);   // Update using keyboard
@@ -53,6 +54,7 @@ namespace DOOM
     bool  pickupLightAmplificationVisor();
     bool  pickupRadiationSuit();
     bool  pickupBerserk();
+    bool  pickupComputerMap();
 
     void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, int damage) override;  // Damage player, taking shield into account
 

@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "States/Doom/GameDoomState.hpp"
-#include "States/Doom/StartDoomState.hpp"
+#include "Doom/States/GameDoomState.hpp"
+#include "Doom/States/StartDoomState.hpp"
 #include "States/LoadingState.hpp"
 #include "States/MessageState.hpp"
 #include "States/StateMachine.hpp"
@@ -9,9 +9,9 @@
 #include "System/Library/FontLibrary.hpp"
 #include "System/Window.hpp"
 
-
-Game::StartDoomState::StartDoomState(Game::StateMachine& machine) :
+DOOM::StartDoomState::StartDoomState(Game::StateMachine& machine, DOOM::Doom& doom) :
   Game::AbstractState(machine),
+  _doom(doom),
   _players({ -1, -1, -1, -1 }),
   _title("DOOM", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
   _subtitle("Select your controller", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
@@ -38,7 +38,7 @@ Game::StartDoomState::StartDoomState(Game::StateMachine& machine) :
   _spriteController.setTexture(_textureController, true);
 }
 
-bool	Game::StartDoomState::update(sf::Time elapsed)
+bool	DOOM::StartDoomState::update(sf::Time elapsed)
 {
   // Add elapsed time to counter
   _elapsed += elapsed;
@@ -74,34 +74,17 @@ bool	Game::StartDoomState::update(sf::Time elapsed)
   return false;
 }
 
-bool	Game::StartDoomState::updateRegister(const int id)
+bool	DOOM::StartDoomState::updateRegister(const int id)
 {
-  // Check if the player is already registered
+  // Start game if player is already registered
   for (int player : _players)
     if (player == id) {
-      // Get player controller list
-      std::vector<int>  players;
+      // Add players to game
       for (int player : _players)
-        if (player != -1)
-          players.push_back(player);
-      
-      // Push loading screen
-      _machine.push<Game::LoadingState>();
-      
-      Game::StateMachine& machine = _machine;
+        _doom.addPlayer(player);
 
-      // Start to load DOOM game
-      std::thread([players, &machine]() {
-        try
-        {
-          machine.swap<Game::GameDoomState>(players);
-        }
-        catch (std::exception exception)
-        {
-          std::cerr << "[StartDoomState::updateRegister] Warning, failed to load file: '" << std::string(exception.what()) << "'." << std::endl;
-          machine.swap<Game::MessageState>("Error: failed to load WAD file.\n");
-        }
-      }).detach();
+      // Push loading screen
+      _machine.swap<DOOM::GameDoomState>(_doom);
 
       return false;
     }
@@ -117,7 +100,7 @@ bool	Game::StartDoomState::updateRegister(const int id)
   return true;
 }
 
-bool	Game::StartDoomState::updateUnregister(const int id)
+bool	DOOM::StartDoomState::updateUnregister(const int id)
 {
   // Find and unregister player
   for (int & player : _players)
@@ -131,7 +114,7 @@ bool	Game::StartDoomState::updateUnregister(const int id)
   return false;
 }
 
-void	Game::StartDoomState::draw()
+void	DOOM::StartDoomState::draw()
 {
   // Set text for each player slot
   for (int index = 0; index < _players.size(); index++) {

@@ -78,6 +78,16 @@ SET(GAME_DOOM_THING_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/PlayerThing.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/PlayerThing.hpp
 )
+SET(GAME_DOOM_STATES_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/DoomState.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/DoomState.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/GameDoomState.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/GameDoomState.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/SplashDoomState.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/SplashDoomState.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/StartDoomState.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/StartDoomState.hpp
+)
 SET(GAME_MATH_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.hpp
@@ -97,12 +107,6 @@ SET(GAME_STATES_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/SplashState.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/StartState.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/StartState.hpp
-)
-SET(GAME_STATES_DOOM_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Doom/GameDoomState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Doom/GameDoomState.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Doom/StartDoomState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Doom/StartDoomState.hpp
 )
 SET(GAME_STATES_MENU_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Menu/AbstractMenuState.cpp
@@ -134,9 +138,9 @@ SET(GAME_SRCS
 	${GAME_DOOM_LINEDEF_SRCS}
 	${GAME_DOOM_ACTION_SRCS}
 	${GAME_DOOM_THING_SRCS}
+	${GAME_DOOM_STATES_SRCS}
 	${GAME_MATH_SRCS}
 	${GAME_STATES_SRCS}
-	${GAME_STATES_DOOM_SRCS}
 	${GAME_STATES_MENU_SRCS}
 	${GAME_SYSTEM_SRCS}
 	${GAME_SYSTEM_LIBRARY_SRCS}
@@ -156,9 +160,9 @@ SOURCE_GROUP("\\Doom\\Flat\\" FILES ${GAME_DOOM_FLAT_SRCS})
 SOURCE_GROUP("\\Doom\\Linedef\\" FILES ${GAME_DOOM_LINEDEF_SRCS})
 SOURCE_GROUP("\\Doom\\Action\\" FILES ${GAME_DOOM_ACTION_SRCS})
 SOURCE_GROUP("\\Doom\\Thing\\" FILES ${GAME_DOOM_THING_SRCS})
+SOURCE_GROUP("\\Doom\\States\\" FILES ${GAME_DOOM_STATES_SRCS})
 SOURCE_GROUP("\\Math\\" FILES ${GAME_MATH_SRCS})
 SOURCE_GROUP("\\States\\" FILES ${GAME_STATES_SRCS})
-SOURCE_GROUP("\\States\\Doom\\" FILES ${GAME_STATES_DOOM_SRCS})
 SOURCE_GROUP("\\States\\Menu\\" FILES ${GAME_STATES_MENU_SRCS})
 SOURCE_GROUP("\\System\\" FILES ${GAME_SYSTEM_SRCS})
 SOURCE_GROUP("\\System\\Library\\" FILES ${GAME_SYSTEM_LIBRARY_SRCS})

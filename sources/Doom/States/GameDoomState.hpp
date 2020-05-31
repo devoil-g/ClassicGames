@@ -11,7 +11,7 @@
 #include "States/LoadingState.hpp"
 #include "Math/Vector.hpp"
 
-namespace Game
+namespace DOOM
 {
   class GameDoomState : public Game::AbstractState
   {
@@ -19,13 +19,13 @@ namespace Game
     static unsigned int RenderScale;  // Scaling factor of resolution
 
   private:
-    DOOM::Doom  _doom;    // Instance of current level
+    DOOM::Doom& _doom;    // DOOM instance
     sf::Image   _image;   // Target for software rendering
     sf::Texture _texture; // Image in graphic memory
     sf::Sprite  _sprite;  // Display rendered texture
 
   public:
-    GameDoomState(Game::StateMachine& machine, const std::vector<int>& players);
+    GameDoomState(Game::StateMachine& machine, DOOM::Doom& doom);
     ~GameDoomState() override = default;
 
     bool  update(sf::Time elapsed) override;  // Update state

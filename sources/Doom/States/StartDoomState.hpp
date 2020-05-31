@@ -8,11 +8,13 @@
 #include "Doom/Doom.hpp"
 #include "States/AbstractState.hpp"
   
-namespace Game
+namespace DOOM
 {
   class StartDoomState : public Game::AbstractState
   {
   private:
+    DOOM::Doom& _doom;  // DOOM instance
+
     std::array<int, 4>      _players;           // Players controles (-1 = none, 0 = mouse/keyboard, 1+ = controller id+1)
     sf::Text                _title, _subtitle;  // Title "DOOM" and subtitle "Player selection"
     std::array<sf::Text, 4> _controllers;       // Name of the controller of the player or "PRESS START"
@@ -26,7 +28,7 @@ namespace Game
     bool  updateUnregister(const int id); // Unregister ID in player list, return false if not registered
     
   public:
-    StartDoomState(Game::StateMachine& machine);
+    StartDoomState(Game::StateMachine& machine, DOOM::Doom& doom);
     ~StartDoomState() override = default;
 
     bool  update(sf::Time elapsed) override;  // Update state

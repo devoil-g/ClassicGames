@@ -1,9 +1,10 @@
 #include <iostream>
 
 #include "System/Library/FontLibrary.hpp"
-#include "States/Doom/StartDoomState.hpp"
+#include "Doom/States/DoomState.hpp"
 #include "States/Menu/MainMenuState.hpp"
 #include "States/Menu/OptionsMenuState.hpp"
+#include "States/LoadingState.hpp"
 #include "States/MessageState.hpp"
 #include "States/StateMachine.hpp"
 #include "System/Config.hpp"
@@ -36,10 +37,22 @@ void	Game::MainMenuState::draw()
   Game::AbstractMenuState::draw();
 }
 
-void	Game::MainMenuState::selectDoom(Game::AbstractMenuState::Item &)
+void	Game::MainMenuState::selectDoom(Game::AbstractMenuState::Item&)
 {
-  // Go to DOOM menu
-  _machine.push<Game::StartDoomState>();
+  Game::StateMachine& machine = _machine;
+
+  // Push loading screen
+  _machine.push<Game::LoadingState>();
+
+  // Start to load DOOM game
+  std::thread([&machine]() {
+    try {
+      machine.swap<DOOM::DoomState>();
+    }
+    catch (std::exception exception) {
+      machine.swap<Game::MessageState>("Error: failed to run DOOM.\n");
+    }
+    }).detach();
 }
 
 void	Game::MainMenuState::selectOptions(Game::AbstractMenuState::Item &)
@@ -51,6 +64,5 @@ void	Game::MainMenuState::selectOptions(Game::AbstractMenuState::Item &)
 void	Game::MainMenuState::selectExit(Game::AbstractMenuState::Item &)
 {
   // Exit application
-  _machine.pop();
-  _machine.pop();
+  _machine.clear();
 }

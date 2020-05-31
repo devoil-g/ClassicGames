@@ -273,6 +273,7 @@ bool  DOOM::PlayerThing::pickup(DOOM::Doom& doom, DOOM::AbstractThing& item)
     { DOOM::Enum::ThingType::ThingType_INS, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupInvisibility(); } },                                                                                                                                                                                                                   // Invisibility
     { DOOM::Enum::ThingType::ThingType_MISC14, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupRadiationSuit(); } },                                                                                                                                                                                                               // Radiation suit
     { DOOM::Enum::ThingType::ThingType_CLIP, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupAmmo(DOOM::Enum::Ammo::AmmoBullet, (item.flags & DOOM::Enum::ThingProperty::ThingProperty_Dropped) ? 5 : 10); } },                                                                                                                    // Ammo clip
+    { DOOM::Enum::ThingType::ThingType_MISC15, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupComputerMap(); } },                                                                                                                                                                                                                 // Computer map
     { DOOM::Enum::ThingType::ThingType_MISC16, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupLightAmplificationVisor(); } },                                                                                                                                                                                                     // Light amplification visor
     { DOOM::Enum::ThingType::ThingType_MISC17, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupAmmo(DOOM::Enum::Ammo::AmmoBullet, 50); } },                                                                                                                                                                                        // Box of ammo
     { DOOM::Enum::ThingType::ThingType_MISC18, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupAmmo(DOOM::Enum::Ammo::AmmoRocket, 1); } },                                                                                                                                                                                         // Rocket
@@ -291,11 +292,6 @@ bool  DOOM::PlayerThing::pickup(DOOM::Doom& doom, DOOM::AbstractThing& item)
     { DOOM::Enum::ThingType::ThingType_SUPERSHOTGUN, [](DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupWeapon(DOOM::Enum::Weapon::WeaponSuperShotgun) | player.pickupAmmo(DOOM::Enum::Ammo::AmmoShell, (item.flags & DOOM::Enum::ThingProperty::ThingProperty_Dropped) ? 4 : 8); } },                                                // Super shotgun
   };
 
-  /* TODO:
-    ThingType_MISC13,         // Berserk
-    ThingType_MISC15,         // Computer map
-  */
-
   auto  iterator = items.find(item.type);
 
   // Pick-up item if known
@@ -305,6 +301,20 @@ bool  DOOM::PlayerThing::pickup(DOOM::Doom& doom, DOOM::AbstractThing& item)
     std::cerr << "[DOOM::PlayerThing] Warning, pickup type '" << item.type << "' not supported." << std::endl;
     return false;
   }
+}
+
+bool  DOOM::PlayerThing::pickupComputerMap()
+{
+  // Do not pickup if already enabled
+  if (_map == true)
+    return false;
+
+  // Enable map
+  _map = true;
+
+  // TODO: stuff here
+
+  return true;
 }
 
 bool  DOOM::PlayerThing::pickupBerserk()

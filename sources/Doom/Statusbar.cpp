@@ -3,7 +3,6 @@
 #include <cctype>
 
 #include "Doom/Statusbar.hpp"
-#include "States/Doom/GameDoomState.hpp"
 
 DOOM::Statusbar::Statusbar(const DOOM::Doom & doom, int id) :
   id(id),

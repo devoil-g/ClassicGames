@@ -23,6 +23,16 @@ void  Game::StateMachine::pop()
   _states.pop();
 }
 
+void  Game::StateMachine::clear()
+{
+  // Thread-lock the machine
+  std::unique_lock  lock(_lock);
+
+  // Empty stack
+  while (_states.empty() == false)
+    _states.pop();
+}
+
 bool  Game::StateMachine::update(sf::Time elapsed)
 {
   // Thread-lock the machine

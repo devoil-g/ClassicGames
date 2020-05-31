@@ -298,8 +298,10 @@ void	DOOM::Doom::clearLevel()
   level.episode = { 0, 0 };
   level.sky = std::ref(DOOM::Doom::Resources::Texture::Null);
 
+  // Remove all things except players
+  level.things.remove_if([](const std::unique_ptr<DOOM::AbstractThing>& ptr) { return dynamic_cast<DOOM::PlayerThing*>(ptr.get()) == nullptr; });
+  
   // Reset level components
-  level.things.clear();
   level.linedefs.clear();
   level.sidedefs.clear();
   level.vertexes.clear();
@@ -565,9 +567,17 @@ void	DOOM::Doom::buildLevelThings()
 	level.things.emplace_back(std::move(converted));
     }
 
-  // Set player in blockmap
-  for (std::reference_wrapper<DOOM::PlayerThing> & player : level.players)
-    level.blockmap.addThing(player.get(), player.get().position.convert<2>());
+  // Set player initial position in blockmap
+  for (std::reference_wrapper<DOOM::PlayerThing>& player : level.players) {
+    for (const std::unique_ptr<DOOM::AbstractThing>& thing : level.things) {
+      if (thing->attributs.id == player.get().id) {
+        level.blockmap.addThing(player, thing->position.convert<2>());
+        player.get().position = thing->position;
+        player.get().angle = thing->angle;
+        break;
+      }
+    }
+  }
 }
 
 void	DOOM::Doom::buildLevelBlockmap()
@@ -611,6 +621,10 @@ void	DOOM::Doom::Level::update(DOOM::Doom & doom, sf::Time elapsed)
 
 std::set<int16_t>	DOOM::Doom::Level::getSectors(const Math::Vector<2> & position, float radius) const
 {
+  // No sector
+  if (sectors.empty() == true)
+    return {};
+
   std::set<int16_t>	result;
 
   // Get sector at thing central position
@@ -660,6 +674,10 @@ std::set<int16_t>	DOOM::Doom::Level::getSectors(const Math::Vector<2> & position
 
 std::pair<int16_t, int16_t>	DOOM::Doom::Level::getSector(Math::Vector<2> const & position, int16_t index) const
 {
+  // No node
+  if (nodes.empty() == true)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
   // Start to search sector from top node
   if (index == -1)
     return getSector(position, (int16_t)nodes.size() - 1);
