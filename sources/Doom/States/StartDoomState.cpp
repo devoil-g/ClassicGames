@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Doom/States/GameDoomState.hpp"
+#include "Doom/States/SplashDoomState.hpp"
 #include "Doom/States/StartDoomState.hpp"
 #include "States/LoadingState.hpp"
 #include "States/MessageState.hpp"
@@ -47,14 +47,12 @@ bool	DOOM::StartDoomState::update(sf::Time elapsed)
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space) == true ||
     Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Return) == true ||
     Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Left) == true)
-    if (updateRegister(0) == false)
-      return false;
+    updateRegister(0);
 
   // Keyboard/mouse cancel
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Escape) == true ||
     Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Right) == true)
-    if (updateUnregister(0) == false)
-      return false;
+    updateUnregister(0);
 
   // Joysticks handle
   for (unsigned int id = 0; id < sf::Joystick::Count; id++)
@@ -62,19 +60,17 @@ bool	DOOM::StartDoomState::update(sf::Time elapsed)
     // Joystick start
     if (Game::Window::Instance().joystick().buttonPressed(id, 7) == true ||
       Game::Window::Instance().joystick().buttonPressed(id, 0) == true)
-      if (updateRegister(id + 1) == false)
-	return false;
+      updateRegister(id + 1);
 
     // Joyatick cancel
     if (Game::Window::Instance().joystick().buttonPressed(id, 1) == true)
-      if (updateUnregister(id + 1) == false)
-	return false;
+      updateUnregister(id + 1);
   }
 
   return false;
 }
 
-bool	DOOM::StartDoomState::updateRegister(const int id)
+void  DOOM::StartDoomState::updateRegister(const int id)
 {
   // Start game if player is already registered
   for (int player : _players)
@@ -84,34 +80,27 @@ bool	DOOM::StartDoomState::updateRegister(const int id)
         _doom.addPlayer(player);
 
       // Push loading screen
-      _machine.swap<DOOM::GameDoomState>(_doom);
+      _machine.swap<DOOM::SplashDoomState>(_doom);
 
-      return false;
+      return;
     }
 
   // Find a slot for new player
   for (int & player : _players)
     if (player == -1) {
       player = id;
-      return true;
+      return;
     }
-
-  // Should not happen
-  return true;
 }
 
-bool	DOOM::StartDoomState::updateUnregister(const int id)
+void  DOOM::StartDoomState::updateUnregister(const int id)
 {
   // Find and unregister player
   for (int & player : _players)
     if (player == id) {
       player = -1;
-      return true;
+      return;
     }
-
-  // Player is not registered, go to previous menu
-  _machine.pop();
-  return false;
 }
 
 void	DOOM::StartDoomState::draw()

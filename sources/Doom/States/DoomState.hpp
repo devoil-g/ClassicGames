@@ -14,8 +14,14 @@ namespace DOOM
   class DoomState : public Game::AbstractState
   {
   private:
+    static const sf::Time ForcedExit; // Forced exit time limit
+
     DOOM::Doom          _doom;  // Main DOOM instance
     Game::StateMachine  _game;  // DOOM state machine
+
+    sf::Time    _elapsed; // Timer of forced exit
+    sf::Texture _texture; // Texture of forced exit bar
+    sf::Sprite  _sprite;  // Sprite of forced exit bar
     
   public:
     DoomState(Game::StateMachine& machine);

@@ -24,8 +24,8 @@ namespace DOOM
     sf::Texture _textureKeyboard, _textureController;
     sf::Sprite  _spriteKeyboard, _spriteController;
 
-    bool  updateRegister(const int id);   // Register ID in player list, return false if already registered
-    bool  updateUnregister(const int id); // Unregister ID in player list, return false if not registered
+    void  updateRegister(const int id);   // Register ID in player list
+    void  updateUnregister(const int id); // Unregister ID in player list
     
   public:
     StartDoomState(Game::StateMachine& machine, DOOM::Doom& doom);

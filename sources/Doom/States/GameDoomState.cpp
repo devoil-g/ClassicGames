@@ -14,7 +14,10 @@ unsigned int		DOOM::GameDoomState::RenderScale = 1;
 
 DOOM::GameDoomState::GameDoomState(Game::StateMachine& machine, DOOM::Doom& doom) :
   Game::AbstractState(machine),
-  _doom(doom)
+  _doom(doom),
+  _image(),
+  _texture(),
+  _sprite()
 {
   // Set initial level
   _doom.setLevel({ 1, 3 });
