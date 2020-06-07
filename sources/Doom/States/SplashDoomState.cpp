@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "Doom/States/SplashDoomState.hpp"
-#include "Doom/States/GameDoomState.hpp"
+#include "Doom/States/MenuDoomState.hpp"
 #include "System/Window.hpp"
 
 DOOM::SplashDoomState::SplashDoomState(Game::StateMachine& machine, DOOM::Doom& doom) :
@@ -16,35 +16,26 @@ DOOM::SplashDoomState::SplashDoomState(Game::StateMachine& machine, DOOM::Doom& 
   if (title == _doom.resources.menus.end())
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-  sf::Image image;
-
-  // Draw texture
-  image.create(DOOM::Doom::RenderWidth, DOOM::Doom::RenderHeight);
-  for (unsigned int x = 0; x < (unsigned int)title->second.width; x++)
-    for (const DOOM::Doom::Resources::Texture::Column::Span& span : title->second.columns.at(x).spans)
-      for (unsigned int y = 0; y < span.pixels.size(); y++)
-        if (x >= 0 && x < image.getSize().x && y >= 0 && y < image.getSize().y)
-          image.setPixel(x, y + span.offset, _doom.resources.palettes[0][span.pixels[y]]);
+  sf::Image image = title->second.image(_doom);
 
   // Send image to GC
-  _texture.create(DOOM::Doom::RenderWidth, DOOM::Doom::RenderHeight);
+  _texture.create(image.getSize().x, image.getSize().y);
   _texture.setSmooth(false);
   _texture.update(image);
-  _sprite.setTexture(_texture);
+  _sprite.setTexture(_texture, true);
 
   // TODO: start badass menu music
 }
 
 bool	DOOM::SplashDoomState::update(sf::Time elapsed)
 {
-  // TODO: instantiate main menu
   // Push to main menu
   if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Left) == true ||
     Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Return) == true ||
     Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space) == true ||
     Game::Window::Instance().joystick().buttonPressed(0, 0) == true ||
     Game::Window::Instance().joystick().buttonPressed(0, 7) == true)
-    _machine.push<DOOM::GameDoomState>(_doom);
+    _machine.push<DOOM::MenuDoomState>(_doom);
 
   return false;
 }

@@ -339,7 +339,8 @@ void	DOOM::Camera::renderSky(DOOM::Doom const & doom, sf::Rect<int16_t> rect, DO
   for (int row = std::max(_vertical[column].first, start); row < std::min(end, _vertical[column].second); row++)
     if (_buffer[column * rect.height + row].color == -1)
     {
-      int	pixel_y = (int)std::lroundf((row - _horizon) * sky_factor * 0.75f) + sky.height / 2;
+      int	pixel_y = std::clamp((int)std::lroundf((row - _horizon) * sky_factor * 0.75f) + sky.height / 2, 0, sky.height - 1);
+      //int	pixel_y = (int)std::lroundf((row - _horizon) * sky_factor * 0.75f) + sky.height / 2;
 
       // Skip pixel if outside of sky texture
       if (pixel_y < 0 || pixel_y >= sky.height)

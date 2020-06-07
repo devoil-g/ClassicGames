@@ -45,6 +45,9 @@ void		Game::Config::initialize(int argc, char** argv)
   Game::Config::ExecutablePath = std::string(path).substr(0, std::string(path).find_last_of('/') + 1);
 #endif
 
+  // Initialize random
+  std::srand(std::time(nullptr));
+
   // Detect maximum of thread concurrency.
   Game::Config::ThreadNumber = std::thread::hardware_concurrency();
 

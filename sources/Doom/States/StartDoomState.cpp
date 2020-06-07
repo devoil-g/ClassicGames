@@ -13,8 +13,9 @@ DOOM::StartDoomState::StartDoomState(Game::StateMachine& machine, DOOM::Doom& do
   Game::AbstractState(machine),
   _doom(doom),
   _players({ -1, -1, -1, -1 }),
-  _title("DOOM", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
-  _subtitle("Select your controller", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
+  _textureTitle(),
+  _spriteTitle(),
+  _subtitle("select your controller", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
   _controllers(
     {
       sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
@@ -28,12 +29,26 @@ DOOM::StartDoomState::StartDoomState(Game::StateMachine& machine, DOOM::Doom& do
   _textureKeyboard(), _textureController(),
   _spriteKeyboard(), _spriteController()
 {
+  const auto& title = _doom.resources.menus.find(DOOM::str_to_key("M_DOOM"));
+
+  // Check that the titlecard is loaded
+  if (title == _doom.resources.menus.end())
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
   // Load keyboard & controller icons
   if (_textureKeyboard.loadFromFile(Game::Config::ExecutablePath + "assets/textures/keyboard.png") == false ||
     _textureController.loadFromFile(Game::Config::ExecutablePath + "assets/textures/controller.png") == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
+  sf::Image image = title->second.image(_doom);
+
+  // Load title texture
+  _textureTitle.create(image.getSize().x, image.getSize().y);
+  _textureTitle.update(image);
+  _textureTitle.setSmooth(false);
+
   // Set sprite texture
+  _spriteTitle.setTexture(_textureTitle, true);
   _spriteKeyboard.setTexture(_textureKeyboard, true);
   _spriteController.setTexture(_textureController, true);
 }
@@ -128,14 +143,21 @@ void	DOOM::StartDoomState::draw()
   }
 
   // Set texts size
-  _title.setCharacterSize(Game::Window::Instance().window().getSize().y / 12);
-  _subtitle.setCharacterSize(Game::Window::Instance().window().getSize().y / 24);
+  _subtitle.setCharacterSize(30);
+  _subtitle.setScale(
+    std::min((Game::Window::Instance().window().getSize().y * 0.07f) / _textureTitle.getSize().y, (Game::Window::Instance().window().getSize().x * 0.175f) / _textureTitle.getSize().x),
+    std::min((Game::Window::Instance().window().getSize().y * 0.07f) / _textureTitle.getSize().y, (Game::Window::Instance().window().getSize().x * 0.175f) / _textureTitle.getSize().x)
+  );
   for (int index = 0; index < _controllers.size(); index++)
     _controllers[index].setCharacterSize(Game::Window::Instance().window().getSize().y / 24);
   _ready.setCharacterSize(Game::Window::Instance().window().getSize().y / 12);
   _ready.setScale(
     0.75f + 0.25f * (std::cos(_elapsed.asSeconds() * 4.f) + 1.f) / 2.f,
     0.75f + 0.25f * (std::cos(_elapsed.asSeconds() * 4.f) + 1.f) / 2.f
+  );
+  _spriteTitle.setScale(
+    std::min((Game::Window::Instance().window().getSize().y * 0.3f) / _textureTitle.getSize().y, (Game::Window::Instance().window().getSize().x * 0.75f) / _textureTitle.getSize().x),
+    std::min((Game::Window::Instance().window().getSize().y * 0.3f) / _textureTitle.getSize().y, (Game::Window::Instance().window().getSize().x * 0.75f) / _textureTitle.getSize().x)
   );
   _spriteKeyboard.setScale(
     std::min((Game::Window::Instance().window().getSize().y * 0.3f) / _textureKeyboard.getSize().y, (Game::Window::Instance().window().getSize().x * 0.85f) / (_textureKeyboard.getSize().x * _controllers.size())),
@@ -157,13 +179,13 @@ void	DOOM::StartDoomState::draw()
   }
 
   // Set texts position
-  _title.setPosition(
-    (Game::Window::Instance().window().getSize().x - _title.getLocalBounds().width) / 2.f,
-    (Game::Window::Instance().window().getSize().y - _title.getLocalBounds().height) * 1.f / 16.f
+  _spriteTitle.setPosition(
+    (Game::Window::Instance().window().getSize().x - _spriteTitle.getGlobalBounds().width) / 2.f,
+    (Game::Window::Instance().window().getSize().y - _spriteTitle.getGlobalBounds().height) / 16.f
   );
   _subtitle.setPosition(
-    (Game::Window::Instance().window().getSize().x - _subtitle.getLocalBounds().width) / 2.f,
-    (Game::Window::Instance().window().getSize().y - _subtitle.getLocalBounds().height) * 2.5f / 16.f
+    (Game::Window::Instance().window().getSize().x - _subtitle.getGlobalBounds().width) / 2.f,
+    (Game::Window::Instance().window().getSize().y - _subtitle.getGlobalBounds().height) * 5.f / 16.f
   );
   for (int index = 0; index < _controllers.size(); index++)
     _controllers[index].setPosition(
@@ -171,12 +193,12 @@ void	DOOM::StartDoomState::draw()
       (Game::Window::Instance().window().getSize().y - _controllers[index].getGlobalBounds().height) * 12.f / 16.f
     );
   _ready.setPosition(
-    (Game::Window::Instance().window().getSize().x - _ready.getLocalBounds().width * _ready.getScale().x) / 2.f,
-    (Game::Window::Instance().window().getSize().y - _ready.getLocalBounds().height * _ready.getScale().y) * 14.5f / 16.f
+    (Game::Window::Instance().window().getSize().x - _ready.getGlobalBounds().width) / 2.f,
+    (Game::Window::Instance().window().getSize().y - _ready.getGlobalBounds().height) * 14.5f / 16.f
   );
 
   // Draw texts
-  Game::Window::Instance().window().draw(_title);
+  Game::Window::Instance().window().draw(_spriteTitle);
   Game::Window::Instance().window().draw(_subtitle);
   for (int index = 0; index < _controllers.size(); index++) {
     Game::Window::Instance().window().draw(_controllers[index]);

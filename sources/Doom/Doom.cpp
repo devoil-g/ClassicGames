@@ -7,10 +7,11 @@
 #include "Doom/Thing/PlayerThing.hpp"
 #include "System/Sound.hpp"
 
-const sf::Time		DOOM::Doom::Tic = sf::seconds(1.f / 35.f);
-const unsigned int	DOOM::Doom::RenderWidth = 320;
-const unsigned int	DOOM::Doom::RenderHeight = 200;
-const float		DOOM::Doom::RenderStretching = 6.f / 5.f;
+const sf::Time	    DOOM::Doom::Tic = sf::seconds(1.f / 35.f);
+const unsigned int  DOOM::Doom::RenderWidth = 320;
+const unsigned int  DOOM::Doom::RenderHeight = 200;
+unsigned int	    DOOM::Doom::RenderScale = 1;
+const float	    DOOM::Doom::RenderStretching = 6.f / 5.f;
 
 const std::array<DOOM::Doom::Resources::Sound::SoundInfo, DOOM::Doom::Resources::Sound::EnumSound::Sound_Number>	DOOM::Doom::Resources::Sound::sound_info = {
   DOOM::Doom::Resources::Sound::SoundInfo{ "None", false,  0, DOOM::Doom::Resources::Sound::EnumSound::Sound_None, -1, -1 },
@@ -127,7 +128,15 @@ const std::array<DOOM::Doom::Resources::Sound::SoundInfo, DOOM::Doom::Resources:
 DOOM::Doom::Resources::Texture const	DOOM::Doom::Resources::Texture::Null = DOOM::Doom::Resources::Texture();
 
 DOOM::Doom::Doom() :
-  wad(), resources(), level(), gamemode(DOOM::Enum::Gamemode::GamemodeIndetermined)
+  wad(),
+  resources(),
+  level(),
+  mode(DOOM::Enum::Mode::ModeIndetermined),
+  skill(DOOM::Enum::Skill::SkillMedium),
+  sensivity(0.8f),
+  sfx(1.f),
+  music(1.f),
+  message(true)
 {}
 
 void	DOOM::Doom::load(std::string const & path)
@@ -139,7 +148,7 @@ void	DOOM::Doom::load(std::string const & path)
   wad.load(path);
 
   // TODO: detect game mode
-  gamemode = DOOM::Enum::Gamemode::GamemodeRegistered;
+  mode = DOOM::Enum::Mode::ModeRegistered;
 
   // Build resources of WAD file
   buildResources();
@@ -1011,6 +1020,21 @@ DOOM::Doom::Resources::Texture::Texture(DOOM::Doom & doom, const DOOM::Wad::RawR
 	columns.back().spans.back().pixels.push_back(pixel);
     }
   }
+}
+
+sf::Image DOOM::Doom::Resources::Texture::image(const DOOM::Doom& doom) const
+{
+  sf::Image image;
+
+  // Draw texture
+  image.create(width, height);
+  for (unsigned int x = 0; x < (unsigned int)width; x++)
+    for (const DOOM::Doom::Resources::Texture::Column::Span& span : columns.at(x).spans)
+      for (unsigned int y = 0; y < span.pixels.size(); y++)
+	if (x >= 0 && x < image.getSize().x && y >= 0 && y < image.getSize().y)
+	  image.setPixel(x, y + span.offset, doom.resources.palettes[0][span.pixels[y]]);
+
+  return image;
 }
 
 DOOM::Doom::Resources::Sound::Sound(DOOM::Doom & doom, const DOOM::Wad::RawResources::Sound & raw) :

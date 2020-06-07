@@ -4,13 +4,12 @@
 #include "Doom/Doom.hpp"
 #include "Doom/Thing/PlayerThing.hpp"
 #include "Doom/States/GameDoomState.hpp"
+#include "Doom/States/MenuDoomState.hpp"
 #include "States/StateMachine.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
 #include "System/Sound.hpp"
-
-unsigned int		DOOM::GameDoomState::RenderScale = 1;
 
 DOOM::GameDoomState::GameDoomState(Game::StateMachine& machine, DOOM::Doom& doom) :
   Game::AbstractState(machine),
@@ -19,8 +18,9 @@ DOOM::GameDoomState::GameDoomState(Game::StateMachine& machine, DOOM::Doom& doom
   _texture(),
   _sprite()
 {
-  // Set initial level
-  _doom.setLevel({ 1, 3 });
+  // Cancel if no level loaded
+  if (_doom.level.episode == std::pair<uint8_t, uint8_t>{ 0, 0 })
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
 bool	DOOM::GameDoomState::update(sf::Time elapsed)
@@ -28,7 +28,7 @@ bool	DOOM::GameDoomState::update(sf::Time elapsed)
   // Return to previous menu
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Escape) == true)
   {
-    _machine.pop();
+    _machine.swap<DOOM::MenuDoomState>(_doom);
     return false;
   }
 
@@ -55,7 +55,7 @@ void	DOOM::GameDoomState::draw()
 
   // Compute grid size
   while (true) {
-    if ((grid.first * DOOM::Doom::RenderWidth * DOOM::GameDoomState::RenderScale) / (grid.second * DOOM::Doom::RenderHeight * DOOM::GameDoomState::RenderScale * DOOM::Doom::RenderStretching) > (float)Game::Window::Instance().window().getSize().x / (float)Game::Window::Instance().window().getSize().y) {
+    if ((grid.first * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale) / (grid.second * DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale * DOOM::Doom::RenderStretching) > (float)Game::Window::Instance().window().getSize().x / (float)Game::Window::Instance().window().getSize().y) {
       if ((grid.first - 1) * grid.second >= _doom.level.players.size())
 	grid.first--;
       else if (grid.first * (grid.second - 1) >= _doom.level.players.size())
@@ -74,13 +74,13 @@ void	DOOM::GameDoomState::draw()
   }
 
   // Resize rendering target if necessary
-  if (_image.getSize().x != grid.first * DOOM::Doom::RenderWidth * DOOM::GameDoomState::RenderScale || _image.getSize().y != (int)(grid.second * DOOM::Doom::RenderHeight * DOOM::GameDoomState::RenderScale))
+  if (_image.getSize().x != grid.first * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale || _image.getSize().y != (int)(grid.second * DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale))
   {
     // Resize RAM image
-    _image.create(grid.first * DOOM::Doom::RenderWidth * DOOM::GameDoomState::RenderScale, (int)(grid.second * DOOM::Doom::RenderHeight * DOOM::GameDoomState::RenderScale));
+    _image.create(grid.first * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, (int)(grid.second * DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale));
 
     // Resize VRAM texture
-    if (_texture.create(grid.first * DOOM::Doom::RenderWidth * DOOM::GameDoomState::RenderScale, (int)(grid.second * DOOM::Doom::RenderHeight * DOOM::GameDoomState::RenderScale)) == false)
+    if (_texture.create(grid.first * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, (int)(grid.second * DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale)) == false)
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
     // Set new sprite texture
@@ -103,8 +103,8 @@ void	DOOM::GameDoomState::draw()
 	tasks.push_back(std::async(std::launch::async, [this, grid, x, y] {
           DOOM::PlayerThing&  player = _doom.level.players[y * grid.first + x];
 
-	  player.camera.render(_doom, _image, sf::Rect<int16_t>(x * DOOM::Doom::RenderWidth * DOOM::GameDoomState::RenderScale, y * DOOM::Doom::RenderHeight * DOOM::GameDoomState::RenderScale, DOOM::Doom::RenderWidth * DOOM::GameDoomState::RenderScale, (DOOM::Doom::RenderHeight - 32) * DOOM::GameDoomState::RenderScale), player.cameraMode(), player.cameraPalette());
-	  player.statusbar.render(_doom, _image, sf::Rect<int16_t>(x * DOOM::Doom::RenderWidth * DOOM::GameDoomState::RenderScale, ((y + 1) * DOOM::Doom::RenderHeight - 32) * DOOM::GameDoomState::RenderScale, DOOM::Doom::RenderWidth * DOOM::GameDoomState::RenderScale, 32 * DOOM::GameDoomState::RenderScale));
+	  player.camera.render(_doom, _image, sf::Rect<int16_t>(x * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, y * DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale, DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, (DOOM::Doom::RenderHeight - 32) * DOOM::Doom::RenderScale), player.cameraMode(), player.cameraPalette());
+	  player.statusbar.render(_doom, _image, sf::Rect<int16_t>(x * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, ((y + 1) * DOOM::Doom::RenderHeight - 32) * DOOM::Doom::RenderScale, DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, 32 * DOOM::Doom::RenderScale));
 	}));
       }
 

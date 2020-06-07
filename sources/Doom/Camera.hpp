@@ -59,6 +59,6 @@ namespace DOOM
     Camera();
     ~Camera() = default;
 
-    void  render(DOOM::Doom const & doom, sf::Image & target, sf::Rect<int16_t> rect, DOOM::Camera::Special special, int16_t palette);  // Render level using resources from camera point of view in image rect
+    void  render(DOOM::Doom const & doom, sf::Image & target, sf::Rect<int16_t> rect, DOOM::Camera::Special special = DOOM::Camera::Special::Normal, int16_t palette = 0);  // Render level using resources from camera point of view in image rect
   };
 }

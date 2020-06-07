@@ -6840,7 +6840,7 @@ void    DOOM::AbstractThing::A_KeenDie(DOOM::Doom& doom)
 void    DOOM::AbstractThing::A_BossDeath(DOOM::Doom& doom)
 {
   // Check if boss level
-  if (doom.gamemode == DOOM::Enum::Gamemode::GamemodeCommercial) {
+  if (doom.mode == DOOM::Enum::Mode::ModeCommercial) {
     if (doom.level.episode.second != 7)
       return;
     if (type != DOOM::Enum::ThingType::ThingType_FATSO &&
@@ -6894,7 +6894,7 @@ void    DOOM::AbstractThing::A_BossDeath(DOOM::Doom& doom)
       return;
 
   // Victory!
-  if (doom.gamemode == DOOM::Enum::Gamemode::GamemodeCommercial) {
+  if (doom.mode == DOOM::Enum::Mode::ModeCommercial) {
     if (type == DOOM::Enum::ThingType::ThingType_FATSO) {
       for (DOOM::Doom::Level::Sector& sector : doom.level.sectors)
         if (sector.tag == 666)

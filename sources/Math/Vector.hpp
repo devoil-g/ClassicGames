@@ -28,8 +28,7 @@ namespace Math
 
       static_assert(sizeof(vec) / sizeof(float) == vSize, "Invalid vector parameters.");
 
-      for (unsigned int i = 0; i < vSize; i++)
-        (*this)(i) = vec[i];
+      std::memcpy(_vector.data(), vec, _vector.size() * sizeof(float));
     };
 
     ~Vector() = default;

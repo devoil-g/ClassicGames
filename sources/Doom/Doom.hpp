@@ -17,13 +17,22 @@ namespace DOOM
 {
   namespace Enum
   {
-    enum Gamemode
+    enum Mode
     {
-      GamemodeShareware,    // DOOM 1 shareware, E1, M9
-      GamemodeRegistered,   // DOOM 1 registered, E3, M27
-      GamemodeCommercial,   // DOOM 2 retail, E1 M34
-      GamemodeRetail,       // DOOM 1 retail, E4, M36
-      GamemodeIndetermined  // Well, no IWAD found
+      ModeShareware,    // DOOM 1 shareware, E1, M9
+      ModeRegistered,   // DOOM 1 registered, E3, M27
+      ModeCommercial,   // DOOM 2 retail, E1 M34
+      ModeRetail,       // DOOM 1 retail, E4, M36
+      ModeIndetermined  // Well, no IWAD found
+    };
+
+    enum Skill
+    {
+      SkillBaby,     // Double ammo, half damage, least monsters or strength
+      SkillEasy,     // Normal ammo, least monsters or strength
+      SkillMedium,   // Normal ammo, default monsters of strength
+      SkillHard,     // Normal ammo, greatest monsters or strength
+      SkillNightmare // Double ammo, fast and respawning monsters, greatest monsters or strength
     };
 
     enum Weapon
@@ -275,6 +284,7 @@ namespace DOOM
     static sf::Time const     Tic;              // Duration of a game tic (1/35s)
     static const unsigned int RenderWidth;      // Default rendering width size
     static const unsigned int RenderHeight;     // Default rendering height size
+    static unsigned int       RenderScale;      // Scaling factor of resolution
     static const float        RenderStretching; // Default rendering vertical stretching
 
     class Resources
@@ -322,6 +332,8 @@ namespace DOOM
         Texture(DOOM::Doom& doom, const DOOM::Wad::RawResources::Texture& texture);
         Texture(DOOM::Doom& doom, const DOOM::Wad::RawResources::Patch& patch);
         ~Texture() = default;
+
+        sf::Image image(const DOOM::Doom& doom) const;
       };
 
       class Sound
@@ -769,7 +781,12 @@ namespace DOOM
     DOOM::Wad             wad;        // File holding WAD datas
     DOOM::Doom::Resources resources;  // Resources built from WAD
     DOOM::Doom::Level     level;      // Current level datas build from WAD
-    DOOM::Enum::Gamemode  gamemode;   // Current game mode
+    DOOM::Enum::Mode      mode;       // Current game mode
+    DOOM::Enum::Skill     skill;      // Current game skill level
+    float                 sensivity;  // Mouse sensivity [0-1]
+    float                 sfx;        // SFX sound volume [0-1]
+    float                 music;      // Music valume [0-1]
+    bool                  message;    // Message enabled
 
     void  load(const std::string& file);  // Load WAD file and build resources
     void  update(sf::Time elapsed);       // Update current level and resources

@@ -16,7 +16,9 @@ namespace DOOM
     DOOM::Doom& _doom;  // DOOM instance
 
     std::array<int, 4>      _players;           // Players controles (-1 = none, 0 = mouse/keyboard, 1+ = controller id+1)
-    sf::Text                _title, _subtitle;  // Title "DOOM" and subtitle "Player selection"
+    sf::Texture             _textureTitle;
+    sf::Sprite              _spriteTitle;
+    sf::Text                _subtitle;          // Subtitle "Player selection"
     std::array<sf::Text, 4> _controllers;       // Name of the controller of the player or "PRESS START"
     sf::Text                _ready;             // Start button, active if at least one controller is assigned
     sf::Time                _elapsed;           // Total elapsed time

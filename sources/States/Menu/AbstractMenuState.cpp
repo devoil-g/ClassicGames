@@ -13,9 +13,9 @@ Game::AbstractMenuState::~AbstractMenuState() = default;
 bool	Game::AbstractMenuState::update(sf::Time elapsed)
 {
   // Return to previous menu
-  if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Right) ||
-    Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Escape) ||
-    Game::Window::Instance().joystick().buttonPressed(0, 1))
+  if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Right) == true ||
+    Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Escape) == true ||
+    Game::Window::Instance().joystick().buttonPressed(0, 1) == true)
   {
     _machine.pop();
     return false;
