@@ -148,7 +148,7 @@ void	DOOM::Doom::load(std::string const & path)
   wad.load(path);
 
   // TODO: detect game mode
-  mode = DOOM::Enum::Mode::ModeRegistered;
+  mode = DOOM::Enum::Mode::ModeRetail;
 
   // Build resources of WAD file
   buildResources();

@@ -60,8 +60,10 @@ DOOM::MenuDoomState::MenuDoomState(Game::StateMachine& machine, DOOM::Doom& doom
       {
         { DOOM::str_to_key("M_OPTTTL"), false, 108, 15, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
         { DOOM::str_to_key("M_ENDGAM"), false, 60, 37, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_MESSG"), true, 60, 53, sf::Keyboard::M, [this]() { _doom.message = !_doom.message; }, []() {}, []() {} },
-        { DOOM::str_to_key("M_DETAIL"), true, 60, 69, sf::Keyboard::G, []() { DOOM::Doom::RenderScale = DOOM::Doom::RenderScale % 2 + 1; }, []() {}, []() {} },
+        { DOOM::str_to_key("M_MESSG"), true, 60, 53, sf::Keyboard::M, [this]() { _doom.message = !_doom.message; std::next(_menuDesc[MenuOptions].items.begin(), 3)->texture = DOOM::str_to_key(_doom.message == true ? "M_MSGON" : "M_MSGOFF"); }, []() {}, []() {} },
+        { DOOM::str_to_key(_doom.message == true ? "M_MSGON" : "M_MSGOFF"), false, 180, 53, sf::Keyboard::Unknown, [this]() {}, []() {}, []() {} },
+        { DOOM::str_to_key("M_DETAIL"), true, 60, 69, sf::Keyboard::G, [this]() { DOOM::Doom::RenderScale = DOOM::Doom::RenderScale % 2 + 1; std::next(_menuDesc[MenuOptions].items.begin(), 5)->texture = DOOM::str_to_key(DOOM::Doom::RenderScale == 1 ? "M_GDLOW" : "M_GDHIGH"); }, []() {}, []() {} },
+        { DOOM::str_to_key(DOOM::Doom::RenderScale == 1 ? "M_GDLOW" : "M_GDHIGH"), false, 235, 69, sf::Keyboard::Unknown, [this]() {}, []() {}, []() {} },
         { DOOM::str_to_key("M_SCRNSZ"), false, 60, 85, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
         { DOOM::str_to_key("M_MSENS"), true, 60, 117, sf::Keyboard::M, [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) + 1) / 8.f, 0.f, 1.f); }, [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) - 1) / 8.f, 0.f, 1.f); }, [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) + 1) / 8.f, 0.f, 1.f); } },
         { DOOM::str_to_key("M_SVOL"), true, 60, 149, sf::Keyboard::S, [this]() { _menuIndex = MenuVolume; _menuCursor = 1; }, []() {}, []() {} }
@@ -142,21 +144,30 @@ DOOM::MenuDoomState::MenuDoomState(Game::StateMachine& machine, DOOM::Doom& doom
   _menuTexture.setSmooth(false);
   _menuSprite.setTexture(_menuTexture, true);
 
+  // TODO: complete this!
   // Handle menu for special versions
   switch (_doom.mode) {
   case DOOM::Enum::Mode::ModeCommercial:
+    // WTF am I suppose to do here?! m_menu.c:1867
     break;
 
-    // Remove the fourth episode
   case DOOM::Enum::Mode::ModeShareware:
   case DOOM::Enum::Mode::ModeRegistered:
+    // Remove the fourth episode
     _menuDesc[DOOM::MenuDoomState::MenuEnum::MenuEpisode].items.pop_back();
+    break;
 
     // We are fine
   case DOOM::Enum::Mode::ModeRetail:
   default:
     break;
   }
+
+  // Additional check for help screen
+  if (_doom.resources.menus.find(_menuDesc[MenuRead1].items.front().texture) == _doom.resources.menus.end())
+    _menuDesc[MenuRead2].items.front().texture = DOOM::str_to_key("HELP");
+  if (_doom.resources.menus.find(_menuDesc[MenuRead2].items.front().texture) == _doom.resources.menus.end())
+    _menuDesc[MenuRead2].items.front().texture = DOOM::str_to_key("CREDIT");
 }
 
 void  DOOM::MenuDoomState::updateSelect()

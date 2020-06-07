@@ -34,26 +34,26 @@ namespace DOOM
     {
       struct Item
       {
-        const uint64_t          texture;    // Texture of item
-        const bool              selectable; // True if item can be selected
-        const int               x, y;       // Position of item on screen
-        const sf::Keyboard::Key hotkey;     // Shortcut to item selection
+        uint64_t          texture;    // Texture of item
+        bool              selectable; // True if item can be selected
+        int               x, y;       // Position of item on screen
+        sf::Keyboard::Key hotkey;     // Shortcut to item selection
 
-        const std::function<void()> select; // Callback when selected
-        const std::function<void()> left;   // Callback when left arrow is used
-        const std::function<void()> right;  // Callback when right arrow is used
+        std::function<void()> select; // Callback when selected
+        std::function<void()> left;   // Callback when left arrow is used
+        std::function<void()> right;  // Callback when right arrow is used
       };
 
       struct Slider
       {
-        const int             x, y; // Slider position
+        int                   x, y; // Slider position
         std::function<int()>  get;  // Value getter for drawing (must return [0-16])
       };
 
       std::list<DOOM::MenuDoomState::Menu::Item>    items;    // Items of menu
       std::list<DOOM::MenuDoomState::Menu::Slider>  sliders;  // Sliders of menu
 
-      const std::function<void()> escape; // Callback when ESC is pressed
+      std::function<void()> escape; // Callback when ESC is pressed
     };
 
     DOOM::Doom& _doom;    // DOOM instance
