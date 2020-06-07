@@ -64,8 +64,8 @@ namespace DOOM
     sf::Texture   _backTexture; // VRAM image
     sf::Sprite    _backSprite;  // Background drawable
 
-    MenuEnum                    _menu;        // Current menu
-    int                         _menuIndex;   // Menu cursor index
+    MenuEnum                    _menuIndex;   // Current menu
+    int                         _menuCursor;  // Menu cursor index
     std::array<Menu, MenuCount> _menuDesc;    // Menus descriptions
     sf::Time                    _menuElapsed; // Used for skull animation
     sf::Image                   _menuImage;   // Camera rendering target

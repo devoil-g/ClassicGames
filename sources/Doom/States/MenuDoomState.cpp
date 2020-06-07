@@ -16,17 +16,17 @@ DOOM::MenuDoomState::MenuDoomState(Game::StateMachine& machine, DOOM::Doom& doom
   _backTexture(),
   _backSprite(),
 
-  _menu(DOOM::MenuDoomState::MenuEnum::MenuMain),
-  _menuIndex(1),
+  _menuIndex(DOOM::MenuDoomState::MenuEnum::MenuMain),
+  _menuCursor(1),
   _menuDesc({
     Menu{ // MenuMain
       {
         { DOOM::str_to_key("M_DOOM"), false, 94, 2, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_NGAME"), true, 97, 64, sf::Keyboard::N, [this]() { _menu = MenuEpisode; _menuIndex = 1; }, []() {}, []() {} },
-        { DOOM::str_to_key("M_OPTION"), true, 97, 80, sf::Keyboard::O, [this]() { _menu = MenuOptions; _menuIndex = 2; }, []() {}, []() {} },
+        { DOOM::str_to_key("M_NGAME"), true, 97, 64, sf::Keyboard::N, [this]() { _menuIndex = MenuEpisode; _menuCursor = 1; }, []() {}, []() {} },
+        { DOOM::str_to_key("M_OPTION"), true, 97, 80, sf::Keyboard::O, [this]() { _menuIndex = MenuOptions; _menuCursor = 2; }, []() {}, []() {} },
         { DOOM::str_to_key("M_LOADG"), false, 97, 96, sf::Keyboard::L, []() {}, []() {}, []() {} },
         { DOOM::str_to_key("M_SAVEG"), false, 97, 112, sf::Keyboard::S, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_RDTHIS"), true, 97, 128, sf::Keyboard::R, [this]() { _menu = MenuRead1; _menuIndex = 0; }, []() {}, []() {} },
+        { DOOM::str_to_key("M_RDTHIS"), true, 97, 128, sf::Keyboard::R, [this]() { _menuIndex = MenuRead1; _menuCursor = 0; }, []() {}, []() {} },
         { DOOM::str_to_key("M_QUITG"), true, 97, 144, sf::Keyboard::Q, [this]() { _machine.clear(); }, []() {}, []() {} }
       },
       {},
@@ -35,13 +35,13 @@ DOOM::MenuDoomState::MenuDoomState(Game::StateMachine& machine, DOOM::Doom& doom
     Menu{ // MenuEpisode
       {
         { DOOM::str_to_key("M_EPISOD"), false, 54, 38, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_EPI1"), true, 48, 63, sf::Keyboard::K, [this]() { _episode = 1; _menu = MenuSkill; _menuIndex = _doom.skill + 2; }, []() {}, []() {} },
-        { DOOM::str_to_key("M_EPI2"), true, 48, 79, sf::Keyboard::T, [this]() { _episode = 2; _menu = MenuSkill; _menuIndex = _doom.skill + 2; }, []() {}, []() {} },
-        { DOOM::str_to_key("M_EPI3"), true, 48, 95, sf::Keyboard::I, [this]() { _episode = 3; _menu = MenuSkill; _menuIndex = _doom.skill + 2; }, []() {}, []() {} },
-        { DOOM::str_to_key("M_EPI4"), true, 48, 111, sf::Keyboard::T, [this]() { _episode = 4; _menu = MenuSkill; _menuIndex = _doom.skill + 2; }, []() {}, []() {} }
+        { DOOM::str_to_key("M_EPI1"), true, 48, 63, sf::Keyboard::K, [this]() { _episode = 1; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; }, []() {}, []() {} },
+        { DOOM::str_to_key("M_EPI2"), true, 48, 79, sf::Keyboard::T, [this]() { _episode = 2; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; }, []() {}, []() {} },
+        { DOOM::str_to_key("M_EPI3"), true, 48, 95, sf::Keyboard::I, [this]() { _episode = 3; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; }, []() {}, []() {} },
+        { DOOM::str_to_key("M_EPI4"), true, 48, 111, sf::Keyboard::T, [this]() { _episode = 4; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; }, []() {}, []() {} }
       },
       {},
-      [this]() { _menu = MenuMain; _menuIndex = 1; }
+      [this]() { _menuIndex = MenuMain; _menuCursor = 1; }
     },
     Menu{ // MenuSkill
       {
@@ -54,7 +54,7 @@ DOOM::MenuDoomState::MenuDoomState(Game::StateMachine& machine, DOOM::Doom& doom
         { DOOM::str_to_key("M_NMARE"), true, 48, 127, sf::Keyboard::N, [this]() { _doom.skill = DOOM::Enum::Skill::SkillNightmare; _doom.setLevel({ _episode, 1 }); _machine.swap<DOOM::GameDoomState>(_doom); }, []() {}, []() {} }
       },
       {},
-      [this]() { _menu = MenuEpisode; _menuIndex = _episode; }
+      [this]() { _menuIndex = MenuEpisode; _menuCursor = _episode; }
     },
     Menu{ // MenuOptions
       {
@@ -63,40 +63,40 @@ DOOM::MenuDoomState::MenuDoomState(Game::StateMachine& machine, DOOM::Doom& doom
         { DOOM::str_to_key("M_MESSG"), true, 60, 53, sf::Keyboard::M, [this]() { _doom.message = !_doom.message; }, []() {}, []() {} },
         { DOOM::str_to_key("M_DETAIL"), true, 60, 69, sf::Keyboard::G, []() { DOOM::Doom::RenderScale = DOOM::Doom::RenderScale % 2 + 1; }, []() {}, []() {} },
         { DOOM::str_to_key("M_SCRNSZ"), false, 60, 85, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_MSENS"), true, 60, 117, sf::Keyboard::M, [this]() { _doom.sensivity = std::clamp(0.f, 1.f, ((int)(_doom.sensivity * 16) + 1) / 16.f); }, [this]() {_doom.sensivity = std::clamp(0.f, 1.f, ((int)(_doom.sensivity * 16) - 1) / 16.f); }, [this]() {_doom.sensivity = std::clamp(0.f, 1.f, ((int)(_doom.sensivity * 16) + 1) / 16.f); } },
-        { DOOM::str_to_key("M_SVOL"), true, 60, 149, sf::Keyboard::S, [this]() { _menu = MenuVolume; _menuIndex = 1; }, []() {}, []() {} }
+        { DOOM::str_to_key("M_MSENS"), true, 60, 117, sf::Keyboard::M, [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) + 1) / 8.f, 0.f, 1.f); }, [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) - 1) / 8.f, 0.f, 1.f); }, [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) + 1) / 8.f, 0.f, 1.f); } },
+        { DOOM::str_to_key("M_SVOL"), true, 60, 149, sf::Keyboard::S, [this]() { _menuIndex = MenuVolume; _menuCursor = 1; }, []() {}, []() {} }
       },
       {
-        { 60, 101, [this]() { return 16; } },
-        { 60, 133, [this]() { return (int)(_doom.sensivity * 16); } }
+        { 60, 101, [this]() { return 8; } },
+        { 60, 133, [this]() { return (int)(_doom.sensivity * 8); } }
       },
-      [this]() { _menu = MenuMain; _menuIndex = 2; }
+      [this]() { _menuIndex = MenuMain; _menuCursor = 2; }
     },
     Menu{ // MenuVolume
       {
         { DOOM::str_to_key("M_SVOL"), false, 60, 38, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_SFXVOL"), true, 80, 64, sf::Keyboard::S, [this]() { _doom.sfx = std::clamp(0.f, 1.f, ((int)(_doom.sfx * 16) + 1) / 16.f); }, [this]() { _doom.sfx = std::clamp(0.f, 1.f, ((int)(_doom.sfx * 16) - 1) / 16.f); }, [this]() { _doom.sfx = std::clamp(0.f, 1.f, ((int)(_doom.sfx * 16) + 1) / 16.f); } },
-        { DOOM::str_to_key("M_MUSVOL"), true, 80, 96, sf::Keyboard::M, [this]() { _doom.music = std::clamp(0.f, 1.f, ((int)(_doom.music * 16) + 1) / 16.f); }, [this]() { _doom.music = std::clamp(0.f, 1.f, ((int)(_doom.music * 16) - 1) / 16.f); }, [this]() { _doom.music = std::clamp(0.f, 1.f, ((int)(_doom.music * 16) + 1) / 16.f); } }
+        { DOOM::str_to_key("M_SFXVOL"), true, 80, 64, sf::Keyboard::S, [this]() { _doom.sfx = std::clamp(((int)(_doom.sfx * 8) + 1) / 8.f, 0.f, 1.f); }, [this]() { _doom.sfx = std::clamp(((int)(_doom.sfx * 8) - 1) / 8.f, 0.f, 1.f); }, [this]() { _doom.sfx = std::clamp(((int)(_doom.sfx * 8) + 1) / 8.f, 0.f, 1.f); } },
+        { DOOM::str_to_key("M_MUSVOL"), true, 80, 96, sf::Keyboard::M, [this]() { _doom.music = std::clamp(((int)(_doom.music * 8) + 1) / 8.f, 0.f, 1.f); }, [this]() { _doom.music = std::clamp(((int)(_doom.music * 8) - 1) / 8.f, 0.f, 1.f); }, [this]() { _doom.music = std::clamp(((int)(_doom.music * 8) + 1) / 8.f, 0.f, 1.f); } }
       },
       {
-        { 80, 80, [this]() { return (int)(_doom.sfx * 16); } },
-        { 80, 112, [this]() { return (int)(_doom.music * 16); } }
+        { 80, 80, [this]() { return (int)(_doom.sfx * 8); } },
+        { 80, 112, [this]() { return (int)(_doom.music * 8); } }
       },
-      [this]() { _menu = MenuOptions; _menuIndex = 6; }
+      [this]() { _menuIndex = MenuOptions; _menuCursor = 6; }
     },
     Menu{ // MenuRead1
       {
-        { DOOM::str_to_key("HELP1"), true, 0, 0, sf::Keyboard::Unknown, [this]() { _menu = MenuRead2; _menuIndex = 0; }, []() {}, []() {} }
+        { DOOM::str_to_key("HELP1"), true, 0, 0, sf::Keyboard::Unknown, [this]() { _menuIndex = MenuRead2; _menuCursor = 0; }, []() {}, []() {} }
       },
       {},
-      [this]() { _menu = MenuMain; _menuIndex = 5; }
+      [this]() { _menuIndex = MenuMain; _menuCursor = 5; }
     },
     Menu{ // MenuRead2
       {
-        { DOOM::str_to_key("HELP2"), true, 0, 0, sf::Keyboard::Unknown, [this]() { _menu = MenuMain; _menuIndex = 5; }, []() {}, []() {} }
+        { DOOM::str_to_key("HELP2"), true, 0, 0, sf::Keyboard::Unknown, [this]() { _menuIndex = MenuMain; _menuCursor = 5; }, []() {}, []() {} }
       },
       {},
-      [this]() { _menu = MenuMain; _menuIndex = 5; }
+      [this]() { _menuIndex = MenuMain; _menuCursor = 5; }
     }
   }),
   _menuElapsed(sf::Time::Zero),
@@ -162,37 +162,37 @@ DOOM::MenuDoomState::MenuDoomState(Game::StateMachine& machine, DOOM::Doom& doom
 void  DOOM::MenuDoomState::updateSelect()
 {
   // Call left arrow handle
-  std::next(_menuDesc[_menu].items.begin(), _menuIndex)->select();
+  std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor)->select();
 }
 
 void  DOOM::MenuDoomState::updateUp()
 {
   // Find first previous selectable item
-  while (std::next(_menuDesc[_menu].items.begin(), _menuIndex = Math::Modulo(--_menuIndex, (int)_menuDesc[_menu].items.size()))->selectable == false);
+  while (std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor = Math::Modulo(--_menuCursor, (int)_menuDesc[_menuIndex].items.size()))->selectable == false);
 }
 
 void  DOOM::MenuDoomState::updateDown()
 {
   // Find first next selectable item
-  while (std::next(_menuDesc[_menu].items.begin(), _menuIndex = Math::Modulo(++_menuIndex, (int)_menuDesc[_menu].items.size()))->selectable == false);
+  while (std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor = Math::Modulo(++_menuCursor, (int)_menuDesc[_menuIndex].items.size()))->selectable == false);
 }
 
 void  DOOM::MenuDoomState::updateLeft()
 {
   // Call left arrow handle
-  std::next(_menuDesc[_menu].items.begin(), _menuIndex)->left();
+  std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor)->left();
 }
 
 void  DOOM::MenuDoomState::updateRight()
 {
   // Call right arrow handle
-  std::next(_menuDesc[_menu].items.begin(), _menuIndex)->right();
+  std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor)->right();
 }
 
 void  DOOM::MenuDoomState::updateEscape()
 {
   // Call ESC handle
-  _menuDesc[_menu].escape();
+  _menuDesc[_menuIndex].escape();
 }
 
 bool  DOOM::MenuDoomState::update(sf::Time elapsed)
@@ -242,11 +242,11 @@ void	DOOM::MenuDoomState::drawMenu(const DOOM::Doom::Resources::Texture& texture
   for (int x = 0; x < texture.width; x++) {
     for (const DOOM::Doom::Resources::Texture::Column::Span& span : texture.columns[x].spans) {
       for (int y = 0; y < span.pixels.size(); y++) {
-        int pixel_x = x + texture.left + texture_x;
-        int pixel_y = y + span.offset + texture.top + texture_y;
-
+        int pixel_x = x - texture.left + texture_x;
+        int pixel_y = y + span.offset - texture.top + texture_y;
+        
         // Compensate for not displayed status bar
-        if (_menu != MenuRead1 && _menu != MenuRead2)
+        if (_menuIndex != MenuRead1 && _menuIndex != MenuRead2)
           pixel_y += 16;
 
         // Draw pixel
@@ -290,7 +290,7 @@ void	DOOM::MenuDoomState::draw()
     }
 
   // Draw menu items
-  for (const Menu::Item& item : _menuDesc[_menu].items) {
+  for (const Menu::Item& item : _menuDesc[_menuIndex].items) {
     const auto& texture = _doom.resources.menus.find(item.texture);
 
     // Crash if no texture
@@ -301,7 +301,27 @@ void	DOOM::MenuDoomState::draw()
     drawMenu(texture->second, item.x, item.y, true);
   }
 
-  // TODO: Draw menu sliders
+  const auto& sliderLeft = _doom.resources.menus.find(DOOM::str_to_key("M_THERML"));
+  const auto& sliderMiddle = _doom.resources.menus.find(DOOM::str_to_key("M_THERMM"));
+  const auto& sliderRight = _doom.resources.menus.find(DOOM::str_to_key("M_THERMR"));
+  const auto& sliderCursor = _doom.resources.menus.find(DOOM::str_to_key("M_THERMO"));
+
+  // Crash if missing slider texture
+  if (sliderLeft == _doom.resources.menus.end() ||
+    sliderMiddle == _doom.resources.menus.end() ||
+    sliderRight == _doom.resources.menus.end() ||
+    sliderCursor == _doom.resources.menus.end())
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // Draw menus sliders
+  for (const Menu::Slider& slider : _menuDesc[_menuIndex].sliders) {
+    drawMenu(sliderLeft->second, slider.x, slider.y, true);
+    for (int x = 0; x <= 8; x++)
+      drawMenu(sliderMiddle->second, slider.x + 8 * (x + 1), slider.y, true);
+    drawMenu(sliderRight->second, slider.x + 8 * (9 + 1), slider.y, true);
+    drawMenu(sliderCursor->second, slider.x + 8 * (slider.get() + 1), slider.y, false);
+  }
+
 
   const auto& skull = _doom.resources.menus.find(DOOM::str_to_key((unsigned int)(_menuElapsed.asSeconds() / DOOM::Doom::Tic.asSeconds()) < SkullDuration ? "M_SKULL1" : "M_SKULL2"));
 
@@ -311,8 +331,8 @@ void	DOOM::MenuDoomState::draw()
 
   // Draw menu skull
   drawMenu(skull->second,
-    std::next(_menuDesc[_menu].items.begin(), _menuIndex)->x - 32,
-    std::next(_menuDesc[_menu].items.begin(), _menuIndex)->y - 1,
+    std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor)->x - 32,
+    std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor)->y - 5,
     true);
 
   // Update textures

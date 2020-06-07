@@ -184,12 +184,5 @@ TARGET_LINK_LIBRARIES(Game sfml-system sfml-window sfml-network sfml-graphics sf
 # Force C++17
 SET_TARGET_PROPERTIES(Game PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF)
 
-# Specific OS commands
-IF (UNIX)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast -Wall -Wextra")
-ELSE (UNIX)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc /std:c++latest")
-ENDIF (UNIX)
-
 # Copy assets to build directory
 ADD_CUSTOM_COMMAND(TARGET Game POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets/ $<TARGET_FILE_DIR:Game>/assets/)

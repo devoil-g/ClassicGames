@@ -564,7 +564,11 @@ void	DOOM::Doom::buildLevelThings()
 {
   // Load level's things from WAD
   for (DOOM::Wad::RawLevel::Thing const & thing : wad.levels[level.episode].things)
-    if (thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel45) // TODO: Filter thing with difficulty here
+
+    // Only build thing of current skill level
+    if (((skill == DOOM::Enum::Skill::SkillBaby || skill == DOOM::Enum::Skill::SkillEasy) && thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel12) ||
+      (skill == DOOM::Enum::Skill::SkillMedium && thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel3) ||
+      ((skill == DOOM::Enum::Skill::SkillHard || skill == DOOM::Enum::Skill::SkillNightmare) && thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel45))
     {
       // Convert thing from WAD
       std::unique_ptr<DOOM::AbstractThing>	converted = DOOM::AbstractThing::factory(*this, thing);
