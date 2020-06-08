@@ -34,8 +34,10 @@ bool	DOOM::SplashDoomState::update(sf::Time elapsed)
     Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Return) == true ||
     Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space) == true ||
     Game::Window::Instance().joystick().buttonPressed(0, 0) == true ||
-    Game::Window::Instance().joystick().buttonPressed(0, 7) == true)
+    Game::Window::Instance().joystick().buttonPressed(0, 7) == true) {
+    _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn);
     _machine.push<DOOM::MenuDoomState>(_doom);
+  }
 
   return false;
 }

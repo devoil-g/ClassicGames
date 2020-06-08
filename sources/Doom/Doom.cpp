@@ -232,6 +232,7 @@ void	DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound)
   // Play sound
   ref.sound.setBuffer(iterator->second.buffer);
   ref.sound.setRelativeToListener(true);
+  ref.sound.setVolume(sfx * 100.f);
   ref.sound.play();
 }
 
@@ -254,6 +255,7 @@ void	DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound, const Math
   ref.sound.setBuffer(iterator->second.buffer);
   ref.sound.setRelativeToListener(false);
   ref.sound.setAttenuation(3.2f);
+  ref.sound.setVolume(sfx * 100.f);
   ref.sound.setMinDistance(256.f);
 
   // Single player
