@@ -6653,7 +6653,6 @@ void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker
     thrust(Math::Vector<3>(std::cos(angle), std::sin(angle), 0.f) * push);
   }
 
-
   // Thing killed
   if (health <= 0) {
     // Remove some flags
@@ -6666,6 +6665,36 @@ void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker
 
     // Reduce height
     height /= 4;
+
+    DOOM::Enum::ThingType drop = (DOOM::Enum::ThingType)-1;
+
+    // Drop stuff
+    switch (type) {
+    case DOOM::Enum::ThingType::ThingType_WOLFSS:
+    case DOOM::Enum::ThingType::ThingType_POSSESSED:
+      drop = DOOM::Enum::ThingType::ThingType_CLIP;
+      break;
+
+    case DOOM::Enum::ThingType::ThingType_SHOTGUY:
+      drop = DOOM::Enum::ThingType::ThingType_SHOTGUN;
+      break;
+
+    case DOOM::Enum::ThingType::ThingType_CHAINGUY:
+      drop = DOOM::Enum::ThingType::ThingType_CHAINGUN;
+      break;
+
+    default:
+      break;
+    }
+
+    // Spawn drop, thrown away from thing
+    if (drop != (DOOM::Enum::ThingType) - 1) {
+      doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, drop, DOOM::Enum::ThingFlag::FlagNone, position.x(), position.y(), angle));
+      doom.level.things.back()->position.z() = position.z() + 32.f;
+      doom.level.things.back()->_thrust = _thrust * 3.2f + Math::Vector<3>(0.f, 0.f, 3.2f);
+      doom.level.things.back()->_gravity = -0.5f;
+      doom.level.things.back()->flags = (DOOM::Enum::ThingProperty)(doom.level.things.back()->flags | DOOM::Enum::ThingProperty::ThingProperty_Dropped);
+    }
   }
 
   // Change target

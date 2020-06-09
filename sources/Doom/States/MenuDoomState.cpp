@@ -197,9 +197,9 @@ void  DOOM::MenuDoomState::start()
         255));
     }
 
-  // Generate first frame of game
   sf::Image end;
 
+  // Generate first frame of game
   end.create(DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale);
   _doom.level.players.front().get().camera.render(_doom, end, sf::Rect<int16_t>(0, 0, DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, (DOOM::Doom::RenderHeight - 32) * DOOM::Doom::RenderScale), _doom.level.players.front().get().cameraMode(), _doom.level.players.front().get().cameraPalette());
   _doom.level.players.front().get().statusbar.render(_doom, end, sf::Rect<int16_t>(0, (DOOM::Doom::RenderHeight - 32) * DOOM::Doom::RenderScale, DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, 32 * DOOM::Doom::RenderScale));
