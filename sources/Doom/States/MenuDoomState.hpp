@@ -72,6 +72,8 @@ namespace DOOM
     sf::Texture                 _menuTexture; // VRAM image
     sf::Sprite                  _menuSprite;  // Menu drawable
 
+    void  start();  // Start game
+
     void  updateSelect();
     void  updateUp();
     void  updateDown();

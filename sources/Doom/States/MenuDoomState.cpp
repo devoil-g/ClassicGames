@@ -2,6 +2,7 @@
 
 #include "Doom/States/MenuDoomState.hpp"
 #include "Doom/States/GameDoomState.hpp"
+#include "Doom/States/TransitionDoomState.hpp"
 #include "Doom/Thing/PlayerThing.hpp"
 #include "System/Sound.hpp"
 #include "System/Window.hpp"
@@ -48,11 +49,11 @@ DOOM::MenuDoomState::MenuDoomState(Game::StateMachine& machine, DOOM::Doom& doom
       {
         { DOOM::str_to_key("M_NEWG"), false, 96, 14, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
         { DOOM::str_to_key("M_SKILL"), false, 54, 38, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_JKILL"), true, 48, 63, sf::Keyboard::I, [this]() { _doom.skill = DOOM::Enum::Skill::SkillBaby; _doom.setLevel({ _episode, 1 }); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); _machine.swap<DOOM::GameDoomState>(_doom); }, []() {}, []() {} },
-        { DOOM::str_to_key("M_ROUGH"), true, 48, 79, sf::Keyboard::H, [this]() { _doom.skill = DOOM::Enum::Skill::SkillEasy; _doom.setLevel({ _episode, 1 }); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); _machine.swap<DOOM::GameDoomState>(_doom); }, []() {}, []() {} },
-        { DOOM::str_to_key("M_HURT"), true, 48, 95, sf::Keyboard::H, [this]() { _doom.skill = DOOM::Enum::Skill::SkillMedium; _doom.setLevel({ _episode, 1 }); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); _machine.swap<DOOM::GameDoomState>(_doom); }, []() {}, []() {} },
-        { DOOM::str_to_key("M_ULTRA"), true, 48, 111, sf::Keyboard::U, [this]() { _doom.skill = DOOM::Enum::Skill::SkillHard; _doom.setLevel({ _episode, 1 }); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); _machine.swap<DOOM::GameDoomState>(_doom); }, []() {}, []() {} },
-        { DOOM::str_to_key("M_NMARE"), true, 48, 127, sf::Keyboard::N, [this]() { _doom.skill = DOOM::Enum::Skill::SkillNightmare; _doom.setLevel({ _episode, 1 }); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); _machine.swap<DOOM::GameDoomState>(_doom); }, []() {}, []() {} }
+        { DOOM::str_to_key("M_JKILL"), true, 48, 63, sf::Keyboard::I, [this]() { _doom.skill = DOOM::Enum::Skill::SkillBaby; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, []() {}, []() {} },
+        { DOOM::str_to_key("M_ROUGH"), true, 48, 79, sf::Keyboard::H, [this]() { _doom.skill = DOOM::Enum::Skill::SkillEasy; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, []() {}, []() {} },
+        { DOOM::str_to_key("M_HURT"), true, 48, 95, sf::Keyboard::H, [this]() { _doom.skill = DOOM::Enum::Skill::SkillMedium; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, []() {}, []() {} },
+        { DOOM::str_to_key("M_ULTRA"), true, 48, 111, sf::Keyboard::U, [this]() { _doom.skill = DOOM::Enum::Skill::SkillHard; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, []() {}, []() {} },
+        { DOOM::str_to_key("M_NMARE"), true, 48, 127, sf::Keyboard::N, [this]() { _doom.skill = DOOM::Enum::Skill::SkillNightmare; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, []() {}, []() {} }
       },
       {},
       [this]() { _menuIndex = MenuEpisode; _menuCursor = _episode; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
@@ -170,6 +171,44 @@ DOOM::MenuDoomState::MenuDoomState(Game::StateMachine& machine, DOOM::Doom& doom
     _menuDesc[MenuRead2].items.front().texture = DOOM::str_to_key("HELP");
   if (_doom.resources.menus.find(_menuDesc[MenuRead2].items.front().texture) == _doom.resources.menus.end())
     _menuDesc[MenuRead2].items.front().texture = DOOM::str_to_key("CREDIT");
+}
+
+void  DOOM::MenuDoomState::start()
+{
+  // Load requested level
+  _doom.setLevel({ _episode, 1 });
+
+  // Copy current screen to buffer
+  sf::Image start(_backImage);
+
+  // Copy menu into buffer
+  for (unsigned int y = 0; y < start.getSize().y; y++)
+    for (unsigned int x = 0; x < start.getSize().x; x++) {
+      sf::Color back = _backImage.getPixel(x, y);
+      sf::Color menu = _menuImage.getPixel(
+        x * _menuImage.getSize().x / start.getSize().x,
+        y * _menuImage.getSize().y / start.getSize().y);
+      
+      // Fusion pixels
+      start.setPixel(x, y, sf::Color(
+        sf::Uint8(((int)back.r * (255 - (int)menu.a) + (int)menu.r * (int)menu.a) / 255),
+        sf::Uint8(((int)back.g * (255 - (int)menu.a) + (int)menu.g * (int)menu.a) / 255),
+        sf::Uint8(((int)back.b * (255 - (int)menu.a) + (int)menu.b * (int)menu.a) / 255),
+        255));
+    }
+
+  // Generate first frame of game
+  sf::Image end;
+
+  end.create(DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale);
+  _doom.level.players.front().get().camera.render(_doom, end, sf::Rect<int16_t>(0, 0, DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, (DOOM::Doom::RenderHeight - 32) * DOOM::Doom::RenderScale), _doom.level.players.front().get().cameraMode(), _doom.level.players.front().get().cameraPalette());
+  _doom.level.players.front().get().statusbar.render(_doom, end, sf::Rect<int16_t>(0, (DOOM::Doom::RenderHeight - 32) * DOOM::Doom::RenderScale, DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, 32 * DOOM::Doom::RenderScale));
+
+  Game::StateMachine& machine = _machine;
+
+  // Swap to game with transition
+  machine.swap<DOOM::GameDoomState>(_doom);
+  machine.push<DOOM::TransitionDoomState>(start, end);
 }
 
 void  DOOM::MenuDoomState::updateSelect()
