@@ -15,17 +15,17 @@
 
 namespace DOOM
 {
-  inline uint64_t str_to_key(const std::string& str)
+  constexpr uint64_t str_to_key(std::string_view str)
   {
     uint64_t  key = 0;
 
-    // Copy string in key (ignore warning of std::strncpy)
-#pragma warning(suppress:4996)
-    std::strncpy((char*)&key, str.c_str(), sizeof(uint64_t));
-
+    // Copy string in key
+    for (unsigned int i = 0; i < std::min(sizeof(uint64_t), str.length()); i++)
+      ((char*)&key)[i] = str.at(i);
+    
     return key;
   }
-
+  
   inline std::string  key_to_str(const uint64_t key)
   {
     char  str[sizeof(uint64_t) + 1] = { 0 };
@@ -36,7 +36,7 @@ namespace DOOM
 
     return std::string(str);
   }
-
+  
   class Wad
   {
   private:

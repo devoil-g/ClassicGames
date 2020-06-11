@@ -18,6 +18,8 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
   _invisibility(sf::seconds(0.f)),
   _light(sf::seconds(0.f)),
   _radiation(sf::seconds(0.f)),
+  _berserk(false),
+  _map(false),
   id(id),
   controller(controller),
   camera(),

@@ -5201,7 +5201,8 @@ void DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed
         continue;
 
       // Pickup thing if destination is in thing area
-      if ((position.convert<2>() + movement * closest_distance - thing.get().position.convert<2>()).length() < thing.get().attributs.radius + attributs.radius) {
+      if ((position.convert<2>() + movement * closest_distance - thing.get().position.convert<2>()).length() < thing.get().attributs.radius + attributs.radius &&
+        position.z() + height > thing.get().position.z() && position.z() < thing.get().position.z() + thing.get().height) {
         thing.get()._remove = pickup(doom, thing);
       }
     }
