@@ -65,6 +65,6 @@ void	DOOM::DoomState::draw()
   _game.draw();
 
   // Draw forced exit bar
-  _sprite.setScale(Game::Window::Instance().window().getSize().x * _elapsed.asSeconds() / DOOM::DoomState::ForcedExit.asSeconds(), 3.f);
+  _sprite.setScale(Game::Window::Instance().window().getSize().x * _elapsed.asSeconds() / DOOM::DoomState::ForcedExit.asSeconds(), 4.f);
   Game::Window::Instance().window().draw(_sprite);
 }
