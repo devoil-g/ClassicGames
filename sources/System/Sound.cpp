@@ -36,6 +36,13 @@ bool		Game::Sound::update(sf::Time elapsed)
   return false;
 }
 
+void  Game::Sound::clear()
+{
+  // Stops every playing sounds
+  for (auto& sound : _sounds)
+    sound.first.stop();
+}
+
 Game::Sound::Reference	Game::Sound::get()
 {
   // Check if internal limit has been reached

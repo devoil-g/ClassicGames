@@ -25,7 +25,7 @@ namespace DOOM
     
   public:
     DoomState(Game::StateMachine& machine);
-    ~DoomState() override = default;
+    ~DoomState() override;
 
     bool  update(sf::Time elapsed) override;  // Update state
     void  draw() override;                    // Draw state

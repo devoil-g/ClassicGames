@@ -1150,7 +1150,7 @@ void	DOOM::Doom::Level::Sidedef::update(DOOM::Doom & doom, sf::Time elapsed)
   }
 }
 
-bool	DOOM::Doom::Level::Sidedef::switched(DOOM::Doom & doom, sf::Time toggle)
+bool	DOOM::Doom::Level::Sidedef::switched(DOOM::Doom & doom, sf::Time toggle, bool exit)
 {
   // Does nothing if a toggle is already running
   if (_toggle > sf::Time::Zero)
@@ -1159,10 +1159,63 @@ bool	DOOM::Doom::Level::Sidedef::switched(DOOM::Doom & doom, sf::Time toggle)
   // Set toggle timer
   _toggle = toggle;
 
+  enum Vertical {
+    None,
+    Upper,
+    Lower,
+    Middle
+  };
+
+  Vertical vertical = None;
+
   // Call animation method to find texture set of switch
-  return switched(doom, _upper_textures, _upper_name) |
-    switched(doom, _lower_textures, _lower_name) |
-    switched(doom, _middle_textures, _middle_name);
+  if (switched(doom, _upper_textures, _upper_name) == true)
+    vertical = Upper;
+  else if (switched(doom, _lower_textures, _lower_name) == true)
+    vertical = Lower;
+  else if (switched(doom, _middle_textures, _middle_name) == true)
+    vertical = Middle;
+  else
+    return false;
+
+  int16_t index = (int16_t)(((uint64_t)this - (uint64_t)doom.level.sidedefs.data()) / sizeof(*this));
+
+  // Find linedef of current sidedef
+  for (const auto& linedef : doom.level.linedefs) {
+    if (linedef->front == index || linedef->back == index) {
+      auto  origin = (doom.level.vertexes[linedef->start] + doom.level.vertexes[linedef->end]) / 2.f;
+
+      // Use front and back sector to find vertical coordinate of sound
+      const auto& sector_front = doom.level.sectors[doom.level.sidedefs[linedef->front].sector];
+      const auto& sector_back = doom.level.sectors[doom.level.sidedefs[linedef->back == -1 ? linedef->front : linedef->back].sector];
+
+      // Play switch sound at linedef position
+      doom.sound(
+	exit == true ? DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchx : DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn,
+	Math::Vector<3>(
+	  origin.x(),
+	  origin.y(),
+	  (vertical == Upper) ? ((sector_front.ceiling_current + sector_back.ceiling_current) / 2.f) :
+	  (vertical == Lower) ? ((sector_front.floor_current + sector_back.floor_current) / 2.f) :
+	  (linedef->front == index) ? ((sector_front.floor_current + sector_front.ceiling_current) / 2.f) :
+	  ((sector_back.floor_current + sector_back.ceiling_current) / 2.f)
+	  )
+      );
+
+      std::cout << Math::Vector<3>(
+	origin.x(),
+	origin.y(),
+	(vertical == Upper) ? ((sector_front.ceiling_current + sector_back.ceiling_current) / 2.f) :
+	(vertical == Lower) ? ((sector_front.floor_current + sector_back.floor_current) / 2.f) :
+	(linedef->front == index) ? ((sector_front.floor_current + sector_front.ceiling_current) / 2.f) :
+	((sector_back.floor_current + sector_back.ceiling_current) / 2.f)
+	) << std::endl;
+
+      break;
+    }
+  }
+  
+  return true;
 }
 
 bool	DOOM::Doom::Level::Sidedef::switched(DOOM::Doom & doom, std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>> & textures, uint64_t & name)

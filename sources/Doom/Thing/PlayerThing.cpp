@@ -248,7 +248,7 @@ void	DOOM::PlayerThing::updateUse(DOOM::Doom & doom, sf::Time elapsed)
 
 void	DOOM::PlayerThing::updateFire(DOOM::Doom & doom, sf::Time elapsed)
 {
-  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol);
+  //doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol);
   P_LineAttack(doom, 1000.f, position + Math::Vector<3>(0.f, 0.f, height / 2.f), Math::Vector<3>(std::cos(angle), std::sin(angle), std::tan(camera.orientation)), 5 + std::rand() % 11);
 }
 

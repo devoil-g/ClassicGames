@@ -4,6 +4,7 @@
 #include "Doom/States/StartDoomState.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
+#include "System/Sound.hpp"
 
 const sf::Time  DOOM::DoomState::ForcedExit = sf::seconds(1.f);
 
@@ -33,6 +34,12 @@ DOOM::DoomState::DoomState(Game::StateMachine& machine) :
   _texture.setSmooth(false);
   _texture.update(image);
   _sprite.setTexture(_texture);
+}
+
+DOOM::DoomState::~DoomState()
+{
+  // Interrupt playing DOOM sounds to avoid reading deleted buffers
+  Game::Sound::Instance().clear();
 }
 
 bool	DOOM::DoomState::update(sf::Time elapsed)

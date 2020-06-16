@@ -525,8 +525,8 @@ namespace DOOM
         Sidedef(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Sidedef& sidedef);
         ~Sidedef() = default;
 
-        void  update(DOOM::Doom& doom, sf::Time elapsed);   // Update sidedef
-        bool  switched(DOOM::Doom& doom, sf::Time toggle);  // Toggle texture switch, reversing it after time given as parameter (0 for no reverse)
+        void  update(DOOM::Doom& doom, sf::Time elapsed);                     // Update sidedef
+        bool  switched(DOOM::Doom& doom, sf::Time toggle, bool exit = false); // Toggle texture switch, reversing it after time given as parameter (0 for no reverse), special sound if exit switch
 
         const DOOM::Doom::Resources::Texture& upper() const;  // Return upper texture to be displayed
         const DOOM::Doom::Resources::Texture& lower() const;  // Return lower texture to be displayed

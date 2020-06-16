@@ -44,7 +44,7 @@ namespace DOOM
 
       // Switch sidedef if trigger pushed or switched, definitively if not repeatable
       if (_Trigger == DOOM::EnumLinedef::Trigger::TriggerPushed || _Trigger == DOOM::EnumLinedef::Trigger::TriggerSwitched && sidedef != -1)
-	doom.level.sidedefs[sidedef].switched(doom, sf::Time::Zero);
+	doom.level.sidedefs[sidedef].switched(doom, sf::Time::Zero, true);
 
       return true;
     }
