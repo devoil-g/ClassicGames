@@ -154,18 +154,67 @@ namespace DOOM
       return std::max(_elapsed - (DOOM::Doom::Tic * (float)TickForceWait), sf::Time::Zero);
     }
 
+    void      updateSound(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector)  // Play state sound
+    {
+      // Does nothing when no states
+      if (_states.empty() == true)
+        return;
+
+      DOOM::Doom::Resources::Sound::EnumSound sound = DOOM::Doom::Resources::Sound::EnumSound::Sound_None;
+
+      // Select sound to play
+      switch (_states.front()) {
+      case State::Open:
+        sound = (Speed > DOOM::EnumAction::Speed::SpeedNormal) ? DOOM::Doom::Resources::Sound::EnumSound::Sound_bdopn : DOOM::Doom::Resources::Sound::EnumSound::Sound_doropn;
+        break;
+      case State::Close:
+      case State::ForceClose:
+        sound = (Speed > DOOM::EnumAction::Speed::SpeedNormal) ? DOOM::Doom::Resources::Sound::EnumSound::Sound_bdcls : DOOM::Doom::Resources::Sound::EnumSound::Sound_dorcls;
+        break;
+      default:  // Handle error (should not happen)
+        return;
+      }
+
+      int             sector_index = ((uint64_t)&sector - (uint64_t)doom.level.sectors.data()) / sizeof(sector);
+      Math::Vector<2> center;
+      int             center_nb = 0;
+
+      // Aggregate sector vertexes
+      for (const auto& subsector : doom.level.subsectors) {
+        if (subsector.sector == sector_index) {
+          for (int segment_index = 0; segment_index < subsector.count; segment_index++) {
+            const auto& segment = doom.level.segments[segment_index + subsector.index];
+
+            center += doom.level.vertexes[segment.start];
+            center += doom.level.vertexes[segment.end];
+            center_nb += 2;
+          }
+        }
+      }
+
+      // No subsector identified
+      if (center_nb == 0)
+        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+      // Compute center of sector
+      center /= center_nb;
+
+      // Play sound at sector center
+      doom.sound(sound, Math::Vector<3>(center.x(), center.y(), (sector.ceiling_base + sector.floor_base) / 2));
+    }
+
   public:
     DoorLevelingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector) :
       DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling>(doom, sector),
       _states(),
       _elapsed(sf::Time::Zero)
     {
-      // Map of states according to door type
+      // Map of states according to door type (initial Noop to force sound)
       static const std::unordered_map<DOOM::EnumAction::Door, std::list<State>> states = {
-        { DOOM::EnumAction::Door::DoorOpenWaitClose, { State::Open, State::Wait, State::Close } },
-        { DOOM::EnumAction::Door::DoorCloseWaitOpen, { State::Close, State::Wait, State::Open } },
-        { DOOM::EnumAction::Door::DoorWaitOpen, { State::Wait, State::Open } },
-        { DOOM::EnumAction::Door::DoorWaitClose, { State::Wait, State::ForceClose } }
+        { DOOM::EnumAction::Door::DoorOpenWaitClose, { State::Noop, State::Open, State::Wait, State::Close } },
+        { DOOM::EnumAction::Door::DoorCloseWaitOpen, { State::Noop, State::Close, State::Wait, State::Open } },
+        { DOOM::EnumAction::Door::DoorWaitOpen, { State::Noop, State::Wait, State::Open } },
+        { DOOM::EnumAction::Door::DoorWaitClose, { State::Noop, State::Wait, State::ForceClose } }
       };
 
       const std::unordered_map<DOOM::EnumAction::Door, std::list<State>>::const_iterator  iterator = states.find(Door);
@@ -200,6 +249,8 @@ namespace DOOM
         case State::ForceWait:
           elapsed = updateForceWait(doom, sector, elapsed);
           break;
+        case State::Noop:
+          break;
         default:  // Handle error (should not happen)
           throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
         }
@@ -211,6 +262,9 @@ namespace DOOM
         // Pop ended state
         _states.pop_front();
         _elapsed = sf::Time::Zero;
+
+        // Play new state sound
+        updateSound(doom, sector);
       }
 
       // Update ceiling base value when animation ended and remove action from sector
@@ -229,26 +283,26 @@ namespace DOOM
       case DOOM::EnumAction::Door::DoorOpenWaitClose:
         switch (_states.front()) {
         case State::Open:
-          _states = { State::Close };
+          _states = { State::Noop, State::Close };
           return true;
         case State::Close: case State::ForceClose:
-          _states = { State::Open, State::Wait, State::Close };
+          _states = { State::Noop, State::Open, State::Wait, State::Close };
           return true;
         case State::Wait: case State::ForceWait:
-          _states.pop_front();
+          _states.front() = State::Noop;
           return true;
         }
         return false;
       case DOOM::EnumAction::Door::DoorCloseWaitOpen:
         switch (_states.front()) {
         case State::Open:
-          _states = { State::Close, State::Wait, State::Open };
+          _states = { State::Noop, State::Close, State::Wait, State::Open };
           return true;
         case State::Close: case State::ForceClose:
-          _states = { State::Open };
+          _states = { State::Noop, State::Open };
           return true;
         case State::Wait: case State::ForceWait:
-          _states.pop_front();
+          _states.front() = State::Noop;
           return true;
         }
         return false;

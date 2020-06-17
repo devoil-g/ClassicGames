@@ -46,8 +46,17 @@ namespace DOOM
     template<DOOM::Enum::KeyColor _Key = DOOM::Enum::KeyColor::KeyColorNone>
     inline std::enable_if_t<Key != _Key, bool>  triggerKey(DOOM::Doom& doom, DOOM::AbstractThing& thing)  // Check if player has the correct key
     {
+      // Only players can open locked doors
+      if (thing.type != DOOM::Enum::ThingType::ThingType_PLAYER)
+        return false;
+
       // Check if thing has the key
-      return thing.key(Key);
+      if (thing.key(Key) == false) {
+        doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_oof);
+        return false;
+      }
+
+      return true;
     }
 
     template<bool _Repeat = true>

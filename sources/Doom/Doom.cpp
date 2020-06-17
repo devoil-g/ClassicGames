@@ -1202,15 +1202,6 @@ bool	DOOM::Doom::Level::Sidedef::switched(DOOM::Doom & doom, sf::Time toggle, bo
 	  )
       );
 
-      std::cout << Math::Vector<3>(
-	origin.x(),
-	origin.y(),
-	(vertical == Upper) ? ((sector_front.ceiling_current + sector_back.ceiling_current) / 2.f) :
-	(vertical == Lower) ? ((sector_front.floor_current + sector_back.floor_current) / 2.f) :
-	(linedef->front == index) ? ((sector_front.floor_current + sector_front.ceiling_current) / 2.f) :
-	((sector_back.floor_current + sector_back.ceiling_current) / 2.f)
-	) << std::endl;
-
       break;
     }
   }

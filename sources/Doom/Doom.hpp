@@ -623,7 +623,7 @@ namespace DOOM
       private:
         std::array<std::unique_ptr<DOOM::AbstractAction>, DOOM::Doom::Level::Sector::Action::Number>  _actions; // Actions on sector
 
-        static std::unique_ptr<DOOM::AbstractAction>  _factory(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, int16_t type, int16_t model); // Action factory intermediate function (cycling inclusion problem)
+        static std::unique_ptr<DOOM::AbstractAction>  _factory(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, int16_t type, int16_t model); // Action factory proxy function (cycling inclusion problem)
 
       public:
         Sector(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Sector& sector);
