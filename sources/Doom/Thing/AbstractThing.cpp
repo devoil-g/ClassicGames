@@ -5484,7 +5484,7 @@ void	DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elapse
 
   // Raise thing if below the floor
   if (position.z() < floor) {
-    position.z() = std::min(floor, position.z() + std::max(_thrust.z(), (floor - position.z()) / 2.f + 2.f) / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
+    position.z() = std::min(floor, position.z() + std::max(_thrust.z(), (floor - position.z()) / 2.f + 3.2f) / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
     _thrust.z() = std::max(_thrust.z(), 0.f);
 
     // Explode missile if colliding with floor
