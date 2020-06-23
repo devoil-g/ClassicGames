@@ -20,7 +20,10 @@ namespace DOOM
     FloorLevelingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float target, int16_t model = -1) :
       DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>(doom, sector, model),
       _target(target)
-    {}
+    {
+      // Floor sound
+      sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov, true);
+    }
 
     ~FloorLevelingAction() override = default;
 
@@ -41,6 +44,7 @@ namespace DOOM
       // Detect end of action
       if (sector.floor_current == _target) {
         sector.floor_base = sector.floor_current;
+        sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstop);
         remove(doom, sector);
       }
     }

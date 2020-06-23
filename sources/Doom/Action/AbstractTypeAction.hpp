@@ -34,7 +34,8 @@ namespace DOOM
     class AbstractTypeAction : public DOOM::AbstractAction
   {
   private:
-    int16_t _model; // Model for properties copy
+    int16_t                 _model; // Model for properties copy
+    Game::Sound::Reference  _sound; // Sound reference of sector action
 
     void  changeTexture(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector)
     {
@@ -92,10 +93,41 @@ namespace DOOM
       sector.action<Type>().reset();
     }
 
+    void  sound(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, DOOM::Doom::Resources::Sound::EnumSound sfx, bool loop = false)  // Emit sound from sector
+    {
+      int             sector_index = ((uint64_t)&sector - (uint64_t)doom.level.sectors.data()) / sizeof(sector);
+      Math::Vector<2> center;
+      int             center_nb = 0;
+
+      // Aggregate sector vertexes
+      for (const auto& subsector : doom.level.subsectors) {
+        if (subsector.sector == sector_index) {
+          for (int segment_index = 0; segment_index < subsector.count; segment_index++) {
+            const auto& segment = doom.level.segments[segment_index + subsector.index];
+
+            center += doom.level.vertexes[segment.start];
+            center += doom.level.vertexes[segment.end];
+            center_nb += 2;
+          }
+        }
+      }
+
+      // No subsector identified
+      if (center_nb == 0)
+        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+      // Compute average vertex positions to get the center of sector
+      center /= center_nb;
+
+      // Play sound at sector center
+      doom.sound(_sound, sfx, Math::Vector<3>(center.x(), center.y(), (sector.ceiling_base + sector.floor_base) / 2), loop);
+    }
+
   public:
     AbstractTypeAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, int16_t model = -1) :
       DOOM::AbstractAction(doom, sector),
-      _model(model)
+      _model(model),
+      _sound(Game::Sound::Instance().get())
     {
       // Warn for errors
       if (ChangeType != DOOM::EnumAction::Change::Type::None && _model == -1)
@@ -106,6 +138,10 @@ namespace DOOM
         change(doom, sector);
     }
 
-    virtual ~AbstractTypeAction() = default;
+    virtual ~AbstractTypeAction()
+    {
+      // Stop looping sounds
+      _sound.sound.setLoop(false);
+    }
   };
 }

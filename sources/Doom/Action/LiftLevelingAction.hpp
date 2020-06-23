@@ -40,6 +40,7 @@ namespace DOOM
       if (sector.floor_current + elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds() > obstacle) {
         if (sector.floor_current > obstacle) {
           _state = State::Lower;
+          sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstart);
           return elapsed;
         }
         else {
@@ -47,6 +48,7 @@ namespace DOOM
 
           sector.floor_current = obstacle;
           _state = State::Lower;
+          sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstart);
           return exceding;
         }
       }
@@ -60,6 +62,7 @@ namespace DOOM
 
         sector.floor_current = _high;
         _state = (Repeat == true ? State::Wait : State::Stop);
+        sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstop);
         return exceding;
       }
       else {
@@ -79,6 +82,7 @@ namespace DOOM
         remaining = std::min(sf::seconds((_low - floor_new) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
         floor_new = _low;
         _state = State::Wait;
+        sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstop);
       }
 
       // Lower things that stand on the ground of the sector
@@ -115,6 +119,7 @@ namespace DOOM
         _state = (sector.floor_current == _low ?
           State::Raise :
           State::Lower);
+        sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstart);
       }
 
       return exceding;
@@ -138,7 +143,9 @@ namespace DOOM
       _high(high),
       _state(State::Lower),
       _elapsed(sf::Time::Zero)
-    {}
+    {
+      sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstart);
+    }
 
     ~LiftLevelingAction() override = default;
 

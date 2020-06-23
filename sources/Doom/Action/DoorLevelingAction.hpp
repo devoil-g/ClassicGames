@@ -160,47 +160,18 @@ namespace DOOM
       if (_states.empty() == true)
         return;
 
-      DOOM::Doom::Resources::Sound::EnumSound sound = DOOM::Doom::Resources::Sound::EnumSound::Sound_None;
-
       // Select sound to play
       switch (_states.front()) {
       case State::Open:
-        sound = (Speed > DOOM::EnumAction::Speed::SpeedNormal) ? DOOM::Doom::Resources::Sound::EnumSound::Sound_bdopn : DOOM::Doom::Resources::Sound::EnumSound::Sound_doropn;
+        sound(doom, sector, (Speed > DOOM::EnumAction::Speed::SpeedNormal) ? DOOM::Doom::Resources::Sound::EnumSound::Sound_bdopn : DOOM::Doom::Resources::Sound::EnumSound::Sound_doropn);
         break;
       case State::Close:
       case State::ForceClose:
-        sound = (Speed > DOOM::EnumAction::Speed::SpeedNormal) ? DOOM::Doom::Resources::Sound::EnumSound::Sound_bdcls : DOOM::Doom::Resources::Sound::EnumSound::Sound_dorcls;
+        sound(doom, sector, (Speed > DOOM::EnumAction::Speed::SpeedNormal) ? DOOM::Doom::Resources::Sound::EnumSound::Sound_bdcls : DOOM::Doom::Resources::Sound::EnumSound::Sound_dorcls);
         break;
       default:  // Handle error (should not happen)
         return;
       }
-
-      int             sector_index = ((uint64_t)&sector - (uint64_t)doom.level.sectors.data()) / sizeof(sector);
-      Math::Vector<2> center;
-      int             center_nb = 0;
-
-      // Aggregate sector vertexes
-      for (const auto& subsector : doom.level.subsectors) {
-        if (subsector.sector == sector_index) {
-          for (int segment_index = 0; segment_index < subsector.count; segment_index++) {
-            const auto& segment = doom.level.segments[segment_index + subsector.index];
-
-            center += doom.level.vertexes[segment.start];
-            center += doom.level.vertexes[segment.end];
-            center_nb += 2;
-          }
-        }
-      }
-
-      // No subsector identified
-      if (center_nb == 0)
-        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-      // Compute center of sector
-      center /= center_nb;
-
-      // Play sound at sector center
-      doom.sound(sound, Math::Vector<3>(center.x(), center.y(), (sector.ceiling_base + sector.floor_base) / 2));
     }
 
   public:

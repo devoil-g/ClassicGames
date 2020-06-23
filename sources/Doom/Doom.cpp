@@ -5,7 +5,6 @@
 #include "Doom/Action/OscillateLightingAction.hpp"
 #include "Doom/Action/RandomLightingAction.hpp"
 #include "Doom/Thing/PlayerThing.hpp"
-#include "System/Sound.hpp"
 
 const sf::Time	    DOOM::Doom::Tic = sf::seconds(1.f / 35.f);
 const unsigned int  DOOM::Doom::RenderWidth = 320;
@@ -215,40 +214,51 @@ void	DOOM::Doom::addPlayer(int controller)
   level.things.push_back(std::make_unique<DOOM::PlayerThing>(*this, (int)level.players.size() + 1, controller));
 }
 
-void	DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound)
+void	DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound, bool loop)
+{
+  this->sound(Game::Sound::Instance().get(), sound, loop);
+}
+
+void	DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound, const Math::Vector<3> & position, bool loop)
+{
+  this->sound(Game::Sound::Instance().get(), sound, position, loop);
+}
+
+void  DOOM::Doom::sound(Game::Sound::Reference& ref, DOOM::Doom::Resources::Sound::EnumSound sound, bool loop)
 {
   // Does nothing if no sound
-  if (sound == DOOM::Doom::Resources::Sound::EnumSound::Sound_None)
+  if (sound == DOOM::Doom::Resources::Sound::EnumSound::Sound_None) {
+    ref.sound.stop();
     return;
+  }
 
   std::unordered_map<uint64_t, DOOM::Doom::Resources::Sound>::const_iterator	iterator = resources.sounds.find(DOOM::str_to_key(std::string("DS") + DOOM::Doom::Resources::Sound::sound_info[sound].name));
 
   // Cancel if no sound found
   if (iterator == resources.sounds.cend())
     return;
-
-  Game::Sound::Reference	ref = Game::Sound::Instance().get();
 
   // Play sound
   ref.sound.setBuffer(iterator->second.buffer);
   ref.sound.setRelativeToListener(true);
   ref.sound.setVolume(sfx * 100.f);
+  ref.sound.setLoop(loop);
   ref.sound.play();
 }
 
-void	DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound, const Math::Vector<3> & position)
+void  DOOM::Doom::sound(Game::Sound::Reference& ref, DOOM::Doom::Resources::Sound::EnumSound sound, const Math::Vector<3>& position, bool loop)
 {
   // Does nothing if no sound
-  if (sound == DOOM::Doom::Resources::Sound::EnumSound::Sound_None)
+  if (sound == DOOM::Doom::Resources::Sound::EnumSound::Sound_None) {
+    ref.sound.stop();
     return;
+  }
 
   std::unordered_map<uint64_t, DOOM::Doom::Resources::Sound>::const_iterator	iterator = resources.sounds.find(DOOM::str_to_key(std::string("DS") + DOOM::Doom::Resources::Sound::sound_info[sound].name));
 
   // Cancel if no sound found
   if (iterator == resources.sounds.cend())
     return;
-
-  Game::Sound::Reference	ref = Game::Sound::Instance().get();
 
   // Set sound properties
   // NOTE: a sound should be heard from a maximum distance of 1200 units
@@ -257,6 +267,7 @@ void	DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound, const Math
   ref.sound.setAttenuation(3.2f);
   ref.sound.setVolume(sfx * 100.f);
   ref.sound.setMinDistance(256.f);
+  ref.sound.setLoop(loop);
 
   // Single player
   if (level.players.size() == 1) {
@@ -268,7 +279,7 @@ void	DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound, const Math
     float	distance = std::numeric_limits<float>::max();
 
     // Get smallest distance from a player
-    for (const DOOM::PlayerThing & player : level.players)
+    for (const DOOM::PlayerThing& player : level.players)
       distance = std::min(distance, (player.position - position).length());
 
     ref.sound.setPosition(distance, 0.f, 0.f);

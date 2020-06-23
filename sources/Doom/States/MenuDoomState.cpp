@@ -283,10 +283,10 @@ bool  DOOM::MenuDoomState::update(sf::Time elapsed)
     :
     std::list<std::pair<bool, std::function<void()>>>{
       { Game::Window::Instance().joystick().buttonPressed(controller - 1, 0) == true, [this]() { updateSelect(); } },
-      { Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovY) < +0.9f && Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovY) != 0.f, [this]() { updateUp(); } },
-      { Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovY) < -0.9f && Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovY) != 0.f, [this]() { updateDown(); } },
-      { Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovX) < -0.9f && Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovX) != 0.f, [this]() { updateLeft(); } },
-      { Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovX) < +0.9f && Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovX) != 0.f, [this]() { updateRight(); } },
+      { Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovY) > +0.9f && Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovY) != 0.f, [this]() { updateUp(); } },
+      { Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovY) < -0.9f && Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovY) != 0.f, [this]() { updateDown(); } },
+      { Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovX) < -0.9f && Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovX) != 0.f, [this]() { updateLeft(); } },
+      { Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovX) > +0.9f && Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovX) != 0.f, [this]() { updateRight(); } },
       { Game::Window::Instance().joystick().buttonPressed(controller - 1, 1) == true, [this]() { updateEscape(); } },
     };
 

@@ -21,7 +21,7 @@ namespace DOOM
 
     float _target;  // Floor target height
     State _state;   // Platform current state
-
+    
     sf::Time  updateRaise(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed)
     {
       float obstacle = std::numeric_limits<float>::max();
@@ -37,6 +37,7 @@ namespace DOOM
         if (sector.floor_current > obstacle) {
           _target = sector.floor_base;
           _state = State::Lower;
+          sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstart);
           return elapsed;
         }
         else {
@@ -45,6 +46,7 @@ namespace DOOM
           sector.floor_current = obstacle;
           _target = sector.floor_base;
           _state = State::Lower;
+          sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstart);
           return exceding;
         }
       }
@@ -58,6 +60,7 @@ namespace DOOM
 
         sector.floor_current = _target;
         _state = State::Stop;
+        sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstop);
         return exceding;
       }
       else {
@@ -77,6 +80,7 @@ namespace DOOM
         remaining = std::min(sf::seconds((_target - floor_new) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
         floor_new = _target;
         _state = State::Stop;
+        sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstop);
       }
 
       // Lower things that stand on the ground of the sector
@@ -117,7 +121,10 @@ namespace DOOM
       DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>(doom, sector, model),
       _target(target),
       _state(State::Raise)
-    {}
+    {
+      // Platform sound
+      sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov);
+    }
 
     ~PlatformLevelingAction() override = default;
 

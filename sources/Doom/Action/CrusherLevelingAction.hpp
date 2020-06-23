@@ -30,6 +30,9 @@ namespace DOOM
 
         sector.ceiling_current = sector.ceiling_base;
         _state = State::Lower;
+        if (Silent == true)
+          sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstop);
+
         return exceding;
       }
       else {
@@ -50,6 +53,9 @@ namespace DOOM
 
         sector.ceiling_current = sector.floor_base + 8.f;
         _state = State::Raise;
+        if (Silent == true)
+          sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstop);
+
         return exceding;
       }
       else {
@@ -61,7 +67,11 @@ namespace DOOM
     CrusherLevelingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector) :
       DOOM::AbstractStoppableAction<DOOM::Doom::Level::Sector::Action::Leveling>(doom, sector),
       _state(State::Lower)
-    {}
+    {
+      // Crusher sound
+      if (Silent == false)
+        sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov, true);
+    }
 
     ~CrusherLevelingAction() override = default;
 

@@ -3,12 +3,16 @@
 
 #include "System/Sound.hpp"
 
-Game::Sound::Reference::Reference(sf::Sound & sound, int & lock) :
+Game::Sound::Reference::Reference(sf::Sound& sound, int& lock) :
   _lock(lock), sound(sound)
 {
   // Lock instance
   _lock++;
 }
+
+Game::Sound::Reference::Reference(const Game::Sound::Reference& ref) :
+  Game::Sound::Reference(ref.sound, ref._lock)
+{}
 
 Game::Sound::Reference::~Reference()
 {

@@ -12,6 +12,7 @@
 
 #include "Doom/Wad.hpp"
 #include "Math/Vector.hpp"
+#include "System/Sound.hpp"
 
 namespace DOOM
 {
@@ -796,8 +797,10 @@ namespace DOOM
 
     void  addPlayer(int controller);  // Add player to current game
 
-    void  sound(DOOM::Doom::Resources::Sound::EnumSound sound);                                   // Play a sound
-    void  sound(DOOM::Doom::Resources::Sound::EnumSound sound, const Math::Vector<3>& position);  // Play a sound relatively to a position
+    void  sound(DOOM::Doom::Resources::Sound::EnumSound sound, bool loop = false);                                                               // Play a sound
+    void  sound(DOOM::Doom::Resources::Sound::EnumSound sound, const Math::Vector<3>& position, bool loop = false);                              // Play a sound relatively to a position
+    void  sound(Game::Sound::Reference& ref, DOOM::Doom::Resources::Sound::EnumSound sound, bool loop = false);                                  // Play a sound with given reference
+    void  sound(Game::Sound::Reference& ref, DOOM::Doom::Resources::Sound::EnumSound sound, const Math::Vector<3>& position, bool loop = false); // Play a sound relatively to a position with given reference
   };
 }
 

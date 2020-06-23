@@ -18,6 +18,11 @@ namespace Game
       int&  _lock;  // Reference to lock of sound
 
       Reference(sf::Sound& sound, int& lock);
+      Reference(const Reference& ref);
+
+      Reference(Reference&& ref) = delete;
+      Reference& operator=(const Reference& ref) = delete;
+      Reference& operator=(Reference&& ref) = delete;
 
     public:
       sf::Sound&  sound;  // Reference to sound to be played

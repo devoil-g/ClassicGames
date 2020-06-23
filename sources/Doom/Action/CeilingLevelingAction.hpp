@@ -18,7 +18,10 @@ namespace DOOM
     CeilingLevelingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float target) :
       DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling>(doom, sector),
       _target(target)
-    {}
+    {
+      // Ceiling sound
+      sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov, true);
+    }
 
     ~CeilingLevelingAction() override = default;
 
