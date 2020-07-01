@@ -5106,9 +5106,15 @@ void	DOOM::AbstractThing::updatePhysics(DOOM::Doom& doom, sf::Time elapsed)
     // Compute movement with collision
     updatePhysicsThrust(doom, elapsed);
 
-    // Apply friction slowdown to thing (except missiles) for next tic (hard coded drag factor of 0.90625)
-    if (!(flags & DOOM::Enum::ThingProperty::ThingProperty_Missile))
+    // Apply friction slowdown to thing (except missiles and attacking flying skulls) for next tic (hard coded drag factor of 0.90625)
+    if (!(flags & (DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_SkullFly)))
       _thrust.convert<2>() *= std::powf(0.90625f, elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
+  }
+
+  // Special case for lost souls
+  else if (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly) {
+    flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_SkullFly);
+    setState(doom, attributs.state_see);
   }
 
   // Update gravity
@@ -5221,6 +5227,12 @@ void DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed
 
     // Slide against currently collisioned walls/things (change movement and thrust)
     _thrust.convert<2>() = closest_direction / closest_direction.length() * _thrust.convert<2>().length() * Math::Vector<2>::cos(_thrust.convert<2>(), closest_direction);
+
+    // Reset lost soul when colliding something
+    if (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly) {
+      flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_SkullFly);
+      setState(doom, attributs.state_see);
+    }
 
     // Explode if thing is a missile
     if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile) {
@@ -5480,12 +5492,16 @@ void	DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elapse
   // Compute gravity
   _thrust.z() += _gravity / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds();
 
+  // Apply friction to vertical thrust for non attacking fly skulls
+  if (type == DOOM::Enum::ThingType::ThingType_SKULL && !(flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly))
+    _thrust.z() *= std::powf(0.90625f, elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
+
   // TODO: delete missile if colliding with sky
 
   // Raise thing if below the floor
   if (position.z() < floor) {
     position.z() = std::min(floor, position.z() + std::max(_thrust.z(), (floor - position.z()) / 2.f + 3.2f) / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
-    _thrust.z() = std::max(_thrust.z(), 0.f);
+    _thrust.z() = std::max(_thrust.z(), (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly) ? +std::abs(_thrust.z()) : 0.f);
 
     // Explode missile if colliding with floor
     if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
@@ -5494,7 +5510,7 @@ void	DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elapse
   // Lower thing is upper than the ceiling (limit to floor)
   else if (position.z() > ceiling - height) {
     position.z() = std::max(std::max(ceiling - height, floor), position.z() + std::min(_thrust.z(), ((ceiling - attributs.height) - position.z()) / 2.f + 2.f) / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
-    _thrust.z() = std::min(_thrust.z(), 0.f);
+    _thrust.z() = std::min(_thrust.z(), (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly) ? -std::abs(_thrust.z()) : 0.f);
 
     // Explode missile if colliding with ceiling
     if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
@@ -5504,7 +5520,7 @@ void	DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elapse
   else if (_thrust.z() < 0.f) {
     position.z() = std::max(floor, position.z() + _thrust.z() / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
     if (position.z() == floor) {
-      _thrust.z() = 0.f;
+      _thrust.z() = (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly) ? +std::abs(_thrust.z()) : 0.f;
 
       // Explode missile if colliding with floor
       if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
@@ -5515,7 +5531,7 @@ void	DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elapse
   else if (_thrust.z() > 0.f) {
     position.z() = std::min(std::max(ceiling - height, floor), position.z() + _thrust.z() / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
     if (position.z() == ceiling - height) {
-      _thrust.z() = 0.f;
+      _thrust.z() = (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly) ? -std::abs(_thrust.z()) : 0.f;
 
       // Explode missile if colliding with floor
       if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
@@ -5920,7 +5936,7 @@ bool	DOOM::AbstractThing::P_TryMove(DOOM::Doom& doom, const Math::Vector<2>& pos
 
     // Don't stand over a dropoff
     if (!(flags & (DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_Float)) &&
-      (target_floor - this->position.z() < -24.f) || (doom.level.sectors[doom.level.getSector(position).first].floor_current - doom.level.sectors[doom.level.getSector(this->position.convert<2>()).first].floor_current < -24.f))
+      ((target_floor - this->position.z() < -24.f) || (doom.level.sectors[doom.level.getSector(position).first].floor_current - doom.level.sectors[doom.level.getSector(this->position.convert<2>()).first].floor_current < -24.f)))
       return false;
   }
 
@@ -5992,7 +6008,7 @@ bool	DOOM::AbstractThing::P_Move(DOOM::Doom& doom)
 
   if (P_TryMove(doom, move_position) == false) {
     // Floating things
-    if (flags & DOOM::Enum::ThingProperty::ThingProperty_Float && P_CheckPosition(doom, move_position) == true) {
+    if ((flags & DOOM::Enum::ThingProperty::ThingProperty_Float) && P_CheckPosition(doom, move_position) == true) {
       float target_floor = std::numeric_limits<float>::lowest();
       float target_ceiling = std::numeric_limits<float>::max();
 
@@ -6796,9 +6812,9 @@ void	DOOM::AbstractThing::A_SkullAttack(DOOM::Doom& doom)
   // Rush to target
   _thrust = Math::Vector<3>();
   thrust(Math::Vector<3>(
-    std::cos(angle) / DOOM::AbstractThing::SkullSpeed,
-    std::sin(angle) / DOOM::AbstractThing::SkullSpeed,
-    (_target->position.z() + (float)_target->height / 2.f - position.z()) / std::max(1.f, (_target->position.convert<2>() - position.convert<2>()).length() / DOOM::AbstractThing::SkullSpeed)));
+    std::cos(angle) * DOOM::AbstractThing::SkullSpeed,
+    std::sin(angle) * DOOM::AbstractThing::SkullSpeed,
+    (_target->position.z() + (float)_target->height / 2.f - position.z()) / std::max(1.f, (_target->position.convert<2>() - position.convert<2>()).length()) * DOOM::AbstractThing::SkullSpeed));
 }
 
 void    DOOM::AbstractThing::A_PainAttack(DOOM::Doom& doom)
