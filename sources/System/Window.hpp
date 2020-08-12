@@ -22,8 +22,8 @@ namespace Game
     static const unsigned int DefaultWidth;         // Default window width
     static const unsigned int DefaultHeight;        // Default window height
     static const unsigned int DefaultAntialiasing;  // Default antialiasing level
+    static const bool         DefaultVerticalSync;  // Vertical synchronisation activation
     static const sf::Time     FpsRefresh;           // Time between FPS refresh
-    static const bool         VerticalSync;         // Vertical synchronisation activation
 
   private:
     class Mouse

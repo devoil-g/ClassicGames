@@ -913,7 +913,7 @@ std::list<std::reference_wrapper<DOOM::AbstractThing>>	DOOM::Doom::Level::getThi
 
 std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>	DOOM::Doom::Level::getThings(const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit) const
 {
-  // TODO: optimize this
+  // TODO: optimize this using blockmap ?
   std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>  result;
 
   // Test every things
@@ -934,7 +934,7 @@ std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>	DOOM::D
       continue;
     }
 
-    float x2 = (-b - std::sqrt(delta)) / (2.f * a);
+    float x2 = (-b + std::sqrt(delta)) / (2.f * a);
     if (x2 >= 0.f && x2 <= limit) {
       result.push_back({ x2, *thing.get() });
       continue;

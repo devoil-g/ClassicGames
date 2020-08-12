@@ -95,7 +95,7 @@ namespace DOOM
 
     void  sound(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, DOOM::Doom::Resources::Sound::EnumSound sfx, bool loop = false)  // Emit sound from sector
     {
-      int             sector_index = ((uint64_t)&sector - (uint64_t)doom.level.sectors.data()) / sizeof(sector);
+      int             sector_index = (int)(((uint64_t)&sector - (uint64_t)doom.level.sectors.data()) / sizeof(sector));
       Math::Vector<2> center;
       int             center_nb = 0;
 
@@ -117,7 +117,7 @@ namespace DOOM
         throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
       // Compute average vertex positions to get the center of sector
-      center /= center_nb;
+      center /= (float)center_nb;
 
       // Play sound at sector center
       doom.sound(_sound, sfx, Math::Vector<3>(center.x(), center.y(), (sector.ceiling_base + sector.floor_base) / 2), loop);

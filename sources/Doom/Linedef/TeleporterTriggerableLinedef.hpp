@@ -24,9 +24,9 @@ namespace DOOM
 
       // Search for teleporter target in sector
       for (const std::unique_ptr<DOOM::AbstractThing>& sector_thing : doom.level.things) {
-        // TODO: do not hardcode 14 for teleporter type
-        if (sector_thing->attributs.id == 14 && doom.level.getSector(sector_thing->position.convert<2>()).first == sector_index) {
-          // TODO: telefrag monster on landing position
+        // TODO: test if teleport still work
+        // if (sector_thing->id == 14 && doom.level.getSector(sector_thing->position.convert<2>()).first == sector_index) {
+        if (sector_thing->type == DOOM::Enum::ThingType::ThingType_TELEPORTMAN && doom.level.getSector(sector_thing->position.convert<2>()).first == sector_index) {
           thing.teleport(doom, sector_thing->position.convert<2>(), sector_thing->angle);
           return true;
         }

@@ -9,7 +9,7 @@ unsigned int const	Game::Window::DefaultWidth = 640;
 unsigned int const	Game::Window::DefaultHeight = 480;
 unsigned int const	Game::Window::DefaultAntialiasing = 4;
 sf::Time const		Game::Window::FpsRefresh = sf::seconds(1.f);
-bool const		Game::Window::VerticalSync = true;
+bool const		Game::Window::DefaultVerticalSync = true;
 float const		Game::Window::Joystick::DeadZone = 20.f;
 
 Game::Window::Window() :
@@ -135,7 +135,7 @@ void		Game::Window::create(sf::VideoMode const & video, sf::Uint32 style, sf::Co
   _window.create(video, Game::Window::DefaultTitle, style, context);
 
   // Activate V-sync (limit fps)
-  _window.setVerticalSyncEnabled(Game::Window::VerticalSync);
+  _window.setVerticalSyncEnabled(Game::Window::DefaultVerticalSync);
   
   // Disabled key repeate
   _window.setKeyRepeatEnabled(false);

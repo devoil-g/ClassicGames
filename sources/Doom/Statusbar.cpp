@@ -76,7 +76,7 @@ void	DOOM::Statusbar::renderAmmo(const DOOM::Doom & doom, sf::Image & target, sf
 void	DOOM::Statusbar::renderHealth(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect) const
 {
   // Draw health in big red digits
-  renderDecimal(doom, target, rect, "STTNUM", health, 90, 3);
+  renderDecimal(doom, target, rect, "STTNUM", (int)std::ceil(health), 90, 3);
   renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key("STTPRCNT"))->second, 90, 3);
 }
 
@@ -99,7 +99,7 @@ void	DOOM::Statusbar::renderFace(const DOOM::Doom & doom, sf::Image & target, sf
 void	DOOM::Statusbar::renderArmor(const DOOM::Doom & doom, sf::Image & target, sf::Rect<int16_t> rect) const
 {
   // Draw armor in big red digits
-  renderDecimal(doom, target, rect, "STTNUM", armor, 221, 3);
+  renderDecimal(doom, target, rect, "STTNUM", (int)std::ceil(armor), 221, 3);
   renderTexture(doom, target, rect, doom.resources.menus.find(DOOM::str_to_key("STTPRCNT"))->second, 221, 3);
 }
 

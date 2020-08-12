@@ -14,7 +14,8 @@ namespace DOOM
     enum State
     {
       Raise,  // Raise the crusher
-      Lower   // Lower the crusher
+      Lower,  // Lower the crusher
+      Crush   // Crush things bellow
     };
 
     State _state; // Crusher current state
@@ -42,10 +43,33 @@ namespace DOOM
 
     sf::Time  updateLower(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed)
     {
+      float tallest = std::numeric_limits<float>::lowest();
+      auto  things = doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable);
+
+      // Find tallest thing in sector
+      for (const auto& thing : things)
+        tallest = std::max(tallest, (float)thing.get().height);
+
       // Lower crusher
       sector.ceiling_current -= elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds();
 
-      // TODO: handle collision
+      // Stop before crushing things
+      if (sector.ceiling_current - sector.floor_base <= tallest) {
+        sf::Time  exceding = std::min(sf::seconds((sector.floor_base + tallest - sector.ceiling_current) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
+
+        sector.ceiling_current = sector.floor_base + tallest;
+        _state = State::Crush;
+
+        // Lower things collinding with ceiling
+        for (const auto& thing : things)
+          thing.get().position.z() = std::max(std::min(thing.get().position.z(), sector.ceiling_current - thing.get().height), sector.floor_base);
+
+        return exceding;
+      }
+
+      // Lower things collinding with ceiling
+      for (const auto& thing : things)
+        thing.get().position.z() = std::max(std::min(thing.get().position.z(), sector.ceiling_current - thing.get().height), sector.floor_base);
 
       // Compute exceding time
       if (sector.ceiling_current < sector.floor_base + 8.f) {
@@ -61,6 +85,52 @@ namespace DOOM
       else {
         return sf::Time::Zero;
       }
+    }
+
+    sf::Time  updateCrush(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed)
+    {
+      float tallest = std::numeric_limits<float>::lowest();
+      auto  things = doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable);
+
+      // Find tallest thing in sector
+      for (const auto& thing : things)
+        tallest = std::max(tallest, (float)thing.get().height);
+
+      // Nothing to crush, return to normal state
+      if (sector.ceiling_current > sector.floor_base + tallest) {
+        _state = State::Lower;
+        return elapsed;
+      }
+
+      // Lower crusher
+      float speed = Speed / (Speed == DOOM::EnumAction::Speed::SpeedSlow ? 8.f : 1.f);
+      sector.ceiling_current -= elapsed.asSeconds() * speed / DOOM::Doom::Tic.asSeconds();
+
+      // Lower things collinding with ceiling
+      for (const auto& thing : things)
+        thing.get().position.z() = std::max(std::min(thing.get().position.z(), sector.ceiling_current - thing.get().height), sector.floor_base);
+
+      // Damage things
+      for (const auto& thing : things) {
+        float distance = std::min(sector.floor_base + thing.get().height, sector.ceiling_current + elapsed.asSeconds() * speed / DOOM::Doom::Tic.asSeconds()) - std::max(sector.floor_base + 8.f, sector.ceiling_current);
+        float damage = distance / speed * 2.5f;
+
+        thing.get().damage(doom, damage);
+      }
+
+      // Compute exceding time
+      if (sector.ceiling_current < sector.floor_base + 8.f) {
+        sf::Time  exceding = std::min(sf::seconds((sector.floor_base + 8.f - sector.ceiling_current) / (Speed / (Speed == DOOM::EnumAction::Speed::SpeedSlow ? 8.f : 1.f)) * DOOM::Doom::Tic.asSeconds()), elapsed);
+
+        sector.ceiling_current = sector.floor_base + 8.f;
+        _state = State::Raise;
+        if (Silent == true)
+          sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstop);
+
+        return exceding;
+      }
+      else
+        return sf::Time::Zero;
     }
 
   public:
@@ -90,6 +160,9 @@ namespace DOOM
           break;
         case State::Lower:
           elapsed = updateLower(doom, sector, elapsed);
+          break;
+        case State::Crush:
+          elapsed = updateCrush(doom, sector, elapsed);
           break;
 
         default:  // Handle error (should not happen)

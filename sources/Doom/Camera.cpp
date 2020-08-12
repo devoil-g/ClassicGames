@@ -276,8 +276,8 @@ int16_t	DOOM::Camera::renderLight(const DOOM::Doom & doom, sf::Rect<int16_t> rec
 
 void	DOOM::Camera::renderTexture(DOOM::Doom const & doom, sf::Rect<int16_t> rect, DOOM::Camera::Special special, DOOM::Doom::Resources::Texture const & texture, int column, float top, float bottom, float height, int offset_x, float offset_y, int16_t light, int16_t seg)
 {
-  int									pixel_x(Math::Modulo(offset_x, texture.width));
-  std::vector<DOOM::Doom::Resources::Texture::Column::Span> const &	spans(texture.columns[pixel_x].spans);
+  int									    pixel_x(Math::Modulo(offset_x, texture.width));
+  std::vector<DOOM::Doom::Resources::Texture::Column::Span> const &         spans(texture.columns[pixel_x].spans);
 
   // Draw column of pixels
   for (int row = std::max(_vertical[column].first, (int)std::lroundf(top)); row < std::min((int)std::lroundf(bottom) + 0, _vertical[column].second); row++)
@@ -288,8 +288,6 @@ void	DOOM::Camera::renderTexture(DOOM::Doom const & doom, sf::Rect<int16_t> rect
       // Find pixel in column span
       for (DOOM::Doom::Resources::Texture::Column::Span const & span : spans)
       {
-	// TODO: optimize this (remember last span ?)
-
 	// Skip spans if before targeted pixel
 	if (span.offset + span.pixels.size() <= pixel_y)
 	  continue;
@@ -439,7 +437,7 @@ void	DOOM::Camera::renderThings(DOOM::Doom const & doom, sf::Rect<int16_t> rect,
 	  if (visible.find(segment_index) == visible.end())
 	  {
 	    // Visible if segment is behind thing from camera point of view
-	    if (vertexes[segment.start] > iterator->second&& vertexes[segment.end] > iterator->second)
+	    if (vertexes[segment.start] > iterator->second && vertexes[segment.end] > iterator->second)
 	      visible[segment_index] = true;
 	    else if (vertexes[segment.start] < iterator->second && vertexes[segment.end] < iterator->second)
 	      visible[segment_index] = false;

@@ -217,9 +217,24 @@ namespace DOOM
       ~Attributs() = default;
     };
 
-    static const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>               _sprites;   // Table of thing sprites
-    static const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::State_Number>  _states;    // Table of thing states
-    static const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingType_Number>    _attributs; // Table of thing attributs
+    enum Direction
+    {
+      DirectionNone = -1,
+      DirectionEast,
+      DirectionNorthEast,
+      DirectionNorth,
+      DirectionNorthWest,
+      DirectionWest,
+      DirectionSouthWest,
+      DirectionSouth,
+      DirectionSouthEast,
+      DirectionNumber
+    };
+
+    static const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>               _sprites;     // Table of thing sprites
+    static const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::State_Number>  _states;      // Table of thing states
+    static const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingType_Number>    _attributs;   // Table of thing attributs
+    static const std::array<Math::Vector<2>, DOOM::AbstractThing::Direction::DirectionNumber>	        _directions;  // Table of move direction vectors
 
     // Constant values
     static const float  MeleeRange;
@@ -239,24 +254,10 @@ namespace DOOM
     const DOOM::AbstractThing::Attributs& attributs;  // Attributs of thing
     DOOM::Enum::ThingProperty             flags;      // Thing properties (from attributs + ambush + justattacked)
 
-    int health; // Thing health points
-    int height; // Thing height
+    float health; // Thing health points
+    int   height; // Thing height
 
   protected:
-    enum Direction
-    {
-      DirectionNone = -1,
-      DirectionEast,
-      DirectionNorthEast,
-      DirectionNorth,
-      DirectionNorthWest,
-      DirectionWest,
-      DirectionSouthWest,
-      DirectionSouth,
-      DirectionSouthEast,
-      DirectionNumber
-    };
-
     int       reactiontime;   // Thing reaction time counter
     Direction move_direction; // Movement direction
     int       move_count;     // When 0, select a new direction
@@ -268,6 +269,7 @@ namespace DOOM
     sf::Time                        _elapsed; // Elapsed time since beginning of state
 
     DOOM::AbstractThing*  _target;            // Thing targeted or missile emitter
+    DOOM::AbstractThing*  _tracer;            // Thing being chased/attacked
     int                   _target_threshold;  // Time focusing exclusively on target
 
   protected:
@@ -349,29 +351,28 @@ namespace DOOM
     void  A_Chase(DOOM::Doom& doom);  // Default movement action, move to target.
 
     // TODO: merge these methods
-    float P_AimLineAttack(DOOM::Doom& doom, const DOOM::AbstractThing& target);                                                                     // Compute visible height of target, NaN if target is not visible
-    bool  P_CheckSight(DOOM::Doom& doom, const DOOM::AbstractThing& target);                                                                        // Check if target is in the line of sight of thing.
-    bool  P_CheckMeleeRange(DOOM::Doom& doom);                                                                                                      // Return true if a melee attack can be performed.
-    bool  P_CheckMissileRange(DOOM::Doom& doom);                                                                                                    // Return true if a missile attack can be performed.
-    bool  P_CheckPosition(DOOM::Doom& doom, const Math::Vector<2>& position);                                                                       // Check destination position against linedefs and other things.
-    bool  P_LookForPlayers(DOOM::Doom& doom, bool full = false);                                                                                    // Find a player to target. Return true if target found. If full is false, only look 180 degree in front.
-    bool  P_Move(DOOM::Doom& doom);                                                                                                                 // Move in the current direction, return false if the move is blocked.
-    void  P_NewChaseDir(DOOM::Doom& doom);                                                                                                          // Find a new direction to chase target.
-    bool  P_TryMove(DOOM::Doom& doom, const Math::Vector<2>& position);                                                                             // Attempt to move thing to a new position, crossing special lines unless property Teleport is set.
-    bool  P_TryWalk(DOOM::Doom& doom);                                                                                                              // Attempt to move thing in its direction. If blocked if either a wall or a thing, return false. If move is either clear or blocked only by a door, return true and sets (and open the door).
-    void  P_LineAttack(DOOM::Doom& doom, float atk_range, const Math::Vector<3>& atk_origin, const Math::Vector<3>& atk_direction, int atk_damage); // Compute an attack from current 
-    void  P_LineSwitch(DOOM::Doom& doom, float swc_range, const Math::Vector<3>& swc_origin, const Math::Vector<3>& swc_direction);                 // Switch the first non obstructed linedef in range 
-    void  P_SpawnMissile(DOOM::Doom& doom, DOOM::Enum::ThingType type);                                                                             // Spawn a missile from thing to target
-    void  P_ExplodeMissile(DOOM::Doom& doom);                                                                                                       // Destroy missile
-    void  P_ExplodeMissile(DOOM::Doom& doom, DOOM::AbstractThing& target);                                                                          // Destroy missile on a target
-    void  P_RadiusAttack(DOOM::Doom& doom, DOOM::AbstractThing& source, int damage);                                                                // Blast damage from current thing position
+    float P_AimLineAttack(DOOM::Doom& doom, const DOOM::AbstractThing& target);                                                                       // Compute visible height of target, NaN if target is not visible
+    bool  P_CheckSight(DOOM::Doom& doom, const DOOM::AbstractThing& target);                                                                          // Check if target is in the line of sight of thing.
+    bool  P_CheckMeleeRange(DOOM::Doom& doom);                                                                                                        // Return true if a melee attack can be performed.
+    bool  P_CheckMissileRange(DOOM::Doom& doom);                                                                                                      // Return true if a missile attack can be performed.
+    bool  P_CheckPosition(DOOM::Doom& doom, const Math::Vector<2>& position);                                                                         // Check destination position against linedefs and other things.
+    bool  P_LookForPlayers(DOOM::Doom& doom, bool full = false);                                                                                      // Find a player to target. Return true if target found. If full is false, only look 180 degree in front.
+    bool  P_Move(DOOM::Doom& doom);                                                                                                                   // Move in the current direction, return false if the move is blocked.
+    void  P_NewChaseDir(DOOM::Doom& doom);                                                                                                            // Find a new direction to chase target.
+    bool  P_TryMove(DOOM::Doom& doom, const Math::Vector<2>& position);                                                                               // Attempt to move thing to a new position, crossing special lines unless property Teleport is set.
+    bool  P_TryWalk(DOOM::Doom& doom);                                                                                                                // Attempt to move thing in its direction. If blocked if either a wall or a thing, return false. If move is either clear or blocked only by a door, return true and sets (and open the door).
+    void  P_LineAttack(DOOM::Doom& doom, float atk_range, const Math::Vector<3>& atk_origin, const Math::Vector<3>& atk_direction, float atk_damage); // Compute an attack from current 
+    void  P_LineSwitch(DOOM::Doom& doom, float swc_range, const Math::Vector<3>& swc_origin, const Math::Vector<3>& swc_direction);                   // Switch the first non obstructed linedef in range 
+    void  P_SpawnMissile(DOOM::Doom& doom, DOOM::Enum::ThingType type);                                                                               // Spawn a missile from thing to target
+    void  P_ExplodeMissile(DOOM::Doom& doom);                                                                                                         // Destroy missile
+    void  P_ExplodeMissile(DOOM::Doom& doom, DOOM::AbstractThing& target);                                                                            // Destroy missile on a target
+    void  P_RadiusAttack(DOOM::Doom& doom, DOOM::AbstractThing& source, float damage);                                                                // Blast damage from current thing position
+    void  P_SpawnPuff(DOOM::Doom& doom, const Math::Vector<3>& coordinates) const;                                                                    // Spawn a smoke puff at coordinates
+    void  P_SpawnBlood(DOOM::Doom& doom, const Math::Vector<3>& coordinates, float damage) const;                                                     // Spawn blood splats at coordinates
 
     void  setState(DOOM::Doom& doom, DOOM::AbstractThing::ThingState state);  // Switch state
 
     virtual bool  pickup(DOOM::Doom& doom, DOOM::AbstractThing& item); // Try to pick-up item, return true if item shall be deleted
-
-    virtual void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, int damage); // Receive attack from attacker caused by origin
-    virtual void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, int damage);                              // Receive attack from attacker
 
     void                                                                                updatePhysics(DOOM::Doom& doom, sf::Time elapsed);                                                                                                        // Update physics of thing
     void                                                                                updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed, int depth = 0, int16_t linedef_ignored = -1, const DOOM::AbstractThing* thing_ignored = nullptr); // Update thrust component of thing
@@ -389,6 +390,10 @@ namespace DOOM
 
     void  teleport(DOOM::Doom& doom, const Math::Vector<2>& destination, float angle);  // Teleport thing to position (reset physics)
     void  thrust(const Math::Vector<3>& acceleration);                                  // Apply acceleration to thing
+
+    virtual void  damage(DOOM::Doom & doom, DOOM::AbstractThing & attacker, DOOM::AbstractThing & origin, float damage);  // Receive attack from attacker caused by origin
+    virtual void  damage(DOOM::Doom & doom, DOOM::AbstractThing & attacker, float damage);                                // Receive attack from attacker
+    virtual void  damage(DOOM::Doom & doom, float damage);                                                                // Receive attack from no one
 
     struct Sprite
     {

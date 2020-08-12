@@ -23,7 +23,7 @@ namespace DOOM
 
     bool  stop(DOOM::Doom& doom, DOOM::AbstractThing& thing) override // Request action to stop (for lift & crusher)
     {
-      // TODO: add check of thing type ?
+      // Only player can stop actions
       if (thing.type != DOOM::Enum::ThingType::ThingType_PLAYER)
         return true;
 
@@ -39,7 +39,7 @@ namespace DOOM
 
     bool  start(DOOM::Doom& doom, DOOM::AbstractThing& thing) override  // Request action to start (for lift & crusher)
     {
-      // TODO: add check of thing type ?
+      // Only player can start actions
       if (thing.type != DOOM::Enum::ThingType::ThingType_PLAYER)
         return true;
 

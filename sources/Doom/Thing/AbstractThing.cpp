@@ -4840,6 +4840,18 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
   }
 };
 
+const std::array<Math::Vector<2>, DOOM::AbstractThing::Direction::DirectionNumber>	DOOM::AbstractThing::_directions =
+{
+  Math::Vector<2>(std::cos(Math::Pi * 0.f), std::sin(Math::Pi * 0.f)),
+  Math::Vector<2>(std::cos(Math::Pi * 0.25f), std::sin(Math::Pi * 0.25f)),
+  Math::Vector<2>(std::cos(Math::Pi * 0.5f), std::sin(Math::Pi * 0.5f)),
+  Math::Vector<2>(std::cos(Math::Pi * 0.75f), std::sin(Math::Pi * 0.75f)),
+  Math::Vector<2>(std::cos(Math::Pi * 1.f), std::sin(Math::Pi * 1.f)),
+  Math::Vector<2>(std::cos(Math::Pi * 1.25f), std::sin(Math::Pi * 1.25f)),
+  Math::Vector<2>(std::cos(Math::Pi * 1.5f), std::sin(Math::Pi * 1.5f)),
+  Math::Vector<2>(std::cos(Math::Pi * 1.75f), std::sin(Math::Pi * 1.75f))
+};
+
 DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Wad::RawLevel::Thing const& thing) :
   DOOM::AbstractThing(
     doom,
@@ -4856,7 +4868,7 @@ DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type,
   type(type),
   attributs(_attributs[type]),
   flags((DOOM::Enum::ThingProperty)(attributs.properties | ((flags & DOOM::Enum::ThingFlag::FlagAmbush) ? DOOM::Enum::ThingProperty::ThingProperty_Ambush : DOOM::Enum::ThingProperty::ThingProperty_None))),
-  health(attributs.spawnhealth),
+  health((float)attributs.spawnhealth),
   height(attributs.height),
   reactiontime(attributs.reactiontime),
   move_direction(Direction::DirectionNone),
@@ -4867,6 +4879,7 @@ DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type,
   _state(attributs.state_spawn),
   _elapsed(sf::Time::Zero),
   _target(nullptr),
+  _tracer(nullptr),
   _target_threshold(0)
 {
   // Cancel if type is invalid 
@@ -4917,7 +4930,7 @@ bool	DOOM::AbstractThing::update(DOOM::Doom& doom, sf::Time elapsed)
 std::unique_ptr<DOOM::AbstractThing>	DOOM::AbstractThing::factory(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing)
 {
   // Create a basic thing from WAD thing
-  // TODO: AbstractThing isn't really abstract
+  // TODO: AbstractThing isn't really abstract anymore
   return std::make_unique<DOOM::AbstractThing>(doom, thing);
 }
 
@@ -4935,6 +4948,8 @@ void	DOOM::AbstractThing::teleport(DOOM::Doom & doom, const Math::Vector<2> & de
   // Update thing vertical position
   // TODO: handle floating objects ?
   position.z() = doom.level.sectors[doom.level.getSector(destination).first].floor_current;
+
+  // TODO: telefrag monster on landing position
 }
 
 void	DOOM::AbstractThing::thrust(const Math::Vector<3> & acceleration)
@@ -5011,7 +5026,7 @@ void	DOOM::AbstractThing::A_BruisAttack(DOOM::Doom& doom)
   // Melee attack
   if (P_CheckMeleeRange(doom) == true) {
     doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_claw, position);
-    _target->damage(doom, *this, (std::rand() % 8 + 1) * 10);
+    _target->damage(doom, *this, (float)((std::rand() % 8 + 1) * 10));
   }
 
   // Range attack
@@ -5043,7 +5058,7 @@ void	DOOM::AbstractThing::A_HeadAttack(DOOM::Doom& doom)
 
   // Melee attack
   if (P_CheckMeleeRange(doom) == true)
-    _target->damage(doom, *this, (std::rand() % 6 + 1) * 10);
+    _target->damage(doom, *this, (float)((std::rand() % 6 + 1) * 10));
 
   // Range attack
   else
@@ -5062,7 +5077,7 @@ void	DOOM::AbstractThing::A_TroopAttack(DOOM::Doom& doom)
   // Melee attack
   if (P_CheckMeleeRange(doom) == true) {
     doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_claw, position);
-    _target->damage(doom, *this, (std::rand() % 8 + 1) * 3);
+    _target->damage(doom, *this, (float)((std::rand() % 8 + 1) * 3));
   }
 
   // Range attack
@@ -5646,7 +5661,7 @@ void	DOOM::AbstractThing::A_Chase(DOOM::Doom& doom)
     if (flags & DOOM::Enum::ThingProperty::ThingProperty_JustAttacked) {
       flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_JustAttacked);
 
-      if (true) // TODO: check if current game skill is Nightmare!
+      if (doom.skill != DOOM::Enum::Skill::SkillNightmare)
 	P_NewChaseDir(doom);
 
       return;
@@ -5698,7 +5713,7 @@ bool	DOOM::AbstractThing::P_LookForPlayers(DOOM::Doom& doom, bool full)
   // Check every player in game
   for (DOOM::PlayerThing& player : doom.level.players) {
     // Player is dead
-    if (player.health <= 0)
+    if (player.health <= 0.f)
       continue;
 
     // Player is out of sight
@@ -5992,19 +6007,7 @@ bool	DOOM::AbstractThing::P_Move(DOOM::Doom& doom)
     return false;
   }
 
-  static const std::array<Math::Vector<2>, Direction::DirectionNumber>	move_vectors =
-  {
-    Math::Vector<2>(std::cos(Math::Pi * 0.f), std::sin(Math::Pi * 0.f)),
-    Math::Vector<2>(std::cos(Math::Pi * 0.25f), std::sin(Math::Pi * 0.25f)),
-    Math::Vector<2>(std::cos(Math::Pi * 0.5f), std::sin(Math::Pi * 0.5f)),
-    Math::Vector<2>(std::cos(Math::Pi * 0.75f), std::sin(Math::Pi * 0.75f)),
-    Math::Vector<2>(std::cos(Math::Pi * 1.f), std::sin(Math::Pi * 1.f)),
-    Math::Vector<2>(std::cos(Math::Pi * 1.25f), std::sin(Math::Pi * 1.25f)),
-    Math::Vector<2>(std::cos(Math::Pi * 1.5f), std::sin(Math::Pi * 1.5f)),
-    Math::Vector<2>(std::cos(Math::Pi * 1.75f), std::sin(Math::Pi * 1.75f))
-  };
-
-  Math::Vector<2> move_position = position.convert<2>() + (move_vectors[move_direction] * (float)attributs.speed);
+  Math::Vector<2> move_position = position.convert<2>() + (_directions[move_direction] * (float)attributs.speed);
 
   if (P_TryMove(doom, move_position) == false) {
     // Floating things
@@ -6013,7 +6016,7 @@ bool	DOOM::AbstractThing::P_Move(DOOM::Doom& doom)
       float target_ceiling = std::numeric_limits<float>::max();
 
       // Find target floor and ceiling height
-      for (int16_t sector_index : doom.level.getSectors(position.convert<2>() + (move_vectors[move_direction] * (float)attributs.speed), attributs.radius / 2.f)) {
+      for (int16_t sector_index : doom.level.getSectors(position.convert<2>() + (_directions[move_direction] * (float)attributs.speed), attributs.radius / 2.f)) {
 	target_floor = std::max(target_floor, doom.level.sectors[sector_index].floor_current);
 	target_ceiling = std::min(target_ceiling, doom.level.sectors[sector_index].ceiling_current);
       }
@@ -6221,8 +6224,8 @@ void	DOOM::AbstractThing::A_PosAttack(DOOM::Doom& doom)
 
   atk_slope += std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f;
 
-  float	atk_angle = angle + std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f;
-  int	atk_damage = (std::rand() % 5 + 1) * 3;
+  float atk_angle = angle + std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f;
+  float atk_damage = (float)((std::rand() % 5 + 1) * 3);
 
   // Attack
   P_LineAttack(doom, AbstractThing::MissileRange, Math::Vector<3>(position.x(), position.y(), position.z() + height / 2.f), Math::Vector<3>(std::cos(atk_angle), std::sin(atk_angle), std::tan(atk_slope)), atk_damage);
@@ -6253,8 +6256,8 @@ void	DOOM::AbstractThing::A_SPosAttack(DOOM::Doom& doom)
   for (int i = 0; i < 3; i++) {
     float               atk_angle = angle + std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f;
     float               atk_slope = slope + std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f;
-    Math::Vector<3>	atk_shot(std::cos(atk_angle), std::sin(atk_angle), std::tan(atk_slope));
-    int	                atk_damage = (std::rand() % 5 + 1) * 3;
+    Math::Vector<3>     atk_shot(std::cos(atk_angle), std::sin(atk_angle), std::tan(atk_slope));
+    float               atk_damage = (float)((std::rand() % 5 + 1) * 3);
 
     // Attack
     P_LineAttack(doom, AbstractThing::MissileRange, position + Math::Vector<3>(0.f, 0.f, height * 0.5f), atk_shot, atk_damage);
@@ -6273,8 +6276,8 @@ void	DOOM::AbstractThing::A_CPosAttack(DOOM::Doom& doom)
   // Play pistol sound
   doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_shotgn, position);
 
-  float	atk_angle = angle + std::pow(Math::Random(), 2) * Math::Pi / 8.f;
-  int	atk_damage = (std::rand() % 5 + 1) * 3;
+  float atk_angle = angle + std::pow(Math::Random(), 2) * Math::Pi / 8.f;
+  float atk_damage = (float)((std::rand() % 5 + 1) * 3);
   float target_height = P_AimLineAttack(doom, *_target);
   float atk_slope = (std::isnan(target_height) == true ? 0.f : std::atan((target_height - (position.z() + height * 0.5f)) / (_target->position.convert<2>() - position.convert<2>()).length())) + std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f;
 
@@ -6314,7 +6317,7 @@ float	DOOM::AbstractThing::P_AimLineAttack(DOOM::Doom& doom, const DOOM::Abstrac
   return (target_bottom + target_top) / 2.f;
 }
 
-void	DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const Math::Vector<3>& atk_origin, const Math::Vector<3>& atk_direction, int atk_damage)
+void	DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const Math::Vector<3>& atk_origin, const Math::Vector<3>& atk_direction, float atk_damage)
 {
   std::list<std::pair<float, int16_t>>						linedefs_list = doom.level.getLinedefs(atk_origin.convert<2>(), atk_direction.convert<2>(), atk_range);
   std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>	things_list = doom.level.getThings(atk_origin.convert<2>(), atk_direction.convert<2>(), atk_range);
@@ -6325,7 +6328,7 @@ void	DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const 
     // TODO: intersection only partially checked, check shoot from above or under
     if (&things_list.front().second.get() != this &&
       things_list.front().second.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable &&
-      things_list.front().second.get().health > 0 &&
+      things_list.front().second.get().health > 0.f &&
       atk_origin.z() + atk_direction.z() * things_list.front().first >= things_list.front().second.get().position.z() &&
       atk_origin.z() + atk_direction.z() * things_list.front().first <= things_list.front().second.get().position.z() + things_list.front().second.get().height)
       break;
@@ -6397,17 +6400,18 @@ void	DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const 
   if (sector != std::numeric_limits<float>::max() &&
     (things_list.empty() || things_list.front().first > sector) &&
     (linedefs_list.empty() || linedefs_list.front().first > sector)) {
-    Math::Vector<2> smoke(atk_origin.convert<2>() + atk_direction.convert<2>() * sector);
-
-    // Spawn smoke puff and set its height
-    doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, DOOM::Enum::ThingType::ThingType_SMOKE, DOOM::Enum::ThingFlag::FlagNone, smoke.x(), smoke.y(), 0.f));
-    doom.level.things.back()->position.z() = atk_origin.z() + atk_direction.z() * sector;
-    doom.level.things.back()->_thrust.z() = +1.f;
+    P_SpawnPuff(doom, atk_origin + atk_direction * sector);
   }
 
   // Shoot thing
   else if (things_list.empty() == false && (linedefs_list.empty() == true || things_list.front().first < linedefs_list.front().first)) {
     things_list.front().second.get().damage(doom, *this, atk_damage);
+
+    // Spawn bullet puffs or blod spots, depending on target type.
+    if (things_list.front().second.get().flags & DOOM::Enum::ThingProperty::ThingProperty_NoBlood)
+      P_SpawnPuff(doom, atk_origin + atk_direction * things_list.front().first);
+    else
+      P_SpawnBlood(doom, atk_origin + atk_direction * things_list.front().first, atk_damage);
   }
 
   // Shoot linedef
@@ -6418,18 +6422,37 @@ void	DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const 
     linedef.gunfire(doom, *this);
     
     Math::Vector<2> linedef_direction = doom.level.vertexes[linedef.end] - doom.level.vertexes[linedef.start];
-    Math::Vector<2> linedef_normal(Math::Vector<2>(+linedef_direction.y(), -linedef_direction.x()) / linedef_direction.length());
+    Math::Vector<3> linedef_normal(Math::Vector<3>(+linedef_direction.y(), -linedef_direction.x(), 0.f) / linedef_direction.length());
 
-    if (Math::Vector<2>::cos(linedef_normal, atk_direction.convert<2>()) > 0.f)
+    if (Math::Vector<2>::cos(linedef_normal.convert<2>(), atk_direction.convert<2>()) > 0.f)
       linedef_normal *= -1.f;
 
-    Math::Vector<2> smoke(atk_origin.convert<2>() + atk_direction.convert<2>() * linedefs_list.front().first + linedef_normal);
-
-    // Spawn smoke puff and set its height
-    doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, DOOM::Enum::ThingType::ThingType_SMOKE, DOOM::Enum::ThingFlag::FlagNone, smoke.x(), smoke.y(), 0.f));
-    doom.level.things.back()->position.z() = atk_origin.z() + atk_direction.z() * linedefs_list.front().first;
-    doom.level.things.back()->_thrust.z() = +1.f;
+    // Spawn smoke puff
+    P_SpawnPuff(doom, atk_origin + atk_direction * linedefs_list.front().first + linedef_normal);
   }
+}
+
+void    DOOM::AbstractThing::P_SpawnPuff(DOOM::Doom& doom, const Math::Vector<3>& coordinates) const
+{
+  // Spawn smoke puff and set its height
+  doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, DOOM::Enum::ThingType::ThingType_SMOKE, DOOM::Enum::ThingFlag::FlagNone, coordinates.x(), coordinates.y(), 0.f));
+  doom.level.things.back()->position.z() = coordinates.z();
+  doom.level.things.back()->_thrust.z() = +1.f;
+  doom.level.things.back()->_elapsed += DOOM::Doom::Tic * (float)std::min(std::rand() % 4, _states[doom.level.things.back()->_state].duration - 1);
+}
+
+void    DOOM::AbstractThing::P_SpawnBlood(DOOM::Doom& doom, const Math::Vector<3>& coordinates, float damage) const
+{
+  doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, DOOM::Enum::ThingType::ThingType_BLOOD, DOOM::Enum::ThingFlag::FlagNone, coordinates.x(), coordinates.y(), 0.f));
+  doom.level.things.back()->position.z() = coordinates.z();
+  doom.level.things.back()->_thrust.z() = +2.f;
+
+  if (damage <= 12.f && damage >= 9.f)
+    doom.level.things.back()->setState(doom, DOOM::AbstractThing::ThingState::State_BLOOD2);
+  else if (damage < 9.f)
+    doom.level.things.back()->setState(doom, DOOM::AbstractThing::ThingState::State_BLOOD3);
+  else
+    doom.level.things.back()->_elapsed += DOOM::Doom::Tic * (float)std::min(std::rand() % 4, _states[doom.level.things.back()->_state].duration - 1);
 }
 
 void	DOOM::AbstractThing::P_LineSwitch(DOOM::Doom& doom, float swc_range, const Math::Vector<3>& swc_origin, const Math::Vector<3>& swc_direction)
@@ -6548,7 +6571,7 @@ void	DOOM::AbstractThing::A_SargAttack(DOOM::Doom& doom)
 
   // Melee attack
   if (P_CheckMeleeRange(doom) == true)
-    _target->damage(doom, *this, (std::rand() % 10 + 1) * 4);
+    _target->damage(doom, *this, (float)((std::rand() % 10 + 1) * 4));
 }
 
 void	DOOM::AbstractThing::A_SkelFist(DOOM::Doom& doom)
@@ -6563,7 +6586,7 @@ void	DOOM::AbstractThing::A_SkelFist(DOOM::Doom& doom)
   // Melee attack
   if (P_CheckMeleeRange(doom) == true) {
     doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_skepch, position);
-    _target->damage(doom, *this, (std::rand() % 10 + 1) * 6);
+    _target->damage(doom, *this, (float)((std::rand() % 10 + 1) * 6));
   }
 }
 
@@ -6632,22 +6655,21 @@ void    DOOM::AbstractThing::P_ExplodeMissile(DOOM::Doom& doom, DOOM::AbstractTh
     return;
 
   // Damage target
-  target.damage(doom, *this, *_target, (std::rand() % 8 + 1) * attributs.damage);
+  target.damage(doom, *this, *_target, (float)((std::rand() % 8 + 1) * attributs.damage));
 }
 
-void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, int damage)
+void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, float damage)
 {
   // Cancel if already dead
   if (health <= 0)
     return;
 
   // Take half damage in baby mode
-  // TODO: check baby mode
-  if (false)
+  if (doom.skill == DOOM::Enum::Skill::SkillBaby)
     damage /= 2;
 
   // Deal damage
-  health = std::max(0, health - damage);
+  health = std::max(0.f, health - damage);
 
   // Reset flying skull thrust
   if (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly)
@@ -6656,6 +6678,7 @@ void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker
   // Ignore thrust if thing is cheating or is attacked by player chainsaw
   // TDOO: check player chainsaw
   if (!(flags & DOOM::Enum::ThingProperty::ThingProperty_NoClip) &&
+    &attacker != this &&
     (attacker.type != DOOM::Enum::ThingType::ThingType_PLAYER || true)) {
     float angle = Math::Vector<2>::angle(position.convert<2>() - attacker.position.convert<2>());
     float push = (float)(damage * 2);
@@ -6715,7 +6738,7 @@ void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker
   }
 
   // Change target
-  if (_target_threshold <= 0) {
+  if (&origin != this && _target_threshold <= 0) {
     _target = &origin;
     _target_threshold = 100;
   }
@@ -6733,10 +6756,16 @@ void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker
     setState(doom, attributs.state_pain);
 }
 
-void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, int dmg)
+void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, float dmg)
 {
   // The attacker is also the origin
   damage(doom, attacker, attacker, dmg);
+}
+
+void	DOOM::AbstractThing::damage(DOOM::Doom& doom, float dmg)
+{
+  // The attacker is also the origin
+  damage(doom, *this, dmg);
 }
 
 bool  DOOM::AbstractThing::key(DOOM::Enum::KeyColor color) const
@@ -6745,7 +6774,7 @@ bool  DOOM::AbstractThing::key(DOOM::Enum::KeyColor color) const
   return false;
 }
 
-void  DOOM::AbstractThing::P_RadiusAttack(DOOM::Doom& doom, DOOM::AbstractThing& source, int damage)
+void  DOOM::AbstractThing::P_RadiusAttack(DOOM::Doom& doom, DOOM::AbstractThing& source, float damage)
 {
   // NOTE: we are using true distance instead of X/Y distance to compute damages
   float distance = (float)(damage + DOOM::AbstractThing::MaxRadius);
@@ -6770,7 +6799,7 @@ void  DOOM::AbstractThing::P_RadiusAttack(DOOM::Doom& doom, DOOM::AbstractThing&
       thing.get().type == DOOM::Enum::ThingType::ThingType_SPIDER)
       continue;
 
-    int distance = std::max(0, (int)(position.convert<2>() - thing.get().position.convert<2>()).length() - thing.get().attributs.radius);
+    float distance = std::max(0.f, (position.convert<2>() - thing.get().position.convert<2>()).length() - thing.get().attributs.radius);
 
     // Thing too far away or not visible
     if (distance >= damage || P_CheckSight(doom, thing.get()) == false)
@@ -6928,15 +6957,15 @@ void    DOOM::AbstractThing::A_BossDeath(DOOM::Doom& doom)
   }
 
   // Make sure there is a player alive for victory
-  int max_health = 0;
+  float max_health = 0.f;
   for (const DOOM::PlayerThing& player : doom.level.players)
     max_health = std::max(max_health, player.health);
-  if (max_health <= 0)
+  if (max_health <= 0.f)
     return;
 
   // Scan remaining things to see if all bosses are dead
   for (const std::unique_ptr<DOOM::AbstractThing>& thing : doom.level.things)
-    if (thing->type == type && thing->health > 0)
+    if (thing->type == type && thing->health > 0.f)
       return;
 
   // Victory!
@@ -7000,7 +7029,7 @@ void    DOOM::AbstractThing::A_BrainScream(DOOM::Doom& doom)
   doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_bosdth);
 }
 
-void	DOOM::AbstractThing::A_BrainExplode(DOOM::Doom& doom)
+void    DOOM::AbstractThing::A_BrainExplode(DOOM::Doom& doom)
 {
   // Spawn an explosion
   doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom,
@@ -7015,19 +7044,19 @@ void	DOOM::AbstractThing::A_BrainExplode(DOOM::Doom& doom)
   doom.level.things.back()->_elapsed += sf::seconds(DOOM::Doom::Tic.asSeconds() * std::min(_states[DOOM::AbstractThing::ThingState::State_BRAINEXPLODE1].duration - 1, (std::rand() % 8)));
 }
 
-void	DOOM::AbstractThing::A_BrainDie(DOOM::Doom& doom)
+void    DOOM::AbstractThing::A_BrainDie(DOOM::Doom& doom)
 {
   // TODO: Exit level, go to next level
 }
 
-void	DOOM::AbstractThing::A_FatRaise(DOOM::Doom& doom)
+void    DOOM::AbstractThing::A_FatRaise(DOOM::Doom& doom)
 {
   // Faace target and scream
   A_FaceTarget(doom);
   doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_manatk, position);
 }
 
-void	DOOM::AbstractThing::A_FatAttack1(DOOM::Doom& doom)
+void    DOOM::AbstractThing::A_FatAttack1(DOOM::Doom& doom)
 {
   // Does nothing if no target
   if (_target == nullptr)
@@ -7044,7 +7073,7 @@ void	DOOM::AbstractThing::A_FatAttack1(DOOM::Doom& doom)
   doom.level.things.back()->_thrust.y() = doom.level.things.back()->attributs.speed * std::sin(doom.level.things.back()->angle);
 }
 
-void	DOOM::AbstractThing::A_FatAttack2(DOOM::Doom& doom)
+void    DOOM::AbstractThing::A_FatAttack2(DOOM::Doom& doom)
 {
   // Does nothing if no target
   if (_target == nullptr)
@@ -7061,7 +7090,7 @@ void	DOOM::AbstractThing::A_FatAttack2(DOOM::Doom& doom)
   doom.level.things.back()->_thrust.y() = doom.level.things.back()->attributs.speed * std::sin(doom.level.things.back()->angle);
 }
 
-void	DOOM::AbstractThing::A_FatAttack3(DOOM::Doom& doom)
+void    DOOM::AbstractThing::A_FatAttack3(DOOM::Doom& doom)
 {
   // Does nothing if no target
   if (_target == nullptr)
@@ -7082,45 +7111,225 @@ void	DOOM::AbstractThing::A_FatAttack3(DOOM::Doom& doom)
   doom.level.things.back()->_thrust.y() = doom.level.things.back()->attributs.speed * std::sin(doom.level.things.back()->angle);
 }
 
-void	DOOM::AbstractThing::A_VileChase(DOOM::Doom& doom)
+void    DOOM::AbstractThing::A_VileChase(DOOM::Doom& doom)
 {
   // TODO: finish this!
 
+  // Check for corpse to raise
   if (move_direction != DOOM::AbstractThing::Direction::DirectionNone) {
-    // Check for corpse to raise
-    float vile_x;
+    // Iterator over things around Vile
+    for (const auto& thing : doom.level.getThings(position.convert<2>() + (_directions[move_direction] * (float)attributs.speed), DOOM::AbstractThing::MaxRadius * 2.f)) {
+      // Check if thing can be resurrected
+      if (!(thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Corpse) ||
+        _states[thing.get()._state].duration != -1 ||
+        thing.get().attributs.state_raise == DOOM::AbstractThing::ThingState::State_None)
+        continue;
+
+      // Check that vile can touch the target
+      if ((position.convert<2>() - thing.get().position.convert<2>()).length() > attributs.radius + thing.get().attributs.radius)
+        continue;
+
+      // Check that there is room for the thing
+      if (thing.get().P_CheckPosition(doom, thing.get().position.convert<2>()) == false)
+        continue;
+
+      // Vile face resurrected thing
+      auto tmp = _target;
+      _target = &thing.get();
+      A_FaceTarget(doom);
+      _target = tmp;
+
+      // Resurrect!
+      setState(doom, DOOM::AbstractThing::ThingState::State_VILE_HEAL1);
+      doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_slop, thing.get().position);
+      
+      // Reset properties
+      thing.get().setState(doom, thing.get().attributs.state_raise);
+      thing.get().height *= 4;
+      thing.get().flags = thing.get().attributs.properties;
+      thing.get().health = (float)thing.get().attributs.spawnhealth;
+      thing.get()._target = nullptr;
+
+      return;
+    }
   }
 
   // Return to normal attack
   A_Chase(doom);
 }
 
-void	DOOM::AbstractThing::A_WeaponReady(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_Lower(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_Raise(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_Punch(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_ReFire(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_FirePistol(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_FireShotgun(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_FireShotgun2(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_CheckReload(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_OpenShotgun2(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_LoadShotgun2(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_CloseShotgun2(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_FireCGun(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_GunFlash(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_FireMissile(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_Saw(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_FirePlasma(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_BFGsound(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_FireBFG(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_BFGSpray(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_VileTarget(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_VileAttack(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_Fire(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_Tracer(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_BrainAwake(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_BrainSpit(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_Light0(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_Light1(DOOM::Doom& doom) {}
-void	DOOM::AbstractThing::A_Light2(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_VileTarget(DOOM::Doom& doom)
+{
+  // Cancel when no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Spawn fire
+  doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, DOOM::Enum::ThingType::ThingType_FIRE, DOOM::Enum::ThingFlag::FlagNone, _target->position.x(), _target->position.y(), 0.f));
+  doom.level.things.back()->position.z() = _target->position.z();
+  doom.level.things.back()->_target = _target;
+  doom.level.things.back()->_tracer = this;
+  doom.level.things.back()->A_Fire(doom);
+
+  // Keep reference of current attack fire
+  _tracer = doom.level.things.back().get();
+}
+
+void    DOOM::AbstractThing::A_Fire(DOOM::Doom& doom)
+{
+  // Cancel when no target or tracer
+  if (_target == nullptr || _tracer == nullptr)
+    return;
+
+  // Ceck if vile still has player in sight
+  if (_tracer->P_CheckSight(doom, *_target) == false)
+    return;
+
+  // Move fire in front of target sight
+  Math::Vector<3> dest(
+    _target->position.x() + 24.f * std::cos(_target->angle),
+    _target->position.y() + 24.f * std::sin(_target->angle),
+    _target->position.z()
+  );
+
+  if (flags & DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap)
+    doom.level.blockmap.moveThing(*this, position.convert<2>(), dest.convert<2>());
+  position = dest;
+}
+
+void    DOOM::AbstractThing::A_VileAttack(DOOM::Doom& doom)
+{
+  // Cancel if no target
+  if (_target == nullptr)
+    return;
+
+  // Face target
+  A_FaceTarget(doom);
+
+  // Cancel if target is not in sight
+  if (P_CheckSight(doom, *_target) == false)
+    return;
+
+  // Direct attack target
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_barexp, position);
+  _target->damage(doom, *this, 20.f);
+  _target->thrust(Math::Vector<3>(0.f, 0.f, 1000.f / _target->attributs.mass));
+
+  // Move fire between the vile and the player
+  if (_tracer == nullptr)
+    return;
+
+  Math::Vector<3> dest(
+    _target->position.x() - 24.f * std::cos(angle),
+    _target->position.y() - 24.f * std::sin(angle),
+    _target->position.z()
+  );
+
+  if (flags & DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap)
+    doom.level.blockmap.moveThing(*_tracer, _tracer->position.convert<2>(), dest.convert<2>());
+  position = dest;
+
+  // Blast damage target
+  _tracer->P_RadiusAttack(doom, *this, 70.f);
+}
+void    DOOM::AbstractThing::A_Tracer(DOOM::Doom& doom)
+{
+  /*
+  angle_t     exact;
+  fixed_t     dist;
+  fixed_t     slope;
+  mobj_t* dest;
+  mobj_t* th;
+
+  if (gametic & 3)
+    return;
+
+  // spawn a puff of smoke behind the rocket
+  P_SpawnPuff(actor->x, actor->y, actor->z);
+
+  th = P_SpawnMobj(actor->x - actor->momx,
+    actor->y - actor->momy,
+    actor->z, MT_SMOKE);
+
+  th->momz = FRACUNIT;
+  th->tics -= P_Random() & 3;
+  if (th->tics < 1)
+    th->tics = 1;
+
+  // adjust direction
+  dest = actor->tracer;
+
+  if (!dest || dest->health <= 0)
+    return;
+
+  // change angle
+  exact = R_PointToAngle2(actor->x,
+    actor->y,
+    dest->x,
+    dest->y);
+
+  if (exact != actor->angle)
+  {
+    if (exact - actor->angle > 0x80000000)
+    {
+      actor->angle -= TRACEANGLE;
+      if (exact - actor->angle < 0x80000000)
+        actor->angle = exact;
+    }
+    else
+    {
+      actor->angle += TRACEANGLE;
+      if (exact - actor->angle > 0x80000000)
+        actor->angle = exact;
+    }
+  }
+
+  exact = actor->angle >> ANGLETOFINESHIFT;
+  actor->momx = FixedMul(actor->info->speed, finecosine[exact]);
+  actor->momy = FixedMul(actor->info->speed, finesine[exact]);
+
+  // change slope
+  dist = P_AproxDistance(dest->x - actor->x,
+    dest->y - actor->y);
+
+  dist = dist / actor->info->speed;
+
+  if (dist < 1)
+    dist = 1;
+  slope = (dest->z + 40 * FRACUNIT - actor->z) / dist;
+
+  if (slope < actor->momz)
+    actor->momz -= FRACUNIT / 8;
+  else
+    actor->momz += FRACUNIT / 8;
+    */
+}
+
+void    DOOM::AbstractThing::A_WeaponReady(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_Lower(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_Raise(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_Punch(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_ReFire(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_FirePistol(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_FireShotgun(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_FireShotgun2(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_CheckReload(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_OpenShotgun2(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_LoadShotgun2(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_CloseShotgun2(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_FireCGun(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_GunFlash(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_FireMissile(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_Saw(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_FirePlasma(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_BFGsound(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_FireBFG(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_BFGSpray(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_BrainAwake(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_BrainSpit(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_Light0(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_Light1(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_Light2(DOOM::Doom& doom) {}

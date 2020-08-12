@@ -11,8 +11,8 @@ namespace DOOM
   public:
     int                                                         id;       // Player ID in game
     int                                                         ammo;     // Ammo count
-    unsigned int                                                health;   // Health percentage
-    unsigned int                                                armor;    // Armor percentage
+    float                                                       health;   // Health percentage
+    float                                                       armor;    // Armor percentage
     std::array<bool, DOOM::Enum::WeaponCount>                   weapons;  // Currently owned weapon
     std::array<DOOM::Enum::KeyType, DOOM::Enum::KeyColorCount>  keys;     // Currently owned keys
     std::array<unsigned int, DOOM::Enum::AmmoCount>             ammos;    // Current number of ammos in inventory

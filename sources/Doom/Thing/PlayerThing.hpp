@@ -43,11 +43,11 @@ namespace DOOM
     bool  pickup(DOOM::Doom& doom, DOOM::AbstractThing& item) override;
 
     bool  pickupArmor(DOOM::Enum::Armor type);
-    bool  pickupArmor(DOOM::Enum::Armor type, unsigned int quantity);
-    bool  pickupHealth(unsigned int quantity, unsigned int maximum);
+    bool  pickupArmor(DOOM::Enum::Armor type, float quantity);
+    bool  pickupHealth(unsigned int quantity, float maximum);
     bool  pickupKey(DOOM::Enum::KeyColor color, DOOM::Enum::KeyType type, bool multiplayer);
     bool  pickupBackpack();
-    bool  pickupAmmo(DOOM::Enum::Ammo type, unsigned int quantity);
+    bool  pickupAmmo(const DOOM::Doom& doom, DOOM::Enum::Ammo type, unsigned int quantity);
     bool  pickupWeapon(DOOM::Enum::Weapon type);
     bool  pickupInvulnerability();
     bool  pickupInvisibility();
@@ -56,7 +56,7 @@ namespace DOOM
     bool  pickupBerserk();
     bool  pickupComputerMap();
 
-    void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, int damage) override;  // Damage player, taking shield into account
+    void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, float damage) override;  // Damage player, taking shield into account
 
   public:
     const int         id;         // Player ID
