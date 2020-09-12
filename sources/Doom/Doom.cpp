@@ -853,7 +853,7 @@ std::set<std::reference_wrapper<DOOM::AbstractThing>>	DOOM::Doom::Level::getThin
     }
 
   // Only keep intersected things
-  for (std::set<std::reference_wrapper<DOOM::AbstractThing>>::iterator iterator = things.begin(); iterator != things.end();) {
+  for (auto iterator = things.begin(); iterator != things.end();) {
     if ((position - iterator->get().position.convert<2>()).length() < radius + iterator->get().attributs.radius)
       iterator++;
     else
@@ -866,15 +866,15 @@ std::set<std::reference_wrapper<DOOM::AbstractThing>>	DOOM::Doom::Level::getThin
 
 std::list<std::reference_wrapper<DOOM::AbstractThing>>	DOOM::Doom::Level::getThings(const DOOM::Doom::Level::Sector & sector, DOOM::Enum::ThingProperty properties) const
 {
-  std::set<DOOM::AbstractThing *>	things;
+  std::set<DOOM::AbstractThing*> things;
 
   // Iterate blocks of sectors
-  for (int block_index : blockmap.sectors.find(&sector)->second) {
-    const DOOM::Doom::Level::Blockmap::Block &	block = blockmap.blocks[block_index];
-
-    // Check if things have correct properties before testing gaint linedefs
-    for (const std::reference_wrapper<DOOM::AbstractThing> & thing : block.things) {
-      if ((thing.get().attributs.properties & properties) == properties && things.find(&(thing.get())) == things.end()) {
+  for (int block_index : blockmap.sectors.find(&sector)->second)
+  {
+    // Check if things have correct properties before testing against linedefs
+    for (const auto& thing : blockmap.blocks[block_index].things) {
+      if ((thing.get().attributs.properties & properties) == properties && things.find(&(thing.get())) == things.end())
+      {
 	// Check if things center stand in sector
 	if (&sectors[getSector(thing.get().position.convert<2>()).first] == &sector) {
 	  things.insert(&(thing.get()));
@@ -883,29 +883,31 @@ std::list<std::reference_wrapper<DOOM::AbstractThing>>	DOOM::Doom::Level::getThi
 
 	// Test if thing bounds intersect with a linedef of the sector
 	for (int16_t linedef_index : blockmap.blocks[block_index].linedefs) {
-	  const DOOM::AbstractLinedef &	linedef = *linedefs[linedef_index].get();
+	  const DOOM::AbstractLinedef&	linedef = *linedefs[linedef_index].get();
 
 	  // Only test thing against linedef of sector
 	  if (&sectors[sidedefs[linedef.front].sector] == &sector || (linedef.back != -1 && &sectors[sidedefs[linedef.back].sector] == &sector)) {
-	    const DOOM::Doom::Level::Vertex &	linedef_start = vertexes[linedef.start];
-	    const DOOM::Doom::Level::Vertex &	linedef_end = vertexes[linedef.end];
+	    const DOOM::Doom::Level::Vertex&  linedef_start = vertexes[linedef.start];
+	    const DOOM::Doom::Level::Vertex&  linedef_end = vertexes[linedef.end];
 
 	    // Get closest point to thing along linedef
-	    float	s = std::clamp(-((linedef_start.x() - thing.get().position.x()) * (linedef_end.x() - linedef_start.x()) + (linedef_start.y() - thing.get().position.y()) * (linedef_end.y() - linedef_start.y())) / (std::pow(linedef_end.x() - linedef_start.x(), 2) + std::pow(linedef_end.y() - linedef_start.y(), 2)), 0.f, 1.f);
+	    float s = std::clamp(-((linedef_start.x() - thing.get().position.x()) * (linedef_end.x() - linedef_start.x()) + (linedef_start.y() - thing.get().position.y()) * (linedef_end.y() - linedef_start.y())) / (std::pow(linedef_end.x() - linedef_start.x(), 2) + std::pow(linedef_end.y() - linedef_start.y(), 2)), 0.f, 1.f);
 
 	    // Add linedef sectors to result if intersecting with thing bounds
-	    if ((linedef_start + (linedef_end - linedef_start) * s - thing.get().position.convert<2>()).length() < thing.get().attributs.radius - 1.f)
+	    if ((linedef_start + (linedef_end - linedef_start) * s - thing.get().position.convert<2>()).length() < thing.get().attributs.radius / 2.f) {
 	      things.insert(&(thing.get()));
+	      break;
+	    }
 	  }
 	}
       }
     }
   }
 
-  std::list<std::reference_wrapper<DOOM::AbstractThing>>	result;
+  std::list<std::reference_wrapper<DOOM::AbstractThing>>  result;
 
   // Convert things set to reference list
-  for (DOOM::AbstractThing * thing : things)
+  for (DOOM::AbstractThing* thing : things)
     result.push_back(*thing);
 
   return result;

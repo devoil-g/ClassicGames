@@ -86,7 +86,7 @@ namespace DOOM
       // Lower things that stand on the ground of the sector
       // TODO: is Shootable enough to identify a monster ?
       for (const std::reference_wrapper<DOOM::AbstractThing>& thing : doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable))
-        if ((thing.get().attributs.properties & DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling) == 0 && thing.get().position.z() == sector.floor_current) {
+        if (!(thing.get().attributs.properties & DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling) && thing.get().position.z() == sector.floor_current) {
           float floor_next = std::numeric_limits<float>::lowest();
 
           // Find next lower floor

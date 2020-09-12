@@ -7116,17 +7116,14 @@ void    DOOM::AbstractThing::A_VileChase(DOOM::Doom& doom)
   // TODO: finish this!
 
   // Check for corpse to raise
-  if (move_direction != DOOM::AbstractThing::Direction::DirectionNone) {
-    // Iterator over things around Vile
-    for (const auto& thing : doom.level.getThings(position.convert<2>() + (_directions[move_direction] * (float)attributs.speed), DOOM::AbstractThing::MaxRadius * 2.f)) {
+  if (move_direction != DOOM::AbstractThing::Direction::DirectionNone)
+  {
+    // Iterator over things touching Vile
+    for (const auto& thing : doom.level.getThings(position.convert<2>() + (_directions[move_direction] * (float)attributs.speed), attributs.radius)) {
       // Check if thing can be resurrected
       if (!(thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Corpse) ||
         _states[thing.get()._state].duration != -1 ||
         thing.get().attributs.state_raise == DOOM::AbstractThing::ThingState::State_None)
-        continue;
-
-      // Check that vile can touch the target
-      if ((position.convert<2>() - thing.get().position.convert<2>()).length() > attributs.radius + thing.get().attributs.radius)
         continue;
 
       // Check that there is room for the thing

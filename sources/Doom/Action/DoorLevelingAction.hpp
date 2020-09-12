@@ -65,7 +65,6 @@ namespace DOOM
       float obstacle = std::numeric_limits<float>::lowest();
 
       // Get highest obstacle
-      // TODO: is Shootable enough to identity monsters ?
       for (const std::reference_wrapper<DOOM::AbstractThing>& thing : doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable))
         if (thing.get().position.z() + thing.get().height > obstacle)
           obstacle = thing.get().position.z() + thing.get().height;
@@ -113,7 +112,6 @@ namespace DOOM
       float obstacle = std::numeric_limits<float>::lowest();
 
       // Get highest obstacle
-      // TODO: is Property_Shootable enough to identify a monster/player ?
       for (const std::reference_wrapper<DOOM::AbstractThing>& thing : doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable))
         obstacle = std::max(obstacle, thing.get().position.z() + thing.get().height);
 

@@ -43,92 +43,108 @@ namespace DOOM
 
     sf::Time  updateLower(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed)
     {
-      float tallest = std::numeric_limits<float>::lowest();
       auto  things = doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable);
+      float obstacle = std::numeric_limits<float>::lowest();
+      float start = sector.ceiling_current;
+      float end = std::max(sector.floor_current + 8.f, sector.ceiling_current - elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds());
 
-      // Find tallest thing in sector
-      for (const auto& thing : things)
-        tallest = std::max(tallest, (float)thing.get().height);
+      // Get highest obstacle
+      for (const auto& thing : things) {
+        float highest_floor = std::numeric_limits<float>::lowest();
 
-      // Lower crusher
-      sector.ceiling_current -= elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds();
+        // Find highest floor under thing
+        for (int sector_index : doom.level.getSectors(thing.get().position.convert<2>(), thing.get().attributs.radius / 2.f))
+          highest_floor = std::max(highest_floor, doom.level.sectors[sector_index].floor_current);
 
-      // Stop before crushing things
-      if (sector.ceiling_current - sector.floor_base <= tallest) {
-        sf::Time  exceding = std::min(sf::seconds((sector.floor_base + tallest - sector.ceiling_current) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
-
-        sector.ceiling_current = sector.floor_base + tallest;
-        _state = State::Crush;
-
-        // Lower things collinding with ceiling
-        for (const auto& thing : things)
-          thing.get().position.z() = std::max(std::min(thing.get().position.z(), sector.ceiling_current - thing.get().height), sector.floor_base);
-
-        return exceding;
+        obstacle = std::min(start, std::max(obstacle, highest_floor + thing.get().height));
       }
+
+      // Stop at highest obstacle
+      end = std::min(start, std::max(end, obstacle));
 
       // Lower things collinding with ceiling
       for (const auto& thing : things)
-        thing.get().position.z() = std::max(std::min(thing.get().position.z(), sector.ceiling_current - thing.get().height), sector.floor_base);
+        thing.get().position.z() = std::min(thing.get().position.z(), end - thing.get().height);
 
-      // Compute exceding time
-      if (sector.ceiling_current < sector.floor_base + 8.f) {
-        sf::Time  exceding = std::min(sf::seconds((sector.floor_base + 8.f - sector.ceiling_current) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
+      sf::Time  exceding = DOOM::Doom::Tic * (start - end) / (float)Speed;
 
-        sector.ceiling_current = sector.floor_base + 8.f;
-        _state = State::Raise;
-        if (Silent == true)
-          sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstop);
+      if (exceding != sf::Time::Zero)
+      {
+        // Obstacle collided
+        if (obstacle > end) {
+          _state = State::Crush;
+        }
 
-        return exceding;
+        // Floor reached
+        else {
+          _state = State::Raise;
+          if (Silent == true)
+            sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstop);
+        }
       }
-      else {
-        return sf::Time::Zero;
-      }
+
+      // Update crusher height
+      sector.ceiling_current = end;
+
+      return exceding;
     }
 
     sf::Time  updateCrush(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed)
     {
-      float tallest = std::numeric_limits<float>::lowest();
       auto  things = doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable);
+      float obstacle = std::numeric_limits<float>::lowest();
 
-      // Find tallest thing in sector
-      for (const auto& thing : things)
-        tallest = std::max(tallest, (float)thing.get().height);
+      // Check that there is something to crush
+      for (const auto& thing : things) {
+        float highest_floor = std::numeric_limits<float>::lowest();
 
-      // Nothing to crush, return to normal state
-      if (sector.ceiling_current > sector.floor_base + tallest) {
+        // Find highest floor under thing
+        for (int sector_index : doom.level.getSectors(thing.get().position.convert<2>(), thing.get().attributs.radius / 2.f))
+          highest_floor = std::max(highest_floor, doom.level.sectors[sector_index].floor_current);
+
+        obstacle = std::max(obstacle, highest_floor + thing.get().height);
+      }
+      
+      // Cancel if there is nothing to crush
+      if (sector.ceiling_current < obstacle) {
         _state = State::Lower;
         return elapsed;
       }
 
-      // Lower crusher
       float speed = Speed / (Speed == DOOM::EnumAction::Speed::SpeedSlow ? 8.f : 1.f);
-      sector.ceiling_current -= elapsed.asSeconds() * speed / DOOM::Doom::Tic.asSeconds();
+      float start = sector.ceiling_current;
+      float end = std::max(sector.floor_current + 8.f, sector.ceiling_current - elapsed.asSeconds() * speed / DOOM::Doom::Tic.asSeconds());
 
-      // Lower things collinding with ceiling
-      for (const auto& thing : things)
-        thing.get().position.z() = std::max(std::min(thing.get().position.z(), sector.ceiling_current - thing.get().height), sector.floor_base);
-
-      // Damage things
+      // Crush obstacles
       for (const auto& thing : things) {
-        float distance = std::min(sector.floor_base + thing.get().height, sector.ceiling_current + elapsed.asSeconds() * speed / DOOM::Doom::Tic.asSeconds()) - std::max(sector.floor_base + 8.f, sector.ceiling_current);
-        float damage = distance / speed * 2.5f;
+        float highest_floor = std::numeric_limits<float>::lowest();
 
-        thing.get().damage(doom, damage);
+        // Find highest floor under thing
+        for (int sector_index : doom.level.getSectors(thing.get().position.convert<2>(), thing.get().attributs.radius / 2.f))
+          highest_floor = std::max(highest_floor, doom.level.sectors[sector_index].floor_current);
+
+        // Push toward the floor
+        thing.get().position.z() = std::max(highest_floor, std::min(thing.get().position.z(), end - thing.get().height));
+
+        float crush_height = std::min(thing.get().position.z() + thing.get().height, start) - end;
+
+        // Crush!
+        if (crush_height > 0.f)
+          thing.get().damage(doom, crush_height / Speed * 2.5f);
       }
 
-      // Compute exceding time
-      if (sector.ceiling_current < sector.floor_base + 8.f) {
-        sf::Time  exceding = std::min(sf::seconds((sector.floor_base + 8.f - sector.ceiling_current) / (Speed / (Speed == DOOM::EnumAction::Speed::SpeedSlow ? 8.f : 1.f)) * DOOM::Doom::Tic.asSeconds()), elapsed);
+      // Update ceiling height
+      sector.ceiling_current = end;
 
-        sector.ceiling_current = sector.floor_base + 8.f;
+      // Compute exceding time
+      if (sector.ceiling_current <= sector.floor_current + 8.f) {
         _state = State::Raise;
         if (Silent == true)
           sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstop);
 
-        return exceding;
+        return sf::seconds(elapsed.asSeconds() - (start - end) / speed * DOOM::Doom::Tic.asSeconds());
       }
+
       else
         return sf::Time::Zero;
     }

@@ -29,17 +29,51 @@ namespace DOOM
 
     void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) override  // Update door action
     {
-      // TODO: handle monster on sector when lowering floor height (gravity wiggle)
-      // Reduce speed by 2 if an obtacle is encountered
+      auto  things = doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable);
 
-      // Update floor height
-      sector.floor_current = (Direction == DOOM::EnumAction::Direction::DirectionUp) ?
+      // Compute start and end height
+      float start = sector.floor_current;
+      float end = (Direction == DOOM::EnumAction::Direction::DirectionUp) ?
         std::min(sector.floor_current + Speed / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds(), _target) :
         std::max(sector.floor_current - Speed / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds(), _target);
 
-      if (Crush == true) {
-        // TODO: apply crushing
+      // Check for collision for raising floor
+      if (Direction == DOOM::EnumAction::Direction::DirectionUp) {
+        float tallest = std::numeric_limits<float>::lowest();
+        
+        // Find tallest thing in sector
+        for (const auto& thing : things)
+          tallest = std::max(tallest, (float)thing.get().height);
+
+        // Crush obstacles
+        if (Crush == true) {
+          for (const auto& thing : things) {
+            float distance = std::min(end + thing.get().height - sector.ceiling_base, end - start);
+
+            if (distance > 0.f)
+              thing.get().damage(doom, distance / Speed * 2.5f);
+          }
+        }
+
+        // Stop on obstacles
+        else {
+          end = std::max(sector.floor_current, std::min(end, sector.ceiling_base - tallest));
+        }
+
+        // Raise things standing on the floor
+        for (const auto& thing : things)
+          thing.get().position.z() = std::max(thing.get().position.z(), end);
       }
+
+      // Lower things standing on the floor
+      else {
+        for (const auto& thing : things)
+          if (!(thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Float) && thing.get().position.z() == start)
+            thing.get().position.z() = end;
+      }
+
+      // Update floor height
+      sector.floor_current = end;
 
       // Detect end of action
       if (sector.floor_current == _target) {
