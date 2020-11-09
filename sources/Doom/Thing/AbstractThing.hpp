@@ -244,6 +244,7 @@ namespace DOOM
     static const int    TargetThreshold;
     static const int    MaxRadius;
     static const float  FatSpread;
+    static const float  TracerAngle;
 
   public:
     static std::unique_ptr<DOOM::AbstractThing> factory(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Thing& thing); // Thing factory

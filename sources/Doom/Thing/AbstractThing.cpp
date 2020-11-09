@@ -12,6 +12,7 @@ const float	DOOM::AbstractThing::SkullSpeed = 20.f;
 const int	DOOM::AbstractThing::TargetThreshold = 100;
 const int	DOOM::AbstractThing::MaxRadius = 32;
 const float     DOOM::AbstractThing::FatSpread = Math::Pi / 16.f;
+const float     DOOM::AbstractThing::TracerAngle = 12.f / 255.f * 2.f * Math::Pi;
 
 const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>	DOOM::AbstractThing::_sprites =
 {
@@ -5139,7 +5140,7 @@ void	DOOM::AbstractThing::updatePhysics(DOOM::Doom& doom, sf::Time elapsed)
 void DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed, int depth, int16_t linedef_ignored, const DOOM::AbstractThing* thing_ignored)
 {
   // NOTE: glitch might happen if radius > 128
-  // TODO: recode this using square bounding box
+  // NOTE: we are using bounding circle instead of square
 
   // Limit movement to 30 units per tics
   Math::Vector<2>	movement = ((_thrust.convert<2>().length() > 30.f) ? (_thrust.convert<2>() * 30.f / _thrust.convert<2>().length()) : _thrust.convert<2>())* elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds();
@@ -5678,8 +5679,7 @@ void	DOOM::AbstractThing::A_Chase(DOOM::Doom& doom)
 
     // Check for missile attack
     if (attributs.state_missile != DOOM::AbstractThing::ThingState::State_None &&
-      true && // TODO: check if current game skill is Nightmare!
-      move_count == 0 &&
+     (doom.skill == DOOM::Enum::Skill::SkillNightmare || move_count == 0) &&
       P_CheckMissileRange(doom) == true) {
       setState(doom, attributs.state_missile);
       flags = (DOOM::Enum::ThingProperty)(flags | DOOM::Enum::ThingProperty::ThingProperty_JustAttacked);
@@ -7119,7 +7119,7 @@ void    DOOM::AbstractThing::A_VileChase(DOOM::Doom& doom)
   if (move_direction != DOOM::AbstractThing::Direction::DirectionNone)
   {
     // Iterator over things touching Vile
-    for (const auto& thing : doom.level.getThings(position.convert<2>() + (_directions[move_direction] * (float)attributs.speed), attributs.radius)) {
+    for (const auto& thing : doom.level.getThings(position.convert<2>() + (_directions[move_direction] * (float)attributs.speed), (float)attributs.radius)) {
       // Check if thing can be resurrected
       if (!(thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Corpse) ||
         _states[thing.get()._state].duration != -1 ||
@@ -7234,75 +7234,37 @@ void    DOOM::AbstractThing::A_VileAttack(DOOM::Doom& doom)
 }
 void    DOOM::AbstractThing::A_Tracer(DOOM::Doom& doom)
 {
-  /*
-  angle_t     exact;
-  fixed_t     dist;
-  fixed_t     slope;
-  mobj_t* dest;
-  mobj_t* th;
-
-  if (gametic & 3)
+  // NOTE: We use move_count instead of game tics to spawn smoke puffs at the right time
+  move_count = (move_count + _states[_state].duration) % 4;
+  if (move_count >= _states[_state].duration)
     return;
 
-  // spawn a puff of smoke behind the rocket
-  P_SpawnPuff(actor->x, actor->y, actor->z);
+  // Spawn a puff of smoke behind the rocket
+  P_SpawnPuff(doom, position - _thrust);
 
-  th = P_SpawnMobj(actor->x - actor->momx,
-    actor->y - actor->momy,
-    actor->z, MT_SMOKE);
-
-  th->momz = FRACUNIT;
-  th->tics -= P_Random() & 3;
-  if (th->tics < 1)
-    th->tics = 1;
-
-  // adjust direction
-  dest = actor->tracer;
-
-  if (!dest || dest->health <= 0)
+  // Cancel if no  target
+  if (_target == nullptr || _target->health <= 0)
     return;
 
-  // change angle
-  exact = R_PointToAngle2(actor->x,
-    actor->y,
-    dest->x,
-    dest->y);
+  float origin_angle = angle;
+  float target_angle = Math::Vector<2>::angle(_target->position.convert<2>() - position.convert<2>());
+  float ajust_angle = Math::Modulo(target_angle - origin_angle, Math::Pi * 2.f);
 
-  if (exact != actor->angle)
-  {
-    if (exact - actor->angle > 0x80000000)
-    {
-      actor->angle -= TRACEANGLE;
-      if (exact - actor->angle < 0x80000000)
-        actor->angle = exact;
-    }
-    else
-    {
-      actor->angle += TRACEANGLE;
-      if (exact - actor->angle > 0x80000000)
-        actor->angle = exact;
-    }
-  }
+  if (ajust_angle > Math::Pi)
+    ajust_angle -= Math::Pi * 2.f;
 
-  exact = actor->angle >> ANGLETOFINESHIFT;
-  actor->momx = FixedMul(actor->info->speed, finecosine[exact]);
-  actor->momy = FixedMul(actor->info->speed, finesine[exact]);
+  float origin_slope = std::atan(_thrust.z() / _thrust.convert<2>().length());
+  float target_slope = std::atan(((_target->position.z() + _target->height / 2.f) - (position.z() + height / 2.f)) / (_target->position.convert<2>() - position.convert<2>()).length());
+  float ajust_slope = target_slope - origin_slope;
+  float slope = origin_slope + ((ajust_slope > 0.f ? std::min(ajust_slope, +DOOM::AbstractThing::TracerAngle) : std::max(ajust_slope, -DOOM::AbstractThing::TracerAngle)));
 
-  // change slope
-  dist = P_AproxDistance(dest->x - actor->x,
-    dest->y - actor->y);
+  // Ajust angle
+  angle += (ajust_angle > 0.f) ? std::min(ajust_angle, +DOOM::AbstractThing::TracerAngle) : std::max(ajust_angle, -DOOM::AbstractThing::TracerAngle);
 
-  dist = dist / actor->info->speed;
+  Math::Vector<3> direction(std::cos(angle), std::sin(angle), std::tan(slope));
 
-  if (dist < 1)
-    dist = 1;
-  slope = (dest->z + 40 * FRACUNIT - actor->z) / dist;
-
-  if (slope < actor->momz)
-    actor->momz -= FRACUNIT / 8;
-  else
-    actor->momz += FRACUNIT / 8;
-    */
+  // Update thrust direction
+  _thrust = direction * (attributs.speed / direction.length());
 }
 
 void    DOOM::AbstractThing::A_WeaponReady(DOOM::Doom& doom) {}

@@ -27,7 +27,6 @@ namespace DOOM
       float obstacle = std::numeric_limits<float>::max();
 
       // Get lowest obstacle
-      // TODO: is shootable enough to identify a monster ?
       for (const std::reference_wrapper<DOOM::AbstractThing>& thing : doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable))
         for (int16_t sector_index : doom.level.getSectors(thing.get().position.convert<2>(), thing.get().attributs.radius / 2.f))
           obstacle = std::min(obstacle, doom.level.sectors[sector_index].ceiling_current - thing.get().height);
@@ -84,7 +83,6 @@ namespace DOOM
       }
 
       // Lower things that stand on the ground of the sector
-      // TODO: is Shootable enough to identify a monster ?
       for (const std::reference_wrapper<DOOM::AbstractThing>& thing : doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable))
         if (!(thing.get().attributs.properties & DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling) && thing.get().position.z() == sector.floor_current) {
           float floor_next = std::numeric_limits<float>::lowest();
