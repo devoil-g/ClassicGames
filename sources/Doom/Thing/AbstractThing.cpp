@@ -6839,11 +6839,10 @@ void	DOOM::AbstractThing::A_SkullAttack(DOOM::Doom& doom)
   A_FaceTarget(doom);
 
   // Rush to target
-  _thrust = Math::Vector<3>();
-  thrust(Math::Vector<3>(
+  _thrust = Math::Vector<3>(
     std::cos(angle) * DOOM::AbstractThing::SkullSpeed,
     std::sin(angle) * DOOM::AbstractThing::SkullSpeed,
-    (_target->position.z() + (float)_target->height / 2.f - position.z()) / std::max(1.f, (_target->position.convert<2>() - position.convert<2>()).length()) * DOOM::AbstractThing::SkullSpeed));
+    (_target->position.z() + (float)_target->height / 2.f - position.z()) / std::max(1.f, (_target->position.convert<2>() - position.convert<2>()).length()) * DOOM::AbstractThing::SkullSpeed);
 }
 
 void    DOOM::AbstractThing::A_PainAttack(DOOM::Doom& doom)

@@ -5,6 +5,7 @@
 #include "Doom/Thing/PlayerThing.hpp"
 #include "Doom/States/GameDoomState.hpp"
 #include "Doom/States/MenuDoomState.hpp"
+#include "Doom/States/TransitionDoomState.hpp"
 #include "States/StateMachine.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
@@ -45,6 +46,34 @@ bool	DOOM::GameDoomState::update(sf::Time elapsed)
 
   // Update game components
   _doom.update(elapsed);
+
+  // TODO: remove this
+  // Change level
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::F2) == true) {
+    auto  levels = _doom.getLevels();
+    auto  next = std::find(levels.begin(), levels.end(), _doom.level.episode);
+
+    // Get next level
+    if (next == levels.end() || (++next) == levels.end())
+      next = levels.begin();
+    
+    // Load next level
+    _doom.setLevel(*next);
+  }
+
+  // TODO: remove this
+  // Change level
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::F1) == true) {
+    auto  levels = _doom.getLevels();
+    auto  next = std::find(levels.rbegin(), levels.rend(), _doom.level.episode);
+
+    // Get next level
+    if (next == levels.rend() || (++next) == levels.rend())
+      next = levels.rbegin();
+
+    // Load previous level
+    _doom.setLevel(*next);
+  }
 
   return false;
 }
