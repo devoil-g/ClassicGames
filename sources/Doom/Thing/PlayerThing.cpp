@@ -103,6 +103,14 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
   // Update status bar (TODO: complete this)
   statusbar.health = health;
 
+  DOOM::Doom::Level::Sector& sector = doom.level.sectors[doom.level.getSector(position.convert<2>()).first];
+
+  // Secret sector found
+  if (position.z() <= sector.floor_current && sector.secret() == true) {
+    // NOTE: original DOOM don't prompt message of play sound
+    doom.level.statistics.secretCurrent++;
+  }
+
   // Always return false as a player is never deleted
   return false;
 }

@@ -13,8 +13,7 @@ DOOM::DoomState::DoomState(Game::StateMachine& machine) :
   _doom(),
   _game(),
   _elapsed(sf::Time::Zero),
-  _texture(),
-  _sprite()
+  _bar(sf::Vector2f(1.f, 1.f))
 {
   // Load WAD
   _doom.load(Game::Config::ExecutablePath + "assets/levels/doom.wad");
@@ -29,11 +28,8 @@ DOOM::DoomState::DoomState(Game::StateMachine& machine) :
   sf::Image image;
 
   // Initialize force exit bar
-  image.create(1, 1, sf::Color::White);
-  _texture.create(1, 1);
-  _texture.setSmooth(false);
-  _texture.update(image);
-  _sprite.setTexture(_texture);
+  _bar.setSize(sf::Vector2f(1.f, 1.f));
+  _bar.setFillColor(sf::Color::White);
 }
 
 DOOM::DoomState::~DoomState()
@@ -72,6 +68,6 @@ void	DOOM::DoomState::draw()
   _game.draw();
 
   // Draw forced exit bar
-  _sprite.setScale(Game::Window::Instance().window().getSize().x * _elapsed.asSeconds() / DOOM::DoomState::ForcedExit.asSeconds(), 4.f);
-  Game::Window::Instance().window().draw(_sprite);
+  _bar.setScale(Game::Window::Instance().window().getSize().x * _elapsed.asSeconds() / DOOM::DoomState::ForcedExit.asSeconds(), 4.f);
+  Game::Window::Instance().window().draw(_bar);
 }

@@ -83,6 +83,8 @@ SET(GAME_DOOM_STATES_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/DoomState.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/GameDoomState.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/GameDoomState.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/IntermissionDoomState.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/IntermissionDoomState.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/MenuDoomState.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/MenuDoomState.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/SplashDoomState.cpp

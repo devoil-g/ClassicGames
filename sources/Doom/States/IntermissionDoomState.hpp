@@ -9,7 +9,7 @@
 
 namespace DOOM
 {
-  class GameDoomState : public Game::AbstractState
+  class IntermissionDoomState : public Game::AbstractState
   {
   private:
     DOOM::Doom& _doom;    // DOOM instance
@@ -17,13 +17,16 @@ namespace DOOM
     sf::Texture _texture; // Image in graphic memory
     sf::Sprite  _sprite;  // Display rendered texture
 
+    int _killsTotal, _killsCurrent;   // Player kills percentage
+    int _itemsTotal, _itemsCurrent;   // Player items percentage
+    int _secretTotal, _secretCurrent; // Player secret percentage
+    int _timeLevel, _timePar;         // Time of level completion 
+
   public:
-    GameDoomState(Game::StateMachine& machine, DOOM::Doom& doom);
-    ~GameDoomState() override = default;
+    IntermissionDoomState(Game::StateMachine& machine, DOOM::Doom& doom);
+    ~IntermissionDoomState() override = default;
 
     bool  update(sf::Time elapsed) override;  // Update state
     void  draw() override;                    // Draw state
-
-    void  addPlayer(int controller);  // Add player to the game
   };
 }

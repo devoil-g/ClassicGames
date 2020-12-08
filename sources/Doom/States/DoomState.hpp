@@ -19,9 +19,8 @@ namespace DOOM
     DOOM::Doom          _doom;  // Main DOOM instance
     Game::StateMachine  _game;  // DOOM state machine
 
-    sf::Time    _elapsed; // Timer of forced exit
-    sf::Texture _texture; // Texture of forced exit bar
-    sf::Sprite  _sprite;  // Sprite of forced exit bar
+    sf::Time            _elapsed; // Timer of forced exit
+    sf::RectangleShape  _bar; // Forced exit bar
     
   public:
     DoomState(Game::StateMachine& machine);

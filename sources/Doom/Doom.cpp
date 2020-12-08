@@ -332,6 +332,7 @@ void	DOOM::Doom::clearLevel()
   level.nodes.clear();
   level.sectors.clear();
   level.blockmap = DOOM::Doom::Level::Blockmap();
+  level.statistics = DOOM::Doom::Level::Statistics();
 }
 
 void	DOOM::Doom::buildResources()
@@ -643,6 +644,9 @@ void	DOOM::Doom::Level::update(DOOM::Doom & doom, sf::Time elapsed)
     else {
       iterator++;
     }
+
+  // Update level statistics
+  statistics.update(doom, elapsed);
 }
 
 std::set<int16_t>	DOOM::Doom::Level::getSectors(const Math::Vector<2> & position, float radius) const
@@ -1466,7 +1470,7 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom& doom, const DOOM::Wad::RawLevel::S
   _neighbors.resize(std::distance(_neighbors.begin(), std::unique(_neighbors.begin(), _neighbors.end())));
 
   // Push action for specific specials
-  switch (sector.special)
+  switch (this->special)
   {
   case DOOM::Doom::Level::Sector::Special::Normal:
     break;
@@ -1493,7 +1497,8 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom& doom, const DOOM::Wad::RawLevel::S
     action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::OscillateLightingAction<>>(doom, *this));
     break;
   case DOOM::Doom::Level::Sector::Special::Secret:
-    break;	// TODO
+    doom.level.statistics.secretTotal += 1;
+    break;
   case DOOM::Doom::Level::Sector::Special::DoorClose:
     action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitClose, DOOM::EnumAction::Speed::SpeedSlow, 1050>>(doom, *this));
     break;
@@ -1695,6 +1700,33 @@ int16_t	DOOM::Doom::Level::Sector::getNeighborHighestLight(const DOOM::Doom & do
     result = std::min(result, doom.level.sectors[index].light_base);
 
   return result;
+}
+
+bool	DOOM::Doom::Level::Sector::secret()
+{
+  // Secret!
+  if (special == DOOM::Doom::Level::Sector::Special::Secret) {
+    special = DOOM::Doom::Level::Sector::Special::Normal;
+    return true;
+  }
+
+  // No secret
+  else {
+    return false;
+  }
+}
+
+DOOM::Doom::Level::Statistics::Statistics() :
+  killsCurrent(0), killsTotal(0),
+  itemsCurrent(0), itemsTotal(0),
+  secretCurrent(0), secretTotal(0),
+  time(sf::Time::Zero), par(sf::Time::Zero)
+{}
+
+void	DOOM::Doom::Level::Statistics::update(DOOM::Doom& doom, sf::Time elapsed)
+{
+  // Add elapsed time to level time
+  time += elapsed;
 }
 
 namespace std

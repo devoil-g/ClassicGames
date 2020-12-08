@@ -687,6 +687,8 @@ namespace DOOM
 
         int16_t getNeighborLowestLight(const DOOM::Doom& doom) const;   // Get lowest neighbor light level
         int16_t getNeighborHighestLight(const DOOM::Doom& doom) const;  // Get highest neighbor light level
+
+        bool  secret(); // Return true if sector is secret, removing secret flag
       };
 
       class Blockmap
@@ -717,6 +719,20 @@ namespace DOOM
         void  removeThing(DOOM::AbstractThing& thing, const Math::Vector<2>& position);                                         // Remove thing from blockmap
       };
 
+      class Statistics
+      {
+      public:
+        int       killsCurrent, killsTotal;   // Kill percentage
+        int       itemsCurrent, itemsTotal;   // Item pick-up percentage
+        int       secretCurrent, secretTotal; // Item pick-up percentage
+        sf::Time  time, par;                  // Time played in level and par time
+
+        Statistics();
+        ~Statistics() = default;
+
+        void  update(DOOM::Doom& doom, sf::Time elapsed); // Update statistics
+      };
+
     private:
       bool  getLinedefsNode(std::list<std::pair<float, int16_t>>& result, const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit, int16_t index) const;       // Recursively find closest subsectors
       bool  getLinedefsSubsector(std::list<std::pair<float, int16_t>>& result, const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit, int16_t index) const;  // Iterate through seg of subsector
@@ -735,6 +751,8 @@ namespace DOOM
       std::vector<DOOM::Doom::Level::Node>                          nodes;      // List of nodes
       std::vector<DOOM::Doom::Level::Sector>                        sectors;    // List of sectors
       DOOM::Doom::Level::Blockmap                                   blockmap;   // Blockmap of level
+      DOOM::Doom::Level::Statistics                                 statistics; // Statistics of level
+      
 
       std::set<int16_t>                                                         getSectors(const Math::Vector<2>& position, float radius) const;                                          // Return sector indexes that thing (position and radius) is over
       std::pair<int16_t, int16_t>                                               getSector(const Math::Vector<2>& position, int16_t index = -1) const;                                     // Return sector/subsector at position
