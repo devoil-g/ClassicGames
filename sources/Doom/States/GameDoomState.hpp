@@ -13,9 +13,6 @@ namespace DOOM
   {
   private:
     DOOM::Doom& _doom;    // DOOM instance
-    sf::Image   _image;   // Target for software rendering
-    sf::Texture _texture; // Image in graphic memory
-    sf::Sprite  _sprite;  // Display rendered texture
 
   public:
     GameDoomState(Game::StateMachine& machine, DOOM::Doom& doom);

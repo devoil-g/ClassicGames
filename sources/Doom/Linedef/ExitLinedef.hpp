@@ -18,7 +18,8 @@ namespace DOOM
 
   template<
     DOOM::EnumLinedef::Exit Exit,
-    DOOM::EnumLinedef::Trigger Trigger
+    DOOM::EnumLinedef::Trigger Trigger,
+    bool SecretExit = false
   >
   class ExitLinedef : public DOOM::AbstractLinedef
   {
@@ -36,15 +37,15 @@ namespace DOOM
       if (thing.type != DOOM::Enum::ThingType::ThingType_PLAYER)
 	return false;
 
-      // TODO: push level transition state
-      std::cout << "[DOOM::ExitLinedef] Exit level (not implemented)." << std::endl;
-
       // Find which sidedef textures should be switched
       int16_t	sidedef = ((Math::Vector<2>::determinant(doom.level.vertexes[start] - thing.position.convert<2>(), doom.level.vertexes[end] - doom.level.vertexes[start]) < 0.f) ? front : back);
 
       // Switch sidedef if trigger pushed or switched, definitively if not repeatable
       if (_Trigger == DOOM::EnumLinedef::Trigger::TriggerPushed || _Trigger == DOOM::EnumLinedef::Trigger::TriggerSwitched && sidedef != -1)
 	doom.level.sidedefs[sidedef].switched(doom, sf::Time::Zero, true);
+
+      // Set end flag in DOOM
+      doom.level.end = (SecretExit == true ? DOOM::Enum::End::EndSecret : DOOM::Enum::End::EndNormal);
 
       return true;
     }

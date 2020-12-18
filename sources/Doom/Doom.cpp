@@ -133,9 +133,10 @@ DOOM::Doom::Doom() :
   mode(DOOM::Enum::Mode::ModeIndetermined),
   skill(DOOM::Enum::Skill::SkillMedium),
   sensivity(0.8f),
-  sfx(1.f),
+  sfx(0.2f),
   music(1.f),
-  message(true)
+  message(true),
+  image()
 {}
 
 void	DOOM::Doom::load(std::string const & path)
@@ -318,6 +319,7 @@ void	DOOM::Doom::clearLevel()
 {
   // Reset level base info
   level.episode = { 0, 0 };
+  level.end = DOOM::Enum::End::EndNone;
   level.sky = std::ref(DOOM::Doom::Resources::Texture::Null);
 
   // Remove all things except players
@@ -491,6 +493,7 @@ void	DOOM::Doom::buildLevel(std::pair<uint8_t, uint8_t> const & level)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   this->level.episode = level;
+  this->level.end = DOOM::Enum::End::EndNone;
   this->level.sky = std::cref(resources.textures.find(0x0000000000594B53 | (((int64_t)level.first + '0') << 24))->second);
 
   // Build every component of resources
@@ -1051,13 +1054,25 @@ sf::Image DOOM::Doom::Resources::Texture::image(const DOOM::Doom& doom) const
 
   // Draw texture
   image.create(width, height);
-  for (unsigned int x = 0; x < (unsigned int)width; x++)
-    for (const DOOM::Doom::Resources::Texture::Column::Span& span : columns.at(x).spans)
-      for (unsigned int y = 0; y < span.pixels.size(); y++)
-	if (x >= 0 && x < image.getSize().x && y >= 0 && y < image.getSize().y)
-	  image.setPixel(x, y + span.offset, doom.resources.palettes[0][span.pixels[y]]);
+  draw(doom, image, { 0, 0 }, { 1, 1 });
 
   return image;
+}
+
+void	DOOM::Doom::Resources::Texture::draw(const DOOM::Doom& doom, sf::Image& image, sf::Vector2i position, sf::Vector2i scale) const
+{
+  // NOTE: optimize this?
+
+  // Draw texture
+  for (int texture_x = 0; texture_x < width; texture_x++)
+    for (const DOOM::Doom::Resources::Texture::Column::Span& span : columns.at(texture_x).spans)
+      for (int texture_y = 0; texture_y < span.pixels.size(); texture_y++) {
+	sf::Color color = doom.resources.palettes[0][span.pixels[texture_y]];
+
+	for (int image_x = std::max(0, position.x + (texture_x - left + 0) * scale.x); image_x < std::min((int)image.getSize().x, position.x + (texture_x - left + 1) * scale.x); image_x++)
+	  for (int image_y = std::max(0, position.y + (span.offset + texture_y - top + 0) * scale.y); image_y < std::min((int)image.getSize().y, position.y + (span.offset + texture_y - top + 1) * scale.y); image_y++)
+	    image.setPixel(image_x, image_y, color);
+      }
 }
 
 DOOM::Doom::Resources::Sound::Sound(DOOM::Doom & doom, const DOOM::Wad::RawResources::Sound & raw) :
@@ -1076,6 +1091,7 @@ DOOM::Doom::Resources::Sound::Sound(DOOM::Doom & doom, const DOOM::Wad::RawResou
 
 DOOM::Doom::Level::Level() :
   episode(0, 0),
+  end(DOOM::Enum::End::EndNone),
   sky(DOOM::Doom::Resources::Texture::Null),
   things(),
   linedefs(),

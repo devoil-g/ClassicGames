@@ -59,18 +59,13 @@ namespace DOOM
     DOOM::Doom& _doom;    // DOOM instance
     uint8_t     _episode; // Selected episode
 
-    DOOM::Camera  _backCamera;  // Background camera
-    sf::Image     _backImage;   // Camera rendering target
-    sf::Texture   _backTexture; // VRAM image
-    sf::Sprite    _backSprite;  // Background drawable
+    DOOM::Camera  _camera;  // Background camera
 
     MenuEnum                    _menuIndex;   // Current menu
     int                         _menuCursor;  // Menu cursor index
     std::array<Menu, MenuCount> _menuDesc;    // Menus descriptions
     sf::Time                    _menuElapsed; // Used for skull animation
-    sf::Image                   _menuImage;   // Camera rendering target
-    sf::Texture                 _menuTexture; // VRAM image
-    sf::Sprite                  _menuSprite;  // Menu drawable
+    sf::Image                   _menuImage;   // Pre-render target of menu
 
     void  start();  // Start game
 
@@ -80,8 +75,6 @@ namespace DOOM
     void  updateLeft();
     void  updateRight();
     void  updateEscape();
-
-    void  drawMenu(const DOOM::Doom::Resources::Texture& texture, int texture_x, int texture_y, bool shadow); // Draw a texture at specified position in menu
 
   public:
     MenuDoomState(Game::StateMachine& machine, DOOM::Doom& doom);

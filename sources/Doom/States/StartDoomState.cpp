@@ -51,6 +51,9 @@ DOOM::StartDoomState::StartDoomState(Game::StateMachine& machine, DOOM::Doom& do
   _spriteTitle.setTexture(_textureTitle, true);
   _spriteKeyboard.setTexture(_textureKeyboard, true);
   _spriteController.setTexture(_textureController, true);
+
+  // Clear DOOM rendering target
+  _doom.image.create(1, 1, sf::Color(0, 0, 0, 0));
 }
 
 bool	DOOM::StartDoomState::update(sf::Time elapsed)

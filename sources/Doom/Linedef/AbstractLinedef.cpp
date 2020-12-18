@@ -185,11 +185,11 @@ std::unique_ptr<DOOM::AbstractLinedef>	DOOM::AbstractLinedef::factory(DOOM::Doom
   case 197:	// Gunfire, normal
     return std::make_unique<DOOM::ExitLinedef<DOOM::EnumLinedef::Exit::ExitNormal, DOOM::EnumLinedef::Trigger::TriggerGunfire>>(doom, linedef);
   case 51:	// Switched, secret
-    return std::make_unique<DOOM::ExitLinedef<DOOM::EnumLinedef::Exit::ExitSecret, DOOM::EnumLinedef::Trigger::TriggerSwitched>>(doom, linedef);
+    return std::make_unique<DOOM::ExitLinedef<DOOM::EnumLinedef::Exit::ExitSecret, DOOM::EnumLinedef::Trigger::TriggerSwitched, true>>(doom, linedef);
   case 124:	// Walkover, secret
-    return std::make_unique<DOOM::ExitLinedef<DOOM::EnumLinedef::Exit::ExitSecret, DOOM::EnumLinedef::Trigger::TriggerWalkover>>(doom, linedef);
+    return std::make_unique<DOOM::ExitLinedef<DOOM::EnumLinedef::Exit::ExitSecret, DOOM::EnumLinedef::Trigger::TriggerWalkover, true>>(doom, linedef);
   case 198:	// Gunfire, secret
-    return std::make_unique<DOOM::ExitLinedef<DOOM::EnumLinedef::Exit::ExitSecret, DOOM::EnumLinedef::Trigger::TriggerGunfire>>(doom, linedef);
+    return std::make_unique<DOOM::ExitLinedef<DOOM::EnumLinedef::Exit::ExitSecret, DOOM::EnumLinedef::Trigger::TriggerGunfire, true>>(doom, linedef);
 
   default:	// Error
     std::cout << "[AbstractLinedef::factory] Warning, unknown type '" << linedef.type << "'." << std::endl;

@@ -14,16 +14,15 @@ namespace DOOM
   class TransitionDoomState : public Game::AbstractState
   {
   private:
-    sf::Image   _start;   // Start image
-    sf::Image   _end;     // End image
-    sf::Image   _image;   // Rendering target
-    sf::Texture _texture; // Target on VRAM
-    sf::Sprite  _sprite;  // Target drawable
+    DOOM::Doom& _doom;  // DOOM instance
+
+    sf::Image _start;   // Start image
+    sf::Image _end;     // End image
 
     std::vector<sf::Time> _offsets; // Temporal offset of pixel column
 
   public:
-    TransitionDoomState(Game::StateMachine& machine, const sf::Image& start, const sf::Image& end);
+    TransitionDoomState(Game::StateMachine& machine, DOOM::Doom& doom, const sf::Image& start, const sf::Image& end);
     ~TransitionDoomState() override = default;
 
     bool  update(sf::Time elapsed) override;  // Update state

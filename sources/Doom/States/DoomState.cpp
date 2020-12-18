@@ -64,10 +64,35 @@ bool	DOOM::DoomState::update(sf::Time elapsed)
 
 void	DOOM::DoomState::draw()
 {
-  // Draw game
+  // Draw game in DOOM rendering target
   _game.draw();
+
+  // Update texture on VRam
+  if (_texture.getSize() != _doom.image.getSize() && _texture.create(_doom.image.getSize().x, _doom.image.getSize().y) == false)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  _texture.update(_doom.image);
+  
+  // Making sure the texture is not filtered
+  _texture.setSmooth(false);
+
+  // Update sprite texture
+  _sprite.setTexture(_texture, true);
+  
+  // Compute sprite scale and position
+  float	scale = std::min((float)Game::Window::Instance().window().getSize().x / (float)_doom.image.getSize().x, (float)Game::Window::Instance().window().getSize().y / ((float)_doom.image.getSize().y * DOOM::Doom::RenderStretching));
+  float	pos_x = (((float)Game::Window::Instance().window().getSize().x - ((float)_doom.image.getSize().x * scale)) / 2.f);
+  float	pos_y = (((float)Game::Window::Instance().window().getSize().y - ((float)_doom.image.getSize().y * scale * DOOM::Doom::RenderStretching)) / 2.f);
+
+  // Position sprite in window
+  _sprite.setScale(sf::Vector2f(scale, scale * DOOM::Doom::RenderStretching));
+  _sprite.setPosition(sf::Vector2f(pos_x, pos_y));
+
+  // Draw DOOM rendering target
+  Game::Window::Instance().window().draw(_sprite);
 
   // Draw forced exit bar
   _bar.setScale(Game::Window::Instance().window().getSize().x * _elapsed.asSeconds() / DOOM::DoomState::ForcedExit.asSeconds(), 4.f);
   Game::Window::Instance().window().draw(_bar);
+
+
 }

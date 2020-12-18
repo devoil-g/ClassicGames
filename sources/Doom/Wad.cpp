@@ -616,7 +616,10 @@ void	DOOM::Wad::loadLevelExmy(DOOM::Wad::Lump const & lump, std::pair<uint8_t, u
 void	DOOM::Wad::loadLevelMapxy(DOOM::Wad::Lump const & lump, std::pair<uint8_t, uint8_t> & level)
 {
   // Get episode and mission number from name
-  level = { (uint8_t)((lump.name >> 24) & 0xFF) - '0', (uint8_t)((lump.name >> 32) & 0xFF) - '0' };
+  level = { 1,
+    ((uint8_t)((lump.name >> 24) & 0xFF) - '0') * 10
+    + ((uint8_t)((lump.name >> 32) & 0xFF) - '0') * 1
+  };
 
   // Remove previously loaded level
   levels.erase(level);

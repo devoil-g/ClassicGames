@@ -13,11 +13,7 @@ DOOM::MenuDoomState::MenuDoomState(Game::StateMachine& machine, DOOM::Doom& doom
   Game::AbstractState(machine),
   _doom(doom),
   _episode(1),
-  _backCamera(),
-  _backImage(),
-  _backTexture(),
-  _backSprite(),
-
+  _camera(),
   _menuIndex(DOOM::MenuDoomState::MenuEnum::MenuMain),
   _menuCursor(1),
   _menuDesc({
@@ -104,10 +100,7 @@ DOOM::MenuDoomState::MenuDoomState(Game::StateMachine& machine, DOOM::Doom& doom
     }
   }),
   _menuElapsed(sf::Time::Zero),
-  _menuImage(),
-  _menuTexture(),
-  _menuSprite()
-
+  _menuImage()
 {
   const auto  levels = _doom.getLevels();
   
@@ -137,18 +130,13 @@ DOOM::MenuDoomState::MenuDoomState(Game::StateMachine& machine, DOOM::Doom& doom
   const auto& spawn = *std::next(spawns.begin(), std::rand() % spawns.size());
 
   // Select a random camera position
-  _backCamera.position = spawn->position + Math::Vector<3>(0.f, 0.f, 56.f * 0.73f);
-  _backCamera.angle = spawn->angle + Math::DegToRad(30.f);
-
-  // Initialize menu image
-  _menuImage.create(DOOM::Doom::RenderWidth, DOOM::Doom::RenderHeight);
-  _menuTexture.create(DOOM::Doom::RenderWidth, DOOM::Doom::RenderHeight);
-  _menuTexture.setSmooth(false);
-  _menuSprite.setTexture(_menuTexture, true);
+  _camera.position = spawn->position + Math::Vector<3>(0.f, 0.f, 56.f * 0.73f);
+  _camera.angle = spawn->angle + Math::DegToRad(30.f);
 
   // Handle menu for special versions
   switch (_doom.mode) {
   case DOOM::Enum::Mode::ModeCommercial:
+    // TODO: probably something ot do with DOOM II
     // NOTE: WTF am I suppose to do here?! m_menu.c:1867
     // This seems to be an hack for ReadThis! screen on some version,
     // additional checks below fix this problem
@@ -171,44 +159,31 @@ DOOM::MenuDoomState::MenuDoomState(Game::StateMachine& machine, DOOM::Doom& doom
     _menuDesc[MenuRead2].items.front().texture = DOOM::str_to_key("HELP");
   if (_doom.resources.menus.find(_menuDesc[MenuRead2].items.front().texture) == _doom.resources.menus.end())
     _menuDesc[MenuRead2].items.front().texture = DOOM::str_to_key("CREDIT");
+
+  // Initialize pre-rendering target of menu
+  _menuImage.create(DOOM::Doom::RenderWidth, DOOM::Doom::RenderHeight);
 }
 
 void  DOOM::MenuDoomState::start()
 {
+  // Copy current screen to buffer
+  sf::Image start(_doom.image);
+
   // Load requested level
   _doom.setLevel({ _episode, 1 });
 
-  // Copy current screen to buffer
-  sf::Image start(_backImage);
-
-  // Copy menu into buffer
-  for (unsigned int y = 0; y < start.getSize().y; y++)
-    for (unsigned int x = 0; x < start.getSize().x; x++) {
-      sf::Color back = _backImage.getPixel(x, y);
-      sf::Color menu = _menuImage.getPixel(
-        x * _menuImage.getSize().x / start.getSize().x,
-        y * _menuImage.getSize().y / start.getSize().y);
-      
-      // Fusion pixels
-      start.setPixel(x, y, sf::Color(
-        sf::Uint8(((int)back.r * (255 - (int)menu.a) + (int)menu.r * (int)menu.a) / 255),
-        sf::Uint8(((int)back.g * (255 - (int)menu.a) + (int)menu.g * (int)menu.a) / 255),
-        sf::Uint8(((int)back.b * (255 - (int)menu.a) + (int)menu.b * (int)menu.a) / 255),
-        255));
-    }
-
-  sf::Image end;
-
-  // Generate first frame of game
-  end.create(DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale);
-  _doom.level.players.front().get().camera.render(_doom, end, sf::Rect<int16_t>(0, 0, DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, (DOOM::Doom::RenderHeight - 32) * DOOM::Doom::RenderScale), _doom.level.players.front().get().cameraMode(), _doom.level.players.front().get().cameraPalette());
-  _doom.level.players.front().get().statusbar.render(_doom, end, sf::Rect<int16_t>(0, (DOOM::Doom::RenderHeight - 32) * DOOM::Doom::RenderScale, DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, 32 * DOOM::Doom::RenderScale));
-
+  // Save references as 'this' is gonna be deleted
   Game::StateMachine& machine = _machine;
+  DOOM::Doom&         doom = _doom;
 
-  // Swap to game with transition
-  machine.swap<DOOM::GameDoomState>(_doom);
-  machine.push<DOOM::TransitionDoomState>(start, end);
+  // Push game state
+  machine.swap<DOOM::GameDoomState>(doom);
+
+  // Draw first image of game
+  machine.draw();
+
+  // Push transition
+  machine.push<DOOM::TransitionDoomState>(doom, start, doom.image);
 }
 
 void  DOOM::MenuDoomState::updateSelect()
@@ -262,7 +237,7 @@ void  DOOM::MenuDoomState::updateEscape()
 bool  DOOM::MenuDoomState::update(sf::Time elapsed)
 {
   // Update background camera
-  _backCamera.angle -= elapsed.asSeconds() * Math::Pi / 36.f;
+  _camera.angle -= elapsed.asSeconds() * Math::Pi / 36.f;
 
   // Update skull animation
   _menuElapsed = sf::microseconds((_menuElapsed.asMicroseconds() + elapsed.asMicroseconds()) % (DOOM::Doom::Tic.asMicroseconds() * SkullDuration * 2));
@@ -301,57 +276,34 @@ bool  DOOM::MenuDoomState::update(sf::Time elapsed)
   return false;
 }
 
-void	DOOM::MenuDoomState::drawMenu(const DOOM::Doom::Resources::Texture& texture, int texture_x, int texture_y, bool shadow)
-{
-  for (int x = 0; x < texture.width; x++) {
-    for (const DOOM::Doom::Resources::Texture::Column::Span& span : texture.columns[x].spans) {
-      for (int y = 0; y < span.pixels.size(); y++) {
-        int pixel_x = x - texture.left + texture_x;
-        int pixel_y = y + span.offset - texture.top + texture_y;
-        
-        // Compensate for not displayed status bar
-        if (_menuIndex != MenuRead1 && _menuIndex != MenuRead2)
-          pixel_y += 16;
-
-        // Draw pixel
-        if (pixel_x >= 0 && pixel_x < (int)_menuImage.getSize().x && pixel_y >= 0 && pixel_y < (int)_menuImage.getSize().y)
-          _menuImage.setPixel(pixel_x, pixel_y, _doom.resources.palettes[0][span.pixels[y]]);
-
-        // Draw shadow pixel
-        if (shadow == true && pixel_x + 1 >= 0 && pixel_x + 1 < (int)_menuImage.getSize().x && pixel_y + 1 >= 0 && pixel_y + 1 < (int)_menuImage.getSize().y)
-          _menuImage.setPixel(pixel_x + 1, pixel_y + 1, sf::Color(0, 0, 0, 127));
-      }
-    }
-  }
-}
-
 void	DOOM::MenuDoomState::draw()
 {
   sf::Vector2u  size = { DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale };
 
-  // Update background rendering target size
-  if (_backImage.getSize() != size) {
-    _backImage.create(size.x, size.y);
-    _backTexture.create(size.x, size.y);
-    _backTexture.setSmooth(false);
-    _backSprite.setTexture(_backTexture, true);
-  }
+  // Update rendering target size
+  if (_doom.image.getSize() != size)
+    _doom.image.create(size.x, size.y);
 
   // Clear rendering targets
-  std::memset((void*)_backImage.getPixelsPtr(), 0, _backImage.getSize().x * _backImage.getSize().y * sizeof(sf::Color));
-  std::memset((void*)_menuImage.getPixelsPtr(), 0, _menuImage.getSize().x * _menuImage.getSize().y * sizeof(sf::Color));
+  std::memset((void*)_doom.image.getPixelsPtr(), 0, _doom.image.getSize().x * _doom.image.getSize().y * sizeof(sf::Color));
 
   // Render background
-  _backCamera.render(_doom, _backImage, sf::Rect<int16_t>(0, 0, size.x, size.y));
+  _camera.render(_doom, _doom.image, sf::Rect<int16_t>(0, 0, size.x, size.y));
 
   // Greyscale background
   for (unsigned int y = 0; y < size.y; y++)
     for (unsigned int x = 0; x < size.x; x++) {
-      sf::Color color = _backImage.getPixel(x, y);
+      sf::Color color = _doom.image.getPixel(x, y);
       sf::Uint8 grey = (sf::Uint8)(((int)color.r + (int)color.g + (int)color.b) / 3);
 
-      _backImage.setPixel(x, y, sf::Color(grey, grey, grey));
+      _doom.image.setPixel(x, y, sf::Color(grey, grey, grey));
     }
+
+  // Clear menu rendering target
+  std::memset((void*)_menuImage.getPixelsPtr(), 0, _menuImage.getSize().x * _menuImage.getSize().y * sizeof(sf::Color));
+
+  // Compensate for not displayed status bar
+  int offset_y = (_menuIndex != MenuRead1 && _menuIndex != MenuRead2) ? 16 : 0;
 
   // Draw menu items
   for (const Menu::Item& item : _menuDesc[_menuIndex].items) {
@@ -362,7 +314,7 @@ void	DOOM::MenuDoomState::draw()
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
     // Draw item
-    drawMenu(texture->second, item.x, item.y, true);
+    texture->second.draw(_doom, _menuImage, { item.x, item.y + offset_y }, { 1, 1 });
   }
 
   const auto& sliderLeft = _doom.resources.menus.find(DOOM::str_to_key("M_THERML"));
@@ -379,13 +331,12 @@ void	DOOM::MenuDoomState::draw()
 
   // Draw menus sliders
   for (const Menu::Slider& slider : _menuDesc[_menuIndex].sliders) {
-    drawMenu(sliderLeft->second, slider.x, slider.y, true);
+    sliderLeft->second.draw(_doom, _menuImage, { slider.x, slider.y + offset_y }, { 1, 1 });
     for (int x = 0; x <= 8; x++)
-      drawMenu(sliderMiddle->second, slider.x + 8 * (x + 1), slider.y, true);
-    drawMenu(sliderRight->second, slider.x + 8 * (9 + 1), slider.y, true);
-    drawMenu(sliderCursor->second, slider.x + 8 * (slider.get() + 1), slider.y, false);
+      sliderMiddle->second.draw(_doom, _menuImage, { slider.x + 8 * (x + 1), slider.y + offset_y }, { 1, 1 });
+    sliderRight->second.draw(_doom, _menuImage, { slider.x + 8 * (9 + 1), slider.y + offset_y }, { 1, 1 });
+    sliderCursor->second.draw(_doom, _menuImage, { slider.x + 8 * (slider.get() + 1), slider.y + offset_y }, { 1, 1 });
   }
-
 
   const auto& skull = _doom.resources.menus.find(DOOM::str_to_key((unsigned int)(_menuElapsed.asSeconds() / DOOM::Doom::Tic.asSeconds()) < SkullDuration ? "M_SKULL1" : "M_SKULL2"));
 
@@ -394,27 +345,38 @@ void	DOOM::MenuDoomState::draw()
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Draw menu skull
-  drawMenu(skull->second,
-    std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor)->x - 32,
-    std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor)->y - 5,
-    true);
+  skull->second.draw(_doom, _menuImage,
+    {
+      std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor)->x - 32,
+      std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor)->y - 5 + offset_y
+    }, { 1, 1 });
 
-  // Update textures
-  _backTexture.update(_backImage);
-  _menuTexture.update(_menuImage);
+  // Draw menu shadow
+  for (unsigned int x = 0; x < _menuImage.getSize().x - 1; x++)
+    for (unsigned int y = 0; y < _menuImage.getSize().y - 1; y++)
+      if (_menuImage.getPixel(x + 0, y + 0).a == 255 &&
+        _menuImage.getPixel(x + 1, y + 1).a == 0)
+        _menuImage.setPixel(x + 1, y + 1, sf::Color(0, 0, 0, 127));
 
-  // Compute sprite scale and position
-  float	scale = std::min((float)Game::Window::Instance().window().getSize().x / (float)DOOM::Doom::RenderWidth, (float)Game::Window::Instance().window().getSize().y / ((float)DOOM::Doom::RenderHeight * DOOM::Doom::RenderStretching));
-  float	pos_x = (((float)Game::Window::Instance().window().getSize().x - ((float)DOOM::Doom::RenderWidth * scale)) / 2.f);
-  float	pos_y = (((float)Game::Window::Instance().window().getSize().y - ((float)DOOM::Doom::RenderHeight * scale * DOOM::Doom::RenderStretching)) / 2.f);
+  // Draw menu over background
+  for (unsigned int y = 0; y < size.y; y++)
+    for (unsigned int x = 0; x < size.x; x++) {
+      sf::Color color = _menuImage.getPixel(x / DOOM::Doom::RenderScale, y / DOOM::Doom::RenderScale);
+      
+      // Draw only visible pixels
+      if (color != sf::Color(0, 0, 0, 0)) {
+        _doom.image.setPixel(x, y, color);
 
-  // Position sprite in window
-  _backSprite.setScale(sf::Vector2f(scale / DOOM::Doom::RenderScale, scale * DOOM::Doom::RenderStretching / DOOM::Doom::RenderScale));
-  _backSprite.setPosition(sf::Vector2f(pos_x, pos_y));
-  _menuSprite.setScale(sf::Vector2f(scale, scale * DOOM::Doom::RenderStretching));
-  _menuSprite.setPosition(sf::Vector2f(pos_x, pos_y));
+        // Drop shadow
+        if (x + DOOM::Doom::RenderScale < _doom.image.getSize().x && y + DOOM::Doom::RenderScale < _doom.image.getSize().y) {
+          sf::Color shadow = _doom.image.getPixel(x + DOOM::Doom::RenderScale, y + DOOM::Doom::RenderScale);
 
-  // Draw sprite
-  Game::Window::Instance().window().draw(_backSprite);
-  Game::Window::Instance().window().draw(_menuSprite);
+          shadow.r /= 2;
+          shadow.g /= 2;
+          shadow.b /= 2;
+
+          _doom.image.setPixel(x + DOOM::Doom::RenderScale, y + DOOM::Doom::RenderScale, shadow);
+        }
+      }
+    }
 }

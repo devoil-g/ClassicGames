@@ -18,6 +18,13 @@ namespace DOOM
 {
   namespace Enum
   {
+    enum End
+    {
+      EndNone,    // Not finished
+      EndNormal,  // Go to next level
+      EndSecret   // Go to secret level
+    };
+
     enum Mode
     {
       ModeShareware,    // DOOM 1 shareware, E1, M9
@@ -334,7 +341,8 @@ namespace DOOM
         Texture(DOOM::Doom& doom, const DOOM::Wad::RawResources::Patch& patch);
         ~Texture() = default;
 
-        sf::Image image(const DOOM::Doom& doom) const;
+        sf::Image image(const DOOM::Doom& doom) const;                                                              // Create an SFML image from texture
+        void      draw(const DOOM::Doom& doom, sf::Image& image, sf::Vector2i position, sf::Vector2i scale) const;  // Draw texture in SFML image at given position & scale
       };
 
       class Sound
@@ -740,6 +748,7 @@ namespace DOOM
 
     public:
       std::pair<uint8_t, uint8_t>                                   episode;    // Level episode and episode's mission number
+      DOOM::Enum::End                                               end;
       std::reference_wrapper<const DOOM::Doom::Resources::Texture>  sky;        // Sky texture of the level
       std::vector<std::reference_wrapper<DOOM::PlayerThing>>        players;    // List of players (references to PlayerThing in things list)
       std::list<std::unique_ptr<DOOM::AbstractThing>>               things;     // List of things
@@ -806,6 +815,7 @@ namespace DOOM
     float                 sfx;        // SFX sound volume [0-1]
     float                 music;      // Music valume [0-1]
     bool                  message;    // Message enabled
+    sf::Image             image;      // DOOM rendering target
 
     void  load(const std::string& file);  // Load WAD file and build resources
     void  update(sf::Time elapsed);       // Update current level and resources

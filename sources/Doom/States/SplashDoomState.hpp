@@ -15,9 +15,6 @@ namespace DOOM
   private:
     DOOM::Doom& _doom;  // DOOM instance
 
-    sf::Texture _texture; // Image in graphic memory
-    sf::Sprite  _sprite;  // Display rendered texture
-
   public:
     SplashDoomState(Game::StateMachine& machine, DOOM::Doom& doom);
     ~SplashDoomState() override = default;

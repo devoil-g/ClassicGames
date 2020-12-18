@@ -16,11 +16,13 @@ namespace DOOM
   private:
     static const sf::Time ForcedExit; // Forced exit time limit
 
-    DOOM::Doom          _doom;  // Main DOOM instance
-    Game::StateMachine  _game;  // DOOM state machine
+    DOOM::Doom          _doom;    // Main DOOM instance
+    Game::StateMachine  _game;    // DOOM state machine
+    sf::Texture         _texture; // Image in graphic memory
+    sf::Sprite          _sprite;  // Display rendered texture
 
     sf::Time            _elapsed; // Timer of forced exit
-    sf::RectangleShape  _bar; // Forced exit bar
+    sf::RectangleShape  _bar;     // Forced exit bar
     
   public:
     DoomState(Game::StateMachine& machine);
