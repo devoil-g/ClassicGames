@@ -28,13 +28,13 @@ namespace DOOM
       StateCount
     };
 
-    static const int  TitleY;         // Title vertical position (centred)
-    static const int  SpacingY;       // Spacing between stats
-    static const int  StatsX, StatsY; // Position of kills/items/secret stats
-    static const int  TimeX, TimeY;   // Position of time
-    static const int  SpeedPercent;   // Percentage increase per tic
-    static const int  SpeedTime;      // Time increase per tic
-    static const int  SpeedPistol;    // Tic between two pistol shoot sound
+    static const int  TitleY;                                   // Title vertical position (centred)
+    static const int  StatsSoloX, StatsSoloY, StatsSoloSpacing; // Position of kills/items/secret stats in solo mode
+    static const int  StatsCoopX, StatsCoopY, StatsCoopSpacing; // Position of kills/items/secret stats in coop mode
+    static const int  TimeX, TimeY;                             // Position of time
+    static const int  SpeedPercent;                             // Percentage increase per tic
+    static const int  SpeedTime;                                // Time increase per tic
+    static const int  SpeedPistol;                              // Tic between two pistol shoot sound
 
     static const std::array<std::array<sf::Vector2i, 9>, 3>                         _positions;   // Position of level on the map per episode/level (ignore this in DOOM II & Episode 4)
     static const std::array<std::vector<DOOM::IntermissionDoomState::Animation>, 3> _animations;  // Animations for DOOM I background
@@ -46,35 +46,51 @@ namespace DOOM
     sf::Time                            _elapsed;       // Elapsed time
     sf::Time                            _nextElapsed;   // Elapsed time in next level screen
 
-    float _kills, _items, _secret, _time, _par;  // Stats counters, -1 when not displayed
+    struct Counter
+    {
+      float value;  // Current value of counter (negative if not displayed)
+      float max;    // Max value of counter
+    };
 
-    const DOOM::Doom::Resources::Texture&                                               _background;    // Screen background
-    const DOOM::Doom::Resources::Texture&                                               _textCurrent;   // Exiting level name
-    const DOOM::Doom::Resources::Texture&                                               _textNext;      // Next level name
-    const std::array<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, 10>  _textNumbers;   // Individual digits
-    const DOOM::Doom::Resources::Texture&                                               _textFinished;  // Text "Finished"
-    const DOOM::Doom::Resources::Texture&                                               _textEntering;  // Text "Entering"
-    const DOOM::Doom::Resources::Texture&                                               _textKills;     // Text "Kills"
-    const DOOM::Doom::Resources::Texture&                                               _textItems;     // Text "Items"
-    const DOOM::Doom::Resources::Texture&                                               _textSecret;    // Text "Secret"
-    const DOOM::Doom::Resources::Texture&                                               _textTime;      // Text "Time"
-    const DOOM::Doom::Resources::Texture&                                               _textSucks;     // Text "Sucks"
-    const DOOM::Doom::Resources::Texture&                                               _textPar;       // Text "Par"
-    const DOOM::Doom::Resources::Texture&                                               _textMinus;     // Character '-'
-    const DOOM::Doom::Resources::Texture&                                               _textPercent;   // Character '%'
-    const DOOM::Doom::Resources::Texture&                                               _textColon;     // Character ':'
+    std::map<int, DOOM::IntermissionDoomState::Counter> _kills;   // Kills counters of players
+    std::map<int, DOOM::IntermissionDoomState::Counter> _items;   // Items counters of players
+    std::map<int, DOOM::IntermissionDoomState::Counter> _secrets; // Secrets counters of players
+    std::map<int, DOOM::IntermissionDoomState::Counter> _times;   // Time counters (0: time, 1: par)
+
+    const DOOM::Doom::Resources::Texture&                                               _background;        // Screen background
+    const DOOM::Doom::Resources::Texture&                                               _playerFace;        // Face of the player
+    const std::array<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, 4>   _playerBackground;  // Face of the player
+    const DOOM::Doom::Resources::Texture&                                               _textCurrent;       // Exiting level name
+    const DOOM::Doom::Resources::Texture&                                               _textNext;          // Next level name
+    const std::array<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, 10>  _textNumbers;       // Individual digits
+    const DOOM::Doom::Resources::Texture&                                               _textFinished;      // Text "Finished"
+    const DOOM::Doom::Resources::Texture&                                               _textEntering;      // Text "Entering"
+    const DOOM::Doom::Resources::Texture&                                               _textKills;         // Text "Kills"
+    const DOOM::Doom::Resources::Texture&                                               _textItems;         // Text "Items"
+    const DOOM::Doom::Resources::Texture&                                               _textSecret;        // Text "Secret"
+    const DOOM::Doom::Resources::Texture&                                               _textScrt;          // Text "Scrt"
+    const DOOM::Doom::Resources::Texture&                                               _textTime;          // Text "Time"
+    const DOOM::Doom::Resources::Texture&                                               _textSucks;         // Text "Sucks"
+    const DOOM::Doom::Resources::Texture&                                               _textPar;           // Text "Par"
+    const DOOM::Doom::Resources::Texture&                                               _textMinus;         // Character '-'
+    const DOOM::Doom::Resources::Texture&                                               _textPercent;       // Character '%'
+    const DOOM::Doom::Resources::Texture&                                               _textColon;         // Character ':'
     
     const DOOM::Doom::Resources::Texture& getTexture(uint64_t key) const;                   // Get texture from DOOM, throw error if failure
     std::pair<uint8_t, uint8_t>           getNextLevel(bool secret) const;                  // Get next level to be loaded
     float                                 getPar(std::pair<uint8_t, uint8_t> level) const;  // Return par time of current level, NaN if none registered
 
     bool  updateStatistics(sf::Time elapsed);
-    void  updateStatistics(sf::Time& elapsed, float& value, int max, int speed, bool silent = false);
+    void  updateStatisticsCounters(sf::Time& elapsed, std::map<int, DOOM::IntermissionDoomState::Counter>& counters, int speed);
+    bool  updateStatisticsCountersCheck(const std::map<int, DOOM::IntermissionDoomState::Counter>& counters);    // Return true if all counters are completed
+    void  updateStatisticsCountersComplete(std::map<int, DOOM::IntermissionDoomState::Counter>& counters);    // Force complete counters
     bool  updateNext(sf::Time elapsed);
     bool  updateSkip();
 
     void  drawBackground();
     void  drawStatistics();
+    void  drawStatisticsSolo();
+    void  drawStatisticsCoop();
     void  drawNext();
 
     void  drawPercent(sf::Vector2i position, int value);

@@ -508,6 +508,7 @@ void	DOOM::Doom::buildLevel(std::pair<uint8_t, uint8_t> const & level)
     buildLevelNodes();
     buildLevelBlockmap();
     buildLevelThings();
+    buildLevelStatistics();
   }
   catch (std::exception e)
   {
@@ -614,6 +615,30 @@ void	DOOM::Doom::buildLevelBlockmap()
 {
   // Convert WAD bockmap
   level.blockmap = DOOM::Doom::Level::Blockmap(*this, wad.levels[level.episode].blockmap);
+}
+
+void	DOOM::Doom::buildLevelStatistics()
+{
+  // Reset counters
+  level.statistics = DOOM::Doom::Level::Statistics();
+
+  // Count monsters and items
+  for (const auto& thing : level.things) {
+    if (thing.get()->flags & DOOM::Enum::ThingProperty::ThingProperty_CountKill)
+      level.statistics.total.kills += 1;
+    if (thing.get()->flags & DOOM::Enum::ThingProperty::ThingProperty_CountItem)
+      level.statistics.total.items += 1;
+  }
+
+  // Count secret sectors
+  for (const auto& sector : level.sectors) {
+    if (sector.special == DOOM::Doom::Level::Sector::Special::Secret)
+      level.statistics.total.secrets += 1;
+  }
+
+  // Initialize player counters
+  for (const auto& player : level.players)
+    level.statistics.players[player.get().id] = DOOM::Doom::Level::Statistics::Stats<unsigned int>();
 }
 
 void	DOOM::Doom::Resources::update(DOOM::Doom & doom, sf::Time elapsed)
@@ -1513,7 +1538,7 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom& doom, const DOOM::Wad::RawLevel::S
     action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::OscillateLightingAction<>>(doom, *this));
     break;
   case DOOM::Doom::Level::Sector::Special::Secret:
-    doom.level.statistics.secretTotal += 1;
+    doom.level.statistics.total.secrets += 1;
     break;
   case DOOM::Doom::Level::Sector::Special::DoorClose:
     action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitClose, DOOM::EnumAction::Speed::SpeedSlow, 1050>>(doom, *this));
@@ -1733,10 +1758,9 @@ bool	DOOM::Doom::Level::Sector::secret()
 }
 
 DOOM::Doom::Level::Statistics::Statistics() :
-  killsCurrent(0), killsTotal(0),
-  itemsCurrent(0), itemsTotal(0),
-  secretCurrent(0), secretTotal(0),
-  time(sf::Time::Zero), par(sf::Time::Zero)
+  players(),
+  total(),
+  time(sf::Time::Zero)
 {}
 
 void	DOOM::Doom::Level::Statistics::update(DOOM::Doom& doom, sf::Time elapsed)

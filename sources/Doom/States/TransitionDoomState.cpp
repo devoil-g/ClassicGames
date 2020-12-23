@@ -8,6 +8,8 @@ DOOM::TransitionDoomState::TransitionDoomState(Game::StateMachine& machine, DOOM
   _end(end),
   _offsets(DOOM::Doom::RenderWidth / 2)
 {
+  // TODO: support any size
+
   // Check images are valid DOOM ratio
   if ((float)_start.getSize().x / (float)_start.getSize().y != (float)DOOM::Doom::RenderWidth / (float)DOOM::Doom::RenderHeight ||
     (float)_end.getSize().x / (float)_end.getSize().y != (float)DOOM::Doom::RenderWidth / (float)DOOM::Doom::RenderHeight)

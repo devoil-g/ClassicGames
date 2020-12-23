@@ -730,10 +730,18 @@ namespace DOOM
       class Statistics
       {
       public:
-        int       killsCurrent, killsTotal;   // Kill percentage
-        int       itemsCurrent, itemsTotal;   // Item pick-up percentage
-        int       secretCurrent, secretTotal; // Item pick-up percentage
-        sf::Time  time, par;                  // Time played in level and par time
+        template<typename Type>
+        struct Stats
+        {
+          Type  kills, items, secrets;  // Kills, items and secrets counters
+
+          Stats() : kills(0), items(0), secrets(0) {};
+          ~Stats() = default;
+        };
+
+        std::map<int, DOOM::Doom::Level::Statistics::Stats<unsigned int>> players;  // Individual counter for each player
+        DOOM::Doom::Level::Statistics::Stats<unsigned int>                total;    // Total number in map
+        sf::Time                                                          time;     // Time played in level
 
         Statistics();
         ~Statistics() = default;
@@ -801,6 +809,7 @@ namespace DOOM
     void  buildLevelSegments();                                 // Build level's segments from WAD file
     void  buildLevelNodes();                                    // Build level's nodes from WAD file
     void  buildLevelBlockmap();                                 // Build level's blockmap from WAD file
+    void  buildLevelStatistics();                               // Initialize level statistics for loaded level
 
   public:
     Doom();

@@ -4908,12 +4908,6 @@ DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type,
 
   // Set thing spawn Z position
   position.z() = (this->flags & (DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling) ? ceiling - height : floor);
-
-  // Update level statistics
-  if (this->flags & DOOM::Enum::ThingProperty::ThingProperty_CountKill)
-    doom.level.statistics.killsTotal += 1;
-  if (this->flags & DOOM::Enum::ThingProperty::ThingProperty_CountItem)
-    doom.level.statistics.itemsTotal += 1;
 }
 
 bool	DOOM::AbstractThing::update(DOOM::Doom& doom, sf::Time elapsed)
@@ -5232,10 +5226,6 @@ void DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed
       if ((position.convert<2>() + movement * closest_distance - thing.get().position.convert<2>()).length() < thing.get().attributs.radius + attributs.radius &&
         position.z() + height > thing.get().position.z() && position.z() < thing.get().position.z() + thing.get().height) {
         thing.get()._remove = pickup(doom, thing);
-
-        // Update level statistics
-        if (thing.get()._remove == true && (thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_CountItem))
-          doom.level.statistics.itemsCurrent += 1;
       }
     }
 
@@ -6747,8 +6737,8 @@ void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker
     }
 
     // Update level statistics
-    if (flags & DOOM::Enum::ThingProperty::ThingProperty_CountKill)
-      doom.level.statistics.killsCurrent += 1;
+    if (flags & DOOM::Enum::ThingProperty::ThingProperty_CountKill && origin.type == DOOM::Enum::ThingType::ThingType_PLAYER)
+      doom.level.statistics.players[static_cast<DOOM::PlayerThing&>(origin).id].kills += 1;
   }
 
   // Change target

@@ -108,7 +108,7 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
   // Secret sector found
   if (position.z() <= sector.floor_current && sector.secret() == true) {
     // NOTE: original DOOM don't prompt message of play sound
-    doom.level.statistics.secretCurrent++;
+    doom.level.statistics.players[id].secrets += 1;
   }
 
   // Always return false as a player is never deleted
@@ -304,13 +304,22 @@ bool  DOOM::PlayerThing::pickup(DOOM::Doom& doom, DOOM::AbstractThing& item)
 
   auto  iterator = items.find(item.type);
 
-  // Pick-up item if known
-  if (iterator != items.end())
-    return iterator->second(doom, *this, item);
-  else {
+  // Handle errors
+  if (iterator == items.end()) {
     std::cerr << "[DOOM::PlayerThing] Warning, pickup type '" << item.type << "' not supported." << std::endl;
     return false;
   }
+
+  // Try to pick-up
+  if (iterator->second(doom, *this, item) == false)
+    return false;
+
+  // Count pickup in statistics
+  if (item.flags & DOOM::Enum::ThingProperty::ThingProperty_CountItem)
+    doom.level.statistics.players[id].items += 1;
+
+  // Remove picked-up item
+  return true;
 }
 
 bool  DOOM::PlayerThing::pickupComputerMap()

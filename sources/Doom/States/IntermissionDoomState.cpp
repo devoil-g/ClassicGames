@@ -5,9 +5,12 @@
 #include "Doom/Thing/PlayerThing.hpp"
 
 const int DOOM::IntermissionDoomState::TitleY = 2;
-const int DOOM::IntermissionDoomState::SpacingY = 33;
-const int DOOM::IntermissionDoomState::StatsX = 50;
-const int DOOM::IntermissionDoomState::StatsY = 50;
+const int DOOM::IntermissionDoomState::StatsSoloX = 50;
+const int DOOM::IntermissionDoomState::StatsSoloY = 50;
+const int DOOM::IntermissionDoomState::StatsSoloSpacing = 33;
+const int DOOM::IntermissionDoomState::StatsCoopX = 64;
+const int DOOM::IntermissionDoomState::StatsCoopY = 50;
+const int DOOM::IntermissionDoomState::StatsCoopSpacing = 64;
 const int DOOM::IntermissionDoomState::TimeX = 16;
 const int DOOM::IntermissionDoomState::TimeY = DOOM::Doom::RenderHeight - 32;
 const int DOOM::IntermissionDoomState::SpeedPercent = 2;
@@ -93,16 +96,23 @@ DOOM::IntermissionDoomState::IntermissionDoomState(Game::StateMachine& machine, 
   _state(DOOM::IntermissionDoomState::State::StateStats),
   _elapsed(sf::Time::Zero),
   _nextElapsed(sf::Time::Zero),
-  _kills(-1.f / DOOM::Doom::Tic.asSeconds() * DOOM::IntermissionDoomState::SpeedPercent),
-  _items(-1.f / DOOM::Doom::Tic.asSeconds() * DOOM::IntermissionDoomState::SpeedPercent),
-  _secret(-1.f / DOOM::Doom::Tic.asSeconds() * DOOM::IntermissionDoomState::SpeedPercent),
-  _time(-1.f / DOOM::Doom::Tic.asSeconds() * DOOM::IntermissionDoomState::SpeedTime),
-  _par(-1.f / DOOM::Doom::Tic.asSeconds() * DOOM::IntermissionDoomState::SpeedTime),
+  _kills(),
+  _items(),
+  _secrets(),
+  _times(),
   _background(getTexture(DOOM::str_to_key(
     (doom.mode == DOOM::Enum::Mode::ModeCommercial || (doom.mode == DOOM::Enum::Mode::ModeRetail && doom.level.episode.first == 4))
     ? (std::string("INTERPIC"))
     : (std::string("WIMAP") + std::to_string(doom.level.episode.first - 1))
   ))),
+  _playerFace(getTexture(DOOM::str_to_key("STFST01"))),
+  _playerBackground
+    {
+      getTexture(DOOM::str_to_key("STPB0")),
+      getTexture(DOOM::str_to_key("STPB1")),
+      getTexture(DOOM::str_to_key("STPB2")),
+      getTexture(DOOM::str_to_key("STPB3"))
+    },
   _textCurrent(getTexture(DOOM::str_to_key(
     (doom.mode == DOOM::Enum::Mode::ModeCommercial)
     ? (std::string("CWILV") + std::to_string((doom.level.episode.second - 1) / 10 % 10) + std::to_string((doom.level.episode.second - 1) % 10))
@@ -131,13 +141,34 @@ DOOM::IntermissionDoomState::IntermissionDoomState(Game::StateMachine& machine, 
   _textKills(getTexture(DOOM::str_to_key("WIOSTK"))),
   _textItems(getTexture(DOOM::str_to_key("WIOSTI"))),
   _textSecret(getTexture(DOOM::str_to_key("WISCRT2"))),
+  _textScrt(getTexture(DOOM::str_to_key("WIOSTS"))),
   _textTime(getTexture(DOOM::str_to_key("WITIME"))),
   _textSucks(getTexture(DOOM::str_to_key("WISUCKS"))),
   _textPar(getTexture(DOOM::str_to_key("WIPAR"))),
   _textMinus(getTexture(DOOM::str_to_key("WIMINUS"))),
   _textPercent(getTexture(DOOM::str_to_key("WIPCNT"))),
   _textColon(getTexture(DOOM::str_to_key("WICOLON")))
-{}
+{
+  // Initialize counter for each player
+  for (const auto& player : _doom.level.players) {
+    _kills[player.get().id].value = -1.f / DOOM::Doom::Tic.asSeconds() * DOOM::IntermissionDoomState::SpeedPercent;
+    _items[player.get().id].value = -1.f / DOOM::Doom::Tic.asSeconds() * DOOM::IntermissionDoomState::SpeedPercent;
+    _secrets[player.get().id].value = -1.f / DOOM::Doom::Tic.asSeconds() * DOOM::IntermissionDoomState::SpeedPercent;
+    _kills[player.get().id].max = (_doom.level.statistics.total.kills == 0) ? 0.f : std::round(_doom.level.statistics.players[player.get().id].kills * 100.f / _doom.level.statistics.total.kills);
+    _items[player.get().id].max = (_doom.level.statistics.total.items == 0) ? 0.f : std::round(_doom.level.statistics.players[player.get().id].items * 100.f / _doom.level.statistics.total.items);
+    _secrets[player.get().id].max = (_doom.level.statistics.total.secrets == 0) ? 0.f : std::round(_doom.level.statistics.players[player.get().id].secrets * 100.f / _doom.level.statistics.total.secrets);
+  }
+
+  // Time counter
+  _times[0].value = -1.f / DOOM::Doom::Tic.asSeconds() * DOOM::IntermissionDoomState::SpeedTime;
+  _times[0].max = std::round(_doom.level.statistics.time.asSeconds());
+
+  // Par counter
+  _times[1].value = -1.f / DOOM::Doom::Tic.asSeconds() * DOOM::IntermissionDoomState::SpeedTime;
+  _times[1].max = getPar(_doom.level.episode);
+  if (std::isnan(_times[1].max) == true)
+    _times[1].max = _times[1].value;
+}
 
 bool    DOOM::IntermissionDoomState::update(sf::Time elapsed)
 {
@@ -167,81 +198,103 @@ bool    DOOM::IntermissionDoomState::update(sf::Time elapsed)
   return false;
 }
 
+void    DOOM::IntermissionDoomState::updateStatisticsCountersComplete(std::map<int, DOOM::IntermissionDoomState::Counter>& counters)
+{
+  // Complete every counter
+  for (auto& counter : counters)
+    counter.second.value = counter.second.max;
+}
+
+bool    DOOM::IntermissionDoomState::updateStatisticsCountersCheck(const std::map<int, DOOM::IntermissionDoomState::Counter>& counters)
+{
+  // Check for counters completion
+  for (const auto& counter : counters)
+    if (counter.second.value < counter.second.max)
+      return false;
+
+  // Success!
+  return true;
+}
+
+void    DOOM::IntermissionDoomState::updateStatisticsCounters(sf::Time& elapsed, std::map<int, DOOM::IntermissionDoomState::Counter>& counters, int speed)
+{
+  // Does nothing if no time or already completed
+  if (elapsed == sf::Time::Zero || updateStatisticsCountersCheck(counters) == true)
+    return;
+
+  sf::Time  copy = elapsed;
+  int       start = std::numeric_limits<int>::max();
+  int       end = std::numeric_limits<int>::min();
+
+  for (auto& counter : counters) {
+    // Already completed
+    if (counter.second.value == counter.second.max)
+      continue;
+
+    // Counter for sound effet
+    start = std::min(start, (int)std::round(counter.second.value / speed / DOOM::IntermissionDoomState::SpeedPistol));
+
+    // Increase counter
+    counter.second.value += copy.asSeconds() / DOOM::Doom::Tic.asSeconds() * speed;
+
+    // Finished
+    if (counter.second.value >= counter.second.max) {
+      elapsed = std::min(elapsed, sf::seconds((counter.second.value - counter.second.max) / speed * DOOM::Doom::Tic.asSeconds()));
+      counter.second.value = counter.second.max;
+    }
+
+    // Not completed, consume time
+    else
+      elapsed = sf::Time::Zero;
+
+    // Counter for sound effet
+    end = std::max(end, (int)std::round(counter.second.value / speed / DOOM::IntermissionDoomState::SpeedPistol));
+  }
+
+  // TODO: will not explode if elapsed is exactly at zero
+  // Counter completed, explode!
+  if (updateStatisticsCountersCheck(counters) == true)
+    _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_barexp);
+
+  // Shoot pistol
+  else if (start < end && end >= 0)
+    _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol);
+}
+
 bool    DOOM::IntermissionDoomState::updateStatistics(sf::Time elapsed)
 {
-  int killsTotal = (_doom.level.statistics.killsTotal == 0) ? (0) : (_doom.level.statistics.killsCurrent * 100 / _doom.level.statistics.killsTotal);
-  int itemsTotal = (_doom.level.statistics.itemsTotal == 0) ? (0) : (_doom.level.statistics.itemsCurrent * 100 / _doom.level.statistics.itemsTotal);
-  int secretTotal = (_doom.level.statistics.secretTotal == 0) ? (0) : (_doom.level.statistics.secretCurrent * 100 / _doom.level.statistics.secretTotal);
-  int timeTotal = (int)_doom.level.statistics.time.asSeconds();
-  int parTotal = (int)((std::isnan(getPar(_doom.level.episode)) == true) ? (_par) : (getPar(_doom.level.episode)));
-
   // Skip statistics
   if (updateSkip() == true) {
-    if (_kills < killsTotal)
-      _kills = (float)killsTotal;
-    else if (_items < itemsTotal)
-      _items = (float)itemsTotal;
-    else if (_secret < secretTotal)
-      _secret = (float)secretTotal;
-    else if (_time < timeTotal || _par < parTotal) {
-      _time = (float)timeTotal;
-      _par = (float)parTotal;
-    }
+    // Skip kills count
+    if (updateStatisticsCountersCheck(_kills) == false)
+      updateStatisticsCountersComplete(_kills);
+    // Skip items count
+    else if (updateStatisticsCountersCheck(_items) == false)
+      updateStatisticsCountersComplete(_items);
+    // Skip secrets count
+    else if (updateStatisticsCountersCheck(_secrets) == false)
+      updateStatisticsCountersComplete(_secrets);
+    // Skip time count
+    else if (updateStatisticsCountersCheck(_times) == false)
+      updateStatisticsCountersComplete(_times);
     else
       return true;
 
     // A stat has been skipped
     _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_barexp);
     elapsed = sf::Time::Zero;
+    return false;
   }
 
   // Percentages
-  updateStatistics(elapsed, _kills, killsTotal, DOOM::IntermissionDoomState::SpeedPercent);
-  updateStatistics(elapsed, _items, itemsTotal, DOOM::IntermissionDoomState::SpeedPercent);
-  updateStatistics(elapsed, _secret, secretTotal, DOOM::IntermissionDoomState::SpeedPercent);
+  updateStatisticsCounters(elapsed, _kills, DOOM::IntermissionDoomState::SpeedPercent);
+  updateStatisticsCounters(elapsed, _items, DOOM::IntermissionDoomState::SpeedPercent);
+  updateStatisticsCounters(elapsed, _secrets, DOOM::IntermissionDoomState::SpeedPercent);
 
-  sf::Time  copy = elapsed;
-  
-  // Time
-  updateStatistics(elapsed, _time, timeTotal, DOOM::IntermissionDoomState::SpeedTime, timeTotal < parTotal);
-  updateStatistics(copy, _par, parTotal, DOOM::IntermissionDoomState::SpeedTime, timeTotal >= parTotal);
+  // Times
+  updateStatisticsCounters(elapsed, _times, DOOM::IntermissionDoomState::SpeedTime);
 
   return false;
-}
-
-void    DOOM::IntermissionDoomState::updateStatistics(sf::Time& elapsed, float& value, int max, int speed, bool silent)
-{
-  // Does nothing if already completed
-  if (value >= max || _elapsed == sf::Time::Zero)
-    return;
-
-  float start = value;
-
-  // Increase counter
-  value += elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds() * speed;
-
-  // Finished, explosion!
-  if (value >= max) {
-    elapsed = sf::seconds((value - max) / speed * DOOM::Doom::Tic.asSeconds());
-    value = (float)max;
-    if (silent == false) {
-      _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_barexp);
-    }
-    return;
-  }
-
-  int start_sound = (int)std::round(start / speed / DOOM::IntermissionDoomState::SpeedPistol);
-  int end_sound = (int)std::round(value / speed / DOOM::IntermissionDoomState::SpeedPistol);
-
-  // Shoot pistol
-  if (start_sound != end_sound && end_sound >= 0 && max > 0) {
-    if (silent == false) {
-      _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol);
-    }
-  }
-
-  // Consume time
-  elapsed = sf::Time::Zero;
 }
 
 bool    DOOM::IntermissionDoomState::updateNext(sf::Time elapsed)
@@ -352,25 +405,75 @@ void	DOOM::IntermissionDoomState::drawStatistics()
   _textCurrent.draw(_doom, _doom.image, sf::Vector2i((DOOM::Doom::RenderWidth - _textCurrent.width) / 2, DOOM::IntermissionDoomState::TitleY), { 1, 1 });
   _textFinished.draw(_doom, _doom.image, sf::Vector2i((DOOM::Doom::RenderWidth - _textFinished.width) / 2, DOOM::IntermissionDoomState::TitleY + _textCurrent.height * 5 / 4), { 1, 1 });
 
-  // Draw stats titles
-  _textKills.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomState::StatsX, DOOM::IntermissionDoomState::StatsY + 0 * _textNumbers[0].get().height * 3 / 2), { 1, 1 });
-  _textItems.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomState::StatsX, DOOM::IntermissionDoomState::StatsY + 1 * _textNumbers[0].get().height * 3 / 2), { 1, 1 });
-  _textSecret.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomState::StatsX, DOOM::IntermissionDoomState::StatsY + 2 * _textNumbers[0].get().height * 3 / 2), { 1, 1 });
+  // Draw statistics
+  if (_doom.level.players.size() == 1)
+    drawStatisticsSolo();
+  else if (_doom.level.players.size() > 1)
+    drawStatisticsCoop();
+  else
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+}
+
+void	DOOM::IntermissionDoomState::drawStatisticsSolo()
+{
+  // Draw solo stats titles
+  _textKills.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomState::StatsSoloX, DOOM::IntermissionDoomState::StatsSoloY + 0 * _textNumbers[0].get().height * 3 / 2), { 1, 1 });
+  _textItems.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomState::StatsSoloX, DOOM::IntermissionDoomState::StatsSoloY + 1 * _textNumbers[0].get().height * 3 / 2), { 1, 1 });
+  _textSecret.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomState::StatsSoloX, DOOM::IntermissionDoomState::StatsSoloY + 2 * _textNumbers[0].get().height * 3 / 2), { 1, 1 });
   _textTime.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomState::TimeX, DOOM::IntermissionDoomState::TimeY), { 1, 1 });
   if (std::isnan(getPar(_doom.level.episode)) == false)
     _textPar.draw(_doom, _doom.image, sf::Vector2i(DOOM::Doom::RenderWidth / 2 + DOOM::IntermissionDoomState::TimeX, DOOM::IntermissionDoomState::TimeY), { 1, 1 });
 
   // Draw statistics
-  if (_kills >= 0.f)
-    drawPercent(sf::Vector2i(DOOM::Doom::RenderWidth - DOOM::IntermissionDoomState::StatsX, DOOM::IntermissionDoomState::StatsY + 0 * _textNumbers[0].get().height * 3 / 2), (int)_kills);
-  if (_items >= 0.f)
-    drawPercent(sf::Vector2i(DOOM::Doom::RenderWidth - DOOM::IntermissionDoomState::StatsX, DOOM::IntermissionDoomState::StatsY + 1 * _textNumbers[0].get().height * 3 / 2), (int)_items);
-  if (_secret >= 0.f)
-    drawPercent(sf::Vector2i(DOOM::Doom::RenderWidth - DOOM::IntermissionDoomState::StatsX, DOOM::IntermissionDoomState::StatsY + 2 * _textNumbers[0].get().height * 3 / 2), (int)_secret);
-  if (_time >= 0.f)
-    drawTime(sf::Vector2i(DOOM::Doom::RenderWidth / 2 - DOOM::IntermissionDoomState::TimeX, DOOM::IntermissionDoomState::TimeY), (int)_time);
-  if (_par >= 0.f)
-    drawTime(sf::Vector2i(DOOM::Doom::RenderWidth - DOOM::IntermissionDoomState::TimeX, DOOM::IntermissionDoomState::TimeY), (int)_par);
+  if (_kills.begin()->second.value >= 0.f)
+    drawPercent(sf::Vector2i(DOOM::Doom::RenderWidth - DOOM::IntermissionDoomState::StatsSoloX, DOOM::IntermissionDoomState::StatsSoloY + 0 * _textNumbers[0].get().height * 3 / 2), (int)_kills.begin()->second.value);
+  if (_items.begin()->second.value >= 0.f)
+    drawPercent(sf::Vector2i(DOOM::Doom::RenderWidth - DOOM::IntermissionDoomState::StatsSoloX, DOOM::IntermissionDoomState::StatsSoloY + 1 * _textNumbers[0].get().height * 3 / 2), (int)_items.begin()->second.value);
+  if (_secrets.begin()->second.value >= 0.f)
+    drawPercent(sf::Vector2i(DOOM::Doom::RenderWidth - DOOM::IntermissionDoomState::StatsSoloX, DOOM::IntermissionDoomState::StatsSoloY + 2 * _textNumbers[0].get().height * 3 / 2), (int)_secrets.begin()->second.value);
+  if (_times[0].value >= 0.f)
+    drawTime(sf::Vector2i(DOOM::Doom::RenderWidth / 2 - DOOM::IntermissionDoomState::TimeX, DOOM::IntermissionDoomState::TimeY), (int)_times[0].value);
+  if (_times[1].value >= 0.f)
+    drawTime(sf::Vector2i(DOOM::Doom::RenderWidth - DOOM::IntermissionDoomState::TimeX, DOOM::IntermissionDoomState::TimeY), (int)_times[1].value);
+}
+
+void	DOOM::IntermissionDoomState::drawStatisticsCoop()
+{
+  // Stats titles
+  _textKills.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomState::StatsCoopX + _playerFace.width / 2 + 1 * DOOM::IntermissionDoomState::StatsCoopSpacing - _textKills.width, DOOM::IntermissionDoomState::StatsCoopY), sf::Vector2i(1, 1));
+  _textItems.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomState::StatsCoopX + _playerFace.width / 2 + 2 * DOOM::IntermissionDoomState::StatsCoopSpacing - _textItems.width, DOOM::IntermissionDoomState::StatsCoopY), sf::Vector2i(1, 1));
+  _textScrt.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomState::StatsCoopX + _playerFace.width / 2 + 3 * DOOM::IntermissionDoomState::StatsCoopSpacing - _textScrt.width, DOOM::IntermissionDoomState::StatsCoopY), sf::Vector2i(1, 1));
+  
+  int y = DOOM::IntermissionDoomState::StatsCoopY + _textKills.height;
+
+  // Draw stats of each player
+  for (const auto& player : _doom.level.players) {
+    _playerBackground[(player.get().id - 1) % _playerBackground.size()].get().draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomState::StatsCoopX + _playerFace.width / 2 + 0 * DOOM::IntermissionDoomState::StatsCoopSpacing - _playerBackground[(player.get().id - 1) % _playerBackground.size()].get().width, y), sf::Vector2i(1, 1));
+    _playerFace.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomState::StatsCoopX + _playerFace.width / 2 + 0 * DOOM::IntermissionDoomState::StatsCoopSpacing - _playerBackground[(player.get().id - 1) % _playerBackground.size()].get().width, y), sf::Vector2i(1, 1));
+
+    if (_kills.at(player.get().id).value >= 0.f)
+      drawPercent(sf::Vector2i(DOOM::IntermissionDoomState::StatsCoopX + _playerFace.width / 2 - _textPercent.width + 1 * DOOM::IntermissionDoomState::StatsCoopSpacing, y + 10), (int)_kills.at(player.get().id).value);
+    if (_items.at(player.get().id).value >= 0.f)
+      drawPercent(sf::Vector2i(DOOM::IntermissionDoomState::StatsCoopX + _playerFace.width / 2 - _textPercent.width + 2 * DOOM::IntermissionDoomState::StatsCoopSpacing, y + 10), (int)_items.at(player.get().id).value);
+    if (_secrets.at(player.get().id).value >= 0.f)
+      drawPercent(sf::Vector2i(DOOM::IntermissionDoomState::StatsCoopX + _playerFace.width / 2 - _textPercent.width + 3 * DOOM::IntermissionDoomState::StatsCoopSpacing, y + 10), (int)_secrets.at(player.get().id).value);
+
+    y += DOOM::IntermissionDoomState::StatsSoloSpacing;
+  }
+
+  // Draw time only if available space
+  if (_doom.level.players.size() <= 3) {
+    // Titles
+    _textTime.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomState::TimeX, DOOM::IntermissionDoomState::TimeY), { 1, 1 });
+    if (std::isnan(getPar(_doom.level.episode)) == false)
+      _textPar.draw(_doom, _doom.image, sf::Vector2i(DOOM::Doom::RenderWidth / 2 + DOOM::IntermissionDoomState::TimeX, DOOM::IntermissionDoomState::TimeY), { 1, 1 });
+
+    // Stats
+    if (_times[0].value >= 0.f)
+      drawTime(sf::Vector2i(DOOM::Doom::RenderWidth / 2 - DOOM::IntermissionDoomState::TimeX, DOOM::IntermissionDoomState::TimeY), (int)_times[0].value);
+    if (_times[1].value >= 0.f)
+      drawTime(sf::Vector2i(DOOM::Doom::RenderWidth - DOOM::IntermissionDoomState::TimeX, DOOM::IntermissionDoomState::TimeY), (int)_times[1].value);
+  }
 }
 
 void	DOOM::IntermissionDoomState::drawNext()
@@ -403,9 +506,9 @@ void	DOOM::IntermissionDoomState::drawNext()
 
       // Choose left of right arrow
       if (_positions[_next.first - 1][_next.second - 1].x - here0.left >= 0 &&
-        _positions[_next.first - 1][_next.second - 1].x - here0.left + here0.width < _doom.image.getSize().x &&
+        _positions[_next.first - 1][_next.second - 1].x - here0.left + here0.width < (int)_doom.image.getSize().x &&
         _positions[_next.first - 1][_next.second - 1].y - here0.top >= 0 &&
-        _positions[_next.first - 1][_next.second - 1].y - here0.top + here0.height < _doom.image.getSize().y)
+        _positions[_next.first - 1][_next.second - 1].y - here0.top + here0.height < (int)_doom.image.getSize().y)
         here0.draw(_doom, _doom.image, _positions[_next.first - 1][_next.second - 1], { 1, 1 });
       else
         here1.draw(_doom, _doom.image, _positions[_next.first - 1][_next.second - 1], { 1, 1 });
