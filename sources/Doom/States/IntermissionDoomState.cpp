@@ -248,7 +248,8 @@ void    DOOM::IntermissionDoomState::updateStatisticsCounters(sf::Time& elapsed,
       elapsed = sf::Time::Zero;
 
     // Counter for sound effet
-    end = std::max(end, (int)std::round(counter.second.value / speed / DOOM::IntermissionDoomState::SpeedPistol));
+    if (counter.second.value >= 0.f)
+      end = std::max(end, (int)std::round(counter.second.value / speed / DOOM::IntermissionDoomState::SpeedPistol));
   }
 
   // TODO: will not explode if elapsed is exactly at zero

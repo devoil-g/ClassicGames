@@ -5706,9 +5706,10 @@ void	DOOM::AbstractThing::A_Chase(DOOM::Doom& doom)
 
 bool	DOOM::AbstractThing::P_LookForPlayers(DOOM::Doom& doom, bool full)
 {
+  // NOTE: do not reset target, might cause crash
   // Reset target
-  _target = nullptr;
-  _target_threshold = 0;
+  // _target = nullptr;
+  // _target_threshold = 0;
 
   // Check every player in game
   for (DOOM::PlayerThing& player : doom.level.players) {
@@ -5811,7 +5812,6 @@ bool	DOOM::AbstractThing::P_CheckMissileRange(DOOM::Doom& doom)
 void	DOOM::AbstractThing::P_NewChaseDir(DOOM::Doom& doom)
 {
   // Error if no target
-  // TODO: we crashed once here
   if (_target == nullptr)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
