@@ -307,56 +307,30 @@ void	DOOM::MenuDoomState::draw()
 
   // Draw menu items
   for (const Menu::Item& item : _menuDesc[_menuIndex].items) {
-    const auto& texture = _doom.resources.menus.find(item.texture);
-
-    // Crash if no texture
-    if (texture == _doom.resources.menus.end())
-      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
     // Draw item
-    texture->second.draw(_doom, _menuImage, { item.x, item.y + offset_y }, { 1, 1 });
+    _doom.resources.getMenu(item.texture).draw(_doom, _menuImage, { item.x, item.y + offset_y }, { 1, 1 });
   }
 
-  const auto& sliderLeft = _doom.resources.menus.find(DOOM::str_to_key("M_THERML"));
-  const auto& sliderMiddle = _doom.resources.menus.find(DOOM::str_to_key("M_THERMM"));
-  const auto& sliderRight = _doom.resources.menus.find(DOOM::str_to_key("M_THERMR"));
-  const auto& sliderCursor = _doom.resources.menus.find(DOOM::str_to_key("M_THERMO"));
-
-  // Crash if missing slider texture
-  if (sliderLeft == _doom.resources.menus.end() ||
-    sliderMiddle == _doom.resources.menus.end() ||
-    sliderRight == _doom.resources.menus.end() ||
-    sliderCursor == _doom.resources.menus.end())
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  const auto& sliderLeft = _doom.resources.getMenu(DOOM::str_to_key("M_THERML"));
+  const auto& sliderMiddle = _doom.resources.getMenu(DOOM::str_to_key("M_THERMM"));
+  const auto& sliderRight = _doom.resources.getMenu(DOOM::str_to_key("M_THERMR"));
+  const auto& sliderCursor = _doom.resources.getMenu(DOOM::str_to_key("M_THERMO"));
 
   // Draw menus sliders
   for (const Menu::Slider& slider : _menuDesc[_menuIndex].sliders) {
-    sliderLeft->second.draw(_doom, _menuImage, { slider.x, slider.y + offset_y }, { 1, 1 });
+    sliderLeft.draw(_doom, _menuImage, { slider.x, slider.y + offset_y }, { 1, 1 });
     for (int x = 0; x <= 8; x++)
-      sliderMiddle->second.draw(_doom, _menuImage, { slider.x + 8 * (x + 1), slider.y + offset_y }, { 1, 1 });
-    sliderRight->second.draw(_doom, _menuImage, { slider.x + 8 * (9 + 1), slider.y + offset_y }, { 1, 1 });
-    sliderCursor->second.draw(_doom, _menuImage, { slider.x + 8 * (slider.get() + 1), slider.y + offset_y }, { 1, 1 });
+      sliderMiddle.draw(_doom, _menuImage, { slider.x + 8 * (x + 1), slider.y + offset_y }, { 1, 1 });
+    sliderRight.draw(_doom, _menuImage, { slider.x + 8 * (9 + 1), slider.y + offset_y }, { 1, 1 });
+    sliderCursor.draw(_doom, _menuImage, { slider.x + 8 * (slider.get() + 1), slider.y + offset_y }, { 1, 1 });
   }
 
-  const auto& skull = _doom.resources.menus.find(DOOM::str_to_key((unsigned int)(_menuElapsed.asSeconds() / DOOM::Doom::Tic.asSeconds()) < SkullDuration ? "M_SKULL1" : "M_SKULL2"));
-
-  // Crash if no skull
-  if (skull == _doom.resources.menus.end())
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
   // Draw menu skull
-  skull->second.draw(_doom, _menuImage,
+  _doom.resources.getMenu(DOOM::str_to_key((unsigned int)(_menuElapsed.asSeconds() / DOOM::Doom::Tic.asSeconds()) < SkullDuration ? "M_SKULL1" : "M_SKULL2")).draw(_doom, _menuImage,
     {
       std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor)->x - 32,
       std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor)->y - 5 + offset_y
     }, { 1, 1 });
-
-  // Draw menu shadow
-  for (unsigned int x = 0; x < _menuImage.getSize().x - 1; x++)
-    for (unsigned int y = 0; y < _menuImage.getSize().y - 1; y++)
-      if (_menuImage.getPixel(x + 0, y + 0).a == 255 &&
-        _menuImage.getPixel(x + 1, y + 1).a == 0)
-        _menuImage.setPixel(x + 1, y + 1, sf::Color(0, 0, 0, 127));
 
   // Draw menu over background
   for (unsigned int y = 0; y < size.y; y++)

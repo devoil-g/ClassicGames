@@ -91,6 +91,8 @@ SET(GAME_DOOM_STATES_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/SplashDoomState.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/StartDoomState.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/StartDoomState.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/TextDoomState.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/TextDoomState.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/TransitionDoomState.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/TransitionDoomState.hpp
 )

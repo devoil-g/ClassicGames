@@ -29,18 +29,12 @@ DOOM::StartDoomState::StartDoomState(Game::StateMachine& machine, DOOM::Doom& do
   _textureKeyboard(), _textureController(),
   _spriteKeyboard(), _spriteController()
 {
-  const auto& title = _doom.resources.menus.find(DOOM::str_to_key("M_DOOM"));
-
-  // Check that the titlecard is loaded
-  if (title == _doom.resources.menus.end())
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
   // Load keyboard & controller icons
   if (_textureKeyboard.loadFromFile(Game::Config::ExecutablePath + "assets/textures/keyboard.png") == false ||
     _textureController.loadFromFile(Game::Config::ExecutablePath + "assets/textures/controller.png") == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-  sf::Image image = title->second.image(_doom);
+  sf::Image image = _doom.resources.getMenu(DOOM::str_to_key("M_DOOM")).image(_doom);
 
   // Load title texture
   _textureTitle.create(image.getSize().x, image.getSize().y);

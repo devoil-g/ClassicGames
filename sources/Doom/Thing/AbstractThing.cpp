@@ -5124,7 +5124,7 @@ void	DOOM::AbstractThing::updatePhysics(DOOM::Doom& doom, sf::Time elapsed)
 
     // Apply friction slowdown to thing (except missiles and attacking flying skulls) for next tic (hard coded drag factor of 0.90625)
     if (!(flags & (DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_SkullFly)))
-      _thrust.convert<2>() *= std::powf(0.90625f, elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
+      _thrust.convert<2>() *= std::pow(0.90625f, elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
   }
 
   // Special case for lost souls
@@ -5510,7 +5510,7 @@ void	DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elapse
 
   // Apply friction to vertical thrust for non attacking fly skulls
   if (type == DOOM::Enum::ThingType::ThingType_SKULL && !(flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly))
-    _thrust.z() *= std::powf(0.90625f, elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
+    _thrust.z() *= std::pow(0.90625f, elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
 
   // TODO: delete missile if colliding with sky
 
@@ -6157,7 +6157,7 @@ void	DOOM::AbstractThing::A_FaceTarget(DOOM::Doom& doom)
 
   // If thing is invisible, randomize angle
   if (flags & DOOM::Enum::ThingProperty::ThingProperty_Shadow)
-    angle += std::pow(Math::Random(), 2) * Math::Pi / 4.f;
+    angle += (Math::Random() * 2.f - 1.f) * Math::Pi / 4.f;
 }
 
 void	DOOM::AbstractThing::A_SkelWhoosh(DOOM::Doom& doom)
@@ -6222,9 +6222,9 @@ void	DOOM::AbstractThing::A_PosAttack(DOOM::Doom& doom)
   else
     atk_slope = std::atan((target_height - (position.z() + height * 0.5f)) / (_target->position.convert<2>() - position.convert<2>()).length());
 
-  atk_slope += std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f;
+  atk_slope += (Math::Random() - Math::Random()) * Math::Pi / 8.f;
 
-  float atk_angle = angle + std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f;
+  float atk_angle = angle + (Math::Random() - Math::Random()) * Math::Pi / 8.f;
   float atk_damage = (float)((std::rand() % 5 + 1) * 3);
 
   // Attack
@@ -6254,8 +6254,8 @@ void	DOOM::AbstractThing::A_SPosAttack(DOOM::Doom& doom)
   // 3 attacks
   // NOTE: should we randomize slope angle too ? the original game didn't
   for (int i = 0; i < 3; i++) {
-    float               atk_angle = angle + std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f;
-    float               atk_slope = slope + std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f;
+    float               atk_angle = angle + (Math::Random() - Math::Random()) * Math::Pi / 8.f;
+    float               atk_slope = slope + (Math::Random() - Math::Random()) * Math::Pi / 8.f;
     Math::Vector<3>     atk_shot(std::cos(atk_angle), std::sin(atk_angle), std::tan(atk_slope));
     float               atk_damage = (float)((std::rand() % 5 + 1) * 3);
 
@@ -6276,10 +6276,10 @@ void	DOOM::AbstractThing::A_CPosAttack(DOOM::Doom& doom)
   // Play pistol sound
   doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_shotgn, position);
 
-  float atk_angle = angle + std::pow(Math::Random(), 2) * Math::Pi / 8.f;
+  float atk_angle = angle + (Math::Random() - Math::Random()) * Math::Pi / 8.f;
   float atk_damage = (float)((std::rand() % 5 + 1) * 3);
   float target_height = P_AimLineAttack(doom, *_target);
-  float atk_slope = (std::isnan(target_height) == true ? 0.f : std::atan((target_height - (position.z() + height * 0.5f)) / (_target->position.convert<2>() - position.convert<2>()).length())) + std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f;
+  float atk_slope = (std::isnan(target_height) == true ? 0.f : std::atan((target_height - (position.z() + height * 0.5f)) / (_target->position.convert<2>() - position.convert<2>()).length())) + (Math::Random() - Math::Random()) * Math::Pi / 8.f;
 
   // Attack
   P_LineAttack(doom, AbstractThing::MissileRange, Math::Vector<3>(position.x(), position.y(), position.z() + height / 2.f), Math::Vector<3>(std::cos(atk_angle), std::sin(atk_angle), std::tan(atk_slope)), atk_damage);
@@ -6597,8 +6597,8 @@ void    DOOM::AbstractThing::P_SpawnMissile(DOOM::Doom& doom, DOOM::Enum::ThingT
     return;
 
   float           target_height = P_AimLineAttack(doom, *_target);
-  float           atk_slope = std::isnan(target_height) == true ? 0.f : std::atan((target_height - (position.z() + height * 0.5f)) / (_target->position.convert<2>() - position.convert<2>()).length()) + ((_target->flags & DOOM::Enum::ThingProperty::ThingProperty_Shadow) ? std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f : 0);
-  float	          atk_angle = Math::Vector<2>::angle((_target->position.convert<2>() - position.convert<2>())) + ((_target->flags & DOOM::Enum::ThingProperty::ThingProperty_Shadow) ? std::pow(Math::Random() * 2.f - 1.f, 2) * Math::Pi / 8.f : 0);
+  float           atk_slope = std::isnan(target_height) == true ? 0.f : std::atan((target_height - (position.z() + height * 0.5f)) / (_target->position.convert<2>() - position.convert<2>()).length()) + ((_target->flags & DOOM::Enum::ThingProperty::ThingProperty_Shadow) ? (Math::Random() * 2.f - 1.f) * Math::Pi / 8.f : 0);
+  float	          atk_angle = Math::Vector<2>::angle((_target->position.convert<2>() - position.convert<2>())) + ((_target->flags & DOOM::Enum::ThingProperty::ThingProperty_Shadow) ? (Math::Random() * 2.f - 1.f) * Math::Pi / 8.f : 0);
   Math::Vector<3> direction(std::cos(atk_angle), std::sin(atk_angle), std::tan(atk_slope));
 
   doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, type, DOOM::Enum::ThingFlag::FlagNone, position.x() + std::cos(atk_angle) * attributs.radius / 2.f, position.y() + std::sin(atk_angle) * attributs.radius / 2.f, atk_angle));

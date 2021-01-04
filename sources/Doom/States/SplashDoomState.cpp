@@ -28,14 +28,6 @@ bool	DOOM::SplashDoomState::update(sf::Time elapsed)
 
 void	DOOM::SplashDoomState::draw()
 {
-  const auto& title = _doom.resources.menus.find(DOOM::str_to_key("TITLEPIC"));
-
-  // Check that the titlecard is loaded
-  if (title == _doom.resources.menus.end())
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
   // Draw splash screen
-  _doom.image = title->second.image(_doom);
-
-  // Does nothing, already drawn in constructor
+  _doom.image = _doom.resources.getMenu(DOOM::str_to_key("TITLEPIC")).image(_doom);
 }

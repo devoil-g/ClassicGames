@@ -8,10 +8,11 @@ namespace DOOM
   class PlayerThing : public DOOM::AbstractThing
   {
   private:
-    static const float  VerticalLimit;  // Maximum vertical angle of camera
-    static const float  TurningSpeed;   // Turning speed (rad/s)
-    static const float  WalkingSpeed;   // Walking speed (units per frame)
-    static const float  RunningSpeed;   // Running speed (units per frame)
+    static const float        VerticalLimit;  // Maximum vertical angle of camera
+    static const float        TurningSpeed;   // Turning speed (rad/s)
+    static const float        WalkingSpeed;   // Walking speed (units per frame)
+    static const float        RunningSpeed;   // Running speed (units per frame)
+    static const unsigned int SectorSpeed;    // Player take damage every 32 tics when standing in damaging sectors
 
   private:
     bool              _running;         // True if player is currently running
@@ -20,6 +21,7 @@ namespace DOOM
     sf::Time          _invisibility;    // Remaining time of invisibility
     sf::Time          _light;           // Remaining time of light amplification visor
     sf::Time          _radiation;       // Remaining time of radiation suit
+    sf::Time          _sector;          // Time spent in damaging sector
     bool              _berserk;         // Berserker enabled flag
     bool              _map;             // Computer map enabled flag
 
@@ -57,6 +59,7 @@ namespace DOOM
     bool  pickupComputerMap();
 
     void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, float damage) override;  // Damage player, taking shield into account
+    void  damageSector(DOOM::Doom& doom, sf::Time elapsed, float damage, bool end = false);                             // Receive damage from damaging sector
 
   public:
     const int         id;         // Player ID

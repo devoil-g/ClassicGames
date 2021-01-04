@@ -638,7 +638,7 @@ void	DOOM::Doom::buildLevelStatistics()
 
   // Initialize player counters
   for (const auto& player : level.players)
-    level.statistics.players[player.get().id] = DOOM::Doom::Level::Statistics::Stats<unsigned int>();
+    level.statistics.players[player.get().id] = DOOM::Doom::Level::Statistics::Stats();
 }
 
 void	DOOM::Doom::Resources::update(DOOM::Doom & doom, sf::Time elapsed)
@@ -1092,7 +1092,7 @@ void	DOOM::Doom::Resources::Texture::draw(const DOOM::Doom& doom, sf::Image& ima
   for (int texture_x = 0; texture_x < width; texture_x++)
     for (const DOOM::Doom::Resources::Texture::Column::Span& span : columns.at(texture_x).spans)
       for (int texture_y = 0; texture_y < span.pixels.size(); texture_y++) {
-	sf::Color color = doom.resources.palettes[0][span.pixels[texture_y]];
+	sf::Color color = doom.resources.palettes[0][doom.resources.colormaps[0][span.pixels[texture_y]]];
 
 	for (int image_x = std::max(0, position.x + (texture_x - left + 0) * scale.x); image_x < std::min((int)image.getSize().x, position.x + (texture_x - left + 1) * scale.x); image_x++)
 	  for (int image_y = std::max(0, position.y + (span.offset + texture_y - top + 0) * scale.y); image_y < std::min((int)image.getSize().y, position.y + (span.offset + texture_y - top + 1) * scale.y); image_y++)
@@ -1482,16 +1482,14 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom& doom, const DOOM::Wad::RawLevel::S
   _actions()
 {
   // Check for errors
-  if ((floor_name != DOOM::str_to_key("F_SKY1") && doom.resources.flats.find(floor_name) == doom.resources.flats.end()) ||
-    (ceiling_name != DOOM::str_to_key("F_SKY1") && doom.resources.flats.find(ceiling_name) == doom.resources.flats.end()) ||
-    light_current < 0 || light_current > 255)
+  if (light_current < 0 || light_current > 255)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Retrieve flat textures
   if (floor_name != DOOM::str_to_key("F_SKY1"))
-    floor_flat = std::cref(*doom.resources.flats.find(floor_name)->second.get());
+    floor_flat = std::cref(doom.resources.getFlat(floor_name));
   if (ceiling_name != DOOM::str_to_key("F_SKY1"))
-    ceiling_flat = std::cref(*doom.resources.flats.find(ceiling_name)->second.get());
+    ceiling_flat = std::cref(doom.resources.getFlat(ceiling_name));
 
   // Index of this sector
   int16_t	index = (int16_t)doom.level.sectors.size();
@@ -1741,20 +1739,6 @@ int16_t	DOOM::Doom::Level::Sector::getNeighborHighestLight(const DOOM::Doom & do
     result = std::min(result, doom.level.sectors[index].light_base);
 
   return result;
-}
-
-bool	DOOM::Doom::Level::Sector::secret()
-{
-  // Secret!
-  if (special == DOOM::Doom::Level::Sector::Special::Secret) {
-    special = DOOM::Doom::Level::Sector::Special::Normal;
-    return true;
-  }
-
-  // No secret
-  else {
-    return false;
-  }
 }
 
 DOOM::Doom::Level::Statistics::Statistics() :

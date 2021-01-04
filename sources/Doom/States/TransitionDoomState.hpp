@@ -2,10 +2,6 @@
 
 #include <vector>
 
-#include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-
 #include "Doom/Doom.hpp"
 #include "States/AbstractState.hpp"
   

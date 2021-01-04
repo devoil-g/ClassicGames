@@ -5,19 +5,21 @@
 #include "Doom/Thing/PlayerThing.hpp"
 #include "System/Window.hpp"
 
-const float	DOOM::PlayerThing::VerticalLimit = Math::DegToRad(22.5f); // 
-const float	DOOM::PlayerThing::TurningSpeed = 2.f / 3.f * Math::Pi;   // 
-const float	DOOM::PlayerThing::WalkingSpeed = 24.f;			  // 24 unit per frame (3 tics)
-const float	DOOM::PlayerThing::RunningSpeed = 50.f;			  // 50 unit per frame (3 tics)
+const float         DOOM::PlayerThing::VerticalLimit = Math::DegToRad(22.5f); // 
+const float         DOOM::PlayerThing::TurningSpeed = 2.f / 3.f * Math::Pi;   // 
+const float         DOOM::PlayerThing::WalkingSpeed = 24.f;                   // 24 unit per frame (3 tics)
+const float         DOOM::PlayerThing::RunningSpeed = 50.f;                   // 50 unit per frame (3 tics)
+const unsigned int  DOOM::PlayerThing::SectorSpeed = 32;                      // Damage every 32 tics
 
-DOOM::PlayerThing::PlayerThing(DOOM::Doom & doom, int id, int controller) :
+DOOM::PlayerThing::PlayerThing(DOOM::Doom& doom, int id, int controller) :
   DOOM::AbstractThing(doom, DOOM::Enum::ThingType::ThingType_PLAYER, DOOM::Enum::ThingFlag::FlagNone, 0.f, 0.f, 0.f),
   _running(false),
   _armor(DOOM::Enum::Armor::ArmorNone),
-  _invulnerability(sf::seconds(0.f)),
-  _invisibility(sf::seconds(0.f)),
-  _light(sf::seconds(0.f)),
-  _radiation(sf::seconds(0.f)),
+  _invulnerability(sf::Time::Zero),
+  _invisibility(sf::Time::Zero),
+  _light(sf::Time::Zero),
+  _radiation(sf::Time::Zero),
+  _sector(sf::Time::Zero),
   _berserk(false),
   _map(false),
   id(id),
@@ -105,10 +107,33 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
 
   DOOM::Doom::Level::Sector& sector = doom.level.sectors[doom.level.getSector(position.convert<2>()).first];
 
-  // Secret sector found
-  if (position.z() <= sector.floor_current && sector.secret() == true) {
-    // NOTE: original DOOM don't prompt message of play sound
-    doom.level.statistics.players[id].secrets += 1;
+  // Special sectors
+  if (position.z() <= sector.floor_current) {
+    switch (sector.special) {
+    case DOOM::Doom::Level::Sector::Special::Secret:  // Player entering this sector gets credit for finding a secret
+      // NOTE: original DOOM don't prompt message of play sound
+      doom.level.statistics.players[id].secrets += 1;
+      sector.special = DOOM::Doom::Level::Sector::Special::Normal;
+      break;
+
+    case DOOM::Doom::Level::Sector::Special::Damage5: // 5 % damage every 32 tics
+      damageSector(doom, elapsed, 5.f);
+      break;
+
+    case DOOM::Doom::Level::Sector::Special::Damage10:  // 10 % damage every 32 tics
+      damageSector(doom, elapsed, 10.f);
+      break;
+
+    case DOOM::Doom::Level::Sector::Special::Damage20:        // 20 % damage per second
+    case DOOM::Doom::Level::Sector::Special::Damage20Blink05: // 20 % damage every 32 tics plus light blink 0.5 second
+    case DOOM::Doom::Level::Sector::Special::End:             // Cancel God mode if active, 20 % damage every 32 tics, when player dies, level ends
+      damageSector(doom, elapsed, 20.f, sector.special == DOOM::Doom::Level::Sector::Special::End);
+      break;
+
+    default:  // Reset sector timer
+      _sector = sf::Time::Zero;
+      break;
+    }
   }
 
   // Always return false as a player is never deleted
@@ -513,8 +538,59 @@ void  DOOM::PlayerThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker,
   if (statusbar.armor == 0)
     _armor = DOOM::Enum::Armor::ArmorNone;
 
+
+  DOOM::Doom::Level::Sector& sector = doom.level.sectors[doom.level.getSector(position.convert<2>()).first];
+
+  // Limit damage when standing in end sector
+  if (position.z() <= sector.floor_current && sector.special == DOOM::Doom::Level::Sector::Special::End)
+    damage = std::min(health - 1, damage);
+
   // Apply remaining damage
   DOOM::AbstractThing::damage(doom, attacker, origin, damage - protection);
+
+  // End game
+  if (position.z() <= sector.floor_current && sector.special == DOOM::Doom::Level::Sector::Special::End && health < 11.f)
+    doom.level.end = DOOM::Enum::End::EndNormal;
+}
+
+void  DOOM::PlayerThing::damageSector(DOOM::Doom& doom, sf::Time elapsed, float damage, bool end)
+{
+  // Add elapsed time to sector timer
+  _sector += elapsed;
+
+  float protection = 0;
+
+  // Damage player every 32 tics
+  while (_sector >= DOOM::Doom::Tic * (float)DOOM::PlayerThing::SectorSpeed) {
+    // Radiation suit
+    if (_radiation.asSeconds() > 0.f && (damage < 20.f || std::rand() % 256 < 6))
+      continue;
+
+    // 1/2 armor when mega armor, 1/3 otherwise
+    if (_armor == DOOM::Enum::Armor::ArmorMega || statusbar.armor >= 100.f)
+      protection = std::min(statusbar.armor, damage / 2.f);
+    else if (_armor == DOOM::Enum::Armor::ArmorSecurity)
+      protection = std::min(statusbar.armor, damage / 3.f);
+
+    // Remove protection from armor
+    statusbar.armor -= protection;
+    if (statusbar.armor == 0)
+      _armor = DOOM::Enum::Armor::ArmorNone;
+
+    // Keep player alive when ending level
+    damage -= protection;
+    if (end == true)
+      damage = std::min(health - 1.f, damage);
+
+    // Apply remaining damage
+    DOOM::AbstractThing::damage(doom, *this, damage);
+
+    // End game
+    if (end == true && health < 11.f)
+      doom.level.end = DOOM::Enum::End::EndNormal;
+
+    _sector -= DOOM::Doom::Tic * (float)DOOM::PlayerThing::SectorSpeed;
+  }
 }
 
 bool  DOOM::PlayerThing::key(DOOM::Enum::KeyColor color) const

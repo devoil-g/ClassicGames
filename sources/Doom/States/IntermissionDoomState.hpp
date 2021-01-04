@@ -39,8 +39,10 @@ namespace DOOM
     static const std::array<std::array<sf::Vector2i, 9>, 3>                         _positions;   // Position of level on the map per episode/level (ignore this in DOOM II & Episode 4)
     static const std::array<std::vector<DOOM::IntermissionDoomState::Animation>, 3> _animations;  // Animations for DOOM I background
 
-    DOOM::Doom&                       _doom;    // DOOM instance
-    const std::pair<uint8_t, uint8_t> _next;    // Next level
+    DOOM::Doom&                       _doom;        // DOOM instance
+    const std::pair<uint8_t, uint8_t> _previous;    // Previous level
+    const std::pair<uint8_t, uint8_t> _next;        // Next level
+    DOOM::Doom::Level::Statistics     _statistics;  // Previous level statistics
 
     DOOM::IntermissionDoomState::State  _state;         // Current state
     sf::Time                            _elapsed;       // Elapsed time
@@ -60,8 +62,6 @@ namespace DOOM
     const DOOM::Doom::Resources::Texture&                                               _background;        // Screen background
     const DOOM::Doom::Resources::Texture&                                               _playerFace;        // Face of the player
     const std::array<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, 4>   _playerBackground;  // Face of the player
-    const DOOM::Doom::Resources::Texture&                                               _textCurrent;       // Exiting level name
-    const DOOM::Doom::Resources::Texture&                                               _textNext;          // Next level name
     const std::array<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, 10>  _textNumbers;       // Individual digits
     const DOOM::Doom::Resources::Texture&                                               _textFinished;      // Text "Finished"
     const DOOM::Doom::Resources::Texture&                                               _textEntering;      // Text "Entering"
@@ -76,16 +76,15 @@ namespace DOOM
     const DOOM::Doom::Resources::Texture&                                               _textPercent;       // Character '%'
     const DOOM::Doom::Resources::Texture&                                               _textColon;         // Character ':'
     
-    const DOOM::Doom::Resources::Texture& getTexture(uint64_t key) const;                   // Get texture from DOOM, throw error if failure
-    std::pair<uint8_t, uint8_t>           getNextLevel(bool secret) const;                  // Get next level to be loaded
-    float                                 getPar(std::pair<uint8_t, uint8_t> level) const;  // Return par time of current level, NaN if none registered
+    float getPar(std::pair<uint8_t, uint8_t> level) const;  // Return par time of current level, NaN if none registered
 
-    bool  updateStatistics(sf::Time elapsed);
+    void  updateStatistics(sf::Time elapsed);
     void  updateStatisticsCounters(sf::Time& elapsed, std::map<int, DOOM::IntermissionDoomState::Counter>& counters, int speed);
     bool  updateStatisticsCountersCheck(const std::map<int, DOOM::IntermissionDoomState::Counter>& counters);    // Return true if all counters are completed
     void  updateStatisticsCountersComplete(std::map<int, DOOM::IntermissionDoomState::Counter>& counters);    // Force complete counters
-    bool  updateNext(sf::Time elapsed);
-    bool  updateSkip();
+    void  updateNext(sf::Time elapsed);
+    bool  updateSkip(); // Return true if skip button has been pressed
+    void  updateEnd();  // Go to next screen/level
 
     void  drawBackground();
     void  drawStatistics();
@@ -97,7 +96,7 @@ namespace DOOM
     void  drawTime(sf::Vector2i position, int value);
 
   public:
-    IntermissionDoomState(Game::StateMachine& machine, DOOM::Doom& doom, bool secret);
+    IntermissionDoomState(Game::StateMachine& machine, DOOM::Doom& doom, std::pair<uint8_t, uint8_t> previous, std::pair<uint8_t, uint8_t> next, const DOOM::Doom::Level::Statistics& statistics);
     ~IntermissionDoomState() override = default;
 
     bool  update(sf::Time elapsed) override;  // Update state

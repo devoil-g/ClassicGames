@@ -481,6 +481,18 @@ namespace DOOM
         ~Sound() = default;
       };
 
+      template <typename Type>
+      const Type& getResource(uint64_t key, const std::unordered_map<uint64_t, Type>& container) const
+      {
+        const auto& iterator = container.find(key);
+
+        // Error if not found
+        if (iterator == container.end())
+          throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+        return iterator->second;
+      }
+
     public:
       std::array<DOOM::Doom::Resources::Palette, 14>                                                                                          palettes;   // Color palettes
       std::array<DOOM::Doom::Resources::Colormap, 34>                                                                                         colormaps;  // Color brightness maps
@@ -493,6 +505,12 @@ namespace DOOM
 
       Resources() = default;
       ~Resources() = default;
+
+      const DOOM::AbstractFlat&             getFlat(uint64_t key) const { return *getResource<std::unique_ptr<DOOM::AbstractFlat>>(key, flats); };  // Get flat texture, throw an error if not found
+      const DOOM::Doom::Resources::Texture& getTexture(uint64_t key) const { return getResource<DOOM::Doom::Resources::Texture>(key, textures); };  // Get texture, throw an error if not found
+      const DOOM::Doom::Resources::Texture& getSprite(uint64_t key) const { return getResource<DOOM::Doom::Resources::Texture>(key, sprites); };    // Get sprite, throw an error if not found
+      const DOOM::Doom::Resources::Texture& getMenu(uint64_t key) const { return getResource<DOOM::Doom::Resources::Texture>(key, menus); };        // Get menu texture, throw an error if not found
+      const DOOM::Doom::Resources::Sound&   getSound(uint64_t key) const { return getResource<DOOM::Doom::Resources::Sound>(key, sounds); };        // Get sound, throw an error if not found
 
       void  update(DOOM::Doom& doom, sf::Time elapsed); // Update resources components
     };
@@ -695,8 +713,6 @@ namespace DOOM
 
         int16_t getNeighborLowestLight(const DOOM::Doom& doom) const;   // Get lowest neighbor light level
         int16_t getNeighborHighestLight(const DOOM::Doom& doom) const;  // Get highest neighbor light level
-
-        bool  secret(); // Return true if sector is secret, removing secret flag
       };
 
       class Blockmap
@@ -730,18 +746,17 @@ namespace DOOM
       class Statistics
       {
       public:
-        template<typename Type>
         struct Stats
         {
-          Type  kills, items, secrets;  // Kills, items and secrets counters
+          unsigned int  kills, items, secrets;  // Kills, items and secrets counters
 
           Stats() : kills(0), items(0), secrets(0) {};
           ~Stats() = default;
         };
 
-        std::map<int, DOOM::Doom::Level::Statistics::Stats<unsigned int>> players;  // Individual counter for each player
-        DOOM::Doom::Level::Statistics::Stats<unsigned int>                total;    // Total number in map
-        sf::Time                                                          time;     // Time played in level
+        std::map<int, DOOM::Doom::Level::Statistics::Stats> players;  // Individual counter for each player
+        DOOM::Doom::Level::Statistics::Stats                total;    // Total number in map
+        sf::Time                                            time;     // Time played in level
 
         Statistics();
         ~Statistics() = default;
