@@ -2502,7 +2502,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     0,		// damage
     (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
 
-    State_STIM,		// state_spawn
+    State_SOUL,		// state_spawn
     State_None,		// state_see
     State_None,		// state_pain
     State_None,		// state_melee
