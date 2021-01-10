@@ -10,7 +10,7 @@ namespace DOOM
   template<
     DOOM::EnumLinedef::Trigger Trigger,
     bool Repeat,
-    DOOM::EnumAction::Speed Speed = DOOM::EnumAction::Speed::SpeedSlow
+    DOOM::EnumAction::Speed Speed = DOOM::EnumAction::Speed::SpeedNormal
   >
     class DonutTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat>
   {

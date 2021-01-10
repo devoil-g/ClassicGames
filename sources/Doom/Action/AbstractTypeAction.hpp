@@ -35,6 +35,8 @@ namespace DOOM
   {
   private:
     int16_t                 _model; // Model for properties copy
+
+  protected:
     Game::Sound::Reference  _sound; // Sound reference of sector action
 
     void  changeTexture(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector)

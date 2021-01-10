@@ -4891,7 +4891,7 @@ DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type,
   if (!(this->flags & DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap))
     doom.level.blockmap.addThing(*this, position.convert<2>());
 
-  std::set<int16_t>	sectors = doom.level.getSectors(position.convert<2>(), attributs.radius / 2.f);
+  std::set<int16_t>	sectors = doom.level.getSectors(*this);
   float			floor = std::numeric_limits<int16_t>().min();
   float			ceiling = std::numeric_limits<int16_t>().max();
 
@@ -5480,7 +5480,7 @@ std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing
 
 void	DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elapsed)
 {
-  std::set<int16_t>	sectors = doom.level.getSectors(position.convert<2>(), attributs.radius / 2.f);
+  std::set<int16_t>	sectors = doom.level.getSectors(*this);
   float			floor = std::numeric_limits<int16_t>().min();
   float			ceiling = std::numeric_limits<int16_t>().max();
 
@@ -6663,10 +6663,6 @@ void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker
   // Cancel if already dead
   if (health <= 0)
     return;
-
-  // Take half damage in baby mode
-  if (doom.skill == DOOM::Enum::Skill::SkillBaby)
-    damage /= 2;
 
   // Deal damage
   health = std::max(0.f, health - damage);

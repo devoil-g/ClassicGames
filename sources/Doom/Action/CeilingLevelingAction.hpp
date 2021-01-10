@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Doom/Action/AbstractTypeAction.hpp"
+#include "Doom/Action/AbstractLevelingAction.hpp"
 
 namespace DOOM
 {
@@ -9,14 +9,14 @@ namespace DOOM
     DOOM::EnumAction::Speed Speed,
     bool Crush = false
   >
-    class CeilingLevelingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling>
+    class CeilingLevelingAction : public DOOM::AbstractLevelingAction<>
   {
   private:
     const float _target;  // Ceiling target height
 
   public:
     CeilingLevelingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float target) :
-      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling>(doom, sector),
+      DOOM::AbstractLevelingAction<>(doom, sector),
       _target(target)
     {
       // Ceiling sound
@@ -27,58 +27,33 @@ namespace DOOM
 
     void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) override  // Update door action
     {
-      auto  things = doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable);
+      // Lower ceiling
+      if (Direction == DOOM::EnumAction::Direction::DirectionDown) {
+        sf::Time  original = elapsed;
 
-      // Compute start and end height
-      float start = sector.ceiling_current;
-      float end = (Direction == DOOM::EnumAction::Direction::DirectionUp) ?
-        std::min(sector.ceiling_current + Speed / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds(), _target) :
-        std::max(sector.ceiling_current - Speed / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds(), _target);
+        elapsed = updateCeilingLower(doom, sector, elapsed, _target, Speed / 8.f);
 
-      // Check for collision for lowering ceiling
-      if (Direction == DOOM::EnumAction::Direction::DirectionDown)
-      {
-        // Crush obstacles
-        if (Crush == true) {
-          for (const auto& thing : things) {
-            float highest_floor = std::numeric_limits<float>::lowest();
+        // Crush things
+        if (Crush == true && elapsed > sf::Time::Zero)
+          elapsed = updateCeilingCrush(doom, sector, elapsed, _target, Speed / 8.f);
 
-            // Find highest floor under thing
-            for (int sector_index : doom.level.getSectors(thing.get().position.convert<2>(), thing.get().attributs.radius / 2.f))
-              highest_floor = std::max(highest_floor, doom.level.sectors[sector_index].floor_current);
+        // Collision, stop sound
+        if (elapsed > sf::Time::Zero && sector.ceiling_current != _target)
+          _sound.sound.pause();
 
-            // Push toward the floor
-            thing.get().position.z() = std::max(highest_floor, std::min(thing.get().position.z(), end - thing.get().height));
-            
-            float crush_height = std::min(thing.get().position.z() + thing.get().height, start) - end;
-
-            // Crush!
-            if (crush_height > 0.f)
-              thing.get().damage(doom, crush_height / Speed * 2.5f);
-          }
-        }
-
-        // Stop on obstacles
-        else {
-          for (const auto& thing : things) {
-            float highest_floor = thing.get().position.z();
-
-            // Find highest floor under thing
-            for (int sector_index : doom.level.getSectors(thing.get().position.convert<2>(), thing.get().attributs.radius / 2.f))
-              highest_floor = std::max(highest_floor, doom.level.sectors[sector_index].floor_current);
-
-            // Stop at highest obstacle
-            end = std::min(start, std::max(end, highest_floor + thing.get().height));
-          }
-        }
+        // Moving, play sound
+        else if (elapsed != original && _sound.sound.getStatus() == sf::SoundSource::Status::Paused)
+          _sound.sound.play();
       }
 
-      // Update ceiling height
-      sector.ceiling_current = end;
+      // Raise ceiling
+      else
+        updateCeilingRaise(doom, sector, elapsed, _target, Speed / 8.f);
 
       // Detect end of action
       if (sector.ceiling_current == _target) {
         sector.ceiling_base = sector.ceiling_current;
+        sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstop);
         remove(doom, sector);
       }
     }

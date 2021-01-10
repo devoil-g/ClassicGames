@@ -28,6 +28,9 @@ DOOM::AbstractLinedef::AbstractLinedef(DOOM::Doom & doom, const DOOM::AbstractLi
 
 std::unique_ptr<DOOM::AbstractLinedef>	DOOM::AbstractLinedef::factory(DOOM::Doom & doom, DOOM::Wad::RawLevel::Linedef const & linedef)
 {
+  if (linedef.type == 40)
+    std::cerr << "DING!" << std::endl;
+
   switch (linedef.type)
   {
   case 0:	// Normal linedef
@@ -151,13 +154,13 @@ std::unique_ptr<DOOM::AbstractLinedef>	DOOM::AbstractLinedef::factory(DOOM::Doom
 
     // Regular stair builders
   case 7:	// Switched once, slow, 8 step
-    return std::make_unique<DOOM::StairTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerSwitched, DOOM::EnumAction::Speed::SpeedSlow, 8>>(doom, linedef);
+    return std::make_unique<DOOM::StairTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerSwitched, DOOM::EnumAction::Speed::SpeedSlower, 8>>(doom, linedef);
   case 8:	// Walkover once, slow, 8 step
-    return std::make_unique<DOOM::StairTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerWalkover, DOOM::EnumAction::Speed::SpeedSlow, 8>>(doom, linedef);
+    return std::make_unique<DOOM::StairTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerWalkover, DOOM::EnumAction::Speed::SpeedSlower, 8>>(doom, linedef);
   case 100:	// Walkover once, fast, 16 step
-    return std::make_unique<DOOM::StairTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerWalkover, DOOM::EnumAction::Speed::SpeedFast, 16>>(doom, linedef);
+    return std::make_unique<DOOM::StairTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerWalkover, DOOM::EnumAction::Speed::SpeedFaster, 16>>(doom, linedef);
   case 127:	// Switched once, fast, 16 step
-    return std::make_unique<DOOM::StairTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerSwitched, DOOM::EnumAction::Speed::SpeedFast, 16>>(doom, linedef);
+    return std::make_unique<DOOM::StairTriggerableLinedef<DOOM::EnumLinedef::Trigger::TriggerSwitched, DOOM::EnumAction::Speed::SpeedFaster, 16>>(doom, linedef);
 
     // Regular scroller
   case 48:

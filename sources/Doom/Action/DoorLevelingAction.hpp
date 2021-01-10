@@ -4,7 +4,7 @@
 
 #include <SFML/System/Time.hpp>
 
-#include "Doom/Action/AbstractTypeAction.hpp"
+#include "Doom/Action/AbstractLevelingAction.hpp"
 
 namespace DOOM
 {
@@ -21,16 +21,16 @@ namespace DOOM
 
   template<
     DOOM::EnumAction::Door Door,
-    DOOM::EnumAction::Speed Speed = DOOM::EnumAction::Speed::SpeedSlow,
+    DOOM::EnumAction::Speed Speed = DOOM::EnumAction::Speed::SpeedNormal,
     unsigned int TickWait = 140,
     unsigned int TickForceWait = 140
   >
-    class DoorLevelingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling>
+    class DoorLevelingAction : public DOOM::AbstractLevelingAction<>
   {
   private:
     enum State
     {
-      Noop,       // Does nothing (dummy state)
+      Noop,       // Does nothing (dummy state for sound)
       Open,       // Open the door
       Close,      // Close the door
       ForceClose, // Close the door without bouncing on thing
@@ -41,117 +41,6 @@ namespace DOOM
     std::list<State>  _states;  // Door states to perform
     sf::Time          _elapsed; // Time elapsed since begining of state
 
-    sf::Time  updateOpen(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) // Update an openning door. Return exceding time.
-    {
-      const float top = sector.getNeighborLowestCeiling(doom).second - 4.f;
-
-      // Raise door
-      sector.ceiling_current += elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds();
-
-      // Compute exceding time
-      if (sector.ceiling_current > top) {
-        sf::Time  exceding = std::min(sf::seconds((sector.ceiling_current - top) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
-
-        sector.ceiling_current = top;
-        return exceding;
-      }
-      else {
-        return sf::Time::Zero;
-      }
-    }
-
-    sf::Time  updateClose(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed)  // Update a closing door. Return exceding time.
-    {
-      float obstacle = std::numeric_limits<float>::lowest();
-
-      // Get highest obstacle
-      for (const std::reference_wrapper<DOOM::AbstractThing>& thing : doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable))
-        if (thing.get().position.z() + thing.get().height > obstacle)
-          obstacle = thing.get().position.z() + thing.get().height;
-
-      // Check for obstacles
-      if (sector.ceiling_current - elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds() < obstacle) {
-        switch (Door) {
-        case DOOM::EnumAction::Door::DoorOpenWaitClose:
-          _states = { State::Noop, State::Open, State::ForceWait, State::Close };
-          break;
-        case DOOM::EnumAction::Door::DoorCloseWaitOpen:
-          _states = { State::Noop, State::Open, State::ForceWait, State::Close, State::Wait, State::Open };
-          break;
-        default:
-          throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-        }
-
-        if (sector.ceiling_current < obstacle)
-          return elapsed;
-        else {
-          sf::Time  exceding = std::min(sf::seconds((sector.ceiling_current - obstacle) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
-
-          sector.ceiling_current = obstacle;
-          return exceding;
-        }
-      }
-
-      // Lower door
-      sector.ceiling_current -= elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds();
-
-      // Compute exceding time
-      if (sector.ceiling_current < sector.floor_base) {
-        sf::Time  exceding = std::min(sf::seconds((sector.floor_base - sector.ceiling_current) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
-
-        sector.ceiling_current = sector.floor_base;
-        return exceding;
-      }
-      else {
-        return sf::Time::Zero;
-      }
-    }
-
-    sf::Time  updateForceClose(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) // Update a closing door. Don't bounce on player. head Return exceding time.
-    {
-      float obstacle = std::numeric_limits<float>::lowest();
-
-      // Get highest obstacle
-      for (const std::reference_wrapper<DOOM::AbstractThing>& thing : doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable))
-        obstacle = std::max(obstacle, thing.get().position.z() + thing.get().height);
-
-      // Check for obstacles
-      if (sector.ceiling_current - elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds() < obstacle) {
-        sector.ceiling_current = obstacle;
-        return sf::Time::Zero;
-      }
-
-      // Lower door
-      sector.ceiling_current -= elapsed.asSeconds() * Speed / DOOM::Doom::Tic.asSeconds();
-
-      // Compute exceding time
-      if (sector.ceiling_current < sector.floor_base) {
-        sf::Time  exceding = std::min(sf::seconds((sector.floor_base - sector.ceiling_current) / Speed * DOOM::Doom::Tic.asSeconds()), elapsed);
-
-        sector.ceiling_current = sector.floor_base;
-        return exceding;
-      }
-      else {
-        return sf::Time::Zero;
-      }
-    }
-
-    sf::Time  updateWait(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) // Update a waiting door. Return exceding time.
-    {
-      _elapsed += elapsed;
-
-      // Return remaining time if any
-      return std::max(_elapsed - (DOOM::Doom::Tic * (float)TickWait), sf::Time::Zero);
-    }
-
-    sf::Time  updateForceWait(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed)  // Update a waiting door. Wait for a fixed time. Return exceding time.
-    {
-      _elapsed += elapsed;
-
-      // Return remaining time if any
-      return std::max(_elapsed - (DOOM::Doom::Tic * (float)TickForceWait), sf::Time::Zero);
-    }
-
     void      updateSound(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector)  // Play state sound
     {
       // Does nothing when no states
@@ -161,20 +50,20 @@ namespace DOOM
       // Select sound to play
       switch (_states.front()) {
       case State::Open:
-        sound(doom, sector, (Speed > DOOM::EnumAction::Speed::SpeedNormal) ? DOOM::Doom::Resources::Sound::EnumSound::Sound_bdopn : DOOM::Doom::Resources::Sound::EnumSound::Sound_doropn);
+        sound(doom, sector, (Speed > DOOM::EnumAction::Speed::SpeedFast) ? DOOM::Doom::Resources::Sound::EnumSound::Sound_bdopn : DOOM::Doom::Resources::Sound::EnumSound::Sound_doropn);
         break;
       case State::Close:
       case State::ForceClose:
-        sound(doom, sector, (Speed > DOOM::EnumAction::Speed::SpeedNormal) ? DOOM::Doom::Resources::Sound::EnumSound::Sound_bdcls : DOOM::Doom::Resources::Sound::EnumSound::Sound_dorcls);
+        sound(doom, sector, (Speed > DOOM::EnumAction::Speed::SpeedFast) ? DOOM::Doom::Resources::Sound::EnumSound::Sound_bdcls : DOOM::Doom::Resources::Sound::EnumSound::Sound_dorcls);
         break;
-      default:  // Handle error (should not happen)
+      default:
         return;
       }
     }
 
   public:
     DoorLevelingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector) :
-      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling>(doom, sector),
+      DOOM::AbstractLevelingAction<>(doom, sector),
       _states(),
       _elapsed(sf::Time::Zero)
     {
@@ -186,7 +75,7 @@ namespace DOOM
         { DOOM::EnumAction::Door::DoorWaitClose, { State::Noop, State::Wait, State::ForceClose } }
       };
 
-      const std::unordered_map<DOOM::EnumAction::Door, std::list<State>>::const_iterator  iterator = states.find(Door);
+      auto  iterator = states.find(Door);
 
       // Check for errors
       if (iterator != states.end())
@@ -204,22 +93,56 @@ namespace DOOM
         switch (_states.front())
         {
         case State::Open:
-          elapsed = updateOpen(doom, sector, elapsed);
+          // Raise door
+          elapsed = updateCeilingRaise(doom, sector, elapsed, sector.getNeighborLowestCeiling(doom).second - 4.f, Speed / 8.f);
           break;
+
         case State::Close:
-          elapsed = updateClose(doom, sector, elapsed);
+          // Lower door
+          elapsed = updateCeilingLower(doom, sector, elapsed, sector.floor_base, Speed / 8.f);
+
+          // Obstacles
+          if (elapsed > sf::Time::Zero && sector.ceiling_current != sector.floor_base) {
+            switch (Door) {
+            case DOOM::EnumAction::Door::DoorOpenWaitClose:
+              _states = { State::Noop, State::Open, State::ForceWait, State::Close };
+              break;
+            case DOOM::EnumAction::Door::DoorCloseWaitOpen:
+              _states = { State::Noop, State::Open, State::ForceWait, State::Close, State::Wait, State::Open };
+              break;
+            default:
+              throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+            }
+          }
           break;
+
         case State::ForceClose:
-          elapsed = updateForceClose(doom, sector, elapsed);
+          // Lower door
+          elapsed = updateCeilingLower(doom, sector, elapsed, sector.floor_base, Speed / 8.f);
+
+          // Stop on obstacles
+          if (sector.ceiling_current != sector.floor_base)
+            elapsed = sf::Time::Zero;
           break;
+
         case State::Wait:
-          elapsed = updateWait(doom, sector, elapsed);
+          _elapsed += elapsed;
+
+          // Get remaining time if any
+          elapsed = std::max(sf::Time::Zero, _elapsed - (DOOM::Doom::Tic * (float)TickWait));
           break;
+
         case State::ForceWait:
-          elapsed = updateForceWait(doom, sector, elapsed);
+          _elapsed += elapsed;
+
+          // Get remaining time if any
+          elapsed = std::max(sf::Time::Zero, _elapsed - (DOOM::Doom::Tic * (float)TickForceWait));
           break;
+
         case State::Noop:
+          // Does nothing
           break;
+
         default:  // Handle error (should not happen)
           throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
         }

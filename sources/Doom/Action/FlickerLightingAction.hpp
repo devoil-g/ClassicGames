@@ -13,8 +13,8 @@ namespace DOOM
     class FlickerLightingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>
   {
   private:
-    int16_t   _cycle;   // Cycle duration
-    int16_t   _flicker; // Flicker duration
+    int       _cycle;   // Cycle duration
+    int       _flicker; // Flicker duration
     sf::Time  _elapsed; // Elapsed time
 
   public:
@@ -35,10 +35,10 @@ namespace DOOM
       _elapsed += elapsed;
 
       // Regenerate random parameter
-      while (_elapsed > DOOM::Doom::Tic* (float)_cycle) {
+      while (_elapsed > DOOM::Doom::Tic * (float)_cycle) {
         _elapsed -= DOOM::Doom::Tic * (float)_cycle;
-        _cycle = (int16_t)(Math::Random() * CycleDuration) + FlickerDuration + 1;
-        _flicker = (int16_t)(Math::Random() * FlickerDuration) + 1;
+        _cycle = (int)(Math::Random() * CycleDuration) + FlickerDuration + 1;
+        _flicker = (int)(Math::Random() * FlickerDuration) + 1;
       }
 
       // Compute light value from elapsed time

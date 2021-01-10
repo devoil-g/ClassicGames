@@ -133,7 +133,7 @@ DOOM::Doom::Doom() :
   mode(DOOM::Enum::Mode::ModeIndetermined),
   skill(DOOM::Enum::Skill::SkillMedium),
   sensivity(0.8f),
-  sfx(0.2f),
+  sfx(0.05f),
   music(1.f),
   message(true),
   image()
@@ -728,6 +728,12 @@ std::set<int16_t>	DOOM::Doom::Level::getSectors(const Math::Vector<2> & position
   }
 
   return result;
+}
+
+std::set<int16_t>	DOOM::Doom::Level::getSectors(const DOOM::AbstractThing& thing) const
+{
+  // Only half of thing radius is considered
+  return getSectors(thing.position.convert<2>(), thing.attributs.radius / 2.f);
 }
 
 std::pair<int16_t, int16_t>	DOOM::Doom::Level::getSector(Math::Vector<2> const & position, int16_t index) const
@@ -1539,7 +1545,7 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom& doom, const DOOM::Wad::RawLevel::S
     doom.level.statistics.total.secrets += 1;
     break;
   case DOOM::Doom::Level::Sector::Special::DoorClose:
-    action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitClose, DOOM::EnumAction::Speed::SpeedSlow, 1050>>(doom, *this));
+    action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitClose, DOOM::EnumAction::Speed::SpeedFast, 1050>>(doom, *this));
     break;
   case DOOM::Doom::Level::Sector::Special::End:
     break;	// TODO
@@ -1550,7 +1556,7 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom& doom, const DOOM::Wad::RawLevel::S
     action<DOOM::Doom::Level::Sector::Action::Lighting>(std::make_unique<DOOM::BlinkLightingAction<35, 5, true>>(doom, *this));
     break;
   case DOOM::Doom::Level::Sector::Special::DoorOpen:
-    action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitOpen, DOOM::EnumAction::Speed::SpeedSlow, 10500>>(doom, *this));
+    action<DOOM::Doom::Level::Sector::Action::Leveling>(std::make_unique<DOOM::DoorLevelingAction<DOOM::EnumAction::Door::DoorWaitOpen, DOOM::EnumAction::Speed::SpeedFast, 10500>>(doom, *this));
     break;
   case DOOM::Doom::Level::Sector::Special::Damage20:
     damage = 20.f;

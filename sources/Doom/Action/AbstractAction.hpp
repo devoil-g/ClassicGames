@@ -8,10 +8,13 @@ namespace DOOM
   {
     enum Speed
     {
-      SpeedSlow = 1,    // Move 1 units/tic
-      SpeedNormal = 2,  // Move 2 units/tic
-      SpeedFast = 4,    // Move 4 units/tic
-      SpeedTurbo = 8    // Move 8 units/tic
+      SpeedSlowest = 1,   // Move 1/8 units/tic
+      SpeedSlower = 2,    // Move 1/4 units/tic
+      SpeedSlow = 4,      // Move 1/2 units/tic
+      SpeedNormal = 8,    // Move 1 units/tic
+      SpeedFast = 16,     // Move 2 units/tic
+      SpeedFaster = 32,   // Move 4 units/tic
+      SpeedFastest = 64   // Move 8 units/tic
     };
 
     enum Direction

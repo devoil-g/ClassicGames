@@ -282,7 +282,7 @@ void	DOOM::PlayerThing::updateUse(DOOM::Doom & doom, sf::Time elapsed)
 void	DOOM::PlayerThing::updateFire(DOOM::Doom & doom, sf::Time elapsed)
 {
   //doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol);
-  P_LineAttack(doom, 1000.f, position + Math::Vector<3>(0.f, 0.f, height / 2.f), Math::Vector<3>(std::cos(angle), std::sin(angle), std::tan(camera.orientation)), (float)(5 + std::rand() % 11));
+  P_LineAttack(doom, 1000.f, position + Math::Vector<3>(0.f, 0.f, height / 2.f), Math::Vector<3>(std::cos(angle), std::sin(angle), std::tan(camera.orientation)), (float)(500 + std::rand() % 11));
 }
 
 bool  DOOM::PlayerThing::pickup(DOOM::Doom& doom, DOOM::AbstractThing& item)
@@ -518,6 +518,10 @@ bool  DOOM::PlayerThing::pickupArmor(DOOM::Enum::Armor type)
 
 void  DOOM::PlayerThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, float damage)
 {
+  // Take half damage in baby mode
+  if (doom.skill == DOOM::Enum::Skill::SkillBaby)
+    damage /= 2;
+
   float protection = 0;
 
   // Compute protection
@@ -538,7 +542,6 @@ void  DOOM::PlayerThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker,
   if (statusbar.armor == 0)
     _armor = DOOM::Enum::Armor::ArmorNone;
 
-
   DOOM::Doom::Level::Sector& sector = doom.level.sectors[doom.level.getSector(position.convert<2>()).first];
 
   // Limit damage when standing in end sector
@@ -558,19 +561,20 @@ void  DOOM::PlayerThing::damageSector(DOOM::Doom& doom, sf::Time elapsed, float 
   // Add elapsed time to sector timer
   _sector += elapsed;
 
-  float protection = 0;
-
   // Damage player every 32 tics
   while (_sector >= DOOM::Doom::Tic * (float)DOOM::PlayerThing::SectorSpeed) {
+    float dmg = damage;
+    float protection = 0;
+
     // Radiation suit
-    if (_radiation.asSeconds() > 0.f && (damage < 20.f || std::rand() % 256 < 6))
+    if (_radiation.asSeconds() > 0.f && (dmg < 20.f || std::rand() % 256 < 6))
       continue;
 
     // 1/2 armor when mega armor, 1/3 otherwise
     if (_armor == DOOM::Enum::Armor::ArmorMega || statusbar.armor >= 100.f)
-      protection = std::min(statusbar.armor, damage / 2.f);
+      protection = std::min(statusbar.armor, dmg / 2.f);
     else if (_armor == DOOM::Enum::Armor::ArmorSecurity)
-      protection = std::min(statusbar.armor, damage / 3.f);
+      protection = std::min(statusbar.armor, dmg / 3.f);
 
     // Remove protection from armor
     statusbar.armor -= protection;
@@ -578,12 +582,12 @@ void  DOOM::PlayerThing::damageSector(DOOM::Doom& doom, sf::Time elapsed, float 
       _armor = DOOM::Enum::Armor::ArmorNone;
 
     // Keep player alive when ending level
-    damage -= protection;
+    dmg -= protection;
     if (end == true)
-      damage = std::min(health - 1.f, damage);
+      dmg = std::min(health - 1.f, dmg);
 
     // Apply remaining damage
-    DOOM::AbstractThing::damage(doom, *this, damage);
+    DOOM::AbstractThing::damage(doom, *this, dmg);
 
     // End game
     if (end == true && health < 11.f)

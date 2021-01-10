@@ -4,7 +4,7 @@
 
 namespace DOOM
 {
-  template<DOOM::EnumAction::Speed Speed = DOOM::EnumAction::Speed::SpeedSlow>
+  template<DOOM::EnumAction::Speed Speed = DOOM::EnumAction::Speed::SpeedNormal>
   class ScrollerLinedef : public DOOM::AbstractLinedef
   {
   public:
@@ -17,7 +17,7 @@ namespace DOOM
     void  update(DOOM::Doom& doom, sf::Time elapsed) override // Update linedef
     {
       // Scroll sidedef texture using offset
-      doom.level.sidedefs[front].x += elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds() * Speed;
+      doom.level.sidedefs[front].x += elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds() * (Speed / 8.f);
     }
   };
 }
