@@ -133,7 +133,7 @@ DOOM::Doom::Doom() :
   mode(DOOM::Enum::Mode::ModeIndetermined),
   skill(DOOM::Enum::Skill::SkillMedium),
   sensivity(0.8f),
-  sfx(0.05f),
+  sfx(0.125f),
   music(1.f),
   message(true),
   image()

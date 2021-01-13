@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "Doom/Action/AbstractStoppableAction.hpp"
+#include "Doom/Action/AbstractTypeAction.hpp"
 
 namespace DOOM
 {
@@ -12,7 +13,10 @@ namespace DOOM
     DOOM::EnumAction::Change::Type ChangeType = DOOM::EnumAction::Change::Type::None,
     DOOM::EnumAction::Change::Time ChangeTime = DOOM::EnumAction::Change::Time::Before
   >
-  class AbstractLevelingAction : public DOOM::AbstractStoppableAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>
+  class AbstractLevelingAction : public std::conditional<Stoppable == true,
+    DOOM::AbstractStoppableAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>,
+    DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>
+  >::type
   {
   protected:
     sf::Time  updateFloorLower(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed, float target, float speed)
@@ -246,32 +250,16 @@ namespace DOOM
         return sf::seconds(elapsed.asSeconds() - std::max(0.f, (start - sector.ceiling_current) / (speed / DOOM::Doom::Tic.asSeconds())));
       else
         return sf::Time::Zero;
-
-      // Not implemented
-      return elapsed;
     }
 
   public:
     AbstractLevelingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, int16_t model = -1) :
-      DOOM::AbstractStoppableAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>(doom, sector, model)
+      std::conditional<Stoppable,
+        DOOM::AbstractStoppableAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>,
+        DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>
+      >::type(doom, sector, model)
     {}
 
     virtual ~AbstractLevelingAction() = default;
-
-    virtual bool  stop(DOOM::Doom& doom, DOOM::AbstractThing& thing)
-    {
-      if (Stoppable == true)
-        return DOOM::AbstractStoppableAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>::stop(doom, thing);
-      else
-        return false;
-    }
-
-    virtual bool  start(DOOM::Doom& doom, DOOM::AbstractThing& thing)
-    {
-      if (Stoppable == true)
-        return DOOM::AbstractStoppableAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>::start(doom, thing);
-      else
-        return false;
-    }
   };
 }
