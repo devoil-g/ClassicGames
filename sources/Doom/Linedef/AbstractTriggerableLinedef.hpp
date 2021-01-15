@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include "Doom/Linedef/AbstractLinedef.hpp"
 #include "Doom/Linedef/NullLinedef.hpp"
 

@@ -64,7 +64,7 @@ void    DOOM::TransitionDoomState::draw()
     if (offset <= sf::Time::Zero)
       offset_y = 0;
     else if (offset.asSeconds() / DOOM::Doom::Tic.asSeconds() <= 16.f)
-      offset_y = (unsigned int)((std::pow((offset.asSeconds() / DOOM::Doom::Tic.asSeconds() / 32.f), 2) * 32.f * 8) * ((float)_transition.getSize().y / (float)DOOM::Doom::RenderHeight) + 0.5f);
+      offset_y = (unsigned int)((Math::Pow<2>((offset.asSeconds() / DOOM::Doom::Tic.asSeconds() / 32.f)) * 32.f * 8) * ((float)_transition.getSize().y / (float)DOOM::Doom::RenderHeight) + 0.5f);
     else
       offset_y = (unsigned int)(((offset.asSeconds() / DOOM::Doom::Tic.asSeconds()) * 8.f - 64.f) * ((float)_transition.getSize().y / (float)DOOM::Doom::RenderHeight) + 0.5f);
 

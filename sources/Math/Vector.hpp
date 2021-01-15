@@ -153,7 +153,7 @@ namespace Math
       float r = 0.f;
 
       for (unsigned int i = 0; i < vSize; i++)
-        r += std::pow((*this)(i), 2);
+        r += Math::Pow<2>((*this)(i));
 
       return std::sqrt(r);
     }
@@ -164,8 +164,8 @@ namespace Math
 
       for (unsigned int n = 0; n < vSize; n++)
       {
-        l += std::pow(A(n), 2);
-        m += std::pow(B(n), 2);
+        l += Math::Pow<2>(A(n));
+        m += Math::Pow<2>(B(n));
       }
 
 #ifdef _DEBUG

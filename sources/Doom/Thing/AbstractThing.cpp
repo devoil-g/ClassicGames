@@ -5317,10 +5317,10 @@ std::pair<float, Math::Vector<2>>	DOOM::AbstractThing::updatePhysicsThrustVertex
     return { 0.f, normal / normal.length() };
 
   // Intersect bounding circle with vertex
-  float	a = std::pow(movement.x(), 2) + std::pow(movement.y(), 2);
+  float	a = Math::Pow<2>(movement.x()) + Math::Pow<2>(movement.y());
   float	b = -2.f * ((vertex.x() - position.x()) * movement.x() + (vertex.y() - position.y()) * movement.y());
-  float	c = std::pow(vertex.x() - position.x(), 2) + std::pow(vertex.y() - position.y(), 2) - std::pow((float)attributs.radius, 2);
-  float	delta = std::pow(b, 2) - 4.f * a * c;
+  float	c = Math::Pow<2>(vertex.x() - position.x()) + Math::Pow<2>(vertex.y() - position.y()) - Math::Pow<2>((float)attributs.radius);
+  float	delta = Math::Pow<2>(b) - 4.f * a * c;
 
   // No intersection found
   if (delta <= 0.f)
@@ -5419,10 +5419,10 @@ std::pair<float, Math::Vector<2>>	DOOM::AbstractThing::updatePhysicsThrustThing(
       return { 1.f, Math::Vector<2>() };
   }
 
-  float	a = std::pow(movement.x(), 2) + std::pow(movement.y(), 2);
+  float	a = Math::Pow<2>(movement.x()) + Math::Pow<2>(movement.y());
   float	b = 2.f * (movement.x() * (position.x() - thing.position.x()) + movement.y() * (position.y() - thing.position.y()));
-  float	c = std::pow(position.x() - thing.position.x(), 2) + std::pow(position.y() - thing.position.y(), 2) + std::pow((float)attributs.radius + (float)thing.attributs.radius, 2);
-  float	delta = std::pow(b, 2) - 4.f * a * c;
+  float	c = Math::Pow<2>(position.x() - thing.position.x()) + Math::Pow<2>(position.y() - thing.position.y()) + Math::Pow<2>((float)(attributs.radius + thing.attributs.radius));
+  float	delta = Math::Pow<2>(b) - 4.f * a * c;
 
   // No intersection found
   if (delta <= 0.f)

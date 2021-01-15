@@ -717,7 +717,7 @@ std::set<int16_t>	DOOM::Doom::Level::getSectors(const Math::Vector<2> & position
     const DOOM::Doom::Level::Vertex &	linedef_end = vertexes[linedef.end];
 
     // Get closest point to thing along linedef
-    float	s = std::clamp(-((linedef_start.x() - position.x()) * (linedef_end.x() - linedef_start.x()) + (linedef_start.y() - position.y()) * (linedef_end.y() - linedef_start.y())) / (std::pow(linedef_end.x() - linedef_start.x(), 2) + std::pow(linedef_end.y() - linedef_start.y(), 2)), 0.f, 1.f);
+    float	s = std::clamp(-((linedef_start.x() - position.x()) * (linedef_end.x() - linedef_start.x()) + (linedef_start.y() - position.y()) * (linedef_end.y() - linedef_start.y())) / (Math::Pow<2>(linedef_end.x() - linedef_start.x()) + Math::Pow<2>(linedef_end.y() - linedef_start.y())), 0.f, 1.f);
 
     // Add linedef sectors to result if intersecting with thing bounds
     if ((linedef_start + (linedef_end - linedef_start) * s - position).length() < radius) {
@@ -929,7 +929,7 @@ std::list<std::reference_wrapper<DOOM::AbstractThing>>	DOOM::Doom::Level::getThi
 	    const DOOM::Doom::Level::Vertex&  linedef_end = vertexes[linedef.end];
 
 	    // Get closest point to thing along linedef
-	    float s = std::clamp(-((linedef_start.x() - thing.get().position.x()) * (linedef_end.x() - linedef_start.x()) + (linedef_start.y() - thing.get().position.y()) * (linedef_end.y() - linedef_start.y())) / (std::pow(linedef_end.x() - linedef_start.x(), 2) + std::pow(linedef_end.y() - linedef_start.y(), 2)), 0.f, 1.f);
+	    float s = std::clamp(-((linedef_start.x() - thing.get().position.x()) * (linedef_end.x() - linedef_start.x()) + (linedef_start.y() - thing.get().position.y()) * (linedef_end.y() - linedef_start.y())) / (Math::Pow<2>(linedef_end.x() - linedef_start.x()) + Math::Pow<2>(linedef_end.y() - linedef_start.y())), 0.f, 1.f);
 
 	    // Add linedef sectors to result if intersecting with thing bounds
 	    if ((linedef_start + (linedef_end - linedef_start) * s - thing.get().position.convert<2>()).length() < thing.get().attributs.radius / 2.f) {
@@ -959,11 +959,11 @@ std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>	DOOM::D
   // Test every things
   for (const std::unique_ptr<DOOM::AbstractThing>& thing : things)
   {
-    float a = std::pow(direction.x(), 2) + std::pow(direction.y(), 2);
+    float a = Math::Pow<2>(direction.x()) + Math::Pow<2>(direction.y());
     float b = 2.f * (((position.x() - thing->position.x()) * direction.x()) + (position.y() - thing->position.y()) * direction.y());
-    float c = std::pow((position.x() - thing->position.x()), 2) + std::pow((position.y() - thing->position.y()), 2) - std::pow((float)thing->attributs.radius, 2);
+    float c = Math::Pow<2>((position.x() - thing->position.x())) + Math::Pow<2>((position.y() - thing->position.y())) - Math::Pow<2>((float)thing->attributs.radius);
 
-    float delta = std::pow(b, 2) - 4.f * a * c;
+    float delta = Math::Pow<2>(b) - 4.f * a * c;
 
     if (delta < 0)
       continue;
