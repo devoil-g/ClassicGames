@@ -55,8 +55,8 @@ namespace Math
   template<>
   inline float Pow<0>(const float value) { return 1.f; }                              // Compute value^Power
 
-  inline float  RadToDeg(float r) { return (r * 180) / Math::Pi; }; // Convert radian (* accuracy) to degree
-  inline float  DegToRad(float r) { return (r * Math::Pi) / 180; }; // Convert degree to radian (* accuracy)
+  inline float  RadToDeg(float r) { return (r * 180.f) / Math::Pi; }; // Convert radian (* accuracy) to degree
+  inline float  DegToRad(float r) { return (r * Math::Pi) / 180.f; }; // Convert degree to radian (* accuracy)
 
   inline float  Random() { return (float)std::rand() / (float)RAND_MAX; };  // Return random value [0; 1]
 }

@@ -51,16 +51,10 @@ namespace Math
       return *reinterpret_cast<const Math::Vector<wSize>*>(this);
     }
 
-    inline constexpr float& operator()(unsigned int c)  // Get nth component of vector
-    {
-      return _vector[c];
-    }
-
-    inline constexpr float  operator()(unsigned int c) const  // Get nth component of vector
-    {
-      return _vector[c];
-    }
-
+    inline float& operator()(unsigned int c) { return _vector[c]; } // Get nth component of vector
+    
+    inline float  operator()(unsigned int c) const { return _vector[c]; } // Get nth component of vector
+    
     inline float& x() { return (*this)(0); }  // Get first component of vector
     inline float& y() { return (*this)(1); }  // Get second component of vector
     inline float& z() { return (*this)(2); }  // Get third component of vector
@@ -73,7 +67,7 @@ namespace Math
 
     inline Math::Vector<vSize>& operator==(const Math::Vector<vSize>& v)  // Vector comparison
     {
-      return (memcmp(this->_vector, v->_vector, vSize * sizeof(float)) == 0) ? true : false;
+      return (std::memcmp(this->_vector, v->_vector, vSize * sizeof(float)) == 0) ? true : false;
     }
 
     inline Math::Vector<vSize>& operator*=(const Math::Vector<vSize>& v)  // Vector multiplication

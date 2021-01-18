@@ -6661,8 +6661,11 @@ void    DOOM::AbstractThing::P_ExplodeMissile(DOOM::Doom& doom, DOOM::AbstractTh
 void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, float damage)
 {
   // Cancel if already dead
-  if (health <= 0)
+  if (health <= 0.f)
     return;
+
+  // Remember exceding damages for gibs
+  float exceding = std::max(0.f, damage - health);
 
   // Deal damage
   health = std::max(0.f, health - damage);
@@ -6680,7 +6683,7 @@ void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker
     float push = (float)(damage * 2);
 
     // Sometimes fall foward when killed
-    if (damage < 40 && health <= 0 && position.z() - attacker.position.z() > 64 && (std::rand() % 2 == 1)) {
+    if (damage < 40 && health <= 0.f && position.z() - attacker.position.z() > 64 && (std::rand() % 2 == 1)) {
       angle += Math::Pi;
       push *= 4.f;
     }
@@ -6690,7 +6693,7 @@ void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker
   }
 
   // Thing killed
-  if (health <= 0) {
+  if (health <= 0.f) {
     // Remove some flags
     flags = (DOOM::Enum::ThingProperty)(flags & ~(DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_SkullFly));
     if (type != DOOM::Enum::ThingType::ThingType_SKULL)
@@ -6744,7 +6747,7 @@ void	DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker
   }
 
   // Gibs monster
-  if (attributs.state_xdeath != DOOM::AbstractThing::ThingState::State_None && health < -attributs.spawnhealth)
+  if (attributs.state_xdeath != DOOM::AbstractThing::ThingState::State_None && exceding >= attributs.spawnhealth)
     setState(doom, attributs.state_xdeath);
 
   // Kill monster
