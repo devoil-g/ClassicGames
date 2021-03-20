@@ -8,12 +8,12 @@ Game::OptionsMenuState::OptionsMenuState(Game::StateMachine& machine) :
   Game::AbstractMenuState(machine)
 {
   // Get menu font
-  sf::Font const &	font = Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf");
+  const auto& font = Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf");
 
   // Options menu text
-  std::string		fullscreenText = std::string("Fullscreen [") + std::string(Game::Window::Instance().window().getSize().x == sf::VideoMode::getDesktopMode().width && Game::Window::Instance().window().getSize().y == sf::VideoMode::getDesktopMode().height ? "X" : "   ") + std::string("]");
-  std::string		antialiasingText = "Antialiasing [";
-  std::string		returnText = "Return";
+  std::string fullscreenText = std::string("Fullscreen [") + std::string(Game::Window::Instance().window().getSize().x == sf::VideoMode::getDesktopMode().width && Game::Window::Instance().window().getSize().y == sf::VideoMode::getDesktopMode().height ? "X" : "   ") + std::string("]");
+  std::string antialiasingText = "Antialiasing [";
+  std::string returnText = "Return";
 
   for (unsigned int i = 2; i <= 8; i *= 2)
     if (Game::Window::Instance().window().getSettings().antialiasingLevel >= i)
@@ -24,30 +24,29 @@ Game::OptionsMenuState::OptionsMenuState(Game::StateMachine& machine) :
   antialiasingText += "]";
 
   // Set menu items/handlers
-  menu() =
-  {
+  menu() = {
     Game::AbstractMenuState::Item(fullscreenText, font, std::function<void(Game::AbstractMenuState::Item &)>(std::bind(&Game::OptionsMenuState::selectFullscreen, this, std::placeholders::_1))),
     Game::AbstractMenuState::Item(antialiasingText, font, std::function<void(Game::AbstractMenuState::Item &)>(std::bind(&Game::OptionsMenuState::selectAntialiasing, this, std::placeholders::_1))),
     Game::AbstractMenuState::Item(returnText, font, std::function<void(Game::AbstractMenuState::Item &)>(std::bind(&Game::OptionsMenuState::selectReturn, this, std::placeholders::_1)))
   };
 }
 
-bool	Game::OptionsMenuState::update(sf::Time elapsed)
+bool  Game::OptionsMenuState::update(sf::Time elapsed)
 {
   // Update menu
   return Game::AbstractMenuState::update(elapsed);
 }
 
-void	Game::OptionsMenuState::draw()
+void  Game::OptionsMenuState::draw()
 {
   // Draw menu
   Game::AbstractMenuState::draw();
 }
 
-void	Game::OptionsMenuState::selectFullscreen(Game::AbstractMenuState::Item & item)
+void  Game::OptionsMenuState::selectFullscreen(Game::AbstractMenuState::Item& item)
 {
   // Save context settings
-  sf::ContextSettings	settings = Game::Window::Instance().window().getSettings();
+  sf::ContextSettings settings = Game::Window::Instance().window().getSettings();
 
   // Toogle fullscreen mode
   if (Game::Window::Instance().window().getSize().x != sf::VideoMode::getDesktopMode().width ||
@@ -63,11 +62,11 @@ void	Game::OptionsMenuState::selectFullscreen(Game::AbstractMenuState::Item & it
   }
 }
 
-void	Game::OptionsMenuState::selectAntialiasing(Game::AbstractMenuState::Item & item)
+void  Game::OptionsMenuState::selectAntialiasing(Game::AbstractMenuState::Item& item)
 {
-  sf::VideoMode		video;
-  unsigned int		style;
-  sf::ContextSettings	settings = Game::Window::Instance().window().getSettings();
+  sf::VideoMode       video;
+  unsigned int        style;
+  sf::ContextSettings settings = Game::Window::Instance().window().getSettings();
 
   // Get actual video mode and window style
   if (Game::Window::Instance().window().getSize().x == sf::VideoMode::getDesktopMode().width &&
@@ -92,7 +91,7 @@ void	Game::OptionsMenuState::selectAntialiasing(Game::AbstractMenuState::Item & 
   Game::Window::Instance().create(video, style, settings);
 
   // Generate new menu item text
-  std::string	text = "Antialiasing [";
+  std::string text = "Antialiasing [";
 
   for (unsigned int i = 2; i <= 8; i *= 2)
     if (Game::Window::Instance().window().getSettings().antialiasingLevel >= i)
@@ -106,7 +105,7 @@ void	Game::OptionsMenuState::selectAntialiasing(Game::AbstractMenuState::Item & 
   item.setString(text);
 }
 
-void	Game::OptionsMenuState::selectReturn(Game::AbstractMenuState::Item &)
+void  Game::OptionsMenuState::selectReturn(Game::AbstractMenuState::Item &)
 {
   // Return to main menu
   _machine.pop();

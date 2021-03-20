@@ -24,13 +24,6 @@ Game::Sound::Reference::~Reference()
     std::cout << "[Game::Sound]: Warning, no reference held on looping sound." << std::endl;
 }
 
-Game::Sound::Sound()
-  : _sounds()
-{}
-
-Game::Sound::~Sound()
-{}
-
 bool		Game::Sound::update(sf::Time elapsed)
 {
   // Remove unreferenced and not playing sounds

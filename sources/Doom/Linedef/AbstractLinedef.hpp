@@ -26,11 +26,11 @@ namespace DOOM
       AlreadyOnMap = 0x0100   // When the level is begun, this line is already on the automap
     };
 
-    int16_t	start, end;   // Start and end vertexes
-    int16_t	flag;         // Linedef flag (see enum)
-    int16_t	type;         // Linedef type (see enum)
-    int16_t	tag;          // Linedef sector tag
-    int16_t	front, back;  // Front (right) and back (left) sidedefs indexes (-1 if no sidedef)
+    int16_t start, end;   // Start and end vertexes
+    int16_t flag;         // Linedef flag (see enum)
+    int16_t type;         // Linedef type (see enum)
+    int16_t tag;          // Linedef sector tag
+    int16_t front, back;  // Front (right) and back (left) sidedefs indexes (-1 if no sidedef)
 
     AbstractLinedef(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Linedef& linedef);
     AbstractLinedef(DOOM::Doom& doom, const DOOM::AbstractLinedef& linedef);

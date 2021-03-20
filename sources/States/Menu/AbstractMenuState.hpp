@@ -21,7 +21,7 @@ namespace Game
 
     public:
       Item(const sf::String& string, const sf::Font& font, std::function<void(Item&)>& callback) : sf::Text(string, font), _callback(callback) {}
-      ~Item() {}
+      ~Item() = default;
 
       void  select() { _callback(*this); }  // Call item function
     };
@@ -34,8 +34,8 @@ namespace Game
     AbstractMenuState(Game::StateMachine& machine);
     virtual ~AbstractMenuState() = 0;
 
-    virtual bool  update(sf::Time) override;  // Update menu state
-    virtual void  draw() override;            // Draw menu state
+    virtual bool  update(sf::Time elapsed) override;  // Update menu state
+    virtual void  draw() override;                    // Draw menu state
 
     std::vector<Item>&        menu() { return _menu; }        // Get/set menu
     const std::vector<Item>&  menu() const { return _menu; }  // Get menu

@@ -331,8 +331,8 @@ void    DOOM::IntermissionDoomState::updateEnd()
   sf::Image start = _doom.image;
 
   // Save references as 'this' is gonna be deleted
-  Game::StateMachine& machine = _machine;
-  DOOM::Doom& doom = _doom;
+  auto& machine = _machine;
+  auto& doom = _doom;
 
   // Pop to next screen
   machine.pop();
@@ -508,8 +508,8 @@ void	DOOM::IntermissionDoomState::drawNext()
     // Draw '<- You are here'
     if ((int)(_nextElapsed.asSeconds() / DOOM::Doom::Tic.asSeconds()) % 32 < 20 &&
       _next.second >= 1 && _next.second <= _positions[_next.first - 1].size()) {
-      const DOOM::Doom::Resources::Texture& here0 = _doom.resources.getMenu(DOOM::str_to_key("WIURH0"));
-      const DOOM::Doom::Resources::Texture& here1 = _doom.resources.getMenu(DOOM::str_to_key("WIURH1"));
+      const auto& here0 = _doom.resources.getMenu(DOOM::str_to_key("WIURH0"));
+      const auto& here1 = _doom.resources.getMenu(DOOM::str_to_key("WIURH1"));
 
       // Choose left of right arrow
       if (_positions[_next.first - 1][_next.second - 1].x - here0.left >= 0 &&
@@ -523,7 +523,7 @@ void	DOOM::IntermissionDoomState::drawNext()
   }
 }
 
-void    DOOM::IntermissionDoomState::drawPercent(sf::Vector2i position, int value)
+void  DOOM::IntermissionDoomState::drawPercent(sf::Vector2i position, int value)
 {
   // Draw percent symbol
   _textPercent.draw(_doom, _doom.image, position, { 1, 1 });
@@ -537,7 +537,7 @@ void    DOOM::IntermissionDoomState::drawPercent(sf::Vector2i position, int valu
   } while (value != 0);
 }
 
-void    DOOM::IntermissionDoomState::drawTime(sf::Vector2i position, int value)
+void  DOOM::IntermissionDoomState::drawTime(sf::Vector2i position, int value)
 {
   // Sucks if over an hour
   if (value >= 60 * 60) {
@@ -575,7 +575,7 @@ void    DOOM::IntermissionDoomState::drawTime(sf::Vector2i position, int value)
   }
 }
 
-float   DOOM::IntermissionDoomState::getPar(std::pair<uint8_t, uint8_t> level) const
+float DOOM::IntermissionDoomState::getPar(std::pair<uint8_t, uint8_t> level) const
 {
   // DOOM Par Times
   std::array<std::array<float, 9>, 3> doom = {

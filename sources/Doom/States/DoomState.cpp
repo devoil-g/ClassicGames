@@ -38,7 +38,7 @@ DOOM::DoomState::~DoomState()
   Game::Sound::Instance().clear();
 }
 
-bool	DOOM::DoomState::update(sf::Time elapsed)
+bool  DOOM::DoomState::update(sf::Time elapsed)
 {
   // Update exit timer
   _elapsed += elapsed;
@@ -62,7 +62,7 @@ bool	DOOM::DoomState::update(sf::Time elapsed)
   return false;
 }
 
-void	DOOM::DoomState::draw()
+void  DOOM::DoomState::draw()
 {
   // Draw game in DOOM rendering target
   _game.draw();
@@ -82,9 +82,9 @@ void	DOOM::DoomState::draw()
     _sprite.setTexture(_texture, true);
 
     // Compute sprite scale and position
-    float	scale = std::min((float)Game::Window::Instance().window().getSize().x / (float)_doom.image.getSize().x, (float)Game::Window::Instance().window().getSize().y / ((float)_doom.image.getSize().y * DOOM::Doom::RenderStretching));
-    float	pos_x = (((float)Game::Window::Instance().window().getSize().x - ((float)_doom.image.getSize().x * scale)) / 2.f);
-    float	pos_y = (((float)Game::Window::Instance().window().getSize().y - ((float)_doom.image.getSize().y * scale * DOOM::Doom::RenderStretching)) / 2.f);
+    float scale = std::min((float)Game::Window::Instance().window().getSize().x / (float)_doom.image.getSize().x, (float)Game::Window::Instance().window().getSize().y / ((float)_doom.image.getSize().y * DOOM::Doom::RenderStretching));
+    float pos_x = (((float)Game::Window::Instance().window().getSize().x - ((float)_doom.image.getSize().x * scale)) / 2.f);
+    float pos_y = (((float)Game::Window::Instance().window().getSize().y - ((float)_doom.image.getSize().y * scale * DOOM::Doom::RenderStretching)) / 2.f);
 
     // Position sprite in window
     _sprite.setScale(sf::Vector2f(scale, scale * DOOM::Doom::RenderStretching));

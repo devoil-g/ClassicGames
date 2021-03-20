@@ -30,21 +30,21 @@ namespace Math
   template<int Mod>
   inline int  Modulo(int i) // Return the positive modulo Mod of i
   {
-    int	r = i % Mod;
+    int r = i % Mod;
 
     return r < 0 ? r + Mod : r;
   }
 
   inline int  Modulo(int i, int n)  // Return the positive modulo n of i
   {
-    int	r = i % n;
+    int r = i % n;
 
     return r < 0 ? r + n : r;
   };
 
   inline float  Modulo(float i, float n)  // Return the positive modulo i of n
   {
-    float r = i - (int)(i / n) * i;
+    float r = i - (int)(i / n) * n;
 
     return r < 0.f ? r + n : r;
   };

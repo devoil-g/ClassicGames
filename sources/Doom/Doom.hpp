@@ -45,19 +45,21 @@ namespace DOOM
 
     enum Weapon
     {
-      WeaponPistol = 0,
-      WeaponShotgun = 1,
-      WeaponChaingun = 2,
-      WeaponRocketLauncher = 3,
-      WeaponPlasmaGun = 4,
-      WeaponBFG9000 = 5,
-      WeaponChainsaw = 6,
-      WeaponSuperShotgun = 7,
+      WeaponFist = 0,
+      WeaponPistol = 1,
+      WeaponShotgun = 2,
+      WeaponChaingun = 3,
+      WeaponRocketLauncher = 4,
+      WeaponPlasmaGun = 5,
+      WeaponBFG9000 = 6,
+      WeaponChainsaw = 7,
+      WeaponSuperShotgun = 8,
       WeaponCount
     };
 
     enum Ammo
     {
+      AmmoNone = -1,
       AmmoBullet = 0,
       AmmoShell = 1,
       AmmoRocket = 2,
@@ -343,6 +345,7 @@ namespace DOOM
 
         sf::Image image(const DOOM::Doom& doom) const;                                                              // Create an SFML image from texture
         void      draw(const DOOM::Doom& doom, sf::Image& image, sf::Vector2i position, sf::Vector2i scale) const;  // Draw texture in SFML image at given position & scale
+        void      draw(const DOOM::Doom& doom, sf::Image& image, sf::Rect<int16_t> area, sf::Vector2i position, sf::Vector2i scale) const;  // Draw texture in SFML image at given position & scale in area
       };
 
       class Sound
@@ -645,7 +648,7 @@ namespace DOOM
         DOOM::AbstractThing* sound_target;  // Last sound emitter
 
       protected:
-        std::vector<int16_t>  _neighbors; // List of neighbor sectors (sorted)
+        std::set<int16_t> _neighbors; // List of neighbor sectors (sorted)
 
       private:
         std::array<std::unique_ptr<DOOM::AbstractAction>, DOOM::Doom::Level::Sector::Action::Number>  _actions; // Actions on sector
@@ -708,6 +711,8 @@ namespace DOOM
         std::pair<int16_t, float> getNeighborHighestCeiling(const DOOM::Doom& doom) const;                    // Get highest neighbor floor level
         std::pair<int16_t, float> getNeighborNextLowestCeiling(const DOOM::Doom& doom, float height) const;   // Get next lowest neighbor floor level from height
         std::pair<int16_t, float> getNeighborNextHighestCeiling(const DOOM::Doom& doom, float height) const;  // Get next highest neighbor floor level from height
+
+        const std::set<int16_t>&  getNeighbors() const; // Get neighbors indexes
 
         int16_t getShortestLowerTexture(const DOOM::Doom& doom) const;  // Get shortest lower texture height on the boundary of the sector
 
@@ -815,7 +820,7 @@ namespace DOOM
     void  buildResourcesFlats();      // Build flats from WAD
     void  buildResourcesSounds();     // Build sounds from WAD
 
-    void  buildLevel(std::pair<uint8_t, uint8_t> const& level); // Build level from WAD file
+    void  buildLevel(const std::pair<uint8_t, uint8_t>& level); // Build level from WAD file
     void  buildLevelVertexes();                                 // Build level's vertexes from WAD file
     void  buildLevelSectors();                                  // Build level's sectors from WAD file
     void  buildLevelLinedefs();                                 // Build level's linedefs from WAD file
@@ -863,7 +868,7 @@ namespace std
   bool  operator<(const std::reference_wrapper<DOOM::AbstractThing>& left, const std::reference_wrapper<DOOM::AbstractThing>& right);
 }
 
-// Definition of class forward-declared (NOTE: we shouldn't do this)
+// Definition of forward-declared class (NOTE: we shouldn't do this)
 #include "Doom/Action/AbstractAction.hpp"
 #include "Doom/Flat/AbstractFlat.hpp"
 #include "Doom/Linedef/AbstractLinedef.hpp"

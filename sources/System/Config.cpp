@@ -22,11 +22,11 @@ namespace Game
   };
 };
 
-void		Game::Config::initialize(int argc, char** argv)
+void  Game::Config::initialize(int argc, char** argv)
 {
 #ifdef _WIN32
-  HMODULE	handle;
-  WCHAR		path[MAX_PATH] = { 0 };
+  HMODULE handle;
+  WCHAR   path[MAX_PATH] = { 0 };
 
   // This error should never happen...
   handle = GetModuleHandle(nullptr);
@@ -36,7 +36,7 @@ void		Game::Config::initialize(int argc, char** argv)
   GetModuleFileNameW(handle, path, MAX_PATH);
   Game::Config::ExecutablePath = std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t>().to_bytes(std::wstring(path).substr(0, std::wstring(path).find_last_of('\\') + 1));
 #else
-  char path[PATH_MAX + 1] = { 0 };
+  char  path[PATH_MAX + 1] = { 0 };
 
   // Find executable path from /proc/self/exe
   if (readlink("/proc/self/exe", path, sizeof(path) - 1) == -1)

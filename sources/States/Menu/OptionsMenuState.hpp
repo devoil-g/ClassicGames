@@ -20,7 +20,7 @@ namespace Game
     OptionsMenuState(Game::StateMachine& machine);
     ~OptionsMenuState() override = default;
 
-    bool  update(sf::Time) override;  // Update state
-    void  draw() override;            // Draw state
+    bool  update(sf::Time elapsed) override;  // Update state
+    void  draw() override;                    // Draw state
   };
 }

@@ -25,13 +25,13 @@ namespace DOOM
   private:
     bool  trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing, int16_t sector_index) override  // Perform light change on sector
     {
-      DOOM::Doom::Level::Sector& sector = doom.level.sectors[sector_index];
+      auto& sector = doom.level.sectors[sector_index];
 
       // Cancel if a lighting action is already running
       if (sector.action<DOOM::Doom::Level::Sector::Action::Lighting>().get() != nullptr)
         return false;
 
-      int16_t	light;
+      int16_t light;
 
       // Get new light level of sector
       switch (Light)

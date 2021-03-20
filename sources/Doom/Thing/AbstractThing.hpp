@@ -7,7 +7,7 @@ namespace DOOM
 {
   class AbstractThing
   {
-  private:
+  protected:
     enum ThingSprite
     {
       Sprite_TROO, Sprite_SHTG, Sprite_PUNG, Sprite_PISG, Sprite_PISF, Sprite_SHTF, Sprite_SHT2, Sprite_CHGG, Sprite_CHGF, Sprite_MISG,
@@ -30,16 +30,6 @@ namespace DOOM
     enum ThingState
     {
       State_None,
-      State_LIGHTDONE,
-      State_PUNCH, State_PUNCHDOWN, State_PUNCHUP, State_PUNCH1, State_PUNCH2, State_PUNCH3, State_PUNCH4, State_PUNCH5,
-      State_PISTOL, State_PISTOLDOWN, State_PISTOLUP, State_PISTOL1, State_PISTOL2, State_PISTOL3, State_PISTOL4, State_PISTOLFLASH,
-      State_SGUN, State_SGUNDOWN, State_SGUNUP, State_SGUN1, State_SGUN2, State_SGUN3, State_SGUN4, State_SGUN5, State_SGUN6, State_SGUN7, State_SGUN8, State_SGUN9, State_SGUNFLASH1, State_SGUNFLASH2,
-      State_DSGUN, State_DSGUNDOWN, State_DSGUNUP, State_DSGUN1, State_DSGUN2, State_DSGUN3, State_DSGUN4, State_DSGUN5, State_DSGUN6, State_DSGUN7, State_DSGUN8, State_DSGUN9, State_DSGUN10, State_DSNR1, State_DSNR2, State_DSGUNFLASH1, State_DSGUNFLASH2,
-      State_CHAIN, State_CHAINDOWN, State_CHAINUP, State_CHAIN1, State_CHAIN2, State_CHAIN3, State_CHAINFLASH1, State_CHAINFLASH2,
-      State_MISSILE, State_MISSILEDOWN, State_MISSILEUP, State_MISSILE1, State_MISSILE2, State_MISSILE3, State_MISSILEFLASH1, State_MISSILEFLASH2, State_MISSILEFLASH3, State_MISSILEFLASH4,
-      State_SAW, State_SAWB, State_SAWDOWN, State_SAWUP, State_SAW1, State_SAW2, State_SAW3,
-      State_PLASMA, State_PLASMADOWN, State_PLASMAUP, State_PLASMA1, State_PLASMA2, State_PLASMAFLASH1, State_PLASMAFLASH2,
-      State_BFG, State_BFGDOWN, State_BFGUP, State_BFG1, State_BFG2, State_BFG3, State_BFG4, State_BFGFLASH1, State_BFGFLASH2,
       State_BLOOD1, State_BLOOD2, State_BLOOD3,
       State_PUFF1, State_PUFF2, State_PUFF3, State_PUFF4,
       State_TBALL1, State_TBALL2,
@@ -166,6 +156,7 @@ namespace DOOM
       State_Number
     };
 
+  private:
     class State
     {
     public:
@@ -231,6 +222,7 @@ namespace DOOM
       DirectionNumber
     };
 
+  protected:
     static const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>               _sprites;     // Table of thing sprites
     static const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::State_Number>  _states;      // Table of thing states
     static const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingType_Number>    _attributs;   // Table of thing attributs
@@ -274,29 +266,6 @@ namespace DOOM
     int                   _target_threshold;  // Time focusing exclusively on target
 
   protected:
-    void  A_Light0(DOOM::Doom& doom);
-    void  A_WeaponReady(DOOM::Doom& doom);
-    void  A_Lower(DOOM::Doom& doom);
-    void  A_Raise(DOOM::Doom& doom);
-    void  A_Punch(DOOM::Doom& doom);
-    void  A_ReFire(DOOM::Doom& doom);
-    void  A_FirePistol(DOOM::Doom& doom);
-    void  A_Light1(DOOM::Doom& doom);
-    void  A_FireShotgun(DOOM::Doom& doom);
-    void  A_Light2(DOOM::Doom& doom);
-    void  A_FireShotgun2(DOOM::Doom& doom);
-    void  A_CheckReload(DOOM::Doom& doom);
-    void  A_OpenShotgun2(DOOM::Doom& doom);
-    void  A_LoadShotgun2(DOOM::Doom& doom);
-    void  A_CloseShotgun2(DOOM::Doom& doom);
-    void  A_FireCGun(DOOM::Doom& doom);
-    void  A_GunFlash(DOOM::Doom& doom);
-    void  A_FireMissile(DOOM::Doom& doom);
-    void  A_Saw(DOOM::Doom& doom);
-    void  A_FirePlasma(DOOM::Doom& doom);
-    void  A_BFGsound(DOOM::Doom& doom);
-    void  A_FireBFG(DOOM::Doom& doom);
-    void  A_BFGSpray(DOOM::Doom& doom);
     void  A_Explode(DOOM::Doom& doom);
     void  A_Pain(DOOM::Doom& doom);
     void  A_PlayerScream(DOOM::Doom& doom);
@@ -347,6 +316,7 @@ namespace DOOM
     void  A_SpawnSound(DOOM::Doom& doom);
     void  A_SpawnFly(DOOM::Doom& doom);
     void  A_BrainExplode(DOOM::Doom& doom);
+    void  A_BFGSpray(DOOM::Doom& doom);
 
     void  A_Look(DOOM::Doom& doom);   // Default look action, try to find a target before running.
     void  A_Chase(DOOM::Doom& doom);  // Default movement action, move to target.
@@ -362,7 +332,7 @@ namespace DOOM
     void  P_NewChaseDir(DOOM::Doom& doom);                                                                                                            // Find a new direction to chase target.
     bool  P_TryMove(DOOM::Doom& doom, const Math::Vector<2>& position);                                                                               // Attempt to move thing to a new position, crossing special lines unless property Teleport is set.
     bool  P_TryWalk(DOOM::Doom& doom);                                                                                                                // Attempt to move thing in its direction. If blocked if either a wall or a thing, return false. If move is either clear or blocked only by a door, return true and sets (and open the door).
-    void  P_LineAttack(DOOM::Doom& doom, float atk_range, const Math::Vector<3>& atk_origin, const Math::Vector<3>& atk_direction, float atk_damage); // Compute an attack from current 
+    bool  P_LineAttack(DOOM::Doom& doom, float atk_range, const Math::Vector<3>& atk_origin, const Math::Vector<3>& atk_direction, float atk_damage); // Compute an attack from current 
     void  P_LineSwitch(DOOM::Doom& doom, float swc_range, const Math::Vector<3>& swc_origin, const Math::Vector<3>& swc_direction);                   // Switch the first non obstructed linedef in range 
     void  P_SpawnMissile(DOOM::Doom& doom, DOOM::Enum::ThingType type);                                                                               // Spawn a missile from thing to target
     void  P_ExplodeMissile(DOOM::Doom& doom);                                                                                                         // Destroy missile

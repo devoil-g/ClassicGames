@@ -21,5 +21,5 @@ namespace Game
   };
 }
 
-// Definition of class forward-declared (NOTE: we shouldn't do this)
+// Definition of forward-declared class (NOTE: we shouldn't do this)
 #include "States/StateMachine.hpp"

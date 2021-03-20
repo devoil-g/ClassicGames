@@ -35,95 +35,6 @@ const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>	D
 const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::State_Number>	DOOM::AbstractThing::_states =
 {
   DOOM::AbstractThing::State{ Sprite_TROO, 0, false, -1, nullptr, State_None },			// State_None
-  DOOM::AbstractThing::State{ Sprite_SHTG, 4, false, 0, &A_Light0, State_None },		// State_LIGHTDONE
-  DOOM::AbstractThing::State{ Sprite_PUNG, 0, false, 1, &A_WeaponReady, State_PUNCH },		// State_PUNCH
-  DOOM::AbstractThing::State{ Sprite_PUNG, 0, false, 1, &A_Lower, State_PUNCHDOWN },		// State_PUNCHDOWN
-  DOOM::AbstractThing::State{ Sprite_PUNG, 0, false, 1, &A_Raise, State_PUNCHUP },		// State_PUNCHUP
-  DOOM::AbstractThing::State{ Sprite_PUNG, 1, false, 4, nullptr, State_PUNCH2 },		// State_PUNCH1
-  DOOM::AbstractThing::State{ Sprite_PUNG, 2, false, 4, &A_Punch, State_PUNCH3 },		// State_PUNCH2
-  DOOM::AbstractThing::State{ Sprite_PUNG, 3, false, 5, nullptr, State_PUNCH4 },		// State_PUNCH3
-  DOOM::AbstractThing::State{ Sprite_PUNG, 2, false, 4, nullptr, State_PUNCH5 },		// State_PUNCH4
-  DOOM::AbstractThing::State{ Sprite_PUNG, 1, false, 5, &A_ReFire, State_PUNCH },		// State_PUNCH5
-  DOOM::AbstractThing::State{ Sprite_PISG, 0, false, 1, &A_WeaponReady, State_PISTOL },		// State_PISTOL
-  DOOM::AbstractThing::State{ Sprite_PISG, 0, false, 1, &A_Lower, State_PISTOLDOWN },		// State_PISTOLDOWN
-  DOOM::AbstractThing::State{ Sprite_PISG, 0, false, 1, &A_Raise, State_PISTOLUP },		// State_PISTOLUP
-  DOOM::AbstractThing::State{ Sprite_PISG, 0, false, 4, nullptr, State_PISTOL2 },		// State_PISTOL1
-  DOOM::AbstractThing::State{ Sprite_PISG, 1, false, 6, &A_FirePistol, State_PISTOL3 },		// State_PISTOL2
-  DOOM::AbstractThing::State{ Sprite_PISG, 2, false, 4, nullptr, State_PISTOL4 },		// State_PISTOL3
-  DOOM::AbstractThing::State{ Sprite_PISG, 1, false, 5, &A_ReFire, State_PISTOL },		// State_PISTOL4
-  DOOM::AbstractThing::State{ Sprite_PISF, 0, true, 7, &A_Light1, State_LIGHTDONE },		// State_PISTOLFLASH
-  DOOM::AbstractThing::State{ Sprite_SHTG, 0, false, 1, &A_WeaponReady, State_SGUN },		// State_SGUN
-  DOOM::AbstractThing::State{ Sprite_SHTG, 0, false, 1, &A_Lower, State_SGUNDOWN },		// State_SGUNDOWN
-  DOOM::AbstractThing::State{ Sprite_SHTG, 0, false, 1, &A_Raise, State_SGUNUP },		// State_SGUNUP
-  DOOM::AbstractThing::State{ Sprite_SHTG, 0, false, 3, nullptr, State_SGUN2 },			// State_SGUN1
-  DOOM::AbstractThing::State{ Sprite_SHTG, 0, false, 7, &A_FireShotgun, State_SGUN3 },		// State_SGUN2
-  DOOM::AbstractThing::State{ Sprite_SHTG, 1, false, 5, nullptr, State_SGUN4 },			// State_SGUN3
-  DOOM::AbstractThing::State{ Sprite_SHTG, 2, false, 5, nullptr, State_SGUN5 },			// State_SGUN4
-  DOOM::AbstractThing::State{ Sprite_SHTG, 3, false, 4, nullptr, State_SGUN6 },			// State_SGUN5
-  DOOM::AbstractThing::State{ Sprite_SHTG, 2, false, 5, nullptr, State_SGUN7 },			// State_SGUN6
-  DOOM::AbstractThing::State{ Sprite_SHTG, 1, false, 5, nullptr, State_SGUN8 },			// State_SGUN7
-  DOOM::AbstractThing::State{ Sprite_SHTG, 0, false, 3, nullptr, State_SGUN9 },			// State_SGUN8
-  DOOM::AbstractThing::State{ Sprite_SHTG, 0, false, 7, &A_ReFire, State_SGUN },		// State_SGUN9
-  DOOM::AbstractThing::State{ Sprite_SHTF, 0, true, 4, &A_Light1, State_SGUNFLASH2 },		// State_SGUNFLASH1
-  DOOM::AbstractThing::State{ Sprite_SHTF, 1, true, 3, &A_Light2, State_LIGHTDONE },		// State_SGUNFLASH2
-  DOOM::AbstractThing::State{ Sprite_SHT2, 0, false, 1, &A_WeaponReady, State_DSGUN },		// State_DSGUN
-  DOOM::AbstractThing::State{ Sprite_SHT2, 0, false, 1, &A_Lower, State_DSGUNDOWN },		// State_DSGUNDOWN
-  DOOM::AbstractThing::State{ Sprite_SHT2, 0, false, 1, &A_Raise, State_DSGUNUP },		// State_DSGUNUP
-  DOOM::AbstractThing::State{ Sprite_SHT2, 0, false, 3, nullptr, State_DSGUN2 },		// State_DSGUN1
-  DOOM::AbstractThing::State{ Sprite_SHT2, 0, false, 7, &A_FireShotgun2, State_DSGUN3 },	// State_DSGUN2
-  DOOM::AbstractThing::State{ Sprite_SHT2, 1, false, 7, nullptr, State_DSGUN4 },		// State_DSGUN3
-  DOOM::AbstractThing::State{ Sprite_SHT2, 2, false, 7, &A_CheckReload, State_DSGUN5 },		// State_DSGUN4
-  DOOM::AbstractThing::State{ Sprite_SHT2, 3, false, 7, &A_OpenShotgun2, State_DSGUN6 },	// State_DSGUN5
-  DOOM::AbstractThing::State{ Sprite_SHT2, 4, false, 7, nullptr, State_DSGUN7 },		// State_DSGUN6
-  DOOM::AbstractThing::State{ Sprite_SHT2, 5, false, 7, &A_LoadShotgun2, State_DSGUN8 },	// State_DSGUN7
-  DOOM::AbstractThing::State{ Sprite_SHT2, 6, false, 6, nullptr, State_DSGUN9 },		// State_DSGUN8
-  DOOM::AbstractThing::State{ Sprite_SHT2, 7, false, 6, &A_CloseShotgun2, State_DSGUN10 },	// State_DSGUN9
-  DOOM::AbstractThing::State{ Sprite_SHT2, 0, false, 5, &A_ReFire, State_DSGUN },		// State_DSGUN10
-  DOOM::AbstractThing::State{ Sprite_SHT2, 1, false, 7, nullptr, State_DSNR2 },			// State_DSNR1
-  DOOM::AbstractThing::State{ Sprite_SHT2, 0, false, 3, nullptr, State_DSGUNDOWN },		// State_DSNR2
-  DOOM::AbstractThing::State{ Sprite_SHT2, 8, true, 5, &A_Light1, State_DSGUNFLASH2 },		// State_DSGUNFLASH1
-  DOOM::AbstractThing::State{ Sprite_SHT2, 9, true, 4, &A_Light2, State_LIGHTDONE },		// State_DSGUNFLASH2
-  DOOM::AbstractThing::State{ Sprite_CHGG, 0, false, 1, &A_WeaponReady, State_CHAIN },		// State_CHAIN
-  DOOM::AbstractThing::State{ Sprite_CHGG, 0, false, 1, &A_Lower, State_CHAINDOWN },		// State_CHAINDOWN
-  DOOM::AbstractThing::State{ Sprite_CHGG, 0, false, 1, &A_Raise, State_CHAINUP },		// State_CHAINUP
-  DOOM::AbstractThing::State{ Sprite_CHGG, 0, false, 4, &A_FireCGun, State_CHAIN2 },		// State_CHAIN1
-  DOOM::AbstractThing::State{ Sprite_CHGG, 1, false, 4, &A_FireCGun, State_CHAIN3 },		// State_CHAIN2
-  DOOM::AbstractThing::State{ Sprite_CHGG, 1, false, 0, &A_ReFire, State_CHAIN },		// State_CHAIN3
-  DOOM::AbstractThing::State{ Sprite_CHGF, 0, true, 5, &A_Light1, State_LIGHTDONE },		// State_CHAINFLASH1
-  DOOM::AbstractThing::State{ Sprite_CHGF, 1, true, 5, &A_Light2, State_LIGHTDONE },		// State_CHAINFLASH2
-  DOOM::AbstractThing::State{ Sprite_MISG, 0, false, 1, &A_WeaponReady, State_MISSILE },	// State_MISSILE
-  DOOM::AbstractThing::State{ Sprite_MISG, 0, false, 1, &A_Lower, State_MISSILEDOWN },		// State_MISSILEDOWN
-  DOOM::AbstractThing::State{ Sprite_MISG, 0, false, 1, &A_Raise, State_MISSILEUP },		// State_MISSILEUP
-  DOOM::AbstractThing::State{ Sprite_MISG, 1, false, 8, &A_GunFlash, State_MISSILE2 },		// State_MISSILE1
-  DOOM::AbstractThing::State{ Sprite_MISG, 1, false, 12, &A_FireMissile, State_MISSILE3 },	// State_MISSILE2
-  DOOM::AbstractThing::State{ Sprite_MISG, 1, false, 0, &A_ReFire, State_MISSILE },		// State_MISSILE3
-  DOOM::AbstractThing::State{ Sprite_MISF, 0, true, 3, &A_Light1, State_MISSILEFLASH2 },	// State_MISSILEFLASH1
-  DOOM::AbstractThing::State{ Sprite_MISF, 1, true, 4, nullptr, State_MISSILEFLASH3 },		// State_MISSILEFLASH2
-  DOOM::AbstractThing::State{ Sprite_MISF, 2, true, 4, &A_Light2, State_MISSILEFLASH4 },	// State_MISSILEFLASH3
-  DOOM::AbstractThing::State{ Sprite_MISF, 3, true, 4, &A_Light2, State_LIGHTDONE },		// State_MISSILEFLASH4
-  DOOM::AbstractThing::State{ Sprite_SAWG, 2, false, 4, &A_WeaponReady, State_SAWB },		// State_SAW
-  DOOM::AbstractThing::State{ Sprite_SAWG, 3, false, 4, &A_WeaponReady, State_SAW },		// State_SAWB
-  DOOM::AbstractThing::State{ Sprite_SAWG, 2, false, 1, &A_Lower, State_SAWDOWN },		// State_SAWDOWN
-  DOOM::AbstractThing::State{ Sprite_SAWG, 2, false, 1, &A_Raise, State_SAWUP },		// State_SAWUP
-  DOOM::AbstractThing::State{ Sprite_SAWG, 0, false, 4, &A_Saw, State_SAW2 },			// State_SAW1
-  DOOM::AbstractThing::State{ Sprite_SAWG, 1, false, 4, &A_Saw, State_SAW3 },			// State_SAW2
-  DOOM::AbstractThing::State{ Sprite_SAWG, 1, false, 0, &A_ReFire, State_SAW },			// State_SAW3
-  DOOM::AbstractThing::State{ Sprite_PLSG, 0, false, 1, &A_WeaponReady, State_PLASMA },		// State_PLASMA
-  DOOM::AbstractThing::State{ Sprite_PLSG, 0, false, 1, &A_Lower, State_PLASMADOWN },		// State_PLASMADOWN
-  DOOM::AbstractThing::State{ Sprite_PLSG, 0, false, 1, &A_Raise, State_PLASMAUP },		// State_PLASMAUP
-  DOOM::AbstractThing::State{ Sprite_PLSG, 0, false, 3, &A_FirePlasma, State_PLASMA2 },		// State_PLASMA1
-  DOOM::AbstractThing::State{ Sprite_PLSG, 1, false, 20, &A_ReFire, State_PLASMA },		// State_PLASMA2
-  DOOM::AbstractThing::State{ Sprite_PLSF, 0, true, 4, &A_Light1, State_LIGHTDONE },		// State_PLASMAFLASH1
-  DOOM::AbstractThing::State{ Sprite_PLSF, 1, true, 4, &A_Light1, State_LIGHTDONE },		// State_PLASMAFLASH2
-  DOOM::AbstractThing::State{ Sprite_BFGG, 0, false, 1, &A_WeaponReady, State_BFG },		// State_BFG
-  DOOM::AbstractThing::State{ Sprite_BFGG, 0, false, 1, &A_Lower, State_BFGDOWN },		// State_BFGDOWN
-  DOOM::AbstractThing::State{ Sprite_BFGG, 0, false, 1, &A_Raise, State_BFGUP },		// State_BFGUP
-  DOOM::AbstractThing::State{ Sprite_BFGG, 0, false, 20, &A_BFGsound, State_BFG2 },		// State_BFG1
-  DOOM::AbstractThing::State{ Sprite_BFGG, 1, false, 10, &A_GunFlash, State_BFG3 },		// State_BFG2
-  DOOM::AbstractThing::State{ Sprite_BFGG, 1, false, 10, &A_FireBFG, State_BFG4 },		// State_BFG3
-  DOOM::AbstractThing::State{ Sprite_BFGG, 1, false, 20, &A_ReFire, State_BFG },		// State_BFG4
-  DOOM::AbstractThing::State{ Sprite_BFGF, 0, true, 11, &A_Light1, State_BFGFLASH2 },		// State_BFGFLASH1
-  DOOM::AbstractThing::State{ Sprite_BFGF, 1, true, 6, &A_Light2, State_LIGHTDONE },		// State_BFGFLASH2
   DOOM::AbstractThing::State{ Sprite_BLUD, 2, false, 8, nullptr, State_BLOOD2 },		// State_BLOOD1
   DOOM::AbstractThing::State{ Sprite_BLUD, 1, false, 8, nullptr, State_BLOOD3 },		// State_BLOOD2
   DOOM::AbstractThing::State{ Sprite_BLUD, 0, false, 8, nullptr, State_None },			// State_BLOOD3
@@ -4853,7 +4764,7 @@ const std::array<Math::Vector<2>, DOOM::AbstractThing::Direction::DirectionNumbe
   Math::Vector<2>(std::cos(Math::Pi * 1.75f), std::sin(Math::Pi * 1.75f))
 };
 
-DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Wad::RawLevel::Thing const& thing) :
+DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Thing& thing) :
   DOOM::AbstractThing(
     doom,
     (DOOM::Enum::ThingType)std::distance(_attributs.cbegin(), std::find_if(_attributs.cbegin(), _attributs.cend(), [thing](const Attributs& attributs) { return attributs.id == thing.type; })),
@@ -4891,9 +4802,9 @@ DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type,
   if (!(this->flags & DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap))
     doom.level.blockmap.addThing(*this, position.convert<2>());
 
-  std::set<int16_t>	sectors = doom.level.getSectors(*this);
-  float			floor = std::numeric_limits<int16_t>().min();
-  float			ceiling = std::numeric_limits<int16_t>().max();
+  std::set<int16_t> sectors = doom.level.getSectors(*this);
+  float             floor = std::numeric_limits<int16_t>().min();
+  float             ceiling = std::numeric_limits<int16_t>().max();
 
   // Get spawn floor and ceiling height
   if (sectors.empty() == true)
@@ -4915,7 +4826,14 @@ bool	DOOM::AbstractThing::update(DOOM::Doom& doom, sf::Time elapsed)
   // Update internal timer
   _elapsed += elapsed;
 
-  while (_states[_state].duration != -1 && _elapsed >= DOOM::Doom::Tic * (sf::Int64)_states[_state].duration) {
+  while (_elapsed >= DOOM::Doom::Tic * (sf::Int64)_states[_state].duration)
+  {
+    // Stop when no duration
+    if (_states[_state].duration == -1) {
+      _elapsed = sf::Time::Zero;
+      break;
+    }
+
     // Skip to next state
     _elapsed -= DOOM::Doom::Tic * (sf::Int64)_states[_state].duration;
     setState(doom, _states[_state].next);
@@ -4965,13 +4883,13 @@ DOOM::AbstractThing::Sprite	DOOM::AbstractThing::sprite(const DOOM::Doom & doom,
   if (_state == DOOM::AbstractThing::ThingState::State_None)
     return { DOOM::Doom::Resources::Texture::Null, false, false };
 
-  std::unordered_map<uint64_t, std::vector<std::array<std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool>, 8>>>::const_iterator	iterator = doom.resources.animations.find(DOOM::str_to_key(_sprites[_states[_state].sprite]));
+  auto  iterator = doom.resources.animations.find(DOOM::str_to_key(_sprites[_states[_state].sprite]));
 
   // Cancel if sequence or frame not found
   if (iterator == doom.resources.animations.cend() || iterator->second.size() < _states[_state].frame)
     return { DOOM::Doom::Resources::Texture::Null, false, false };
 
-  const std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool>& texture = iterator->second[_states[_state].frame][Math::Modulo<8>((int)((std::fmodf(angle, Math::Pi * 2.f) + Math::Pi * 2.f) * 4.f / Math::Pi + 16.5f))];
+  const auto& texture = iterator->second[_states[_state].frame][Math::Modulo<8>((int)((std::fmodf(angle, Math::Pi * 2.f) + Math::Pi * 2.f) * 4.f / Math::Pi + 16.5f))];
 
   return { texture.first.get(), texture.second, _states[_state].brightness };
 }
@@ -5118,7 +5036,8 @@ void	DOOM::AbstractThing::setState(DOOM::Doom & doom, DOOM::AbstractThing::Thing
 void	DOOM::AbstractThing::updatePhysics(DOOM::Doom& doom, sf::Time elapsed)
 {
   // Compute physics if minimal thrust
-  if (std::fabsf(_thrust.x()) > 0.001f || std::fabsf(_thrust.y()) > 0.001f) {
+  if (std::fabsf(_thrust.x()) > 0.001f || std::fabsf(_thrust.y()) > 0.001f)
+  {
     // Compute movement with collision
     updatePhysicsThrust(doom, elapsed);
 
@@ -5172,7 +5091,7 @@ void DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed
     }
   }
 
-  //   Check collision with things
+  // Check collision with things
   if ((flags & DOOM::Enum::ThingProperty::ThingProperty_Solid) || (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile))
     for (const std::reference_wrapper<DOOM::AbstractThing>& thing : linedefs_things.second) {
       // Thing has already been removed
@@ -6228,7 +6147,12 @@ void	DOOM::AbstractThing::A_PosAttack(DOOM::Doom& doom)
   float atk_damage = (float)((std::rand() % 5 + 1) * 3);
 
   // Attack
-  P_LineAttack(doom, AbstractThing::MissileRange, Math::Vector<3>(position.x(), position.y(), position.z() + height / 2.f), Math::Vector<3>(std::cos(atk_angle), std::sin(atk_angle), std::tan(atk_slope)), atk_damage);
+  P_LineAttack(
+    doom,
+    AbstractThing::MissileRange,
+    Math::Vector<3>(position.x(), position.y(), position.z() + height / 2.f),
+    Math::Vector<3>(std::cos(atk_angle), std::sin(atk_angle), std::tan(atk_slope)),
+    atk_damage);
 }
 
 void	DOOM::AbstractThing::A_SPosAttack(DOOM::Doom& doom)
@@ -6294,9 +6218,10 @@ float	DOOM::AbstractThing::P_AimLineAttack(DOOM::Doom& doom, const DOOM::Abstrac
   for (const std::pair<float, int16_t>& linedef_index : doom.level.getLinedefs(position.convert<2>(), target.position.convert<2>() - position.convert<2>())) {
     DOOM::AbstractLinedef& linedef = *doom.level.linedefs[linedef_index.second];
 
+    // NOTE: we can see through impassible walls
     // Stop immediatly if linedef is impassible
-    if (linedef.flag & DOOM::AbstractLinedef::Flag::Impassible)
-      return std::numeric_limits<float>::quiet_NaN();
+    //if (linedef.flag & DOOM::AbstractLinedef::Flag::Impassible && false)
+    //  return std::numeric_limits<float>::quiet_NaN();
 
     // Can't see outside the map
     if (linedef.front == -1 || linedef.back == -1)
@@ -6317,7 +6242,7 @@ float	DOOM::AbstractThing::P_AimLineAttack(DOOM::Doom& doom, const DOOM::Abstrac
   return (target_bottom + target_top) / 2.f;
 }
 
-void	DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const Math::Vector<3>& atk_origin, const Math::Vector<3>& atk_direction, float atk_damage)
+bool    DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const Math::Vector<3>& atk_origin, const Math::Vector<3>& atk_direction, float atk_damage)
 {
   std::list<std::pair<float, int16_t>>						linedefs_list = doom.level.getLinedefs(atk_origin.convert<2>(), atk_direction.convert<2>(), atk_range);
   std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>	things_list = doom.level.getThings(atk_origin.convert<2>(), atk_direction.convert<2>(), atk_range);
@@ -6401,6 +6326,9 @@ void	DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const 
     (things_list.empty() || things_list.front().first > sector) &&
     (linedefs_list.empty() || linedefs_list.front().first > sector)) {
     P_SpawnPuff(doom, atk_origin + atk_direction * sector);
+
+    // Floor is not a valid target
+    return false;
   }
 
   // Shoot thing
@@ -6412,15 +6340,14 @@ void	DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const 
       P_SpawnPuff(doom, atk_origin + atk_direction * things_list.front().first);
     else
       P_SpawnBlood(doom, atk_origin + atk_direction * things_list.front().first, atk_damage);
+
+    // Things shot
+    return true;
   }
 
   // Shoot linedef
   else if (linedefs_list.empty() == false && (things_list.empty() == true || linedefs_list.front().first < things_list.front().first)) {
     DOOM::AbstractLinedef& linedef = *doom.level.linedefs[linedefs_list.front().second].get();
-
-    // Gunfire trigger
-    linedef.gunfire(doom, *this);
-    
     Math::Vector<2> linedef_direction = doom.level.vertexes[linedef.end] - doom.level.vertexes[linedef.start];
     Math::Vector<3> linedef_normal(Math::Vector<3>(+linedef_direction.y(), -linedef_direction.x(), 0.f) / linedef_direction.length());
 
@@ -6429,7 +6356,13 @@ void	DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const 
 
     // Spawn smoke puff
     P_SpawnPuff(doom, atk_origin + atk_direction * linedefs_list.front().first + linedef_normal);
+
+    // Gunfire trigger
+    return linedef.gunfire(doom, *this);
   }
+
+  // Nothing shot
+  return false;
 }
 
 void    DOOM::AbstractThing::P_SpawnPuff(DOOM::Doom& doom, const Math::Vector<3>& coordinates) const
@@ -7269,28 +7202,6 @@ void    DOOM::AbstractThing::A_Tracer(DOOM::Doom& doom)
   _thrust = direction * (attributs.speed / direction.length());
 }
 
-void    DOOM::AbstractThing::A_WeaponReady(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_Lower(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_Raise(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_Punch(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_ReFire(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_FirePistol(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_FireShotgun(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_FireShotgun2(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_CheckReload(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_OpenShotgun2(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_LoadShotgun2(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_CloseShotgun2(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_FireCGun(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_GunFlash(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_FireMissile(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_Saw(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_FirePlasma(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_BFGsound(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_FireBFG(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_BFGSpray(DOOM::Doom& doom) {}
 void    DOOM::AbstractThing::A_BrainAwake(DOOM::Doom& doom) {}
 void    DOOM::AbstractThing::A_BrainSpit(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_Light0(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_Light1(DOOM::Doom& doom) {}
-void    DOOM::AbstractThing::A_Light2(DOOM::Doom& doom) {}
+void    DOOM::AbstractThing::A_BFGSpray(DOOM::Doom& doom) {}

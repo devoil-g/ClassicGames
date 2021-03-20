@@ -7,7 +7,7 @@
 Game::LoadingState::LoadingState(Game::StateMachine& machine) :
   Game::AbstractState(machine),
   _text("Loading", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf"), 1),
-  _elapsed(0.f)
+  _elapsed(sf::Time::Zero)
 {
   // Set taskbar status to flickering
   Game::Window::Instance().taskbar(Game::Window::WindowFlag::Indeterminate);
@@ -19,15 +19,15 @@ Game::LoadingState::~LoadingState()
   Game::Window::Instance().taskbar(Game::Window::WindowFlag::NoProgress);
 }
 
-bool	Game::LoadingState::update(sf::Time elapsed)
+bool  Game::LoadingState::update(sf::Time elapsed)
 {
   // Get elasped time
-  _elapsed += elapsed.asSeconds();
+  _elapsed += elapsed;
 
-  std::string	text("Loading");
+  std::string text("Loading");
 
   // Generate loading dots
-  for (int n = 0; n < (int)(_elapsed * 2) % 4; n++)
+  for (int n = 0; n < (int)(_elapsed.asSeconds() * 2) % 4; n++)
     text += ".";
 
   // Set loading screen text
@@ -36,7 +36,7 @@ bool	Game::LoadingState::update(sf::Time elapsed)
   return false;
 }
 
-void	Game::LoadingState::draw()
+void  Game::LoadingState::draw()
 {
   // Set text size according to window size
   _text.setCharacterSize(std::min(Game::Window::Instance().window().getSize().x, Game::Window::Instance().window().getSize().y) / 16);

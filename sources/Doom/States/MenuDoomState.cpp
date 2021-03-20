@@ -317,7 +317,7 @@ void	DOOM::MenuDoomState::draw()
   const auto& sliderCursor = _doom.resources.getMenu(DOOM::str_to_key("M_THERMO"));
 
   // Draw menus sliders
-  for (const Menu::Slider& slider : _menuDesc[_menuIndex].sliders) {
+  for (const auto& slider : _menuDesc[_menuIndex].sliders) {
     sliderLeft.draw(_doom, _menuImage, { slider.x, slider.y + offset_y }, { 1, 1 });
     for (int x = 0; x <= 8; x++)
       sliderMiddle.draw(_doom, _menuImage, { slider.x + 8 * (x + 1), slider.y + offset_y }, { 1, 1 });

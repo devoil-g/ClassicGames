@@ -23,12 +23,10 @@ namespace DOOM
         doom.level.sectors[sector_index].action<Type>(doom, type, doom.level.sidedefs[front].sector);
         return true;
       }
-      else if (Trigger == DOOM::EnumLinedef::Trigger::TriggerPushed) {
+      else if (Trigger == DOOM::EnumLinedef::Trigger::TriggerPushed)
         return action->start(doom, thing);
-      }
-      else {
+      else
         return false;
-      }
     }
 
   public:

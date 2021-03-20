@@ -34,10 +34,10 @@ namespace Game
 
     std::list<std::pair<sf::Sound, int>>  _sounds;  // Sound instances
 
-  public:
-    Sound();
-    ~Sound();
+    Sound() = default;
+    ~Sound() = default;
 
+  public:    
     inline static Game::Sound&  Instance() { static Game::Sound singleton; return singleton; }; // Get instance (singleton)
 
     bool                    update(sf::Time); // Update sounds

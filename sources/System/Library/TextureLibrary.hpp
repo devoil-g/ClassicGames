@@ -12,11 +12,11 @@ namespace Game
   {
   private:
     TextureLibrary();
-    ~TextureLibrary() override;
+    ~TextureLibrary() override = default;
 
   public:
     inline static Game::TextureLibrary& Instance() { static Game::TextureLibrary singleton; return singleton; };  // Return unique instance (singleton)
 
-    void  load(std::string const&) override;  // Load a texture in the library
+    void  load(const std::string&) override;  // Load a texture in the library
   };
 }

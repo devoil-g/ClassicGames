@@ -35,8 +35,8 @@ namespace Game
       int                                       _wheel;               // Mouse wheel ticks since last update
       std::array<bool, sf::Mouse::ButtonCount>  _pressed, _released;  // Maps of pressed/released mouse button
 
-      inline Mouse() : _position(), _relative(), _wheel(), _pressed(), _released() {};
-      inline ~Mouse() {};
+      inline Mouse() : _position(), _relative(), _wheel(), _pressed(), _released() {}
+      inline ~Mouse() = default;
 
     public:
       inline const sf::Vector2i&  position() const { return _position; }; // Return mouse current position
@@ -56,8 +56,8 @@ namespace Game
       std::wstring                              _text;                // Buffer of text typed
       std::array<bool, sf::Keyboard::KeyCount>  _pressed, _released;  // Maps of pressed/released keyboard key
 
-      inline Keyboard() : _text(), _pressed(), _released() {};
-      inline ~Keyboard() {};
+      inline Keyboard() : _text(), _pressed(), _released() {}
+      inline ~Keyboard() = default;
 
     public:
       inline bool                 key(sf::Keyboard::Key key) const { return Game::Window::Instance().window().hasFocus() && sf::Keyboard::isKeyPressed(key); }; // Check if a key is currently pressed
@@ -76,8 +76,8 @@ namespace Game
       std::array<std::array<float, sf::Joystick::AxisCount>, sf::Joystick::Count>   _position, _relative; // Joystick position
       std::array<std::array<bool, sf::Joystick::ButtonCount>, sf::Joystick::Count>  _pressed, _released;  // Maps of pressed/released joystick key
 
-      inline Joystick() : _position(), _relative(), _pressed(), _released() {};
-      inline ~Joystick() {};
+      inline Joystick() : _position(), _relative(), _pressed(), _released() {}
+      inline ~Joystick() = default;
 
     public:
       inline float  position(unsigned int joystick, unsigned int axis) const { return _position[joystick][axis]; }; // Return joystick axis current position
@@ -102,7 +102,7 @@ namespace Game
 #endif
 
     Window();
-    ~Window();
+    ~Window() = default;
 
   public:
 #ifdef _WIN32
@@ -130,7 +130,7 @@ namespace Game
     bool  update(sf::Time);                                                     // Update window (get events)
     void  create(const sf::VideoMode&, sf::Uint32, const sf::ContextSettings&); // (Re)create window with parameters
     void  taskbar(WindowFlag);                                                  // Set taskbar status (Windows 7+ only)
-    void  taskbar(WindowFlag, double);                                          // Set taskbar progress (Windows 7+ only)
+    void  taskbar(WindowFlag, float);                                           // Set taskbar progress (Windows 7+ only)
     void  transparency(sf::Uint8 transparency);                                 // Set window global transparency
 
     inline sf::RenderWindow&              window() { return _window; };           // Get SFML window

@@ -400,8 +400,8 @@ namespace DOOM
     std::map<std::pair<uint8_t, uint8_t>, DOOM::Wad::RawLevel>  levels;     // Levels definition (key is [Ex, My])
     DOOM::Wad::RawResources                                     resources;  // File resources
 
-    Wad();
-    ~Wad();
+    Wad() = default;
+    ~Wad() = default;
 
     void  load(const std::string& file);  // Load levels from file
   };

@@ -15,15 +15,15 @@ namespace DOOM
   private:
     inline bool trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing, int16_t sector_index) // Teleport thing to sector
     {
-      DOOM::Doom::Level::Vertex linedef_start = doom.level.vertexes[start];
-      DOOM::Doom::Level::Vertex linedef_end = doom.level.vertexes[end];
+      auto& linedef_start = doom.level.vertexes[start];
+      auto& linedef_end = doom.level.vertexes[end];
 
       // Ignore teleportation if coming from the wrong direction
       if (Math::Vector<2>::determinant(linedef_end.convert<2>() - linedef_start.convert<2>(), thing.position.convert<2>() - linedef_start.convert<2>()) > 0.f)
         return false;
 
       // Search for teleporter target in sector
-      for (const std::unique_ptr<DOOM::AbstractThing>& sector_thing : doom.level.things) {
+      for (const auto& sector_thing : doom.level.things) {
         // TODO: test if teleport still work
         // if (sector_thing->id == 14 && doom.level.getSector(sector_thing->position.convert<2>()).first == sector_index) {
         if (sector_thing->type == DOOM::Enum::ThingType::ThingType_TELEPORTMAN && doom.level.getSector(sector_thing->position.convert<2>()).first == sector_index) {

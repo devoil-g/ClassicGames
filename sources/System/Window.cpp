@@ -4,13 +4,13 @@
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
-std::string const	Game::Window::DefaultTitle = "Classical Games";
-unsigned int const	Game::Window::DefaultWidth = 640;
-unsigned int const	Game::Window::DefaultHeight = 480;
-unsigned int const	Game::Window::DefaultAntialiasing = 4;
-sf::Time const		Game::Window::FpsRefresh = sf::seconds(1.f);
-bool const		Game::Window::DefaultVerticalSync = true;
-float const		Game::Window::Joystick::DeadZone = 20.f;
+std::string const   Game::Window::DefaultTitle = "Classical Games";
+unsigned int const  Game::Window::DefaultWidth = 640;
+unsigned int const  Game::Window::DefaultHeight = 480;
+unsigned int const  Game::Window::DefaultAntialiasing = 4;
+sf::Time const	    Game::Window::FpsRefresh = sf::seconds(1.f);
+bool const	    Game::Window::DefaultVerticalSync = false;
+float const	    Game::Window::Joystick::DeadZone = 20.f;
 
 Game::Window::Window() :
   _window(), _mouse(), _keyboard(), _joystick(), _elapsed(), _tick()
@@ -27,10 +27,7 @@ Game::Window::Window() :
 #endif
 }
 
-Game::Window::~Window()
-{}
-
-bool		Game::Window::update(sf::Time elapsed)
+bool  Game::Window::update(sf::Time elapsed)
 {
   // Clear inputs pressed/released maps
   _mouse._pressed.fill(false);
@@ -47,15 +44,15 @@ bool		Game::Window::update(sf::Time elapsed)
   _mouse._wheel = 0;
   
   // Process pending events
-  for (sf::Event event; _window.pollEvent(event) == true;)
+  sf::Event event;
+  while (_window.pollEvent(event) == true)
   {
     // Stop if window closed
     if (event.type == sf::Event::Closed)
       return true;
 
     // Update the view to the new size of the window
-    if (event.type == sf::Event::Resized)
-    {
+    if (event.type == sf::Event::Resized) {
       _window.setView(sf::View(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height)));
       glViewport(0, 0, event.size.width, event.size.height);
     }
@@ -63,27 +60,44 @@ bool		Game::Window::update(sf::Time elapsed)
     // Get input only if window focused
     if (_window.hasFocus() == true)
     {
-      // Get mouse events
-      if (event.type == sf::Event::MouseButtonPressed)
+      switch (event.type)
+      {
+	// Get mouse events
+      case sf::Event::MouseButtonPressed:
 	_mouse._pressed[event.mouseButton.button] = true;
-      if (event.type == sf::Event::MouseButtonReleased)
+	break;
+      case sf::Event::MouseButtonReleased:
 	_mouse._released[event.mouseButton.button] = true;
-      if (event.type == sf::Event::MouseWheelMoved)
+	break;
+      case sf::Event::MouseWheelMoved:
 	_mouse._wheel += event.mouseWheel.delta;
+	break;
 
-      // Get keyboard events
-      if (event.type == sf::Event::KeyPressed && event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount)
-	_keyboard._pressed[event.key.code] = true;
-      if (event.type == sf::Event::KeyReleased && event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount)
-	_keyboard._released[event.key.code] = true;
-      if (event.type == sf::Event::TextEntered)
+	// Get keyboard events
+      case sf::Event::KeyPressed:
+	if (event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount)
+	  _keyboard._pressed[event.key.code] = true;
+	break;
+      case sf::Event::KeyReleased:
+	if (event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount)
+	  _keyboard._released[event.key.code] = true;
+	break;
+      case sf::Event::TextEntered:
 	_keyboard._text.push_back((wchar_t)event.text.unicode);
+	break;
 
-      // Get joystick events
-      if (event.type == sf::Event::JoystickButtonPressed)
+	// Get joystick events
+      case sf::Event::JoystickButtonPressed:
 	_joystick._pressed[event.joystickButton.joystickId][event.joystickButton.button] = true;
-      if (event.type == sf::Event::JoystickButtonReleased)
+	break;
+      case sf::Event::JoystickButtonReleased:
 	_joystick._released[event.joystickButton.joystickId][event.joystickButton.button] = true;
+	break;
+
+      default:
+	break;
+      }
+      
     }
   }
 
@@ -94,9 +108,8 @@ bool		Game::Window::update(sf::Time elapsed)
   
   // Update joysticks axis positions
   for (unsigned int joystick = 0; joystick < sf::Joystick::Count; joystick++)
-    for (unsigned int axis = 0; axis < sf::Joystick::AxisCount; axis++)
-    {
-      float	value = sf::Joystick::getAxisPosition(joystick, (sf::Joystick::Axis)axis);
+    for (unsigned int axis = 0; axis < sf::Joystick::AxisCount; axis++) {
+      float value = sf::Joystick::getAxisPosition(joystick, (sf::Joystick::Axis)axis);
 
       _joystick._relative[joystick][axis] = value - _joystick._position[joystick][axis];
       _joystick._position[joystick][axis] = value;
@@ -120,12 +133,12 @@ bool		Game::Window::update(sf::Time elapsed)
   return false;
 }
 
-void		Game::Window::create(sf::VideoMode const & video, sf::Uint32 style, sf::ContextSettings const & context)
+void  Game::Window::create(const sf::VideoMode& video, sf::Uint32 style, const sf::ContextSettings& context)
 {
 #ifdef _WIN32
-  COLORREF	pcrKey = RGB(0, 0, 0);
-  BYTE		pbAlpha = 255;
-  DWORD		pdwFlags = 0;
+  COLORREF  pcrKey = RGB(0, 0, 0);
+  BYTE	    pbAlpha = 255;
+  DWORD	    pdwFlags = 0;
 
   // Save actual window transparency configuration
   GetLayeredWindowAttributes(_window.getSystemHandle(), &pcrKey, &pbAlpha, &pdwFlags);
@@ -158,30 +171,27 @@ void		Game::Window::create(sf::VideoMode const & video, sf::Uint32 style, sf::Co
 #endif
 }
 
-void		Game::Window::taskbar(Game::Window::WindowFlag flag)
+void  Game::Window::taskbar(Game::Window::WindowFlag flag)
 {
 #ifdef _WIN32
   _taskbar->SetProgressState(_window.getSystemHandle(), (TBPFLAG)flag);
 #endif
 }
 
-void		Game::Window::taskbar(Game::Window::WindowFlag flag, double progress)
+void  Game::Window::taskbar(Game::Window::WindowFlag flag, float progress)
 {
   // Apply flag
   taskbar(flag);
 
   // Check for progress value
-  if (progress < 0.f)
-    progress = 0.f;
-  if (progress > 1.f)
-    progress = 1.f;
+  progress = std::clamp(progress, 0.f, 1.f);
 
 #ifdef _WIN32
   _taskbar->SetProgressValue(_window.getSystemHandle(), (ULONGLONG)(progress * 1000), 1000);
 #endif
 }
 
-void		Game::Window::transparency(sf::Uint8 transparency)
+void  Game::Window::transparency(sf::Uint8 transparency)
 {
 #ifdef _WIN32
   if (SetLayeredWindowAttributes(_window.getSystemHandle(), RGB(0, 0, 0), 255 - transparency, LWA_ALPHA) == FALSE)

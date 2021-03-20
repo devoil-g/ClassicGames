@@ -50,7 +50,7 @@ DOOM::StartDoomState::StartDoomState(Game::StateMachine& machine, DOOM::Doom& do
   _doom.image.create(1, 1, sf::Color(0, 0, 0, 0));
 }
 
-bool	DOOM::StartDoomState::update(sf::Time elapsed)
+bool  DOOM::StartDoomState::update(sf::Time elapsed)
 {
   // Add elapsed time to counter
   _elapsed += elapsed;
@@ -86,10 +86,11 @@ void  DOOM::StartDoomState::updateRegister(const int id)
 {
   // Start game if player is already registered
   for (int player : _players)
-    if (player == id) {
+    if (player == id)
+    {
       // Add players to game
       for (int player : _players)
-        _doom.addPlayer(player);
+	_doom.addPlayer(player);
 
       // Push loading screen
       _machine.swap<DOOM::SplashDoomState>(_doom);
@@ -98,7 +99,7 @@ void  DOOM::StartDoomState::updateRegister(const int id)
     }
 
   // Find a slot for new player
-  for (int & player : _players)
+  for (int& player : _players)
     if (player == -1) {
       player = id;
       return;
@@ -108,21 +109,21 @@ void  DOOM::StartDoomState::updateRegister(const int id)
 void  DOOM::StartDoomState::updateUnregister(const int id)
 {
   // Find and unregister player
-  for (int & player : _players)
+  for (int& player : _players)
     if (player == id) {
       player = -1;
       return;
     }
 }
 
-void	DOOM::StartDoomState::draw()
+void  DOOM::StartDoomState::draw()
 {
   // Set text for each player slot
   for (int index = 0; index < _players.size(); index++) {
     switch (_players[index]) {
     case -1:	// No controller
     {
-      float	intensity = std::sqrtf(1.f - (std::cos(_elapsed.asSeconds() * 4.f) + 1.f) / 2.f);
+      float intensity = std::sqrtf(1.f - (std::cos(_elapsed.asSeconds() * 4.f) + 1.f) / 2.f);
 
       _controllers[index].setString("PRESS START");
       _controllers[index].setFillColor(sf::Color((sf::Uint8)(255 * intensity), (sf::Uint8)(255 * intensity), (sf::Uint8)(255 * intensity)));
@@ -218,7 +219,7 @@ void	DOOM::StartDoomState::draw()
       break;
     }
   }
+
   if (*std::max_element(_players.begin(), _players.end()) > -1)
     Game::Window::Instance().window().draw(_ready);
-
 }

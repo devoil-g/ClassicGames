@@ -12,11 +12,11 @@ namespace Game
   {
   private:
     FontLibrary();
-    ~FontLibrary() override;
+    ~FontLibrary() override = default;
 
   public:
     inline static Game::FontLibrary&  Instance() { static Game::FontLibrary singleton; return singleton; }; // Return unique instance (singleton)
 
-    void  load(std::string const&) override;  // Load a font in the library
+    void  load(const std::string&) override;  // Load a font in the library
   };
 }

@@ -102,8 +102,8 @@ namespace DOOM
       int             center_nb = 0;
 
       // Aggregate sector vertexes
-      for (const auto& subsector : doom.level.subsectors) {
-        if (subsector.sector == sector_index) {
+      for (const auto& subsector : doom.level.subsectors)
+        if (subsector.sector == sector_index)
           for (int segment_index = 0; segment_index < subsector.count; segment_index++) {
             const auto& segment = doom.level.segments[segment_index + subsector.index];
 
@@ -111,8 +111,6 @@ namespace DOOM
             center += doom.level.vertexes[segment.end];
             center_nb += 2;
           }
-        }
-      }
 
       // No subsector identified
       if (center_nb == 0)

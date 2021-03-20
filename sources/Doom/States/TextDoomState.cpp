@@ -67,8 +67,8 @@ bool	DOOM::TextDoomState::update(sf::Time elapsed)
     sf::Image start = _doom.image;
 
     // Save references as 'this' is gonna be deleted
-    Game::StateMachine& machine = _machine;
-    DOOM::Doom& doom = _doom;
+    auto& machine = _machine;
+    auto& doom = _doom;
 
     // Pop text screen
     machine.pop();
@@ -105,7 +105,7 @@ bool    DOOM::TextDoomState::updateSkip()
   return skip;
 }
 
-void	DOOM::TextDoomState::draw()
+void    DOOM::TextDoomState::draw()
 {
   // Copy buffer
   _doom.image = _image;

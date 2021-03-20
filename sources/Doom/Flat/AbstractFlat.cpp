@@ -12,7 +12,7 @@ DOOM::AbstractFlat::AbstractFlat(DOOM::Doom& doom)
 void                                DOOM::AbstractFlat::update(DOOM::Doom& doom, sf::Time)
 {}
 
-std::unique_ptr<DOOM::AbstractFlat> DOOM::AbstractFlat::factory(DOOM::Doom& doom, uint64_t name, DOOM::Wad::RawResources::Flat const& flat)
+std::unique_ptr<DOOM::AbstractFlat> DOOM::AbstractFlat::factory(DOOM::Doom& doom, uint64_t name, const DOOM::Wad::RawResources::Flat& flat)
 {
   // List of animated flats and their frames
   static std::vector<std::vector<uint64_t>> const	animations = {
@@ -28,7 +28,7 @@ std::unique_ptr<DOOM::AbstractFlat> DOOM::AbstractFlat::factory(DOOM::Doom& doom
   };
 
   // Check if flat is part of an animated sequence
-  for (std::vector<uint64_t> const& sequence : animations)
+  for (const auto& sequence : animations)
     for (uint64_t const frame : sequence)
       if (name == frame)
         return std::make_unique<DOOM::AnimatedFlat<>>(doom, sequence);

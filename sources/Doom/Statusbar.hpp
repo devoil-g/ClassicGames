@@ -38,6 +38,6 @@ namespace DOOM
     ~Statusbar() = default;
 
     void  update(sf::Time elapsed);                                                         // Update statusbar
-    void  render(DOOM::Doom const& doom, sf::Image& target, sf::Rect<int16_t> rect) const;  // Render statusbat to target image
+    void  render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect) const;  // Render statusbat to target image
   };
 }

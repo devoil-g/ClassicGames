@@ -14,30 +14,29 @@ Game::MainMenuState::MainMenuState(Game::StateMachine& machine) :
   Game::AbstractMenuState(machine)
 {
   // Get menu font
-  sf::Font const &	font = Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf");
+  const auto& font = Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf");
 
   // Set menu items/handlers
-  menu() =
-  {
+  menu() = {
     Game::AbstractMenuState::Item("DOOM", font, std::function<void(Game::AbstractMenuState::Item &)>(std::bind(&Game::MainMenuState::selectDoom, this, std::placeholders::_1))),
     Game::AbstractMenuState::Item("Options", font, std::function<void(Game::AbstractMenuState::Item &)>(std::bind(&Game::MainMenuState::selectOptions, this, std::placeholders::_1))),
     Game::AbstractMenuState::Item("Exit", font, std::function<void(Game::AbstractMenuState::Item &)>(std::bind(&Game::MainMenuState::selectExit, this, std::placeholders::_1)))
   };
 }
 
-bool	Game::MainMenuState::update(sf::Time elapsed)
+bool  Game::MainMenuState::update(sf::Time elapsed)
 {
   // Update menu
   return Game::AbstractMenuState::update(elapsed);
 }
 
-void	Game::MainMenuState::draw()
+void  Game::MainMenuState::draw()
 {
   // Draw menu
   Game::AbstractMenuState::draw();
 }
 
-void	Game::MainMenuState::selectDoom(Game::AbstractMenuState::Item&)
+void  Game::MainMenuState::selectDoom(Game::AbstractMenuState::Item&)
 {
   Game::StateMachine& machine = _machine;
 
@@ -55,13 +54,13 @@ void	Game::MainMenuState::selectDoom(Game::AbstractMenuState::Item&)
     }).detach();
 }
 
-void	Game::MainMenuState::selectOptions(Game::AbstractMenuState::Item &)
+void  Game::MainMenuState::selectOptions(Game::AbstractMenuState::Item &)
 {
   // Go to option menu
   _machine.push<Game::OptionsMenuState>();
 }
 
-void	Game::MainMenuState::selectExit(Game::AbstractMenuState::Item &)
+void  Game::MainMenuState::selectExit(Game::AbstractMenuState::Item &)
 {
   // Exit application
   _machine.clear();

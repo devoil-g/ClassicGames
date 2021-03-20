@@ -8,10 +8,7 @@ Game::TextureLibrary::TextureLibrary()
   // Pre-load textures here
 }
 
-Game::TextureLibrary::~TextureLibrary()
-{}
-
-void	Game::TextureLibrary::load(std::string const & path)
+void  Game::TextureLibrary::load(const std::string& path)
 {
   // Load texture from path
   if (_library[path].loadFromFile(path) == false)

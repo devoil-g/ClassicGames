@@ -14,8 +14,8 @@ namespace Game
   class LoadingState : public Game::AbstractState
   {
   private:
-    sf::Text    _text;    // Loading text
-    float       _elapsed; // Time elapsed
+    sf::Text  _text;    // Loading text
+    sf::Time  _elapsed; // Time elapsed
 
   public:
     LoadingState(Game::StateMachine& machine);

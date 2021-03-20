@@ -8,7 +8,7 @@ namespace Game
 {
   class SplashState : public Game::AbstractState
   {
-    float       _elapsed; // Time elasped since state creation
+    sf::Time    _elapsed; // Time elasped since state creation
     sf::Sprite  _sprite;  // Sprite containing application logo
 
   public:

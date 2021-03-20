@@ -16,7 +16,7 @@ namespace Game
     int       _selected;  // Index of selected menu (-1 for no selection)
 
   public:
-    MessageState(Game::StateMachine& machine, std::string const&);
+    MessageState(Game::StateMachine& machine, const std::string& message);
     ~MessageState() override = default;
 
     bool  update(sf::Time) override;  // Update state

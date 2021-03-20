@@ -15,7 +15,7 @@
 
 namespace Game
 {
-  void	initialize(int argc, char ** argv)
+  void  initialize(int argc, char ** argv)
   {
     Game::Config::initialize(argc, argv);
   }
@@ -26,15 +26,14 @@ namespace Game
   void  run()
   {
     Game::StateMachine  game;
-    sf::Clock		clock;
+    sf::Clock           clock;
 
     // Push initial state
     game.push<Game::SplashState>();
 
     // Run the game !
-    while (Game::Window::Instance().window().isOpen())
-    {
-      sf::Time		elapsed = clock.restart();
+    while (Game::Window::Instance().window().isOpen()) {
+      sf::Time  elapsed = clock.restart();
 
       // Stop if update return true
       if (Game::Window::Instance().update(elapsed) == true ||
@@ -53,7 +52,7 @@ namespace Game
 };
 
 
-int	main(int argc, char ** argv)
+int main(int argc, char ** argv)
 {
   try {
 #ifdef __linux__
@@ -66,7 +65,7 @@ int	main(int argc, char ** argv)
     Game::help();
     Game::run();
   }
-  catch (std::exception e) {
+  catch (std::exception& e) {
     std::cerr << "[Runtime Error]: " << e.what() << std::endl;
 
 #ifdef _WIN32

@@ -9,8 +9,8 @@ namespace Game
   class StartState : public Game::AbstractState
   {
   private:
-    float     _elapsed;
-    sf::Text  _text;
+    sf::Time  _elapsed; // Elapsed time
+    sf::Text  _text;    // Text to be displayed
 
   public:
     StartState(Game::StateMachine& machine);

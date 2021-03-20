@@ -7,10 +7,7 @@ Game::FontLibrary::FontLibrary()
   load(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf");
 }
 
-Game::FontLibrary::~FontLibrary()
-{}
-
-void	Game::FontLibrary::load(std::string const & path)
+void  Game::FontLibrary::load(const std::string& path)
 {
   // Load font from path
   if (_library[path].loadFromFile(path) == false)

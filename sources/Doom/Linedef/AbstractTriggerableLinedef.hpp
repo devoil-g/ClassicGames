@@ -65,7 +65,8 @@ namespace DOOM
     inline std::enable_if_t<Repeat != _Repeat>  triggerRepeat(DOOM::Doom& doom) // Replace linedef with null if not repeatable
     {
       // Replace current linedef by a normal linedef
-      for (std::unique_ptr<DOOM::AbstractLinedef>& linedef : doom.level.linedefs)
+      // TODO: use pointer arithmetic to find linedef to replace
+      for (auto& linedef : doom.level.linedefs)
         if (linedef.get() == this) {
           linedef = std::make_unique<DOOM::NullLinedef>(doom, *this);
           return;
@@ -97,7 +98,7 @@ namespace DOOM
       if (tag == 0)
         return false;
 
-      bool	result = false;
+      bool  result = false;
 
       // Trigger tagged sectors
       for (int16_t index = 0; index < doom.level.sectors.size(); index++)

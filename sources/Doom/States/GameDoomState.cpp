@@ -23,7 +23,7 @@ DOOM::GameDoomState::GameDoomState(Game::StateMachine& machine, DOOM::Doom& doom
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-bool	DOOM::GameDoomState::update(sf::Time elapsed)
+bool  DOOM::GameDoomState::update(sf::Time elapsed)
 {
   // Return to previous menu
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Escape) == true)
@@ -89,27 +89,27 @@ bool	DOOM::GameDoomState::update(sf::Time elapsed)
   return false;
 }
 
-void	DOOM::GameDoomState::draw()
+void  DOOM::GameDoomState::draw()
 {
-  std::pair<int, int>	grid((int)_doom.level.players.size(), (int)_doom.level.players.size());
+  std::pair<int, int> grid((int)_doom.level.players.size(), (int)_doom.level.players.size());
 
   // Compute grid size
   while (true) {
     if ((grid.first * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale) / (grid.second * DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale * DOOM::Doom::RenderStretching) > (float)Game::Window::Instance().window().getSize().x / (float)Game::Window::Instance().window().getSize().y) {
       if ((grid.first - 1) * grid.second >= _doom.level.players.size())
-	grid.first--;
+        grid.first--;
       else if (grid.first * (grid.second - 1) >= _doom.level.players.size())
-	grid.second--;
+        grid.second--;
       else
-	break;
+        break;
     }
     else {
       if (grid.first * (grid.second - 1) >= _doom.level.players.size())
-	grid.second--;
+        grid.second--;
       else if ((grid.first - 1) * grid.second >= _doom.level.players.size())
-	grid.first--;
+        grid.first--;
       else
-	break;
+        break;
     }
   }
 
@@ -121,35 +121,32 @@ void	DOOM::GameDoomState::draw()
   std::memset((void *)_doom.image.getPixelsPtr(), 0, _doom.image.getSize().x * _doom.image.getSize().y * sizeof(sf::Color));
 
   // List of rendering tasks
-  std::list<std::future<void>>	tasks;
+  std::list<std::future<void>>  tasks;
   
   // Render each player camera on its own thread
   for (int y = 0; y < grid.second; y++)
     for (int x = 0; x < grid.first; x++)
       if (y * grid.first + x < _doom.level.players.size()) {
-	tasks.push_back(std::async(std::launch::async, [this, grid, x, y] {
-          DOOM::PlayerThing&  player = _doom.level.players[y * grid.first + x];
-
-	  player.camera.render(_doom, _doom.image, sf::Rect<int16_t>(x * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, y * DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale, DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, (DOOM::Doom::RenderHeight - 32) * DOOM::Doom::RenderScale), player.cameraMode(), player.cameraPalette());
-	  player.statusbar.render(_doom, _doom.image, sf::Rect<int16_t>(x * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, ((y + 1) * DOOM::Doom::RenderHeight - 32) * DOOM::Doom::RenderScale, DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, 32 * DOOM::Doom::RenderScale));
-	}));
+        tasks.push_back(std::async(std::launch::async, [this, grid, x, y] {
+          _doom.level.players[y * grid.first + x].get().draw(_doom, _doom.image, sf::Rect<int16_t>(x * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, y * DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale, DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale), DOOM::Doom::RenderScale);
+        }));
       }
 
   // Wait for rendering tasks to complete
-  for (std::future<void> & task : tasks)
+  for (auto& task : tasks)
     task.wait();
 }
 
-void	DOOM::GameDoomState::addPlayer(int controller)
+void  DOOM::GameDoomState::addPlayer(int controller)
 {
   // Add player to current game
   _doom.addPlayer(controller);
 }
 
-void	DOOM::GameDoomState::end()
+void  DOOM::GameDoomState::end()
 {
-  std::pair<uint8_t, uint8_t>	previous = _doom.level.episode;
-  std::pair<uint8_t, uint8_t>	next = { 0, 0 };
+  std::pair<uint8_t, uint8_t> previous = _doom.level.episode;
+  std::pair<uint8_t, uint8_t> next = { 0, 0 };
 
   // Select next level, depending on DOOM version. Level M0:E0 lead to main menu.
   switch (_doom.mode) {
@@ -360,9 +357,9 @@ void	DOOM::GameDoomState::end()
   }
 
   // Save references as 'this' is gonna be deleted
-  Game::StateMachine&		machine = _machine;
-  DOOM::Doom&			doom = _doom;
-  DOOM::Doom::Level::Statistics	statistics = _doom.level.statistics;
+  auto& machine = _machine;
+  auto& doom = _doom;
+  auto  statistics = _doom.level.statistics;
 
   // Draw last frame of game
   _machine.draw();

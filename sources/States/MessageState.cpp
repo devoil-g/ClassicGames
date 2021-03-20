@@ -4,14 +4,14 @@
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
-Game::MessageState::MessageState(Game::StateMachine& machine, std::string const & message) :
+Game::MessageState::MessageState(Game::StateMachine& machine, const std::string& message) :
   Game::AbstractState(machine),
   _message(message, Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
   _return("Return", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
   _selected(-1)
 {}
 
-bool	Game::MessageState::update(sf::Time elapsed)
+bool  Game::MessageState::update(sf::Time elapsed)
 {
   // Return to previous menu
   if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Right) ||
@@ -53,7 +53,7 @@ bool	Game::MessageState::update(sf::Time elapsed)
   return false;
 }
 
-void	Game::MessageState::draw()
+void  Game::MessageState::draw()
 {
   // Set message position to the center of the screen
   _message.setCharacterSize((unsigned int)(Game::Window::Instance().window().getSize().y / 12.f));

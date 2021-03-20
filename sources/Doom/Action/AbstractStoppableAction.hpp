@@ -33,9 +33,8 @@ namespace DOOM
         _run = false;
         return true;
       }
-      else {
+      else
         return false;
-      }
     }
 
     bool  start(DOOM::Doom& doom, DOOM::AbstractThing& thing) override  // Request action to start (for lift & crusher)
@@ -49,9 +48,8 @@ namespace DOOM
         _run = true;
         return true;
       }
-      else {
+      else
         return false;
-      }
     }
   };
 }

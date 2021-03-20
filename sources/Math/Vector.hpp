@@ -11,7 +11,7 @@ namespace Math
   class Vector
   {
   private:
-    std::array<float, vSize>	_vector;
+    std::array<float, vSize>  _vector;
 
   public:
     Vector() :
@@ -26,6 +26,7 @@ namespace Math
     {
       float vec[]{ args... };
 
+      // Check for invalid template parameters
       static_assert(sizeof(vec) / sizeof(float) == vSize, "Invalid vector parameters.");
 
       std::memcpy(_vector.data(), vec, _vector.size() * sizeof(float));
@@ -222,9 +223,9 @@ namespace Math
   }
 }
 
-// Vector to stream
+// Vector to std::ostream
 template<unsigned int vSize>
-std::ostream& operator<<(std::ostream& stream, Math::Vector<vSize> const& vector)
+std::ostream& operator<<(std::ostream& stream, const Math::Vector<vSize>& vector)
 {
   if (vSize == 0)
     stream << "[]";

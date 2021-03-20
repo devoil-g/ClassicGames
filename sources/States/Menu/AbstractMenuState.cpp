@@ -10,7 +10,7 @@ Game::AbstractMenuState::AbstractMenuState(Game::StateMachine& machine) :
 
 Game::AbstractMenuState::~AbstractMenuState() = default;
 
-bool	Game::AbstractMenuState::update(sf::Time elapsed)
+bool  Game::AbstractMenuState::update(sf::Time elapsed)
 {
   // Return to previous menu
   if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Right) == true ||
@@ -67,7 +67,7 @@ bool	Game::AbstractMenuState::update(sf::Time elapsed)
   return false;
 }
 
-void	Game::AbstractMenuState::draw()
+void  Game::AbstractMenuState::draw()
 {
   // Set font size of menu
   for (unsigned int i = 0; i < _menu.size(); i++)
