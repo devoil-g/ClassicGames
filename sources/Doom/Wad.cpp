@@ -698,5 +698,5 @@ void  DOOM::Wad::loadLevelBlockmap(std::ifstream& file, const DOOM::Wad::Lump& l
   file.read((char*)levels[level].blockmap.blocklist.data(), lump.size - (sizeof(int16_t) * 4 + sizeof(int16_t) * (levels[level].blockmap.column * levels[level].blockmap.row)));
 }
 
-void	DOOM::Wad::loadIgnore()
+void  DOOM::Wad::loadIgnore()
 {}

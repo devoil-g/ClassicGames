@@ -163,7 +163,7 @@ DOOM::IntermissionDoomState::IntermissionDoomState(Game::StateMachine& machine, 
     _times[1].max = _times[1].value;
 }
 
-bool    DOOM::IntermissionDoomState::update(sf::Time elapsed)
+bool  DOOM::IntermissionDoomState::update(sf::Time elapsed)
 {
   // Add time to counter
   _elapsed += elapsed;
@@ -186,14 +186,14 @@ bool    DOOM::IntermissionDoomState::update(sf::Time elapsed)
   return false;
 }
 
-void    DOOM::IntermissionDoomState::updateStatisticsCountersComplete(std::map<int, DOOM::IntermissionDoomState::Counter>& counters)
+void  DOOM::IntermissionDoomState::updateStatisticsCountersComplete(std::map<int, DOOM::IntermissionDoomState::Counter>& counters)
 {
   // Complete every counter
   for (auto& counter : counters)
     counter.second.value = counter.second.max;
 }
 
-bool    DOOM::IntermissionDoomState::updateStatisticsCountersCheck(const std::map<int, DOOM::IntermissionDoomState::Counter>& counters)
+bool  DOOM::IntermissionDoomState::updateStatisticsCountersCheck(const std::map<int, DOOM::IntermissionDoomState::Counter>& counters)
 {
   // Check for counters completion
   for (const auto& counter : counters)
@@ -204,7 +204,7 @@ bool    DOOM::IntermissionDoomState::updateStatisticsCountersCheck(const std::ma
   return true;
 }
 
-void    DOOM::IntermissionDoomState::updateStatisticsCounters(sf::Time& elapsed, std::map<int, DOOM::IntermissionDoomState::Counter>& counters, int speed)
+void  DOOM::IntermissionDoomState::updateStatisticsCounters(sf::Time& elapsed, std::map<int, DOOM::IntermissionDoomState::Counter>& counters, int speed)
 {
   // Does nothing if no time or already completed
   if (elapsed == sf::Time::Zero || updateStatisticsCountersCheck(counters) == true)
@@ -250,7 +250,7 @@ void    DOOM::IntermissionDoomState::updateStatisticsCounters(sf::Time& elapsed,
     _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol);
 }
 
-void    DOOM::IntermissionDoomState::updateStatistics(sf::Time elapsed)
+void  DOOM::IntermissionDoomState::updateStatistics(sf::Time elapsed)
 {
   // Skip statistics
   if (updateSkip() == true) {
@@ -294,7 +294,7 @@ void    DOOM::IntermissionDoomState::updateStatistics(sf::Time elapsed)
   updateStatisticsCounters(elapsed, _times, DOOM::IntermissionDoomState::SpeedTime);
 }
 
-void    DOOM::IntermissionDoomState::updateNext(sf::Time elapsed)
+void  DOOM::IntermissionDoomState::updateNext(sf::Time elapsed)
 {
   // Update Next state timer
   _nextElapsed += elapsed;
@@ -304,7 +304,7 @@ void    DOOM::IntermissionDoomState::updateNext(sf::Time elapsed)
     updateEnd();
 }
 
-bool    DOOM::IntermissionDoomState::updateSkip()
+bool  DOOM::IntermissionDoomState::updateSkip()
 {
   bool  skip = false;
 
@@ -325,7 +325,7 @@ bool    DOOM::IntermissionDoomState::updateSkip()
   return skip;
 }
 
-void    DOOM::IntermissionDoomState::updateEnd()
+void  DOOM::IntermissionDoomState::updateEnd()
 {
   // Copy current screen
   sf::Image start = _doom.image;
@@ -344,7 +344,7 @@ void    DOOM::IntermissionDoomState::updateEnd()
   machine.push<DOOM::TransitionDoomState>(doom, start, doom.image);
 }
 
-void	DOOM::IntermissionDoomState::draw()
+void  DOOM::IntermissionDoomState::draw()
 {
   // Resize rendering target
   if (_doom.image.getSize() != sf::Vector2u(DOOM::Doom::RenderWidth, DOOM::Doom::RenderHeight))
@@ -370,7 +370,7 @@ void	DOOM::IntermissionDoomState::draw()
   }
 }
 
-void	DOOM::IntermissionDoomState::drawBackground()
+void  DOOM::IntermissionDoomState::drawBackground()
 {
   // Draw background screen
   _background.draw(_doom, _doom.image, { 0, 0 }, { 1, 1 });
@@ -394,7 +394,7 @@ void	DOOM::IntermissionDoomState::drawBackground()
   }
 }
 
-void	DOOM::IntermissionDoomState::drawStatistics()
+void  DOOM::IntermissionDoomState::drawStatistics()
 {
   const auto& title = _doom.resources.getMenu(DOOM::str_to_key(
     (_doom.mode == DOOM::Enum::Mode::ModeCommercial)
@@ -415,7 +415,7 @@ void	DOOM::IntermissionDoomState::drawStatistics()
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-void	DOOM::IntermissionDoomState::drawStatisticsSolo()
+void  DOOM::IntermissionDoomState::drawStatisticsSolo()
 {
   // Draw solo stats titles
   _textKills.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomState::StatsSoloX, DOOM::IntermissionDoomState::StatsSoloY + 0 * _textNumbers[0].get().height * 3 / 2), { 1, 1 });
@@ -438,7 +438,7 @@ void	DOOM::IntermissionDoomState::drawStatisticsSolo()
     drawTime(sf::Vector2i(DOOM::Doom::RenderWidth - DOOM::IntermissionDoomState::TimeX, DOOM::IntermissionDoomState::TimeY), (int)_times[1].value);
 }
 
-void	DOOM::IntermissionDoomState::drawStatisticsCoop()
+void  DOOM::IntermissionDoomState::drawStatisticsCoop()
 {
   // Stats titles
   _textKills.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomState::StatsCoopX + _playerFace.width / 2 + 1 * DOOM::IntermissionDoomState::StatsCoopSpacing - _textKills.width, DOOM::IntermissionDoomState::StatsCoopY), sf::Vector2i(1, 1));
@@ -477,7 +477,7 @@ void	DOOM::IntermissionDoomState::drawStatisticsCoop()
   }
 }
 
-void	DOOM::IntermissionDoomState::drawNext()
+void  DOOM::IntermissionDoomState::drawNext()
 {
   const auto& title = _doom.resources.getMenu(DOOM::str_to_key(
     (_doom.mode == DOOM::Enum::Mode::ModeCommercial)

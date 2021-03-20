@@ -329,7 +329,7 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
   return false;
 }
 
-void	DOOM::PlayerThing::updateKeyboard(DOOM::Doom & doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateKeyboard(DOOM::Doom & doom, sf::Time elapsed)
 {
   updateKeyboardTurn(doom, elapsed);
   updateKeyboardMove(doom, elapsed);
@@ -344,7 +344,7 @@ void	DOOM::PlayerThing::updateKeyboard(DOOM::Doom & doom, sf::Time elapsed)
     updateFire(doom, elapsed);
 }
 
-void	DOOM::PlayerThing::updateKeyboardTurn(DOOM::Doom & doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateKeyboardTurn(DOOM::Doom & doom, sf::Time elapsed)
 {
   // Turn player
   float	horizontal = 0.f;
@@ -364,7 +364,7 @@ void	DOOM::PlayerThing::updateKeyboardTurn(DOOM::Doom & doom, sf::Time elapsed)
   updateTurn(doom, elapsed, horizontal, vertical);
 }
 
-void	DOOM::PlayerThing::updateKeyboardMove(DOOM::Doom & doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateKeyboardMove(DOOM::Doom & doom, sf::Time elapsed)
 {
   // Move player
   Math::Vector<2> movement(0.f, 0.f);
@@ -385,7 +385,7 @@ void	DOOM::PlayerThing::updateKeyboardMove(DOOM::Doom & doom, sf::Time elapsed)
   updateMove(doom, elapsed, movement);
 }
 
-void	DOOM::PlayerThing::updateKeyboardWeapon(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateKeyboardWeapon(DOOM::Doom& doom, sf::Time elapsed)
 {
   // Weapon binding
   static const std::list<std::pair<sf::Keyboard::Key, std::list<DOOM::Enum::Weapon>>> bindings = {
@@ -409,7 +409,7 @@ void	DOOM::PlayerThing::updateKeyboardWeapon(DOOM::Doom& doom, sf::Time elapsed)
   }
 }
 
-void	DOOM::PlayerThing::updateController(DOOM::Doom & doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateController(DOOM::Doom & doom, sf::Time elapsed)
 {
   updateControllerTurn(doom, elapsed);
   updateControllerMove(doom, elapsed);
@@ -423,7 +423,7 @@ void	DOOM::PlayerThing::updateController(DOOM::Doom & doom, sf::Time elapsed)
     updateFire(doom, elapsed);
 }
 
-void	DOOM::PlayerThing::updateControllerTurn(DOOM::Doom & doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateControllerTurn(DOOM::Doom & doom, sf::Time elapsed)
 {
   // Apply rotation to player
   updateTurn(doom, elapsed,
@@ -432,7 +432,7 @@ void	DOOM::PlayerThing::updateControllerTurn(DOOM::Doom & doom, sf::Time elapsed
   );
 }
 
-void	DOOM::PlayerThing::updateControllerMove(DOOM::Doom & doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateControllerMove(DOOM::Doom & doom, sf::Time elapsed)
 {
   // Move player
   Math::Vector<2> movement(
@@ -450,7 +450,7 @@ void	DOOM::PlayerThing::updateControllerMove(DOOM::Doom & doom, sf::Time elapsed
   updateMove(doom, elapsed, movement);
 }
 
-void	DOOM::PlayerThing::updateTurn(DOOM::Doom & doom, sf::Time elapsed, float horizontal, float vertical)
+void  DOOM::PlayerThing::updateTurn(DOOM::Doom & doom, sf::Time elapsed, float horizontal, float vertical)
 {
   // Apply sprinting to turning
   horizontal *= (_running == true ? DOOM::PlayerThing::RunningSpeed / DOOM::PlayerThing::WalkingSpeed : 1.f);
@@ -465,7 +465,7 @@ void	DOOM::PlayerThing::updateTurn(DOOM::Doom & doom, sf::Time elapsed, float ho
   camera.angle = angle;
 }
 
-void	DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Vector<2> movement)
+void  DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Vector<2> movement)
 {
   // Limit movement
   movement.x() = std::clamp(movement.x(), -1.f, +1.f);
@@ -485,12 +485,12 @@ void	DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Ve
   thrust(Math::Vector<3>(movement.x(), movement.y(), 0.f) * elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
 }
 
-void	DOOM::PlayerThing::updateUse(DOOM::Doom & doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateUse(DOOM::Doom & doom, sf::Time elapsed)
 {
   P_LineSwitch(doom, 64.f, position + Math::Vector<3>(0.f, 0.f, height / 2.f), Math::Vector<3>(std::cos(angle), std::sin(angle), std::tan(camera.orientation)));
 }
 
-void	DOOM::PlayerThing::updateFire(DOOM::Doom & doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateFire(DOOM::Doom & doom, sf::Time elapsed)
 {}
 
 void  DOOM::PlayerThing::draw(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale)

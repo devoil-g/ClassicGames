@@ -276,7 +276,7 @@ bool  DOOM::MenuDoomState::update(sf::Time elapsed)
   return false;
 }
 
-void	DOOM::MenuDoomState::draw()
+void  DOOM::MenuDoomState::draw()
 {
   sf::Vector2u  size = { DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale };
 

@@ -20,7 +20,7 @@ DOOM::TransitionDoomState::TransitionDoomState(Game::StateMachine& machine, DOOM
     _offsets[i] = std::clamp(_offsets[i - 1] + (DOOM::Doom::Tic * (float)(std::rand() % 3 - 1)), DOOM::Doom::Tic * -15.f, sf::Time::Zero);
 }
 
-bool	DOOM::TransitionDoomState::update(sf::Time elapsed)
+bool  DOOM::TransitionDoomState::update(sf::Time elapsed)
 {
   bool  done = true;
 
@@ -41,7 +41,7 @@ bool	DOOM::TransitionDoomState::update(sf::Time elapsed)
   return false;
 }
 
-void    DOOM::TransitionDoomState::draw()
+void  DOOM::TransitionDoomState::draw()
 {
   // Remove DOOM base rendering target
   _doom.image.create(0, 0);
@@ -87,7 +87,7 @@ void    DOOM::TransitionDoomState::draw()
   drawImage(_transition);
 }
 
-void    DOOM::TransitionDoomState::drawImage(sf::Image& image)
+void  DOOM::TransitionDoomState::drawImage(sf::Image& image)
 {
   static sf::Texture texture;
   static sf::Sprite  sprite;

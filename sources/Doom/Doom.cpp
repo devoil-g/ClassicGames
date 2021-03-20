@@ -787,7 +787,6 @@ bool  DOOM::Doom::Level::getLinedefsNode(std::list<std::pair<float, int16_t>>& r
     (Math::Vector<2>::determinant(node.origin - position, node.direction) / Math::Vector<2>::determinant(direction, node.direction) >= 0.f && getLinedefsNode(result, position, direction, limit, node.leftchild) == true);
 }
 
-
 bool  DOOM::Doom::Level::getLinedefsSubsector(std::list<std::pair<float, int16_t>>& result, const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit, int16_t index) const
 {
   const auto& subsector(subsectors[index]);

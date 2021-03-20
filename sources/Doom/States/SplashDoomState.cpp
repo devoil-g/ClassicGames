@@ -11,7 +11,7 @@ DOOM::SplashDoomState::SplashDoomState(Game::StateMachine& machine, DOOM::Doom& 
   // TODO: start badass menu music
 }
 
-bool	DOOM::SplashDoomState::update(sf::Time elapsed)
+bool  DOOM::SplashDoomState::update(sf::Time elapsed)
 {
   // Push to main menu
   if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Left) == true ||
@@ -26,7 +26,7 @@ bool	DOOM::SplashDoomState::update(sf::Time elapsed)
   return false;
 }
 
-void	DOOM::SplashDoomState::draw()
+void  DOOM::SplashDoomState::draw()
 {
   // Draw splash screen
   _doom.image = _doom.resources.getMenu(DOOM::str_to_key("TITLEPIC")).image(_doom);

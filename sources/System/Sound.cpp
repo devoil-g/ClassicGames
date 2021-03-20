@@ -24,7 +24,7 @@ Game::Sound::Reference::~Reference()
     std::cout << "[Game::Sound]: Warning, no reference held on looping sound." << std::endl;
 }
 
-bool		Game::Sound::update(sf::Time elapsed)
+bool  Game::Sound::update(sf::Time elapsed)
 {
   // Remove unreferenced and not playing sounds
   _sounds.remove_if([](const std::pair<sf::Sound, int>& pair) { return pair.second == 0 && pair.first.getStatus() == sf::Sound::Status::Stopped; });
@@ -40,7 +40,7 @@ void  Game::Sound::clear()
     sound.first.stop();
 }
 
-Game::Sound::Reference	Game::Sound::get()
+Game::Sound::Reference  Game::Sound::get()
 {
   // Check if internal limit has been reached
   if (_sounds.size() + 1 > Game::Sound::MaxSound)

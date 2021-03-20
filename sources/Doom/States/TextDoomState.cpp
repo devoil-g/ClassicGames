@@ -32,7 +32,7 @@ DOOM::TextDoomState::TextDoomState(Game::StateMachine& machine, DOOM::Doom& doom
   // TODO: start badass menu music
 }
 
-bool	DOOM::TextDoomState::update(sf::Time elapsed)
+bool  DOOM::TextDoomState::update(sf::Time elapsed)
 {
   // Add elapsed time to timer
   _elapsed += elapsed;
@@ -84,7 +84,7 @@ bool	DOOM::TextDoomState::update(sf::Time elapsed)
   return false;
 }
 
-bool    DOOM::TextDoomState::updateSkip()
+bool  DOOM::TextDoomState::updateSkip()
 {
   bool  skip = false;
 
@@ -105,7 +105,7 @@ bool    DOOM::TextDoomState::updateSkip()
   return skip;
 }
 
-void    DOOM::TextDoomState::draw()
+void  DOOM::TextDoomState::draw()
 {
   // Copy buffer
   _doom.image = _image;

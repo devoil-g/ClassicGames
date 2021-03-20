@@ -20,7 +20,7 @@ namespace Game
     Game::Config::initialize(argc, argv);
   }
 
-  void	help()
+  void  help()
   {}
 
   void  run()
