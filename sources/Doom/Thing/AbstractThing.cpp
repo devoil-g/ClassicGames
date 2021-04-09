@@ -5287,8 +5287,9 @@ std::pair<float, Math::Vector<2>> DOOM::AbstractThing::updatePhysicsThrustLinede
     return { 1.f, Math::Vector<2>() };
 
   // Check if intersection should be ignored using front and back sidedef
-  if (!(linedef.flag & DOOM::AbstractLinedef::Flag::Impassible) &&
-    !((linedef.flag & DOOM::AbstractLinedef::Flag::BlockMonsters) && (flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable) && type != DOOM::Enum::ThingType::ThingType_PLAYER) &&
+  if (((flags & DOOM::Enum::ThingProperty::ThingProperty_Missile) ||
+    (!(linedef.flag & DOOM::AbstractLinedef::Flag::Impassible) &&
+    !((linedef.flag & DOOM::AbstractLinedef::Flag::BlockMonsters) && (flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable) && type != DOOM::Enum::ThingType::ThingType_PLAYER))) &&
     updatePhysicsThrustSidedefs(doom, sidedef_front_index, sidedef_back_index) == true)
     return { 1.f, Math::Vector<2>() };
 
@@ -6535,6 +6536,18 @@ void  DOOM::AbstractThing::P_SpawnMissile(DOOM::Doom& doom, DOOM::Enum::ThingTyp
   Math::Vector<3> direction(std::cos(atk_angle), std::sin(atk_angle), std::tan(atk_slope));
 
   doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, type, DOOM::Enum::ThingFlag::FlagNone, position.x() + std::cos(atk_angle) * attributs.radius / 2.f, position.y() + std::sin(atk_angle) * attributs.radius / 2.f, atk_angle));
+  doom.level.things.back()->position.z() = position.z() + 32.f;
+  doom.level.things.back()->_thrust = direction * (doom.level.things.back()->attributs.speed / direction.length());
+  doom.level.things.back()->_target = this;
+
+  doom.sound(doom.level.things.back()->attributs.sound_see, doom.level.things.back()->position);
+}
+
+void  DOOM::AbstractThing::P_SpawnPlayerMissile(DOOM::Doom& doom, DOOM::Enum::ThingType type, float slope)
+{
+  Math::Vector<3> direction(std::cos(angle), std::sin(angle), std::tan(slope));
+
+  doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, type, DOOM::Enum::ThingFlag::FlagNone, position.x() + std::cos(angle) * attributs.radius / 2.f, position.y() + std::sin(angle) * attributs.radius / 2.f, angle));
   doom.level.things.back()->position.z() = position.z() + 32.f;
   doom.level.things.back()->_thrust = direction * (doom.level.things.back()->attributs.speed / direction.length());
   doom.level.things.back()->_target = this;

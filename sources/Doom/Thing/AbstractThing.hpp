@@ -335,6 +335,7 @@ namespace DOOM
     bool  P_LineAttack(DOOM::Doom& doom, float atk_range, const Math::Vector<3>& atk_origin, const Math::Vector<3>& atk_direction, float atk_damage); // Compute an attack from current 
     void  P_LineSwitch(DOOM::Doom& doom, float swc_range, const Math::Vector<3>& swc_origin, const Math::Vector<3>& swc_direction);                   // Switch the first non obstructed linedef in range 
     void  P_SpawnMissile(DOOM::Doom& doom, DOOM::Enum::ThingType type);                                                                               // Spawn a missile from thing to target
+    void  P_SpawnPlayerMissile(DOOM::Doom& doom, DOOM::Enum::ThingType type, float slope);                                                            // Spawn a missile
     void  P_ExplodeMissile(DOOM::Doom& doom);                                                                                                         // Destroy missile
     void  P_ExplodeMissile(DOOM::Doom& doom, DOOM::AbstractThing& target);                                                                            // Destroy missile on a target
     void  P_RadiusAttack(DOOM::Doom& doom, DOOM::AbstractThing& source, float damage);                                                                // Blast damage from current thing position

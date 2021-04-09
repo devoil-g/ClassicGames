@@ -50,7 +50,7 @@ namespace DOOM
     {
     public:
       DOOM::Enum::Ammo                ammo;   // Ammo type
-      unsigned int                    count;   // Ammo count to fire
+      unsigned int                    count;  // Ammo count to fire
       DOOM::PlayerThing::WeaponState  up;     // Up state
       DOOM::PlayerThing::WeaponState  down;   // Down state
       DOOM::PlayerThing::WeaponState  ready;  // Ready state
@@ -82,6 +82,7 @@ namespace DOOM
     Game::Sound::Reference          _weaponSound;     // Sound of weapon
     Math::Vector<2>                 _weaponPosition;  // Position of weapon on screen
     bool                            _weaponRefire;    // True if shot is a refire (less accurate)
+    bool                            _weaponFire;      // Fire trigger for BFG and rocket launcher
 
     void  setWeaponState(DOOM::Doom& doom, DOOM::PlayerThing::WeaponState state); //
     void  updateWeapon(DOOM::Doom& doom, sf::Time elapsed);                       //
@@ -113,7 +114,6 @@ namespace DOOM
     void  updateRadiationSuit(DOOM::Doom& doom, sf::Time elapsed);            // Update radation suit timer
 
     bool  pickup(DOOM::Doom& doom, DOOM::AbstractThing& item) override;
-
     bool  pickupArmor(DOOM::Enum::Armor type);
     bool  pickupArmor(DOOM::Enum::Armor type, float quantity);
     bool  pickupHealth(unsigned int quantity, float maximum);
@@ -161,7 +161,6 @@ namespace DOOM
     bool  P_CheckAmmo(DOOM::Doom& doom);                                                                                                                        // Returns true if there is enough ammo to shoot. If not, selects the next weapon to use.
     void  P_BringUpWeapon(DOOM::Doom& doom);                                                                                                                    // Starts bringing the pending weapon up from the bottom of the screen.
     void  P_GunShot(DOOM::Doom& doom, float dispersion, float damage);                                                                                          // Simple gun shot
-    void  P_SpawnPlayerMissile(DOOM::Doom& doom, DOOM::Enum::ThingType type);                                                                                   // Spawn a missile
     void  P_NoiseAlert(DOOM::Doom& doom, int16_t sector_index, int limit = 2, std::unordered_map<int16_t, int>& sectors = std::unordered_map<int16_t, int>());  // Make player sound target of adjacent sectors
 
     enum Control

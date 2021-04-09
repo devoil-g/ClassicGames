@@ -119,12 +119,12 @@ DOOM::MenuDoomState::MenuDoomState(Game::StateMachine& machine, DOOM::Doom& doom
     for (const auto& thing : _doom.level.things)
       if (thing->type == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWN1 || 
         thing->type == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWN2 || 
-        thing->type == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWN3 || 
+        thing->type == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWN3 ||
         thing->type == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWN4)
         spawns.emplace_back(thing.get());
 
   // Critical error
-  if (spawns.empty() == true )
+  if (spawns.empty() == true)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   const auto& spawn = *std::next(spawns.begin(), std::rand() % spawns.size());

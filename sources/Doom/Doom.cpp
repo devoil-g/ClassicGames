@@ -584,9 +584,10 @@ void  DOOM::Doom::buildLevelThings()
   for (const auto& thing : wad.levels[level.episode].things)
   {
     // Only build thing of current skill level
-    if (((skill == DOOM::Enum::Skill::SkillBaby || skill == DOOM::Enum::Skill::SkillEasy) && thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel12) ||
-      (skill == DOOM::Enum::Skill::SkillMedium && thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel3) ||
-      ((skill == DOOM::Enum::Skill::SkillHard || skill == DOOM::Enum::Skill::SkillNightmare) && thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel45))
+    if ((thing.flag & DOOM::Enum::ThingFlag::FlagMultiplayer) == 0 &&
+      (((skill == DOOM::Enum::Skill::SkillBaby || skill == DOOM::Enum::Skill::SkillEasy) && thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel12) ||
+      ((skill == DOOM::Enum::Skill::SkillMedium) && thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel3) ||
+      ((skill == DOOM::Enum::Skill::SkillHard || skill == DOOM::Enum::Skill::SkillNightmare) && thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel45)))
     {
       // Convert thing from WAD
       auto  converted = DOOM::AbstractThing::factory(*this, thing);

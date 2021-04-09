@@ -202,7 +202,7 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom& doom, int id, int controller) :
   _berserk(false),
   _map(false),
   id(id),
-  _weapon(DOOM::Enum::Weapon::WeaponPistol), _weaponNext(DOOM::Enum::Weapon::WeaponPistol), _weaponState(_attributs[_weapon].up), _weaponElapsed(sf::Time::Zero), _weaponSound(Game::Sound::Instance().get()), _weaponPosition(), _weaponRefire(false),
+  _weapon(DOOM::Enum::Weapon::WeaponPistol), _weaponNext(DOOM::Enum::Weapon::WeaponPistol), _weaponState(_attributs[_weapon].up), _weaponElapsed(sf::Time::Zero), _weaponSound(Game::Sound::Instance().get()), _weaponPosition(), _weaponRefire(false), _weaponFire(false),
   _flash(0), _flashState(DOOM::PlayerThing::WeaponState::State_None), _flashElapsed(sf::Time::Zero),
   controller(controller),
   camera(),
@@ -234,6 +234,9 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom& doom, int id, int controller) :
   // Initial weapon
   _weaponNext = DOOM::Enum::Weapon::WeaponPistol;
   P_BringUpWeapon(doom);
+
+  statusbar.weapons[DOOM::Enum::Weapon::WeaponRocketLauncher] = true;
+  statusbar.ammos[DOOM::Enum::Ammo::AmmoRocket] = 50;
 }
 
 void  DOOM::PlayerThing::updateRadiationSuit(DOOM::Doom& doom, sf::Time elapsed)
@@ -271,9 +274,13 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
   // Update player using controller
   if (controller == 0)
     updateKeyboard(doom, elapsed);
-  else
+  else if (controller > 0)
     updateController(doom, elapsed);
 
+  // Update BFG and rocket fire
+  if (control(DOOM::PlayerThing::Control::ControlAttack, true) == true)
+    _weaponFire = true;
+  
   // Update timers
   updateInvulnerability(doom, elapsed);
   updateInvisibility(doom, elapsed);
@@ -293,6 +300,7 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
 
   // Update status bar (TODO: complete this)
   statusbar.health = health;
+  statusbar.ammo = (_attributs[_weapon].ammo == DOOM::Enum::Ammo::AmmoNone) ? 0 : statusbar.ammos[_attributs[_weapon].ammo];
 
   DOOM::Doom::Level::Sector& sector = doom.level.sectors[doom.level.getSector(position.convert<2>()).first];
 
@@ -300,7 +308,7 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
   if (position.z() <= sector.floor_current) {
     switch (sector.special) {
     case DOOM::Doom::Level::Sector::Special::Secret:  // Player entering this sector gets credit for finding a secret
-      // NOTE: original DOOM don't prompt message of play sound
+      // NOTE: original DOOM doesn't prompt message of play sound
       doom.level.statistics.players[id].secrets += 1;
       sector.special = DOOM::Doom::Level::Sector::Special::Normal;
       break;
@@ -313,9 +321,10 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
       damageSector(doom, elapsed, 10.f);
       break;
 
+    case DOOM::Doom::Level::Sector::Special::End:             // Cancel God mode if active, 20 % damage every 32 tics, when player dies, level ends
+      _invulnerability = sf::Time::Zero;
     case DOOM::Doom::Level::Sector::Special::Damage20:        // 20 % damage per second
     case DOOM::Doom::Level::Sector::Special::Damage20Blink05: // 20 % damage every 32 tics plus light blink 0.5 second
-    case DOOM::Doom::Level::Sector::Special::End:             // Cancel God mode if active, 20 % damage every 32 tics, when player dies, level ends
       damageSector(doom, elapsed, 20.f, sector.special == DOOM::Doom::Level::Sector::Special::End);
       break;
 
@@ -329,7 +338,7 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
   return false;
 }
 
-void  DOOM::PlayerThing::updateKeyboard(DOOM::Doom & doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateKeyboard(DOOM::Doom& doom, sf::Time elapsed)
 {
   updateKeyboardTurn(doom, elapsed);
   updateKeyboardMove(doom, elapsed);
@@ -344,7 +353,7 @@ void  DOOM::PlayerThing::updateKeyboard(DOOM::Doom & doom, sf::Time elapsed)
     updateFire(doom, elapsed);
 }
 
-void  DOOM::PlayerThing::updateKeyboardTurn(DOOM::Doom & doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateKeyboardTurn(DOOM::Doom& doom, sf::Time elapsed)
 {
   // Turn player
   float	horizontal = 0.f;
@@ -452,6 +461,10 @@ void  DOOM::PlayerThing::updateControllerMove(DOOM::Doom & doom, sf::Time elapse
 
 void  DOOM::PlayerThing::updateTurn(DOOM::Doom & doom, sf::Time elapsed, float horizontal, float vertical)
 {
+  // The dead can't move
+  if (health <= 0.f)
+    return;
+
   // Apply sprinting to turning
   horizontal *= (_running == true ? DOOM::PlayerThing::RunningSpeed / DOOM::PlayerThing::WalkingSpeed : 1.f);
 
@@ -467,6 +480,10 @@ void  DOOM::PlayerThing::updateTurn(DOOM::Doom & doom, sf::Time elapsed, float h
 
 void  DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Vector<2> movement)
 {
+  // The dead can't move
+  if (health <= 0.f)
+    return;
+
   // Limit movement
   movement.x() = std::clamp(movement.x(), -1.f, +1.f);
   movement.y() = std::clamp(movement.y(), -1.f, +1.f);
@@ -571,6 +588,10 @@ void  DOOM::PlayerThing::drawStatusbar(DOOM::Doom& doom, sf::Image& target, sf::
 
 bool  DOOM::PlayerThing::pickup(DOOM::Doom& doom, DOOM::AbstractThing& item)
 {
+  // Can't pick-up when dead
+  if (health <= 0.f)
+    return false;
+
   // Map of pick-upable items
   static const std::unordered_map<DOOM::Enum::ThingType, std::function<bool(DOOM::Doom&, DOOM::PlayerThing&, DOOM::AbstractThing&)>> items = {
     { DOOM::Enum::ThingType::ThingType_MISC0, [](DOOM::Doom& doom, DOOM::PlayerThing& player, DOOM::AbstractThing& item) { return player.pickupArmor(DOOM::Enum::Armor::ArmorSecurity) && (doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_itemup), true); } },                                                                                                                                                                                                                   // Green armor
@@ -860,7 +881,7 @@ void  DOOM::PlayerThing::damageSector(DOOM::Doom& doom, sf::Time elapsed, float 
     float protection = 0;
 
     // Radiation suit
-    if (_radiation.asSeconds() > 0.f && (dmg < 20.f || std::rand() % 256 < 6))
+    if (_radiation.asSeconds() > 0.f && (dmg < 20.f || std::rand() % 256 < 250))
       continue;
 
     // 1/2 armor when mega armor, 1/3 otherwise
@@ -1046,8 +1067,9 @@ void  DOOM::PlayerThing::A_WeaponReady(DOOM::Doom& doom)
   }
 
   // The missile launcher and BFG do not auto fire
-  // TODO: bad handling of rocket and BFG
-  if (control(DOOM::PlayerThing::Control::ControlAttack, _weapon == DOOM::Enum::Weapon::WeaponRocketLauncher || _weapon == DOOM::Enum::Weapon::WeaponBFG9000) == true) {
+  if ((_weapon == DOOM::Enum::Weapon::WeaponRocketLauncher || _weapon == DOOM::Enum::Weapon::WeaponBFG9000) ?
+    (_weaponFire == true) :
+    (control(DOOM::PlayerThing::Control::ControlAttack, false) == true)) {
     P_FireWeapon(doom);
     return;
   }
@@ -1237,7 +1259,7 @@ void  DOOM::PlayerThing::A_FireMissile(DOOM::Doom& doom)
   statusbar.ammos[_attributs[DOOM::Enum::Weapon::WeaponRocketLauncher].ammo] -= _attributs[DOOM::Enum::Weapon::WeaponRocketLauncher].count;
 
   // Spawn missile
-  P_SpawnPlayerMissile(doom, DOOM::Enum::ThingType::ThingType_ROCKET);
+  P_SpawnPlayerMissile(doom, DOOM::Enum::ThingType::ThingType_ROCKET, camera.orientation);
 }
 
 void  DOOM::PlayerThing::A_Saw(DOOM::Doom& doom)
@@ -1277,7 +1299,7 @@ void  DOOM::PlayerThing::A_FirePlasma(DOOM::Doom& doom)
   setFlashState(doom, (DOOM::PlayerThing::WeaponState)(_attributs[DOOM::Enum::Weapon::WeaponPlasmaGun].flash + std::rand() % 2));
 
   // Spawn missile
-  P_SpawnPlayerMissile(doom, DOOM::Enum::ThingType::ThingType_PLASMA);
+  P_SpawnPlayerMissile(doom, DOOM::Enum::ThingType::ThingType_PLASMA, camera.orientation);
 }
 
 void  DOOM::PlayerThing::A_BFGsound(DOOM::Doom& doom)
@@ -1291,7 +1313,7 @@ void  DOOM::PlayerThing::A_FireBFG(DOOM::Doom& doom)
   statusbar.ammos[_attributs[DOOM::Enum::Weapon::WeaponBFG9000].ammo] -= _attributs[DOOM::Enum::Weapon::WeaponBFG9000].count;
 
   // Spawn missile
-  P_SpawnPlayerMissile(doom, DOOM::Enum::ThingType::ThingType_BFG);
+  P_SpawnPlayerMissile(doom, DOOM::Enum::ThingType::ThingType_BFG, camera.orientation);
 }
 
 void  DOOM::PlayerThing::A_GunFlash(DOOM::Doom& doom)
@@ -1317,6 +1339,9 @@ void  DOOM::PlayerThing::A_Light2(DOOM::Doom& doom)
 
 void  DOOM::PlayerThing::P_FireWeapon(DOOM::Doom& doom)
 {
+  // Remove fire flag
+  _weaponFire = false;
+
   // Check enough ammo to fire
   if (P_CheckAmmo(doom) == false)
     return;
@@ -1437,9 +1462,4 @@ void  DOOM::PlayerThing::P_GunShot(DOOM::Doom& doom, float dispersion, float dam
     Math::Vector<3>(position.x(), position.y(), position.z() + height / 2.f),
     Math::Vector<3>(std::cos(atk_angle), std::sin(atk_angle), std::tan(atk_slope)),
     damage);
-}
-
-void  DOOM::PlayerThing::P_SpawnPlayerMissile(DOOM::Doom& doom, DOOM::Enum::ThingType type)
-{
-  // TODO
 }
