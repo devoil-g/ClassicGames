@@ -17,6 +17,6 @@ A collection of classical games re-coded in C++
 6. Project has been generated in \<build\>
 7. When project has been built, copy \<library\>/SFML-2.x.x/bin/openal32.dll next to game executable
 
-## How tu build (Linux):
+## How to build (Linux):
 
 You use Linux. You're strong. Do it yourself. Use CMake.
