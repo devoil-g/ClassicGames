@@ -321,6 +321,8 @@ namespace DOOM
     void  A_Look(DOOM::Doom& doom);   // Default look action, try to find a target before running.
     void  A_Chase(DOOM::Doom& doom);  // Default movement action, move to target.
 
+    void  A_MissileSmoke(DOOM::Doom& doom); // Spawn smoke behind the missile
+
     // TODO: merge these methods
     float P_AimLineAttack(DOOM::Doom& doom, const DOOM::AbstractThing& target);                                                                       // Compute visible height of target, NaN if target is not visible
     bool  P_CheckSight(DOOM::Doom& doom, const DOOM::AbstractThing& target);                                                                          // Check if target is in the line of sight of thing.

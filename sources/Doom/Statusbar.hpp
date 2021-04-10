@@ -19,17 +19,17 @@ namespace DOOM
     std::array<unsigned int, DOOM::Enum::AmmoCount>             maximum;  // Maximum number of ammos in inventory
 
   private:
-    void  renderBackground(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect) const;
-    void  renderAmmo(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect) const;
-    void  renderHealth(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect) const;
-    void  renderWeapons(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect) const;
-    void  renderFace(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect) const;
-    void  renderArmor(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect) const;
-    void  renderKey(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect) const;
-    void  renderAmmos(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect) const;
+    void  renderBackground(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const;
+    void  renderAmmo(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const;
+    void  renderHealth(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const;
+    void  renderWeapons(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const;
+    void  renderFace(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const;
+    void  renderArmor(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const;
+    void  renderKey(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const;
+    void  renderAmmos(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const;
 
-    void  renderDecimal(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, const std::string& font, int value, int x, int y) const;             // Render a decimal number at given non-scaled coordinates from right to left
-    void  renderTexture(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, const DOOM::Doom::Resources::Texture& texture, int x, int y) const;  // Render texture at given non-scaled coordinates
+    void  renderDecimal(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, const std::string& font, int value, int x, int y, int16_t palette) const;             // Render a decimal number at given non-scaled coordinates from right to left
+    void  renderTexture(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, const DOOM::Doom::Resources::Texture& texture, int x, int y, int16_t palette) const;  // Render texture at given non-scaled coordinates
 
   public:
     Statusbar(const DOOM::Doom& doom, int id);
@@ -37,7 +37,7 @@ namespace DOOM
     Statusbar(const Statusbar&) = delete;
     ~Statusbar() = default;
 
-    void  update(sf::Time elapsed);                                                         // Update statusbar
-    void  render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect) const;  // Render statusbat to target image
+    void  update(sf::Time elapsed);                                                                         // Update statusbar
+    void  render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const; // Render statusbat to target image
   };
 }

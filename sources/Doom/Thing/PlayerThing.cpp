@@ -204,6 +204,7 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom& doom, int id, int controller) :
   id(id),
   _weapon(DOOM::Enum::Weapon::WeaponPistol), _weaponNext(DOOM::Enum::Weapon::WeaponPistol), _weaponState(_attributs[_weapon].up), _weaponElapsed(sf::Time::Zero), _weaponSound(Game::Sound::Instance().get()), _weaponPosition(), _weaponRefire(false), _weaponFire(false),
   _flash(0), _flashState(DOOM::PlayerThing::WeaponState::State_None), _flashElapsed(sf::Time::Zero),
+  _palettePickup(sf::Time::Zero), _paletteDamage(sf::Time::Zero), _paletteBerserk(sf::Time::Zero),
   controller(controller),
   camera(),
   statusbar(doom, id)
@@ -243,6 +244,14 @@ void  DOOM::PlayerThing::updateRadiationSuit(DOOM::Doom& doom, sf::Time elapsed)
 {
   // Decrement timer
   _radiation = std::max(sf::seconds(0.f), _radiation - elapsed);
+}
+
+void  DOOM::PlayerThing::updatePalette(DOOM::Doom& doom, sf::Time elapsed)
+{
+  // Decrement palette timers
+  _palettePickup = std::max(sf::seconds(0.f), _palettePickup - elapsed);
+  _paletteDamage = std::max(sf::seconds(0.f), _paletteDamage - elapsed);
+  _paletteBerserk = std::max(sf::seconds(0.f), _paletteBerserk - elapsed);
 }
 
 void  DOOM::PlayerThing::updateInvulnerability(DOOM::Doom& doom, sf::Time elapsed)
@@ -286,7 +295,8 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
   updateInvisibility(doom, elapsed);
   updateLightAmplificationVisor(doom, elapsed);
   updateRadiationSuit(doom, elapsed);
-  
+  updatePalette(doom, elapsed);
+
   // Update core components and physics
   DOOM::AbstractThing::update(doom, elapsed);
 
@@ -512,17 +522,19 @@ void  DOOM::PlayerThing::updateFire(DOOM::Doom & doom, sf::Time elapsed)
 
 void  DOOM::PlayerThing::draw(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale)
 {
+  int16_t palette = cameraPalette();
+
   // Draw 3D view
-  drawCamera(doom, target, rect, scale);
+  drawCamera(doom, target, rect, scale, palette);
   
   // Draw weapon
-  drawWeapon(doom, target, rect, scale);
+  drawWeapon(doom, target, rect, scale, palette);
 
   // Draw statusbar
-  drawStatusbar(doom, target, rect, scale);
+  drawStatusbar(doom, target, rect, scale, palette);
 }
 
-void  DOOM::PlayerThing::drawCamera(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale)
+void  DOOM::PlayerThing::drawCamera(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette)
 {
   // Compute head bobing
   float bob = std::min(8.f, (Math::Pow<2>(_thrust.x()) + Math::Pow<2>(_thrust.y())) / 8.f)
@@ -534,10 +546,10 @@ void  DOOM::PlayerThing::drawCamera(DOOM::Doom& doom, sf::Image& target, sf::Rec
   camera.position.z() = position.z() + 41.f + bob;
 
   // Render 3D view
-  camera.render(doom, target, sf::Rect<int16_t>(rect.left, rect.top, rect.width, rect.height - 32 * scale), _flash, cameraMode(), cameraPalette());
+  camera.render(doom, target, sf::Rect<int16_t>(rect.left, rect.top, rect.width, rect.height - 32 * scale), _flash, cameraMode(), palette);
 }
 
-void  DOOM::PlayerThing::drawWeapon(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale)
+void  DOOM::PlayerThing::drawWeapon(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette)
 {
   // Simulate bobing of weapon
   int angle_x = (int)(doom.level.statistics.time.asSeconds() / DOOM::Doom::Tic.asSeconds() * 128) % 8192;
@@ -559,7 +571,8 @@ void  DOOM::PlayerThing::drawWeapon(DOOM::Doom& doom, sf::Image& target, sf::Rec
           rect.left + (int)((_weaponPosition.x() + bob * std::cosf(angle_x / 8192.f * Math::Pi * 2.f)) * scale),
           rect.top + (int)((_weaponPosition.y() - 16 + bob * std::sinf(angle_y / 8192.f * Math::Pi * 2.f)) * scale)
         ),
-        sf::Vector2i(scale, scale));
+        sf::Vector2i(scale, scale),
+        palette);
     }
   }
 
@@ -576,14 +589,15 @@ void  DOOM::PlayerThing::drawWeapon(DOOM::Doom& doom, sf::Image& target, sf::Rec
           rect.left + (int)((_weaponPosition.x() + bob * std::cosf(angle_x / 8192.f * Math::Pi * 2.f)) * scale),
           rect.top + (int)((_weaponPosition.y() - 16 + bob * std::sinf(angle_y / 8192.f * Math::Pi * 2.f)) * scale)
         ),
-        sf::Vector2i(scale, scale));
+        sf::Vector2i(scale, scale),
+        palette);
     }
   }
 }
 
-void  DOOM::PlayerThing::drawStatusbar(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale)
+void  DOOM::PlayerThing::drawStatusbar(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette)
 {
-  statusbar.render(doom, target, sf::Rect<int16_t>(rect.left, rect.top + (DOOM::Doom::RenderHeight - 32) * scale, rect.width, 32 * scale));
+  statusbar.render(doom, target, sf::Rect<int16_t>(rect.left, rect.top + (DOOM::Doom::RenderHeight - 32) * scale, rect.width, 32 * scale), palette);
 }
 
 bool  DOOM::PlayerThing::pickup(DOOM::Doom& doom, DOOM::AbstractThing& item)
@@ -648,6 +662,9 @@ bool  DOOM::PlayerThing::pickup(DOOM::Doom& doom, DOOM::AbstractThing& item)
   if (item.flags & DOOM::Enum::ThingProperty::ThingProperty_CountItem)
     doom.level.statistics.players[id].items += 1;
 
+  // Pick-up flash
+  _palettePickup += DOOM::Doom::Tic * 6.f;
+
   // Remove picked-up item
   return true;
 }
@@ -674,6 +691,12 @@ bool  DOOM::PlayerThing::pickupBerserk()
 
   // Become berserk
   _berserk = true;
+
+  // Raise fists
+  _weaponNext = DOOM::Enum::Weapon::WeaponFist;
+
+  // Berserk flash
+  _paletteBerserk += DOOM::Doom::Tic * 64.f * 12.f;
 
   return true;
 }
@@ -738,6 +761,9 @@ bool  DOOM::PlayerThing::pickupWeapon(DOOM::Enum::Weapon type)
   // Pickup gun
   statusbar.weapons[type] = true;
   setWeapon(type);
+
+  // Increase pick-up flash
+  _palettePickup += DOOM::Doom::Tic * 6.f;
 
   return true;
 }
@@ -865,6 +891,9 @@ void  DOOM::PlayerThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker,
   // Apply remaining damage
   DOOM::AbstractThing::damage(doom, attacker, origin, damage - protection);
 
+  // Red flash
+  _paletteDamage += DOOM::Doom::Tic * (damage - protection);
+
   // End game
   if (position.z() <= sector.floor_current && sector.special == DOOM::Doom::Level::Sector::Special::End && health < 11.f)
     doom.level.end = DOOM::Enum::End::EndNormal;
@@ -903,6 +932,9 @@ void  DOOM::PlayerThing::damageSector(DOOM::Doom& doom, sf::Time elapsed, float 
     // Apply remaining damage
     DOOM::AbstractThing::damage(doom, *this, dmg);
 
+    // Red flash
+    _paletteDamage += DOOM::Doom::Tic * dmg;
+
     // End game
     if (end == true && health < 11.f)
       doom.level.end = DOOM::Enum::End::EndNormal;
@@ -934,13 +966,19 @@ DOOM::Camera::Special DOOM::PlayerThing::cameraMode() const
 
 int16_t DOOM::PlayerThing::cameraPalette() const
 {
-  // Radiation suit
-  if (_radiation > sf::seconds(0.f))
-    return 13;
+  int16_t palette = 0;
 
-  // Default color palette
-  else
-    return 0;
+  // Damage palette
+  if (_paletteDamage > sf::Time::Zero || _paletteBerserk > sf::Time::Zero)
+    palette = std::clamp((int)(std::max(_paletteDamage.asSeconds() / DOOM::Doom::Tic.asSeconds() / 8.f, _paletteBerserk.asSeconds() / DOOM::Doom::Tic.asSeconds() / 64.f)), 0, 7) + 1;
+  // Pick-up palette
+  else if (_palettePickup > sf::Time::Zero)
+    palette = std::clamp((int)(_palettePickup.asSeconds() / DOOM::Doom::Tic.asSeconds() / 8.f), 0, 3) + 9;
+  // Radiation suit
+  else if (_radiation > sf::seconds(0.f))
+    palette = 13;
+
+  return palette;
 }
 
 void  DOOM::PlayerThing::setWeaponState(DOOM::Doom& doom, DOOM::PlayerThing::WeaponState state)

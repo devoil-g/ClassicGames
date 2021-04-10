@@ -343,9 +343,9 @@ namespace DOOM
         Texture(DOOM::Doom& doom, const DOOM::Wad::RawResources::Patch& patch);
         ~Texture() = default;
 
-        sf::Image image(const DOOM::Doom& doom) const;                                                              // Create an SFML image from texture
-        void      draw(const DOOM::Doom& doom, sf::Image& image, sf::Vector2i position, sf::Vector2i scale) const;  // Draw texture in SFML image at given position & scale
-        void      draw(const DOOM::Doom& doom, sf::Image& image, sf::Rect<int16_t> area, sf::Vector2i position, sf::Vector2i scale) const;  // Draw texture in SFML image at given position & scale in area
+        sf::Image image(const DOOM::Doom& doom) const;                                                                                                          // Create an SFML image from texture
+        void      draw(const DOOM::Doom& doom, sf::Image& image, sf::Vector2i position, sf::Vector2i scale, int16_t palette = 0) const;                         // Draw texture in SFML image at given position & scale
+        void      draw(const DOOM::Doom& doom, sf::Image& image, sf::Rect<int16_t> area, sf::Vector2i position, sf::Vector2i scale, int16_t palette = 0) const; // Draw texture in SFML image at given position & scale in area
       };
 
       class Sound

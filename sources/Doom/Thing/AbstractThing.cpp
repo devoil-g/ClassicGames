@@ -59,7 +59,7 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_PLSE, 2, true, 4, nullptr, State_PLASEXP4 },		// State_PLASEXP3
   DOOM::AbstractThing::State{ Sprite_PLSE, 3, true, 4, nullptr, State_PLASEXP5 },		// State_PLASEXP4
   DOOM::AbstractThing::State{ Sprite_PLSE, 4, true, 4, nullptr, State_None },			// State_PLASEXP5
-  DOOM::AbstractThing::State{ Sprite_MISL, 0, true, 1, nullptr, State_ROCKET },			// State_ROCKET
+  DOOM::AbstractThing::State{ Sprite_MISL, 0, true, 1, &A_MissileSmoke, State_ROCKET },		// State_ROCKET
   DOOM::AbstractThing::State{ Sprite_BFS1, 0, true, 4, nullptr, State_BFGSHOT2 },		// State_BFGSHOT
   DOOM::AbstractThing::State{ Sprite_BFS1, 1, true, 4, nullptr, State_BFGSHOT },		// State_BFGSHOT2
   DOOM::AbstractThing::State{ Sprite_BFE1, 0, true, 8, nullptr, State_BFGLAND2 },		// State_BFGLAND
@@ -5622,6 +5622,12 @@ void  DOOM::AbstractThing::A_Chase(DOOM::Doom& doom)
     // Make active sound
     if (std::rand() % 256 < 3)
       doom.sound(attributs.sound_active, position);
+}
+
+void  DOOM::AbstractThing::A_MissileSmoke(DOOM::Doom& doom)
+{
+  // Spawn smoke behind the missile
+  P_SpawnPuff(doom, position - _thrust / _thrust.length() * (float)attributs.radius + Math::Vector<3>(Math::Random() * 2.f - 1.f, Math::Random() * 2.f - 1.f, Math::Random() * 2.f - 1.f) * 4.f * Math::Random());
 }
 
 bool  DOOM::AbstractThing::P_LookForPlayers(DOOM::Doom& doom, bool full)

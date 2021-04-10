@@ -95,6 +95,10 @@ namespace DOOM
     void  setFlashState(DOOM::Doom& doom, DOOM::PlayerThing::WeaponState state);
     void  updateFlash(DOOM::Doom& doom, sf::Time elapsed);
 
+    sf::Time  _palettePickup;
+    sf::Time  _paletteDamage;
+    sf::Time  _paletteBerserk;
+
     void  updateKeyboard(DOOM::Doom& doom, sf::Time elapsed);       // Update using keyboard
     void  updateKeyboardTurn(DOOM::Doom& doom, sf::Time elapsed);   // Update using keyboard
     void  updateKeyboardMove(DOOM::Doom& doom, sf::Time elapsed);   // Update using keyboard
@@ -112,6 +116,7 @@ namespace DOOM
     void  updateInvisibility(DOOM::Doom& doom, sf::Time elapsed);             // Update invisibility timer
     void  updateLightAmplificationVisor(DOOM::Doom& doom, sf::Time elapsed);  // Update light amplification visor timer
     void  updateRadiationSuit(DOOM::Doom& doom, sf::Time elapsed);            // Update radation suit timer
+    void  updatePalette(DOOM::Doom& doom, sf::Time elapsed);                  // Update palette timers
 
     bool  pickup(DOOM::Doom& doom, DOOM::AbstractThing& item) override;
     bool  pickupArmor(DOOM::Enum::Armor type);
@@ -173,9 +178,9 @@ namespace DOOM
 
     bool  control(DOOM::PlayerThing::Control action, bool pressed = false);
 
-    void  drawCamera(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale);    // Render player camera
-    void  drawWeapon(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale);    // Render player weapon and muzzle flash
-    void  drawStatusbar(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale); // Render player statusbar
+    void  drawCamera(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette);     // Render player camera
+    void  drawWeapon(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette);     // Render player weapon and muzzle flash
+    void  drawStatusbar(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette);  // Render player statusbar
 
   public:
     const int         id;         // Player ID

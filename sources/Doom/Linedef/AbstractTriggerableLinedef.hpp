@@ -65,7 +65,6 @@ namespace DOOM
     inline std::enable_if_t<Repeat != _Repeat>  triggerRepeat(DOOM::Doom& doom) // Replace linedef with null if not repeatable
     {
       // Replace current linedef by a normal linedef
-      // TODO: use pointer arithmetic to find linedef to replace
       for (auto& linedef : doom.level.linedefs)
         if (linedef.get() == this) {
           linedef = std::make_unique<DOOM::NullLinedef>(doom, *this);

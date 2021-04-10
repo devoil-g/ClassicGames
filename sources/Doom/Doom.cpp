@@ -1089,12 +1089,12 @@ sf::Image DOOM::Doom::Resources::Texture::image(const DOOM::Doom& doom) const
   return image;
 }
 
-void  DOOM::Doom::Resources::Texture::draw(const DOOM::Doom& doom, sf::Image& image, sf::Vector2i position, sf::Vector2i scale) const
+void  DOOM::Doom::Resources::Texture::draw(const DOOM::Doom& doom, sf::Image& image, sf::Vector2i position, sf::Vector2i scale, int16_t palette) const
 {
-  draw(doom, image, sf::Rect<int16_t>(0, 0, image.getSize().x, image.getSize().y), position, scale);
+  draw(doom, image, sf::Rect<int16_t>(0, 0, image.getSize().x, image.getSize().y), position, scale, palette);
 }
 
-void  DOOM::Doom::Resources::Texture::draw(const DOOM::Doom& doom, sf::Image& image, sf::Rect<int16_t> area, sf::Vector2i position, sf::Vector2i scale) const
+void  DOOM::Doom::Resources::Texture::draw(const DOOM::Doom& doom, sf::Image& image, sf::Rect<int16_t> area, sf::Vector2i position, sf::Vector2i scale, int16_t palette) const
 {
   // NOTE: optimize this?
 
@@ -1102,7 +1102,7 @@ void  DOOM::Doom::Resources::Texture::draw(const DOOM::Doom& doom, sf::Image& im
   for (int texture_x = 0; texture_x < width; texture_x++)
     for (const auto& span : columns.at(texture_x).spans)
       for (int texture_y = 0; texture_y < span.pixels.size(); texture_y++) {
-        sf::Color color = doom.resources.palettes[0][doom.resources.colormaps[0][span.pixels[texture_y]]];
+        sf::Color color = doom.resources.palettes[palette][doom.resources.colormaps[0][span.pixels[texture_y]]];
 
         for (int image_x = std::max(std::max(0, (int)area.left), position.x + (texture_x - left + 0) * scale.x); image_x < std::min(std::min((int)image.getSize().x, area.left + area.width), position.x + (texture_x - left + 1) * scale.x); image_x++)
           for (int image_y = std::max(std::max(0, (int)area.top), position.y + (span.offset + texture_y - top + 0) * scale.y); image_y < std::min(std::min((int)image.getSize().y, area.top + area.height), position.y + (span.offset + texture_y - top + 1) * scale.y); image_y++)
