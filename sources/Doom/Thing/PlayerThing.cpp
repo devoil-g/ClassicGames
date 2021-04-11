@@ -235,9 +235,6 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom& doom, int id, int controller) :
   // Initial weapon
   _weaponNext = DOOM::Enum::Weapon::WeaponPistol;
   P_BringUpWeapon(doom);
-
-  statusbar.weapons[DOOM::Enum::Weapon::WeaponRocketLauncher] = true;
-  statusbar.ammos[DOOM::Enum::Ammo::AmmoRocket] = 50;
 }
 
 void  DOOM::PlayerThing::updateRadiationSuit(DOOM::Doom& doom, sf::Time elapsed)

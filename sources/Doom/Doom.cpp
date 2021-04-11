@@ -1426,11 +1426,9 @@ DOOM::Doom::Level::Blockmap::Blockmap(DOOM::Doom& doom, const DOOM::Wad::RawLeve
 
 int DOOM::Doom::Level::Blockmap::index(const Math::Vector<2>& position) const
 {
-  // TODO: we can end up with a wrong index when out of bounds
-
   // Check if position out of bound
-  if (position.x() < x || position.x() >= x + 128 * column ||
-    position.y() < y || position.y() >= y + 128 * row)
+  if ((int)position.x() < x || (int)position.x() >= x + 128 * column ||
+    (int)position.y() < y || (int)position.y() >= y + 128 * row)
     return -1;
 
   // Compute position index in blockmap
