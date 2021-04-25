@@ -23,7 +23,9 @@ namespace DOOM
       Secret = 0x0020,        // See documentation
       BlockSound = 0x0040,    // For purposes of monsters hearing sounds and thus becoming alerted
       NotOnMap = 0x0080,      // The line is not shown on the automap
-      AlreadyOnMap = 0x0100   // When the level is begun, this line is already on the automap
+      AlreadyOnMap = 0x0100,  // When the level is begun, this line is already on the automap
+
+      OnMap = 0x0200          // [CUSTOM] Enabled when wall has been rendered (for automap)
     };
 
     int16_t start, end;   // Start and end vertexes

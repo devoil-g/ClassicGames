@@ -3,6 +3,8 @@ PROJECT(ClassicGames)
 
 # Set game sources
 SET(GAME_DOOM_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Automap.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Automap.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Camera.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Camera.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Doom.cpp

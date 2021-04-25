@@ -9,7 +9,7 @@ namespace DOOM
   class Statusbar
   {
   public:
-    int                                                         id;       // Player ID in game
+    const int                                                   id;       // Player ID in game
     int                                                         ammo;     // Ammo count
     float                                                       health;   // Health percentage
     float                                                       armor;    // Armor percentage
@@ -38,6 +38,6 @@ namespace DOOM
     ~Statusbar() = default;
 
     void  update(sf::Time elapsed);                                                                         // Update statusbar
-    void  render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const; // Render statusbat to target image
+    void  render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const; // Render statusbar to target image
   };
 }

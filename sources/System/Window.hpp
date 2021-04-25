@@ -43,9 +43,9 @@ namespace Game
       inline const sf::Vector2i&  relative() const { return _relative; }; // Return mouse movement since last update
       inline int                  wheel() const { return  _wheel; };      // Return wheel ticks since last update
 
-      inline bool button(sf::Mouse::Button button) const { return Game::Window::Instance().window().hasFocus() && sf::Mouse::isButtonPressed(button); };  // Check if a button is currently pressed
-      inline bool buttonPressed(sf::Mouse::Button button) const { return _pressed[button]; };                                                             // Check if a button has been pressed since last update
-      inline bool buttonReleased(sf::Mouse::Button button) const { return _released[button]; };                                                           // Check if a button has been released since last update
+      inline bool buttonDown(sf::Mouse::Button button) const { return Game::Window::Instance().window().hasFocus() && sf::Mouse::isButtonPressed(button); };  // Check if a button is currently pressed
+      inline bool buttonPressed(sf::Mouse::Button button) const { return _pressed[button]; };                                                                 // Check if a button has been pressed since last update
+      inline bool buttonReleased(sf::Mouse::Button button) const { return _released[button]; };                                                               // Check if a button has been released since last update
     };
 
     class Keyboard
@@ -60,10 +60,10 @@ namespace Game
       inline ~Keyboard() = default;
 
     public:
-      inline bool                 key(sf::Keyboard::Key key) const { return Game::Window::Instance().window().hasFocus() && sf::Keyboard::isKeyPressed(key); }; // Check if a key is currently pressed
-      inline bool                 keyPressed(sf::Keyboard::Key key) const { return _pressed[key]; };                                                            // Check if a key has been pressed since last update
-      inline bool                 keyReleased(sf::Keyboard::Key key) const { return _released[key]; };                                                          // Check if a key has been released since last update
-      inline const std::wstring&  text() const { return _text; };                                                                                               // Return text entered since last frame
+      inline bool                 keyDown(sf::Keyboard::Key key) const { return Game::Window::Instance().window().hasFocus() && sf::Keyboard::isKeyPressed(key); }; // Check if a key is currently pressed
+      inline bool                 keyPressed(sf::Keyboard::Key key) const { return _pressed[key]; };                                                                // Check if a key has been pressed since last update
+      inline bool                 keyReleased(sf::Keyboard::Key key) const { return _released[key]; };                                                              // Check if a key has been released since last update
+      inline const std::wstring&  text() const { return _text; };                                                                                                   // Return text entered since last frame
     };
 
     class Joystick
@@ -83,9 +83,9 @@ namespace Game
       inline float  position(unsigned int joystick, unsigned int axis) const { return _position[joystick][axis]; }; // Return joystick axis current position
       inline float  relative(unsigned int joystick, unsigned int axis) const { return _relative[joystick][axis]; }; // Return joystick axis movement since last update
 
-      inline bool button(unsigned int joystick, unsigned int button) const { return Game::Window::Instance().window().hasFocus() && sf::Joystick::isButtonPressed(joystick, button); }; // Check if a button is currently pressed
-      inline bool buttonPressed(unsigned int joystick, unsigned int button) const { return _pressed[joystick][button]; };                                                               // Check if a button has been pressed since last update
-      inline bool buttonReleased(unsigned int joystick, unsigned int button) const { return _released[joystick][button]; };                                                             // Check if a button has been released since last update
+      inline bool buttonDown(unsigned int joystick, unsigned int button) const { return Game::Window::Instance().window().hasFocus() && sf::Joystick::isButtonPressed(joystick, button); }; // Check if a button is currently pressed
+      inline bool buttonPressed(unsigned int joystick, unsigned int button) const { return _pressed[joystick][button]; };                                                                   // Check if a button has been pressed since last update
+      inline bool buttonReleased(unsigned int joystick, unsigned int button) const { return _released[joystick][button]; };                                                                 // Check if a button has been released since last update
     };
 
     sf::RenderWindow        _window;    // SFML window

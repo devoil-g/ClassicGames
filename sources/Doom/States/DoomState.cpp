@@ -44,7 +44,7 @@ bool  DOOM::DoomState::update(sf::Time elapsed)
   _elapsed += elapsed;
 
   // Reset timer when ESC is not pressed
-  if (Game::Window::Instance().keyboard().key(sf::Keyboard::Escape) == false)
+  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Escape) == false)
     _elapsed = sf::Time::Zero;
 
   // Exit if limit reached

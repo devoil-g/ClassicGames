@@ -5041,6 +5041,8 @@ void  DOOM::AbstractThing::updatePhysics(DOOM::Doom& doom, sf::Time elapsed)
     // Compute movement with collision
     updatePhysicsThrust(doom, elapsed);
 
+    // TODO: do not apply friction when not touching ground
+
     // Apply friction slowdown to thing (except missiles and attacking flying skulls) for next tic (hard coded drag factor of 0.90625)
     if (!(flags & (DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_SkullFly)))
       _thrust.convert<2>() *= std::pow(0.90625f, elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());

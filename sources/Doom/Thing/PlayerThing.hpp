@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Doom/Automap.hpp"
 #include "Doom/Camera.hpp"
 #include "Doom/Statusbar.hpp"
 
@@ -66,6 +67,7 @@ namespace DOOM
 
   private:
     bool              _running;         // True if player is currently running
+    bool              _automap;         // True if automap is enabled
     DOOM::Enum::Armor _armor;           // Player armor type
     sf::Time          _invulnerability; // Remaining time of invulnerability
     sf::Time          _invisibility;    // Remaining time of invisibility
@@ -111,6 +113,7 @@ namespace DOOM
     void  updateMove(DOOM::Doom& doom, sf::Time elapsed, Math::Vector<2> movement);         // Update player position
     void  updateUse(DOOM::Doom& doom, sf::Time elapsed);                                    // Perform use action
     void  updateFire(DOOM::Doom& doom, sf::Time elapsed);                                   // Perform gunfire action
+    void  updateAutomap(DOOM::Doom& doom, sf::Time elapsed);                                // Update player automap
     
     void  updateInvulnerability(DOOM::Doom& doom, sf::Time elapsed);          // Update invulnerability timer
     void  updateInvisibility(DOOM::Doom& doom, sf::Time elapsed);             // Update invisibility timer
@@ -173,6 +176,10 @@ namespace DOOM
       ControlAttack,        // Attack/fire button
       ControlUse,           // Use button
       ControlRun,           // Sprint button
+      ControlAutomap,       // Toogle automap
+      ControlMode,          // Change automap mode
+      ControlZoom,          // Zoom automap
+      ControlUnzoom,        // Unzoom automap
       ControlCount
     };
 
@@ -181,13 +188,15 @@ namespace DOOM
     void  drawCamera(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette);     // Render player camera
     void  drawWeapon(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette);     // Render player weapon and muzzle flash
     void  drawStatusbar(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette);  // Render player statusbar
+    void  drawAutomap(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette);    // Render player automap
 
   public:
     const int         id;         // Player ID
     const int         controller; // Controller used by player
     DOOM::Camera      camera;     // Player camera
     DOOM::Statusbar   statusbar;  // Player status bar
-    
+    DOOM::Automap     automap;    // Player automap
+
     PlayerThing(DOOM::Doom& doom, int id, int controller);
     ~PlayerThing() = default;
 

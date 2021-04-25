@@ -46,19 +46,29 @@ void  DOOM::Camera::render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<i
   // Draw level walls and flats from BSP root node
   renderNode(doom, rect, extralight, special, (int16_t)(doom.level.nodes.size() - 1));
 
+  std::set<int16_t> segments;
+
   // Simplify column of pixel segment index
   for (int col = 0; col < (int)rect.width; col++)
   {
     // Simplify ceiling
-    for (int row = std::min((int)_horizon - 1, (int)rect.height - 1); row >= 0; row--)
+    for (int row = std::min((int)_horizon - 1, (int)rect.height - 1); row >= 0; row--) {
+      segments.insert(_buffer[col * rect.height + row].segment);
       if (_buffer[col * rect.height + row].height == _buffer[col * rect.height + row + 1].height)
         _buffer[col * rect.height + row].segment = _buffer[col * rect.height + row + 1].segment;
+    }
 
     // Simplify floor
-    for (int row = std::max((int)_horizon + 1, 1); row < (int)rect.height; row++)
+    for (int row = std::max((int)_horizon + 1, 1); row < (int)rect.height; row++) {
+      segments.insert(_buffer[col * rect.height + row].segment);
       if (_buffer[col * rect.height + row].height == _buffer[col * rect.height + row - 1].height)
         _buffer[col * rect.height + row].segment = _buffer[col * rect.height + row - 1].segment;
+    }
   }
+
+  // Flag render linedefs (for automap)
+  for (auto index : segments)
+    doom.level.linedefs[doom.level.segments[index].linedef]->flag |= DOOM::AbstractLinedef::Flag::OnMap;
 
   // Draw things
   renderThings(doom, rect, special);
