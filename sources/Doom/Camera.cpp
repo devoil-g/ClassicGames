@@ -68,7 +68,8 @@ void  DOOM::Camera::render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<i
 
   // Flag render linedefs (for automap)
   for (auto index : segments)
-    doom.level.linedefs[doom.level.segments[index].linedef]->flag |= DOOM::AbstractLinedef::Flag::OnMap;
+    if (index != -1)
+      doom.level.linedefs[doom.level.segments[index].linedef]->flag |= DOOM::AbstractLinedef::Flag::OnMap;
 
   // Draw things
   renderThings(doom, rect, special);
