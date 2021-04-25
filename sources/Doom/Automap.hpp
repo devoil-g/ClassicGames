@@ -22,6 +22,8 @@ namespace DOOM
     float               angle;    // Map camera orientation
     float               zoom;     // Map camera zoom factor
     DOOM::Automap::Mode mode;     // Current camera mode
+    bool                grid;     // Grid enabled
+    bool                reveal;   // Reveal map (computer map pickup)
 
   private:
     enum Color
@@ -30,6 +32,7 @@ namespace DOOM
       ColorCeiling = 231, // Ceiling changes
       ColorFloor = 64,    // Floor changes
       ColorMap = 96,      // Not yet seen (computer map)
+      ColorGrid = 96,     // Grid
       ColorPlayer = 4     // Players color
     };
 

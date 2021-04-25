@@ -4,11 +4,29 @@
 DOOM::Automap::Automap() :
   position(),
   zoom(0.125f),
-  mode(DOOM::Automap::Mode::ModeFollow)
+  mode(DOOM::Automap::Mode::ModeFollow),
+  grid(false),
+  reveal(false)
 {}
 
 void  DOOM::Automap::render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette) const
 {
+  // Draw grid
+  if (grid == true) {
+    float radius = std::sqrt(Math::Pow<2>(rect.width) + Math::Pow<2>(rect.height)) / 2.f / zoom + 128.f;
+
+    for (float x = (int)((position.x() - radius) / 128.f) * 128.f; x < (int)((position.x() + radius) / 128.f) * 128.f + 128.f; x += 128.f)
+      renderLine(doom, target, rect,
+        renderTransform(rect, scale, Math::Vector<2>(x, position.y() - radius)),
+        renderTransform(rect, scale, Math::Vector<2>(x, position.y() + radius)),
+        DOOM::Automap::Color::ColorGrid, palette);
+    for (float y = (int)((position.y() - radius) / 128.f) * 128.f; y < (int)((position.y() + radius) / 128.f) * 128.f + 128.f; y += 128.f)
+      renderLine(doom, target, rect,
+        renderTransform(rect, scale, Math::Vector<2>(position.x() - radius, y)),
+        renderTransform(rect, scale, Math::Vector<2>(position.x() + radius, y)),
+        DOOM::Automap::Color::ColorGrid, palette);
+  }
+
   // Draw linedefs of level
   for (const auto& linedef : doom.level.linedefs) {
     DOOM::Automap::Color  color;
@@ -26,20 +44,23 @@ void  DOOM::Automap::render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<
       else
         continue;
     }
-    else if (linedef->flag & DOOM::AbstractLinedef::Flag::AlreadyOnMap)
-      color = DOOM::Automap::Color::ColorMap;
+    else if ((linedef->flag & DOOM::AbstractLinedef::Flag::AlreadyOnMap) || reveal == true) {
+      if (linedef->back == -1 ||
+        linedef->flag & DOOM::AbstractLinedef::Flag::Secret ||
+        doom.level.sectors[doom.level.sidedefs[linedef->front].sector].floor_current != doom.level.sectors[doom.level.sidedefs[linedef->back].sector].floor_current ||
+        doom.level.sectors[doom.level.sidedefs[linedef->front].sector].ceiling_current != doom.level.sectors[doom.level.sidedefs[linedef->back].sector].ceiling_current)
+        color = DOOM::Automap::Color::ColorMap;
+      else
+        continue;
+    }
     else
       continue;
 
     // Render linedef
-    renderLine(
-      doom,
-      target,
-      rect,
+    renderLine(doom, target, rect,
       renderTransform(rect, scale, doom.level.vertexes[linedef->start].convert<2>()),
       renderTransform(rect, scale, doom.level.vertexes[linedef->end].convert<2>()),
-      color,
-      palette);
+      color, palette);
   }
 
   // Render players
@@ -59,14 +80,10 @@ void  DOOM::Automap::render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<
 
     // Draw arrow lines
     for (const auto& line : arrow) {
-      renderLine(
-        doom,
-        target,
-        rect,
+      renderLine(doom, target, rect,
         renderTransform(rect, scale, Math::Vector<2>(line.first.x() * std::cos(player.get().angle) + line.first.y() * std::sin(player.get().angle), line.first.x() * std::sin(player.get().angle) - line.first.y() * std::cos(player.get().angle)) * (float)player.get().attributs.radius + player.get().position.convert<2>()),
         renderTransform(rect, scale, Math::Vector<2>(line.second.x() * std::cos(player.get().angle) + line.second.y() * std::sin(player.get().angle), line.second.x() * std::sin(player.get().angle) - line.second.y() * std::cos(player.get().angle)) * (float)player.get().attributs.radius + player.get().position.convert<2>()),
-        DOOM::Automap::Color::ColorPlayer,
-        palette);
+        DOOM::Automap::Color::ColorPlayer, palette);
     }
   }
 }

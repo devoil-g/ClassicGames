@@ -201,7 +201,6 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom& doom, int id, int controller) :
   _radiation(sf::Time::Zero),
   _sector(sf::Time::Zero),
   _berserk(false),
-  _map(false),
   id(id),
   _weapon(DOOM::Enum::Weapon::WeaponPistol), _weaponNext(DOOM::Enum::Weapon::WeaponPistol), _weaponState(_attributs[_weapon].up), _weaponElapsed(sf::Time::Zero), _weaponSound(Game::Sound::Instance().get()), _weaponPosition(), _weaponRefire(false), _weaponFire(false),
   _flash(0), _flashState(DOOM::PlayerThing::WeaponState::State_None), _flashElapsed(sf::Time::Zero),
@@ -360,6 +359,8 @@ void  DOOM::PlayerThing::updateAutomap(DOOM::Doom& doom, sf::Time elapsed)
   if (_automap == true) {
     if (control(DOOM::PlayerThing::Control::ControlMode, true) == true) // Change mode
       automap.mode = (DOOM::Automap::Mode)((automap.mode + 1) % DOOM::Automap::Mode::ModeCount);
+    if (control(DOOM::PlayerThing::Control::ControlGrid, true) == true) // Toggle grid
+      automap.grid = !automap.grid;
     if (control(DOOM::PlayerThing::Control::ControlZoom) == true)       // Zoom
       automap.zoom = std::clamp(automap.zoom * std::pow(2.f, elapsed.asSeconds()), 0.015625f, 1.f);
     if (control(DOOM::PlayerThing::Control::ControlUnzoom) == true)     // Unzoom
@@ -734,11 +735,11 @@ bool  DOOM::PlayerThing::pickup(DOOM::Doom& doom, DOOM::AbstractThing& item)
 bool  DOOM::PlayerThing::pickupComputerMap()
 {
   // Do not pickup if already enabled
-  if (_map == true)
+  if (automap.reveal == true)
     return false;
 
   // Enable map
-  _map = true;
+  automap.reveal = true;
 
   // TODO: stuff here
 
@@ -1129,6 +1130,8 @@ bool  DOOM::PlayerThing::control(DOOM::PlayerThing::Control action, bool pressed
       return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Key::Tab) : Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::Tab);
     else if (action == DOOM::PlayerThing::Control::ControlMode)
       return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Key::F) : Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::F);
+    else if (action == DOOM::PlayerThing::Control::ControlGrid)
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Key::G) : Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::G);
     else if (action == DOOM::PlayerThing::Control::ControlZoom)
       return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Key::Add) : Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::Add);
     else if (action == DOOM::PlayerThing::Control::ControlUnzoom)
@@ -1149,6 +1152,8 @@ bool  DOOM::PlayerThing::control(DOOM::PlayerThing::Control action, bool pressed
       return (pressed == true) ? Game::Window::Instance().joystick().buttonPressed(controller - 1, 6) : Game::Window::Instance().joystick().buttonDown(controller - 1, 8);
     else if (action == DOOM::PlayerThing::Control::ControlMode)
       return (pressed == true) ? Game::Window::Instance().joystick().buttonPressed(controller - 1, 3) : Game::Window::Instance().joystick().buttonDown(controller - 1, 3);
+    else if (action == DOOM::PlayerThing::Control::ControlGrid)
+      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovX) != 0.f : Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovX) != 0.f;
     else if (action == DOOM::PlayerThing::Control::ControlZoom)
       return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovY) > 0.f : Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovY) > 0.f;
     else if (action == DOOM::PlayerThing::Control::ControlUnzoom)

@@ -75,7 +75,6 @@ namespace DOOM
     sf::Time          _radiation;       // Remaining time of radiation suit
     sf::Time          _sector;          // Time spent in damaging sector
     bool              _berserk;         // Berserker enabled flag
-    bool              _map;             // Computer map enabled flag
 
     DOOM::Enum::Weapon              _weapon;          // Current type of weapon
     DOOM::Enum::Weapon              _weaponNext;      // Next weapon to use
@@ -178,6 +177,7 @@ namespace DOOM
       ControlRun,           // Sprint button
       ControlAutomap,       // Toogle automap
       ControlMode,          // Change automap mode
+      ControlGrid,          // Toogle automap grid
       ControlZoom,          // Zoom automap
       ControlUnzoom,        // Unzoom automap
       ControlCount
