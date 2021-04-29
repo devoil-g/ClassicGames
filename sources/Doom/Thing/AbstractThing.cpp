@@ -4811,14 +4811,12 @@ DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type,
     floor = 0.f;
   else
     for (int16_t sector : sectors) {
-      if (doom.level.sectors[sector].floor_current > floor)
-	floor = doom.level.sectors[sector].floor_current;
-      if (doom.level.sectors[sector].ceiling_current < ceiling)
-	ceiling = doom.level.sectors[sector].ceiling_current;
+      floor = std::max(floor, doom.level.sectors[sector].floor_current);
+      ceiling = std::min(ceiling, doom.level.sectors[sector].ceiling_current);
     }
 
   // Set thing spawn Z position
-  position.z() = (this->flags & (DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling) ? ceiling - height : floor);
+  position.z() = ((this->flags & DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling) ? ceiling - height : floor);
 }
 
 bool  DOOM::AbstractThing::update(DOOM::Doom& doom, sf::Time elapsed)

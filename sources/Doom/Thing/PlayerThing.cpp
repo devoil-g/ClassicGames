@@ -236,6 +236,8 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom& doom, int id, int controller) :
   // Initial weapon
   _weaponNext = DOOM::Enum::Weapon::WeaponPistol;
   P_BringUpWeapon(doom);
+
+  // TODO: set player initial position.z()
 }
 
 void  DOOM::PlayerThing::updateRadiationSuit(DOOM::Doom& doom, sf::Time elapsed)
@@ -741,8 +743,6 @@ bool  DOOM::PlayerThing::pickupComputerMap()
   // Enable map
   automap.reveal = true;
 
-  // TODO: stuff here
-
   return true;
 }
 
@@ -1244,7 +1244,7 @@ void  DOOM::PlayerThing::A_Punch(DOOM::Doom& doom)
 {
   float atk_slope = camera.orientation + (Math::Random() - Math::Random()) * Math::Pi / 8.f;
   float atk_angle = angle + (Math::Random() - Math::Random()) * Math::Pi / 8.f;
-  float atk_damage = (std::rand() % 10 + 1) / 2 * (_berserk == true ? 10.f : 1.f);
+  float atk_damage = (std::rand() % 10 + 1) / 2 * ((_berserk == true) ? 10.f : 1.f);
 
   // Attack nearby things
   bool success = P_LineAttack(

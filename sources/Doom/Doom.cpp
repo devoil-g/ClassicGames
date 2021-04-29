@@ -601,7 +601,8 @@ void  DOOM::Doom::buildLevelThings()
   }
 
   // Set player initial position in blockmap
-  for (const auto& player : level.players)
+  for (const auto& player : level.players) {
+    player.get().position = Math::Vector<3>();
     for (const auto& thing : level.things)
       if (thing->attributs.id == player.get().id) {
         level.blockmap.addThing(player, thing->position.convert<2>());
@@ -609,6 +610,7 @@ void  DOOM::Doom::buildLevelThings()
         player.get().angle = thing->angle;
         break;
       }
+  }
 }
 
 void  DOOM::Doom::buildLevelBlockmap()

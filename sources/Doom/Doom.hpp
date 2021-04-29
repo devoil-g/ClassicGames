@@ -791,14 +791,14 @@ namespace DOOM
       DOOM::Doom::Level::Statistics                                 statistics; // Statistics of level
       
 
-      std::set<int16_t>                                                         getSectors(const Math::Vector<2>& position, float radius) const;                                          // Return sector indexes at position/radius
-      std::set<int16_t>                                                         getSectors(const DOOM::AbstractThing& thing) const;                                                       // Return sector indexes that thing (position and radius/2) is over
-      std::pair<int16_t, int16_t>                                               getSector(const Math::Vector<2>& position, int16_t index = -1) const;                                     // Return sector/subsector at position
-      std::list<std::pair<float, int16_t>>                                      getLinedefs(const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit = 1.f) const;  // Return an ordered list of linedef index intersected by ray within distance limit
-      std::set<int16_t>                                                         getLinedefs(const Math::Vector<2>& position, float radius) const;                                         // Return a list of linedef index at a position/radius
-      std::list<std::reference_wrapper<DOOM::AbstractThing>>                    getThings(const DOOM::Doom::Level::Sector& sector, DOOM::Enum::ThingProperty properties) const;           // Return things in sector with corresponding properties
-      std::set<std::reference_wrapper<DOOM::AbstractThing>>                     getThings(const Math::Vector<2>& position, float radius) const;                                           // Return things at given position / radius
-      std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>  getThings(const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit = 1.f) const;    // Return an ordered list of things intersected by ray within distance limit
+      std::set<int16_t>                                                         getSectors(const Math::Vector<2>& position, float radius) const;                                                                                // Return sector indexes at position/radius
+      std::set<int16_t>                                                         getSectors(const DOOM::AbstractThing& thing) const;                                                                                             // Return sector indexes that thing (position and radius/2) is over
+      std::pair<int16_t, int16_t>                                               getSector(const Math::Vector<2>& position, int16_t index = -1) const;                                                                           // Return sector/subsector at position
+      std::list<std::pair<float, int16_t>>                                      getLinedefs(const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit = 1.f) const;                                        // Return an ordered list of linedef index intersected by ray within distance limit
+      std::set<int16_t>                                                         getLinedefs(const Math::Vector<2>& position, float radius) const;                                                                               // Return a list of linedef index at a position/radius
+      std::list<std::reference_wrapper<DOOM::AbstractThing>>                    getThings(const DOOM::Doom::Level::Sector& sector, DOOM::Enum::ThingProperty properties = DOOM::Enum::ThingProperty::ThingProperty_None) const; // Return things in sector with corresponding properties
+      std::set<std::reference_wrapper<DOOM::AbstractThing>>                     getThings(const Math::Vector<2>& position, float radius) const;                                                                                 // Return things at given position / radius
+      std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>  getThings(const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit = 1.f) const;                                          // Return an ordered list of things intersected by ray within distance limit
 
       Level();
       ~Level() = default;

@@ -31,10 +31,10 @@ namespace DOOM
       sector.floor_current = std::max(target, sector.floor_current - elapsed.asSeconds() * (speed / DOOM::Doom::Tic.asSeconds()));
 
       // Lower things standing in the sector
-      for (const auto& thing : doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable))
+      for (const auto& thing : doom.level.getThings(sector))
       {
         // Ignore if thing doesn't touch the floor or no gravity
-        if (thing.get().position.z() > start || thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Float)
+        if (thing.get().position.z() > start || (thing.get().flags & (DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_NoGravity)))
           continue;
 
         float thing_floor = sector.floor_current;
@@ -61,7 +61,7 @@ namespace DOOM
       sector.floor_current = std::min(sector.floor_current, target);
 
       float start = sector.floor_current;
-      auto  things = doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable);
+      auto  things = doom.level.getThings(sector);
       
       // Lower target to lowest thing obstacle
       for (const auto& thing : things)
@@ -182,10 +182,10 @@ namespace DOOM
       sector.ceiling_current = std::min(target, sector.ceiling_current + elapsed.asSeconds() * (speed / DOOM::Doom::Tic.asSeconds()));
 
       // Raise things standing in the sector
-      for (const auto& thing : doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable))
+      for (const auto& thing : doom.level.getThings(sector))
       {
         // Ignore if thing doesn't touch the floor or no gravity
-        if (thing.get().position.z() + thing.get().height < start || thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Float)
+        if (thing.get().position.z() + thing.get().height < start || (thing.get().flags & (DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_NoGravity)))
           continue;
 
         float thing_ceiling = sector.ceiling_current;
