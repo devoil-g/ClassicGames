@@ -4,7 +4,77 @@
 
 #include "Doom/Statusbar.hpp"
 
+const std::array<std::array<uint64_t, DOOM::Statusbar::FaceSprite::SpriteCount>, DOOM::Statusbar::FacePain::PainCount>  DOOM::Statusbar::_sprites{
+  std::array<uint64_t, DOOM::Statusbar::FaceSprite::SpriteCount>{ // 00-19 % health
+    DOOM::str_to_key("STFST40"),  // SpriteLookForward
+    DOOM::str_to_key("STFST41"),  // SpriteLookLeft
+    DOOM::str_to_key("STFST42"),  // SpriteLookRight
+    DOOM::str_to_key("STFKILL4"), // SpriteDamageForward
+    DOOM::str_to_key("STFTL40"),  // SpriteDamageLeft
+    DOOM::str_to_key("STFTR40"),  // SpriteDamageRight
+    DOOM::str_to_key("STFOUCH4"), // SpriteOuch
+    DOOM::str_to_key("STFEVL4"),  // SpriteEvil
+    DOOM::str_to_key("STFKILL4"), // SpriteRampage
+    DOOM::str_to_key("STFGOD0"),  // SpriteGod
+    DOOM::str_to_key("STFDEAD0")  // SpriteDead
+  },
+  std::array<uint64_t, DOOM::Statusbar::FaceSprite::SpriteCount>{ // 20-39 % health
+    DOOM::str_to_key("STFST30"),  // SpriteLookForward
+    DOOM::str_to_key("STFST31"),  // SpriteLookLeft
+    DOOM::str_to_key("STFST32"),  // SpriteLookRight
+    DOOM::str_to_key("STFKILL3"), // SpriteDamageForward
+    DOOM::str_to_key("STFTL30"),  // SpriteDamageLeft
+    DOOM::str_to_key("STFTR30"),  // SpriteDamageRight
+    DOOM::str_to_key("STFOUCH3"), // SpriteOuch
+    DOOM::str_to_key("STFEVL3"),  // SpriteEvil
+    DOOM::str_to_key("STFKILL3"), // SpriteRampage
+    DOOM::str_to_key("STFGOD0"),  // SpriteGod
+    DOOM::str_to_key("STFDEAD0")  // SpriteDead
+  },
+  std::array<uint64_t, DOOM::Statusbar::FaceSprite::SpriteCount>{ // 40-59 % health
+    DOOM::str_to_key("STFST20"),  // SpriteLookForward
+    DOOM::str_to_key("STFST21"),  // SpriteLookLeft
+    DOOM::str_to_key("STFST22"),  // SpriteLookRight
+    DOOM::str_to_key("STFKILL2"), // SpriteDamageForward
+    DOOM::str_to_key("STFTL20"),  // SpriteDamageLeft
+    DOOM::str_to_key("STFTR20"),  // SpriteDamageRight
+    DOOM::str_to_key("STFOUCH2"), // SpriteOuch
+    DOOM::str_to_key("STFEVL2"),  // SpriteEvil
+    DOOM::str_to_key("STFKILL2"), // SpriteRampage
+    DOOM::str_to_key("STFGOD0"),  // SpriteGod
+    DOOM::str_to_key("STFDEAD0")  // SpriteDead
+  },
+  std::array<uint64_t, DOOM::Statusbar::FaceSprite::SpriteCount>{ // 60-79 % health
+    DOOM::str_to_key("STFST10"),  // SpriteLookForward
+    DOOM::str_to_key("STFST11"),  // SpriteLookLeft
+    DOOM::str_to_key("STFST12"),  // SpriteLookRight
+    DOOM::str_to_key("STFKILL1"), // SpriteDamageForward
+    DOOM::str_to_key("STFTL10"),  // SpriteDamageLeft
+    DOOM::str_to_key("STFTR10"),  // SpriteDamageRight
+    DOOM::str_to_key("STFOUCH1"), // SpriteOuch
+    DOOM::str_to_key("STFEVL1"),  // SpriteEvil
+    DOOM::str_to_key("STFKILL1"), // SpriteRampage
+    DOOM::str_to_key("STFGOD0"),  // SpriteGod
+    DOOM::str_to_key("STFDEAD0")  // SpriteDead
+  },
+  std::array<uint64_t, DOOM::Statusbar::FaceSprite::SpriteCount>{ // 80-200 % health
+    DOOM::str_to_key("STFST00"),  // SpriteLookForward
+    DOOM::str_to_key("STFST01"),  // SpriteLookLeft
+    DOOM::str_to_key("STFST02"),  // SpriteLookRight
+    DOOM::str_to_key("STFKILL0"), // SpriteDamageForward
+    DOOM::str_to_key("STFTL00"),  // SpriteDamageLeft
+    DOOM::str_to_key("STFTR00"),  // SpriteDamageRight
+    DOOM::str_to_key("STFOUCH0"), // SpriteOuch
+    DOOM::str_to_key("STFEVL0"),  // SpriteEvil
+    DOOM::str_to_key("STFKILL0"), // SpriteRampage
+    DOOM::str_to_key("STFGOD0"),  // SpriteGod
+    DOOM::str_to_key("STFDEAD0")  // SpriteDead
+  }
+};
+
 DOOM::Statusbar::Statusbar(const DOOM::Doom& doom, int id) :
+  _face{ 0, 1, DOOM::Statusbar::FaceSprite::SpriteLookForward },
+  _elapsed(sf::Time::Zero),
   id(id),
   ammo(0),
   health(0),
@@ -21,7 +91,41 @@ DOOM::Statusbar::Statusbar(const DOOM::Doom& doom, int id) :
 
 void  DOOM::Statusbar::update(sf::Time elapsed)
 {
-  // TODO: update face animation
+  // Does nothing if state is infinite
+  if (_face.duration == 0) {
+    _elapsed = sf::Time::Zero;
+    return;
+  }
+
+  // Increment time counter
+  _elapsed += elapsed;
+
+  while (_elapsed >= DOOM::Doom::Tic * (float)_face.duration) {
+    _elapsed -= DOOM::Doom::Tic * (float)_face.duration;
+
+    int                         r = std::rand() % 3;
+    DOOM::Statusbar::FaceSprite face;
+
+    // Choose random looking direction
+    if (r == 0)
+      face = DOOM::Statusbar::FaceSprite::SpriteLookForward;
+    else if (r == 1)
+      face = DOOM::Statusbar::FaceSprite::SpriteLookLeft;
+    else
+      face = DOOM::Statusbar::FaceSprite::SpriteLookRight;
+
+    // Apply new state
+    setFace(10, { 0, 35 / 2, face });
+  }
+}
+
+void  DOOM::Statusbar::setFace(unsigned int priority, const DOOM::Statusbar::Face& state)
+{
+  // Check priority order
+  if (priority > _face.priority) {
+    _face = state;
+    _elapsed = sf::Time::Zero;
+  }
 }
 
 void  DOOM::Statusbar::render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const
@@ -71,6 +175,10 @@ void  DOOM::Statusbar::renderWeapons(const DOOM::Doom& doom, sf::Image& target, 
 void  DOOM::Statusbar::renderFace(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const
 {
   // TODO: animate face
+
+  const auto& texture = doom.resources.getMenu(_sprites[std::clamp((int)(health / 20.f), 0, (int)_sprites.size() - 1)][(health > 0.f) ? _face.sprite : DOOM::Statusbar::FaceSprite::SpriteDead]);
+
+  renderTexture(doom, target, rect, texture, 143 - texture.left, 0 - texture.top, palette);
 }
 
 void  DOOM::Statusbar::renderArmor(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const

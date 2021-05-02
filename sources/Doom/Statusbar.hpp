@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include <SFML/Graphics/Image.hpp>
 
 #include "Doom/Doom.hpp"
@@ -9,14 +11,56 @@ namespace DOOM
   class Statusbar
   {
   public:
-    const int                                                   id;       // Player ID in game
-    int                                                         ammo;     // Ammo count
-    float                                                       health;   // Health percentage
-    float                                                       armor;    // Armor percentage
-    std::array<bool, DOOM::Enum::WeaponCount>                   weapons;  // Currently owned weapon
-    std::array<DOOM::Enum::KeyType, DOOM::Enum::KeyColorCount>  keys;     // Currently owned keys
-    std::array<unsigned int, DOOM::Enum::AmmoCount>             ammos;    // Current number of ammos in inventory
-    std::array<unsigned int, DOOM::Enum::AmmoCount>             maximum;  // Maximum number of ammos in inventory
+    enum FaceSprite
+    {
+      SpriteLookForward,    // Idle, looking forward
+      SpriteLookLeft,       // Idle, looking left
+      SpriteLookRight,      // Idle, looking right
+      SpriteDamageForward,  // Taking damage from front/bottom
+      SpriteDamageLeft,     // Taking damage from left
+      SpriteDamageRight,    // Taking damage from right
+      SpriteOuch,           // Taking massive damage
+      SpriteEvil,           // Pick-up a new weapon
+      SpriteRampage,        // Continuous shooting
+      SpriteGod,            // Invincible
+      SpriteDead,           // Dead player
+
+      SpriteCount
+    };
+
+    struct Face
+    {
+      unsigned int                priority; // Priority level of state
+      unsigned int                duration; // State duration (in tics, 0 when infinite)
+      DOOM::Statusbar::FaceSprite sprite;    // State to be displayed
+    };
+
+  private:
+    enum FacePain
+    {
+      Pain80 = 80,  // Completely healthy
+      Pain60 = 60,  // Bloody nose, hair slightly mussed
+      Pain40 = 40,  // Face swollen, grimacing
+      Pain20 = 20,  // Eyes bloodshot, face dirty and bleeding
+      Pain0 = 0,    // Similar to 20-39%, but even bloodier
+
+      PainCount = 5
+    };
+    
+  static const std::array<std::array<uint64_t, DOOM::Statusbar::FaceSprite::SpriteCount>, DOOM::Statusbar::FacePain::PainCount> _sprites; // Face sprites
+
+  DOOM::Statusbar::Face _face;    // Face of player
+  sf::Time              _elapsed; // Time since begining of face state
+
+  public:
+    const int                                                   id;               // Player ID in game
+    int                                                         ammo;             // Ammo count
+    float                                                       health;           // Health percentage
+    float                                                       armor;            // Armor percentage
+    std::array<bool, DOOM::Enum::WeaponCount>                   weapons;          // Currently owned weapon
+    std::array<DOOM::Enum::KeyType, DOOM::Enum::KeyColorCount>  keys;             // Currently owned keys
+    std::array<unsigned int, DOOM::Enum::AmmoCount>             ammos;            // Current number of ammos in inventory
+    std::array<unsigned int, DOOM::Enum::AmmoCount>             maximum;          // Maximum number of ammos in inventory
 
   private:
     void  renderBackground(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const;
@@ -36,6 +80,8 @@ namespace DOOM
     Statusbar() = delete;
     Statusbar(const Statusbar&) = delete;
     ~Statusbar() = default;
+
+    void  setFace(unsigned int priority, const DOOM::Statusbar::Face& state); // Change current face
 
     void  update(sf::Time elapsed);                                                                         // Update statusbar
     void  render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const; // Render statusbar to target image

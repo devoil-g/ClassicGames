@@ -143,7 +143,7 @@ namespace Math
       return Math::Vector<vSize>(*this) -= v;
     }
 
-    inline float  length() const  // Return ray length (* accuracy)
+    inline float  length() const  // Return ray length
     {
       float r = 0.f;
 
@@ -153,7 +153,7 @@ namespace Math
       return std::sqrt(r);
     }
 
-    static inline float cos(const Math::Vector<vSize>& A, const Math::Vector<vSize>& B) // Calculate cosinus between two vectors (* accuracy)
+    static inline float cos(const Math::Vector<vSize>& A, const Math::Vector<vSize>& B) // Calculate cosinus between two vectors
     {
       float l = 0.f, m = 0.f;
 
@@ -177,7 +177,7 @@ namespace Math
       return std::atan2f(v.y(), v.x());
     }
 
-    static inline float angle(const Math::Vector<vSize>& A, const Math::Vector<vSize>& B) // Calculate angle (radian) between two rays (* accuracy)
+    static inline float angle(const Math::Vector<vSize>& A, const Math::Vector<vSize>& B) // Calculate angle (radian) between two rays
     {
       return std::acos(Math::Vector<vSize>::cos(A, B));
     }

@@ -202,7 +202,7 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom& doom, int id, int controller) :
   _sector(sf::Time::Zero),
   _berserk(false),
   id(id),
-  _weapon(DOOM::Enum::Weapon::WeaponPistol), _weaponNext(DOOM::Enum::Weapon::WeaponPistol), _weaponState(_attributs[_weapon].up), _weaponElapsed(sf::Time::Zero), _weaponSound(Game::Sound::Instance().get()), _weaponPosition(), _weaponRefire(false), _weaponFire(false),
+  _weapon(DOOM::Enum::Weapon::WeaponPistol), _weaponNext(DOOM::Enum::Weapon::WeaponPistol), _weaponState(_attributs[_weapon].up), _weaponElapsed(sf::Time::Zero), _weaponRampage(sf::Time::Zero), _weaponSound(Game::Sound::Instance().get()), _weaponPosition(), _weaponRefire(false), _weaponFire(false),
   _flash(0), _flashState(DOOM::PlayerThing::WeaponState::State_None), _flashElapsed(sf::Time::Zero),
   _palettePickup(sf::Time::Zero), _paletteDamage(sf::Time::Zero), _paletteBerserk(sf::Time::Zero),
   controller(controller),
@@ -258,6 +258,9 @@ void  DOOM::PlayerThing::updateInvulnerability(DOOM::Doom& doom, sf::Time elapse
 {
   // Decrement timer
   _invulnerability = std::max(sf::seconds(0.f), _invulnerability - elapsed);
+
+  if (_invulnerability > sf::Time::Zero)
+    statusbar.setFace(4, { 4, 1, DOOM::Statusbar::FaceSprite::SpriteGod });
 }
 
 void  DOOM::PlayerThing::updateInvisibility(DOOM::Doom& doom, sf::Time elapsed)
@@ -290,6 +293,9 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
   if (control(DOOM::PlayerThing::Control::ControlAttack, true) == true)
     _weaponFire = true;
   
+  // Update statusbar face
+  statusbar.update(elapsed);
+
   // Update timers
   updateInvulnerability(doom, elapsed);
   updateInvisibility(doom, elapsed);
@@ -310,10 +316,6 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
   // Update camera position
   camera.position = position;
   camera.position.z() += height * 0.73f;
-
-  // Update status bar (TODO: complete this)
-  statusbar.health = health;
-  statusbar.ammo = (_attributs[_weapon].ammo == DOOM::Enum::Ammo::AmmoNone) ? 0 : statusbar.ammos[_attributs[_weapon].ammo];
 
   DOOM::Doom::Level::Sector& sector = doom.level.sectors[doom.level.getSector(position.convert<2>()).first];
 
@@ -346,6 +348,10 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
       break;
     }
   }
+
+  // Update statusbar data
+  statusbar.health = health;
+  statusbar.ammo = (_attributs[_weapon].ammo == DOOM::Enum::Ammo::AmmoNone) ? 0 : statusbar.ammos[_attributs[_weapon].ammo];
 
   // Always return false as a player is never deleted
   return false;
@@ -825,6 +831,9 @@ bool  DOOM::PlayerThing::pickupWeapon(DOOM::Enum::Weapon type)
   statusbar.weapons[type] = true;
   setWeapon(type);
 
+  // Set statusbar face smiling
+  statusbar.setFace(9, { 8, 70, DOOM::Statusbar::FaceSprite::SpriteEvil });
+
   // Increase pick-up flash
   _palettePickup += DOOM::Doom::Tic * 6.f;
 
@@ -954,6 +963,35 @@ void  DOOM::PlayerThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker,
   // Apply remaining damage
   DOOM::AbstractThing::damage(doom, attacker, origin, damage - protection);
 
+  // Set statusbar face
+  if (&origin == this) {
+    if (damage - protection > 20.f)
+      statusbar.setFace(7, { 7, 35, DOOM::Statusbar::FaceSprite::SpriteOuch });
+    else
+      statusbar.setFace(7, { 6, 35, DOOM::Statusbar::FaceSprite::SpriteDamageForward });
+  }
+  else {
+    if (damage - protection > 20.f)
+      statusbar.setFace(8, { 7, 35, DOOM::Statusbar::FaceSprite::SpriteOuch });
+    else {
+      Math::Vector<2> player(std::cos(angle), std::sin(angle));
+      Math::Vector<2> ennemy(origin.position.convert<2>() - position.convert<2>());
+      float           dir = Math::Vector<2>::angle(player, ennemy);
+
+      std::cout << "dir: " << dir << std::endl;
+
+      // Find direction to damage origin
+      if (dir > +Math::Pi * 1.f / 4.f && dir < +Math::Pi * 3.f / 4.f) {
+        if (Math::Vector<2>::cos(Math::Vector<2>(-player.y(), +player.x()), ennemy) > 0.f)
+          statusbar.setFace(8, { 7, 35, DOOM::Statusbar::FaceSprite::SpriteDamageLeft });
+        else
+          statusbar.setFace(8, { 7, 35, DOOM::Statusbar::FaceSprite::SpriteDamageRight });
+      }
+      else
+        statusbar.setFace(8, { 7, 35, DOOM::Statusbar::FaceSprite::SpriteDamageForward });
+    }
+  }
+
   // Red flash
   _paletteDamage += DOOM::Doom::Tic * (damage - protection);
 
@@ -964,6 +1002,10 @@ void  DOOM::PlayerThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker,
 
 void  DOOM::PlayerThing::damageSector(DOOM::Doom& doom, sf::Time elapsed, float damage, bool end)
 {
+  // Does nothing when dead
+  if (health <= 0.f)
+    return;
+
   // Add elapsed time to sector timer
   _sector += elapsed;
 
@@ -994,6 +1036,12 @@ void  DOOM::PlayerThing::damageSector(DOOM::Doom& doom, sf::Time elapsed, float 
 
     // Apply remaining damage
     DOOM::AbstractThing::damage(doom, *this, dmg);
+
+    // Set statusbar face
+    if (dmg > 20.f)
+      statusbar.setFace(7, { 7, 35, DOOM::Statusbar::FaceSprite::SpriteOuch });
+    else
+      statusbar.setFace(7, { 6, 35, DOOM::Statusbar::FaceSprite::SpriteDamageForward });
 
     // Red flash
     _paletteDamage += DOOM::Doom::Tic * dmg;
@@ -1071,6 +1119,15 @@ void  DOOM::PlayerThing::updateWeapon(DOOM::Doom& doom, sf::Time elapsed)
     _weaponElapsed -= DOOM::Doom::Tic * (sf::Int64)_states[_weaponState].duration;
     setWeaponState(doom, _states[_weaponState].next);
   }
+
+  // Statusbar face rampage
+  if (control(DOOM::PlayerThing::Control::ControlAttack) == true) {
+    _weaponRampage += elapsed;
+    if (_weaponRampage > DOOM::Doom::Tic * 70.f)
+      statusbar.setFace(6, { 5, 1, DOOM::Statusbar::FaceSprite::SpriteRampage });
+  }
+  else
+    _weaponRampage = sf::Time::Zero;
 }
 
 bool  DOOM::PlayerThing::setWeapon(DOOM::Enum::Weapon weapon)
