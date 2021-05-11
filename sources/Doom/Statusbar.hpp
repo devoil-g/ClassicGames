@@ -76,9 +76,8 @@ namespace DOOM
     void  renderTexture(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, const DOOM::Doom::Resources::Texture& texture, int x, int y, int16_t palette) const;  // Render texture at given non-scaled coordinates
 
   public:
-    Statusbar(const DOOM::Doom& doom, int id);
     Statusbar() = delete;
-    Statusbar(const Statusbar&) = delete;
+    Statusbar(const DOOM::Doom& doom, int id);
     ~Statusbar() = default;
 
     void  setFace(unsigned int priority, const DOOM::Statusbar::Face& state); // Change current face

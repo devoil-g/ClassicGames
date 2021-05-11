@@ -4767,7 +4767,7 @@ const std::array<Math::Vector<2>, DOOM::AbstractThing::Direction::DirectionNumbe
 DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Thing& thing) :
   DOOM::AbstractThing(
     doom,
-    (DOOM::Enum::ThingType)std::distance(_attributs.cbegin(), std::find_if(_attributs.cbegin(), _attributs.cend(), [thing](const Attributs& attributs) { return attributs.id == thing.type; })),
+    id_to_type(thing.type),
     (DOOM::Enum::ThingFlag)thing.flag,
     (float)thing.x,
     (float)thing.y,
@@ -4817,6 +4817,23 @@ DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type,
 
   // Set thing spawn Z position
   position.z() = ((this->flags & DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling) ? ceiling - height : floor);
+}
+
+DOOM::Enum::ThingType DOOM::AbstractThing::id_to_type(int16_t id)
+{
+  // Find index of thing with given id
+  for (int index = 0; index < _attributs.size(); index++)
+    if (_attributs[index].id == id)
+      return (DOOM::Enum::ThingType)index;
+
+  // Id not found
+  throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+}
+
+int16_t               DOOM::AbstractThing::type_to_id(DOOM::Enum::ThingType type)
+{
+  // Return WAD id of given type
+  return _attributs[type].id;
 }
 
 bool  DOOM::AbstractThing::update(DOOM::Doom& doom, sf::Time elapsed)

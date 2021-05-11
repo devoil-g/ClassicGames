@@ -201,6 +201,8 @@ namespace DOOM
     PlayerThing(DOOM::Doom& doom, int id, int controller);
     ~PlayerThing() = default;
 
+    void  reset(DOOM::Doom& doom, bool hard = false);           // Reset player to begin level
+
     bool  update(DOOM::Doom& doom, sf::Time elapsed) override;  // Update player using controller, alway return false as a player thing is never deleted
     bool  key(DOOM::Enum::KeyColor color) const override;       // Return true if player has the key
 

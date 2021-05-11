@@ -201,10 +201,10 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom& doom, int id, int controller) :
   _radiation(sf::Time::Zero),
   _sector(sf::Time::Zero),
   _berserk(false),
-  id(id),
   _weapon(DOOM::Enum::Weapon::WeaponPistol), _weaponNext(DOOM::Enum::Weapon::WeaponPistol), _weaponState(_attributs[_weapon].up), _weaponElapsed(sf::Time::Zero), _weaponRampage(sf::Time::Zero), _weaponSound(Game::Sound::Instance().get()), _weaponPosition(), _weaponRefire(false), _weaponFire(false),
   _flash(0), _flashState(DOOM::PlayerThing::WeaponState::State_None), _flashElapsed(sf::Time::Zero),
   _palettePickup(sf::Time::Zero), _paletteDamage(sf::Time::Zero), _paletteBerserk(sf::Time::Zero),
+  id(id),
   controller(controller),
   camera(),
   statusbar(doom, id),
@@ -217,8 +217,49 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom& doom, int id, int controller) :
   // Register player in DOOM
   doom.level.players.push_back(std::reference_wrapper<DOOM::PlayerThing>(*this));
 
-  // Set player initial position
-  for (const std::unique_ptr<DOOM::AbstractThing> & thing : doom.level.things)
+  // Reset every player status
+  reset(doom, true);
+}
+
+void  DOOM::PlayerThing::reset(DOOM::Doom& doom, bool hard)
+{
+  _running = false;
+  _automap = false;
+  _armor; // Keep armor
+  _invulnerability = sf::Time::Zero;
+  _invisibility = sf::Time::Zero;
+  _light = sf::Time::Zero;
+  _radiation = sf::Time::Zero;
+  _sector = sf::Time::Zero;
+  _berserk = false;
+
+  _weapon; // Keep current weapon
+  _weaponNext; // Keep current weapon
+  _weaponState; // Keep current weapon
+  _weaponElapsed = sf::Time::Zero;
+  _weaponRampage = sf::Time::Zero;
+  _weaponSound; // Keep sound
+  _weaponPosition; // Reset later
+  _weaponRefire = false;
+  _weaponFire = false;
+
+  _flash = 0;
+  _flashState = DOOM::PlayerThing::WeaponState::State_None;
+  _flashElapsed = sf::Time::Zero;
+
+  _palettePickup = sf::Time::Zero;
+  _paletteDamage = sf::Time::Zero;
+  _paletteBerserk = sf::Time::Zero;
+
+  statusbar.keys = { DOOM::Enum::KeyType::KeyTypeNone };
+  statusbar.setFace(10, { 0, 1, DOOM::Statusbar::FaceSprite::SpriteLookForward });
+
+  // Base components
+  _thrust = { 0.f, 0.f, 0.f };
+  height = attributs.height;
+
+  // Set player position
+  for (const std::unique_ptr<DOOM::AbstractThing>& thing : doom.level.things)
     if (thing->attributs.id == id) {
       doom.level.blockmap.moveThing(*this, position.convert<2>(), thing->position.convert<2>());
       position = thing->position;
@@ -229,15 +270,28 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom& doom, int id, int controller) :
   // Update camera position
   camera.position = position;
   camera.position.z() += height * 0.73f;
+  camera.angle = angle;
+  camera.orientation = 0.f;
 
-  // Initial ammo
-  statusbar.ammos[DOOM::Enum::Ammo::AmmoBullet] = 50;
+  // Hard reset
+  if (hard == true || health <= 0.f) {
+    _armor = DOOM::Enum::Armor::ArmorNone;
+    _weapon = DOOM::Enum::Weapon::WeaponPistol;
+    _weaponNext = DOOM::Enum::Weapon::WeaponPistol;
+    health = (float)attributs.spawnhealth;
+    statusbar.ammo = 50;
+    statusbar.health = health;
+    statusbar.armor = 0;
+    statusbar.ammo = 50;
+    statusbar.ammos = { 0, 0, 0, 0 };
+    statusbar.weapons = { false };
+    statusbar.ammos[DOOM::Enum::Ammo::AmmoBullet] = 50;
+    statusbar.maximum = { 200, 50, 50, 300 };
+  }
 
-  // Initial weapon
-  _weaponNext = DOOM::Enum::Weapon::WeaponPistol;
+  // Raise weapon
+  _weaponNext = _weapon;
   P_BringUpWeapon(doom);
-
-  // TODO: set player initial position.z()
 }
 
 void  DOOM::PlayerThing::updateRadiationSuit(DOOM::Doom& doom, sf::Time elapsed)
@@ -316,6 +370,7 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
   // Update camera position
   camera.position = position;
   camera.position.z() += height * 0.73f;
+  camera.angle = angle;
 
   DOOM::Doom::Level::Sector& sector = doom.level.sectors[doom.level.getSector(position.convert<2>()).first];
 
@@ -1124,7 +1179,7 @@ void  DOOM::PlayerThing::updateWeapon(DOOM::Doom& doom, sf::Time elapsed)
   if (control(DOOM::PlayerThing::Control::ControlAttack) == true) {
     _weaponRampage += elapsed;
     if (_weaponRampage > DOOM::Doom::Tic * 70.f)
-      statusbar.setFace(6, { 5, 1, DOOM::Statusbar::FaceSprite::SpriteRampage });
+      statusbar.setFace(6, { 5, 8, DOOM::Statusbar::FaceSprite::SpriteRampage });
   }
   else
     _weaponRampage = sf::Time::Zero;

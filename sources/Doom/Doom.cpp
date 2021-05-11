@@ -194,10 +194,14 @@ std::list<std::pair<uint8_t, uint8_t>>  DOOM::Doom::getLevels() const
   return list;
 }
 
-void  DOOM::Doom::setLevel(const std::pair<uint8_t, uint8_t>& level)
+void  DOOM::Doom::setLevel(const std::pair<uint8_t, uint8_t>& level, bool reset)
 {
   // Build level
   buildLevel(level);
+
+  // Reset players
+  for (const auto& player : this->level.players)
+    player.get().reset(*this, reset);
 }
 
 void  DOOM::Doom::addPlayer(int controller)
@@ -585,15 +589,15 @@ void  DOOM::Doom::buildLevelThings()
   {
     // Only build thing of current skill level
     if (((thing.flag & DOOM::Enum::ThingFlag::FlagMultiplayer) == 0 &&
-      (((skill == DOOM::Enum::Skill::SkillBaby || skill == DOOM::Enum::Skill::SkillEasy) && thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel12) ||
-        ((skill == DOOM::Enum::Skill::SkillMedium) && thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel3) ||
-        ((skill == DOOM::Enum::Skill::SkillHard || skill == DOOM::Enum::Skill::SkillNightmare) && thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel45))) ||
+      (((skill == DOOM::Enum::Skill::SkillBaby || skill == DOOM::Enum::Skill::SkillEasy) && (thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel12)) ||
+        ((skill == DOOM::Enum::Skill::SkillMedium) && (thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel3)) ||
+        ((skill == DOOM::Enum::Skill::SkillHard || skill == DOOM::Enum::Skill::SkillNightmare) && (thing.flag & DOOM::Enum::ThingFlag::FlagSkillLevel45)))) ||
       // NOTE: ugly fix for when spawn difficulty setting is not given
-      (thing.type == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWN1 ||
-        thing.type == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWN2 ||
-        thing.type == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWN3 ||
-        thing.type == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWN4 ||
-        thing.type == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWNDM))
+      (DOOM::AbstractThing::id_to_type(thing.type) == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWN1 ||
+        DOOM::AbstractThing::id_to_type(thing.type) == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWN2 ||
+        DOOM::AbstractThing::id_to_type(thing.type) == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWN3 ||
+        DOOM::AbstractThing::id_to_type(thing.type) == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWN4 ||
+        DOOM::AbstractThing::id_to_type(thing.type) == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWNDM))
     {
       // Convert thing from WAD
       auto  converted = DOOM::AbstractThing::factory(*this, thing);
@@ -601,21 +605,10 @@ void  DOOM::Doom::buildLevelThings()
       // Check for error
       if (converted.get() == nullptr)
         throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-      else
-        level.things.emplace_back(std::move(converted));
+      
+      // Push thing in level
+      level.things.emplace_back(std::move(converted));
     }
-  }
-
-  // Set player initial position in blockmap
-  for (const auto& player : level.players) {
-    player.get().position = Math::Vector<3>();
-    for (const auto& thing : level.things)
-      if (thing->attributs.id == player.get().id) {
-        level.blockmap.addThing(player, thing->position.convert<2>());
-        player.get().position = thing->position;
-        player.get().angle = thing->angle;
-        break;
-      }
   }
 }
 

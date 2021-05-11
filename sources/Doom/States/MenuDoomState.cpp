@@ -114,7 +114,7 @@ DOOM::MenuDoomState::MenuDoomState(Game::StateMachine& machine, DOOM::Doom& doom
     if (thing->type == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWNDM)
       spawns.emplace_back(thing.get());
 
-  // Fallback player spawn point when no deathmatch spawn
+  // Fallback to player spawn point when no deathmatch spawn
   if (spawns.empty() == true)
     for (const auto& thing : _doom.level.things)
       if (thing->type == DOOM::Enum::ThingType::ThingType_PLAYER_SPAWN1 || 
@@ -170,7 +170,7 @@ void  DOOM::MenuDoomState::start()
   sf::Image start(_doom.image);
 
   // Load requested level
-  _doom.setLevel({ _episode, 1 });
+  _doom.setLevel({ _episode, 1 }, true);
 
   // Save references as 'this' is gonna be deleted
   Game::StateMachine& machine = _machine;

@@ -850,8 +850,8 @@ namespace DOOM
     void  load(const std::string& file);  // Load WAD file and build resources
     void  update(sf::Time elapsed);       // Update current level and resources
 
-    std::list<std::pair<uint8_t, uint8_t>>  getLevels() const;                                  // Return list of available level in WAD
-    void                                    setLevel(const std::pair<uint8_t, uint8_t>& level); // Build specified level from WAD, return true if successful
+    std::list<std::pair<uint8_t, uint8_t>>  getLevels() const;                                                      // Return list of available level in WAD
+    void                                    setLevel(const std::pair<uint8_t, uint8_t>& level, bool reset = false); // Build specified level from WAD, use reset to hard reset players
 
     void  addPlayer(int controller);  // Add player to current game
 
