@@ -101,19 +101,19 @@ namespace DOOM
     sf::Time  _paletteDamage;
     sf::Time  _paletteBerserk;
 
-    void  updateKeyboard(DOOM::Doom& doom, sf::Time elapsed);       // Update using keyboard
-    void  updateKeyboardTurn(DOOM::Doom& doom, sf::Time elapsed);   // Update using keyboard
-    void  updateKeyboardMove(DOOM::Doom& doom, sf::Time elapsed);   // Update using keyboard
-    void  updateKeyboardWeapon(DOOM::Doom& doom, sf::Time elapsed); // Update using keyboard
-    void  updateController(DOOM::Doom& doom, sf::Time elapsed);     // Update using game pad
-    void  updateControllerTurn(DOOM::Doom& doom, sf::Time elapsed); // Update using game pad
-    void  updateControllerMove(DOOM::Doom& doom, sf::Time elapsed); // Update using game pad
+    void  updateKeyboard(DOOM::Doom& doom, sf::Time elapsed);         // Update using keyboard
+    void  updateKeyboardTurn(DOOM::Doom& doom, sf::Time elapsed);     // Update using keyboard
+    void  updateKeyboardMove(DOOM::Doom& doom, sf::Time elapsed);     // Update using keyboard
+    void  updateKeyboardWeapon(DOOM::Doom& doom, sf::Time elapsed);   // Update using keyboard
+    void  updateController(DOOM::Doom& doom, sf::Time elapsed);       // Update using game pad
+    void  updateControllerTurn(DOOM::Doom& doom, sf::Time elapsed);   // Update using game pad
+    void  updateControllerMove(DOOM::Doom& doom, sf::Time elapsed);   // Update using game pad
 
     void  updateTurn(DOOM::Doom& doom, sf::Time elapsed, float horizontal, float vertical); // Update player angle
     void  updateMove(DOOM::Doom& doom, sf::Time elapsed, Math::Vector<2> movement);         // Update player position
     void  updateUse(DOOM::Doom& doom, sf::Time elapsed);                                    // Perform use action
-    void  updateFire(DOOM::Doom& doom, sf::Time elapsed);                                   // Perform gunfire action
     void  updateAutomap(DOOM::Doom& doom, sf::Time elapsed);                                // Update player automap
+    void  updateWeapon(DOOM::Doom& doom, sf::Time elapsed, int inc);                        // Switch to previous/next weapon
     
     void  updateInvulnerability(DOOM::Doom& doom, sf::Time elapsed);          // Update invulnerability timer
     void  updateInvisibility(DOOM::Doom& doom, sf::Time elapsed);             // Update invisibility timer
@@ -173,14 +173,17 @@ namespace DOOM
 
     enum Control
     {
-      ControlAttack,        // Attack/fire button
-      ControlUse,           // Use button
-      ControlRun,           // Sprint button
-      ControlAutomap,       // Toogle automap
-      ControlMode,          // Change automap mode
-      ControlGrid,          // Toogle automap grid
-      ControlZoom,          // Zoom automap
-      ControlUnzoom,        // Unzoom automap
+      ControlAttack,    // Attack/fire button
+      ControlUse,       // Use button
+      ControlRun,       // Sprint button
+      ControlNext,      // Next weapon
+      ControlPrevious,  // Previous weapon
+      ControlAutomap,   // Toogle automap
+      ControlMode,      // Change automap mode
+      ControlGrid,      // Toogle automap grid
+      ControlZoom,      // Zoom automap
+      ControlUnzoom,    // Unzoom automap
+
       ControlCount
     };
 

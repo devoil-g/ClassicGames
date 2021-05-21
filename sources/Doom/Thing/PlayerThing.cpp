@@ -284,7 +284,7 @@ void  DOOM::PlayerThing::reset(DOOM::Doom& doom, bool hard)
     statusbar.armor = 0;
     statusbar.ammo = 50;
     statusbar.ammos = { 0, 0, 0, 0 };
-    statusbar.weapons = { false };
+    statusbar.weapons = { true, true, false, false, false, false, false, false, false };
     statusbar.ammos[DOOM::Enum::Ammo::AmmoBullet] = 50;
     statusbar.maximum = { 200, 50, 50, 300 };
   }
@@ -342,6 +342,16 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
     updateKeyboard(doom, elapsed);
   else if (controller > 0)
     updateController(doom, elapsed);
+
+  // Switch weapon
+  if (control(DOOM::PlayerThing::Control::ControlNext, true) == true)
+    updateWeapon(doom, elapsed, +1);
+  if (control(DOOM::PlayerThing::Control::ControlPrevious, true) == true)
+    updateWeapon(doom, elapsed, -1);
+
+  // Perform a use action
+  if (control(DOOM::PlayerThing::Control::ControlUse, true) == true)
+    updateUse(doom, elapsed);
 
   // Update BFG and rocket fire
   if (control(DOOM::PlayerThing::Control::ControlAttack, true) == true)
@@ -445,14 +455,6 @@ void  DOOM::PlayerThing::updateKeyboard(DOOM::Doom& doom, sf::Time elapsed)
   updateKeyboardTurn(doom, elapsed);
   updateKeyboardMove(doom, elapsed);
   updateKeyboardWeapon(doom, elapsed);
-
-  // Perform a use action
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::E) == true)
-    updateUse(doom, elapsed);
-
-  // Perform a fire action
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space) == true)
-    updateFire(doom, elapsed);
 }
 
 void  DOOM::PlayerThing::updateKeyboardTurn(DOOM::Doom& doom, sf::Time elapsed)
@@ -524,14 +526,6 @@ void  DOOM::PlayerThing::updateController(DOOM::Doom & doom, sf::Time elapsed)
 {
   updateControllerTurn(doom, elapsed);
   updateControllerMove(doom, elapsed);
-
-  // Perform a use action
-  if (Game::Window::Instance().joystick().buttonPressed(controller - 1, 1) == true)
-    updateUse(doom, elapsed);
-
-  // Perform a fire action
-  if (Game::Window::Instance().joystick().buttonPressed(controller - 1, 0) == true)
-    updateFire(doom, elapsed);
 }
 
 void  DOOM::PlayerThing::updateControllerTurn(DOOM::Doom & doom, sf::Time elapsed)
@@ -554,7 +548,7 @@ void  DOOM::PlayerThing::updateControllerMove(DOOM::Doom & doom, sf::Time elapse
   // Handle running (left stick click)
   if (movement.length() < 0.72f)
     _running = false;
-  if (Game::Window::Instance().joystick().buttonDown(controller - 1, 8) == true)
+  if (control(DOOM::PlayerThing::Control::ControlRun, true) == true)
     _running = true;
 
   // Apply movement to player position
@@ -633,8 +627,37 @@ void  DOOM::PlayerThing::updateUse(DOOM::Doom & doom, sf::Time elapsed)
   P_LineSwitch(doom, 64.f, position + Math::Vector<3>(0.f, 0.f, height / 2.f), Math::Vector<3>(std::cos(angle), std::sin(angle), std::tan(camera.orientation)));
 }
 
-void  DOOM::PlayerThing::updateFire(DOOM::Doom & doom, sf::Time elapsed)
-{}
+void  DOOM::PlayerThing::updateWeapon(DOOM::Doom& doom, sf::Time elapsed, int inc)
+{
+  // Check arguments
+  inc = std::clamp(inc, -1, +1);
+  if (inc == 0)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // Weapon order
+  static const std::array<DOOM::Enum::Weapon, DOOM::Enum::Weapon::WeaponCount>  order = {
+    DOOM::Enum::Weapon::WeaponFist,
+    DOOM::Enum::Weapon::WeaponChainsaw,
+    DOOM::Enum::Weapon::WeaponPistol,
+    DOOM::Enum::Weapon::WeaponShotgun,
+    DOOM::Enum::Weapon::WeaponSuperShotgun,
+    DOOM::Enum::Weapon::WeaponChaingun,
+    DOOM::Enum::Weapon::WeaponRocketLauncher,
+    DOOM::Enum::Weapon::WeaponPlasmaGun,
+    DOOM::Enum::Weapon::WeaponBFG9000
+  };
+
+  int index = 0;
+
+  // Find current weapon
+  while (index < order.size() && order[index] != _weaponNext)
+    index++;
+
+  // Get next weapon
+  for (int w = 1; w < order.size(); w++)
+    if (setWeapon(order[((index + w * inc) % (int)order.size() + (int)order.size()) % (int)order.size()]) == true)
+      return;
+}
 
 void  DOOM::PlayerThing::draw(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale)
 {
@@ -1033,8 +1056,6 @@ void  DOOM::PlayerThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker,
       Math::Vector<2> ennemy(origin.position.convert<2>() - position.convert<2>());
       float           dir = Math::Vector<2>::angle(player, ennemy);
 
-      std::cout << "dir: " << dir << std::endl;
-
       // Find direction to damage origin
       if (dir > +Math::Pi * 1.f / 4.f && dir < +Math::Pi * 3.f / 4.f) {
         if (Math::Vector<2>::cos(Math::Vector<2>(-player.y(), +player.x()), ennemy) > 0.f)
@@ -1238,6 +1259,10 @@ bool  DOOM::PlayerThing::control(DOOM::PlayerThing::Control action, bool pressed
       return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Key::E) : Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::E);
     else if (action == DOOM::PlayerThing::Control::ControlRun)
       return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Key::LShift) : Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::LShift);
+    else if (action == DOOM::PlayerThing::Control::ControlNext)
+      return false;
+    else if (action == DOOM::PlayerThing::Control::ControlPrevious)
+      return false;
     else if (action == DOOM::PlayerThing::Control::ControlAutomap)
       return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Key::Tab) : Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::Tab);
     else if (action == DOOM::PlayerThing::Control::ControlMode)
@@ -1260,6 +1285,10 @@ bool  DOOM::PlayerThing::control(DOOM::PlayerThing::Control action, bool pressed
       return (pressed == true) ? Game::Window::Instance().joystick().buttonPressed(controller - 1, 1) : Game::Window::Instance().joystick().buttonDown(controller - 1, 1);
     else if (action == DOOM::PlayerThing::Control::ControlRun)
       return (pressed == true) ? Game::Window::Instance().joystick().buttonPressed(controller - 1, 8) : Game::Window::Instance().joystick().buttonDown(controller - 1, 8);
+    else if (action == DOOM::PlayerThing::Control::ControlNext)
+      return (pressed == true) ? Game::Window::Instance().joystick().buttonPressed(controller - 1, 3) : Game::Window::Instance().joystick().buttonDown(controller - 1, 3);
+    else if (action == DOOM::PlayerThing::Control::ControlPrevious)
+      return (pressed == true) ? Game::Window::Instance().joystick().buttonPressed(controller - 1, 2) : Game::Window::Instance().joystick().buttonDown(controller - 1, 2);
     else if (action == DOOM::PlayerThing::Control::ControlAutomap)
       return (pressed == true) ? Game::Window::Instance().joystick().buttonPressed(controller - 1, 6) : Game::Window::Instance().joystick().buttonDown(controller - 1, 8);
     else if (action == DOOM::PlayerThing::Control::ControlMode)
