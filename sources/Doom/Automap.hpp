@@ -41,7 +41,6 @@ namespace DOOM
 
   public:
     Automap();
-    Automap(const Automap&) = delete;
     ~Automap() = default;
 
     void  render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette) const;  // Render automap to target image

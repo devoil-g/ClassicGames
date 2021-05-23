@@ -1,8 +1,8 @@
 #include <stdexcept>
 #include <iostream>
 
-#include "States/SplashState.hpp"
-#include "States/StateMachine.hpp"
+#include "Scenes/SplashScene.hpp"
+#include "Scenes/SceneMachine.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 #include "System/Sound.hpp"
@@ -25,11 +25,11 @@ namespace Game
 
   void  run()
   {
-    Game::StateMachine  game;
+    Game::SceneMachine  game;
     sf::Clock           clock;
 
     // Push initial state
-    game.push<Game::SplashState>();
+    game.push<Game::SplashScene>();
 
     // Run the game !
     while (Game::Window::Instance().window().isOpen()) {

@@ -273,12 +273,19 @@ void  DOOM::PlayerThing::reset(DOOM::Doom& doom, bool hard)
   camera.angle = angle;
   camera.orientation = 0.f;
 
+  // Reset automap
+  automap.position = position.convert<2>();
+  automap.angle = (automap.mode == DOOM::Automap::Mode::ModeRotation) ? angle : 0.f;
+  automap.reveal = false;
+
   // Hard reset
   if (hard == true || health <= 0.f) {
     _armor = DOOM::Enum::Armor::ArmorNone;
     _weapon = DOOM::Enum::Weapon::WeaponPistol;
     _weaponNext = DOOM::Enum::Weapon::WeaponPistol;
     health = (float)attributs.spawnhealth;
+    flags = attributs.properties;
+    height = attributs.height;
     statusbar.ammo = 50;
     statusbar.health = health;
     statusbar.armor = 0;
@@ -1082,11 +1089,10 @@ void  DOOM::PlayerThing::damageSector(DOOM::Doom& doom, sf::Time elapsed, float 
   if (health <= 0.f)
     return;
 
-  // Add elapsed time to sector timer
-  _sector += elapsed;
-
   // Damage player every 32 tics
-  while (_sector >= DOOM::Doom::Tic * (float)DOOM::PlayerThing::SectorSpeed) {
+  for (_sector += elapsed;
+    _sector >= DOOM::Doom::Tic * (float)DOOM::PlayerThing::SectorSpeed;
+    _sector -= DOOM::Doom::Tic * (float)DOOM::PlayerThing::SectorSpeed) {
     float dmg = damage;
     float protection = 0;
 
@@ -1125,8 +1131,6 @@ void  DOOM::PlayerThing::damageSector(DOOM::Doom& doom, sf::Time elapsed, float 
     // End game
     if (end == true && health < 11.f)
       doom.level.end = DOOM::Enum::End::EndNormal;
-
-    _sector -= DOOM::Doom::Tic * (float)DOOM::PlayerThing::SectorSpeed;
   }
 }
 

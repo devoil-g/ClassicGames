@@ -85,22 +85,22 @@ SET(GAME_DOOM_THING_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Thing/PlayerThing.hpp
 )
 SET(GAME_DOOM_STATES_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/DoomState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/DoomState.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/GameDoomState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/GameDoomState.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/IntermissionDoomState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/IntermissionDoomState.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/MenuDoomState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/MenuDoomState.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/SplashDoomState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/SplashDoomState.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/StartDoomState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/StartDoomState.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/TextDoomState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/TextDoomState.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/TransitionDoomState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/States/TransitionDoomState.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/DoomScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/DoomScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/GameDoomScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/GameDoomScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/IntermissionDoomScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/IntermissionDoomScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/MenuDoomScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/MenuDoomScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/SplashDoomScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/SplashDoomScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/StartDoomScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/StartDoomScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/TextDoomScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/TextDoomScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/TransitionDoomScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/TransitionDoomScene.hpp
 )
 SET(GAME_MATH_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.cpp
@@ -109,26 +109,26 @@ SET(GAME_MATH_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Vector.hpp
 )
 SET(GAME_STATES_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/StateMachine.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/StateMachine.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/AbstractState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/AbstractState.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/LoadingState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/LoadingState.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/MessageState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/MessageState.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/SplashState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/SplashState.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/StartState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/StartState.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/SceneMachine.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/SceneMachine.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/AbstractScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/AbstractScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/LoadingScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/LoadingScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/MessageScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/MessageScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/SplashScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/SplashScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/StartScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/StartScene.hpp
 )
 SET(GAME_STATES_MENU_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Menu/AbstractMenuState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Menu/AbstractMenuState.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Menu/MainMenuState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Menu/MainMenuState.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Menu/OptionsMenuState.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/States/Menu/OptionsMenuState.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/Menu/AbstractMenuScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/Menu/AbstractMenuScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/Menu/MainMenuScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/Menu/MainMenuScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/Menu/OptionsMenuScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/Menu/OptionsMenuScene.hpp
 )
 SET(GAME_SYSTEM_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Config.cpp
@@ -174,10 +174,10 @@ SOURCE_GROUP("\\Doom\\Flat\\" FILES ${GAME_DOOM_FLAT_SRCS})
 SOURCE_GROUP("\\Doom\\Linedef\\" FILES ${GAME_DOOM_LINEDEF_SRCS})
 SOURCE_GROUP("\\Doom\\Action\\" FILES ${GAME_DOOM_ACTION_SRCS})
 SOURCE_GROUP("\\Doom\\Thing\\" FILES ${GAME_DOOM_THING_SRCS})
-SOURCE_GROUP("\\Doom\\States\\" FILES ${GAME_DOOM_STATES_SRCS})
+SOURCE_GROUP("\\Doom\\Scenes\\" FILES ${GAME_DOOM_STATES_SRCS})
 SOURCE_GROUP("\\Math\\" FILES ${GAME_MATH_SRCS})
-SOURCE_GROUP("\\States\\" FILES ${GAME_STATES_SRCS})
-SOURCE_GROUP("\\States\\Menu\\" FILES ${GAME_STATES_MENU_SRCS})
+SOURCE_GROUP("\\Scenes\\" FILES ${GAME_STATES_SRCS})
+SOURCE_GROUP("\\Scenes\\Menu\\" FILES ${GAME_STATES_MENU_SRCS})
 SOURCE_GROUP("\\System\\" FILES ${GAME_SYSTEM_SRCS})
 SOURCE_GROUP("\\System\\Library\\" FILES ${GAME_SYSTEM_LIBRARY_SRCS})
 SOURCE_GROUP("\\Resources\\" FILES ${GAME_RSRC})
