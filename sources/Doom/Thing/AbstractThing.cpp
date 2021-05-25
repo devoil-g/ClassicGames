@@ -4782,7 +4782,7 @@ DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type,
   flags((DOOM::Enum::ThingProperty)(attributs.properties | ((flags & DOOM::Enum::ThingFlag::FlagAmbush) ? DOOM::Enum::ThingProperty::ThingProperty_Ambush : DOOM::Enum::ThingProperty::ThingProperty_None))),
   health((float)attributs.spawnhealth),
   height(attributs.height),
-  reactiontime(attributs.reactiontime),
+  reactiontime(doom.skill == DOOM::Enum::Skill::SkillNightmare ? 0 : attributs.reactiontime),
   move_direction(Direction::DirectionNone),
   move_count(0),
   _remove(false),
@@ -4868,8 +4868,23 @@ std::unique_ptr<DOOM::AbstractThing>  DOOM::AbstractThing::factory(DOOM::Doom & 
   return std::make_unique<DOOM::AbstractThing>(doom, thing);
 }
 
-void  DOOM::AbstractThing::teleport(DOOM::Doom & doom, const Math::Vector<2> & destination, float orientation)
+bool  DOOM::AbstractThing::teleport(DOOM::Doom& doom, const Math::Vector<2>& destination, float orientation, bool telefrag)
 {
+  // Telefrag this on lading or cancel jump
+  for (const auto& thing : doom.level.getThings(destination, (float)attributs.radius)) {
+    if (thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable) {
+      if (telefrag == true)
+        thing.get().damage(doom, 10000.f);
+      else
+        return false;
+    }
+  }
+
+  // Spawn teleport fog at start
+  doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, DOOM::Enum::ThingType::ThingType_TFOG, DOOM::Enum::ThingFlag::FlagNone, position.x(), position.y(), 0.f));
+  doom.level.things.back()->position.z() = position.z();
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_telept, doom.level.things.back()->position);
+
   // Cancel thrust
   _thrust = Math::Vector<3>();
 
@@ -4883,7 +4898,16 @@ void  DOOM::AbstractThing::teleport(DOOM::Doom & doom, const Math::Vector<2> & d
   // TODO: handle floating objects ?
   position.z() = doom.level.sectors[doom.level.getSector(destination).first].floor_current;
 
-  // TODO: telefrag monster on landing position
+  // Spawn teleport fog at end
+  doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, DOOM::Enum::ThingType::ThingType_TFOG, DOOM::Enum::ThingFlag::FlagNone, position.x() + std::cos(angle) * 20.f, position.y() + std::sin(angle) * 20.f, 0.f));
+  doom.level.things.back()->position.z() = position.z();
+  doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_telept, doom.level.things.back()->position);
+
+  // Wait after teleport
+  reactiontime = 18;
+  move_count = 0;
+
+  return true;
 }
 
 void  DOOM::AbstractThing::thrust(const Math::Vector<3> & acceleration)
@@ -4945,7 +4969,7 @@ void  DOOM::AbstractThing::A_SpawnFly(DOOM::Doom& doom)
     doom.level.things.back()->setState(doom, doom.level.things.back()->attributs.state_see);
 
   // Telefrag anything in this spot
-  doom.level.things.back()->teleport(doom, doom.level.things.back()->position.convert<2>(), doom.level.things.back()->angle);
+  doom.level.things.back()->teleport(doom, doom.level.things.back()->position.convert<2>(), doom.level.things.back()->angle, true);
 
   // Remove seft (spawn cube)
   setState(doom, State_None);
@@ -5450,6 +5474,7 @@ void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elaps
     _thrust.z() *= std::pow(0.90625f, elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
 
   // TODO: delete missile if colliding with sky
+  // TODO: player falling must bounce on the ground and grunt
 
   // Raise thing if below the floor
   if (position.z() < floor) {
@@ -5901,12 +5926,15 @@ bool  DOOM::AbstractThing::P_TryMove(DOOM::Doom& doom, const Math::Vector<2>& po
   if (!(flags & DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap))
     doom.level.blockmap.moveThing(*this, this->position.convert<2>(), position);
 
+  auto old_position = this->position.convert<2>();
+  
   // Walkover linedef
-  for (const std::pair<float, int16_t>& linedef_index : doom.level.getLinedefs(this->position.convert<2>(), position - this->position.convert<2>()))
+  for (const std::pair<float, int16_t>& linedef_index : doom.level.getLinedefs(old_position, position - old_position))
     doom.level.linedefs[linedef_index.second]->walkover(doom, *this);
 
   // Move thing
-  this->position.convert<2>() = position;
+  if (this->position.convert<2>() == old_position)
+    this->position.convert<2>() = position;
 
   return true;
 }
@@ -6642,6 +6670,9 @@ void  DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacke
   // Reset flying skull thrust
   if (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly)
     _thrust = Math::Vector<3>();
+
+  // We are awake now
+  reactiontime = 0;
 
   // Ignore thrust if thing is cheating or is attacked by player chainsaw
   // TDOO: check player chainsaw

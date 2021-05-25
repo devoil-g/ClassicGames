@@ -63,10 +63,11 @@ namespace DOOM
       float start = sector.floor_current;
       auto  things = doom.level.getThings(sector);
       
-      // Lower target to lowest thing obstacle
+      // Lower target to lowest shootable thing obstacle
       for (const auto& thing : things)
-        for (auto thing_index : doom.level.getSectors(thing.get()))
-          target = std::min(target, doom.level.sectors[thing_index].ceiling_current - thing.get().height);
+        if (thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable)
+          for (auto thing_index : doom.level.getSectors(thing.get()))
+            target = std::min(target, doom.level.sectors[thing_index].ceiling_current - thing.get().height);
 
       // Stop if already crushing things
       if (sector.floor_current >= target)
@@ -93,7 +94,7 @@ namespace DOOM
       sector.floor_current = std::min(sector.floor_current, target);
 
       float start = sector.floor_current;
-      auto  things = doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable);
+      auto  things = doom.level.getThings(sector);
 
       // Check that something is getting crushed
       {
@@ -101,8 +102,9 @@ namespace DOOM
 
         // Get lowest thing to crush
         for (const auto& thing : things)
-          for (auto thing_index : doom.level.getSectors(thing.get()))
-            thing_floor = std::min(thing_floor, doom.level.sectors[thing_index].ceiling_current - thing.get().height);
+          if (thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable)
+            for (auto thing_index : doom.level.getSectors(thing.get()))
+              thing_floor = std::min(thing_floor, doom.level.sectors[thing_index].ceiling_current - thing.get().height);
 
         // Stop if nothing to crush
         if (sector.floor_current < thing_floor)
@@ -117,6 +119,10 @@ namespace DOOM
       {
         // Raise thing
         thing.get().position.z() = std::max(thing.get().position.z(), std::min(sector.floor_current, thing.get().position.z() + sector.floor_current - start));
+
+        // Only crush shootable things
+        if (!(thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable))
+          continue;
 
         float thing_ceiling = sector.ceiling_current;
 
@@ -145,12 +151,13 @@ namespace DOOM
       sector.ceiling_current = std::max(sector.ceiling_current, target);
 
       float start = sector.ceiling_current;
-      auto  things = doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable);
+      auto  things = doom.level.getThings(sector);
 
-      // Raise target to highest thing obstacle
+      // Raise target to highest shootable thing obstacle
       for (const auto& thing : things)
-        for (auto thing_index : doom.level.getSectors(thing.get()))
-          target = std::max(target, doom.level.sectors[thing_index].floor_current + thing.get().height);
+        if (thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable)
+          for (auto thing_index : doom.level.getSectors(thing.get()))
+            target = std::max(target, doom.level.sectors[thing_index].floor_current + thing.get().height);
 
       // Stop if already crushing things
       if (sector.ceiling_current <= target)
@@ -212,13 +219,14 @@ namespace DOOM
       sector.ceiling_current = std::max(sector.ceiling_current, target);
 
       float start = sector.floor_current;
-      auto  things = doom.level.getThings(sector, DOOM::Enum::ThingProperty::ThingProperty_Shootable);
+      auto  things = doom.level.getThings(sector);
       float thing_ceiling = sector.floor_current;
 
-      // Get highest thing to crush
+      // Get highest shootable thing to crush
       for (const auto& thing : things)
-        for (auto thing_index : doom.level.getSectors(thing.get()))
-          thing_ceiling = std::max(thing_ceiling, doom.level.sectors[thing_index].floor_current + thing.get().height);
+        if (thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable)
+          for (auto thing_index : doom.level.getSectors(thing.get()))
+            thing_ceiling = std::max(thing_ceiling, doom.level.sectors[thing_index].floor_current + thing.get().height);
 
       // Stop if nothing to crush
       if (sector.ceiling_current > thing_ceiling)
@@ -237,6 +245,10 @@ namespace DOOM
 
         // Lower thing
         thing.get().position.z() = std::min(thing.get().position.z(), std::max(thing_floor, thing.get().position.z() + sector.ceiling_current - start));
+
+        // Do not crush not shootable things
+        if (!(thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable))
+          continue;
 
         float damage = std::min(thing_floor + thing.get().height - sector.ceiling_current, start - sector.ceiling_current) / (speed / DOOM::Doom::Tic.asSeconds()) * 87.5f;
 

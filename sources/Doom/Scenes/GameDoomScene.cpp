@@ -25,6 +25,32 @@ DOOM::GameDoomScene::GameDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom
 
 bool  DOOM::GameDoomScene::update(sf::Time elapsed)
 {
+  int alive = 0;
+
+  // Count alive player
+  for (const auto& player : _doom.level.players)
+    if (player.get().health > 0.f)
+      alive += 1;
+
+  // Restart level when no player alive
+  if (alive == 0) {
+    for (const auto& player : _doom.level.players) {
+      if ((player.get().controller == 0 && Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space) == true) ||
+        (player.get().controller > 0 && Game::Window::Instance().joystick().buttonPressed(player.get().controller - 1, 0) == true)) {
+        auto start = _doom.image;
+
+        // Reload current level, reset players
+        _doom.setLevel(_doom.level.episode, true);
+
+        // Transition to next level
+        draw();
+        _machine.push<DOOM::TransitionDoomScene>(_doom, start, _doom.image);
+
+        return false;
+      }
+    }
+  }
+
   // Pause menu
   for (const auto& player : _doom.level.players) {
     if ((player.get().controller == 0 && Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Escape) == true) ||

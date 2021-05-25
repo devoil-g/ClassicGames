@@ -66,9 +66,9 @@ namespace Math
     inline float  z() const { return (*this)(2); }  // Get third component of vector
     inline float  w() const { return (*this)(2); }  // Get fourth component of vector
 
-    inline Math::Vector<vSize>& operator==(const Math::Vector<vSize>& v)  // Vector comparison
+    inline bool operator==(const Math::Vector<vSize>& v)  // Vector comparison
     {
-      return (std::memcmp(this->_vector, v->_vector, vSize * sizeof(float)) == 0) ? true : false;
+      return (std::memcmp(this->_vector.data(), v._vector.data(), vSize * sizeof(float)) == 0) ? true : false;
     }
 
     inline Math::Vector<vSize>& operator*=(const Math::Vector<vSize>& v)  // Vector multiplication

@@ -194,7 +194,7 @@ std::list<std::pair<uint8_t, uint8_t>>  DOOM::Doom::getLevels() const
   return list;
 }
 
-void  DOOM::Doom::setLevel(const std::pair<uint8_t, uint8_t>& level, bool reset)
+void  DOOM::Doom::setLevel(std::pair<uint8_t, uint8_t> level, bool reset)
 {
   // Build level
   buildLevel(level);

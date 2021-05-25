@@ -1015,6 +1015,10 @@ bool  DOOM::PlayerThing::pickupArmor(DOOM::Enum::Armor type)
 
 void  DOOM::PlayerThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, float damage)
 {
+  // Invulnerability doesn't works with telefrag
+  if (_invulnerability > sf::Time::Zero && damage < 10000.f)
+    return;
+
   // Take half damage in baby mode
   if (doom.skill == DOOM::Enum::Skill::SkillBaby)
     damage /= 2;

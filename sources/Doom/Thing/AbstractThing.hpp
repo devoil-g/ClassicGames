@@ -365,12 +365,12 @@ namespace DOOM
     static DOOM::Enum::ThingType  id_to_type(int16_t id);                 // Convert WAD id to DOOM type
     static int16_t                type_to_id(DOOM::Enum::ThingType type); // Convert DOOM type to WAD id
 
-    void  teleport(DOOM::Doom& doom, const Math::Vector<2>& destination, float angle);  // Teleport thing to position (reset physics)
-    void  thrust(const Math::Vector<3>& acceleration);                                  // Apply acceleration to thing
+    bool  teleport(DOOM::Doom& doom, const Math::Vector<2>& destination, float angle, bool telefrag = false); // Teleport thing to position (reset physics)
+    void  thrust(const Math::Vector<3>& acceleration);                                                        // Apply acceleration to thing
 
-    virtual void  damage(DOOM::Doom & doom, DOOM::AbstractThing & attacker, DOOM::AbstractThing & origin, float damage);  // Receive attack from attacker caused by origin
-    virtual void  damage(DOOM::Doom & doom, DOOM::AbstractThing & attacker, float damage);                                // Receive attack from attacker
-    virtual void  damage(DOOM::Doom & doom, float damage);                                                                // Receive attack from no one
+    virtual void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, float damage); // Receive attack from attacker caused by origin
+    virtual void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, float damage);                              // Receive attack from attacker
+    virtual void  damage(DOOM::Doom& doom, float damage);                                                             // Receive attack from no one
 
     struct Sprite
     {

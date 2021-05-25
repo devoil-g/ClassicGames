@@ -15,6 +15,10 @@ namespace DOOM
   private:
     inline bool trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing, int16_t sector_index) // Teleport thing to sector
     {
+      // Missiles doesn't teleport
+      if (thing.flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
+        return false;
+
       auto& linedef_start = doom.level.vertexes[start];
       auto& linedef_end = doom.level.vertexes[end];
 
@@ -24,11 +28,8 @@ namespace DOOM
 
       // Search for teleporter target in sector
       for (const auto& sector_thing : doom.level.things) {
-        // TODO: test if teleport still work
-        // if (sector_thing->id == 14 && doom.level.getSector(sector_thing->position.convert<2>()).first == sector_index) {
         if (sector_thing->type == DOOM::Enum::ThingType::ThingType_TELEPORTMAN && doom.level.getSector(sector_thing->position.convert<2>()).first == sector_index) {
-          thing.teleport(doom, sector_thing->position.convert<2>(), sector_thing->angle);
-          return true;
+          return thing.teleport(doom, sector_thing->position.convert<2>(), sector_thing->angle);
         }
       }
 
