@@ -139,7 +139,7 @@ DOOM::Doom::Doom() :
   image()
 {}
 
-void  DOOM::Doom::load(const std::string& path)
+void  DOOM::Doom::load(const std::string& path, DOOM::Enum::Mode mode)
 {
   // Clear resources
   clear();
@@ -147,8 +147,8 @@ void  DOOM::Doom::load(const std::string& path)
   // Load WAD file 
   wad.load(path);
 
-  // TODO: detect game mode
-  mode = DOOM::Enum::Mode::ModeRetail;
+  // Set game mode
+  this->mode = mode;
 
   // Build resources of WAD file
   buildResources();
@@ -357,7 +357,7 @@ void  DOOM::Doom::buildResources()
     buildResourcesFlats();
     buildResourcesSounds();
   }
-  catch (std::exception e)
+  catch (const std::exception& e)
   {
     clear();
     throw std::runtime_error(e.what());
@@ -498,7 +498,17 @@ void  DOOM::Doom::buildLevel(const std::pair<uint8_t, uint8_t>& level)
 
   this->level.episode = level;
   this->level.end = DOOM::Enum::End::EndNone;
-  this->level.sky = std::cref(resources.textures.find(0x0000000000594B53 | (((int64_t)level.first + '0') << 24))->second);
+  this->level.sky = std::cref(resources.textures.find(DOOM::str_to_key(std::string("SKY") + std::to_string((int)level.first)))->second);
+
+  // DOOM 2 sky
+  if (mode == DOOM::Enum::Mode::ModeCommercial) {
+    if (level.second < 12)
+      this->level.sky = std::cref(resources.textures.find(DOOM::str_to_key("SKY1"))->second);
+    else if (level.second < 21)
+      this->level.sky = std::cref(resources.textures.find(DOOM::str_to_key("SKY2"))->second);
+    else
+      this->level.sky = std::cref(resources.textures.find(DOOM::str_to_key("SKY3"))->second);
+  }
 
   // Build every component of resources
   try
@@ -514,7 +524,7 @@ void  DOOM::Doom::buildLevel(const std::pair<uint8_t, uint8_t>& level)
     buildLevelThings();
     buildLevelStatistics();
   }
-  catch (std::exception e)
+  catch (const std::exception& e)
   {
     clearLevel();
     throw std::runtime_error(e.what());

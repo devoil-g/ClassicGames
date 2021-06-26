@@ -491,7 +491,7 @@ namespace DOOM
 
         // Error if not found
         if (iterator == container.end())
-          throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+          throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__) + " " + DOOM::key_to_str(key)).c_str());
 
         return iterator->second;
       }
@@ -847,8 +847,8 @@ namespace DOOM
     bool                  message;    // Message enabled
     sf::Image             image;      // DOOM rendering target
 
-    void  load(const std::string& file);  // Load WAD file and build resources
-    void  update(sf::Time elapsed);       // Update current level and resources
+    void  load(const std::string& file, DOOM::Enum::Mode mode); // Load WAD file and build resources
+    void  update(sf::Time elapsed);                             // Update current level and resources
 
     std::list<std::pair<uint8_t, uint8_t>>  getLevels() const;                                                // Return list of available level in WAD
     void                                    setLevel(std::pair<uint8_t, uint8_t> level, bool reset = false);  // Build specified level from WAD, use reset to hard reset players

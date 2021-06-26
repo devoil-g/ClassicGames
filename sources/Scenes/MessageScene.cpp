@@ -56,9 +56,11 @@ bool  Game::MessageScene::update(sf::Time elapsed)
 void  Game::MessageScene::draw()
 {
   // Set message position to the center of the screen
-  _message.setCharacterSize((unsigned int)(Game::Window::Instance().window().getSize().y / 12.f));
-  _message.setPosition(sf::Vector2f((Game::Window::Instance().window().getSize().x - _message.getLocalBounds().width) / 2.f, (Game::Window::Instance().window().getSize().y - _message.getLocalBounds().height) / 2.f));
-  
+  float scale = 0.75f * std::min((float)Game::Window::Instance().window().getSize().x / (float)_message.getLocalBounds().width, (float)Game::Window::Instance().window().getSize().y / (float)_message.getLocalBounds().height);
+
+  _message.setScale(scale, scale);
+  _message.setPosition(sf::Vector2f((Game::Window::Instance().window().getSize().x - _message.getGlobalBounds().width) / 2.f, (Game::Window::Instance().window().getSize().y - _message.getLocalBounds().height) / 2.f));
+
   // Set return button size
   if (_selected == -1)
     _return.setCharacterSize(Game::Window::Instance().window().getSize().y / 16);

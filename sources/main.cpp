@@ -65,7 +65,7 @@ int main(int argc, char ** argv)
     Game::help();
     Game::run();
   }
-  catch (std::exception& e) {
+  catch (const std::exception& e) {
     std::cerr << "[Runtime Error]: " << e.what() << std::endl;
 
 #ifdef _WIN32

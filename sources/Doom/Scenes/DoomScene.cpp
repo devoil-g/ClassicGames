@@ -8,7 +8,7 @@
 
 const sf::Time  DOOM::DoomScene::ForcedExit = sf::seconds(1.f);
 
-DOOM::DoomScene::DoomScene(Game::SceneMachine& machine) :
+DOOM::DoomScene::DoomScene(Game::SceneMachine& machine, const std::string& wad, DOOM::Enum::Mode mode) :
   Game::AbstractScene(machine),
   _doom(),
   _game(),
@@ -16,7 +16,7 @@ DOOM::DoomScene::DoomScene(Game::SceneMachine& machine) :
   _bar(sf::Vector2f(1.f, 1.f))
 {
   // Load WAD
-  _doom.load(Game::Config::ExecutablePath + "assets/levels/doom.wad");
+  _doom.load(wad, mode);
 
   // Check that at least one level is available
   if (_doom.getLevels().empty() == true)

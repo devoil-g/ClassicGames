@@ -20,7 +20,7 @@ DOOM::MenuDoomScene::MenuDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom
     Menu{ // MenuMain
       {
         { DOOM::str_to_key("M_DOOM"), false, 94, 2, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_NGAME"), true, 97, 64, sf::Keyboard::N, [this]() { _menuIndex = MenuEpisode; _menuCursor = 1; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, []() {}, []() {} },
+        { DOOM::str_to_key("M_NGAME"), true, 97, 64, sf::Keyboard::N, [this]() { if (_doom.mode == DOOM::Enum::Mode::ModeCommercial) { _episode = 1; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; } else { _menuIndex = MenuEpisode; _menuCursor = 1; } _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, []() {}, []() {} },
         { DOOM::str_to_key("M_OPTION"), true, 97, 80, sf::Keyboard::O, [this]() { _menuIndex = MenuOptions; _menuCursor = 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, []() {}, []() {} },
         { DOOM::str_to_key("M_LOADG"), false, 97, 96, sf::Keyboard::L, []() {}, []() {}, []() {} },
         { DOOM::str_to_key("M_SAVEG"), false, 97, 112, sf::Keyboard::S, []() {}, []() {}, []() {} },
@@ -142,6 +142,8 @@ DOOM::MenuDoomScene::MenuDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom
     // NOTE: WTF am I suppose to do here?! m_menu.c:1867
     // This seems to be an hack for ReadThis! screen on some version,
     // additional checks below fix this problem
+    // Remove the fourth episode
+    _menuDesc[DOOM::MenuDoomScene::MenuEnum::MenuEpisode].items.pop_back();
     break;
 
   case DOOM::Enum::Mode::ModeShareware:
@@ -158,7 +160,7 @@ DOOM::MenuDoomScene::MenuDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom
 
   // Additional check for help screen
   if (_doom.resources.menus.find(_menuDesc[MenuRead1].items.front().texture) == _doom.resources.menus.end())
-    _menuDesc[MenuRead2].items.front().texture = DOOM::str_to_key("HELP");
+    _menuDesc[MenuRead1].items.front().texture = DOOM::str_to_key("HELP");
   if (_doom.resources.menus.find(_menuDesc[MenuRead2].items.front().texture) == _doom.resources.menus.end())
     _menuDesc[MenuRead2].items.front().texture = DOOM::str_to_key("CREDIT");
 
@@ -172,7 +174,25 @@ void  DOOM::MenuDoomScene::start()
   sf::Image start(_doom.image);
 
   // Load requested level
-  _doom.setLevel({ _episode, 1 }, true);
+  switch (_doom.mode) {
+  case DOOM::Enum::Mode::ModeRegistered:
+  case DOOM::Enum::Mode::ModeRetail:
+  case DOOM::Enum::Mode::ModeShareware:
+    _doom.setLevel({ _episode, 1 }, true);
+    break;
+  case DOOM::Enum::Mode::ModeCommercial:
+    if (_episode == 1)
+      _doom.setLevel({ 1, 1 }, true);
+    else if (_episode == 2)
+      _doom.setLevel({ 1, 12 }, true);
+    else if (_episode == 3)
+      _doom.setLevel({ 1, 21 }, true);
+    else
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+    break;
+  default:
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  }
 
   // Save references as 'this' is gonna be deleted
   Game::SceneMachine& machine = _machine;

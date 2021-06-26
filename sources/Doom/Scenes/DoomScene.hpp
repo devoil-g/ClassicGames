@@ -25,7 +25,7 @@ namespace DOOM
     sf::RectangleShape  _bar;     // Forced exit bar
     
   public:
-    DoomScene(Game::SceneMachine& machine);
+    DoomScene(Game::SceneMachine& machine, const std::string& wad, DOOM::Enum::Mode mode);
     ~DoomScene() override;
 
     bool  update(sf::Time elapsed) override;  // Update state

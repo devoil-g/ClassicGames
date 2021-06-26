@@ -70,15 +70,14 @@ void  DOOM::Wad::loadLumps(std::ifstream& file, int32_t const numlumps, int32_t 
       { std::regex("PNAMES"), std::bind(&DOOM::Wad::loadResourcePnames, this, std::ref(file), std::ref(lump)) },
       { std::regex("ENDOOM"), std::bind(&DOOM::Wad::loadResourceEndoom, this, std::ref(file), std::ref(lump)) },
       { std::regex("GENMIDI"), std::bind(&DOOM::Wad::loadResourceGenmidi, this, std::ref(file), std::ref(lump)) },
-      { std::regex("DMXGUS"), std::bind(&DOOM::Wad::loadIgnore, this) },
-      { std::regex("D_[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMusic, this, std::ref(file), std::ref(lump)) },
-      { std::regex("DS[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceSound, this, std::ref(file), std::ref(lump)) },
-      { std::regex("DP[[:alnum:]]+"), std::bind(&DOOM::Wad::loadIgnore, this) },
+      { std::regex("DMXGUS[[:alnum:]]?"), std::bind(&DOOM::Wad::loadIgnore, this) },
+      { std::regex("D_[_[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMusic, this, std::ref(file), std::ref(lump)) },
+      { std::regex("DS[_[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceSound, this, std::ref(file), std::ref(lump)) },
+      { std::regex("DP[_[:alnum:]]+"), std::bind(&DOOM::Wad::loadIgnore, this) },
       { std::regex("DEMO[[:digit:]]"), std::bind(&DOOM::Wad::loadResourceDemox, this, std::ref(file), std::ref(lump)) },
 
       // Menu resources lumps
-      { std::regex("HELP1"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("HELP2"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("HELP[[:digit:]]?"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
       { std::regex("TITLEPIC"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
       { std::regex("CREDIT"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
       { std::regex("VICTORY2"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
@@ -92,7 +91,9 @@ void  DOOM::Wad::loadLumps(std::ifstream& file, int32_t const numlumps, int32_t 
       { std::regex("WI[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
       { std::regex("M_[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
       { std::regex("BRDR_[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-
+      { std::regex("CWILV[[:digit:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      { std::regex("BOSSBACK"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+      
       // Level lumps
       { std::regex("VERTEXES"), std::bind(&DOOM::Wad::loadLevelVertexes, this, std::ref(file), std::ref(lump), level) },
       { std::regex("SECTORS"), std::bind(&DOOM::Wad::loadLevelSectors, this, std::ref(file), std::ref(lump), level) },
@@ -343,7 +344,8 @@ void  DOOM::Wad::loadResourceFlat(std::ifstream& file, const DOOM::Wad::Lump& lu
   // Ignore special delimiters (TODO: dont ignore them ?)
   if (lump.name == DOOM::str_to_key("F_START") || lump.name == DOOM::str_to_key("F_END") ||
     lump.name == DOOM::str_to_key("F1_START") || lump.name == DOOM::str_to_key("F1_END") ||
-    lump.name == DOOM::str_to_key("F2_START") || lump.name == DOOM::str_to_key("F2_END"))
+    lump.name == DOOM::str_to_key("F2_START") || lump.name == DOOM::str_to_key("F2_END") ||
+    lump.name == DOOM::str_to_key("F3_START") || lump.name == DOOM::str_to_key("F3_END"))
     return;
 
   // Check for invalid lump size

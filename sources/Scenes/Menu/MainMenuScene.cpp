@@ -18,7 +18,8 @@ Game::MainMenuScene::MainMenuScene(Game::SceneMachine& machine) :
 
   // Set menu items/handlers
   menu() = {
-    Game::AbstractMenuScene::Item("DOOM", font, std::function<void(Game::AbstractMenuScene::Item &)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1))),
+    Game::AbstractMenuScene::Item("DOOM", font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath + "assets/levels/doom.wad", DOOM::Enum::Mode::ModeRetail))),
+    Game::AbstractMenuScene::Item("DOOM II", font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath + "assets/levels/doom2.wad", DOOM::Enum::Mode::ModeCommercial))),
     Game::AbstractMenuScene::Item("Options", font, std::function<void(Game::AbstractMenuScene::Item &)>(std::bind(&Game::MainMenuScene::selectOptions, this, std::placeholders::_1))),
     Game::AbstractMenuScene::Item("Exit", font, std::function<void(Game::AbstractMenuScene::Item &)>(std::bind(&Game::MainMenuScene::selectExit, this, std::placeholders::_1)))
   };
@@ -36,7 +37,7 @@ void  Game::MainMenuScene::draw()
   Game::AbstractMenuScene::draw();
 }
 
-void  Game::MainMenuScene::selectDoom(Game::AbstractMenuScene::Item&)
+void  Game::MainMenuScene::selectDoom(Game::AbstractMenuScene::Item&, const std::string& wad, DOOM::Enum::Mode mode)
 {
   Game::SceneMachine& machine = _machine;
 
@@ -44,12 +45,13 @@ void  Game::MainMenuScene::selectDoom(Game::AbstractMenuScene::Item&)
   _machine.push<Game::LoadingScene>();
 
   // Start to load DOOM game
-  std::thread([&machine]() {
+  std::thread([&machine, wad, mode]() {
     try {
-      machine.swap<DOOM::DoomScene>();
+      machine.swap<DOOM::DoomScene>(wad, mode);
     }
-    catch (std::exception exception) {
+    catch (const std::exception& exception) {
       machine.swap<Game::MessageScene>("Error: failed to run DOOM.\n");
+      machine.swap<Game::MessageScene>(exception.what());
     }
     }).detach();
 }
