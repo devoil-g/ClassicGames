@@ -20,7 +20,7 @@ namespace Game
       Item() = delete;
 
     public:
-      Item(const sf::String& string, const sf::Font& font, std::function<void(Item&)>& callback) : sf::Text(string, font), _callback(callback) {}
+      Item(const sf::String& string, const sf::Font& font, const std::function<void(Item&)>& callback) : sf::Text(string, font), _callback(callback) {}
       ~Item() = default;
 
       void  select() { _callback(*this); }  // Call item function

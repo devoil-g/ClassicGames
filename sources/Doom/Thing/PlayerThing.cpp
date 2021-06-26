@@ -15,95 +15,95 @@ const unsigned int  DOOM::PlayerThing::SectorSpeed = 32;                      //
 const std::array<DOOM::PlayerThing::State, DOOM::PlayerThing::WeaponState::State_Number>  DOOM::PlayerThing::_states =
 {
   DOOM::PlayerThing::State{ Sprite_TROO, 0, false, -1, nullptr, State_None },			// State_None
-  DOOM::PlayerThing::State{ Sprite_SHTG, 4, false, 0, &A_Light0, State_None },			// State_LIGHTDONE
-  DOOM::PlayerThing::State{ Sprite_PUNG, 0, false, 1, &A_WeaponReady, State_PUNCH },		// State_PUNCH
-  DOOM::PlayerThing::State{ Sprite_PUNG, 0, false, 1, &A_Lower, State_PUNCHDOWN },		// State_PUNCHDOWN
-  DOOM::PlayerThing::State{ Sprite_PUNG, 0, false, 1, &A_Raise, State_PUNCHUP },		// State_PUNCHUP
+  DOOM::PlayerThing::State{ Sprite_SHTG, 4, false, 0, &DOOM::PlayerThing::A_Light0, State_None },			// State_LIGHTDONE
+  DOOM::PlayerThing::State{ Sprite_PUNG, 0, false, 1, &DOOM::PlayerThing::A_WeaponReady, State_PUNCH },		// State_PUNCH
+  DOOM::PlayerThing::State{ Sprite_PUNG, 0, false, 1, &DOOM::PlayerThing::A_Lower, State_PUNCHDOWN },		// State_PUNCHDOWN
+  DOOM::PlayerThing::State{ Sprite_PUNG, 0, false, 1, &DOOM::PlayerThing::A_Raise, State_PUNCHUP },		// State_PUNCHUP
   DOOM::PlayerThing::State{ Sprite_PUNG, 1, false, 4, nullptr, State_PUNCH2 },			// State_PUNCH1
-  DOOM::PlayerThing::State{ Sprite_PUNG, 2, false, 4, &A_Punch, State_PUNCH3 },			// State_PUNCH2
+  DOOM::PlayerThing::State{ Sprite_PUNG, 2, false, 4, &DOOM::PlayerThing::A_Punch, State_PUNCH3 },			// State_PUNCH2
   DOOM::PlayerThing::State{ Sprite_PUNG, 3, false, 5, nullptr, State_PUNCH4 },			// State_PUNCH3
   DOOM::PlayerThing::State{ Sprite_PUNG, 2, false, 4, nullptr, State_PUNCH5 },			// State_PUNCH4
-  DOOM::PlayerThing::State{ Sprite_PUNG, 1, false, 5, &A_ReFire, State_PUNCH },			// State_PUNCH5
-  DOOM::PlayerThing::State{ Sprite_PISG, 0, false, 1, &A_WeaponReady, State_PISTOL },		// State_PISTOL
-  DOOM::PlayerThing::State{ Sprite_PISG, 0, false, 1, &A_Lower, State_PISTOLDOWN },		// State_PISTOLDOWN
-  DOOM::PlayerThing::State{ Sprite_PISG, 0, false, 1, &A_Raise, State_PISTOLUP },		// State_PISTOLUP
+  DOOM::PlayerThing::State{ Sprite_PUNG, 1, false, 5, &DOOM::PlayerThing::A_ReFire, State_PUNCH },			// State_PUNCH5
+  DOOM::PlayerThing::State{ Sprite_PISG, 0, false, 1, &DOOM::PlayerThing::A_WeaponReady, State_PISTOL },		// State_PISTOL
+  DOOM::PlayerThing::State{ Sprite_PISG, 0, false, 1, &DOOM::PlayerThing::A_Lower, State_PISTOLDOWN },		// State_PISTOLDOWN
+  DOOM::PlayerThing::State{ Sprite_PISG, 0, false, 1, &DOOM::PlayerThing::A_Raise, State_PISTOLUP },		// State_PISTOLUP
   DOOM::PlayerThing::State{ Sprite_PISG, 0, false, 4, nullptr, State_PISTOL2 },			// State_PISTOL1
-  DOOM::PlayerThing::State{ Sprite_PISG, 1, false, 6, &A_FirePistol, State_PISTOL3 },		// State_PISTOL2
+  DOOM::PlayerThing::State{ Sprite_PISG, 1, false, 6, &DOOM::PlayerThing::A_FirePistol, State_PISTOL3 },		// State_PISTOL2
   DOOM::PlayerThing::State{ Sprite_PISG, 2, false, 4, nullptr, State_PISTOL4 },			// State_PISTOL3
-  DOOM::PlayerThing::State{ Sprite_PISG, 1, false, 5, &A_ReFire, State_PISTOL },		// State_PISTOL4
-  DOOM::PlayerThing::State{ Sprite_PISF, 0, true, 7, &A_Light1, State_LIGHTDONE },		// State_PISTOLFLASH
-  DOOM::PlayerThing::State{ Sprite_SHTG, 0, false, 1, &A_WeaponReady, State_SGUN },		// State_SGUN
-  DOOM::PlayerThing::State{ Sprite_SHTG, 0, false, 1, &A_Lower, State_SGUNDOWN },		// State_SGUNDOWN
-  DOOM::PlayerThing::State{ Sprite_SHTG, 0, false, 1, &A_Raise, State_SGUNUP },			// State_SGUNUP
+  DOOM::PlayerThing::State{ Sprite_PISG, 1, false, 5, &DOOM::PlayerThing::A_ReFire, State_PISTOL },		// State_PISTOL4
+  DOOM::PlayerThing::State{ Sprite_PISF, 0, true, 7, &DOOM::PlayerThing::A_Light1, State_LIGHTDONE },		// State_PISTOLFLASH
+  DOOM::PlayerThing::State{ Sprite_SHTG, 0, false, 1, &DOOM::PlayerThing::A_WeaponReady, State_SGUN },		// State_SGUN
+  DOOM::PlayerThing::State{ Sprite_SHTG, 0, false, 1, &DOOM::PlayerThing::A_Lower, State_SGUNDOWN },		// State_SGUNDOWN
+  DOOM::PlayerThing::State{ Sprite_SHTG, 0, false, 1, &DOOM::PlayerThing::A_Raise, State_SGUNUP },			// State_SGUNUP
   DOOM::PlayerThing::State{ Sprite_SHTG, 0, false, 3, nullptr, State_SGUN2 },			// State_SGUN1
-  DOOM::PlayerThing::State{ Sprite_SHTG, 0, false, 7, &A_FireShotgun, State_SGUN3 },		// State_SGUN2
+  DOOM::PlayerThing::State{ Sprite_SHTG, 0, false, 7, &DOOM::PlayerThing::A_FireShotgun, State_SGUN3 },		// State_SGUN2
   DOOM::PlayerThing::State{ Sprite_SHTG, 1, false, 5, nullptr, State_SGUN4 },			// State_SGUN3
   DOOM::PlayerThing::State{ Sprite_SHTG, 2, false, 5, nullptr, State_SGUN5 },			// State_SGUN4
   DOOM::PlayerThing::State{ Sprite_SHTG, 3, false, 4, nullptr, State_SGUN6 },			// State_SGUN5
   DOOM::PlayerThing::State{ Sprite_SHTG, 2, false, 5, nullptr, State_SGUN7 },			// State_SGUN6
   DOOM::PlayerThing::State{ Sprite_SHTG, 1, false, 5, nullptr, State_SGUN8 },			// State_SGUN7
   DOOM::PlayerThing::State{ Sprite_SHTG, 0, false, 3, nullptr, State_SGUN9 },			// State_SGUN8
-  DOOM::PlayerThing::State{ Sprite_SHTG, 0, false, 7, &A_ReFire, State_SGUN },			// State_SGUN9
-  DOOM::PlayerThing::State{ Sprite_SHTF, 0, true, 4, &A_Light1, State_SGUNFLASH2 },		// State_SGUNFLASH1
-  DOOM::PlayerThing::State{ Sprite_SHTF, 1, true, 3, &A_Light2, State_LIGHTDONE },		// State_SGUNFLASH2
-  DOOM::PlayerThing::State{ Sprite_SHT2, 0, false, 1, &A_WeaponReady, State_DSGUN },		// State_DSGUN
-  DOOM::PlayerThing::State{ Sprite_SHT2, 0, false, 1, &A_Lower, State_DSGUNDOWN },		// State_DSGUNDOWN
-  DOOM::PlayerThing::State{ Sprite_SHT2, 0, false, 1, &A_Raise, State_DSGUNUP },		// State_DSGUNUP
+  DOOM::PlayerThing::State{ Sprite_SHTG, 0, false, 7, &DOOM::PlayerThing::A_ReFire, State_SGUN },			// State_SGUN9
+  DOOM::PlayerThing::State{ Sprite_SHTF, 0, true, 4, &DOOM::PlayerThing::A_Light1, State_SGUNFLASH2 },		// State_SGUNFLASH1
+  DOOM::PlayerThing::State{ Sprite_SHTF, 1, true, 3, &DOOM::PlayerThing::A_Light2, State_LIGHTDONE },		// State_SGUNFLASH2
+  DOOM::PlayerThing::State{ Sprite_SHT2, 0, false, 1, &DOOM::PlayerThing::A_WeaponReady, State_DSGUN },		// State_DSGUN
+  DOOM::PlayerThing::State{ Sprite_SHT2, 0, false, 1, &DOOM::PlayerThing::A_Lower, State_DSGUNDOWN },		// State_DSGUNDOWN
+  DOOM::PlayerThing::State{ Sprite_SHT2, 0, false, 1, &DOOM::PlayerThing::A_Raise, State_DSGUNUP },		// State_DSGUNUP
   DOOM::PlayerThing::State{ Sprite_SHT2, 0, false, 3, nullptr, State_DSGUN2 },			// State_DSGUN1
-  DOOM::PlayerThing::State{ Sprite_SHT2, 0, false, 7, &A_FireShotgun2, State_DSGUN3 },		// State_DSGUN2
+  DOOM::PlayerThing::State{ Sprite_SHT2, 0, false, 7, &DOOM::PlayerThing::A_FireShotgun2, State_DSGUN3 },		// State_DSGUN2
   DOOM::PlayerThing::State{ Sprite_SHT2, 1, false, 7, nullptr, State_DSGUN4 },			// State_DSGUN3
-  DOOM::PlayerThing::State{ Sprite_SHT2, 2, false, 7, &A_CheckReload, State_DSGUN5 },		// State_DSGUN4
-  DOOM::PlayerThing::State{ Sprite_SHT2, 3, false, 7, &A_OpenShotgun2, State_DSGUN6 },		// State_DSGUN5
+  DOOM::PlayerThing::State{ Sprite_SHT2, 2, false, 7, &DOOM::PlayerThing::A_CheckReload, State_DSGUN5 },		// State_DSGUN4
+  DOOM::PlayerThing::State{ Sprite_SHT2, 3, false, 7, &DOOM::PlayerThing::A_OpenShotgun2, State_DSGUN6 },		// State_DSGUN5
   DOOM::PlayerThing::State{ Sprite_SHT2, 4, false, 7, nullptr, State_DSGUN7 },			// State_DSGUN6
-  DOOM::PlayerThing::State{ Sprite_SHT2, 5, false, 7, &A_LoadShotgun2, State_DSGUN8 },		// State_DSGUN7
+  DOOM::PlayerThing::State{ Sprite_SHT2, 5, false, 7, &DOOM::PlayerThing::A_LoadShotgun2, State_DSGUN8 },		// State_DSGUN7
   DOOM::PlayerThing::State{ Sprite_SHT2, 6, false, 6, nullptr, State_DSGUN9 },			// State_DSGUN8
-  DOOM::PlayerThing::State{ Sprite_SHT2, 7, false, 6, &A_CloseShotgun2, State_DSGUN10 },	// State_DSGUN9
-  DOOM::PlayerThing::State{ Sprite_SHT2, 0, false, 5, &A_ReFire, State_DSGUN },			// State_DSGUN10
+  DOOM::PlayerThing::State{ Sprite_SHT2, 7, false, 6, &DOOM::PlayerThing::A_CloseShotgun2, State_DSGUN10 },	// State_DSGUN9
+  DOOM::PlayerThing::State{ Sprite_SHT2, 0, false, 5, &DOOM::PlayerThing::A_ReFire, State_DSGUN },			// State_DSGUN10
   DOOM::PlayerThing::State{ Sprite_SHT2, 1, false, 7, nullptr, State_DSNR2 },			// State_DSNR1
   DOOM::PlayerThing::State{ Sprite_SHT2, 0, false, 3, nullptr, State_DSGUNDOWN },		// State_DSNR2
-  DOOM::PlayerThing::State{ Sprite_SHT2, 8, true, 5, &A_Light1, State_DSGUNFLASH2 },		// State_DSGUNFLASH1
-  DOOM::PlayerThing::State{ Sprite_SHT2, 9, true, 4, &A_Light2, State_LIGHTDONE },		// State_DSGUNFLASH2
-  DOOM::PlayerThing::State{ Sprite_CHGG, 0, false, 1, &A_WeaponReady, State_CHAIN },		// State_CHAIN
-  DOOM::PlayerThing::State{ Sprite_CHGG, 0, false, 1, &A_Lower, State_CHAINDOWN },		// State_CHAINDOWN
-  DOOM::PlayerThing::State{ Sprite_CHGG, 0, false, 1, &A_Raise, State_CHAINUP },		// State_CHAINUP
-  DOOM::PlayerThing::State{ Sprite_CHGG, 0, false, 4, &A_FireCGun, State_CHAIN2 },		// State_CHAIN1
-  DOOM::PlayerThing::State{ Sprite_CHGG, 1, false, 4, &A_FireCGun, State_CHAIN3 },		// State_CHAIN2
-  DOOM::PlayerThing::State{ Sprite_CHGG, 1, false, 0, &A_ReFire, State_CHAIN },			// State_CHAIN3
-  DOOM::PlayerThing::State{ Sprite_CHGF, 0, true, 5, &A_Light1, State_LIGHTDONE },		// State_CHAINFLASH1
-  DOOM::PlayerThing::State{ Sprite_CHGF, 1, true, 5, &A_Light2, State_LIGHTDONE },		// State_CHAINFLASH2
-  DOOM::PlayerThing::State{ Sprite_MISG, 0, false, 1, &A_WeaponReady, State_MISSILE },		// State_MISSILE
-  DOOM::PlayerThing::State{ Sprite_MISG, 0, false, 1, &A_Lower, State_MISSILEDOWN },		// State_MISSILEDOWN
-  DOOM::PlayerThing::State{ Sprite_MISG, 0, false, 1, &A_Raise, State_MISSILEUP },		// State_MISSILEUP
-  DOOM::PlayerThing::State{ Sprite_MISG, 1, false, 8, &A_GunFlash, State_MISSILE2 },		// State_MISSILE1
-  DOOM::PlayerThing::State{ Sprite_MISG, 1, false, 12, &A_FireMissile, State_MISSILE3 },	// State_MISSILE2
-  DOOM::PlayerThing::State{ Sprite_MISG, 1, false, 0, &A_ReFire, State_MISSILE },		// State_MISSILE3
-  DOOM::PlayerThing::State{ Sprite_MISF, 0, true, 3, &A_Light1, State_MISSILEFLASH2 },		// State_MISSILEFLASH1
+  DOOM::PlayerThing::State{ Sprite_SHT2, 8, true, 5, &DOOM::PlayerThing::A_Light1, State_DSGUNFLASH2 },		// State_DSGUNFLASH1
+  DOOM::PlayerThing::State{ Sprite_SHT2, 9, true, 4, &DOOM::PlayerThing::A_Light2, State_LIGHTDONE },		// State_DSGUNFLASH2
+  DOOM::PlayerThing::State{ Sprite_CHGG, 0, false, 1, &DOOM::PlayerThing::A_WeaponReady, State_CHAIN },		// State_CHAIN
+  DOOM::PlayerThing::State{ Sprite_CHGG, 0, false, 1, &DOOM::PlayerThing::A_Lower, State_CHAINDOWN },		// State_CHAINDOWN
+  DOOM::PlayerThing::State{ Sprite_CHGG, 0, false, 1, &DOOM::PlayerThing::A_Raise, State_CHAINUP },		// State_CHAINUP
+  DOOM::PlayerThing::State{ Sprite_CHGG, 0, false, 4, &DOOM::PlayerThing::A_FireCGun, State_CHAIN2 },		// State_CHAIN1
+  DOOM::PlayerThing::State{ Sprite_CHGG, 1, false, 4, &DOOM::PlayerThing::A_FireCGun, State_CHAIN3 },		// State_CHAIN2
+  DOOM::PlayerThing::State{ Sprite_CHGG, 1, false, 0, &DOOM::PlayerThing::A_ReFire, State_CHAIN },			// State_CHAIN3
+  DOOM::PlayerThing::State{ Sprite_CHGF, 0, true, 5, &DOOM::PlayerThing::A_Light1, State_LIGHTDONE },		// State_CHAINFLASH1
+  DOOM::PlayerThing::State{ Sprite_CHGF, 1, true, 5, &DOOM::PlayerThing::A_Light2, State_LIGHTDONE },		// State_CHAINFLASH2
+  DOOM::PlayerThing::State{ Sprite_MISG, 0, false, 1, &DOOM::PlayerThing::A_WeaponReady, State_MISSILE },		// State_MISSILE
+  DOOM::PlayerThing::State{ Sprite_MISG, 0, false, 1, &DOOM::PlayerThing::A_Lower, State_MISSILEDOWN },		// State_MISSILEDOWN
+  DOOM::PlayerThing::State{ Sprite_MISG, 0, false, 1, &DOOM::PlayerThing::A_Raise, State_MISSILEUP },		// State_MISSILEUP
+  DOOM::PlayerThing::State{ Sprite_MISG, 1, false, 8, &DOOM::PlayerThing::A_GunFlash, State_MISSILE2 },		// State_MISSILE1
+  DOOM::PlayerThing::State{ Sprite_MISG, 1, false, 12, &DOOM::PlayerThing::A_FireMissile, State_MISSILE3 },	// State_MISSILE2
+  DOOM::PlayerThing::State{ Sprite_MISG, 1, false, 0, &DOOM::PlayerThing::A_ReFire, State_MISSILE },		// State_MISSILE3
+  DOOM::PlayerThing::State{ Sprite_MISF, 0, true, 3, &DOOM::PlayerThing::A_Light1, State_MISSILEFLASH2 },		// State_MISSILEFLASH1
   DOOM::PlayerThing::State{ Sprite_MISF, 1, true, 4, nullptr, State_MISSILEFLASH3 },		// State_MISSILEFLASH2
-  DOOM::PlayerThing::State{ Sprite_MISF, 2, true, 4, &A_Light2, State_MISSILEFLASH4 },		// State_MISSILEFLASH3
-  DOOM::PlayerThing::State{ Sprite_MISF, 3, true, 4, &A_Light2, State_LIGHTDONE },		// State_MISSILEFLASH4
-  DOOM::PlayerThing::State{ Sprite_SAWG, 2, false, 4, &A_WeaponReady, State_SAWB },		// State_SAW
-  DOOM::PlayerThing::State{ Sprite_SAWG, 3, false, 4, &A_WeaponReady, State_SAW },		// State_SAWB
-  DOOM::PlayerThing::State{ Sprite_SAWG, 2, false, 1, &A_Lower, State_SAWDOWN },		// State_SAWDOWN
-  DOOM::PlayerThing::State{ Sprite_SAWG, 2, false, 1, &A_Raise, State_SAWUP },			// State_SAWUP
-  DOOM::PlayerThing::State{ Sprite_SAWG, 0, false, 4, &A_Saw, State_SAW2 },			// State_SAW1
-  DOOM::PlayerThing::State{ Sprite_SAWG, 1, false, 4, &A_Saw, State_SAW3 },			// State_SAW2
-  DOOM::PlayerThing::State{ Sprite_SAWG, 1, false, 0, &A_ReFire, State_SAW },			// State_SAW3
-  DOOM::PlayerThing::State{ Sprite_PLSG, 0, false, 1, &A_WeaponReady, State_PLASMA },		// State_PLASMA
-  DOOM::PlayerThing::State{ Sprite_PLSG, 0, false, 1, &A_Lower, State_PLASMADOWN },		// State_PLASMADOWN
-  DOOM::PlayerThing::State{ Sprite_PLSG, 0, false, 1, &A_Raise, State_PLASMAUP },		// State_PLASMAUP
-  DOOM::PlayerThing::State{ Sprite_PLSG, 0, false, 3, &A_FirePlasma, State_PLASMA2 },		// State_PLASMA1
-  DOOM::PlayerThing::State{ Sprite_PLSG, 1, false, 20, &A_ReFire, State_PLASMA },		// State_PLASMA2
-  DOOM::PlayerThing::State{ Sprite_PLSF, 0, true, 4, &A_Light1, State_LIGHTDONE },		// State_PLASMAFLASH1
-  DOOM::PlayerThing::State{ Sprite_PLSF, 1, true, 4, &A_Light1, State_LIGHTDONE },		// State_PLASMAFLASH2
-  DOOM::PlayerThing::State{ Sprite_BFGG, 0, false, 1, &A_WeaponReady, State_BFG },		// State_BFG
-  DOOM::PlayerThing::State{ Sprite_BFGG, 0, false, 1, &A_Lower, State_BFGDOWN },		// State_BFGDOWN
-  DOOM::PlayerThing::State{ Sprite_BFGG, 0, false, 1, &A_Raise, State_BFGUP },			// State_BFGUP
-  DOOM::PlayerThing::State{ Sprite_BFGG, 0, false, 20, &A_BFGsound, State_BFG2 },		// State_BFG1
-  DOOM::PlayerThing::State{ Sprite_BFGG, 1, false, 10, &A_GunFlash, State_BFG3 },		// State_BFG2
-  DOOM::PlayerThing::State{ Sprite_BFGG, 1, false, 10, &A_FireBFG, State_BFG4 },		// State_BFG3
-  DOOM::PlayerThing::State{ Sprite_BFGG, 1, false, 20, &A_ReFire, State_BFG },			// State_BFG4
-  DOOM::PlayerThing::State{ Sprite_BFGF, 0, true, 11, &A_Light1, State_BFGFLASH2 },		// State_BFGFLASH1
-  DOOM::PlayerThing::State{ Sprite_BFGF, 1, true, 6, &A_Light2, State_LIGHTDONE }		// State_BFGFLASH2
+  DOOM::PlayerThing::State{ Sprite_MISF, 2, true, 4, &DOOM::PlayerThing::A_Light2, State_MISSILEFLASH4 },		// State_MISSILEFLASH3
+  DOOM::PlayerThing::State{ Sprite_MISF, 3, true, 4, &DOOM::PlayerThing::A_Light2, State_LIGHTDONE },		// State_MISSILEFLASH4
+  DOOM::PlayerThing::State{ Sprite_SAWG, 2, false, 4, &DOOM::PlayerThing::A_WeaponReady, State_SAWB },		// State_SAW
+  DOOM::PlayerThing::State{ Sprite_SAWG, 3, false, 4, &DOOM::PlayerThing::A_WeaponReady, State_SAW },		// State_SAWB
+  DOOM::PlayerThing::State{ Sprite_SAWG, 2, false, 1, &DOOM::PlayerThing::A_Lower, State_SAWDOWN },		// State_SAWDOWN
+  DOOM::PlayerThing::State{ Sprite_SAWG, 2, false, 1, &DOOM::PlayerThing::A_Raise, State_SAWUP },			// State_SAWUP
+  DOOM::PlayerThing::State{ Sprite_SAWG, 0, false, 4, &DOOM::PlayerThing::A_Saw, State_SAW2 },			// State_SAW1
+  DOOM::PlayerThing::State{ Sprite_SAWG, 1, false, 4, &DOOM::PlayerThing::A_Saw, State_SAW3 },			// State_SAW2
+  DOOM::PlayerThing::State{ Sprite_SAWG, 1, false, 0, &DOOM::PlayerThing::A_ReFire, State_SAW },			// State_SAW3
+  DOOM::PlayerThing::State{ Sprite_PLSG, 0, false, 1, &DOOM::PlayerThing::A_WeaponReady, State_PLASMA },		// State_PLASMA
+  DOOM::PlayerThing::State{ Sprite_PLSG, 0, false, 1, &DOOM::PlayerThing::A_Lower, State_PLASMADOWN },		// State_PLASMADOWN
+  DOOM::PlayerThing::State{ Sprite_PLSG, 0, false, 1, &DOOM::PlayerThing::A_Raise, State_PLASMAUP },		// State_PLASMAUP
+  DOOM::PlayerThing::State{ Sprite_PLSG, 0, false, 3, &DOOM::PlayerThing::A_FirePlasma, State_PLASMA2 },		// State_PLASMA1
+  DOOM::PlayerThing::State{ Sprite_PLSG, 1, false, 20, &DOOM::PlayerThing::A_ReFire, State_PLASMA },		// State_PLASMA2
+  DOOM::PlayerThing::State{ Sprite_PLSF, 0, true, 4, &DOOM::PlayerThing::A_Light1, State_LIGHTDONE },		// State_PLASMAFLASH1
+  DOOM::PlayerThing::State{ Sprite_PLSF, 1, true, 4, &DOOM::PlayerThing::A_Light1, State_LIGHTDONE },		// State_PLASMAFLASH2
+  DOOM::PlayerThing::State{ Sprite_BFGG, 0, false, 1, &DOOM::PlayerThing::A_WeaponReady, State_BFG },		// State_BFG
+  DOOM::PlayerThing::State{ Sprite_BFGG, 0, false, 1, &DOOM::PlayerThing::A_Lower, State_BFGDOWN },		// State_BFGDOWN
+  DOOM::PlayerThing::State{ Sprite_BFGG, 0, false, 1, &DOOM::PlayerThing::A_Raise, State_BFGUP },			// State_BFGUP
+  DOOM::PlayerThing::State{ Sprite_BFGG, 0, false, 20, &DOOM::PlayerThing::A_BFGsound, State_BFG2 },		// State_BFG1
+  DOOM::PlayerThing::State{ Sprite_BFGG, 1, false, 10, &DOOM::PlayerThing::A_GunFlash, State_BFG3 },		// State_BFG2
+  DOOM::PlayerThing::State{ Sprite_BFGG, 1, false, 10, &DOOM::PlayerThing::A_FireBFG, State_BFG4 },		// State_BFG3
+  DOOM::PlayerThing::State{ Sprite_BFGG, 1, false, 20, &DOOM::PlayerThing::A_ReFire, State_BFG },			// State_BFG4
+  DOOM::PlayerThing::State{ Sprite_BFGF, 0, true, 11, &DOOM::PlayerThing::A_Light1, State_BFGFLASH2 },		// State_BFGFLASH1
+  DOOM::PlayerThing::State{ Sprite_BFGF, 1, true, 6, &DOOM::PlayerThing::A_Light2, State_LIGHTDONE }		// State_BFGFLASH2
 };
 
 const std::array<DOOM::PlayerThing::Attributs, DOOM::Enum::Weapon::WeaponCount> DOOM::PlayerThing::_attributs = {
@@ -539,8 +539,8 @@ void  DOOM::PlayerThing::updateControllerTurn(DOOM::Doom & doom, sf::Time elapse
 {
   // Apply rotation to player
   updateTurn(doom, elapsed,
-    std::fabsf(Game::Window::Instance().joystick().position(controller - 1, 4)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, 4) / 100.f : 0.f,
-    std::fabsf(Game::Window::Instance().joystick().position(controller - 1, 5)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, 5) / 100.f : 0.f
+    std::abs(Game::Window::Instance().joystick().position(controller - 1, 4)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, 4) / 100.f : 0.f,
+    std::abs(Game::Window::Instance().joystick().position(controller - 1, 5)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, 5) / 100.f : 0.f
   );
 }
 
@@ -548,8 +548,8 @@ void  DOOM::PlayerThing::updateControllerMove(DOOM::Doom & doom, sf::Time elapse
 {
   // Move player
   Math::Vector<2> movement(
-    std::fabsf(Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::Y)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::Y) / 100.f : 0.f,
-    std::fabs(Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::X)) / 100.f > 0.2f ? +Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::X) / 100.f : 0.f
+    std::abs(Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::Y)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::Y) / 100.f : 0.f,
+    std::abs(Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::X)) / 100.f > 0.2f ? +Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::X) / 100.f : 0.f
   );
   
   // Handle running (left stick click)
@@ -688,7 +688,7 @@ void  DOOM::PlayerThing::drawCamera(DOOM::Doom& doom, sf::Image& target, sf::Rec
 {
   // Compute head bobing
   float bob = std::min(8.f, (Math::Pow<2>(_thrust.x()) + Math::Pow<2>(_thrust.y())) / 8.f)
-    * std::sinf(Math::Pi * 2.f * Math::Modulo(doom.level.statistics.time.asSeconds() / DOOM::Doom::Tic.asSeconds() / 20.f, 1.f));
+    * std::sin(Math::Pi * 2.f * Math::Modulo(doom.level.statistics.time.asSeconds() / DOOM::Doom::Tic.asSeconds() / 20.f, 1.f));
 
   // Apply position to camera
   camera.position.x() = position.x();
@@ -718,8 +718,8 @@ void  DOOM::PlayerThing::drawWeapon(DOOM::Doom& doom, sf::Image& target, sf::Rec
         target,
         sf::Rect<int16_t>(rect.left, rect.top, rect.width, rect.height - 32 * scale),
         sf::Vector2i(
-          rect.left + (int)((_weaponPosition.x() + bob * std::cosf(angle_x / 8192.f * Math::Pi * 2.f)) * scale),
-          rect.top + (int)((_weaponPosition.y() - 16 + bob * std::sinf(angle_y / 8192.f * Math::Pi * 2.f)) * scale)
+          rect.left + (int)((_weaponPosition.x() + bob * std::cos(angle_x / 8192.f * Math::Pi * 2.f)) * scale),
+          rect.top + (int)((_weaponPosition.y() - 16 + bob * std::sin(angle_y / 8192.f * Math::Pi * 2.f)) * scale)
         ),
         sf::Vector2i(scale, scale),
         palette);
@@ -736,8 +736,8 @@ void  DOOM::PlayerThing::drawWeapon(DOOM::Doom& doom, sf::Image& target, sf::Rec
         target,
         sf::Rect<int16_t>(rect.left, rect.top, rect.width, rect.height - 32 * scale),
         sf::Vector2i(
-          rect.left + (int)((_weaponPosition.x() + bob * std::cosf(angle_x / 8192.f * Math::Pi * 2.f)) * scale),
-          rect.top + (int)((_weaponPosition.y() - 16 + bob * std::sinf(angle_y / 8192.f * Math::Pi * 2.f)) * scale)
+          rect.left + (int)((_weaponPosition.x() + bob * std::cos(angle_x / 8192.f * Math::Pi * 2.f)) * scale),
+          rect.top + (int)((_weaponPosition.y() - 16 + bob * std::sin(angle_y / 8192.f * Math::Pi * 2.f)) * scale)
         ),
         sf::Vector2i(scale, scale),
         palette);
@@ -1617,6 +1617,14 @@ void  DOOM::PlayerThing::P_FireWeapon(DOOM::Doom& doom)
   
   // Alert nearby monsters
   P_NoiseAlert(doom, doom.level.getSector(position.convert<2>()).first);
+}
+
+void  DOOM::PlayerThing::P_NoiseAlert(DOOM::Doom& doom, int16_t sector_index, int limit)
+{
+  // Initialize sound propagation map
+  std::unordered_map<int16_t, int>  sectors;
+
+  P_NoiseAlert(doom, sector_index, limit, sectors);
 }
 
 void  DOOM::PlayerThing::P_NoiseAlert(DOOM::Doom& doom, int16_t sector_index, int limit, std::unordered_map<int16_t, int>& sectors)

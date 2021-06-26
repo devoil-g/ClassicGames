@@ -20,7 +20,7 @@ namespace DOOM
 
       // Push action in sector or trigger current action
       if (action.get() == nullptr) {
-        doom.level.sectors[sector_index].action<Type>(doom, type, doom.level.sidedefs[front].sector);
+        doom.level.sectors[sector_index].action<Type>(doom, DOOM::AbstractLinedef::type, doom.level.sidedefs[DOOM::AbstractLinedef::front].sector);
         return true;
       }
       else if (Trigger == DOOM::EnumLinedef::Trigger::TriggerPushed)

@@ -123,7 +123,7 @@ void  DOOM::StartDoomScene::draw()
     switch (_players[index]) {
     case -1:	// No controller
     {
-      float intensity = std::sqrtf(1.f - (std::cos(_elapsed.asSeconds() * 4.f) + 1.f) / 2.f);
+      float intensity = std::sqrt(1.f - (std::cos(_elapsed.asSeconds() * 4.f) + 1.f) / 2.f);
 
       _controllers[index].setString("PRESS START");
       _controllers[index].setFillColor(sf::Color((sf::Uint8)(255 * intensity), (sf::Uint8)(255 * intensity), (sf::Uint8)(255 * intensity)));

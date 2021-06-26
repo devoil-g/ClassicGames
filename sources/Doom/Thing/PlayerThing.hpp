@@ -34,7 +34,7 @@ namespace DOOM
     class State
     {
     public:
-      typedef void(DOOM::PlayerThing::* Action)(DOOM::Doom&);
+      using Action = void(DOOM::PlayerThing::*)(DOOM::Doom&);
 
       DOOM::AbstractThing::ThingSprite  sprite;     // Sprite sequence to use
       int                               frame;      // Frame of sprite to display
@@ -165,11 +165,12 @@ namespace DOOM
     void  A_Light1(DOOM::Doom& doom);         // Flash level to 1
     void  A_Light2(DOOM::Doom& doom);         // Flash level to 2
 
-    void  P_FireWeapon(DOOM::Doom& doom);                                                                                                                       // Attempt to fire with current weapon
-    bool  P_CheckAmmo(DOOM::Doom& doom);                                                                                                                        // Returns true if there is enough ammo to shoot. If not, selects the next weapon to use.
-    void  P_BringUpWeapon(DOOM::Doom& doom);                                                                                                                    // Starts bringing the pending weapon up from the bottom of the screen.
-    void  P_GunShot(DOOM::Doom& doom, float dispersion, float damage);                                                                                          // Simple gun shot
-    void  P_NoiseAlert(DOOM::Doom& doom, int16_t sector_index, int limit = 2, std::unordered_map<int16_t, int>& sectors = std::unordered_map<int16_t, int>());  // Make player sound target of adjacent sectors
+    void  P_FireWeapon(DOOM::Doom& doom);                                                                             // Attempt to fire with current weapon
+    bool  P_CheckAmmo(DOOM::Doom& doom);                                                                              // Returns true if there is enough ammo to shoot. If not, selects the next weapon to use.
+    void  P_BringUpWeapon(DOOM::Doom& doom);                                                                          // Starts bringing the pending weapon up from the bottom of the screen.
+    void  P_GunShot(DOOM::Doom& doom, float dispersion, float damage);                                                // Simple gun shot
+    void  P_NoiseAlert(DOOM::Doom& doom, int16_t sector_index, int limit = 2);                                        // Make player sound target of adjacent sectors
+    void  P_NoiseAlert(DOOM::Doom& doom, int16_t sector_index, int limit, std::unordered_map<int16_t, int>& sectors); // Make player sound target of adjacent sectors
 
     enum Control
     {

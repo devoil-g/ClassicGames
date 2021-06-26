@@ -57,8 +57,8 @@ int main(int argc, char ** argv)
   try {
 #ifdef __linux__
     // Initializes Xlib support for concurrent threads
-    if (XInitThreads() == 0)
-      throw std::runtime_error("XInitThreads() failed.");
+    //if (XInitThreads() == 0)
+    //throw std::runtime_error("XInitThreads() failed.");
 #endif
 
     Game::initialize(argc, argv);

@@ -52,10 +52,8 @@ bool  Game::Window::update(sf::Time elapsed)
       return true;
 
     // Update the view to the new size of the window
-    if (event.type == sf::Event::Resized) {
+    if (event.type == sf::Event::Resized)
       _window.setView(sf::View(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height)));
-      glViewport(0, 0, event.size.width, event.size.height);
-    }
 
     // Get input only if window focused
     if (_window.hasFocus() == true)

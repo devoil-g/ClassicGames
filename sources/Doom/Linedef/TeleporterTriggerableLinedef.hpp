@@ -19,8 +19,8 @@ namespace DOOM
       if (thing.flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
         return false;
 
-      auto& linedef_start = doom.level.vertexes[start];
-      auto& linedef_end = doom.level.vertexes[end];
+      auto& linedef_start = doom.level.vertexes[DOOM::AbstractLinedef::start];
+      auto& linedef_end = doom.level.vertexes[DOOM::AbstractLinedef::end];
 
       // Ignore teleportation if coming from the wrong direction
       if (Math::Vector<2>::determinant(linedef_end.convert<2>() - linedef_start.convert<2>(), thing.position.convert<2>() - linedef_start.convert<2>()) > 0.f)

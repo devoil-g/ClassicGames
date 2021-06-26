@@ -1,6 +1,8 @@
 #pragma once
 
 #include <array>
+#include <iostream>
+#include <cstring>
 #include <string>
 
 #include "Math/Math.hpp"
@@ -174,7 +176,7 @@ namespace Math
 
     static inline float angle(const Math::Vector<vSize>& v) // Compute 2D vector angle with X axis [O, 2pi[.
     {
-      return std::atan2f(v.y(), v.x());
+      return std::atan2(v.y(), v.x());
     }
 
     static inline float angle(const Math::Vector<vSize>& A, const Math::Vector<vSize>& B) // Calculate angle (radian) between two rays

@@ -12,12 +12,7 @@ namespace Game
 
   public:
     AbstractLibrary() = default;
-
-    virtual ~AbstractLibrary() = 0
-    {
-      // Properly destruct library elements
-      clear();
-    }
+    virtual ~AbstractLibrary() = 0;
 
     const Data& get(const Key& key) // Return data linked to key
     {
@@ -41,4 +36,11 @@ namespace Game
     virtual void  load(const Key&) = 0;   // Load element in library
     virtual void  unload(const Key&) {};  // Unload element in library (use default destructor by default)
   };
+}
+
+template<typename Key, typename Data>
+Game::AbstractLibrary<Key, Data>::~AbstractLibrary()
+{
+  // Properly destruct library elements
+  clear();
 }

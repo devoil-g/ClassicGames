@@ -22,7 +22,7 @@ namespace DOOM
       _target(target)
     {
       // Floor sound
-      sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov, true);
+      DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>::sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov, true);
     }
 
     ~FloorLevelingAction() override = default;
@@ -33,30 +33,30 @@ namespace DOOM
       if (Direction == DOOM::EnumAction::Direction::DirectionUp) {
         sf::Time  original = elapsed;
 
-        elapsed = updateFloorRaise(doom, sector, elapsed, _target, Speed / 8.f);
+        elapsed = DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::updateFloorRaise(doom, sector, elapsed, _target, Speed / 8.f);
 
         // Crush things
         if (Crush == true && elapsed > sf::Time::Zero)
-          elapsed = updateFloorCrush(doom, sector, elapsed, _target, Speed / 8.f);
+          elapsed = DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::updateFloorCrush(doom, sector, elapsed, _target, Speed / 8.f);
 
         // Collision, stop sound
         if (elapsed > sf::Time::Zero && sector.floor_current != _target)
-          _sound.sound.pause();
+          DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::_sound.sound.pause();
 
         // Moving, play sound
-        else if (elapsed != original && _sound.sound.getStatus() == sf::SoundSource::Status::Paused)
-          _sound.sound.play();
+        else if (elapsed != original && DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::_sound.sound.getStatus() == sf::SoundSource::Status::Paused)
+          DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::_sound.sound.play();
       }
 
       // Raise ceiling
       else
-        updateFloorLower(doom, sector, elapsed, _target, Speed / 8.f);
+        DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::updateFloorLower(doom, sector, elapsed, _target, Speed / 8.f);
 
       // Detect end of action
       if (sector.floor_current == _target) {
         sector.floor_base = sector.floor_current;
-        sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstop);
-        remove(doom, sector);
+        DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>::sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstop);
+        DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>::remove(doom, sector);
       }
     }
   };

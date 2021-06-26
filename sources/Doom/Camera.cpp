@@ -333,7 +333,7 @@ void  DOOM::Camera::renderFlat(const DOOM::Doom& doom, sf::Rect<int16_t> rect, D
       int16_t shaded = renderLight(doom, rect, special, light, (position.convert<2>() - coord).length() / distance_distortion);
 
       // Get color in flat from coordinates and register segment index in seg-buffer
-      _buffer[column * rect.height + row] = { seg, altitude, 31 - shaded / 8, texture[(Math::Modulo<64>(64 - (int)coord.y())) * 64 + Math::Modulo<64>((int)coord.x() - 1)] };
+      _buffer[column * rect.height + row] = { seg, altitude, (int16_t)(31 - shaded / 8), texture[(Math::Modulo<64>(64 - (int)coord.y())) * 64 + Math::Modulo<64>((int)coord.x() - 1)] };
     }
 }
 

@@ -3,7 +3,7 @@
 #include "Doom/Flat/AnimatedFlat.hpp"
 #include "Doom/Flat/StaticFlat.hpp"
 
-const DOOM::StaticFlat    DOOM::AbstractFlat::_Null;
+const DOOM::StaticFlat    DOOM::AbstractFlat::_Null = DOOM::StaticFlat();
 const DOOM::AbstractFlat& DOOM::AbstractFlat::Null = _Null;
 
 DOOM::AbstractFlat::AbstractFlat(DOOM::Doom& doom)

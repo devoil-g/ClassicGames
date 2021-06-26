@@ -160,7 +160,7 @@ namespace DOOM
     class State
     {
     public:
-      typedef void(DOOM::AbstractThing::* Action)(DOOM::Doom&);
+      using Action = void(DOOM::AbstractThing::*)(DOOM::Doom&);
 
       DOOM::AbstractThing::ThingSprite  sprite;     // Sprite sequence to use
       int                               frame;      // Frame of sprite to display

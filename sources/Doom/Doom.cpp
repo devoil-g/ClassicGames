@@ -221,12 +221,16 @@ void  DOOM::Doom::addPlayer(int controller)
 
 void  DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound, bool loop)
 {
-  this->sound(Game::Sound::Instance().get(), sound, loop);
+  auto ref = Game::Sound::Instance().get();
+
+  this->sound(ref, sound, loop);
 }
 
 void  DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound, const Math::Vector<3>& position, bool loop)
 {
-  this->sound(Game::Sound::Instance().get(), sound, position, loop);
+  auto ref = Game::Sound::Instance().get();
+
+  this->sound(ref, sound, position, loop);
 }
 
 void  DOOM::Doom::sound(Game::Sound::Reference& ref, DOOM::Doom::Resources::Sound::EnumSound sound, bool loop)
