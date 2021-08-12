@@ -199,8 +199,8 @@ void  DOOM::MenuDoomScene::start()
   DOOM::Doom&         doom = _doom;
 
   // Push game state
-  machine.pop();
-  machine.swap<DOOM::GameDoomScene>(doom);
+  machine.clear();
+  machine.push<DOOM::GameDoomScene>(doom);
 
   // Draw first image of game
   machine.draw();

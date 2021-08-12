@@ -6,6 +6,7 @@
 #include "Doom/Scenes/GameDoomScene.hpp"
 #include "Doom/Scenes/IntermissionDoomScene.hpp"
 #include "Doom/Scenes/MenuDoomScene.hpp"
+#include "Doom/Scenes/SplashDoomScene.hpp"
 #include "Doom/Scenes/TextDoomScene.hpp"
 #include "Doom/Scenes/TransitionDoomScene.hpp"
 #include "Scenes/SceneMachine.hpp"
@@ -392,13 +393,19 @@ void  DOOM::GameDoomScene::end()
 
   sf::Image start = _doom.image;
 
+  // Reset scenes
+  machine.clear();
+
   // Load next level
   if (next != std::pair<uint8_t, uint8_t>(0, 0)) {
     doom.setLevel(next);
-    machine.swap<DOOM::GameDoomScene>(doom);
+    machine.push<DOOM::GameDoomScene>(doom);
   }
+
+  // Go to main menu
   else {
-    machine.swap<DOOM::MenuDoomScene>(doom);
+    machine.push<DOOM::SplashDoomScene>(doom);
+    machine.push<DOOM::MenuDoomScene>(doom);
   }
 
   // Push text screen

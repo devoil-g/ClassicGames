@@ -17,7 +17,7 @@ bool  Game::StartScene::update(sf::Time elapsed)
   _elapsed += elapsed;
 
   // Switch to main menu when the player press start
-  if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Left) == true ||
+  if (Game::Window::Instance().mouse().buttonReleased(sf::Mouse::Button::Left) == true ||
     Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Return) == true || Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space) == true ||
     Game::Window::Instance().joystick().buttonPressed(0, 0) == true || Game::Window::Instance().joystick().buttonPressed(0, 7) == true)
   {
