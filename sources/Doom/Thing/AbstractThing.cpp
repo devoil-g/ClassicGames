@@ -6590,6 +6590,7 @@ void  DOOM::AbstractThing::P_SpawnMissile(DOOM::Doom& doom, DOOM::Enum::ThingTyp
   doom.level.things.back()->position.z() = position.z() + 32.f;
   doom.level.things.back()->_thrust = direction * (doom.level.things.back()->attributs.speed / direction.length());
   doom.level.things.back()->_target = this;
+  doom.level.things.back()->_tracer = _target;
 
   doom.sound(doom.level.things.back()->attributs.sound_see, doom.level.things.back()->position);
 }
@@ -6602,6 +6603,7 @@ void  DOOM::AbstractThing::P_SpawnPlayerMissile(DOOM::Doom& doom, DOOM::Enum::Th
   doom.level.things.back()->position.z() = position.z() + 32.f;
   doom.level.things.back()->_thrust = direction * (doom.level.things.back()->attributs.speed / direction.length());
   doom.level.things.back()->_target = this;
+  doom.level.things.back()->_tracer = nullptr;
 
   doom.sound(doom.level.things.back()->attributs.sound_see, doom.level.things.back()->position);
 }
@@ -6696,8 +6698,10 @@ void  DOOM::AbstractThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacke
   if (health <= 0.f) {
     // Remove some flags
     flags = (DOOM::Enum::ThingProperty)(flags & ~(DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_SkullFly));
-    if (type != DOOM::Enum::ThingType::ThingType_SKULL)
+    if (type != DOOM::Enum::ThingType::ThingType_SKULL) {
       flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_NoGravity);
+      _gravity = -1.f;
+    }
 
     // Add corpse flags
     flags = (DOOM::Enum::ThingProperty)(flags | DOOM::Enum::ThingProperty::ThingProperty_Corpse | DOOM::Enum::ThingProperty::ThingProperty_DropOff);
@@ -6779,6 +6783,8 @@ bool  DOOM::AbstractThing::key(DOOM::Enum::KeyColor color) const
 
 void  DOOM::AbstractThing::P_RadiusAttack(DOOM::Doom& doom, DOOM::AbstractThing& source, float damage)
 {
+  std::cout << "Radius attack!" << std::endl;
+
   // NOTE: we are using true distance instead of X/Y distance to compute damages
   float distance = (float)(damage + DOOM::AbstractThing::MaxRadius);
   std::set<std::reference_wrapper<DOOM::AbstractThing>> things;
@@ -6826,6 +6832,12 @@ void  DOOM::AbstractThing::A_SkelMissile(DOOM::Doom& doom)
   position.z() += 16.f;
   P_SpawnMissile(doom, DOOM::Enum::ThingType::ThingType_TRACER);
   position.z() -= 16.f;
+
+  // 50% chance skell missile goes to target
+  if (std::rand() % 2 == 0)
+    doom.level.things.back()->_tracer = _target;
+  else
+    doom.level.things.back()->_tracer = nullptr;
 }
 
 void  DOOM::AbstractThing::A_SkullAttack(DOOM::Doom& doom)
@@ -7245,24 +7257,25 @@ void  DOOM::AbstractThing::A_Tracer(DOOM::Doom& doom)
   // Spawn a puff of smoke behind the rocket
   P_SpawnPuff(doom, position - _thrust);
 
-  // Cancel if no  target
-  if (_target == nullptr || _target->health <= 0)
+  // Cancel if no tracer
+  if (_tracer == nullptr || _tracer->health <= 0)
     return;
 
   float origin_angle = angle;
-  float target_angle = Math::Vector<2>::angle(_target->position.convert<2>() - position.convert<2>());
+  float target_angle = Math::Vector<2>::angle(_tracer->position.convert<2>() - position.convert<2>());
   float ajust_angle = Math::Modulo(target_angle - origin_angle, Math::Pi * 2.f);
 
-  if (ajust_angle > Math::Pi)
+  if (ajust_angle > +Math::Pi)
     ajust_angle -= Math::Pi * 2.f;
+  if (ajust_angle < -Math::Pi)
+    ajust_angle += Math::Pi * 2.f;
 
   float origin_slope = std::atan(_thrust.z() / _thrust.convert<2>().length());
-  float target_slope = std::atan(((_target->position.z() + _target->height / 2.f) - (position.z() + height / 2.f)) / (_target->position.convert<2>() - position.convert<2>()).length());
-  float ajust_slope = target_slope - origin_slope;
-  float slope = origin_slope + ((ajust_slope > 0.f ? std::min(ajust_slope, +DOOM::AbstractThing::TracerAngle) : std::max(ajust_slope, -DOOM::AbstractThing::TracerAngle)));
+  float target_slope = std::atan(((_tracer->position.z() + _tracer->height / 2.f) - (position.z() + height / 2.f)) / (_tracer->position.convert<2>() - position.convert<2>()).length());
+  float slope = origin_slope + std::clamp(target_slope - origin_slope, -DOOM::AbstractThing::TracerAngle, +DOOM::AbstractThing::TracerAngle);
 
   // Ajust angle
-  angle += (ajust_angle > 0.f) ? std::min(ajust_angle, +DOOM::AbstractThing::TracerAngle) : std::max(ajust_angle, -DOOM::AbstractThing::TracerAngle);
+  angle += std::clamp(ajust_angle, -DOOM::AbstractThing::TracerAngle, +DOOM::AbstractThing::TracerAngle);
 
   Math::Vector<3> direction(std::cos(angle), std::sin(angle), std::tan(slope));
 

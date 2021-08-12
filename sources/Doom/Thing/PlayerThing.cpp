@@ -695,6 +695,13 @@ void  DOOM::PlayerThing::drawCamera(DOOM::Doom& doom, sf::Image& target, sf::Rec
   camera.position.y() = position.y();
   camera.position.z() = position.z() + 41.f + bob;
 
+  /*
+  // TODO: remove this, third person view
+  camera.position.x() -= std::cos(angle) * 64.f;
+  camera.position.y() -= std::sin(angle) * 64.f;
+  camera.position.z() -= bob;
+  */
+
   // Render 3D view
   camera.render(doom, target, sf::Rect<int16_t>(rect.left, rect.top, rect.width, rect.height - 32 * scale), _flash, cameraMode(), palette);
 }
