@@ -5206,8 +5206,11 @@ void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapse
 
     // Reset lost soul when colliding something
     if (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly) {
+      // Damage collided shootable
+      if (closest_thing != nullptr && closest_thing->flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable)
+        closest_thing->damage(doom, *this, (std::rand() % 8 + 1) * attributs.damage);
       flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_SkullFly);
-      setState(doom, attributs.state_see);
+      setState(doom, attributs.state_spawn);
     }
 
     // Explode if thing is a missile
@@ -6783,8 +6786,6 @@ bool  DOOM::AbstractThing::key(DOOM::Enum::KeyColor color) const
 
 void  DOOM::AbstractThing::P_RadiusAttack(DOOM::Doom& doom, DOOM::AbstractThing& source, float damage)
 {
-  std::cout << "Radius attack!" << std::endl;
-
   // NOTE: we are using true distance instead of X/Y distance to compute damages
   float distance = (float)(damage + DOOM::AbstractThing::MaxRadius);
   std::set<std::reference_wrapper<DOOM::AbstractThing>> things;
@@ -7255,7 +7256,7 @@ void  DOOM::AbstractThing::A_Tracer(DOOM::Doom& doom)
     return;
 
   // Spawn a puff of smoke behind the rocket
-  P_SpawnPuff(doom, position - _thrust);
+  P_SpawnPuff(doom, position - _thrust / _thrust.length() * (float)attributs.radius + Math::Vector<3>(Math::Random() * 2.f - 1.f, Math::Random() * 2.f - 1.f, Math::Random() * 2.f - 1.f) * 4.f * Math::Random());
 
   // Cancel if no tracer
   if (_tracer == nullptr || _tracer->health <= 0)
