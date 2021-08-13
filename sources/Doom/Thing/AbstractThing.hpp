@@ -348,6 +348,7 @@ namespace DOOM
 
     virtual bool  pickup(DOOM::Doom& doom, DOOM::AbstractThing& item); // Try to pick-up item, return true if item shall be deleted
 
+    void                                                                                updateState(DOOM::Doom& doom, sf::Time elapsed);                                                                                                          // Update state of thing
     void                                                                                updatePhysics(DOOM::Doom& doom, sf::Time elapsed);                                                                                                        // Update physics of thing
     void                                                                                updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed, int depth = 0, int16_t linedef_ignored = -1, const DOOM::AbstractThing* thing_ignored = nullptr); // Update thrust component of thing
     bool                                                                                updatePhysicsThrustSidedefs(DOOM::Doom& doom, int16_t sidedef_front_index, int16_t sidedef_back_index);                                                   // Return true if thing can move through sidedefs

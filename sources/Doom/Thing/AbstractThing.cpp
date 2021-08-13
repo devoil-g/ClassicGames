@@ -4838,6 +4838,18 @@ int16_t               DOOM::AbstractThing::type_to_id(DOOM::Enum::ThingType type
 
 bool  DOOM::AbstractThing::update(DOOM::Doom& doom, sf::Time elapsed)
 {
+  // Update state of thing
+  updateState(doom, elapsed);
+
+  // Update physics of thing
+  updatePhysics(doom, elapsed);
+
+  // Return remove flag
+  return _remove;
+}
+
+void  DOOM::AbstractThing::updateState(DOOM::Doom& doom, sf::Time elapsed)
+{
   // Update internal timer
   _elapsed += elapsed;
 
@@ -4853,12 +4865,6 @@ bool  DOOM::AbstractThing::update(DOOM::Doom& doom, sf::Time elapsed)
     _elapsed -= DOOM::Doom::Tic * (sf::Int64)_states[_state].duration;
     setState(doom, _states[_state].next);
   }
-
-  // Update physics of thing
-  updatePhysics(doom, elapsed);
-
-  // Return remove flag
-  return _remove;
 }
 
 std::unique_ptr<DOOM::AbstractThing>  DOOM::AbstractThing::factory(DOOM::Doom & doom, const DOOM::Wad::RawLevel::Thing & thing)
@@ -5075,7 +5081,7 @@ void  DOOM::AbstractThing::setState(DOOM::Doom & doom, DOOM::AbstractThing::Thin
 void  DOOM::AbstractThing::updatePhysics(DOOM::Doom& doom, sf::Time elapsed)
 {
   // Compute physics if minimal thrust
-  if (std::abs(_thrust.x()) > 0.001f || std::abs(_thrust.y()) > 0.001f)
+  if (_thrust.convert<2>().length() > 0.001f)
   {
     // Compute movement with collision
     updatePhysicsThrust(doom, elapsed);
@@ -5208,7 +5214,7 @@ void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapse
     if (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly) {
       // Damage collided shootable
       if (closest_thing != nullptr && closest_thing->flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable)
-        closest_thing->damage(doom, *this, (std::rand() % 8 + 1) * attributs.damage);
+        closest_thing->damage(doom, *this, (float)((std::rand() % 8 + 1) * attributs.damage));
       flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_SkullFly);
       setState(doom, attributs.state_spawn);
     }

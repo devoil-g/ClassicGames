@@ -374,7 +374,15 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
   updateRadiationSuit(doom, elapsed);
   updatePalette(doom, elapsed);
 
-  // Update core components and physics
+  // Update state (used only for sprite)
+  if (_thrust.convert<2>().length() > 0.1f) {
+    if (_state == DOOM::AbstractThing::ThingState::State_PLAY)
+      setState(doom, DOOM::AbstractThing::ThingState::State_PLAY_RUN1);
+  }
+  else if (_state >= DOOM::AbstractThing::ThingState::State_PLAY_RUN1 && _state <= DOOM::AbstractThing::ThingState::State_PLAY_RUN4)
+    setState(doom, DOOM::AbstractThing::ThingState::State_PLAY);
+  
+  // Update physics and core components
   DOOM::AbstractThing::update(doom, elapsed);
 
   // Update automap
