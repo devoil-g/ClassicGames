@@ -122,7 +122,7 @@ void  DOOM::GameDoomScene::draw()
 
   // Compute grid size
   while (true) {
-    if ((grid.first * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale) / (grid.second * DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale * DOOM::Doom::RenderStretching) > (float)Game::Window::Instance().window().getSize().x / (float)Game::Window::Instance().window().getSize().y) {
+    if (((grid.first - 1) * DOOM::Doom::RenderScale + grid.first * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale) / ((grid.second - 1) * DOOM::Doom::RenderScale + grid.second * DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale * DOOM::Doom::RenderStretching) > (float)Game::Window::Instance().window().getSize().x / (float)Game::Window::Instance().window().getSize().y) {
       if ((grid.first - 1) * grid.second >= _doom.level.players.size())
         grid.first--;
       else if (grid.first * (grid.second - 1) >= _doom.level.players.size())
@@ -141,8 +141,8 @@ void  DOOM::GameDoomScene::draw()
   }
 
   // Resize rendering target if necessary
-  if (_doom.image.getSize().x != grid.first * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale || _doom.image.getSize().y != (int)(grid.second * DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale))
-    _doom.image.create(grid.first * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, (int)(grid.second * DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale));
+  if (_doom.image.getSize().x != (grid.first - 1) * DOOM::Doom::RenderScale + grid.first * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale || _doom.image.getSize().y != (grid.second - 1) * DOOM::Doom::RenderScale + grid.second * DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale)
+    _doom.image.create((grid.first - 1) * DOOM::Doom::RenderScale + grid.first * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, (grid.second - 1) * DOOM::Doom::RenderScale + grid.second * DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale);
 
   // Clear rendering target
   std::memset((void *)_doom.image.getPixelsPtr(), 0, _doom.image.getSize().x * _doom.image.getSize().y * sizeof(sf::Color));
@@ -155,7 +155,7 @@ void  DOOM::GameDoomScene::draw()
     for (int x = 0; x < grid.first; x++)
       if (y * grid.first + x < _doom.level.players.size()) {
         tasks.push_back(std::async(std::launch::async, [this, grid, x, y] {
-          _doom.level.players[y * grid.first + x].get().draw(_doom, _doom.image, sf::Rect<int16_t>(x * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, y * DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale, DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale), DOOM::Doom::RenderScale);
+          _doom.level.players[y * grid.first + x].get().draw(_doom, _doom.image, sf::Rect<int16_t>(x * DOOM::Doom::RenderScale + x * DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, y * DOOM::Doom::RenderScale + y * DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale, DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale), DOOM::Doom::RenderScale);
         }));
       }
 
