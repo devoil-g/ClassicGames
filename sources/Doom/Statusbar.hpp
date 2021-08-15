@@ -53,14 +53,14 @@ namespace DOOM
   sf::Time              _elapsed; // Time since begining of face state
 
   public:
-    const int                                                   id;               // Player ID in game
-    int                                                         ammo;             // Ammo count
-    float                                                       health;           // Health percentage
-    float                                                       armor;            // Armor percentage
-    std::array<bool, DOOM::Enum::WeaponCount>                   weapons;          // Currently owned weapon
-    std::array<DOOM::Enum::KeyType, DOOM::Enum::KeyColorCount>  keys;             // Currently owned keys
-    std::array<unsigned int, DOOM::Enum::AmmoCount>             ammos;            // Current number of ammos in inventory
-    std::array<unsigned int, DOOM::Enum::AmmoCount>             maximum;          // Maximum number of ammos in inventory
+    const int                                                             id;               // Player ID in game
+    int                                                                   ammo;             // Ammo count
+    float                                                                 health;           // Health percentage
+    float                                                                 armor;            // Armor percentage
+    std::array<bool, DOOM::Enum::WeaponCount>                             weapons;          // Currently owned weapon
+    std::array<DOOM::Enum::KeyType, DOOM::Enum::KeyColor::KeyColorCount>  keys;             // Currently owned keys
+    std::array<unsigned int, DOOM::Enum::Ammo::AmmoCount>                 ammos;            // Current number of ammos in inventory
+    std::array<unsigned int, DOOM::Enum::Ammo::AmmoCount>                 maximum;          // Maximum number of ammos in inventory
 
   private:
     void  renderBackground(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const;

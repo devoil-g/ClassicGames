@@ -5223,8 +5223,20 @@ void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapse
     if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile) {
       if (closest_thing != nullptr)
         P_ExplodeMissile(doom, *closest_thing);
-      else
-        P_ExplodeMissile(doom);
+      else {
+        const DOOM::AbstractLinedef& linedef = *doom.level.linedefs[closest_linedef].get();
+
+        // Remove missile if colliding the sky
+        if (linedef.back == -1 ||
+          (doom.level.sectors[doom.level.sidedefs[linedef.front].sector].floor_name != DOOM::str_to_key("F_SKY1") ||
+            doom.level.sectors[doom.level.sidedefs[linedef.back].sector].floor_name != DOOM::str_to_key("F_SKY1")) &&
+          (doom.level.sectors[doom.level.sidedefs[linedef.front].sector].ceiling_name != DOOM::str_to_key("F_SKY1") ||
+            doom.level.sectors[doom.level.sidedefs[linedef.back].sector].ceiling_name != DOOM::str_to_key("F_SKY1")))
+          P_ExplodeMissile(doom);
+        else
+          setState(doom, DOOM::AbstractThing::ThingState::State_None);
+      }
+        
     }
 
     // Attempt new move, ignoring collided linedef/thing
@@ -5246,8 +5258,8 @@ bool  DOOM::AbstractThing::updatePhysicsThrustSidedefs(DOOM::Doom& doom, int16_t
   DOOM::Doom::Level::Sidedef& sidedef_front = doom.level.sidedefs[sidedef_front_index];
   DOOM::Doom::Level::Sidedef& sidedef_back = doom.level.sidedefs[sidedef_back_index];
 
-  // Can't move if texture in middle section of sidedef
-  if (sidedef_front.middle().width != 0 && sidedef_back.middle().width != 0)
+  // Only missile can move through middle texture
+  if (!(flags & DOOM::Enum::ThingProperty::ThingProperty_Missile) && sidedef_front.middle().width != 0)
     return false;
 
   DOOM::Doom::Level::Sector& sector_front = doom.level.sectors[sidedef_front.sector];
@@ -5485,6 +5497,14 @@ void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elaps
   // TODO: delete missile if colliding with sky
   // TODO: player falling must bounce on the ground and grunt
 
+  // Missile collision with wall/sky
+  auto collideMissile = [this, &doom](uint64_t flat) {
+    if (flat == DOOM::str_to_key("F_SKY1"))
+      setState(doom, DOOM::AbstractThing::ThingState::State_None);
+    else
+      P_ExplodeMissile(doom);
+  };
+
   // Raise thing if below the floor
   if (position.z() < floor) {
     position.z() = std::min(floor, position.z() + std::max(_thrust.z(), (floor - position.z()) / 2.f + 3.2f) / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
@@ -5492,7 +5512,7 @@ void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elaps
 
     // Explode missile if colliding with floor
     if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
-      P_ExplodeMissile(doom);
+      collideMissile(doom.level.sectors[doom.level.getSector(position.convert<2>()).first].floor_name);
   }
   // Lower thing is upper than the ceiling (limit to floor)
   else if (position.z() > ceiling - height) {
@@ -5501,8 +5521,9 @@ void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elaps
 
     // Explode missile if colliding with ceiling
     if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
-      P_ExplodeMissile(doom);
+      collideMissile(doom.level.sectors[doom.level.getSector(position.convert<2>()).first].ceiling_name);
   }
+
   // Normal gravity
   else if (_thrust.z() < 0.f) {
     position.z() = std::max(floor, position.z() + _thrust.z() / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
@@ -5511,7 +5532,7 @@ void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elaps
 
       // Explode missile if colliding with floor
       if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
-        P_ExplodeMissile(doom);
+        collideMissile(doom.level.sectors[doom.level.getSector(position.convert<2>()).first].floor_name);
     }
   }
   // Reverse gravity
@@ -5522,7 +5543,7 @@ void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elaps
 
       // Explode missile if colliding with floor
       if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
-        P_ExplodeMissile(doom);
+        collideMissile(doom.level.sectors[doom.level.getSector(position.convert<2>()).first].ceiling_name);
     }
   }
 }
@@ -6280,10 +6301,7 @@ float DOOM::AbstractThing::P_AimLineAttack(DOOM::Doom& doom, const DOOM::Abstrac
     DOOM::AbstractLinedef& linedef = *doom.level.linedefs[linedef_index.second];
 
     // NOTE: we can see through impassible walls
-    // Stop immediatly if linedef is impassible
-    //if (linedef.flag & DOOM::AbstractLinedef::Flag::Impassible && false)
-    //  return std::numeric_limits<float>::quiet_NaN();
-
+    
     // Can't see outside the map
     if (linedef.front == -1 || linedef.back == -1)
       return std::numeric_limits<float>::quiet_NaN();
@@ -6307,7 +6325,7 @@ bool  DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const
 {
   std::list<std::pair<float, int16_t>>						linedefs_list = doom.level.getLinedefs(atk_origin.convert<2>(), atk_direction.convert<2>(), atk_range);
   std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>	things_list = doom.level.getThings(atk_origin.convert<2>(), atk_direction.convert<2>(), atk_range);
-  float                                                                         sector = std::numeric_limits<float>::max();
+  std::pair<float, int16_t>                                                     sector = { std::numeric_limits<float>::max(), -1 };
 
   // Find first shootable thing
   while (things_list.empty() == false)
@@ -6350,12 +6368,12 @@ bool  DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const
     if (atk_direction.z() != 0.f) {
       // Intersection with floor
       if (height < sector_front.floor_current) {
-        sector = (sector_front.floor_current - atk_origin.z()) / atk_direction.z();
+        sector = { (sector_front.floor_current - atk_origin.z()) / atk_direction.z(), sidedef_front.sector };
         break;
       }
       // Intersection with ceiling
       if (height > sector_front.ceiling_current) {
-        sector = (sector_front.ceiling_current - atk_origin.z()) / atk_direction.z();
+        sector = { (sector_front.ceiling_current - atk_origin.z()) / atk_direction.z(), sidedef_front.sector };
         break;
       }
     }
@@ -6373,20 +6391,20 @@ bool  DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const
       break;
     }
     
-    // Intersection with middle texture
-    if (sidedef_front.middle().height != 0) {
-      break;
-    }
-
+    // NOTE: no intersection with middle texture, we can shot through windows
+    
     // No intersection with linedef
     linedefs_list.pop_front();
   }
 
   // Shoot sector floor or ceiling
-  if (sector != std::numeric_limits<float>::max() &&
-    (things_list.empty() || things_list.front().first > sector) &&
-    (linedefs_list.empty() || linedefs_list.front().first > sector)) {
-    P_SpawnPuff(doom, atk_origin + atk_direction * sector);
+  if (sector.first != std::numeric_limits<float>::max() &&
+    (things_list.empty() || things_list.front().first > sector.first) &&
+    (linedefs_list.empty() || linedefs_list.front().first > sector.first)) {
+    // Don't spawn puff on sky
+    if ((atk_direction.z() < 0.f && doom.level.sectors[sector.second].floor_name != DOOM::str_to_key("F_SKY1")) ||
+      (atk_direction.z() > 0.f && doom.level.sectors[sector.second].ceiling_name != DOOM::str_to_key("F_SKY1")))
+      P_SpawnPuff(doom, atk_origin + atk_direction * sector.first);
 
     // Floor is not a valid target
     return false;
@@ -6416,7 +6434,12 @@ bool  DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const
       linedef_normal *= -1.f;
 
     // Spawn smoke puff
-    P_SpawnPuff(doom, atk_origin + atk_direction * linedefs_list.front().first + linedef_normal);
+    if (linedef.back == -1 ||
+      (doom.level.sectors[doom.level.sidedefs[linedef.front].sector].floor_name != DOOM::str_to_key("F_SKY1") ||
+       doom.level.sectors[doom.level.sidedefs[linedef.back].sector].floor_name != DOOM::str_to_key("F_SKY1")) &&
+      (doom.level.sectors[doom.level.sidedefs[linedef.front].sector].ceiling_name != DOOM::str_to_key("F_SKY1") ||
+       doom.level.sectors[doom.level.sidedefs[linedef.back].sector].ceiling_name != DOOM::str_to_key("F_SKY1")))
+      P_SpawnPuff(doom, atk_origin + atk_direction * linedefs_list.front().first + linedef_normal);
 
     // Gunfire trigger
     return linedef.gunfire(doom, *this);

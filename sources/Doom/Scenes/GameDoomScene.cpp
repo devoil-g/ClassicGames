@@ -74,6 +74,46 @@ bool  DOOM::GameDoomScene::update(sf::Time elapsed)
   _doom.update(elapsed);
 
   // TODO: remove this
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::F4) == true) {
+    for (const auto& player : _doom.level.players) {
+      // Max ammos
+      for (int i = 0; i < player.get().statusbar.ammos.size(); i++)
+        player.get().statusbar.ammos[i] = player.get().statusbar.maximum[i];
+      if (player.get().health > 0.f) {
+        player.get().health = 200.f;
+        player.get().statusbar.armor = 199.f;
+        _doom.level.things.emplace_back(std::make_unique<DOOM::AbstractThing>(_doom, DOOM::Enum::ThingType::ThingType_MISC1, DOOM::Enum::ThingFlag::FlagNone, player.get().position.x(), player.get().position.y(), 0.f));
+      }
+      // Backpack
+      if (player.get().statusbar.maximum[DOOM::Enum::Ammo::AmmoBullet] < 400)
+        _doom.level.things.emplace_back(std::make_unique<DOOM::AbstractThing>(_doom, DOOM::Enum::ThingType::ThingType_MISC24, DOOM::Enum::ThingFlag::FlagNone, player.get().position.x(), player.get().position.y(), 0.f));
+      // BFG
+      if (player.get().statusbar.weapons[DOOM::Enum::Weapon::WeaponBFG9000] == false)
+        _doom.level.things.emplace_back(std::make_unique<DOOM::AbstractThing>(_doom, DOOM::Enum::ThingType::ThingType_MISC25, DOOM::Enum::ThingFlag::FlagNone, player.get().position.x(), player.get().position.y(), 0.f));
+      // Chaingun
+      if (player.get().statusbar.weapons[DOOM::Enum::Weapon::WeaponChaingun] == false)
+        _doom.level.things.emplace_back(std::make_unique<DOOM::AbstractThing>(_doom, DOOM::Enum::ThingType::ThingType_CHAINGUN, DOOM::Enum::ThingFlag::FlagNone, player.get().position.x(), player.get().position.y(), 0.f));
+      // Chainsaw
+      if (player.get().statusbar.weapons[DOOM::Enum::Weapon::WeaponChainsaw] == false)
+        _doom.level.things.emplace_back(std::make_unique<DOOM::AbstractThing>(_doom, DOOM::Enum::ThingType::ThingType_MISC26, DOOM::Enum::ThingFlag::FlagNone, player.get().position.x(), player.get().position.y(), 0.f));
+      // Rocket launcher
+      if (player.get().statusbar.weapons[DOOM::Enum::Weapon::WeaponRocketLauncher] == false)
+        _doom.level.things.emplace_back(std::make_unique<DOOM::AbstractThing>(_doom, DOOM::Enum::ThingType::ThingType_MISC27, DOOM::Enum::ThingFlag::FlagNone, player.get().position.x(), player.get().position.y(), 0.f));
+      // Plasma rifle
+      if (player.get().statusbar.weapons[DOOM::Enum::Weapon::WeaponPlasmaGun] == false)
+        _doom.level.things.emplace_back(std::make_unique<DOOM::AbstractThing>(_doom, DOOM::Enum::ThingType::ThingType_MISC28, DOOM::Enum::ThingFlag::FlagNone, player.get().position.x(), player.get().position.y(), 0.f));
+      // Shotgun
+      if (player.get().statusbar.weapons[DOOM::Enum::Weapon::WeaponShotgun] == false)
+        _doom.level.things.emplace_back(std::make_unique<DOOM::AbstractThing>(_doom, DOOM::Enum::ThingType::ThingType_SHOTGUN, DOOM::Enum::ThingFlag::FlagNone, player.get().position.x(), player.get().position.y(), 0.f));
+      // Super shotgun
+      if (_doom.mode == DOOM::Enum::Mode::ModeCommercial && player.get().statusbar.weapons[DOOM::Enum::Weapon::WeaponSuperShotgun] == false)
+        _doom.level.things.emplace_back(std::make_unique<DOOM::AbstractThing>(_doom, DOOM::Enum::ThingType::ThingType_SUPERSHOTGUN, DOOM::Enum::ThingFlag::FlagNone, player.get().position.x(), player.get().position.y(), 0.f));
+
+
+    }
+  }
+
+  // TODO: remove this
   // Change level
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::F3) == true) {
     auto  levels = _doom.getLevels();
