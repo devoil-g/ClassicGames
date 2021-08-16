@@ -5236,7 +5236,6 @@ void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapse
         else
           setState(doom, DOOM::AbstractThing::ThingState::State_None);
       }
-        
     }
 
     // Attempt new move, ignoring collided linedef/thing
@@ -7313,6 +7312,43 @@ void  DOOM::AbstractThing::A_Tracer(DOOM::Doom& doom)
   _thrust = direction * (attributs.speed / direction.length());
 }
 
+void  DOOM::AbstractThing::A_BFGSpray(DOOM::Doom& doom)
+{
+  // Check that emitter is alive
+  if (_target == nullptr || _target->health <= 0.f)
+    return;
+
+  // 40 BFG rays in a 90° cone
+  for (float ray_angle = angle - Math::DegToRad(45.f); ray_angle <= angle + Math::DegToRad(45.f); ray_angle += Math::DegToRad(90.f / 40.f)) {
+    auto things = doom.level.getThings(_target->position.convert<2>(), Math::Vector<2>(std::cos(ray_angle), std::sin(ray_angle)), 1024.f);
+
+    // Find thing to shot
+    for (const auto& thing : things) {
+      // Do not shoot player or inanimated things
+      if (&thing.second.get() == _target || !(thing.second.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable))
+        continue;
+
+      // Check that thing is in line of sight
+      if (std::isnan(_target->P_AimLineAttack(doom, thing.second)) == true)
+        continue;
+
+      float damage = 0.f;
+
+      // Compute damage
+      for (int d = 0; d < 15; d++)
+        damage += std::rand() % 8 + 1;
+
+      // Damage thing
+      thing.second.get().damage(doom, *this, *_target, damage);
+
+      // Spawn green sparks on victim
+      doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, DOOM::Enum::ThingType::ThingType_EXTRABFG, DOOM::Enum::ThingFlag::FlagNone, thing.second.get().position.x(), thing.second.get().position.y(), 0.f));
+      doom.level.things.back()->position.z() = thing.second.get().position.z() + thing.second.get().height / 2.f;
+
+      break;
+    }
+  }
+}
+
 void  DOOM::AbstractThing::A_BrainAwake(DOOM::Doom& doom) {}
 void  DOOM::AbstractThing::A_BrainSpit(DOOM::Doom& doom) {}
-void  DOOM::AbstractThing::A_BFGSpray(DOOM::Doom& doom) {}

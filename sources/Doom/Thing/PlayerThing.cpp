@@ -299,6 +299,9 @@ void  DOOM::PlayerThing::reset(DOOM::Doom& doom, bool hard)
   // Raise weapon
   _weaponNext = _weapon;
   P_BringUpWeapon(doom);
+
+  // Set start state
+  setState(doom, attributs.state_spawn);
 }
 
 void  DOOM::PlayerThing::updateRadiationSuit(DOOM::Doom& doom, sf::Time elapsed)
@@ -1116,7 +1119,7 @@ void  DOOM::PlayerThing::damageSector(DOOM::Doom& doom, sf::Time elapsed, float 
     float protection = 0;
 
     // Radiation suit
-    if (_radiation.asSeconds() > 0.f && (dmg < 20.f || std::rand() % 256 < 250))
+    if (end == false && _radiation.asSeconds() > 0.f && (dmg < 20.f || std::rand() % 256 < 250))
       continue;
 
     // 1/2 armor when mega armor, 1/3 otherwise
@@ -1136,7 +1139,7 @@ void  DOOM::PlayerThing::damageSector(DOOM::Doom& doom, sf::Time elapsed, float 
       dmg = std::min(health - 1.f, dmg);
 
     // Apply remaining damage
-    DOOM::AbstractThing::damage(doom, *this, dmg);
+    DOOM::AbstractThing::damage(doom, *this, *this, dmg);
 
     // Set statusbar face
     if (dmg > 20.f)

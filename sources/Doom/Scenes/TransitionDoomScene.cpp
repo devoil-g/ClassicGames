@@ -9,11 +9,6 @@ DOOM::TransitionDoomScene::TransitionDoomScene(Game::SceneMachine& machine, DOOM
   _transition(),
   _offsets(DOOM::Doom::RenderWidth / 2)
 {
-  // Check images are valid DOOM ratio
-  if (_start.getSize().x % DOOM::Doom::RenderWidth != 0 ||
-    _end.getSize().x % DOOM::Doom::RenderWidth != 0)
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
   // Randomly set timers
   _offsets.front() = DOOM::Doom::Tic * (float)(-std::rand() % 16);
   for (unsigned int i = 1; i < _offsets.size(); i++)
