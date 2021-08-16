@@ -211,9 +211,9 @@ const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::St
   DOOM::AbstractThing::State{ Sprite_VILE, 13, true, 8, &DOOM::AbstractThing::A_FaceTarget, State_VILE_ATK10 },	// State_VILE_ATK9
   DOOM::AbstractThing::State{ Sprite_VILE, 14, true, 8, &DOOM::AbstractThing::A_VileAttack, State_VILE_ATK11 },	// State_VILE_ATK10
   DOOM::AbstractThing::State{ Sprite_VILE, 15, true, 20, nullptr, State_VILE_RUN1 },		// State_VILE_ATK11
-  DOOM::AbstractThing::State{ Sprite_VILE, 36, true, 10, nullptr, State_VILE_HEAL2 },		// State_VILE_HEAL1
-  DOOM::AbstractThing::State{ Sprite_VILE, 37, true, 10, nullptr, State_VILE_HEAL3 },		// State_VILE_HEAL2
-  DOOM::AbstractThing::State{ Sprite_VILE, 38, true, 10, nullptr, State_VILE_RUN1 },		// State_VILE_HEAL3
+  DOOM::AbstractThing::State{ Sprite_VILE, 26, true, 10, nullptr, State_VILE_HEAL2 },		// State_VILE_HEAL1
+  DOOM::AbstractThing::State{ Sprite_VILE, 27, true, 10, nullptr, State_VILE_HEAL3 },		// State_VILE_HEAL2
+  DOOM::AbstractThing::State{ Sprite_VILE, 28, true, 10, nullptr, State_VILE_RUN1 },		// State_VILE_HEAL3
   DOOM::AbstractThing::State{ Sprite_VILE, 16, false, 5, nullptr, State_VILE_PAIN2 },		// State_VILE_PAIN
   DOOM::AbstractThing::State{ Sprite_VILE, 16, false, 5, &DOOM::AbstractThing::A_Pain, State_VILE_RUN1 },		// State_VILE_PAIN2
   DOOM::AbstractThing::State{ Sprite_VILE, 16, false, 7, nullptr, State_VILE_DIE2 },		// State_VILE_DIE1
@@ -7270,7 +7270,7 @@ void  DOOM::AbstractThing::A_VileAttack(DOOM::Doom& doom)
 
   if (flags & DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap)
     doom.level.blockmap.moveThing(*_tracer, _tracer->position.convert<2>(), dest.convert<2>());
-  position = dest;
+  _tracer->position = dest;
 
   // Blast damage target
   _tracer->P_RadiusAttack(doom, *this, 70.f);
