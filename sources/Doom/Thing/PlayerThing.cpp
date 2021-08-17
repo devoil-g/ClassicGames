@@ -954,6 +954,47 @@ bool  DOOM::PlayerThing::pickupAmmo(const DOOM::Doom& doom, DOOM::Enum::Ammo typ
   if (statusbar.ammos[type] >= statusbar.maximum[type])
     return false;
 
+  // Switch weapon
+  switch (type)
+  {
+  case DOOM::Enum::Ammo::AmmoBullet:
+    if (statusbar.weapons[DOOM::Enum::Weapon::WeaponChaingun] == true &&
+      (_weaponNext == DOOM::Enum::Weapon::WeaponFist) &&
+      statusbar.ammos[DOOM::Enum::Ammo::AmmoBullet] < _attributs[DOOM::Enum::Weapon::WeaponChaingun].count)
+      _weaponNext = DOOM::Enum::Weapon::WeaponChaingun;
+    else if (statusbar.weapons[DOOM::Enum::Weapon::WeaponPistol] == true &&
+      (_weaponNext == DOOM::Enum::Weapon::WeaponFist) &&
+      statusbar.ammos[DOOM::Enum::Ammo::AmmoBullet] < _attributs[DOOM::Enum::Weapon::WeaponPistol].count)
+      _weaponNext = DOOM::Enum::Weapon::WeaponPistol;
+    break;
+
+  case DOOM::Enum::Ammo::AmmoShell:
+    if (statusbar.weapons[DOOM::Enum::Weapon::WeaponSuperShotgun] == true &&
+      (_weaponNext == DOOM::Enum::Weapon::WeaponFist || _weaponNext == DOOM::Enum::Weapon::WeaponPistol) &&
+      statusbar.ammos[DOOM::Enum::Ammo::AmmoShell] < _attributs[DOOM::Enum::Weapon::WeaponSuperShotgun].count)
+      _weaponNext = DOOM::Enum::Weapon::WeaponSuperShotgun;
+    else if (statusbar.weapons[DOOM::Enum::Weapon::WeaponShotgun] == true &&
+      (_weaponNext == DOOM::Enum::Weapon::WeaponFist || _weaponNext == DOOM::Enum::Weapon::WeaponPistol) &&
+      statusbar.ammos[DOOM::Enum::Ammo::AmmoShell] < _attributs[DOOM::Enum::Weapon::WeaponShotgun].count)
+      _weaponNext = DOOM::Enum::Weapon::WeaponShotgun;
+    break;
+
+  case DOOM::Enum::Ammo::AmmoRocket:
+    if (statusbar.weapons[DOOM::Enum::Weapon::WeaponRocketLauncher] == true &&
+      (_weaponNext == DOOM::Enum::Weapon::WeaponFist) &&
+      statusbar.ammos[DOOM::Enum::Ammo::AmmoRocket] < _attributs[DOOM::Enum::Weapon::WeaponRocketLauncher].count)
+      _weaponNext = DOOM::Enum::Weapon::WeaponRocketLauncher;
+
+  case DOOM::Enum::Ammo::AmmoCell:
+    if (statusbar.weapons[DOOM::Enum::Weapon::WeaponPlasmaGun] == true &&
+      (_weaponNext == DOOM::Enum::Weapon::WeaponFist || _weaponNext == DOOM::Enum::Weapon::WeaponPistol) &&
+      statusbar.ammos[DOOM::Enum::Ammo::AmmoRocket] < _attributs[DOOM::Enum::Weapon::WeaponPlasmaGun].count)
+      _weaponNext = DOOM::Enum::Weapon::WeaponPlasmaGun;
+
+  default:
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  }
+
   // Pickup double in "I'm Too Young To Die" and "Nightmare!" skill levels
   statusbar.ammos[type] = std::min(statusbar.maximum[type], (statusbar.ammos[type] + quantity) * ((doom.skill == DOOM::Enum::Skill::SkillBaby || doom.skill == DOOM::Enum::Skill::SkillNightmare) ? 2 : 1));
 
