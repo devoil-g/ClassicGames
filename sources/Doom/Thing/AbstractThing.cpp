@@ -4947,7 +4947,6 @@ void  DOOM::AbstractThing::A_SpawnFly(DOOM::Doom& doom)
 {
   // Wait end of reaction time
   _reactiontime += -1;
-  std::cout << _reactiontime << std::endl;
   if (_reactiontime != 0)
     return;
 
