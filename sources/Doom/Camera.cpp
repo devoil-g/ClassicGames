@@ -385,7 +385,9 @@ void  DOOM::Camera::renderThings(const DOOM::Doom& doom, sf::Rect<int16_t> rect,
 
   // Render every things of current level
   for (const auto& thing : doom.level.things)
-    if (thing->sprite(doom, 0).texture.width > 0) // TODO: angle parameter if thing->sprite() ?
+    // NOTE: we use angle 0 to speed-up calculation, will not
+    // work with things visible only from a certain angle
+    if (thing->sprite(doom, 0).texture.width > 0)
     {
       float distance = Math::Vector<2>::determinant(thing->position.convert<2>() - position.convert<2>(), eye_90) / eye_r;
 

@@ -240,7 +240,6 @@ void  DOOM::IntermissionDoomScene::updateStatisticsCounters(sf::Time& elapsed, s
       end = std::max(end, (int)std::round(counter.second.value / speed / DOOM::IntermissionDoomScene::SpeedPistol));
   }
 
-  // TODO: will not explode if elapsed is exactly at zero
   // Counter completed, explode!
   if (updateStatisticsCountersCheck(counters) == true)
     _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_barexp);

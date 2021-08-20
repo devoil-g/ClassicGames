@@ -385,6 +385,7 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
   else if (_state >= DOOM::AbstractThing::ThingState::State_PLAY_RUN1 && _state <= DOOM::AbstractThing::ThingState::State_PLAY_RUN4)
     setState(doom, DOOM::AbstractThing::ThingState::State_PLAY);
   
+  // TODO: player falling must bounce on the ground
   // Update physics and core components
   DOOM::AbstractThing::update(doom, elapsed);
 
@@ -617,6 +618,10 @@ void  DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::V
     return;
   }
 
+  // Do not move when not touching ground
+  if (_thrust.z() != 0.f)
+    return;
+
   // The dead can't move
   if (health <= 0.f)
     return;
@@ -633,8 +638,6 @@ void  DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::V
   movement = Math::Vector<2>(
     movement.x() * std::cos(angle) + movement.y() * std::sin(angle),
     movement.x() * std::sin(angle) - movement.y() * std::cos(angle));
-
-  // TODO: do not move when not touching ground
 
   // Apply movement to current position
   thrust(Math::Vector<3>(movement.x(), movement.y(), 0.f) * elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
@@ -705,13 +708,6 @@ void  DOOM::PlayerThing::drawCamera(DOOM::Doom& doom, sf::Image& target, sf::Rec
   camera.position.x() = position.x();
   camera.position.y() = position.y();
   camera.position.z() = position.z() + 41.f + bob;
-
-  /*
-  // TODO: remove this, third person view
-  camera.position.x() -= std::cos(angle) * 64.f;
-  camera.position.y() -= std::sin(angle) * 64.f;
-  camera.position.z() -= bob;
-  */
 
   // Render 3D view
   camera.render(doom, target, sf::Rect<int16_t>(rect.left, rect.top, rect.width, rect.height - 32 * scale), _flash, cameraMode(), palette);
@@ -922,8 +918,6 @@ bool  DOOM::PlayerThing::pickupLightAmplificationVisor()
   return true;
 }
 
-// TODO: remove these pragma, due to a MSVC optimization bug, setWeapon is not called properly
-#pragma optimize("", off)
 bool  DOOM::PlayerThing::pickupWeapon(DOOM::Enum::Weapon type)
 {
   // Cancel if weapon already in inventory
@@ -942,7 +936,6 @@ bool  DOOM::PlayerThing::pickupWeapon(DOOM::Enum::Weapon type)
 
   return true;
 }
-#pragma optimize("", on)
 
 bool  DOOM::PlayerThing::pickupAmmo(const DOOM::Doom& doom, DOOM::Enum::Ammo type, unsigned int quantity)
 {
@@ -984,12 +977,14 @@ bool  DOOM::PlayerThing::pickupAmmo(const DOOM::Doom& doom, DOOM::Enum::Ammo typ
       (_weaponNext == DOOM::Enum::Weapon::WeaponFist) &&
       statusbar.ammos[DOOM::Enum::Ammo::AmmoRocket] < _attributs[DOOM::Enum::Weapon::WeaponRocketLauncher].count)
       _weaponNext = DOOM::Enum::Weapon::WeaponRocketLauncher;
+    break;
 
   case DOOM::Enum::Ammo::AmmoCell:
     if (statusbar.weapons[DOOM::Enum::Weapon::WeaponPlasmaGun] == true &&
       (_weaponNext == DOOM::Enum::Weapon::WeaponFist || _weaponNext == DOOM::Enum::Weapon::WeaponPistol) &&
       statusbar.ammos[DOOM::Enum::Ammo::AmmoRocket] < _attributs[DOOM::Enum::Weapon::WeaponPlasmaGun].count)
       _weaponNext = DOOM::Enum::Weapon::WeaponPlasmaGun;
+    break;
 
   default:
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());

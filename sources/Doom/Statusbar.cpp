@@ -174,10 +174,9 @@ void  DOOM::Statusbar::renderWeapons(const DOOM::Doom& doom, sf::Image& target, 
 
 void  DOOM::Statusbar::renderFace(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const
 {
-  // TODO: animate face
-
   const auto& texture = doom.resources.getMenu(_sprites[std::clamp((int)(health / 20.f), 0, (int)_sprites.size() - 1)][(health > 0.f) ? _face.sprite : DOOM::Statusbar::FaceSprite::SpriteDead]);
 
+  // Draw face
   renderTexture(doom, target, rect, texture, 143 - texture.left, 0 - texture.top, palette);
 }
 

@@ -251,9 +251,9 @@ namespace DOOM
     int   height; // Thing height
 
   protected:
-    int       reactiontime;   // Thing reaction time counter
-    Direction move_direction; // Movement direction
-    int       move_count;     // When 0, select a new direction
+    int       _reactiontime;   // Thing reaction time counter
+    Direction _move_direction; // Movement direction
+    int       _move_count;     // When 0, select a new direction
 
     bool                            _remove;  // True if thing should be deleted
     Math::Vector<3>                 _thrust;  // Thrust applied on thing
@@ -366,8 +366,8 @@ namespace DOOM
     static DOOM::Enum::ThingType  id_to_type(int16_t id);                 // Convert WAD id to DOOM type
     static int16_t                type_to_id(DOOM::Enum::ThingType type); // Convert DOOM type to WAD id
 
-    bool  teleport(DOOM::Doom& doom, const Math::Vector<2>& destination, float angle, bool telefrag = false); // Teleport thing to position (reset physics)
-    void  thrust(const Math::Vector<3>& acceleration);                                                        // Apply acceleration to thing
+    bool  teleport(DOOM::Doom& doom, const Math::Vector<2>& destination, float angle, bool telefrag, bool silent = false);  // Teleport thing to position (reset physics)
+    void  thrust(const Math::Vector<3>& acceleration);                                                                      // Apply acceleration to thing
 
     virtual void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, float damage); // Receive attack from attacker caused by origin
     virtual void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, float damage);                              // Receive attack from attacker

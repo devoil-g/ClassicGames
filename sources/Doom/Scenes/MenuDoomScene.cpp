@@ -138,7 +138,6 @@ DOOM::MenuDoomScene::MenuDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom
   // Handle menu for special versions
   switch (_doom.mode) {
   case DOOM::Enum::Mode::ModeCommercial:
-    // TODO: probably something ot do with DOOM II
     // NOTE: WTF am I suppose to do here?! m_menu.c:1867
     // This seems to be an hack for ReadThis! screen on some version,
     // additional checks below fix this problem

@@ -29,7 +29,7 @@ namespace DOOM
       // Search for teleporter target in sector
       for (const auto& sector_thing : doom.level.things) {
         if (sector_thing->type == DOOM::Enum::ThingType::ThingType_TELEPORTMAN && doom.level.getSector(sector_thing->position.convert<2>()).first == sector_index) {
-          return thing.teleport(doom, sector_thing->position.convert<2>(), sector_thing->angle);
+          return thing.teleport(doom, sector_thing->position.convert<2>(), sector_thing->angle, thing.type == DOOM::Enum::ThingType::ThingType_PLAYER);
         }
       }
 
