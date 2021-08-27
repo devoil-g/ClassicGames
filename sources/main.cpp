@@ -2,10 +2,14 @@
 #include <iostream>
 
 #include "Scenes/SplashScene.hpp"
+#include "Scenes/Menu/MainMenuScene.hpp"
 #include "Scenes/SceneMachine.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 #include "System/Sound.hpp"
+
+// TODO: remove this
+#include "System/Midi.hpp"
 
 #ifdef _WIN32
 # include <windows.h>
@@ -28,8 +32,13 @@ namespace Game
     Game::SceneMachine  game;
     sf::Clock           clock;
 
+    // TODO: remove this
+    Game::Midi::SoundFont sf(Game::Config::ExecutablePath + "/assets/levels/gzdoom.sf2");
+
     // Push initial state
-    game.push<Game::SplashScene>();
+    //game.push<Game::SplashScene>();
+    // TODO: remove this
+    game.push<Game::MainMenuScene>();
 
     // Run the game !
     while (Game::Window::Instance().window().isOpen()) {

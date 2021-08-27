@@ -10,17 +10,21 @@
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
+// TODO: remove this
+#include "Scenes/MidiScene.hpp"
+
 Game::MainMenuScene::MainMenuScene(Game::SceneMachine& machine) :
   Game::AbstractMenuScene(machine)
 {
   // Get menu font
   const auto& font = Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf");
 
+  // TODO: remove MIDI (test)
   // Set menu items/handlers
   menu() = {
     Game::AbstractMenuScene::Item("DOOM", font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath + "assets/levels/doom.wad", DOOM::Enum::Mode::ModeRetail))),
     Game::AbstractMenuScene::Item("DOOM II", font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath + "assets/levels/doom2.wad", DOOM::Enum::Mode::ModeCommercial))),
-    Game::AbstractMenuScene::Item("DOOM II (test)", font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath + "assets/levels/doom2_test.wad", DOOM::Enum::Mode::ModeCommercial))),
+    Game::AbstractMenuScene::Item("MIDI (test)", font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectMidi, this, std::placeholders::_1))),
     Game::AbstractMenuScene::Item("Options", font, std::function<void(Game::AbstractMenuScene::Item &)>(std::bind(&Game::MainMenuScene::selectOptions, this, std::placeholders::_1))),
     Game::AbstractMenuScene::Item("Exit", font, std::function<void(Game::AbstractMenuScene::Item &)>(std::bind(&Game::MainMenuScene::selectExit, this, std::placeholders::_1)))
   };
@@ -57,7 +61,13 @@ void  Game::MainMenuScene::selectDoom(Game::AbstractMenuScene::Item&, const std:
     }).detach();
 }
 
-void  Game::MainMenuScene::selectOptions(Game::AbstractMenuScene::Item &)
+void  Game::MainMenuScene::selectMidi(Game::AbstractMenuScene::Item&)
+{
+  // Go to option menu
+  _machine.push<Game::MidiScene>();
+}
+
+void  Game::MainMenuScene::selectOptions(Game::AbstractMenuScene::Item&)
 {
   // Go to option menu
   _machine.push<Game::OptionsMenuScene>();

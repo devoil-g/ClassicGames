@@ -125,7 +125,7 @@ namespace DOOM
     bool  pickupArmor(DOOM::Enum::Armor type);
     bool  pickupArmor(DOOM::Enum::Armor type, float quantity);
     bool  pickupHealth(unsigned int quantity, float maximum);
-    bool  pickupKey(DOOM::Enum::KeyColor color, DOOM::Enum::KeyType type, bool multiplayer);
+    bool  pickupKey(DOOM::Enum::KeyColor color, DOOM::Enum::KeyType type);
     bool  pickupBackpack();
     bool  pickupAmmo(const DOOM::Doom& doom, DOOM::Enum::Ammo type, unsigned int quantity);
     bool  pickupWeapon(DOOM::Enum::Weapon type);

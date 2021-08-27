@@ -22,7 +22,7 @@ namespace DOOM
     // Copy string in key
     for (unsigned int i = 0; i < std::min(sizeof(uint64_t), str.length()); i++)
       ((char*)&key)[i] = str.at(i);
-    
+
     return key;
   }
   
@@ -34,6 +34,7 @@ namespace DOOM
 #pragma warning(suppress:4996)
     std::strncpy(str, (const char*)&key, sizeof(uint64_t));
 
+#pragma warning(suppress:6053)
     return std::string(str);
   }
   
@@ -379,15 +380,11 @@ namespace DOOM
         throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
       // Reset data container
-      datas.clear();
+      datas.resize(lump.size / sizeof(Data));
 
-      // Load lump datas
+      // Read datas
       file.seekg(lump.position, file.beg);
-      for (unsigned int i = 0; i < lump.size / sizeof(Data); i++)
-      {
-        datas.push_back(Data());
-        file.read((char*)&datas.back(), sizeof(Data));
-      }
+      file.read((char*)datas.data(), lump.size);
     };
 
     static inline uint64_t& uppercase(uint64_t& key)  // Force uppercase in WAD name

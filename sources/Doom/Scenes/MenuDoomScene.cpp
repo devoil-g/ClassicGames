@@ -9,6 +9,7 @@
 
 const unsigned int  DOOM::MenuDoomScene::SkullDuration = 8;
 
+// TODO: save/load menu
 DOOM::MenuDoomScene::MenuDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom, bool random) :
   Game::AbstractScene(machine),
   _doom(doom),

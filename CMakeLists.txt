@@ -117,6 +117,8 @@ SET(GAME_STATES_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/LoadingScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/MessageScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/MessageScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/MidiScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/MidiScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/SplashScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/SplashScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/StartScene.cpp
@@ -133,6 +135,8 @@ SET(GAME_STATES_MENU_SRCS
 SET(GAME_SYSTEM_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Config.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Config.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Midi.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Midi.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Sound.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Sound.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Window.cpp
@@ -165,6 +169,7 @@ SET(GAME_SRCS
 SET(GAME_RSRC
 	${CMAKE_CURRENT_SOURCE_DIR}/assets/icons/Icons.rc
 	${CMAKE_CURRENT_SOURCE_DIR}/assets/levels/dmsp1666.txt
+	${CMAKE_CURRENT_SOURCE_DIR}/assets/levels/MUSform.txt
 )
 
 # Set game source groups
