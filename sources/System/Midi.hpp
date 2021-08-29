@@ -70,7 +70,7 @@ namespace Game
         uint16_t  bag;        // Index to the preset's zone list in the PBAG sub-chunk
         uint32_t  library;    // Unused, reserved for future implementation
         uint32_t  genre;      // Unused, reserved for future implementation
-        uint32_t  gorphology; // Unused, reserved for future implementation
+        uint32_t  morphology; // Unused, reserved for future implementation
       };
 
       struct Sf2Instrument
@@ -284,8 +284,6 @@ namespace Game
       std::vector<int16_t>                              samples16;            // Raw audio samples, 16bits
       std::vector<int8_t>                               samples24;            // Additional byte to transform raw audio samples from 16bits to 24bits
     };
-
-    sf::SoundBuffer _buffer;
 
   public:
     Midi();

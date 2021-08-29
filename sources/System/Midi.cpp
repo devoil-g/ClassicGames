@@ -38,12 +38,13 @@ void  toWave(const std::string& filename, const std::vector<int16_t>& samples16)
   out.write((char*)samples16.data(), samples16.size() * 2);
 }
 
-Game::Midi::Midi() :
-  _buffer()
+Game::Midi::Midi()
 {}
 
 Game::Midi::SoundFont::SoundFont(const std::string& filename) :
-  info()
+  info(),
+  samples16(),
+  samples24()
 {
   // Load file
   load(filename);
