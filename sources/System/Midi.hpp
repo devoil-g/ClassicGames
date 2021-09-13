@@ -12,34 +12,52 @@ namespace Game
 {
   class Midi
   {
+  private:
+    static constexpr uint32_t str_to_key(std::string_view str)
+    {
+      uint32_t  key = 0;
+
+      // Copy string in key
+      for (unsigned int i = 0; i < std::min(sizeof(uint32_t), str.length()); i++)
+        ((char*)&key)[i] = str.at(i);
+
+      return key;
+    }
+
+    static inline std::string key_to_str(const uint32_t key)
+    {
+      char  str[sizeof(uint32_t) + 1] = { 0 };
+
+      // Copy key in string (ignore warning of std::strncpy)
+#pragma warning(suppress:4996; suppress:6053)
+      return std::strncpy(str, (const char*)&key, sizeof(uint32_t));
+    }
+
+    template<typename Type>
+    static inline std::istream& read(std::istream& stream, Type* ptr, std::size_t number = 1)
+    {
+      // Safe read, throw exception in case of error
+      if (stream.read((char*)ptr, number * sizeof(Type)).good() == false)
+        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+      return stream;
+    }
+
+    template<typename Type>
+    static inline Type  swap_endianness(const Type& value)
+    {
+      Type  result = value;
+
+      // Swap bytes of value
+      for (int index = 0; index < sizeof(Type) / 2; index++)
+        std::swap(((uint8_t*)&result)[index], ((uint8_t*)&result)[sizeof(Type) - index - 1]);
+      return result;
+    }
+
   public:
     class SoundFont
     {
     private:
-      constexpr uint32_t str_to_key(std::string_view str)
-      {
-        uint32_t  key = 0;
-
-        // Copy string in key
-        for (unsigned int i = 0; i < std::min(sizeof(uint32_t), str.length()); i++)
-          ((char*)&key)[i] = str.at(i);
-
-        return key;
-      }
-
-      inline std::string  key_to_str(const uint32_t key)
-      {
-        char  str[sizeof(uint32_t) + 1] = { 0 };
-
-        // Copy key in string (ignore warning of std::strncpy)
-
-        
-
-#pragma warning(suppress:6053)
-#pragma warning(suppress:4996)
-        return std::strncpy(str, (const char*)&key, sizeof(uint32_t));
-      }
-
+      
 #pragma pack(push, 1)
     private:
       struct Sf2Header
@@ -225,20 +243,16 @@ namespace Game
       template <typename Data>
       void  loadSubsection(std::ifstream& file, std::size_t size, std::vector<Data>& datas)
       {
-        // Check for invalid lump size
-        if (size % sizeof(Data) != 0) {
-          std::cout << size << "/" << sizeof(Data) << std::endl;
+        // Check for invalid subsection size
+        if (size % sizeof(Data) != 0)
           throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-        }
 
         // Reset data container
         datas.resize(size / sizeof(Data));
 
         // Load datas
-        file.read((char*)datas.data(), size);
+        read(file, datas.data(), datas.size());
       };
-
-      
 
       struct Info
       {
@@ -280,13 +294,177 @@ namespace Game
       SoundFont(const std::string& filename);
       ~SoundFont() = default;
 
-      Game::Midi::SoundFont::Info                       info;                 // General informations
-      std::vector<int16_t>                              samples16;            // Raw audio samples, 16bits
-      std::vector<int8_t>                               samples24;            // Additional byte to transform raw audio samples from 16bits to 24bits
+      Game::Midi::SoundFont::Info info;       // General informations
+      std::vector<int16_t>        samples16;  // Raw audio samples, 16bits
+      std::vector<int8_t>         samples24;  // Additional byte to transform raw audio samples from 16bits to 24bits
     };
 
+  private:
+    struct MidiHeader
+    {
+      uint32_t  type; // Chunk type, MThd or MTrk
+      uint32_t  size; // Number of byte in the chunk (header not included)
+    };
+
+    enum MidiTrackFormat : uint16_t
+    {
+      SingleTrack = 0,        // The file contains a single multi-channel track
+      SimultaneousTracks = 1, // The file contains one or more simultaneous tracks (or MIDI outputs) of a sequence
+      MultipleTracks = 2      // The file contains one or more sequentially independent single-track patterns
+    };
+
+    enum MidiTimeFormat
+    {
+      QuarterNote = 0,        // The value is the division of a quarter note
+      SMPTE = 1               // The value is the number of ticks per second
+    };
+
+    struct Sequence
+    {
+      struct MetaData
+      {
+        struct Smpte
+        {
+          uint8_t framerate;    // Number of frames per second
+          uint8_t hours;        // Number of hours
+          uint8_t minutes;      // Number of minutes
+          uint8_t seconds;      // Number of seconds
+          uint8_t frames;       // Number of the frame
+          uint8_t fractionals;  // Fraction of frame
+        };
+
+        struct Signature
+        {
+          uint8_t numerator;    // Numerator of the signature as notated on sheet music
+          uint8_t denominator;  // Denominator of the signature as notated on sheet music
+          uint8_t metronome;    // Number of MIDI clocks in a metronome click
+          uint8_t quarter;      // Number of notated 32nd notes in a MIDI quarter note (24 MIDI clocks)
+        };
+
+        struct Key
+        {
+          uint8_t key;    // 0 for the key of C, a positive value for each sharp above C, or a negative value for each flat below C
+          bool    major;  // True when major, false when minor
+        };
+
+        enum Tag : uint8_t
+        {
+          TagGenre = 1,
+          TagArtist = 2,
+          TagComposer = 3,
+          TagDuration = 4,
+          TagBpm = 5
+        };
+
+        std::string                                             name;       // Specifies the title of the sequence
+        std::string                                             copyright;  // Specifies copyright information for the sequence
+        std::string                                             instrument; // Names the instrument intended to play the contents of this track
+        std::list<std::pair<std::size_t, std::string>>          lyrics;     // Lyrics intended to be sung at the given time
+        std::list<std::pair<std::size_t, std::string>>          markers;    // Points in the sequence which occurs at the given time
+        std::list<std::pair<std::size_t, std::string>>          cues;       // Identifies synchronisation point which occurs at the specified time
+        std::list<std::pair<std::size_t, std::string>>          texts;      // Supplies an arbitrary text at the specified time
+        uint16_t                                                sequence;   // Specifies the sequence number
+        std::list<std::pair<std::size_t, uint32_t>>             tempos;     // Number of microseconds per quarter note at the specified time (default 120BPM)
+        MetaData::Smpte                                         smpte;      // Specify the starting point offset from the beginning of the track
+        std::list<std::pair<std::size_t, MetaData::Signature>>  signatures; // Time signature of the track at the given time
+        std::list<std::pair<std::size_t, MetaData::Key>>        keys;       // Keys signature of the track at the given time
+        std::string                                             program;    // The name of the program (ie, patch) used to play the track
+        std::list<std::pair<std::size_t, std::string>>          devices;    // The name of the MIDI devices (port) where the track is routed at the specified time
+        std::vector<uint8_t>                                    datas;      // Store vendor-proprietary data
+        std::unordered_map<MetaData::Tag, std::string>          tags;       // Music tags (not standard)
+        std::size_t                                             end;        // Clock value at end of sequence
+      };
+
+      struct Track
+      {
+        struct Channel
+        {
+          struct Key
+          {
+            uint8_t key;      // Key number
+            uint8_t velocity; // Velocity of press/release
+          };
+
+          struct PolyphonicKey
+          {
+            uint8_t key;      // Key number
+            uint8_t pressure; // Pressure applied to the key
+          };
+
+          std::list<std::pair<std::size_t, Key>>            pressed;    // Note on
+          std::list<std::pair<std::size_t, Key>>            released;   // Note off
+          std::list<std::pair<std::size_t, PolyphonicKey>>  polyphonic; // Polyphonic key pressure
+          std::list<std::pair<std::size_t, uint8_t>>        program;    // Patch number
+          std::list<std::pair<std::size_t, uint16_t>>       pitch;      // Pitch wheel modifier (center: 0x2000)
+        };
+
+        std::string                     name;     // Name of the track
+        std::array<Track::Channel, 16>  program;  // Program for each channel at given time
+      };
+
+      Game::Midi::Sequence::MetaData                                metadata;   // Informations of the track
+      std::unordered_map<std::size_t, Game::Midi::Sequence::Track>  tracks;  // Subtracks of the track
+    };
+
+    Game::Midi::SoundFont       _soundfont;   // Sound library
+    Game::Midi::MidiTrackFormat _format;      // MIDI file format 
+    uint16_t                    _trackNumber; // Number of tracks in the file
+    Game::Midi::MidiTimeFormat  _timeFormat;  // Track time format
+    uint16_t                    _timeValue;   // Track time format value
+
+    void  load(const std::string& filename);  // Load a MIDI (.mid) file
+    void  loadHeader(std::ifstream& file);    // Load first chunk, should be MThd
+    void  loadTracks(std::ifstream& file);    // Load MIDI tracks
+
+    void  loadTrack(std::ifstream& file, const Game::Midi::MidiHeader& header, Game::Midi::Sequence& sequence, std::size_t track);  // Load MIDI tracks
+
+    void  loadTrackSysexF0(std::ifstream& file);  // MIDI system exclusive message
+    void  loadTrackSysexF7(std::ifstream& file);  // MIDI system exclusive message
+
+    void  loadTrackMetaName(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track);            // Specifies the title of the track or sequence
+    void  loadTrackMetaCopyright(std::ifstream& file, Game::Midi::Sequence& sequence);                          // Specifies copyright information for the sequence
+    void  loadTrackMetaInstrument(std::ifstream& file, Game::Midi::Sequence& sequence);                         // Names the instrument intended to play the contents of this track
+    void  loadTrackMetaLyrics(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock);          // Lyrics intended to be sung at the given time
+    void  loadTrackMetaMarkers(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock);         // Points in the sequence which occurs at the given time
+    void  loadTrackMetaCues(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock);            // Identifies synchronisation point which occurs at the specified time
+    void  loadTrackMetaTexts(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock);           // Supplies an arbitrary text at the specified time
+    void  loadTrackMetaSequence(std::ifstream& file, Game::Midi::Sequence& sequence);                           // Specifies the sequence number
+    void  loadTrackMetaSequenceDefault(std::ifstream& file, Game::Midi::Sequence& sequence, uint16_t value);    // Specifies the sequence number
+    void  loadTrackMetaTempos(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock);          // Number of microseconds per quarter note at the specified time (default 120BPM)
+    void  loadTrackMetaSmpte(std::ifstream& file, Game::Midi::Sequence& sequence);                              // Specify the starting point offset from the beginning of the track
+    void  loadTrackMetaSignatures(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock);      // Time signature of the track at the given time
+    void  loadTrackMetaKeys(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock);            // Keys signature of the track at the given time
+    void  loadTrackMetaProgram(std::ifstream& file, Game::Midi::Sequence& sequence);                            // The name of the program (ie, patch) used to play the track
+    void  loadTrackMetaDevices(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock);         // The name of the MIDI devices (port) where the track is routed at the specified time
+    void  loadTrackMetaChannels(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock);        // May be used to associate a MIDI channel with all events which follow (not supported)
+    void  loadTrackMetaPorts(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock);           // The number of the port where the track is routed at the specified time (not supported)
+    void  loadTrackMetaDatas(std::ifstream& file, Game::Midi::Sequence& sequence);                              // Store vendor-proprietary data
+    void  loadTrackMetaTags(std::ifstream& file, Game::Midi::Sequence& sequence);                               // Track tags (not standard)
+    void  loadTrackMetaEnd(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock, bool& end);  // Track tags (not standard)
+
+    void  loadTrackMidiNoteOff(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);                // Sent when a note is released (ended)
+    void  loadTrackMidiNoteOn(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);                 // Sent when a note is depressed (start)
+    void  loadTrackMidiPolyphonicKeyPressure(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);  // Most often sent by pressing down on the key after it "bottoms out"
+    void  loadTrackMidiControlChange(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock);                             // Sent when a controller value changes
+    void  loadTrackMidiProgramChange(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);          // Sent when the patch number changes
+    void  loadTrackMidiChannelPressure(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);        // Most often sent by pressing down on the key after it "bottoms out"
+    void  loadTrackMidiPitchWheelChange(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);       // Indicates a change in the pitch wheel
+
+    void  loadTrackMidiUndefined(std::ifstream& file, const std::vector<uint8_t>& instruction, std::size_t skip = 0); // Undefined command, specify the number of byte to skip
+
+    uint64_t    loadVariableLengthQuantity(std::ifstream& file);  // Load a Variable Length Quantity number
+    std::string loadText(std::ifstream& file);                    // Load a string (length + text)
+    uint8_t     loadChannel(std::ifstream& file);                 // Load a channel number from the preceding byte
+
+    sf::Time    duration(const Game::Midi::Sequence& sequence, std::size_t clock);  // Translate MIDI clock time to SFML time
+
+    // TODO: remove this
+    void  generate(const Game::Midi::Sequence& sequence);
+
   public:
-    Midi();
+    Midi(const std::string& filename);
     ~Midi() = default;
+
+    std::list<Game::Midi::Sequence>  sequences;
   };
 }

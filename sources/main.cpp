@@ -33,7 +33,7 @@ namespace Game
     sf::Clock           clock;
 
     // TODO: remove this
-    Game::Midi::SoundFont sf(Game::Config::ExecutablePath + "/assets/levels/gzdoom.sf2");
+    Game::Midi  midi(Game::Config::ExecutablePath + "/assets/levels/level1.mid");
 
     // Push initial state
     //game.push<Game::SplashScene>();

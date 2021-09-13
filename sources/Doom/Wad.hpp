@@ -31,13 +31,10 @@ namespace DOOM
     char  str[sizeof(uint64_t) + 1] = { 0 };
 
     // Copy key in string (ignore warning of std::strncpy)
-#pragma warning(suppress:4996)
-    std::strncpy(str, (const char*)&key, sizeof(uint64_t));
-
-#pragma warning(suppress:6053)
-    return std::string(str);
+#pragma warning(suppress:6053; suppress:4996)
+    return std::strncpy(str, (const char*)&key, sizeof(uint64_t));
   }
-  
+
   class Wad
   {
   private:
@@ -391,6 +388,15 @@ namespace DOOM
     {
       std::transform((char*)&key, (char*)&key + 8, (char*)&key, ::toupper);
       return key;
+    }
+
+    template<typename Type>
+    static inline std::istream& read(std::istream& stream, Type* ptr, std::size_t number = 1)
+    {
+      // Safe read, throw exception in case of error
+      if (stream.read((char*)ptr, number * sizeof(Type)).good() == false)
+        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+      return stream;
     }
 
   public:
