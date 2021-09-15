@@ -225,258 +225,95 @@ void  Game::Midi::loadTracks(std::ifstream& file)
 
 void  Game::Midi::loadTrack(std::ifstream& file, const Game::Midi::MidiHeader& header, Game::Midi::Sequence& sequence, std::size_t track)
 {
-  std::size_t clock = 0;
-  bool        end = false;
-
+  // TODO: remove this
   std::cout << std::endl << "  [SUBTRACK] " << track << std::endl;
 
+  using Command = std::tuple<uint8_t, uint8_t, void(Game::Midi::*)(std::ifstream&, Game::Midi::Sequence&, std::size_t, uint8_t, std::size_t)>;
+
+  // MIDI events
+  static const std::array<Command, 23>  midi_commands =
+  {
+    // Channel Voice Messages
+    Command{ 4, 0b10000000, &Game::Midi::loadTrackMidiNoteOff },
+    Command{ 4, 0b10010000, &Game::Midi::loadTrackMidiNoteOn },
+    Command{ 4, 0b10100000, &Game::Midi::loadTrackMidiPolyphonicKeyPressure },
+    Command{ 4, 0b10110000, &Game::Midi::loadTrackMidiControlChange },
+    Command{ 4, 0b11000000, &Game::Midi::loadTrackMidiProgramChange },
+    Command{ 4, 0b11010000, &Game::Midi::loadTrackMidiChannelPressure },
+    Command{ 4, 0b11100000, &Game::Midi::loadTrackMidiPitchWheelChange },
+
+    // System Common Messages
+    Command{ 8, 0b11110000, &Game::Midi::loadTrackSysexF0 },
+    Command{ 8, 0b11110001, &Game::Midi::loadTrackUndefined },
+    Command{ 8, 0b11110010, &Game::Midi::loadTrackUndefined },
+    Command{ 8, 0b11110011, &Game::Midi::loadTrackUndefined },
+    Command{ 8, 0b11110100, &Game::Midi::loadTrackUndefined },
+    Command{ 8, 0b11110101, &Game::Midi::loadTrackUndefined },
+    Command{ 8, 0b11110110, &Game::Midi::loadTrackUndefined },
+    Command{ 8, 0b11110111, &Game::Midi::loadTrackSysexF7 },
+
+    // System Real-Time Messages
+    Command{ 8, 0b11111000, &Game::Midi::loadTrackUndefined },
+    Command{ 8, 0b11111001, &Game::Midi::loadTrackUndefined },
+    Command{ 8, 0b11111010, &Game::Midi::loadTrackUndefined },
+    Command{ 8, 0b11111011, &Game::Midi::loadTrackUndefined },
+    Command{ 8, 0b11111100, &Game::Midi::loadTrackUndefined },
+    Command{ 8, 0b11111101, &Game::Midi::loadTrackUndefined },
+    Command{ 8, 0b11111110, &Game::Midi::loadTrackUndefined },
+
+    // Meta events
+    Command{ 8, 0b11111111, &Game::Midi::loadTrackMeta }
+  };
+
+  std::size_t clock = 0;
+  uint8_t     status = 0;
+
+  // Set flag end value
+  sequence.metadata.end = (std::size_t)-1;
+
   // Read until track end event
-  while (end == false)
+  while (sequence.metadata.end == (std::size_t)-1)
   {
     // Get delta time of event
     clock += loadVariableLengthQuantity(file);
 
-    std::list<std::tuple<uint8_t, std::vector<uint8_t>, std::function<void()>>> midi_commands =
-    {
-      // Sysex events
-      { 8, { 0xF0 }, std::bind(&Game::Midi::loadTrackSysexF0, this, std::ref(file)) },
-      { 8, { 0xF7 }, std::bind(&Game::Midi::loadTrackSysexF7, this, std::ref(file)) },
+    uint8_t byte = 0;
 
-      // Meta events
-      { 24, { 0xFF, 0x00, 0x00 }, std::bind(&Game::Midi::loadTrackMetaSequenceDefault, this, std::ref(file), std::ref(sequence), (int16_t)sequences.size()) },
-      { 24, { 0xFF, 0x00, 0x02 }, std::bind(&Game::Midi::loadTrackMetaSequence, this, std::ref(file), std::ref(sequence)) },
-      { 16, { 0xFF, 0x01 }, std::bind(&Game::Midi::loadTrackMetaTexts, this, std::ref(file), std::ref(sequence), clock) },
-      { 16, { 0xFF, 0x02 }, std::bind(&Game::Midi::loadTrackMetaCopyright, this, std::ref(file), std::ref(sequence)) },
-      { 16, { 0xFF, 0x03 }, std::bind(&Game::Midi::loadTrackMetaName, this, std::ref(file), std::ref(sequence), track) },
-      { 16, { 0xFF, 0x04 }, std::bind(&Game::Midi::loadTrackMetaInstrument, this, std::ref(file), std::ref(sequence)) },
-      { 16, { 0xFF, 0x05 }, std::bind(&Game::Midi::loadTrackMetaLyrics, this, std::ref(file), std::ref(sequence), clock) },
-      { 16, { 0xFF, 0x06 }, std::bind(&Game::Midi::loadTrackMetaMarkers, this, std::ref(file), std::ref(sequence), clock) },
-      { 16, { 0xFF, 0x07 }, std::bind(&Game::Midi::loadTrackMetaCues, this, std::ref(file), std::ref(sequence), clock) },
-      { 16, { 0xFF, 0x08 }, std::bind(&Game::Midi::loadTrackMetaProgram, this, std::ref(file), std::ref(sequence)) },
-      { 16, { 0xFF, 0x09 }, std::bind(&Game::Midi::loadTrackMetaDevices, this, std::ref(file), std::ref(sequence), clock) },
-      { 24, { 0xFF, 0x20, 0x01 }, std::bind(&Game::Midi::loadTrackMetaChannels, this, std::ref(file), std::ref(sequence), clock) },
-      { 24, { 0xFF, 0x21, 0x01 }, std::bind(&Game::Midi::loadTrackMetaPorts, this, std::ref(file), std::ref(sequence), clock) },
-      { 24, { 0xFF, 0x2F, 0x00 }, std::bind(&Game::Midi::loadTrackMetaEnd, this, std::ref(file), std::ref(sequence), clock, std::ref(end)) },
-      { 16, { 0xFF, 0x4B }, std::bind(&Game::Midi::loadTrackMetaTags, this, std::ref(file), std::ref(sequence)) },
-      { 24, { 0xFF, 0x51, 0x03 }, std::bind(&Game::Midi::loadTrackMetaTempos, this, std::ref(file), std::ref(sequence), clock) },
-      { 24, { 0xFF, 0x54, 0x05 }, std::bind(&Game::Midi::loadTrackMetaSmpte, this, std::ref(file), std::ref(sequence)) },
-      { 24, { 0xFF, 0x58, 0x04 }, std::bind(&Game::Midi::loadTrackMetaSignatures, this, std::ref(file), std::ref(sequence), clock) },
-      { 24, { 0xFF, 0x59, 0x02 }, std::bind(&Game::Midi::loadTrackMetaKeys, this, std::ref(file), std::ref(sequence), clock) },
-      { 16, { 0xFF, 0x7F }, std::bind(&Game::Midi::loadTrackMetaDatas, this, std::ref(file), std::ref(sequence)) },
-      
-      // MIDI events, Channel Voice Messages
-      { 4, { 0b10000000 }, std::bind(&Game::Midi::loadTrackMidiNoteOff, this, std::ref(file), std::ref(sequence), track, clock) },
-      { 4, { 0b10010000 }, std::bind(&Game::Midi::loadTrackMidiNoteOn, this, std::ref(file), std::ref(sequence), track, clock) },
-      { 4, { 0b10100000 }, std::bind(&Game::Midi::loadTrackMidiPolyphonicKeyPressure, this, std::ref(file), std::ref(sequence), track, clock) },
-      { 4, { 0b10110000 }, std::bind(&Game::Midi::loadTrackMidiControlChange, this, std::ref(file), std::ref(sequence), clock) },
-      { 4, { 0b11000000 }, std::bind(&Game::Midi::loadTrackMidiProgramChange, this, std::ref(file), std::ref(sequence), track, clock) },
-      { 4, { 0b11010000 }, std::bind(&Game::Midi::loadTrackMidiChannelPressure, this, std::ref(file), std::ref(sequence), track, clock) },
-      { 4, { 0b11100000 }, std::bind(&Game::Midi::loadTrackMidiPitchWheelChange, this, std::ref(file), std::ref(sequence), track, clock) },
+    // Read next byte of file
+    read(file, &byte);
 
-      // MIDI events, System Common Messages
-      { 8, { 0b11110001 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0xF1 }), 0) },
-      { 8, { 0b11110010 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0xF2 }), 0) },
-      { 8, { 0b11110011 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0xF3 }), 0) },
-      { 8, { 0b11110100 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0xF4 }), 0) },
-      { 8, { 0b11110101 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0xF5 }), 0) },
-      { 8, { 0b11110110 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0xF6 }), 0) },
+    // New status
+    if (byte & 0b10000000)
+      status = byte;
 
-      // MIDI events, System Real-Time Messages
-      { 8, { 0b11111000 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0xF8 }), 0) },
-      { 8, { 0b11111001 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0xF9 }), 0) },
-      { 8, { 0b11111010 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0xFA }), 0) },
-      { 8, { 0b11111011 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0xFB }), 0) },
-      { 8, { 0b11111100 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0xFC }), 0) },
-      { 8, { 0b11111101 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0xFD }), 0) },
-      { 8, { 0b11111110 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0xFE }), 0) },
+    // Running command, repeat last status
+    else
+      file.seekg(-1, file.cur);
 
-      // MIDI Controller Messages
-      { 8, { 0x00 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x00 }), 1) },
-      { 8, { 0x01 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x01 }), 1) },
-      { 8, { 0x02 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x02 }), 1) },
-      { 8, { 0x03 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x03 }), 1) },
-      { 8, { 0x04 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x04 }), 1) },
-      { 8, { 0x05 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x05 }), 1) },
-      { 8, { 0x06 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x06 }), 1) },
-      { 8, { 0x07 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x07 }), 1) },
-      { 8, { 0x08 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x08 }), 1) },
-      { 8, { 0x09 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x09 }), 1) },
-      { 8, { 0x0A }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x0A }), 1) },
-      { 8, { 0x0B }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x0B }), 1) },
-      { 8, { 0x0C }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x0C }), 1) },
-      { 8, { 0x0D }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x0D }), 1) },
-      { 8, { 0x0E }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x0E }), 1) },
-      { 8, { 0x0F }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x0F }), 1) },
+    // Find command to execute
+    auto command = std::find_if(midi_commands.begin(), midi_commands.end(),
+      [status](const auto& instruction) {
+        auto s = status;
 
-      { 8, { 0x10 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x10 }), 1) },
-      { 8, { 0x11 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x11 }), 1) },
-      { 8, { 0x12 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x12 }), 1) },
-      { 8, { 0x13 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x13 }), 1) },
-      { 8, { 0x14 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x14 }), 1) },
-      { 8, { 0x15 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x15 }), 1) },
-      { 8, { 0x16 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x16 }), 1) },
-      { 8, { 0x17 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x17 }), 1) },
-      { 8, { 0x18 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x18 }), 1) },
-      { 8, { 0x19 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x19 }), 1) },
-      { 8, { 0x1A }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x1A }), 1) },
-      { 8, { 0x1B }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x1B }), 1) },
-      { 8, { 0x1C }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x1C }), 1) },
-      { 8, { 0x1D }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x1D }), 1) },
-      { 8, { 0x1E }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x1E }), 1) },
-      { 8, { 0x1F }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x1F }), 1) },
-
-      { 8, { 0x20 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x20 }), 1) },
-      { 8, { 0x21 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x21 }), 1) },
-      { 8, { 0x22 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x22 }), 1) },
-      { 8, { 0x23 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x23 }), 1) },
-      { 8, { 0x24 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x24 }), 1) },
-      { 8, { 0x25 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x25 }), 1) },
-      { 8, { 0x26 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x26 }), 1) },
-      { 8, { 0x27 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x27 }), 1) },
-      { 8, { 0x28 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x28 }), 1) },
-      { 8, { 0x29 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x29 }), 1) },
-      { 8, { 0x2A }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x2A }), 1) },
-      { 8, { 0x2B }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x2B }), 1) },
-      { 8, { 0x2C }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x2C }), 1) },
-      { 8, { 0x2D }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x2D }), 1) },
-      { 8, { 0x2E }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x2E }), 1) },
-      { 8, { 0x2F }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x2F }), 1) },
-
-      { 8, { 0x30 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x30 }), 1) },
-      { 8, { 0x31 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x31 }), 1) },
-      { 8, { 0x32 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x32 }), 1) },
-      { 8, { 0x33 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x33 }), 1) },
-      { 8, { 0x34 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x34 }), 1) },
-      { 8, { 0x35 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x35 }), 1) },
-      { 8, { 0x36 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x36 }), 1) },
-      { 8, { 0x37 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x37 }), 1) },
-      { 8, { 0x38 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x38 }), 1) },
-      { 8, { 0x39 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x39 }), 1) },
-      { 8, { 0x3A }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x3A }), 1) },
-      { 8, { 0x3B }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x3B }), 1) },
-      { 8, { 0x3C }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x3C }), 1) },
-      { 8, { 0x3D }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x3D }), 1) },
-      { 8, { 0x3E }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x3E }), 1) },
-      { 8, { 0x3F }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x3F }), 1) },
-
-      { 8, { 0x40 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x40 }), 1) },
-      { 8, { 0x41 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x41 }), 1) },
-      { 8, { 0x42 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x42 }), 1) },
-      { 8, { 0x43 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x43 }), 1) },
-      { 8, { 0x44 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x44 }), 1) },
-      { 8, { 0x45 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x45 }), 1) },
-      { 8, { 0x46 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x46 }), 1) },
-      { 8, { 0x47 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x47 }), 1) },
-      { 8, { 0x48 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x48 }), 1) },
-      { 8, { 0x49 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x49 }), 1) },
-      { 8, { 0x4A }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x4A }), 1) },
-      { 8, { 0x4B }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x4B }), 1) },
-      { 8, { 0x4C }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x4C }), 1) },
-      { 8, { 0x4D }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x4D }), 1) },
-      { 8, { 0x4E }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x4E }), 1) },
-      { 8, { 0x4F }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x4F }), 1) },
-
-      { 8, { 0x50 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x50 }), 1) },
-      { 8, { 0x51 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x51 }), 1) },
-      { 8, { 0x52 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x52 }), 1) },
-      { 8, { 0x53 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x53 }), 1) },
-      { 8, { 0x54 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x54 }), 1) },
-      { 8, { 0x55 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x55 }), 1) },
-      { 8, { 0x56 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x56 }), 1) },
-      { 8, { 0x57 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x57 }), 1) },
-      { 8, { 0x58 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x58 }), 1) },
-      { 8, { 0x59 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x59 }), 1) },
-      { 8, { 0x5A }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x5A }), 1) },
-      { 8, { 0x5B }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x5B }), 1) },
-      { 8, { 0x5C }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x5C }), 1) },
-      { 8, { 0x5D }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x5D }), 1) },
-      { 8, { 0x5E }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x5E }), 1) },
-      { 8, { 0x5F }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x5F }), 1) },
-
-      { 8, { 0x60 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x60 }), 1) },
-      { 8, { 0x61 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x61 }), 1) },
-      { 8, { 0x62 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x62 }), 1) },
-      { 8, { 0x63 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x63 }), 1) },
-      { 8, { 0x64 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x64 }), 1) },
-      { 8, { 0x65 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x65 }), 1) },
-      { 8, { 0x66 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x66 }), 1) },
-      { 8, { 0x67 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x67 }), 1) },
-      { 8, { 0x68 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x68 }), 1) },
-      { 8, { 0x69 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x69 }), 1) },
-      { 8, { 0x6A }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x6A }), 1) },
-      { 8, { 0x6B }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x6B }), 1) },
-      { 8, { 0x6C }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x6C }), 1) },
-      { 8, { 0x6D }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x6D }), 1) },
-      { 8, { 0x6E }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x6E }), 1) },
-      { 8, { 0x6F }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x6F }), 1) },
-
-      { 8, { 0x70 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x70 }), 1) },
-      { 8, { 0x71 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x71 }), 1) },
-      { 8, { 0x72 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x72 }), 1) },
-      { 8, { 0x73 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x73 }), 1) },
-      { 8, { 0x74 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x74 }), 1) },
-      { 8, { 0x75 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x75 }), 1) },
-      { 8, { 0x76 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x76 }), 1) },
-      { 8, { 0x77 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x77 }), 1) },
-      { 8, { 0x78 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x78 }), 1) },
-      { 8, { 0x79 }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x79 }), 1) },
-      { 8, { 0x7A }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x7A }), 1) },
-      { 8, { 0x7B }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x7B }), 1) },
-      { 8, { 0x7C }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x7C }), 1) },
-      { 8, { 0x7D }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x7D }), 1) },
-      { 8, { 0x7E }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x7E }), 1) },
-      { 8, { 0x7F }, std::bind(&Game::Midi::loadTrackMidiUndefined, this, std::ref(file), std::vector<uint8_t>({ 0x7F }), 1) },
-    };
-
-    std::cout << "  [READ] (clock: " << clock << ") " << std::flush;
-
-    // Find matching command
-    while (true) {
-      uint8_t byte = 0;
-
-      // Read one byte from input
-      read(file, &byte);
-
-      // TODO: remove this
-      std::ios_base::fmtflags save(std::cout.flags());
-      std::cout << " " << std::hex << std::setw(2) << std::setfill('0') << (int)byte << std::flush;
-      std::cout.flags(save);
-
-      // Remove non-matching commands
-      midi_commands.remove_if([byte](const auto& instruction) {
-        if (std::get<1>(instruction).empty() == true)
-          throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-        auto b = byte;
+        // Keep only significant bits
         if (std::get<0>(instruction) < 8) {
-          b = b >> (8 - std::get<0>(instruction));
-          b = b << (8 - std::get<0>(instruction));
+          s = s >> (8 - std::get<0>(instruction));
+          s = s << (8 - std::get<0>(instruction));
         }
 
-        return std::get<1>(instruction).front() != b;
+        return std::get<1>(instruction) == s;
       });
 
-      // No match
-      if (midi_commands.empty() == true)
-        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+    // Invalid command
+    if (status == 0 || command == midi_commands.end())
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-      // Remove first byte of each remaining instruction
-      for (auto& instruction : midi_commands) {
-        std::get<0>(instruction) -= 8;
-        std::get<1>(instruction).erase(std::get<1>(instruction).begin());
-      }
-
-      // Execute instruction if only an empty one remains
-      if (midi_commands.size() == 1 && std::get<1>(midi_commands.front()).empty() == true) {
-        std::cout << std::endl;
-        std::get<2>(midi_commands.front())();
-        break;
-      }
-    }
+    // Execute command
+    (*this.*std::get<2>(*command))(file, sequence, track, status, clock);
   }
 }
 
-void  Game::Midi::loadTrackSysexF0(std::ifstream& file)
+void  Game::Midi::loadTrackSysexF0(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
 {
   // Get length of message
   uint64_t  length = loadVariableLengthQuantity(file);
@@ -495,7 +332,7 @@ void  Game::Midi::loadTrackSysexF0(std::ifstream& file)
   std::cout.flags(save);
 }
 
-void  Game::Midi::loadTrackSysexF7(std::ifstream& file)
+void  Game::Midi::loadTrackSysexF7(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
 {
   // Get length of message
   uint64_t  length = loadVariableLengthQuantity(file);
@@ -514,101 +351,179 @@ void  Game::Midi::loadTrackSysexF7(std::ifstream& file)
   std::cout.flags(save);
 }
 
-void  Game::Midi::loadTrackMetaName(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track)
+void  Game::Midi::loadTrackMeta(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
+{
+  using Command = std::pair<uint8_t, void(Game::Midi::*)(std::ifstream&, Game::Midi::Sequence&, std::size_t, std::size_t)>;
+
+  // Meta events
+  static const std::array<Command, 19> meta_commands =
+  {
+    Command{ 0x00, &Game::Midi::loadTrackMetaSequence },
+    Command{ 0x01, &Game::Midi::loadTrackMetaTexts },
+    Command{ 0x02, &Game::Midi::loadTrackMetaCopyright },
+    Command{ 0x03, &Game::Midi::loadTrackMetaName },
+    Command{ 0x04, &Game::Midi::loadTrackMetaInstrument },
+    Command{ 0x05, &Game::Midi::loadTrackMetaLyrics },
+    Command{ 0x06, &Game::Midi::loadTrackMetaMarkers },
+    Command{ 0x07, &Game::Midi::loadTrackMetaCues },
+    Command{ 0x08, &Game::Midi::loadTrackMetaProgram },
+    Command{ 0x09, &Game::Midi::loadTrackMetaDevices },
+    Command{ 0x20, &Game::Midi::loadTrackMetaChannels },
+    Command{ 0x21, &Game::Midi::loadTrackMetaPorts },
+    Command{ 0x2F, &Game::Midi::loadTrackMetaEnd },
+    Command{ 0x4B, &Game::Midi::loadTrackMetaTags },
+    Command{ 0x51, &Game::Midi::loadTrackMetaTempos },
+    Command{ 0x54, &Game::Midi::loadTrackMetaSmpte },
+    Command{ 0x58, &Game::Midi::loadTrackMetaSignatures },
+    Command{ 0x59, &Game::Midi::loadTrackMetaKeys },
+    Command{ 0x7F, &Game::Midi::loadTrackMetaDatas }
+  };
+  
+  uint8_t meta = 0;
+
+  // Read Meta instruction byte
+  read(file, &meta);
+
+  // TODO: remove this
+  std::ios_base::fmtflags save(std::cout.flags());
+  std::cout << "  [META][" << std::hex << std::setw(2) << std::setfill('0') << (int)meta << "] " << std::flush;
+  std::cout.flags(save);
+
+  // Find command to execute
+  auto command = std::find_if(meta_commands.begin(), meta_commands.end(),
+    [meta](const auto& instruction) {
+      return std::get<0>(instruction) == meta;
+    });
+
+  // Invalid command
+  if (command == meta_commands.end())
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // Execute command
+  (*this.*std::get<1>(*command))(file, sequence, track, clock);
+}
+
+void  Game::Midi::loadTrackMetaName(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
   std::string name = loadText(file);
 
-  // Check if general name of track name
+  // Sequence name
   if (track == 0)
     sequence.metadata.name = name;
-  else
-    sequence.tracks[track].name = name;
+
+  // Assign name to track
+  sequence.tracks[track].name = name;
 
   // TODO: remove this
   if (track == 0)
-    std::cout << "  [META] sequence name: " << sequence.metadata.name << std::endl;
+    std::cout << "sequence name: " << sequence.metadata.name << std::endl;
   else
-    std::cout << "  [META] track " << track << " name: " << sequence.metadata.name << std::endl;
+    std::cout << "track " << track << " name: " << sequence.tracks[track].name << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaCopyright(std::ifstream& file, Game::Midi::Sequence& sequence)
+void  Game::Midi::loadTrackMetaCopyright(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
   sequence.metadata.copyright = loadText(file);
 
   // TODO: remove this
-  std::cout << "  [META] copyright: " << sequence.metadata.copyright << std::endl;
+  std::cout << "copyright: " << sequence.metadata.copyright << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaInstrument(std::ifstream& file, Game::Midi::Sequence& sequence)
+void  Game::Midi::loadTrackMetaInstrument(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
   sequence.metadata.instrument = loadText(file);
 
   // TODO: remove this
-  std::cout << "  [META] instrument: " << sequence.metadata.instrument << std::endl;
+  std::cout << "instrument: " << sequence.metadata.instrument << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaLyrics(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock)
+void  Game::Midi::loadTrackMetaLyrics(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
   sequence.metadata.lyrics.push_back({ clock, loadText(file) });
 
   // TODO: remove this
-  std::cout << "  [META] lyric: '" << sequence.metadata.lyrics.back().second << "' at " << sequence.metadata.lyrics.back().first << std::endl;
+  std::cout << "lyric: '" << sequence.metadata.lyrics.back().second << "' at " << sequence.metadata.lyrics.back().first << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaMarkers(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock)
+void  Game::Midi::loadTrackMetaMarkers(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
   sequence.metadata.markers.push_back({ clock, loadText(file) });
 
     // TODO: remove this
-    std::cout << "  [META] marker: '" << sequence.metadata.markers.back().second << "' at " << sequence.metadata.markers.back().first << std::endl;
+    std::cout << "marker: '" << sequence.metadata.markers.back().second << "' at " << sequence.metadata.markers.back().first << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaCues(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock)
+void  Game::Midi::loadTrackMetaCues(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
   sequence.metadata.cues.push_back({ clock, loadText(file) });
 
   // TODO: remove this
-  std::cout << "  [META] cue: '" << sequence.metadata.cues.back().second << "' at " << sequence.metadata.cues.back().first << std::endl;
+  std::cout << "cue: '" << sequence.metadata.cues.back().second << "' at " << sequence.metadata.cues.back().first << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaTexts(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock)
+void  Game::Midi::loadTrackMetaTexts(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
   sequence.metadata.texts.push_back({ clock, loadText(file) });
 
   // TODO: remove this
-  std::cout << "  [META] text: '" << sequence.metadata.texts.back().second << "' at " << sequence.metadata.texts.back().first << std::endl;
+  std::cout << "text: '" << sequence.metadata.texts.back().second << "' at " << sequence.metadata.texts.back().first << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaSequence(std::ifstream& file, Game::Midi::Sequence& sequence)
+void  Game::Midi::loadTrackMetaSequence(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
-  read(file, &sequence.metadata.sequence);
-  sequence.metadata.sequence = Game::Midi::swap_endianness(sequence.metadata.sequence);
+  uint8_t mode = 0;
+
+  // Read sequence mode
+  read(file, &mode);
+
+  // Default mode
+  if (mode == 0x00)
+    sequence.metadata.sequence = (uint16_t)(sequences.size() - 1);
+
+  // Get value from file
+  else if (mode == 0x02) {
+    read(file, &sequence.metadata.sequence);
+    sequence.metadata.sequence = Game::Midi::swap_endianness(sequence.metadata.sequence);
+  }
+
+  // Unsupported
+  else
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // TODO: remove this
-  std::cout << "  [META] sequence: " << sequence.metadata.sequence << std::endl;
+  std::cout << "sequence: " << sequence.metadata.sequence << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaSequenceDefault(std::ifstream& file, Game::Midi::Sequence& sequence, uint16_t value)
+void  Game::Midi::loadTrackMetaTempos(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
-  sequence.metadata.sequence = value;
-
-  // TODO: remove this
-  std::cout << "  [META] sequence: " << sequence.metadata.sequence << " (default)" << std::endl;
-}
-
-void  Game::Midi::loadTrackMetaTempos(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock)
-{
+  uint8_t   mode = 0;
   uint32_t  tempo = 0;
+
+  // Get mode
+  read(file, &mode);
+
+  // Invalid mode
+  if (mode != 0x03)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   read(file, ((char*)&tempo) + 1, 3);
   sequence.metadata.tempos.push_back({ clock, Game::Midi::swap_endianness(tempo) });
 
   // TODO: remove this
-  std::cout << "  [META] tempo: " << 60000000 / sequence.metadata.tempos.back().second << " BPM at " << sequence.metadata.tempos.back().first << std::endl;
+  std::cout << "tempo: " << 60000000 / sequence.metadata.tempos.back().second << " BPM at " << sequence.metadata.tempos.back().first << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaSmpte(std::ifstream& file, Game::Midi::Sequence& sequence)
+void  Game::Midi::loadTrackMetaSmpte(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
+  uint8_t mode = 0;
+
+  // Get mode
+  read(file, &mode);
+
+  // Invalid mode
+  if (mode != 0x05)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
   read(file, &sequence.metadata.smpte.hours);
   read(file, &sequence.metadata.smpte.minutes);
   read(file, &sequence.metadata.smpte.seconds);
@@ -622,7 +537,7 @@ void  Game::Midi::loadTrackMetaSmpte(std::ifstream& file, Game::Midi::Sequence& 
   sequence.metadata.smpte.hours = (sequence.metadata.smpte.hours & 0b00011111);
 
   // TODO: remove this
-  std::cout << "  [META] smpte: "
+  std::cout << "smpte: "
     << (int)sequence.metadata.smpte.hours << "h "
     << (int)sequence.metadata.smpte.minutes << "m "
     << (int)sequence.metadata.smpte.seconds << "s "
@@ -631,9 +546,17 @@ void  Game::Midi::loadTrackMetaSmpte(std::ifstream& file, Game::Midi::Sequence& 
     << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaSignatures(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock)
+void  Game::Midi::loadTrackMetaSignatures(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
-  Game::Midi::Sequence::MetaData::Signature  signature = {};
+  uint8_t                                   mode = 0;
+  Game::Midi::Sequence::MetaData::Signature signature = {};
+  
+  // Get mode
+  read(file, &mode);
+
+  // Invalid mode
+  if (mode != 0x04)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   read(file, &signature.numerator);
   read(file, &signature.denominator);
@@ -646,12 +569,20 @@ void  Game::Midi::loadTrackMetaSignatures(std::ifstream& file, Game::Midi::Seque
   sequence.metadata.signatures.push_back({ clock, signature });
 
   // TODO: remove this
-  std::cout << "  [META] signature: " << (int)sequence.metadata.signatures.back().second.numerator << "/" << (int)sequence.metadata.signatures.back().second.denominator << " at " << sequence.metadata.signatures.back().first << std::endl;
+  std::cout << "signature: " << (int)sequence.metadata.signatures.back().second.numerator << "/" << (int)sequence.metadata.signatures.back().second.denominator << " at " << sequence.metadata.signatures.back().first << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaKeys(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock)
+void  Game::Midi::loadTrackMetaKeys(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
-  Game::Midi::Sequence::MetaData::Key  key = {};
+  uint8_t                             mode = 0;
+  Game::Midi::Sequence::MetaData::Key key = {};
+
+  // Get mode
+  read(file, &mode);
+
+  // Invalid mode
+  if (mode != 0x02)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   read(file, &key.key);
   read(file, &key.major);
@@ -659,42 +590,58 @@ void  Game::Midi::loadTrackMetaKeys(std::ifstream& file, Game::Midi::Sequence& s
   sequence.metadata.keys.push_back({ clock, key });
 
   // TODO: remove this
-  std::cout << "  [META] key: " << (int)sequence.metadata.keys.back().second.key << " " << (sequence.metadata.keys.back().second.major ? "major" : "minor") << " at " << sequence.metadata.keys.back().first << std::endl;
+  std::cout << "key: " << (int)sequence.metadata.keys.back().second.key << " " << (sequence.metadata.keys.back().second.major ? "major" : "minor") << " at " << sequence.metadata.keys.back().first << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaProgram(std::ifstream& file, Game::Midi::Sequence& sequence)
+void  Game::Midi::loadTrackMetaProgram(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
   sequence.metadata.program = loadText(file);
 
   // TODO: remove this
-  std::cout << "  [META] program: " << sequence.metadata.program << std::endl;
+  std::cout << "program: " << sequence.metadata.program << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaDevices(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock)
+void  Game::Midi::loadTrackMetaDevices(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
   sequence.metadata.devices.push_back({ clock, loadText(file) });
 
   // TODO: remove this
-  std::cout << "  [META] device: '" << sequence.metadata.devices.back().second << "' at " << sequence.metadata.devices.back().first << std::endl;
+  std::cout << "device: '" << sequence.metadata.devices.back().second << "' at " << sequence.metadata.devices.back().first << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaChannels(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock)
+void  Game::Midi::loadTrackMetaChannels(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
-  uint8_t channel;
+  uint8_t mode = 0;
+  uint8_t channel = 0;
+  
+  // Get mode
+  read(file, &mode);
+
+  // Invalid mode
+  if (mode != 0x01)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   read(file, &channel);
   std::cerr << "[Game::Midi::load]: Warning, ignored MIDI track metadata (channel prefix " << (int)channel << ")." << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaPorts(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock)
+void  Game::Midi::loadTrackMetaPorts(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
-  uint8_t port;
+  uint8_t mode = 0;
+  uint8_t port = 0;
+
+  // Get mode
+  read(file, &mode);
+
+  // Invalid mode
+  if (mode != 0x01)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   read(file, &port);
   std::cerr << "[Game::Midi::load]: Warning, ignored MIDI track metadata (MIDI port " << (int)port << ")." << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaDatas(std::ifstream& file, Game::Midi::Sequence& sequence)
+void  Game::Midi::loadTrackMetaDatas(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
   uint64_t  length(loadVariableLengthQuantity(file));
 
@@ -702,10 +649,10 @@ void  Game::Midi::loadTrackMetaDatas(std::ifstream& file, Game::Midi::Sequence& 
   read(file, sequence.metadata.datas.data(), sequence.metadata.datas.size());
 
   // TODO: remove this
-  std::cout << "  [META] datas: " << length << " bytes" << std::endl;
+  std::cout << "datas: " << length << " bytes" << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaTags(std::ifstream& file, Game::Midi::Sequence& sequence)
+void  Game::Midi::loadTrackMetaTags(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
   uint64_t                            length(loadVariableLengthQuantity(file));
   std::vector<char>                   text(length + 1, 0);
@@ -716,37 +663,42 @@ void  Game::Midi::loadTrackMetaTags(std::ifstream& file, Game::Midi::Sequence& s
   sequence.metadata.tags[tag] = text.data();
 
   // TODO: remove this
-  std::cout << "  [META] tag: [" << (int)tag << "] '" << sequence.metadata.tags[tag] << "'" << std::endl;
+  std::cout << "tag: [" << (int)tag << "] '" << sequence.metadata.tags[tag] << "'" << std::endl;
 }
 
-void  Game::Midi::loadTrackMetaEnd(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock, bool& end)
+void  Game::Midi::loadTrackMetaEnd(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
-  // Stop track recording
-  end = true;
+  uint8_t mode = 0;
+
+  // Get mode
+  read(file, &mode);
+
+  // Invalid mode
+  if (mode != 0x00)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Save end time
-  sequence.metadata.end = std::max(sequence.metadata.end, clock);
+  sequence.metadata.end = (sequence.metadata.end == (std::size_t)-1) ? clock : std::max(sequence.metadata.end, clock);
 
   // TODO: remove this
-  std::cout << "  [META] end clock: " << clock << std::endl;
+  std::cout << "end clock: " << clock << std::endl;
 }
 
-void  Game::Midi::loadTrackMidiNoteOff(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
+void  Game::Midi::loadTrackMidiNoteOff(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
 {
-  uint8_t channel = 0;
+  uint8_t channel = status & 0b00001111;
   uint8_t key = 0;
-  uint8_t velocity = 0;
+  int8_t  velocity = 0;
   
   // Get instruction parameters
-  channel = loadChannel(file);
   read(file, &key);
   read(file, &velocity);
 
   // Add new key released
-  sequence.tracks[track].program[channel].released.push_back({ clock, { key, velocity } });
+  sequence.tracks[track].channel[channel].note.push_back({ clock, { key, (int8_t)-velocity } });
 
   // Force key pressure to 0
-  sequence.tracks[track].program[channel].polyphonic.push_back({ clock, { key, 0 } });
+  sequence.tracks[track].channel[channel].polyphonic.push_back({ clock, { key, 0 } });
 
   return;
 
@@ -758,19 +710,18 @@ void  Game::Midi::loadTrackMidiNoteOff(std::ifstream& file, Game::Midi::Sequence
     << "    velocity: " << (int)velocity << std::endl;
 }
 
-void  Game::Midi::loadTrackMidiNoteOn(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
+void  Game::Midi::loadTrackMidiNoteOn(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
 {
-  uint8_t channel = 0;
+  uint8_t channel = status & 0b00001111;
   uint8_t key = 0;
-  uint8_t velocity = 0;
+  int8_t  velocity = 0;
 
   // Get instruction parameters
-  channel = loadChannel(file);
   read(file, &key);
   read(file, &velocity);
 
   // Add new key press
-  sequence.tracks[track].program[channel].pressed.push_back({ clock, { key, velocity } });
+  sequence.tracks[track].channel[channel].note.push_back({ clock, { key, (int8_t)+velocity } });
 
   return;
 
@@ -782,19 +733,18 @@ void  Game::Midi::loadTrackMidiNoteOn(std::ifstream& file, Game::Midi::Sequence&
     << "    velocity:   " << (int)velocity << std::endl;
 }
 
-void  Game::Midi::loadTrackMidiPolyphonicKeyPressure(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
+void  Game::Midi::loadTrackMidiPolyphonicKeyPressure(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
 {
-  uint8_t channel = 0;
+  uint8_t channel = status & 0b00001111;
   uint8_t key = 0;
   uint8_t pressure = 0;
 
   // Get instruction parameters
-  channel = loadChannel(file);
   read(file, &key);
   read(file, &pressure);
 
   // Add new polyphonic key pressure
-  sequence.tracks[track].program[channel].polyphonic.push_back({ clock, { key, pressure } });
+  sequence.tracks[track].channel[channel].polyphonic.push_back({ clock, { key, pressure } });
 
   return;
 
@@ -806,16 +756,20 @@ void  Game::Midi::loadTrackMidiPolyphonicKeyPressure(std::ifstream& file, Game::
     << "    pressure:   " << (int)pressure << std::endl;
 }
 
-void  Game::Midi::loadTrackMidiControlChange(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t clock)
+void  Game::Midi::loadTrackMidiControlChange(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
 {
-  uint8_t channel = 0;
+  uint8_t channel = status & 0b00001111;
   uint8_t controller = 0;
   uint8_t value = 0;
 
   // Get instruction parameters
-  channel = loadChannel(file);
   read(file, &controller);
   read(file, &value);
+
+  // New new controller value
+  sequence.tracks[track].channel[channel].controller[(Game::Midi::Sequence::Track::Channel::Controller)controller].push_back({ clock, value });
+
+  return;
 
   // TODO: remove this
   std::cout
@@ -825,17 +779,16 @@ void  Game::Midi::loadTrackMidiControlChange(std::ifstream& file, Game::Midi::Se
     << "    value:      " << (int)value << std::endl;
 }
 
-void  Game::Midi::loadTrackMidiProgramChange(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
+void  Game::Midi::loadTrackMidiProgramChange(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
 {
-  uint8_t channel = 0;
+  uint8_t channel = status & 0b00001111;
   uint8_t program = 0;
 
   // Get instruction parameters
-  channel = loadChannel(file);
   read(file, &program);
 
   // Add program change
-  sequence.tracks[track].program[channel].program.push_back({ clock, program });
+  sequence.tracks[track].channel[channel].program.push_back({ clock, program });
 
   return;
 
@@ -846,18 +799,17 @@ void  Game::Midi::loadTrackMidiProgramChange(std::ifstream& file, Game::Midi::Se
     << "    program:    " << (int)program << std::endl;
 }
 
-void  Game::Midi::loadTrackMidiChannelPressure(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
+void  Game::Midi::loadTrackMidiChannelPressure(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
 {
-  uint8_t channel = 0;
+  uint8_t channel = status & 0b00001111;
   uint8_t pressure = 0;
 
   // Get instruction parameters
-  channel = loadChannel(file);
   read(file, &pressure);
 
   // Add new polyphonic key pressure for every key of the channel
   for (uint8_t key = 0; key < 128; key++)
-    sequence.tracks[track].program[channel].polyphonic.push_back({ clock, { key, pressure } });
+    sequence.tracks[track].channel[channel].polyphonic.push_back({ clock, { key, pressure } });
 
   return;
 
@@ -868,20 +820,19 @@ void  Game::Midi::loadTrackMidiChannelPressure(std::ifstream& file, Game::Midi::
     << "    pressure:   " << (int)pressure << std::endl;
 }
 
-void  Game::Midi::loadTrackMidiPitchWheelChange(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
+void  Game::Midi::loadTrackMidiPitchWheelChange(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
 {
-  uint8_t   channel = 0;
+  uint8_t   channel = status & 0b00001111;
   uint16_t  pitch = 0;
 
   // Get instruction parameters
-  channel = loadChannel(file);
   read(file, &pitch);
 
   // Only keep significant bits
   pitch = (((uint8_t*)&pitch)[0] & 0b01111111) * 128 + (((uint8_t*)&pitch)[1] & 0b01111111);
 
   // Add new pitch wheel value
-  sequence.tracks[track].program[channel].pitch.push_back({ clock, pitch });
+  sequence.tracks[track].channel[channel].pitch.push_back({ clock, pitch });
   
   return;
 
@@ -892,22 +843,17 @@ void  Game::Midi::loadTrackMidiPitchWheelChange(std::ifstream& file, Game::Midi:
     << "    pitch:      " << (int)pitch << std::endl;
 }
 
-void  Game::Midi::loadTrackMidiUndefined(std::ifstream& file, const std::vector<uint8_t>& instruction, std::size_t skip)
+void  Game::Midi::loadTrackUndefined(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
 {
-  std::vector<uint8_t>  unused(skip, 0);
+  std::vector<uint8_t>  unused(1, 0);
 
   // Skip unused bytes
   read(file, unused.data(), unused.size());
 
-  std::cerr << "[Game::Midi::load]: Warning, undefined instruction '";
-
-  // Display instruction bytes
+  // Display instruction byte
   std::ios_base::fmtflags save(std::cerr.flags());
-  for (auto it = instruction.begin(); it != instruction.end(); it++)
-    std::cerr << ((it == instruction.begin()) ? "" : " ") << std::hex << std::setw(2) << std::setfill('0') << (int)*it << std::flush;
+  std::cerr << "[Game::Midi::load]: Warning, undefined instruction '" << std::hex << std::setw(2) << std::setfill('0') << (int)status << "' (1 bytes skipped)." << std::endl;
   std::cerr.flags(save);
-
-  std::cerr << "' (" << skip << " bytes skipped)." << std::endl;
 }
 
 uint64_t  Game::Midi::loadVariableLengthQuantity(std::ifstream& file)
@@ -940,17 +886,6 @@ std::string Game::Midi::loadText(std::ifstream& file)
   read(file, str.data(), str.size() - 1);
 
   return str.data();
-}
-
-uint8_t Game::Midi::loadChannel(std::ifstream& file)
-{
-  uint8_t byte = 0;
-
-  // Re-read instruction byte
-  file.seekg(-1, file.cur);
-  read(file, &byte);
-
-  return byte & 0b00001111;
 }
 
 sf::Time  Game::Midi::duration(const Game::Midi::Sequence& sequence, std::size_t clock)
