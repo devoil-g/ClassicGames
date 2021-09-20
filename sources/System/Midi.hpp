@@ -103,7 +103,16 @@ namespace Game
         uint16_t  modulator;
       };
 
-      typedef uint16_t Sf2GenAmountType;
+      union Sf2GenAmountType
+      {
+        struct {
+          uint8_t low;      // Low value of range
+          uint8_t high;     // High value of range
+        }         range;    // Amount is a range
+
+        int16_t   s_amount; // Signed 16bit amount [-32768:+32767]
+        uint16_t  u_amount; // Unsigned 16bit amount [0:+65535]
+      };
 
       enum Sf2Generator : uint16_t
       {
@@ -167,8 +176,9 @@ namespace Game
         ExclusiveClass = 57,
         OverridingRootKey = 58,
         Unused5 = 59,
+        Unused6 = 60,
 
-        Count = 60
+        Count = 61
       };
 
       struct Sf2GenList
@@ -177,7 +187,16 @@ namespace Game
         Sf2GenAmountType  amount;
       };
 
-      typedef uint16_t Sf2Modulator;
+      struct Sf2Modulator
+      {
+        uint16_t  data; // Raw data of the modulator
+
+        uint8_t type() { return (((uint8_t*)&data)[0] & 0b11111100) >> 2; }
+        bool    polarity() { return (((uint8_t*)&data)[0] & 0b00000010) ? true : false; }
+        bool    direction() { return (((uint8_t*)&data)[0] & 0b00000001) ? true : false; }
+        bool    continuous() { return (((uint8_t*)&data)[1] & 0b10000000) ? true : false; }
+        uint8_t index() { return ((uint8_t*)&data)[1] & 0b01111111; }
+      };
 
       enum Sf2Transform : uint16_t
       {
@@ -290,13 +309,19 @@ namespace Game
         uint16_t  wAmount;
       };
 
+      struct Preset
+      {
+
+      };
+
     public:
       SoundFont(const std::string& filename);
       ~SoundFont() = default;
 
-      Game::Midi::SoundFont::Info info;       // General informations
-      std::vector<int16_t>        samples16;  // Raw audio samples, 16bits
-      std::vector<int8_t>         samples24;  // Additional byte to transform raw audio samples from 16bits to 24bits
+      Game::Midi::SoundFont::Info                                                             info;       // General informations
+      std::vector<int16_t>                                                                    samples16;  // Raw audio samples, 16bits
+      std::vector<int8_t>                                                                     samples24;  // Additional byte to transform raw audio samples from 16bits to 24bits
+      std::unordered_map<uint8_t, std::unordered_map<uint8_t, Game::Midi::SoundFont::Preset>> presets;    // Preset organized by bank/midi number
     };
 
   private:
@@ -393,9 +418,82 @@ namespace Game
 
           enum Controller : uint8_t
           {
-            ControllerBank,
-
-            ControllerCount
+            ControllerBankSelectCoarse = 0,
+            ControllerModulationWheelCoarse = 1,
+            ControllerBreathCoarse = 2,
+            // ... (undefined)
+            ControllerFootPedalCoarse = 4,
+            ControllerPortamentoTimeCoarse = 5,
+            ControllerDataEntryCoarse = 6,
+            ControllerVolumeCoarse = 7,
+            ControllerBalanceCoarse = 8,
+            // ... (undefined)
+            ControllerPanCoarse = 10,
+            ControllerExpressionCoarse = 11,
+            ControllerEffect1Coarse = 12,
+            ControllerEffect2Coarse = 13,
+            // ... (undefined)
+            ControllerGeneralPurpose1 = 16,
+            ControllerGeneralPurpose2 = 17,
+            ControllerGeneralPurpose3 = 18,
+            ControllerGeneralPurpose4 = 19,
+            // ... (undefined)
+            ControllerBankSelectFine = 32,
+            ControllerModulationWheelFine = 33,
+            ControllerBreathFine = 34,
+            // ... (undefined)
+            ControllerFootPedalFine = 36,
+            ControllerPortamentoTimeFine = 37,
+            ControllerDataEntryFine = 38,
+            ControllerVolumeFine = 39,
+            ControllerBalanceFine = 40,
+            // ... (undefined)
+            ControllerPanFine = 42,
+            ControllerExpressionFine = 43,
+            ControllerEffect1Fine = 44,
+            ControllerEffect2Fine = 45,
+            // ... (undefined)
+            ControllerHoldPedal = 64,
+            ControllerPortamento = 65,
+            ControllerSustenutoPedal = 66,
+            ControllerSoftPedal = 67,
+            ControllerLegatoPedal = 68,
+            ControllerHoldPedal2 = 69,
+            ControllerSoundVariation = 70,
+            ControllerSoundTimbre = 71,
+            ControllerSoundReleaseTime = 72,
+            ControllerSoundAttackTime = 73,
+            ControllerSoundBrightness = 74,
+            ControllerSound6 = 75,
+            ControllerSound7 = 76,
+            ControllerSound8 = 77,
+            ControllerSound9 = 78,
+            ControllerSound10 = 79,
+            ControllerGeneralPurposeButton1 = 80,
+            ControllerGeneralPurposeButton2 = 81,
+            ControllerGeneralPurposeButton3 = 82,
+            ControllerGeneralPurposeButton4 = 83,
+            // ... (undefined)
+            ControllerEffectLevel = 91,
+            ControllerTremuloLevel = 92,
+            ControllerChorusLevel = 93,
+            ControllerCelesteLevel = 94,
+            ControllerPhaserLevel = 95,
+            ControllerDataButtonIncrement = 96,
+            ControllerDataButtonDecrement = 97,
+            ControllerNonRegisteredParameterNumberFine = 98,
+            ControllerNonRegisteredParameterNumberCoarse = 99,
+            ControllerRegisteredParameterNumberFine = 100,
+            ControllerRegisteredParameterNumberCoarse = 101,
+            // ... (undefined)
+            ControllerAllSoundOff = 120,
+            ControllerAllControllerOff = 121,
+            ControllerLocalKeyboard = 122,
+            ControllerAllNoteOff = 123,
+            ControllerOmniOff = 124,
+            ControllerOmniOn = 125,
+            ControllerMonophonicOperation = 126,
+            ControllerPolyhonicOperation = 127
           };
 
           std::list<std::pair<std::size_t, Channel::Key>>                                     note;       // Note pressed/released, null or negative velocity means release
@@ -425,34 +523,34 @@ namespace Game
 
     void  loadTrack(std::ifstream& file, const Game::Midi::MidiHeader& header, Game::Midi::Sequence& sequence, std::size_t track);  // Load MIDI tracks
 
-    void  loadTrackSysexF0(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock); // MIDI system exclusive message
-    void  loadTrackSysexF7(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock); // MIDI system exclusive message
+    void  loadTrackSysexF0(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock);  // MIDI system exclusive message
+    void  loadTrackSysexF7(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock);  // MIDI system exclusive message
 
-    void  loadTrackMeta(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock);                // Handle MIDI meta events
-    void  loadTrackMetaName(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);            // Specifies the title of the track or sequence
-    void  loadTrackMetaCopyright(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);                          // Specifies copyright information for the sequence
-    void  loadTrackMetaInstrument(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);                         // Names the instrument intended to play the contents of this track
-    void  loadTrackMetaLyrics(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);          // Lyrics intended to be sung at the given time
-    void  loadTrackMetaMarkers(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);         // Points in the sequence which occurs at the given time
-    void  loadTrackMetaCues(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);            // Identifies synchronisation point which occurs at the specified time
-    void  loadTrackMetaTexts(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);           // Supplies an arbitrary text at the specified time
-    void  loadTrackMetaSequence(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);                           // Specifies the sequence number
-    void  loadTrackMetaTempos(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);          // Number of microseconds per quarter note at the specified time (default 120BPM)
-    void  loadTrackMetaSmpte(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);                              // Specify the starting point offset from the beginning of the track
-    void  loadTrackMetaSignatures(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);      // Time signature of the track at the given time
-    void  loadTrackMetaKeys(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);            // Keys signature of the track at the given time
-    void  loadTrackMetaProgram(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);                            // The name of the program (ie, patch) used to play the track
-    void  loadTrackMetaDevices(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);         // The name of the MIDI devices (port) where the track is routed at the specified time
-    void  loadTrackMetaChannels(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);        // May be used to associate a MIDI channel with all events which follow (not supported)
-    void  loadTrackMetaPorts(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);           // The number of the port where the track is routed at the specified time (not supported)
-    void  loadTrackMetaDatas(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);                              // Store vendor-proprietary data
-    void  loadTrackMetaTags(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);                               // Track tags (not standard)
-    void  loadTrackMetaEnd(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);  // Track tags (not standard)
+    void  loadTrackMeta(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock); // Handle MIDI meta events
+    void  loadTrackMetaName(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);             // Specifies the title of the track or sequence
+    void  loadTrackMetaCopyright(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);        // Specifies copyright information for the sequence
+    void  loadTrackMetaInstrument(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);       // Names the instrument intended to play the contents of this track
+    void  loadTrackMetaLyrics(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);           // Lyrics intended to be sung at the given time
+    void  loadTrackMetaMarkers(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);          // Points in the sequence which occurs at the given time
+    void  loadTrackMetaCues(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);             // Identifies synchronisation point which occurs at the specified time
+    void  loadTrackMetaTexts(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);            // Supplies an arbitrary text at the specified time
+    void  loadTrackMetaSequence(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);         // Specifies the sequence number
+    void  loadTrackMetaTempos(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);           // Number of microseconds per quarter note at the specified time (default 120BPM)
+    void  loadTrackMetaSmpte(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);            // Specify the starting point offset from the beginning of the track
+    void  loadTrackMetaSignatures(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);       // Time signature of the track at the given time
+    void  loadTrackMetaKeys(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);             // Keys signature of the track at the given time
+    void  loadTrackMetaProgram(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);          // The name of the program (ie, patch) used to play the track
+    void  loadTrackMetaDevices(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);          // The name of the MIDI devices (port) where the track is routed at the specified time
+    void  loadTrackMetaChannels(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);         // May be used to associate a MIDI channel with all events which follow (not supported)
+    void  loadTrackMetaPorts(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);            // The number of the port where the track is routed at the specified time (not supported)
+    void  loadTrackMetaDatas(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);            // Store vendor-proprietary data
+    void  loadTrackMetaTags(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);             // Track tags (not standard)
+    void  loadTrackMetaEnd(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, std::size_t clock);              // Track tags (not standard)
 
     void  loadTrackMidiNoteOff(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock);                // Sent when a note is released (ended)
     void  loadTrackMidiNoteOn(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock);                 // Sent when a note is depressed (start)
     void  loadTrackMidiPolyphonicKeyPressure(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock);  // Most often sent by pressing down on the key after it "bottoms out"
-    void  loadTrackMidiControlChange(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock);                             // Sent when a controller value changes
+    void  loadTrackMidiControlChange(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock);          // Sent when a controller value changes
     void  loadTrackMidiProgramChange(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock);          // Sent when the patch number changes
     void  loadTrackMidiChannelPressure(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock);        // Most often sent by pressing down on the key after it "bottoms out"
     void  loadTrackMidiPitchWheelChange(std::ifstream& file, Game::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock);       // Indicates a change in the pitch wheel

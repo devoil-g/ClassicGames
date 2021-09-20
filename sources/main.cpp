@@ -33,7 +33,7 @@ namespace Game
     sf::Clock           clock;
 
     // TODO: remove this
-    Game::Midi  midi(Game::Config::ExecutablePath + "/assets/levels/beethoven.mid");
+    Game::Midi  midi(Game::Config::ExecutablePath + "/assets/levels/level1.mid");
 
     // Push initial state
     //game.push<Game::SplashScene>();

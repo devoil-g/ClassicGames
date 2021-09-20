@@ -15,10 +15,9 @@
 // TODO: remove this
 struct Note
 {
-  uint8_t   key = 0;
-  uint8_t   velocity = 0;
-  uint64_t  clock = 0;
-  bool      pressed = false;
+  uint8_t     key = 0;
+  int8_t      velocity = 0;
+  std::size_t clock = 0;
 };
 
 // TODO: remove this
@@ -63,7 +62,7 @@ void  Game::Midi::generate(const Game::Midi::Sequence& sequence)
   std::array<Note, 120> piano;
   std::vector<float>  samples((int)(duration(sequence, sequence.metadata.end).asSeconds() * 22050) + 1, 0.f);
 
-  piano.fill(Note{ 0, 0, 0, false });
+  piano.fill(Note{ 0, 0, 0 });
 
   std::cout << "generating" << std::endl;
 
@@ -82,7 +81,7 @@ void  Game::Midi::generate(const Game::Midi::Sequence& sequence)
     }
 
     for (const auto& note : piano) {
-      if (note.velocity > 0.f && note.pressed == true) {
+      if (note.velocity > 0.f) {
         for (int sample_idx = (int)(duration(sequence, tick).asSeconds() * 22050); sample_idx < (int)(duration(sequence, tick + 1).asSeconds() * 22050); sample_idx++) {
           float note_frequency = (261.626f * (float)std::pow(2.f, note.key / 12 - 5)) * (1.f + (note.key % 12) / 12.f);
           float note_duration = std::max(0.f, (sample_idx / 22050.f) - duration(sequence, note.clock).asSeconds());
@@ -95,7 +94,7 @@ void  Game::Midi::generate(const Game::Midi::Sequence& sequence)
 
   std::vector<int16_t>  samples16;
   for (const auto& sample : samples) {
-    samples16.push_back((int16_t)(std::clamp(sample, -1.f, +1.f) * 32767.f));
+    samples16.push_back((int16_t)(std::clamp(sample, -1.f, +1.f) * 32767.f * 0.5f));
   }
 
   std::cout << std::endl;
@@ -700,6 +699,9 @@ void  Game::Midi::loadTrackMidiNoteOff(std::ifstream& file, Game::Midi::Sequence
   // Force key pressure to 0
   sequence.tracks[track].channel[channel].polyphonic.push_back({ clock, { key, 0 } });
 
+  // TODO: remove this
+  notes.push_back(Note{ key, (int8_t)-velocity, clock });
+
   return;
 
   // TODO: remove this
@@ -722,6 +724,9 @@ void  Game::Midi::loadTrackMidiNoteOn(std::ifstream& file, Game::Midi::Sequence&
 
   // Add new key press
   sequence.tracks[track].channel[channel].note.push_back({ clock, { key, (int8_t)+velocity } });
+
+  // TODO: remove this
+  notes.push_back(Note{ key, (int8_t)+velocity, clock });
 
   return;
 
@@ -1221,6 +1226,63 @@ void  Game::Midi::SoundFont::loadSectionListPdta(std::ifstream& file, const Game
     << "    [PDTA] instrument generators: " << instrumentGenerators.size() << std::endl
     << "    [PDTA] samples:               " << sampleHeaders.size() << std::endl
     ;
+
+  for (int preset_index = 0; preset_index < presetHeaders.size() - 1; preset_index++) {
+    std::cout << std::endl;
+    std::cout << "Preset '" << presetHeaders[preset_index].name << "' [" << presetHeaders[preset_index].bank << ":" << presetHeaders[preset_index].midi << "]:" << std::endl;
+
+    // BAG
+    for (int preset_bag_index = presetHeaders[preset_index].bag; preset_bag_index < presetHeaders[preset_index + 1].bag; preset_bag_index++) {
+      std::cout << "  Bag " << preset_bag_index << ":" << std::endl;
+
+      // GENERATOR
+      for (int preset_generator_index = presetBags[preset_bag_index].generator; preset_generator_index < presetBags[preset_bag_index + 1].generator; preset_generator_index++) {
+        std::cout
+          << "    Generator " << preset_generator_index << ":" << std::endl
+          << "      operation: " << presetGenerators[preset_generator_index].operation << std::endl
+          << "      amount:    " << presetGenerators[preset_generator_index].amount.u_amount << std::endl;
+
+        if (presetGenerators[preset_generator_index].operation == SoundFont::Sf2Generator::Instrument) {
+          std::cout << "        Instrument '" << instrumentHeaders[presetGenerators[preset_generator_index].amount.u_amount].name << "':" << std::endl;
+          
+          for (int instrument_bag_index = instrumentHeaders[presetGenerators[preset_generator_index].amount.u_amount].bag; instrument_bag_index < instrumentHeaders[presetGenerators[preset_generator_index].amount.u_amount + 1].bag; instrument_bag_index++) {
+            std::cout << "          Bag " << instrument_bag_index << ":" << std::endl;
+
+            // GENERATOR
+            for (int instrument_generator_index = instrumentBags[instrument_bag_index].generator; instrument_generator_index < instrumentBags[instrument_bag_index + 1].generator; instrument_generator_index++) {
+              std::cout
+                << "            Generator " << instrument_generator_index << ":" << std::endl
+                << "              operation: " << instrumentGenerators[instrument_generator_index].operation << std::endl
+                << "              amount:    " << instrumentGenerators[instrument_generator_index].amount.u_amount << std::endl;
+
+            }
+
+            // MODULATOR
+            for (int instrument_modulator_index = instrumentBags[instrument_bag_index].modulator; instrument_modulator_index < instrumentBags[instrument_bag_index + 1].modulator; instrument_modulator_index++) {
+              std::cout
+                << "            Modulator " << instrument_modulator_index << ":" << std::endl
+                << "              source:      " << "type: " << (int)instrumentModulators[instrument_modulator_index].source.type() << "; polarity: " << instrumentModulators[instrument_modulator_index].source.polarity() << "; direction: " << instrumentModulators[instrument_modulator_index].source.direction() << "; continuous: " << instrumentModulators[instrument_modulator_index].source.continuous() << "; index: " << (int)instrumentModulators[instrument_modulator_index].source.index() << std::endl
+                << "              destination: " << instrumentModulators[instrument_modulator_index].destination << std::endl
+                << "              amount:      " << instrumentModulators[instrument_modulator_index].amount << std::endl
+                << "              degree:      " << "type: " << (int)instrumentModulators[instrument_modulator_index].degree.type() << "; polarity: " << instrumentModulators[instrument_modulator_index].degree.polarity() << "; direction: " << instrumentModulators[instrument_modulator_index].degree.direction() << "; continuous: " << instrumentModulators[instrument_modulator_index].degree.continuous() << "; index: " << (int)instrumentModulators[instrument_modulator_index].degree.index() << std::endl
+                << "              transform:   " << instrumentModulators[instrument_modulator_index].transform << std::endl;
+            }
+          }
+        }
+      }
+
+      // MODULATOR
+      for (int preset_modulator_index = presetBags[preset_bag_index].modulator; preset_modulator_index < presetBags[preset_bag_index + 1].modulator; preset_modulator_index++) {
+        std::cout
+          << "    Modulator " << preset_modulator_index << ":" << std::endl
+          << "      source:      " << "type : " << (int)presetModulators[preset_modulator_index].source.type() << "; polarity: " << presetModulators[preset_modulator_index].source.polarity() << "; direction: " << presetModulators[preset_modulator_index].source.direction() << "; continuous: " << presetModulators[preset_modulator_index].source.continuous() << "; index: " << (int)presetModulators[preset_modulator_index].source.index() << std::endl
+          << "      destination: " << presetModulators[preset_modulator_index].destination << std::endl
+          << "      amount:      " << presetModulators[preset_modulator_index].amount << std::endl
+          << "      degree:      " << "type : " << (int)presetModulators[preset_modulator_index].degree.type() << "; polarity: " << presetModulators[preset_modulator_index].degree.polarity() << "; direction: " << presetModulators[preset_modulator_index].degree.direction() << "; continuous: " << presetModulators[preset_modulator_index].degree.continuous() << "; index: " << (int)presetModulators[preset_modulator_index].degree.index() << std::endl
+          << "      transform:   " << presetModulators[preset_modulator_index].transform << std::endl;
+      }
+    }
+  }
 
   // TODO: build presets, instruments and samples
 }
