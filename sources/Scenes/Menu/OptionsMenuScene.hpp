@@ -14,6 +14,7 @@ namespace Game
   private:
     void  selectFullscreen(Game::AbstractMenuScene::Item&);   // Toggle fullscreen mode
     void  selectAntialiasing(Game::AbstractMenuScene::Item&); // Change antialiasing level
+    void  selectVerticalSync(Game::AbstractMenuScene::Item&); // Toogle vertical synchronisation
     void  selectReturn(Game::AbstractMenuScene::Item&);       // Return to main menu
 
   public:

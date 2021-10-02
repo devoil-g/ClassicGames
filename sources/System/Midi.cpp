@@ -915,8 +915,8 @@ sf::Time  Game::Midi::duration(const Game::Midi::Sequence& sequence, std::size_t
 
 Game::Midi::SoundFont::SoundFont(const std::string& filename) :
   info(),
-  samples16(),
-  samples24()
+  _samples16(),
+  _samples24()
 {
   // Load file
   load(filename);
@@ -991,7 +991,7 @@ void  Game::Midi::SoundFont::loadSections(std::ifstream& file, const Game::Midi:
 void  Game::Midi::SoundFont::loadSectionList(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header, const Game::Midi::SoundFont::Sf2SectionHeader& section, std::streampos position)
 {
   // Matching sections
-  std::unordered_map<uint32_t, std::function<void()>> list_commands = {
+  const std::unordered_map<uint32_t, std::function<void()>> list_commands = {
     { Game::Midi::str_to_key("INFO"), std::bind(&SoundFont::loadSectionListInfo, this, std::ref(file), std::ref(header), std::ref(section), position) },
     { Game::Midi::str_to_key("sdta"), std::bind(&SoundFont::loadSectionListSdta, this, std::ref(file), std::ref(header), std::ref(section), position) },
     { Game::Midi::str_to_key("pdta"), std::bind(&SoundFont::loadSectionListPdta, this, std::ref(file), std::ref(header), std::ref(section), position) }
@@ -1150,8 +1150,8 @@ void  Game::Midi::SoundFont::loadSectionListSdta(std::ifstream& file, const Game
 
     // Matching subsections
     std::unordered_map<uint32_t, std::function<void()>> sdta_commands = {
-      { Game::Midi::str_to_key("smpl"), std::bind(&Game::Midi::SoundFont::loadSubsection<int16_t>, this, std::ref(file), sdta.size, std::ref(samples16)) },
-      { Game::Midi::str_to_key("sm24"), std::bind(&Game::Midi::SoundFont::loadSubsection<int8_t>, this, std::ref(file), sdta.size, std::ref(samples24)) }
+      { Game::Midi::str_to_key("smpl"), std::bind(&Game::Midi::SoundFont::loadSubsection<int16_t>, this, std::ref(file), sdta.size, std::ref(_samples16)) },
+      { Game::Midi::str_to_key("sm24"), std::bind(&Game::Midi::SoundFont::loadSubsection<int8_t>, this, std::ref(file), sdta.size, std::ref(_samples24)) }
     };
 
     auto command = sdta_commands.find(sdta.name);
@@ -1165,8 +1165,8 @@ void  Game::Midi::SoundFont::loadSectionListSdta(std::ifstream& file, const Game
 
   // TODO: remove this
   std::cout
-    << "    [SDTA] samples16: " << samples16.size() << std::endl
-    << "    [SDTA] samples24: " << samples24.size() << std::endl
+    << "    [SDTA] samples16: " << _samples16.size() << std::endl
+    << "    [SDTA] samples24: " << _samples24.size() << std::endl
     ;
 }
 
@@ -1214,6 +1214,83 @@ void  Game::Midi::SoundFont::loadSectionListPdta(std::ifstream& file, const Game
       std::cerr << "[Game::Midi::SoundFont::load]: Warning, unknow pdta name '" << Game::Midi::key_to_str(pdta.name) << "' (sdta ignored)." << std::endl;
   }
 
+  // Build presets
+  for (int preset_index = 0; preset_index < presetHeaders.size() - 1; preset_index++) {
+    SoundFont::Preset&    preset = presets[(uint8_t)presetHeaders[preset_index].bank][(uint8_t)presetHeaders[preset_index].midi];
+    SoundFont::Generator  generator_global;
+    int                   preset_bag_start = presetHeaders[preset_index + 0].bag;
+    int                   preset_bag_end = presetHeaders[preset_index + 1].bag;
+
+    // Get name of the preset
+    preset.name = (const char*)presetHeaders[preset_index].name;
+
+    // Get preset bags
+    for (int preset_bag_index = preset_bag_start; preset_bag_index < preset_bag_end; preset_bag_index++) {
+      SoundFont::Generator  generator_preset = generator_global;
+
+      // Get generators of preset bag
+      for (int preset_generator_index = presetBags[preset_bag_index].generator; preset_generator_index < presetBags[preset_bag_index + 1].generator; preset_generator_index++) {
+        switch (presetGenerators[preset_generator_index].operation) {
+        case Sf2Generator::StartAddrsOffset:
+        case Sf2Generator::EndAddrsOffset:
+        case Sf2Generator::StartLoopAddrsOffset:
+        case Sf2Generator::EndLoopAddrsOffset:
+        case Sf2Generator::StartAddrsCoarseOffset:
+        case Sf2Generator::EndAddrsCoarseOffset:
+        case Sf2Generator::StartLoopAddrsCoarseOffset:
+        case Sf2Generator::EndLoopAddrsCoarseOffset:
+        case Sf2Generator::Keynum:
+        case Sf2Generator::Velocity:
+        case Sf2Generator::SampleMode:
+        case Sf2Generator::ExclusiveClass:
+        case Sf2Generator::OverridingRootKey:
+          std::cerr << "[Game::Midi::SoundFont::load]: Warning, invalid generator in preset zone (" << presetGenerators[preset_generator_index].operation << "), ignored." << std::endl;
+          break;
+
+        default:
+          generator_preset[presetGenerators[preset_generator_index].operation] = presetGenerators[preset_generator_index].amount;
+          break;
+        }
+      }
+
+      // TODO: get modulators
+
+      // First bag without instrument is a global generator, other bags without instrument are ignored
+      if (generator_preset[Sf2Generator::Instrument].s_amount == -1) {
+        if (preset_bag_index == preset_bag_start)
+          generator_global = generator_preset;
+        continue;
+      }
+
+      SoundFont::Preset::Instrument instrument;
+      int                           instrument_bag_start = instrumentHeaders[generator_preset[Sf2Generator::Instrument].s_amount + 0].bag;
+      int                           instrument_bag_end = instrumentHeaders[generator_preset[Sf2Generator::Instrument].s_amount + 1].bag;
+
+      // Name of the instrument
+      instrument.name = (const char*)instrumentHeaders[generator_preset[Sf2Generator::Instrument].s_amount].name;
+
+      // Save current preset generators in instrument
+      instrument.generator = generator_preset;
+
+      // Get instrument bags
+      for (int instrument_bag_index = instrument_bag_start; instrument_bag_index < instrument_bag_end; instrument_bag_index++) {
+        SoundFont::Preset::Instrument::Bag  bag;
+
+        // Get generators of instrument bag
+        for (int instrument_generator_index = instrumentBags[instrument_bag_index].generator; instrument_generator_index < instrumentBags[instrument_bag_index + 1].generator; instrument_generator_index++)
+          bag.generator[instrumentGenerators[instrument_generator_index].operation] = instrumentGenerators[instrument_generator_index].amount;
+
+        // TODO: get modulators
+
+        // Add bag to instrument
+        instrument.bags.push_back(bag);
+      }
+
+      // Add new instrument to preset
+      preset.instruments.push_back(instrument);
+    }
+  }
+
   // TODO: remove this
   std::cout
     << "    [PDTA] presets:               " << presetHeaders.size() << std::endl
@@ -1226,63 +1303,70 @@ void  Game::Midi::SoundFont::loadSectionListPdta(std::ifstream& file, const Game
     << "    [PDTA] instrument generators: " << instrumentGenerators.size() << std::endl
     << "    [PDTA] samples:               " << sampleHeaders.size() << std::endl
     ;
+}
 
-  for (int preset_index = 0; preset_index < presetHeaders.size() - 1; preset_index++) {
-    std::cout << std::endl;
-    std::cout << "Preset '" << presetHeaders[preset_index].name << "' [" << presetHeaders[preset_index].bank << ":" << presetHeaders[preset_index].midi << "]:" << std::endl;
-
-    // BAG
-    for (int preset_bag_index = presetHeaders[preset_index].bag; preset_bag_index < presetHeaders[preset_index + 1].bag; preset_bag_index++) {
-      std::cout << "  Bag " << preset_bag_index << ":" << std::endl;
-
-      // GENERATOR
-      for (int preset_generator_index = presetBags[preset_bag_index].generator; preset_generator_index < presetBags[preset_bag_index + 1].generator; preset_generator_index++) {
-        std::cout
-          << "    Generator " << preset_generator_index << ":" << std::endl
-          << "      operation: " << presetGenerators[preset_generator_index].operation << std::endl
-          << "      amount:    " << presetGenerators[preset_generator_index].amount.u_amount << std::endl;
-
-        if (presetGenerators[preset_generator_index].operation == SoundFont::Sf2Generator::Instrument) {
-          std::cout << "        Instrument '" << instrumentHeaders[presetGenerators[preset_generator_index].amount.u_amount].name << "':" << std::endl;
-          
-          for (int instrument_bag_index = instrumentHeaders[presetGenerators[preset_generator_index].amount.u_amount].bag; instrument_bag_index < instrumentHeaders[presetGenerators[preset_generator_index].amount.u_amount + 1].bag; instrument_bag_index++) {
-            std::cout << "          Bag " << instrument_bag_index << ":" << std::endl;
-
-            // GENERATOR
-            for (int instrument_generator_index = instrumentBags[instrument_bag_index].generator; instrument_generator_index < instrumentBags[instrument_bag_index + 1].generator; instrument_generator_index++) {
-              std::cout
-                << "            Generator " << instrument_generator_index << ":" << std::endl
-                << "              operation: " << instrumentGenerators[instrument_generator_index].operation << std::endl
-                << "              amount:    " << instrumentGenerators[instrument_generator_index].amount.u_amount << std::endl;
-
-            }
-
-            // MODULATOR
-            for (int instrument_modulator_index = instrumentBags[instrument_bag_index].modulator; instrument_modulator_index < instrumentBags[instrument_bag_index + 1].modulator; instrument_modulator_index++) {
-              std::cout
-                << "            Modulator " << instrument_modulator_index << ":" << std::endl
-                << "              source:      " << "type: " << (int)instrumentModulators[instrument_modulator_index].source.type() << "; polarity: " << instrumentModulators[instrument_modulator_index].source.polarity() << "; direction: " << instrumentModulators[instrument_modulator_index].source.direction() << "; continuous: " << instrumentModulators[instrument_modulator_index].source.continuous() << "; index: " << (int)instrumentModulators[instrument_modulator_index].source.index() << std::endl
-                << "              destination: " << instrumentModulators[instrument_modulator_index].destination << std::endl
-                << "              amount:      " << instrumentModulators[instrument_modulator_index].amount << std::endl
-                << "              degree:      " << "type: " << (int)instrumentModulators[instrument_modulator_index].degree.type() << "; polarity: " << instrumentModulators[instrument_modulator_index].degree.polarity() << "; direction: " << instrumentModulators[instrument_modulator_index].degree.direction() << "; continuous: " << instrumentModulators[instrument_modulator_index].degree.continuous() << "; index: " << (int)instrumentModulators[instrument_modulator_index].degree.index() << std::endl
-                << "              transform:   " << instrumentModulators[instrument_modulator_index].transform << std::endl;
-            }
-          }
-        }
-      }
-
-      // MODULATOR
-      for (int preset_modulator_index = presetBags[preset_bag_index].modulator; preset_modulator_index < presetBags[preset_bag_index + 1].modulator; preset_modulator_index++) {
-        std::cout
-          << "    Modulator " << preset_modulator_index << ":" << std::endl
-          << "      source:      " << "type : " << (int)presetModulators[preset_modulator_index].source.type() << "; polarity: " << presetModulators[preset_modulator_index].source.polarity() << "; direction: " << presetModulators[preset_modulator_index].source.direction() << "; continuous: " << presetModulators[preset_modulator_index].source.continuous() << "; index: " << (int)presetModulators[preset_modulator_index].source.index() << std::endl
-          << "      destination: " << presetModulators[preset_modulator_index].destination << std::endl
-          << "      amount:      " << presetModulators[preset_modulator_index].amount << std::endl
-          << "      degree:      " << "type : " << (int)presetModulators[preset_modulator_index].degree.type() << "; polarity: " << presetModulators[preset_modulator_index].degree.polarity() << "; direction: " << presetModulators[preset_modulator_index].degree.direction() << "; continuous: " << presetModulators[preset_modulator_index].degree.continuous() << "; index: " << (int)presetModulators[preset_modulator_index].degree.index() << std::endl
-          << "      transform:   " << presetModulators[preset_modulator_index].transform << std::endl;
-      }
-    }
-  }
-
-  // TODO: build presets, instruments and samples
+Game::Midi::SoundFont::Generator::Generator() :
+  std::array<SoundFont::Sf2Amount, SoundFont::Sf2Generator::Count>()
+{
+  // Default values of generators
+  (*this)[SoundFont::Sf2Generator::StartAddrsOffset].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::EndAddrsOffset].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::StartLoopAddrsOffset].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::EndLoopAddrsOffset].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::StartAddrsCoarseOffset].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::ModLfoToPitch].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::VibLfoToPitch].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::ModEnvToPitch].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::InitialFilterFc].u_amount = 13500;
+  (*this)[SoundFont::Sf2Generator::InitialFilterQ].u_amount = 0;
+  (*this)[SoundFont::Sf2Generator::ModLfoToFilterFc].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::ModEnvToFilterFc].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::EndAddrsCoarseOffset].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::ModLfoToVolume].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::Unused1].u_amount = 0;
+  (*this)[SoundFont::Sf2Generator::ChorusEffectsSend].u_amount = 0;
+  (*this)[SoundFont::Sf2Generator::ReverbEffectsSend].u_amount = 0;
+  (*this)[SoundFont::Sf2Generator::Pan].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::Unused2].u_amount = 0;
+  (*this)[SoundFont::Sf2Generator::Unused3].u_amount = 0;
+  (*this)[SoundFont::Sf2Generator::Unused4].u_amount = 0;
+  (*this)[SoundFont::Sf2Generator::DelayModLfo].s_amount = -12000;
+  (*this)[SoundFont::Sf2Generator::FreqModLfo].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::DelayVibLfo].s_amount = -12000;
+  (*this)[SoundFont::Sf2Generator::FreqVibLfo].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::DelayModEnv].s_amount = -12000;
+  (*this)[SoundFont::Sf2Generator::AttackModEnv].s_amount = -12000;
+  (*this)[SoundFont::Sf2Generator::HoldModEnv].s_amount = -12000;
+  (*this)[SoundFont::Sf2Generator::DecayModEnv].s_amount = -12000;
+  (*this)[SoundFont::Sf2Generator::SustainModEnv].u_amount = 0;
+  (*this)[SoundFont::Sf2Generator::ReleaseModEnv].s_amount = -12000;
+  (*this)[SoundFont::Sf2Generator::KeynumToModEnvHold].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::KeynumToModEnvDecay].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::DelayVolEnv].s_amount = -12000;
+  (*this)[SoundFont::Sf2Generator::AttackVolEnv].s_amount = -12000;
+  (*this)[SoundFont::Sf2Generator::HoldVolEnv].s_amount = -12000;
+  (*this)[SoundFont::Sf2Generator::DecayVolEnv].s_amount = -12000;
+  (*this)[SoundFont::Sf2Generator::SustainVolEnv].u_amount = 0;
+  (*this)[SoundFont::Sf2Generator::ReleaseVolEnv].s_amount = -12000;
+  (*this)[SoundFont::Sf2Generator::KeynumToVolEnvHold].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::KeynumToVolEnvDecay].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::Instrument].s_amount = -1;
+  (*this)[SoundFont::Sf2Generator::Reserved1].u_amount = 0;
+  (*this)[SoundFont::Sf2Generator::KeyRange].range = { 0, 127 };
+  (*this)[SoundFont::Sf2Generator::VelRange].range = { 0, 127 };
+  (*this)[SoundFont::Sf2Generator::StartLoopAddrsCoarseOffset].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::Keynum].s_amount = -1;
+  (*this)[SoundFont::Sf2Generator::Velocity].s_amount = -1;
+  (*this)[SoundFont::Sf2Generator::InitialAttenuation].u_amount = 0;
+  (*this)[SoundFont::Sf2Generator::Reserved2].u_amount = 0;
+  (*this)[SoundFont::Sf2Generator::EndLoopAddrsCoarseOffset].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::CoarseTune].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::FineTune].s_amount = 0;
+  (*this)[SoundFont::Sf2Generator::SampleId].u_amount = -1;
+  (*this)[SoundFont::Sf2Generator::SampleMode].u_amount = 0;
+  (*this)[SoundFont::Sf2Generator::Reserved3].u_amount = 0;
+  (*this)[SoundFont::Sf2Generator::ScaleTuning].u_amount = 100;
+  (*this)[SoundFont::Sf2Generator::ExclusiveClass].u_amount = 0;
+  (*this)[SoundFont::Sf2Generator::OverridingRootKey].s_amount = -1;
+  (*this)[SoundFont::Sf2Generator::Unused5].u_amount = 0;
 }

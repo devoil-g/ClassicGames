@@ -94,6 +94,7 @@ namespace Game
     Game::Window::Joystick  _joystick;  // Joysticks informations
     sf::Time                _elapsed;   // Time elapsed since last FPS update
     unsigned int            _tick;      // Number of frame rendered since last FPS update
+    bool                    _sync;      // Vertical synchronisation toogle
 
 #ifdef _WIN32
     ITaskbarList3*  _taskbar; // Windows 7+ window handler
@@ -127,11 +128,12 @@ namespace Game
 
     inline static Game::Window& Instance() { static Game::Window singleton; return singleton; };  // Get instance (singleton)
 
-    bool  update(sf::Time);                                                     // Update window (get events)
-    void  create(const sf::VideoMode&, sf::Uint32, const sf::ContextSettings&); // (Re)create window with parameters
-    void  taskbar(WindowFlag);                                                  // Set taskbar status (Windows 7+ only)
-    void  taskbar(WindowFlag, float);                                           // Set taskbar progress (Windows 7+ only)
-    void  transparency(sf::Uint8 transparency);                                 // Set window global transparency
+    bool  update(sf::Time);                                                                                     // Update window (get events)
+    void  create(const sf::VideoMode& video, sf::Uint32 style, const sf::ContextSettings& context, bool sync);  // (Re)create window with parameters
+    void  taskbar(WindowFlag flag);                                                                             // Set taskbar status (Windows 7+ only)
+    void  taskbar(WindowFlag flag, float value);                                                                // Set taskbar progress (Windows 7+ only)
+    void  transparency(sf::Uint8 transparency);                                                                 // Set window global transparency
+    bool  getVerticalSync() const;                                                                              // Return true if vertical sync is enabled
 
     inline sf::RenderWindow&              window() { return _window; };           // Get SFML window
     inline const Game::Window::Mouse&     mouse() const { return _mouse; };       // Get mouse informations

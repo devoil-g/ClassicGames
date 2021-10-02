@@ -13,10 +13,10 @@ bool const	    Game::Window::DefaultVerticalSync = true;
 float const	    Game::Window::Joystick::DeadZone = 20.f;
 
 Game::Window::Window() :
-  _window(), _mouse(), _keyboard(), _joystick(), _elapsed(), _tick()
+  _window(), _mouse(), _keyboard(), _joystick(), _elapsed(), _tick(), _sync(Game::Window::DefaultVerticalSync)
 {
   // Create window with default parameters
-  create(sf::VideoMode(Game::Window::DefaultWidth, Game::Window::DefaultHeight), sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close, sf::ContextSettings(24, 8, Game::Window::DefaultAntialiasing, 4, 4));
+  create(sf::VideoMode(Game::Window::DefaultWidth, Game::Window::DefaultHeight), sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close, sf::ContextSettings(24, 8, Game::Window::DefaultAntialiasing, 4, 4), _sync);
 
 #ifdef _WIN32
   // Get system handle of window
@@ -131,7 +131,7 @@ bool  Game::Window::update(sf::Time elapsed)
   return false;
 }
 
-void  Game::Window::create(const sf::VideoMode& video, sf::Uint32 style, const sf::ContextSettings& context)
+void  Game::Window::create(const sf::VideoMode& video, sf::Uint32 style, const sf::ContextSettings& context, bool sync)
 {
 #ifdef _WIN32
   COLORREF  pcrKey = RGB(0, 0, 0);
@@ -146,8 +146,9 @@ void  Game::Window::create(const sf::VideoMode& video, sf::Uint32 style, const s
   _window.create(video, Game::Window::DefaultTitle, style, context);
 
   // Activate V-sync (limit fps)
-  _window.setVerticalSyncEnabled(Game::Window::DefaultVerticalSync);
-  
+  _window.setVerticalSyncEnabled(sync);
+  _sync = sync;
+
   // Disabled key repeate
   _window.setKeyRepeatEnabled(false);
 
@@ -196,4 +197,9 @@ void  Game::Window::transparency(sf::Uint8 transparency)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
   RedrawWindow(_window.getSystemHandle(), NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
 #endif
+}
+
+bool  Game::Window::getVerticalSync() const
+{
+  return _sync;
 }

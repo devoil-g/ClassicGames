@@ -40,13 +40,67 @@ void  DOOM::Wad::load(const std::string& path)
 void  DOOM::Wad::loadLumps(std::ifstream& file, int32_t const numlumps, int32_t const infotableofs)
 {
   std::pair<uint8_t, uint8_t> level = { 0, 0 };
+  DOOM::Wad::Lump	      lump = {};
+  int32_t		      iterator = 0;
+
+  // Initialize regex command map
+  const std::list<std::pair<std::regex, std::function<void()>>> commands_regex =
+  {
+    // Scoped lumps
+    { std::regex("F_START"), std::bind(&DOOM::Wad::loadResourceFlats, this, std::ref(file), numlumps, infotableofs, std::ref(iterator)) },
+    { std::regex("S_START"), std::bind(&DOOM::Wad::loadResourceSprites, this, std::ref(file), numlumps, infotableofs, std::ref(iterator)) },
+    { std::regex("P_START"), std::bind(&DOOM::Wad::loadResourcePatches, this, std::ref(file), numlumps, infotableofs, std::ref(iterator)) },
+
+    // Resources lumps
+    { std::regex("PLAYPAL"), std::bind(&DOOM::Wad::loadResourcePlaypal, this, std::ref(file), std::ref(lump)) },
+    { std::regex("COLORMAP"), std::bind(&DOOM::Wad::loadResourceColormap, this, std::ref(file), std::ref(lump)) },
+    { std::regex("TEXTURE1"), std::bind(&DOOM::Wad::loadResourceTexture, this, std::ref(file), std::ref(lump)) },
+    { std::regex("TEXTURE2"), std::bind(&DOOM::Wad::loadResourceTexture, this, std::ref(file), std::ref(lump)) },
+    { std::regex("PNAMES"), std::bind(&DOOM::Wad::loadResourcePnames, this, std::ref(file), std::ref(lump)) },
+    { std::regex("ENDOOM"), std::bind(&DOOM::Wad::loadResourceEndoom, this, std::ref(file), std::ref(lump)) },
+    { std::regex("GENMIDI"), std::bind(&DOOM::Wad::loadResourceGenmidi, this, std::ref(file), std::ref(lump)) },
+    { std::regex("DMXGUS[[:alnum:]]?"), std::bind(&DOOM::Wad::loadIgnore, this) },
+    { std::regex("D_[_[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMusic, this, std::ref(file), std::ref(lump)) },
+    { std::regex("DS[_[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceSound, this, std::ref(file), std::ref(lump)) },
+    { std::regex("DP[_[:alnum:]]+"), std::bind(&DOOM::Wad::loadIgnore, this) },
+    { std::regex("DEMO[[:digit:]]"), std::bind(&DOOM::Wad::loadResourceDemox, this, std::ref(file), std::ref(lump)) },
+
+    // Menu resources lumps
+    { std::regex("HELP[[:digit:]]?"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+    { std::regex("TITLEPIC"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+    { std::regex("CREDIT"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+    { std::regex("VICTORY2"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+    { std::regex("PFUB1"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+    { std::regex("PFUB2"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+    { std::regex("INTERPIC"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+    { std::regex("ENDPIC"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+    { std::regex("END[[:digit:]]"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+    { std::regex("AMMNUM[[:digit:]]"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+    { std::regex("ST[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+    { std::regex("WI[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+    { std::regex("M_[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+    { std::regex("BRDR_[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+    { std::regex("CWILV[[:digit:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+    { std::regex("BOSSBACK"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
+
+    // Level lumps
+    { std::regex("VERTEXES"), std::bind(&DOOM::Wad::loadLevelVertexes, this, std::ref(file), std::ref(lump), std::cref(level)) },
+    { std::regex("SECTORS"), std::bind(&DOOM::Wad::loadLevelSectors, this, std::ref(file), std::ref(lump), std::cref(level)) },
+    { std::regex("SIDEDEFS"), std::bind(&DOOM::Wad::loadLevelSidedefs, this, std::ref(file), std::ref(lump), std::cref(level)) },
+    { std::regex("LINEDEFS"), std::bind(&DOOM::Wad::loadLevelLinedefs, this, std::ref(file), std::ref(lump), std::cref(level)) },
+    { std::regex("SEGS"), std::bind(&DOOM::Wad::loadLevelSegs, this, std::ref(file), std::ref(lump), std::cref(level)) },
+    { std::regex("SSECTORS"), std::bind(&DOOM::Wad::loadLevelSsectors, this, std::ref(file), std::ref(lump), std::cref(level)) },
+    { std::regex("NODES"), std::bind(&DOOM::Wad::loadLevelNodes, this, std::ref(file), std::ref(lump), std::cref(level)) },
+    { std::regex("REJECT"), std::bind(&DOOM::Wad::loadLevelReject, this, std::ref(file), std::ref(lump), std::cref(level)) },
+    { std::regex("BLOCKMAP"), std::bind(&DOOM::Wad::loadLevelBlockmap, this, std::ref(file), std::ref(lump), std::cref(level)) },
+    { std::regex("THINGS"), std::bind(&DOOM::Wad::loadLevelThings, this, std::ref(file), std::ref(lump), std::cref(level)) },
+    { std::regex("E[[:digit:]]M[[:digit:]]"), std::bind(&DOOM::Wad::loadLevelExmy, this, std::ref(lump), std::ref(level)) },
+    { std::regex("MAP[[:digit:]][[:digit:]]"), std::bind(&DOOM::Wad::loadLevelMapxy, this, std::ref(lump), std::ref(level)) }
+  };
 
   // Process every lump of file
-  for (int32_t iterator = 0; iterator < numlumps; iterator++)
+  for (iterator = 0; iterator < numlumps; iterator++)
   {
-    // Lump header data structure
-    DOOM::Wad::Lump lump;
-
     // Read lump header data from file
     file.seekg(infotableofs + iterator * sizeof(DOOM::Wad::Lump), file.beg);
     read(file, &lump);
@@ -54,69 +108,14 @@ void  DOOM::Wad::loadLumps(std::ifstream& file, int32_t const numlumps, int32_t 
     // Force name format
     uppercase(lump.name);
 
-    // Initialize regex command map
-    std::list<std::pair<std::regex, std::function<void()>>> commands_regex =
-    {
-      // Scoped lumps
-      { std::regex("F_START"), std::bind(&DOOM::Wad::loadResourceFlats, this, std::ref(file), numlumps, infotableofs, std::ref(iterator)) },
-      { std::regex("S_START"), std::bind(&DOOM::Wad::loadResourceSprites, this, std::ref(file), numlumps, infotableofs, std::ref(iterator)) },
-      { std::regex("P_START"), std::bind(&DOOM::Wad::loadResourcePatches, this, std::ref(file), numlumps, infotableofs, std::ref(iterator)) },
-
-      // Resources lumps
-      { std::regex("PLAYPAL"), std::bind(&DOOM::Wad::loadResourcePlaypal, this, std::ref(file), std::ref(lump)) },
-      { std::regex("COLORMAP"), std::bind(&DOOM::Wad::loadResourceColormap, this, std::ref(file), std::ref(lump)) },
-      { std::regex("TEXTURE1"), std::bind(&DOOM::Wad::loadResourceTexture, this, std::ref(file), std::ref(lump)) },
-      { std::regex("TEXTURE2"), std::bind(&DOOM::Wad::loadResourceTexture, this, std::ref(file), std::ref(lump)) },
-      { std::regex("PNAMES"), std::bind(&DOOM::Wad::loadResourcePnames, this, std::ref(file), std::ref(lump)) },
-      { std::regex("ENDOOM"), std::bind(&DOOM::Wad::loadResourceEndoom, this, std::ref(file), std::ref(lump)) },
-      { std::regex("GENMIDI"), std::bind(&DOOM::Wad::loadResourceGenmidi, this, std::ref(file), std::ref(lump)) },
-      { std::regex("DMXGUS[[:alnum:]]?"), std::bind(&DOOM::Wad::loadIgnore, this) },
-      { std::regex("D_[_[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMusic, this, std::ref(file), std::ref(lump)) },
-      { std::regex("DS[_[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceSound, this, std::ref(file), std::ref(lump)) },
-      { std::regex("DP[_[:alnum:]]+"), std::bind(&DOOM::Wad::loadIgnore, this) },
-      { std::regex("DEMO[[:digit:]]"), std::bind(&DOOM::Wad::loadResourceDemox, this, std::ref(file), std::ref(lump)) },
-
-      // Menu resources lumps
-      { std::regex("HELP[[:digit:]]?"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("TITLEPIC"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("CREDIT"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("VICTORY2"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("PFUB1"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("PFUB2"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("INTERPIC"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("ENDPIC"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("END[[:digit:]]"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("AMMNUM[[:digit:]]"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("ST[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("WI[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("M_[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("BRDR_[[:alnum:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("CWILV[[:digit:]]+"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      { std::regex("BOSSBACK"), std::bind(&DOOM::Wad::loadResourceMenu, this, std::ref(file), std::ref(lump)) },
-      
-      // Level lumps
-      { std::regex("VERTEXES"), std::bind(&DOOM::Wad::loadLevelVertexes, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("SECTORS"), std::bind(&DOOM::Wad::loadLevelSectors, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("SIDEDEFS"), std::bind(&DOOM::Wad::loadLevelSidedefs, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("LINEDEFS"), std::bind(&DOOM::Wad::loadLevelLinedefs, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("SEGS"), std::bind(&DOOM::Wad::loadLevelSegs, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("SSECTORS"), std::bind(&DOOM::Wad::loadLevelSsectors, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("NODES"), std::bind(&DOOM::Wad::loadLevelNodes, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("REJECT"), std::bind(&DOOM::Wad::loadLevelReject, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("BLOCKMAP"), std::bind(&DOOM::Wad::loadLevelBlockmap, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("THINGS"), std::bind(&DOOM::Wad::loadLevelThings, this, std::ref(file), std::ref(lump), level) },
-      { std::regex("E[[:digit:]]M[[:digit:]]"), std::bind(&DOOM::Wad::loadLevelExmy, this, std::ref(lump), std::ref(level)) },
-      { std::regex("MAP[[:digit:]][[:digit:]]"), std::bind(&DOOM::Wad::loadLevelMapxy, this, std::ref(lump), std::ref(level)) }
-    };
-
     // Remove each non-matching regex
-    commands_regex.remove_if([lump](const auto& regex) { uint64_t str[] = { lump.name, 0 }; return std::regex_match((char const*)str, regex.first) == false; });
+    auto command = std::find_if(commands_regex.begin(), commands_regex.end(), [lump](const auto& regex) { return std::regex_match(DOOM::key_to_str(lump.name).c_str(), regex.first) == true; });
 
-    // Execute matching regex if only one found
-    if (commands_regex.size() == 1)
-      commands_regex.front().second();
-    else
+    // Execute matching regex
+    if (command == commands_regex.end())
       std::cerr << "[Wad::load]: Warning, unknown lump name '" << DOOM::key_to_str(lump.name) << "'." << std::endl;
+    else
+      command->second();
   }
 }
 

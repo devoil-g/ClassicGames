@@ -103,9 +103,10 @@ namespace Game
         uint16_t  modulator;
       };
 
-      union Sf2GenAmountType
+      union Sf2Amount
       {
-        struct {
+        struct
+        {
           uint8_t low;      // Low value of range
           uint8_t high;     // High value of range
         }         range;    // Amount is a range
@@ -183,19 +184,38 @@ namespace Game
 
       struct Sf2GenList
       {
-        Sf2Generator      operation;
-        Sf2GenAmountType  amount;
+        SoundFont::Sf2Generator operation;
+        SoundFont::Sf2Amount    amount;
       };
 
       struct Sf2Modulator
       {
-        uint16_t  data; // Raw data of the modulator
+      private:
+        uint16_t  _data; // Raw data of the modulator
 
-        uint8_t type() { return (((uint8_t*)&data)[0] & 0b11111100) >> 2; }
-        bool    polarity() { return (((uint8_t*)&data)[0] & 0b00000010) ? true : false; }
-        bool    direction() { return (((uint8_t*)&data)[0] & 0b00000001) ? true : false; }
-        bool    continuous() { return (((uint8_t*)&data)[1] & 0b10000000) ? true : false; }
-        uint8_t index() { return ((uint8_t*)&data)[1] & 0b01111111; }
+      public:
+        enum Type : uint8_t
+        {
+          Linear = 0, // The SoundFont modulator controller moves linearly from the minimum to the maximum value in the direction and with the polarity specified by the 'D' and 'P' bits.
+          Concave = 1 // The SoundFont modulator controller moves in a concave fashion from the minimum to the maximum value in the direction and with the polarity specified by the 'D' and 'P' bits.
+        };
+
+        enum Index : uint8_t
+        {
+          NoController = 0,           // No controller is to be used. The output of this controller module should be treated as if its value were set to '1'. It should not be a means to turn off a modulator.
+          NoteOnVelocity = 2,         // The controller source to be used is the velocity value which is sent from the MIDI note-on command which generated the given sound.
+          NoteOnKeyNumber = 3,        // The controller source to be used is the key number value which was sent from the MIDI note-on command which generated the given sound.
+          PolyPressure = 10,          // The controller source to be used is the poly-pressure amount that is sent from the MIDI poly-pressure command.
+          ChannelPressure = 13,       // The controller source to be used is the channel pressure amount that is sent from the MIDI channel-pressure command.
+          PitchWheel = 14,            // The controller source to be used is the pitch wheel amount which is sent from the MIDI pitch wheel command.
+          PitchWheelSensitivity = 16  // The controller source to be used is the pitch wheel sensitivity amount which is sent from the MIDI RPN 0 pitch wheel sensitivity command.
+        };
+
+        Sf2Modulator::Type  type() { return (Sf2Modulator::Type)((((uint8_t*)&_data)[0] & 0b11111100) >> 2); }
+        bool                polarity() { return (((uint8_t*)&_data)[0] & 0b00000010) ? true : false; }
+        bool                direction() { return (((uint8_t*)&_data)[0] & 0b00000001) ? true : false; }
+        bool                continuous() { return (((uint8_t*)&_data)[1] & 0b10000000) ? true : false; }
+        Sf2Modulator::Index index() { return (Sf2Modulator::Index)(((uint8_t*)&_data)[1] & 0b01111111); }
       };
 
       enum Sf2Transform : uint16_t
@@ -226,16 +246,16 @@ namespace Game
           RomLinked = 32776 // Not supported
         };
 
-        int8_t        name[20];
-        uint32_t      sampleStart;
-        uint32_t      sampleEnd;
-        uint32_t      loopStart;
-        uint32_t      loopEnd;
-        uint32_t      sampleRate;
-        uint8_t       pitchOriginal;
-        int8_t        pitchCorrection;
-        uint16_t      sampleLink;
-        Sf2SampleLink sampleType;
+        int8_t        name[20];         // Name of the sample
+        uint32_t      sampleStart;      // Index of the first sample in sample section
+        uint32_t      sampleEnd;        // Index of the last sample in sample section
+        uint32_t      loopStart;        // Index of the first sample of loop in sample section
+        uint32_t      loopEnd;          // Index of the last sample of loop in sample section
+        uint32_t      sampleRate;       // Sample rate of the sample
+        uint8_t       pitchOriginal;    // The MIDI key number of the recorded pitch of the sample
+        int8_t        pitchCorrection;  // Pitch correction in cents that should be applied to the sample on playback
+        uint16_t      sampleLink;       // Associated sample (for stereo)
+        Sf2SampleLink sampleType;       // Type of sample link
       };
 #pragma pack(pop)
 
@@ -288,40 +308,45 @@ namespace Game
         std::string                   tool;       // [ISFT] Tool used to create the sound bank
       };
 
-      struct Modulator
+      struct Generator : public std::array<SoundFont::Sf2Amount, SoundFont::Sf2Generator::Count>
       {
-        uint8_t type;       // 6-bit value specifying the continuity of the controller
-        bool    polarity;   // Polarity
-        bool    direction;  // Direction
-        bool    controller; // MIDI Continuous Controller Flag
-        uint8_t index;      // 7 bit value specifying the controller source
+        Generator();
+        ~Generator() = default;
       };
 
-      union GeneratorAmount
+      struct Modulator
       {
-        struct
-        {
-          uint8_t byLo;
-          uint8_t byHi;
-        }         ranges;
-
-        int16_t   shAmount;
-        uint16_t  wAmount;
+        // TODO
       };
 
       struct Preset
       {
+        struct Instrument
+        {
+          struct Bag
+          {
+            SoundFont::Generator  generator;  // Instrument (local) generator
+            SoundFont::Modulator  modulator;  // Modulator of the instrument
+          };
 
+          std::string                 name;       // Instrument name
+          SoundFont::Generator        generator;  // Preset (global) generator
+          std::list<Instrument::Bag>  bags;       // Bags of the instrument
+        };
+
+        std::string                   name;         // Name of the preset
+        std::list<Preset::Instrument> instruments;  // Instruments of the preset
       };
 
+      std::vector<int16_t>  _samples16;  // Raw audio samples, 16bits
+      std::vector<int8_t>   _samples24;  // Additional byte to transform raw audio samples from 16bits to 24bits
+      
     public:
       SoundFont(const std::string& filename);
       ~SoundFont() = default;
 
-      Game::Midi::SoundFont::Info                                                             info;       // General informations
-      std::vector<int16_t>                                                                    samples16;  // Raw audio samples, 16bits
-      std::vector<int8_t>                                                                     samples24;  // Additional byte to transform raw audio samples from 16bits to 24bits
-      std::unordered_map<uint8_t, std::unordered_map<uint8_t, Game::Midi::SoundFont::Preset>> presets;    // Preset organized by bank/midi number
+      Game::Midi::SoundFont::Info                                                 info;     // General informations
+      std::unordered_map<uint8_t, std::unordered_map<uint8_t, SoundFont::Preset>> presets;  // Presets ordered by bank/MIDI preset number
     };
 
   private:
