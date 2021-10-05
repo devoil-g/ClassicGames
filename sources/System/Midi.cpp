@@ -1214,6 +1214,19 @@ void  Game::Midi::SoundFont::loadSectionListPdta(std::ifstream& file, const Game
       std::cerr << "[Game::Midi::SoundFont::load]: Warning, unknow pdta name '" << Game::Midi::key_to_str(pdta.name) << "' (sdta ignored)." << std::endl;
   }
 
+  // TODO: remove this
+  std::cout
+    << "    [PDTA] presets:               " << presetHeaders.size() << std::endl
+    << "    [PDTA] preset bags:           " << presetBags.size() << std::endl
+    << "    [PDTA] preset modulators:     " << presetModulators.size() << std::endl
+    << "    [PDTA] preset generators:     " << presetGenerators.size() << std::endl
+    << "    [PDTA] instruments:           " << instrumentHeaders.size() << std::endl
+    << "    [PDTA] instrument bags:       " << instrumentBags.size() << std::endl
+    << "    [PDTA] instrument modulators: " << instrumentModulators.size() << std::endl
+    << "    [PDTA] instrument generators: " << instrumentGenerators.size() << std::endl
+    << "    [PDTA] samples:               " << sampleHeaders.size() << std::endl
+    ;
+
   // Build presets
   for (int preset_index = 0; preset_index < presetHeaders.size() - 1; preset_index++) {
     SoundFont::Preset&    preset = presets[(uint8_t)presetHeaders[preset_index].bank][(uint8_t)presetHeaders[preset_index].midi];
@@ -1254,11 +1267,15 @@ void  Game::Midi::SoundFont::loadSectionListPdta(std::ifstream& file, const Game
       }
 
       // TODO: get modulators
+      for (int preset_modulator_index = presetBags[preset_bag_index].modulator; preset_modulator_index < presetBags[preset_bag_index + 1].modulator; preset_modulator_index++)
+        ;
 
       // First bag without instrument is a global generator, other bags without instrument are ignored
       if (generator_preset[Sf2Generator::Instrument].s_amount == -1) {
         if (preset_bag_index == preset_bag_start)
           generator_global = generator_preset;
+        else
+          std::cerr << "[Game::Midi::SoundFont::load]: Warning, invalid preset zone (no instrument), ignored." << std::endl;
         continue;
       }
 
@@ -1281,28 +1298,74 @@ void  Game::Midi::SoundFont::loadSectionListPdta(std::ifstream& file, const Game
           bag.generator[instrumentGenerators[instrument_generator_index].operation] = instrumentGenerators[instrument_generator_index].amount;
 
         // TODO: get modulators
+        for (int instrument_modulator_index = instrumentBags[instrument_bag_index].modulator; instrument_modulator_index < instrumentBags[instrument_bag_index + 1].modulator; instrument_modulator_index++)
+          ;
 
         // Add bag to instrument
-        instrument.bags.push_back(bag);
+        instrument.bags.push_back(std::move(bag));
       }
 
       // Add new instrument to preset
-      preset.instruments.push_back(instrument);
+      preset.instruments.push_back(std::move(instrument));
     }
   }
 
-  // TODO: remove this
-  std::cout
-    << "    [PDTA] presets:               " << presetHeaders.size() << std::endl
-    << "    [PDTA] preset bags:           " << presetBags.size() << std::endl
-    << "    [PDTA] preset modulators:     " << presetModulators.size() << std::endl
-    << "    [PDTA] preset generators:     " << presetGenerators.size() << std::endl
-    << "    [PDTA] instruments:           " << instrumentHeaders.size() << std::endl
-    << "    [PDTA] instrument bags:       " << instrumentBags.size() << std::endl
-    << "    [PDTA] instrument modulators: " << instrumentModulators.size() << std::endl
-    << "    [PDTA] instrument generators: " << instrumentGenerators.size() << std::endl
-    << "    [PDTA] samples:               " << sampleHeaders.size() << std::endl
-    ;
+  // Build samples
+  for (const auto& sample : sampleHeaders)
+  {
+    // Ignore last sample
+    if (&sample == &sampleHeaders.back())
+      break;
+
+    // Add a new sample
+    samples.emplace_back();
+
+    // Default values
+    samples.back().name = "";
+    samples.back().samples = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
+    samples.back().start = 2;
+    samples.back().end = 6;
+    samples.back().rate = 22050;
+    samples.back().key = 60;
+    samples.back().correction = 0;
+    samples.back().type = Game::Midi::SoundFont::Sample::Link::Mono;
+    samples.back().link = 0;
+
+    // Only support stereo
+    if (sample.sampleType != Game::Midi::SoundFont::Sf2Sample::Sf2SampleLink::Mono &&
+      sample.sampleType != Game::Midi::SoundFont::Sf2Sample::Sf2SampleLink::Left &&
+      sample.sampleType != Game::Midi::SoundFont::Sf2Sample::Sf2SampleLink::Right) {
+      std::cerr << "[Game::Midi::SoundFont::load]: Warning, unsupported sample type (" << (int)sample.sampleType << "), ignored." << std::endl;
+      continue;
+    }
+      
+
+    // Loop should be contained in samples and at least one sample long
+    if (sample.loopStart < sample.sampleStart || sample.loopStart > sample.loopEnd ||
+      sample.loopEnd < sample.sampleStart || sample.loopEnd > sample.loopEnd ||
+      sample.loopStart >= sample.loopEnd ||
+      sample.sampleStart >= sample.sampleEnd ||
+      sample.sampleStart >= _samples16.size() || sample.sampleEnd >= _samples16.size()) {
+      std::cerr << "[Game::Midi::SoundFont::load]: Warning, invalid sample points, ignored." << std::endl;
+      continue;
+    }
+
+    // Copy attributes
+    samples.back().name = (const char*)sample.name;
+    samples.back().start = sample.loopStart;
+    samples.back().end = sample.loopEnd;
+    samples.back().rate = sample.sampleRate;
+    samples.back().key = sample.pitchOriginal;
+    samples.back().correction = sample.pitchCorrection;
+    samples.back().type = (Game::Midi::SoundFont::Sample::Link)sample.sampleType;
+    samples.back().link = sample.sampleLink;
+
+    // Copy samples
+    // NOTE: sample24 remains unused
+    samples.back().samples.resize(sample.sampleEnd - sample.sampleStart, 0.f);
+    for (auto index = sample.sampleStart; index < sample.sampleEnd; index++)
+      samples.back().samples[index - sample.sampleStart] = _samples16[index] / 16384.f;
+  }
 }
 
 Game::Midi::SoundFont::Generator::Generator() :

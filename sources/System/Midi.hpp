@@ -341,12 +341,33 @@ namespace Game
       std::vector<int16_t>  _samples16;  // Raw audio samples, 16bits
       std::vector<int8_t>   _samples24;  // Additional byte to transform raw audio samples from 16bits to 24bits
       
+      struct Sample
+      {
+        enum Link : uint16_t
+        {
+          Mono = Sf2Sample::Sf2SampleLink::Mono,    // Only one channel
+          Right = Sf2Sample::Sf2SampleLink::Right,  // Right channel, left at link index
+          Left = Sf2Sample::Sf2SampleLink::Left     // Left channel, right at link index
+        };
+
+        std::string         name;       // Name of the sample
+        std::vector<float>  samples;    // Samples stored in float format [-1:+1[
+        std::size_t         start;      // Index of the first sample of the loop
+        std::size_t         end;        // Index of the first sample after the loop
+        std::size_t         rate;       // Sample rate of the sample
+        uint8_t             key;        // The MIDI key number of the recorded pitch of the sample
+        int8_t              correction; // Pitch correction in cents that should be applied to the sample on playback
+        Sample::Link        type;       // Type of link
+        std::size_t         link;       // Index of other channel for stereo samples
+      };
+
     public:
       SoundFont(const std::string& filename);
       ~SoundFont() = default;
 
-      Game::Midi::SoundFont::Info                                                 info;     // General informations
+      SoundFont::Info                                                             info;     // General informations
       std::unordered_map<uint8_t, std::unordered_map<uint8_t, SoundFont::Preset>> presets;  // Presets ordered by bank/MIDI preset number
+      std::vector<SoundFont::Sample>                                              samples;  // Samples used by presets
     };
 
   private:
