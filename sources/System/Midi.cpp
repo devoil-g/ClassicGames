@@ -915,8 +915,8 @@ sf::Time  Game::Midi::duration(const Game::Midi::Sequence& sequence, std::size_t
 
 Game::Midi::SoundFont::SoundFont(const std::string& filename) :
   info(),
-  _samples16(),
-  _samples24()
+  presets(),
+  samples()
 {
   // Load file
   load(filename);
@@ -949,11 +949,14 @@ void  Game::Midi::SoundFont::load(const std::string& filename)
     std::memcmp(&header.type, "sfbk", sizeof(header.magic)) != 0)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
+  // Buffer for samples
+  std::vector<float>  samplesFloat;
+
   // Load sections of SoundFont
-  loadSections(file, header);
+  loadSections(file, header, samplesFloat);
 }
 
-void  Game::Midi::SoundFont::loadSections(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header)
+void  Game::Midi::SoundFont::loadSections(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header, std::vector<float>& samplesFloat)
 {
   SoundFont::Sf2SectionHeader section = {};
 
@@ -975,7 +978,7 @@ void  Game::Midi::SoundFont::loadSections(std::ifstream& file, const Game::Midi:
 
     // Matching sections
     std::unordered_map<uint32_t, std::function<void()>> section_commands = {
-      { Game::Midi::str_to_key("LIST"), std::bind(&Game::Midi::SoundFont::loadSectionList, this, std::ref(file), std::ref(header), std::ref(section), section_position) }
+      { Game::Midi::str_to_key("LIST"), std::bind(&Game::Midi::SoundFont::loadSectionList, this, std::ref(file), std::ref(header), std::ref(section), std::ref(samplesFloat), section_position) }
     };
 
     auto command = section_commands.find(section.type);
@@ -988,13 +991,13 @@ void  Game::Midi::SoundFont::loadSections(std::ifstream& file, const Game::Midi:
   }
 }
 
-void  Game::Midi::SoundFont::loadSectionList(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header, const Game::Midi::SoundFont::Sf2SectionHeader& section, std::streampos position)
+void  Game::Midi::SoundFont::loadSectionList(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header, const Game::Midi::SoundFont::Sf2SectionHeader& section, std::vector<float>& samplesFloat, std::streampos position)
 {
   // Matching sections
   const std::unordered_map<uint32_t, std::function<void()>> list_commands = {
     { Game::Midi::str_to_key("INFO"), std::bind(&SoundFont::loadSectionListInfo, this, std::ref(file), std::ref(header), std::ref(section), position) },
-    { Game::Midi::str_to_key("sdta"), std::bind(&SoundFont::loadSectionListSdta, this, std::ref(file), std::ref(header), std::ref(section), position) },
-    { Game::Midi::str_to_key("pdta"), std::bind(&SoundFont::loadSectionListPdta, this, std::ref(file), std::ref(header), std::ref(section), position) }
+    { Game::Midi::str_to_key("sdta"), std::bind(&SoundFont::loadSectionListSdta, this, std::ref(file), std::ref(header), std::ref(section), std::ref(samplesFloat), position) },
+    { Game::Midi::str_to_key("pdta"), std::bind(&SoundFont::loadSectionListPdta, this, std::ref(file), std::ref(header), std::ref(section), std::ref(samplesFloat), position) }
   };
 
   auto command = list_commands.find(section.name);
@@ -1044,17 +1047,17 @@ void  Game::Midi::SoundFont::loadSectionListInfo(std::ifstream& file, const Game
 
   // TODO: remove this
   std::cout
-    << "    [INFO] version: " << this->info.version.first << "." << this->info.version.second << std::endl
-    << "    [INFO] engine: " << this->info.engine << std::endl
-    << "    [INFO] name: " << this->info.name << std::endl
-    << "    [INFO] rom: " << this->info.rom << std::endl
+    << "    [INFO] version:     " << this->info.version.first << "." << this->info.version.second << std::endl
+    << "    [INFO] engine:      " << this->info.engine << std::endl
+    << "    [INFO] name:        " << this->info.name << std::endl
+    << "    [INFO] rom:         " << this->info.rom << std::endl
     << "    [INFO] rom version: " << this->info.romVersion.first << "." << this->info.romVersion.second << std::endl
-    << "    [INFO] creation: " << this->info.creation << std::endl
-    << "    [INFO] author: " << this->info.author << std::endl
-    << "    [INFO] product: " << this->info.product << std::endl
-    << "    [INFO] copyright: " << this->info.copyright << std::endl
-    << "    [INFO] comment: " << this->info.comment << std::endl
-    << "    [INFO] tool: " << this->info.tool << std::endl
+    << "    [INFO] creation:    " << this->info.creation << std::endl
+    << "    [INFO] author:      " << this->info.author << std::endl
+    << "    [INFO] product:     " << this->info.product << std::endl
+    << "    [INFO] copyright:   " << this->info.copyright << std::endl
+    << "    [INFO] comment:     " << this->info.comment << std::endl
+    << "    [INFO] tool:        " << this->info.tool << std::endl
     ;
 }
 
@@ -1136,9 +1139,11 @@ std::string Game::Midi::SoundFont::loadString(std::ifstream& file, std::size_t s
   return str.data();
 }
 
-void  Game::Midi::SoundFont::loadSectionListSdta(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header, const Game::Midi::SoundFont::Sf2SectionHeader& section, std::streampos position)
+void  Game::Midi::SoundFont::loadSectionListSdta(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header, const Game::Midi::SoundFont::Sf2SectionHeader& section, std::vector<float>& samplesFloat, std::streampos position)
 {
   Game::Midi::SoundFont::Sf2SubsectionHeader  sdta = {};
+  std::vector<int16_t>                        samples16;
+  std::vector<int8_t>                         samples24;
 
   for (std::streampos sdta_position = sizeof(section); sdta_position < section.size + 8; sdta_position += sizeof(sdta) + sdta.size)
   {
@@ -1150,8 +1155,8 @@ void  Game::Midi::SoundFont::loadSectionListSdta(std::ifstream& file, const Game
 
     // Matching subsections
     std::unordered_map<uint32_t, std::function<void()>> sdta_commands = {
-      { Game::Midi::str_to_key("smpl"), std::bind(&Game::Midi::SoundFont::loadSubsection<int16_t>, this, std::ref(file), sdta.size, std::ref(_samples16)) },
-      { Game::Midi::str_to_key("sm24"), std::bind(&Game::Midi::SoundFont::loadSubsection<int8_t>, this, std::ref(file), sdta.size, std::ref(_samples24)) }
+      { Game::Midi::str_to_key("smpl"), std::bind(&Game::Midi::SoundFont::loadSubsection<int16_t>, this, std::ref(file), sdta.size, std::ref(samples16)) },
+      { Game::Midi::str_to_key("sm24"), std::bind(&Game::Midi::SoundFont::loadSubsection<int8_t>, this, std::ref(file), sdta.size, std::ref(samples24)) }
     };
 
     auto command = sdta_commands.find(sdta.name);
@@ -1165,12 +1170,23 @@ void  Game::Midi::SoundFont::loadSectionListSdta(std::ifstream& file, const Game
 
   // TODO: remove this
   std::cout
-    << "    [SDTA] samples16: " << _samples16.size() << std::endl
-    << "    [SDTA] samples24: " << _samples24.size() << std::endl
+    << "    [SDTA] samples16: " << samples16.size() << std::endl
+    << "    [SDTA] samples24: " << samples24.size() << std::endl
     ;
+
+  // Set 24 bits complementary to 0 if absent or incomplete
+  if (samples24.size() < samples16.size())
+    samples24.resize(samples16.size(), 0);
+
+  // Allocate sample buffer
+  samplesFloat.resize(samples16.size(), 0.f);
+
+  // Convert RAW 24 bits samples to float
+  for (auto index = 0; index < samples16.size(); index++)
+    samplesFloat[index] = ((float)samples16[index] * 256.f + (float)samples24[index]) / (float)std::pow(2, 23);
 }
 
-void  Game::Midi::SoundFont::loadSectionListPdta(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header, const Game::Midi::SoundFont::Sf2SectionHeader& section, std::streampos position)
+void  Game::Midi::SoundFont::loadSectionListPdta(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header, const Game::Midi::SoundFont::Sf2SectionHeader& section, std::vector<float>& samplesFloat, std::streampos position)
 {
   SoundFont::Sf2SubsectionHeader  pdta = {};
 
@@ -1345,7 +1361,7 @@ void  Game::Midi::SoundFont::loadSectionListPdta(std::ifstream& file, const Game
       sample.loopEnd < sample.sampleStart || sample.loopEnd > sample.loopEnd ||
       sample.loopStart >= sample.loopEnd ||
       sample.sampleStart >= sample.sampleEnd ||
-      sample.sampleStart >= _samples16.size() || sample.sampleEnd >= _samples16.size()) {
+      sample.sampleStart >= samplesFloat.size() || sample.sampleEnd >= samplesFloat.size()) {
       std::cerr << "[Game::Midi::SoundFont::load]: Warning, invalid sample points, ignored." << std::endl;
       continue;
     }
@@ -1361,10 +1377,9 @@ void  Game::Midi::SoundFont::loadSectionListPdta(std::ifstream& file, const Game
     samples.back().link = sample.sampleLink;
 
     // Copy samples
-    // NOTE: sample24 remains unused
     samples.back().samples.resize(sample.sampleEnd - sample.sampleStart, 0.f);
     for (auto index = sample.sampleStart; index < sample.sampleEnd; index++)
-      samples.back().samples[index - sample.sampleStart] = _samples16[index] / 16384.f;
+      samples.back().samples[index - sample.sampleStart] = samplesFloat[index];
   }
 }
 

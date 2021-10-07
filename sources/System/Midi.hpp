@@ -260,8 +260,8 @@ namespace Game
 #pragma pack(pop)
 
       void  load(const std::string& filename);
-      void  loadSections(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header);
-      void  loadSectionList(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header, const Game::Midi::SoundFont::Sf2SectionHeader& section, std::streampos position);
+      void  loadSections(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header, std::vector<float>& samplesFloat);
+      void  loadSectionList(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header, const Game::Midi::SoundFont::Sf2SectionHeader& section, std::vector<float>& samplesFloat, std::streampos position);
       void  loadSectionListInfo(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header, const Game::Midi::SoundFont::Sf2SectionHeader& section, std::streampos position);
       void  loadSectionListInfoIfil(std::ifstream& file, const Game::Midi::SoundFont::Sf2SubsectionHeader& info);
       void  loadSectionListInfoIsng(std::ifstream& file, const Game::Midi::SoundFont::Sf2SubsectionHeader& info);
@@ -274,8 +274,8 @@ namespace Game
       void  loadSectionListInfoIcop(std::ifstream& file, const Game::Midi::SoundFont::Sf2SubsectionHeader& info);
       void  loadSectionListInfoIcmt(std::ifstream& file, const Game::Midi::SoundFont::Sf2SubsectionHeader& info);
       void  loadSectionListInfoIsft(std::ifstream& file, const Game::Midi::SoundFont::Sf2SubsectionHeader& info);
-      void  loadSectionListSdta(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header, const Game::Midi::SoundFont::Sf2SectionHeader& section, std::streampos position);
-      void  loadSectionListPdta(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header, const Game::Midi::SoundFont::Sf2SectionHeader& section, std::streampos position);
+      void  loadSectionListSdta(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header, const Game::Midi::SoundFont::Sf2SectionHeader& section, std::vector<float>& samples, std::streampos position);
+      void  loadSectionListPdta(std::ifstream& file, const Game::Midi::SoundFont::Sf2Header& header, const Game::Midi::SoundFont::Sf2SectionHeader& section, std::vector<float>& samples, std::streampos position);
 
       std::string loadString(std::ifstream& file, std::size_t size);
 
@@ -338,9 +338,6 @@ namespace Game
         std::list<Preset::Instrument> instruments;  // Instruments of the preset
       };
 
-      std::vector<int16_t>  _samples16;  // Raw audio samples, 16bits
-      std::vector<int8_t>   _samples24;  // Additional byte to transform raw audio samples from 16bits to 24bits
-      
       struct Sample
       {
         enum Link : uint16_t
