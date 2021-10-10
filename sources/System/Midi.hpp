@@ -115,6 +115,7 @@ namespace Game
         uint16_t  u_amount; // Unsigned 16bit amount [0:+65535]
       };
 
+    public:
       enum Sf2Generator : uint16_t
       {
         StartAddrsOffset = 0,
@@ -161,7 +162,7 @@ namespace Game
         Instrument = 41,
         Reserved1 = 42,
         KeyRange = 43,
-        VelRange = 44,
+        VelocityRange = 44,
         StartLoopAddrsCoarseOffset = 45,
         Keynum = 46,
         Velocity = 47,
@@ -182,6 +183,7 @@ namespace Game
         Count = 61
       };
 
+    private:
       struct Sf2GenList
       {
         SoundFont::Sf2Generator operation;
@@ -544,6 +546,22 @@ namespace Game
           std::list<std::pair<std::size_t, uint8_t>>                                          program;    // Patch number
           std::list<std::pair<std::size_t, uint16_t>>                                         pitch;      // Pitch wheel modifier (center: 0x2000)
           std::unordered_map<Channel::Controller, std::list<std::pair<std::size_t, uint8_t>>> controller; // Controller modifying the sound
+
+          uint8_t getData(Channel::Controller controller, std::size_t tic, uint8_t default) const;                    // Retrieve last record of controller at given tic
+
+          template <typename Data>
+          Data    getData(const std::list<std::pair<std::size_t, Data>>& datas, std::size_t tic, Data default) const  // Retrieve last record at given tic
+          {
+            // Find first matching data
+            for (const auto& data : datas)
+              if (data.first <= tic)
+                return data.second;
+
+            // No matching data
+            return default;
+          }
+
+          
         };
 
         std::string                     name;     // Name of the track
@@ -603,15 +621,18 @@ namespace Game
     uint64_t    loadVariableLengthQuantity(std::ifstream& file);  // Load a Variable Length Quantity number
     std::string loadText(std::ifstream& file);                    // Load a string (length + text)
 
-    sf::Time    duration(const Game::Midi::Sequence& sequence, std::size_t clock);  // Translate MIDI clock time to SFML time
+    sf::Time    duration(const Game::Midi::Sequence& sequence, std::size_t tic) const;                    // Translate MIDI clock time to SFML time
+    sf::Time    duration(const Game::Midi::Sequence& sequence, std::size_t start, std::size_t end) const; // Translate MIDI clock time interval to SFML time
 
-    // TODO: remove this
-    void  generate(const Game::Midi::Sequence& sequence);
+    void  generateTrack(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, std::vector<float>& buffer, std::size_t sampleRate) const;
+    float generateMix(float a, float b) const;  // Mix two audio samples
 
   public:
     Midi(const std::string& filename);
     ~Midi() = default;
 
     std::list<Game::Midi::Sequence>  sequences;
+
+    std::vector<float>  generate(const Game::Midi::Sequence& sequence, std::size_t sampleRate = 22050) const;
   };
 }
