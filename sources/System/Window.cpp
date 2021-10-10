@@ -121,6 +121,7 @@ bool  Game::Window::update(sf::Time elapsed)
   if (_elapsed >= Game::Window::FpsRefresh)
   {
     // Display new FPS in window title
+    // NOTE: in unknown cases, we can't get stuck in setTitle
     _window.setTitle(Game::Window::DefaultTitle + " (" + std::to_string((int)(_tick / _elapsed.asSeconds())) + "." + std::to_string((int)(10 * _tick / _elapsed.asSeconds()) % 10) + " FPS)");
 
     // Reset FPS counters

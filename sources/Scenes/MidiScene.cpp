@@ -4,6 +4,8 @@
 #include "Scenes/MidiScene.hpp"
 #include "System/Window.hpp"
 #include "Math/Math.hpp"
+#include "System/Midi.hpp"
+#include "System/Config.hpp"
 
 const float         Game::MidiScene::MiddleCFrequency = 261.626f;
 
@@ -14,6 +16,9 @@ Game::MidiScene::MidiScene(Game::SceneMachine& machine) :
   _octave(0),
   _wave()
 {
+  // TODO: remove this
+  Game::Midi s(Game::Config::ExecutablePath + "/assets/levels/level1.mid");
+
   for (int index = 0; index < _wave.size(); index++)
     _wave[index] = std::cos((float)index / (float)_wave.size() * 2.f * Math::Pi);
 
@@ -33,7 +38,6 @@ bool  Game::MidiScene::update(sf::Time elapsed)
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Add) == true)
     _octave += +1;
 
- 
   return false;
 }
 

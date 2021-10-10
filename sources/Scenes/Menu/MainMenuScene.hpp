@@ -14,7 +14,6 @@ namespace Game
   {
   private:
     void  selectDoom(Game::AbstractMenuScene::Item&, const std::string& wad, DOOM::Enum::Mode mode);  // Create a new game of DOOM
-    void  selectMidi(Game::AbstractMenuScene::Item&);                                                 // Go to MIDI test scene
     void  selectOptions(Game::AbstractMenuScene::Item&);                                              // Go to option menu
     void  selectExit(Game::AbstractMenuScene::Item&);                                                 // Exit game
 

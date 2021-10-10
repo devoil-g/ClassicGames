@@ -4,12 +4,10 @@
 #include "Scenes/SplashScene.hpp"
 #include "Scenes/Menu/MainMenuScene.hpp"
 #include "Scenes/SceneMachine.hpp"
+#include "Scenes/MidiScene.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 #include "System/Sound.hpp"
-
-// TODO: remove this
-#include "System/Midi.hpp"
 
 #ifdef _WIN32
 # include <windows.h>
@@ -32,13 +30,11 @@ namespace Game
     Game::SceneMachine  game;
     sf::Clock           clock;
 
-    // TODO: remove this
-    Game::Midi  midi(Game::Config::ExecutablePath + "/assets/levels/level1.mid");
-
     // Push initial state
-    //game.push<Game::SplashScene>();
+    game.push<Game::SplashScene>();
+
     // TODO: remove this
-    game.push<Game::MainMenuScene>();
+    game.push<Game::MidiScene>();
 
     // Run the game !
     while (Game::Window::Instance().window().isOpen()) {

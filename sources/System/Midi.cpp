@@ -13,15 +13,19 @@
 #include "System/Config.hpp"
 
 // TODO: remove this
-void  toWave(const std::string& filename, const std::vector<int16_t>& samples16, std::size_t samplerate)
+void  toWave(const std::string& filename, const std::vector<float>& buffer, std::size_t samplerate)
 {
+  std::vector<int16_t>  buffer16;
+  for (const auto& sample : buffer)
+    buffer16.push_back((int16_t)(std::clamp(sample, -1.f, +1.f) * 32767.f));
+
   std::ofstream  out(filename, std::ofstream::binary);
 
   uint32_t byte4;
   uint16_t byte2;
 
   out.write("RIFF", 4);
-  byte4 = (int)samples16.size() * 2 + 36;
+  byte4 = (int)buffer16.size() * 2 + 36;
   out.write((char*)&byte4, sizeof(byte4));
   out.write("WAVE", 4);
   out.write("fmt ", 4);
@@ -40,9 +44,9 @@ void  toWave(const std::string& filename, const std::vector<int16_t>& samples16,
   byte2 = 16;
   out.write((char*)&byte2, sizeof(byte2));
   out.write("data", 4);
-  byte4 = (int)samples16.size() * 2;
+  byte4 = (int)buffer16.size() * 2;
   out.write((char*)&byte4, sizeof(byte4));
-  out.write((char*)samples16.data(), samples16.size() * 2);
+  out.write((char*)buffer16.data(), buffer16.size() * 2);
 }
 
 // TODO: remove this
@@ -50,11 +54,9 @@ std::vector<float>  Game::Midi::generate(const Game::Midi::Sequence& sequence, s
 {
   std::vector<float>  buffer((int)(duration(sequence, sequence.metadata.end).asSeconds() * sampleRate) + 1, 0.f);
 
-  for (const auto& track : sequence.tracks) {
-    std::cout << "track " << track.first << ": " << track.second.name << std::endl;
-
+  // Generate each track
+  for (const auto& track : sequence.tracks)
     generateTrack(sequence, track.second, buffer, sampleRate);
-  }
 
   float max = 1.f;
 
@@ -62,13 +64,9 @@ std::vector<float>  Game::Midi::generate(const Game::Midi::Sequence& sequence, s
   for (float sample : buffer)
     max = std::max(max, std::abs(sample));
 
-  std::vector<int16_t>  buffer16;
-  for (const auto& sample : buffer)
-    buffer16.push_back((int16_t)(std::clamp(sample, -1.f, +1.f) * 32767.f / max));
+  ::toWave(Game::Config::ExecutablePath + "/generated.wav", buffer, sampleRate);
 
-  ::toWave(Game::Config::ExecutablePath + "/generated.wav", buffer16, sampleRate);
-
-  return std::vector<float>();
+  return buffer;
 }
 
 void  Game::Midi::generateTrack(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, std::vector<float>& buffer, std::size_t sampleRate) const
@@ -111,13 +109,7 @@ void  Game::Midi::generateTrack(const Game::Midi::Sequence& sequence, const Game
       const auto& preset = _soundfont.presets.find(bank)->second.find(program)->second;
 
       // TODO: remove this
-      std::cout << "pressed:" << std::endl
-        << "  bank:     " << (int)bank << std::endl
-        << "  program:  " << (int)program << std::endl
-        << "  key:      " << (int)start.second.key << std::endl
-        << "  preset:   " << preset.name << std::endl
-        << "  pressed:  " << duration(sequence, start.first).asSeconds() << "s" << std::endl
-        << "  released: " << duration(sequence, end.first).asSeconds() << "s" << std::endl;
+      std::cout << "channel: " << channel_index << " ; bank: " << (int)bank << " ; program: " << (int)program << " ; key: " << (int)start.second.key << " ; preset: " << preset.name << " ; pressed: " << duration(sequence, start.first).asSeconds() << "s" << " ; released: " << duration(sequence, end.first).asSeconds() << "s" << "          \r";
 
       // Find instrument bag to generate
       for (const auto& instrument : preset.instruments) {
@@ -206,6 +198,8 @@ void  Game::Midi::generateTrack(const Game::Midi::Sequence& sequence, const Game
       }
     }
   }
+
+  std::cout << std::endl;
 }
 
 float Game::Midi::generateMix(float a, float b) const
