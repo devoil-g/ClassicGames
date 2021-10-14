@@ -17,7 +17,7 @@ Game::MidiScene::MidiScene(Game::SceneMachine& machine) :
   _wave()
 {
   // TODO: remove this
-  Game::Midi s(Game::Config::ExecutablePath + "/assets/levels/level1.mid");
+  Game::Midi(Game::Config::ExecutablePath + "/assets/levels/level1.mid");
 
   for (int index = 0; index < _wave.size(); index++)
     _wave[index] = std::cos((float)index / (float)_wave.size() * 2.f * Math::Pi);

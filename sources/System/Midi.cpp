@@ -11,6 +11,7 @@
 #include "Math/Math.hpp"
 #include "System/Midi.hpp"
 #include "System/Config.hpp"
+#include "System/Pitch.hpp"
 
 // TODO: remove this
 void  toWave(const std::string& filename, const std::vector<float>& buffer, std::size_t samplerate)
@@ -52,7 +53,7 @@ void  toWave(const std::string& filename, const std::vector<float>& buffer, std:
 // TODO: remove this
 std::vector<float>  Game::Midi::generate(const Game::Midi::Sequence& sequence, std::size_t sampleRate) const
 {
-  std::vector<float>  buffer((int)(duration(sequence, sequence.metadata.end).asSeconds() * sampleRate) + 1, 0.f);
+  std::vector<float>  buffer((int)(duration(sequence, sequence.metadata.end).asSeconds() * (float)sampleRate) + 1, 0.f);
 
   // Generate each track
   for (const auto& track : sequence.tracks)
@@ -63,6 +64,10 @@ std::vector<float>  Game::Midi::generate(const Game::Midi::Sequence& sequence, s
   // Get max value of buffer
   for (float sample : buffer)
     max = std::max(max, std::abs(sample));
+  
+  // Normalize buffer
+  for (float& sample : buffer)
+    sample = sample / max;
 
   ::toWave(Game::Config::ExecutablePath + "/generated.wav", buffer, sampleRate);
 
@@ -71,6 +76,8 @@ std::vector<float>  Game::Midi::generate(const Game::Midi::Sequence& sequence, s
 
 void  Game::Midi::generateTrack(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, std::vector<float>& buffer, std::size_t sampleRate) const
 {
+  Game::Pitch pitcher;
+
   // Iterate manually on channel as some index are specials
   for (unsigned int channel_index = 0; channel_index < track.channel.size(); channel_index++)
   {
@@ -125,6 +132,9 @@ void  Game::Midi::generateTrack(const Game::Midi::Sequence& sequence, const Game
 
           // Get sample to play
           auto sample = _soundfont.samples[bag.generator[SoundFont::Sf2Generator::SampleId].u_amount];
+
+          // TODO: pitch sample
+          pitcher.shift(sample.samples, sample.rate, std::pow(2.f, ((float)start.second.key - (float)sample.key + sample.correction / 100.f) / 12.f));
 
           unsigned int  buffer_index = (unsigned int)(duration(sequence, start.first).asSeconds() * (float)sampleRate);
           float         buffer_time = duration(sequence, start.first).asSeconds();
@@ -204,6 +214,8 @@ void  Game::Midi::generateTrack(const Game::Midi::Sequence& sequence, const Game
 
 float Game::Midi::generateMix(float a, float b) const
 {
+  return a + b;
+
   // According to http://www.vttoth.com/CMS/index.php/technical-notes/68
   a += 1.f;
   b += 1.f;

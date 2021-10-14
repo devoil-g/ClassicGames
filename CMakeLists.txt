@@ -139,6 +139,8 @@ SET(GAME_SYSTEM_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Midi.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Sound.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Sound.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Pitch.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Pitch.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Window.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Window.hpp
 )
