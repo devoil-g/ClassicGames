@@ -69,6 +69,7 @@ std::vector<float>  Game::Midi::generate(const Game::Midi::Sequence& sequence, s
   for (float& sample : buffer)
     sample = sample / max;
 
+  puts("generate");
   ::toWave(Game::Config::ExecutablePath + "/generated.wav", buffer, sampleRate);
 
   return buffer;
@@ -76,7 +77,9 @@ std::vector<float>  Game::Midi::generate(const Game::Midi::Sequence& sequence, s
 
 void  Game::Midi::generateTrack(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, std::vector<float>& buffer, std::size_t sampleRate) const
 {
-  Game::Pitch pitcher;
+  const unsigned int            FrameSize = 2048;
+  const unsigned int            Step = 4;
+  Game::Pitch<FrameSize, Step>  pitcher;
 
   // Iterate manually on channel as some index are specials
   for (unsigned int channel_index = 0; channel_index < track.channel.size(); channel_index++)
@@ -133,76 +136,86 @@ void  Game::Midi::generateTrack(const Game::Midi::Sequence& sequence, const Game
           // Get sample to play
           auto sample = _soundfont.samples[bag.generator[SoundFont::Sf2Generator::SampleId].u_amount];
 
+          /*
+          sample.samples.insert(sample.samples.begin(), FrameSize, 0.f);
+          sample.samples.insert(sample.samples.end(), FrameSize, 0.f);
+          sample.start += FrameSize;
+          sample.end += FrameSize;
+          */
+
           // TODO: pitch sample
           pitcher.shift(sample.samples, sample.rate, std::pow(2.f, ((float)start.second.key - (float)sample.key + sample.correction / 100.f) / 12.f));
 
-          unsigned int  buffer_index = (unsigned int)(duration(sequence, start.first).asSeconds() * (float)sampleRate);
-          float         buffer_time = duration(sequence, start.first).asSeconds();
-
+          float buffer_time = duration(sequence, start.first).asSeconds();
+          int   buffer_index = (int)std::floor(buffer_time * (float)sampleRate);
+          
           // Sample start
           for (buffer_index;
-            buffer_index < (unsigned int)((buffer_time + (float)sample.start / (float)sample.rate) * (float)sampleRate);
+            buffer_index < (int)((buffer_time + ((float)sample.start / (float)sample.rate)) * (float)sampleRate);
             buffer_index++)
           {
             // Index of sample to get
-            float sample_index = (((float)buffer_index / (float)sampleRate) - buffer_time) * sample.rate;
+            float sample_index = (((float)buffer_index / (float)sampleRate) - buffer_time) * (float)sample.rate;
 
-            // Ignore when outside of sample zone
-            if (sample_index < 0 || sample_index >= sample.samples.size() - 1)
-              continue;
+            // Get left and right sample
+            float sample_left = std::floor(sample_index + 0) < 0 || std::floor(sample_index + 0) >= sample.samples.size() ? 0.f : sample.samples[(int)std::floor(sample_index + 0)];
+            float sample_right = std::floor(sample_index + 1) < 0 || std::floor(sample_index + 1) >= sample.samples.size() ? 0.f : sample.samples[(int)std::floor(sample_index + 1)];
 
-            buffer[buffer_index % buffer.size()] = generateMix(
-              buffer[buffer_index % buffer.size()],
-              sample.samples[(unsigned int)sample_index] * (1.f - Math::Modulo(sample_index, 1.f))
-              + sample.samples[(unsigned int)sample_index + 1] * Math::Modulo(sample_index, 1.f));
+            // Add sample to buffer
+            buffer[Math::Modulo(buffer_index, (int)buffer.size())] += sample_left * (1.f - Math::Modulo(sample_index, 1.f)) + sample_right * Math::Modulo(sample_index, 1.f);
           }
 
-          buffer_time = (float)buffer_index / (float)sampleRate;
+          // New time to beginning of loop
+          buffer_time += (float)sample.start / (float)sample.rate;
+
+          // Count the number of sample loop
+          unsigned int loop_count = 0;
 
           // Sample loop
-          if (bag.generator[SoundFont::Sf2Generator::SampleMode].u_amount != 0) {
+          if (bag.generator[SoundFont::Sf2Generator::SampleMode].u_amount != 0)
+          {
+            float loop_end = duration(sequence, end.first).asSeconds();
+
+            // Repeat sample loop until key is released
             for (buffer_time;
-              buffer_time < duration(sequence, end.first).asSeconds();
+              buffer_time < loop_end;
               buffer_time += (float)(sample.end - sample.start) / (float)sample.rate)
             {
-              // Get every sample in the loop
+              // Copy one sample loop
               for (buffer_index;
-                buffer_index < (buffer_time + (float)(sample.end - sample.start) / (float)sample.rate) * (float)sampleRate;
+                buffer_index < (int)((buffer_time + (float)(sample.end - sample.start) * (float)(loop_count + 1) / (float)sample.rate) * (float)sampleRate);
                 buffer_index++)
               {
                 // Index of sample to get
-                float sample_index = ((float)buffer_index / (float)sampleRate - buffer_time) * (float)sample.rate + sample.start;
+                float sample_index = ((float)buffer_index / (float)sampleRate - buffer_time) * (float)sample.rate + (float)(sample.start + (sample.end - sample.start) * loop_count);
 
-                // Ignore when outside of sample zone
-                if (sample_index < 0 || sample_index >= sample.samples.size() - 1)
-                  continue;
+                // Get left and right sample
+                float sample_left = std::floor(sample_index + 0) < 0 || std::floor(sample_index + 0) >= sample.samples.size() ? 0.f : sample.samples[(int)std::floor(sample_index + 0)];
+                float sample_right = std::floor(sample_index + 1) < 0 || std::floor(sample_index + 1) >= sample.samples.size() ? 0.f : sample.samples[(int)std::floor(sample_index + 1)];
 
-                buffer[buffer_index % buffer.size()] = generateMix(
-                  buffer[buffer_index % buffer.size()],
-                  sample.samples[(unsigned int)sample_index] * (1.f - Math::Modulo(sample_index, 1.f))
-                  + sample.samples[(unsigned int)sample_index + 1] * Math::Modulo(sample_index, 1.f));
+                // Add sample to buffer
+                buffer[Math::Modulo(buffer_index, (int)buffer.size())] += sample_left * (1.f - Math::Modulo(sample_index, 1.f)) + sample_right * Math::Modulo(sample_index, 1.f);
               }
+
+              // Add a loop to counter
+              loop_count++;
             }
           }
 
-          buffer_time = (float)buffer_index / (float)sampleRate;
-
           // Sample end
           for (buffer_index;
-            buffer_index < (buffer_time + ((float)sample.samples.size() - (float)sample.end) / (float)sample.rate) * (float)sampleRate;
+            buffer_index < (int)((buffer_time + (float)(sample.samples.size() - sample.end) / (float)sample.rate) * (float)sampleRate);
             buffer_index++)
           {
             // Index of sample to get
-            float sample_index = ((float)buffer_index / (float)sampleRate - buffer_time) * (float)sample.rate + sample.end;
+            float sample_index = ((float)buffer_index / (float)sampleRate - buffer_time) * (float)sample.rate + (float)(sample.start + (sample.end - sample.start) * loop_count);
 
-            // Ignore when outside of sample zone
-            if (sample_index < 0 || sample_index >= sample.samples.size() - 1)
-              continue;
+            // Get left and right sample
+            float sample_left = std::floor(sample_index + 0) < 0 || std::floor(sample_index + 0) >= sample.samples.size() ? 0.f : sample.samples[(int)std::floor(sample_index + 0)];
+            float sample_right = std::floor(sample_index + 1) < 0 || std::floor(sample_index + 1) >= sample.samples.size() ? 0.f : sample.samples[(int)std::floor(sample_index + 1)];
 
-            buffer[buffer_index % buffer.size()] = generateMix(
-              buffer[buffer_index % buffer.size()],
-              sample.samples[(unsigned int)sample_index] * (1.f - Math::Modulo(sample_index, 1.f))
-              + sample.samples[(unsigned int)sample_index + 1] * Math::Modulo(sample_index, 1.f));
+            // Add sample to buffer
+            buffer[Math::Modulo(buffer_index, (int)buffer.size())] += sample_left * (1.f - Math::Modulo(sample_index, 1.f)) + sample_right * Math::Modulo(sample_index, 1.f);
           }
         }
       }
@@ -1522,8 +1535,8 @@ void  Game::Midi::SoundFont::loadSectionListPdta(std::ifstream& file, const Game
 
     // Copy attributes
     samples.back().name = (const char*)sample.name;
-    samples.back().start = sample.loopStart;
-    samples.back().end = sample.loopEnd;
+    samples.back().start = sample.loopStart - sample.sampleStart;
+    samples.back().end = sample.loopEnd - sample.sampleStart;
     samples.back().rate = sample.sampleRate;
     samples.back().key = sample.pitchOriginal;
     samples.back().correction = sample.pitchCorrection;

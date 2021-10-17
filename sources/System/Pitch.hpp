@@ -40,6 +40,8 @@
 
 #include <vector>
 
+#include "Math/Math.hpp"
+
 namespace Game
 {
   template<std::size_t FrameSize = 2048, std::size_t Step = 4>
@@ -154,6 +156,9 @@ namespace Game
       /* Set up some handy variables */
       float freqPerBin = (float)sampleRate / (float)FrameSize;
       float expected = 2.f * Math::Pi * (float)(FrameSize / Step) / (float)FrameSize;
+
+      // Normalize sample size to FrameSize
+      samples.resize((std::size_t)std::ceil((float)samples.size() / (float)FrameSize) * FrameSize, 0.f);
 
       /* Main processing loop */
       for (std::size_t i = 0, gRover = FrameSize - FrameSize / Step; i < samples.size() + (FrameSize - FrameSize / Step); i++)
