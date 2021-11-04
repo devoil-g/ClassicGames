@@ -133,13 +133,18 @@ namespace Game
     Pitch() = default;
     ~Pitch() = default;
 
+    void shift(std::vector<float>& samples, std::size_t sampleRate, float pitchShift)
+    {
+      shift(samples, sampleRate, std::vector<std::pair<std::size_t, float>>({ { 0, pitchShift } }));
+    }
+
     /*
     ** Routine smbPitchShift(). See top of file for explanation
     ** Purpose: doing pitch shifting while maintaining duration using the Short
     ** Time Fourier Transform.
     ** Author: (c)1999-2015 Stephan M. Bernsee <s.bernsee [AT] zynaptiq [DOT] com>
     */
-    void shift(std::vector<float>& samples, std::size_t sampleRate, float pitchShift)
+    void shift(std::vector<float>& samples, std::size_t sampleRate, const std::vector<std::pair<std::size_t, float>>& pitchShifts)
     {
       // Reset data arrays
       _InFIFO.fill(0.f);
@@ -156,6 +161,8 @@ namespace Game
       /* Set up some handy variables */
       float freqPerBin = (float)sampleRate / (float)FrameSize;
       float expected = 2.f * Math::Pi * (float)(FrameSize / Step) / (float)FrameSize;
+
+      auto pitch = pitchShifts.begin();
 
       // Normalize sample size to FrameSize
       samples.resize((std::size_t)std::ceil((float)samples.size() / (float)FrameSize) * FrameSize, 0.f);
@@ -225,12 +232,16 @@ namespace Game
           _SynMagn.fill(0.f);
           _SynFreq.fill(0.f);
 
+          // Find pitch shift to apply
+          while (std::next(pitch) != pitchShifts.end() && std::next(pitch)->first < i)
+            pitch++;
+
           for (unsigned int k = 0; k <= FrameSize / 2; k++) {
-            unsigned int index = (int)(k * pitchShift);
+            unsigned int index = (int)(k * pitch->second);
 
             if (index <= FrameSize / 2) {
               _SynMagn[index] += _AnaMagn[k];
-              _SynFreq[index] = _AnaFreq[k] * pitchShift;
+              _SynFreq[index] = _AnaFreq[k] * pitch->second;
             }
           }
 

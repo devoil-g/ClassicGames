@@ -7,11 +7,16 @@
 #include <iomanip>
 #include <tuple>
 #include <algorithm>
+#include <future>
+#include <set>
 
 #include "Math/Math.hpp"
 #include "System/Midi.hpp"
 #include "System/Config.hpp"
 #include "System/Pitch.hpp"
+
+// TODO: remove this
+#include <SFML/System/Clock.hpp>
 
 // TODO: remove this
 void  toWave(const std::string& filename, const std::vector<float>& buffer, std::size_t samplerate)
@@ -34,11 +39,11 @@ void  toWave(const std::string& filename, const std::vector<float>& buffer, std:
   out.write((char*)&byte4, sizeof(byte4));
   byte2 = 1;
   out.write((char*)&byte2, sizeof(byte2));
-  byte2 = 1;
+  byte2 = 2;
   out.write((char*)&byte2, sizeof(byte2));
   byte4 = (uint32_t)samplerate;
   out.write((char*)&byte4, sizeof(byte4));
-  byte4 = (uint32_t)samplerate * 2;
+  byte4 = (uint32_t)samplerate * 2 * 2;
   out.write((char*)&byte4, sizeof(byte4));
   byte2 = 2;
   out.write((char*)&byte2, sizeof(byte2));
@@ -53,11 +58,37 @@ void  toWave(const std::string& filename, const std::vector<float>& buffer, std:
 // TODO: remove this
 std::vector<float>  Game::Midi::generate(const Game::Midi::Sequence& sequence, std::size_t sampleRate) const
 {
-  std::vector<float>  buffer((int)(duration(sequence, sequence.metadata.end).asSeconds() * (float)sampleRate) + 1, 0.f);
+  sf::Clock clock;
 
-  // Generate each track
+  std::vector<float>            buffer((std::size_t)((duration(sequence, sequence.metadata.end) * (float)sampleRate) + 1) * 2, 0.f);
+  std::mutex                    buffer_lock;
+  std::list<std::future<void>>  tasks;
+
+  // Run a task for each track
   for (const auto& track : sequence.tracks)
-    generateTrack(sequence, track.second, buffer, sampleRate);
+  {
+    // Execute task
+    tasks.push_back(std::async(std::launch::async, [this, &sequence, &track, sampleRate, &buffer_lock, &buffer]
+      {
+        std::vector<float>  task_buffer(buffer.size(), 0.f);
+
+        // Generate track
+        generateTrack(sequence, track.second, task_buffer, sampleRate);
+
+        // Lock buffer
+        std::unique_lock  lock(buffer_lock);
+
+        // Add to buffer
+        for (std::size_t index = 0; index < task_buffer.size(); index++)
+          buffer[index] += task_buffer[index];
+      }));
+  }
+
+  // Wait for rendering tasks to complete
+  for (auto& task : tasks)
+    task.wait();
+
+  std::cout << "generation time: " << clock.getElapsedTime().asSeconds() << "s." << std::endl;
 
   float max = 1.f;
 
@@ -69,174 +100,399 @@ std::vector<float>  Game::Midi::generate(const Game::Midi::Sequence& sequence, s
   for (float& sample : buffer)
     sample = sample / max;
 
-  puts("generate");
+  puts("Generate WAVE file...");
   ::toWave(Game::Config::ExecutablePath + "/generated.wav", buffer, sampleRate);
+  puts("Done.");
 
   return buffer;
 }
 
 void  Game::Midi::generateTrack(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, std::vector<float>& buffer, std::size_t sampleRate) const
 {
-  const unsigned int            FrameSize = 2048;
-  const unsigned int            Step = 4;
-  Game::Pitch<FrameSize, Step>  pitcher;
+  std::mutex                    buffer_lock;
+  std::list<std::future<void>>  tasks;
 
   // Iterate manually on channel as some index are specials
-  for (unsigned int channel_index = 0; channel_index < track.channel.size(); channel_index++)
+  for (std::size_t channel_index = 0; channel_index < track.channel.size(); channel_index++)
   {
     // Get channel
     const auto& channel = track.channel[channel_index];
 
-    // Process each "positive" note of channel
-    for (auto note_start = channel.note.begin(); note_start != channel.note.end(); note_start++)
-    {
-      // Skip released notes
-      if (note_start->second.velocity <= 0)
-        continue;
+    // Skip empty channels
+    if (channel.note.empty() == true)
+      continue;
 
-      // Find matching released key event
-      auto note_end = std::find_if(std::next(note_start), channel.note.end(), [this, note_start](const auto& end) { return note_start->second.key == end.second.key; });
+    // Execute task
+    tasks.push_back(std::async(std::launch::async, [this, &sequence, &track, &channel, &buffer, &buffer_lock, sampleRate, channel_index]
+      {
+        std::vector<float>    channel_buffer(buffer.size(), 0.f);
 
-      std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>  start = *note_start;
-      std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>  end = note_end != channel.note.end() ? *note_end : std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>{ sequence.metadata.end, { start.second.key, 0 } };
+        // Generate channel
+        generateChannel(sequence, track, channel, channel_buffer, sampleRate);
 
-      // Missing note release event
-      if (end.second.velocity > 0)
-        std::cerr << "[Game::Midi::generate]: Warning, missing MIDI key release event (key: " << (int)start.second.key << ", time: " << duration(sequence, start.first).asSeconds() << "s)." << std::endl;
+        // Lock buffer
+        std::unique_lock  lock(buffer_lock);
 
-      // Get current bank number and program
-      uint8_t program = channel.getData<uint8_t>(channel.program, start.first, 0);
-      uint8_t bank = channel.getData(Game::Midi::Sequence::Track::Channel::Controller::ControllerBankSelectCoarse, start.first, 0)
-        + channel.getData(Game::Midi::Sequence::Track::Channel::Controller::ControllerBankSelectFine, start.first, 0) * 128 + (channel_index == 9 ? 128 : 0);
+        // Add to buffer
+        for (std::size_t index = 0; index < channel_buffer.size(); index++)
+          buffer[index] += channel_buffer[index];
 
-      // Check a preset exist for given bank/key
-      if (_soundfont.presets.find(bank) == _soundfont.presets.end() || _soundfont.presets.find(bank)->second.find(program) == _soundfont.presets.find(bank)->second.end()) {
-        std::cerr << "[Game::Midi::generate]: Warning, no preset for MIDI bank/program (bank: " << (int)bank << ", program: " << (int)program << ", time: " << duration(sequence, start.first).asSeconds() << "s)." << std::endl;
-        continue;
-      }
+        // TODO: remove this
+        std::cout << "Channel " << channel_index << " done." << std::endl;
+      }));
+  }
 
-      // Get preset to be played
-      const auto& preset = _soundfont.presets.find(bank)->second.find(program)->second;
+  // Wait for rendering tasks to complete
+  for (auto& task : tasks)
+    task.wait();
 
-      // TODO: remove this
-      std::cout << "channel: " << channel_index << " ; bank: " << (int)bank << " ; program: " << (int)program << " ; key: " << (int)start.second.key << " ; preset: " << preset.name << " ; pressed: " << duration(sequence, start.first).asSeconds() << "s" << " ; released: " << duration(sequence, end.first).asSeconds() << "s" << "          \r";
+  std::cout << "Track " << track.name << " done." << std::endl;
+}
 
-      // Find instrument bag to generate
-      for (const auto& instrument : preset.instruments) {
-        for (const auto& bag : instrument.bags)
-        {
-          // Check bag's key range
-          if (start.second.key < bag.generator[SoundFont::Sf2Generator::KeyRange].range.low || start.second.key > bag.generator[SoundFont::Sf2Generator::KeyRange].range.high)
-            continue;
+void  Game::Midi::generateChannel(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, const Game::Midi::Sequence::Track::Channel& channel, std::vector<float>& buffer, std::size_t sampleRate) const
+{
+  std::mutex                    buffer_lock;
+  std::list<std::future<void>>  tasks;
 
-          // Check bag's velocity range
-          if (start.second.key < bag.generator[SoundFont::Sf2Generator::VelocityRange].range.low || start.second.key > bag.generator[SoundFont::Sf2Generator::VelocityRange].range.high)
-            continue;
+  // Process each "positive" note of channel
+  for (auto note_start = channel.note.begin(); note_start != channel.note.end(); note_start++)
+  {
+    // Skip released notes
+    if (note_start->second.velocity <= 0)
+      continue;
 
-          // Get sample to play
-          auto sample = _soundfont.samples[bag.generator[SoundFont::Sf2Generator::SampleId].u_amount];
+    // Execute task
+    tasks.push_back(std::async(std::launch::async, [this, &sequence, &track, &buffer, &buffer_lock, &channel, note_start, sampleRate]
+      {
+        // Find matching released key event
+        auto note_end = std::find_if(std::next(note_start), channel.note.end(), [this, note_start](const auto& end) { return note_start->second.key == end.second.key; });
 
-          /*
-          sample.samples.insert(sample.samples.begin(), FrameSize, 0.f);
-          sample.samples.insert(sample.samples.end(), FrameSize, 0.f);
-          sample.start += FrameSize;
-          sample.end += FrameSize;
-          */
+        std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>  start = *note_start;
+        std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>  end = note_end != channel.note.end() ? *note_end : std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>{ sequence.metadata.end, { start.second.key, 0 } };
+        
+        // Missing note release event
+        if (end.second.velocity > 0) {
+          std::cerr << "[Game::Midi::generate]: Warning, missing MIDI key release event (key: " << (int)start.second.key << ", time: " << duration(sequence, start.first) << "s)." << std::endl;
+          end.second.velocity = 0;
+        }
 
-          // TODO: pitch sample
-          pitcher.shift(sample.samples, sample.rate, std::pow(2.f, ((float)start.second.key - (float)sample.key + sample.correction / 100.f) / 12.f));
+        // Hold pedal
+        end.first = generateChannelHold(sequence, track, channel, start, end);
 
-          float buffer_time = duration(sequence, start.first).asSeconds();
-          int   buffer_index = (int)std::floor(buffer_time * (float)sampleRate);
-          
-          // Sample start
-          for (buffer_index;
-            buffer_index < (int)((buffer_time + ((float)sample.start / (float)sample.rate)) * (float)sampleRate);
-            buffer_index++)
+        // Sustenuto pedal
+        end.first = generateChannelSustenuto(sequence, track, channel, start, end);
+        
+        // Soft pedal
+        float note_soft = generateChannelSoft(sequence, track, channel, start, end);
+
+        // Get current bank number and program
+        uint8_t program = channel.getData<uint8_t>(channel.program, start.first, 0);
+        uint8_t bank = channel.getData(Game::Midi::Sequence::Track::Channel::Controller::ControllerBankSelectCoarse, start.first, 0)
+          + channel.getData(Game::Midi::Sequence::Track::Channel::Controller::ControllerBankSelectFine, start.first, 0) * 128 + (&channel == &track.channel[9] ? 128 : 0);
+
+        // Check a preset exist for given bank/key
+        if (_soundfont.presets.find(bank) == _soundfont.presets.end() || _soundfont.presets.find(bank)->second.find(program) == _soundfont.presets.find(bank)->second.end()) {
+          std::cerr << "[Game::Midi::generate]: Warning, no preset for MIDI bank/program (bank: " << (int)bank << ", program: " << (int)program << ", time: " << duration(sequence, start.first) << "s)." << std::endl;
+          return;
+        }
+
+        Game::Pitch<2048, 4>  pitcher;
+
+        // Get preset to be played
+        const auto& preset = _soundfont.presets.find(bank)->second.find(program)->second;
+
+        // Find instrument bag to generate
+        for (const auto& instrument : preset.instruments) {
+          for (const auto& bag : instrument.bags)
           {
-            // Index of sample to get
-            float sample_index = (((float)buffer_index / (float)sampleRate) - buffer_time) * (float)sample.rate;
+            // Check bag's key range
+            if (start.second.key < bag.generator[SoundFont::Sf2Generator::KeyRange].range.low || start.second.key > bag.generator[SoundFont::Sf2Generator::KeyRange].range.high)
+              continue;
 
-            // Get left and right sample
-            float sample_left = std::floor(sample_index + 0) < 0 || std::floor(sample_index + 0) >= sample.samples.size() ? 0.f : sample.samples[(int)std::floor(sample_index + 0)];
-            float sample_right = std::floor(sample_index + 1) < 0 || std::floor(sample_index + 1) >= sample.samples.size() ? 0.f : sample.samples[(int)std::floor(sample_index + 1)];
+            // Check bag's velocity range
+            if (start.second.key < bag.generator[SoundFont::Sf2Generator::VelocityRange].range.low || start.second.key > bag.generator[SoundFont::Sf2Generator::VelocityRange].range.high)
+              continue;
 
-            // Add sample to buffer
-            buffer[Math::Modulo(buffer_index, (int)buffer.size())] += sample_left * (1.f - Math::Modulo(sample_index, 1.f)) + sample_right * Math::Modulo(sample_index, 1.f);
-          }
+            // Get sample to play
+            const auto& sample = _soundfont.samples[bag.generator[SoundFont::Sf2Generator::SampleId].u_amount];
 
-          // New time to beginning of loop
-          buffer_time += (float)sample.start / (float)sample.rate;
+            std::vector<float>  note;
+            float               note_start = duration(sequence, start.first);
+            float               note_end = duration(sequence, end.first);
 
-          // Count the number of sample loop
-          unsigned int loop_count = 0;
+            // Pre-allocate memory
+            note.reserve((std::size_t)std::ceil((note_end - note_start) * sample.rate) + sample.samples.size());
 
-          // Sample loop
-          if (bag.generator[SoundFont::Sf2Generator::SampleMode].u_amount != 0)
-          {
-            float loop_end = duration(sequence, end.first).asSeconds();
+            // Sample start
+            note.insert(note.end(), sample.samples.data(), sample.samples.data() + sample.start);
 
-            // Repeat sample loop until key is released
-            for (buffer_time;
-              buffer_time < loop_end;
-              buffer_time += (float)(sample.end - sample.start) / (float)sample.rate)
+            // Repeat sample loop at least once and until key is released
+            do
             {
-              // Copy one sample loop
-              for (buffer_index;
-                buffer_index < (int)((buffer_time + (float)(sample.end - sample.start) * (float)(loop_count + 1) / (float)sample.rate) * (float)sampleRate);
-                buffer_index++)
-              {
-                // Index of sample to get
-                float sample_index = ((float)buffer_index / (float)sampleRate - buffer_time) * (float)sample.rate + (float)(sample.start + (sample.end - sample.start) * loop_count);
+              // Sample loop
+              note.insert(note.end(), sample.samples.data() + sample.start, sample.samples.data() + sample.end);
+            } while (bag.generator[SoundFont::Sf2Generator::SampleMode].u_amount != 0 && note_start + (float)note.size() / (float)sample.rate < note_end);
 
-                // Get left and right sample
-                float sample_left = std::floor(sample_index + 0) < 0 || std::floor(sample_index + 0) >= sample.samples.size() ? 0.f : sample.samples[(int)std::floor(sample_index + 0)];
-                float sample_right = std::floor(sample_index + 1) < 0 || std::floor(sample_index + 1) >= sample.samples.size() ? 0.f : sample.samples[(int)std::floor(sample_index + 1)];
+            // Sample end
+            note.insert(note.end(), sample.samples.data() + sample.end, sample.samples.data() + sample.samples.size());
 
-                // Add sample to buffer
-                buffer[Math::Modulo(buffer_index, (int)buffer.size())] += sample_left * (1.f - Math::Modulo(sample_index, 1.f)) + sample_right * Math::Modulo(sample_index, 1.f);
-              }
+            // Apply soft pedal
+            for (std::size_t index = (std::size_t)std::max(0.f, std::ceil((note_soft - note_start) * (float)sample.rate)); index < note.size(); index++)
+              note[index] *= 1.f - std::min(((float)index / (float)sample.rate - (note_soft - note_start)) / 2.f * 8.f, 0.5f);
 
-              // Add a loop to counter
-              loop_count++;
+            std::vector<std::pair<std::size_t, float>>  pitchs;
+
+            // Get sample index-pitch map from channel pitch
+            pitchs.emplace_back(0, std::pow(2.f, ((float)start.second.key - (float)sample.key + ((float)sample.correction + 0.f) / 100.f) / 12.f));
+            for (const auto& pitch : channel.pitch) {
+              if (pitch.first < start.first)
+                pitchs.front().second = std::pow(2.f, ((float)start.second.key - (float)sample.key + ((float)sample.correction + (((float)pitch.second - (float)0x2000) / (float)0x2000 * 200.f)) / 100.f) / 12.f);
+              else if (duration(sequence, pitch.first) < note_start + (float)note.size() / (float)sample.rate)
+                pitchs.emplace_back((std::size_t)((duration(sequence, pitch.first) - note_start) * (float)sample.rate), std::pow(2.f, ((float)start.second.key - (float)sample.key + ((float)sample.correction + (((float)pitch.second - (float)0x2000) / (float)0x2000 * 200.f)) / 100.f) / 12.f));
+              else
+                break;
+            }
+
+            // Pitch note
+            pitcher.shift(note, sample.rate, pitchs);
+
+            // Lock buffer
+            std::unique_lock  lock(buffer_lock);
+
+            // Copy note to buffer
+            for (int buffer_index = (int)std::floor(note_start * (float)sampleRate);
+              buffer_index < (int)std::ceil((note_start + (float)note.size() / (float)sample.rate) * sampleRate);
+              buffer_index++)
+            {
+              // Index of sample to get
+              float note_index = (((float)buffer_index / (float)sampleRate) - note_start) * (float)sample.rate;
+
+              // Get left and right sample
+              float note_left = std::floor(note_index + 0) < 0 || std::floor(note_index + 0) >= note.size() ? 0.f : note[(int)std::floor(note_index + 0)];
+              float note_right = std::floor(note_index + 1) < 0 || std::floor(note_index + 1) >= note.size() ? 0.f : note[(int)std::floor(note_index + 1)];
+
+              // Add sample to buffer
+              buffer[Math::Modulo(buffer_index * 2 + 0, (int)buffer.size())] += note_left * (1.f - Math::Modulo(note_index, 1.f)) + note_right * Math::Modulo(note_index, 1.f);
+              buffer[Math::Modulo(buffer_index * 2 + 1, (int)buffer.size())] += note_left * (1.f - Math::Modulo(note_index, 1.f)) + note_right * Math::Modulo(note_index, 1.f);
             }
           }
-
-          // Sample end
-          for (buffer_index;
-            buffer_index < (int)((buffer_time + (float)(sample.samples.size() - sample.end) / (float)sample.rate) * (float)sampleRate);
-            buffer_index++)
-          {
-            // Index of sample to get
-            float sample_index = ((float)buffer_index / (float)sampleRate - buffer_time) * (float)sample.rate + (float)(sample.start + (sample.end - sample.start) * loop_count);
-
-            // Get left and right sample
-            float sample_left = std::floor(sample_index + 0) < 0 || std::floor(sample_index + 0) >= sample.samples.size() ? 0.f : sample.samples[(int)std::floor(sample_index + 0)];
-            float sample_right = std::floor(sample_index + 1) < 0 || std::floor(sample_index + 1) >= sample.samples.size() ? 0.f : sample.samples[(int)std::floor(sample_index + 1)];
-
-            // Add sample to buffer
-            buffer[Math::Modulo(buffer_index, (int)buffer.size())] += sample_left * (1.f - Math::Modulo(sample_index, 1.f)) + sample_right * Math::Modulo(sample_index, 1.f);
-          }
         }
-      }
+      }));
+  }
+
+  // Wait for rendering tasks to complete
+  for (auto& task : tasks)
+    task.wait();
+
+  // Apply volume/pan/balance to channel
+  generateChannelVolume(sequence, track, channel, buffer, sampleRate);
+  generateChannelPan(sequence, track, channel, buffer, sampleRate);
+  generateChannelBalance(sequence, track, channel, buffer, sampleRate);
+}
+
+std::size_t Game::Midi::generateChannelHold(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, const Game::Midi::Sequence::Track::Channel& channel, const std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>& start, const std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>& end) const
+{
+  auto  hold_controller = channel.controller.find(Game::Midi::Sequence::Track::Channel::Controller::ControllerHoldPedal);
+
+  if (hold_controller != channel.controller.end())
+  {
+    auto  hold_pedal = hold_controller->second.begin();
+
+    while (hold_pedal != hold_controller->second.end())
+    {
+      // Find beginning of hold
+      while (hold_pedal != hold_controller->second.end() && hold_pedal->second < 64)
+        hold_pedal++;
+
+      // No more pedal
+      if (hold_pedal == hold_controller->second.end())
+        break;
+
+      // Note already released
+      if (hold_pedal->first >= end.first)
+        break;
+
+      // Find ending of hold
+      while (hold_pedal != hold_controller->second.end() && hold_pedal->second >= 64)
+        hold_pedal++;
+
+      // Remember start time of hold
+      std::size_t release = (hold_pedal == hold_controller->second.end()) ? sequence.metadata.end : hold_pedal->first;
+
+      // Hold stop before end of the note
+      if (release < end.first)
+        continue;
+
+      // Remember new note release time
+      return release;
     }
   }
 
-  std::cout << std::endl;
+  return end.first;
 }
 
-float Game::Midi::generateMix(float a, float b) const
+std::size_t Game::Midi::generateChannelSustenuto(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, const Game::Midi::Sequence::Track::Channel& channel, const std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>& start, const std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>& end) const
 {
-  return a + b;
+  auto  sustenuto_controller = channel.controller.find(Game::Midi::Sequence::Track::Channel::Controller::ControllerSustenutoPedal);
 
-  // According to http://www.vttoth.com/CMS/index.php/technical-notes/68
-  a += 1.f;
-  b += 1.f;
+  if (sustenuto_controller != channel.controller.end())
+  {
+    auto  sustenuto_pedal = sustenuto_controller->second.begin();
 
-  if (a < 1.f && b < 1.f)
-    return (a * b) - 1.f;
-  else
-    return 2.f * (a + b) - (a * b) - 2.f - 1.f;
+    while (sustenuto_pedal != sustenuto_controller->second.end())
+    {
+      // Find beginning of sustenuto
+      while (sustenuto_pedal != sustenuto_controller->second.end() && sustenuto_pedal->second < 64)
+        sustenuto_pedal++;
+
+      // No more pedal
+      if (sustenuto_pedal == sustenuto_controller->second.end())
+        break;
+
+      // Note not pressed yet
+      if (sustenuto_pedal->first <= start.first)
+      {
+        // Skip until pedal release
+        while (sustenuto_pedal != sustenuto_controller->second.end() && sustenuto_pedal->second >= 64)
+          sustenuto_pedal++;
+
+        continue;
+      }
+
+      // Note already released
+      if (sustenuto_pedal->first >= end.first)
+        break;
+
+      // Find ending of sustenuto
+      while (sustenuto_pedal != sustenuto_controller->second.end() && sustenuto_pedal->second >= 64)
+        sustenuto_pedal++;
+
+      // Remember end time of sustenuto
+      std::size_t release = (sustenuto_pedal == sustenuto_controller->second.end()) ? sequence.metadata.end : sustenuto_pedal->first;
+
+      // Sustenuto stop before end of the note
+      if (release < end.first)
+        continue;
+
+      // Remember new note release time
+      return release;
+    }
+  }
+
+  return end.first;
+}
+
+float Game::Midi::generateChannelSoft(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, const Game::Midi::Sequence::Track::Channel& channel, const std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>& start, const std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>& end) const
+{
+  auto  soft_controller = channel.controller.find(Game::Midi::Sequence::Track::Channel::Controller::ControllerSoftPedal);
+
+  if (soft_controller != channel.controller.end())
+  {
+    puts("vagin");
+    auto  soft_pedal = soft_controller->second.begin();
+
+    while (soft_pedal != soft_controller->second.end())
+    {
+      // Find beginning of soft
+      while (soft_pedal != soft_controller->second.end() && soft_pedal->second < 64)
+        soft_pedal++;
+
+      // No more pedal
+      if (soft_pedal == soft_controller->second.end())
+        break;
+
+      // Note already released
+      if (soft_pedal->first >= end.first)
+        break;
+
+      // Remember start time of soft
+      std::size_t pressed = (soft_pedal == soft_controller->second.end()) ? sequence.metadata.end : soft_pedal->first;
+
+      // Find ending of soft
+      while (soft_pedal != soft_controller->second.end() && soft_pedal->second >= 64)
+        soft_pedal++;
+
+      // Remember end time of soft
+      std::size_t release = (soft_pedal == soft_controller->second.end()) ? sequence.metadata.end : soft_pedal->first;
+
+      // Soft stopped before start of the note
+      if (release < start.first)
+        continue;
+
+      // Remember new note release time
+      return duration(sequence, pressed);
+    }
+  }
+
+  return std::numeric_limits<float>::max();
+}
+
+void  Game::Midi::generateChannelVolume(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, const Game::Midi::Sequence::Track::Channel& channel, std::vector<float>& buffer, std::size_t sample_rate) const
+{
+  auto  volume_controller = channel.controller.find(Game::Midi::Sequence::Track::Channel::Controller::ControllerVolumeCoarse);
+
+  // Does nothing if no controller
+  if (volume_controller == channel.controller.end())
+    return;
+
+  auto  volume_iterator = volume_controller->second.begin();
+  float volume_time = (volume_iterator == volume_controller->second.end()) ? std::numeric_limits<float>::max() : duration(sequence, volume_iterator->first);
+  float volume_current = 127 / 127.f;
+
+  // Apply volume to buffer
+  for (std::size_t index = 0; index < buffer.size() / 2; index++)
+  {
+    // Volume change
+    while ((float)index / (float)sample_rate >= volume_time) {
+      volume_current = volume_iterator->second / 127.f;
+      volume_iterator++;
+      volume_time = (volume_iterator == volume_controller->second.end()) ? std::numeric_limits<float>::max() : duration(sequence, volume_iterator->first);
+    }
+
+    // Apply volume
+    buffer[index * 2 + 0] *= volume_current;
+    buffer[index * 2 + 1] *= volume_current;
+  }
+}
+
+void  Game::Midi::generateChannelPan(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, const Game::Midi::Sequence::Track::Channel& channel, std::vector<float>& buffer, std::size_t sample_rate) const
+{
+  auto  pan_controller = channel.controller.find(Game::Midi::Sequence::Track::Channel::Controller::ControllerPanCoarse);
+
+  // Does nothing if no controller
+  if (pan_controller == channel.controller.end())
+    return;
+
+  auto  pan_iterator = pan_controller->second.begin();
+  float pan_time = (pan_iterator == pan_controller->second.end()) ? std::numeric_limits<float>::max() : duration(sequence, pan_iterator->first);
+  float pan_current = 64 / 128.f;
+
+  // Apply pan to buffer
+  for (std::size_t index = 0; index < buffer.size() / 2; index++)
+  {
+    // Volume change
+    while ((float)index / (float)sample_rate >= pan_time) {
+      pan_current = pan_iterator->second / 128.f;
+      pan_iterator++;
+      pan_time = (pan_iterator == pan_controller->second.end()) ? std::numeric_limits<float>::max() : duration(sequence, pan_iterator->first);
+    }
+
+    // Apply pan
+    buffer[index * 2 + 0] *= (1 - pan_current);
+    buffer[index * 2 + 1] *= pan_current;
+  }
+}
+
+void  Game::Midi::generateChannelBalance(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, const Game::Midi::Sequence::Track::Channel& channel, std::vector<float>& buffer, std::size_t sample_rate) const
+{
+  auto  balance_controller = channel.controller.find(Game::Midi::Sequence::Track::Channel::Controller::ControllerBalanceCoarse);
+
+  // Does nothing if no controller
+  if (balance_controller == channel.controller.end())
+    return;
+
+  // TODO: implement this
+  std::cerr << "[Game::Midi::generate]: Warning, balance not implemented." << std::endl;
 }
 
 Game::Midi::Midi(const std::string& filename) :
@@ -354,9 +610,6 @@ void  Game::Midi::loadTracks(std::ifstream& file)
     loadTrack(file, header, sequences.back(), (_format == Game::Midi::MidiTrackFormat::MultipleTracks) ? 0 : track);
     track++;
   }
-
-  // TODO: remove this
-  generate(sequences.front(), 22050);
 }
 
 void  Game::Midi::loadTrack(std::ifstream& file, const Game::Midi::MidiHeader& header, Game::Midi::Sequence& sequence, std::size_t track)
@@ -905,7 +1158,13 @@ void  Game::Midi::loadTrackMidiControlChange(std::ifstream& file, Game::Midi::Se
   // New new controller value
   sequence.tracks[track].channel[channel].controller[(Game::Midi::Sequence::Track::Channel::Controller)controller].push_back({ clock, value });
 
-  return;
+  //return;
+
+  static std::set<uint8_t>  set;
+
+  if (set.find(controller) != set.end())
+    return;
+  set.insert(controller);
 
   // TODO: remove this
   std::cout
@@ -965,7 +1224,7 @@ void  Game::Midi::loadTrackMidiPitchWheelChange(std::ifstream& file, Game::Midi:
   read(file, &pitch);
 
   // Only keep significant bits
-  pitch = (((uint8_t*)&pitch)[0] & 0b01111111) * 128 + (((uint8_t*)&pitch)[1] & 0b01111111);
+  pitch = (((uint8_t*)&pitch)[1] & 0b01111111) * 128 + (((uint8_t*)&pitch)[0] & 0b01111111);
 
   // Add new pitch wheel value
   sequence.tracks[track].channel[channel].pitch.push_back({ clock, pitch });
@@ -1024,34 +1283,34 @@ std::string Game::Midi::loadText(std::ifstream& file)
   return str.data();
 }
 
-sf::Time  Game::Midi::duration(const Game::Midi::Sequence& sequence, std::size_t clock) const
+float Game::Midi::duration(const Game::Midi::Sequence& sequence, std::size_t clock) const
 {
   // Get time since beginning of sequence
   return duration(sequence, 0, clock);
 }
 
-sf::Time  Game::Midi::duration(const Game::Midi::Sequence& sequence, std::size_t start, std::size_t end) const
+float Game::Midi::duration(const Game::Midi::Sequence& sequence, std::size_t start, std::size_t end) const
 {
   // Translate time according to format
   switch (_timeFormat)
   {
   case Game::Midi::QuarterNote:
   {
-    sf::Time  elapsed = sf::Time::Zero;
+    float elapsed = 0.f;
 
     if (sequence.metadata.tempos.empty() == true)
-      return sf::seconds(((float)(end - start) / (float)_timeValue) * (60.f / (60000000.f / 120.f)));
+      return ((float)(end - start) / (float)_timeValue) * (60.f / (60000000.f / 120.f));
 
     for (auto tempo = sequence.metadata.tempos.begin(); tempo != sequence.metadata.tempos.end(); tempo++)
     {
       // No end of records
       if (std::next(tempo) == sequence.metadata.tempos.end() || std::next(tempo)->first >= end) {
-        elapsed += sf::seconds(((float)(end - start) / (float)_timeValue) * (60.f / (60000000.f / (float)tempo->second)));
+        elapsed += ((float)(end - start) / (float)_timeValue) * (60.f / (60000000.f / (float)tempo->second));
         break;
       }
 
       // Add time of interval
-      elapsed += sf::seconds(((float)(std::next(tempo)->first - start) / (float)_timeValue) * (60.f / (60000000.f / (float)tempo->second)));
+      elapsed += ((float)(std::next(tempo)->first - start) / (float)_timeValue) * (60.f / (60000000.f / (float)tempo->second));
 
       // Skip start of interval
       start = std::next(tempo)->first;
@@ -1060,7 +1319,7 @@ sf::Time  Game::Midi::duration(const Game::Midi::Sequence& sequence, std::size_t
     return elapsed;
   }
   case Game::Midi::SMPTE:
-    return sf::seconds((float)(end - start) / (float)_timeValue);
+    return (float)(end - start) / (float)_timeValue;
   default:
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
     break;

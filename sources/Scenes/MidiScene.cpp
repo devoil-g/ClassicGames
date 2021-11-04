@@ -16,9 +16,6 @@ Game::MidiScene::MidiScene(Game::SceneMachine& machine) :
   _octave(0),
   _wave()
 {
-  // TODO: remove this
-  Game::Midi(Game::Config::ExecutablePath + "/assets/levels/level1.mid");
-
   for (int index = 0; index < _wave.size(); index++)
     _wave[index] = std::cos((float)index / (float)_wave.size() * 2.f * Math::Pi);
 
@@ -29,6 +26,11 @@ Game::MidiScene::MidiScene(Game::SceneMachine& machine) :
 
 bool  Game::MidiScene::update(sf::Time elapsed)
 {
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Enter) == true) {
+    Game::Midi  midi(Game::Config::ExecutablePath + "/assets/levels/level1.mid");
+    midi.generate(midi.sequences.front(), 44100);
+  }
+
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Escape) == true)
     _machine.pop();
 

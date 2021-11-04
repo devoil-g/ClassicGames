@@ -7,9 +7,6 @@
 #include <list>
 #include <unordered_map>
 
-#include <SFML/Audio/Sound.hpp>
-#include <SFML/Audio/SoundBuffer.hpp>
-
 namespace Game
 {
   class Midi
@@ -562,8 +559,6 @@ namespace Game
             // No matching data
             return default;
           }
-
-          
         };
 
         std::string                     name;     // Name of the track
@@ -623,11 +618,18 @@ namespace Game
     uint64_t    loadVariableLengthQuantity(std::ifstream& file);  // Load a Variable Length Quantity number
     std::string loadText(std::ifstream& file);                    // Load a string (length + text)
 
-    sf::Time    duration(const Game::Midi::Sequence& sequence, std::size_t tic) const;                    // Translate MIDI clock time to SFML time
-    sf::Time    duration(const Game::Midi::Sequence& sequence, std::size_t start, std::size_t end) const; // Translate MIDI clock time interval to SFML time
+    float duration(const Game::Midi::Sequence& sequence, std::size_t tic) const;                    // Translate MIDI clock time to SFML time
+    float duration(const Game::Midi::Sequence& sequence, std::size_t start, std::size_t end) const; // Translate MIDI clock time interval to SFML time
 
     void  generateTrack(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, std::vector<float>& buffer, std::size_t sampleRate) const;
-    float generateMix(float a, float b) const;  // Mix two audio samples
+    void  generateChannel(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, const Game::Midi::Sequence::Track::Channel& channel, std::vector<float>& buffer, std::size_t sampleRate) const;
+
+    std::size_t generateChannelHold(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, const Game::Midi::Sequence::Track::Channel& channel, const std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>& start, const std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>& end) const;
+    std::size_t generateChannelSustenuto(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, const Game::Midi::Sequence::Track::Channel& channel, const std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>& start, const std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>& end) const;
+    float       generateChannelSoft(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, const Game::Midi::Sequence::Track::Channel& channel, const std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>& start, const std::pair<std::size_t, Game::Midi::Sequence::Track::Channel::Key>& end) const;
+    void        generateChannelVolume(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, const Game::Midi::Sequence::Track::Channel& channel, std::vector<float>& buffer, std::size_t sample_rate) const;
+    void        generateChannelPan(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, const Game::Midi::Sequence::Track::Channel& channel, std::vector<float>& buffer, std::size_t sample_rate) const;
+    void        generateChannelBalance(const Game::Midi::Sequence& sequence, const Game::Midi::Sequence::Track& track, const Game::Midi::Sequence::Track::Channel& channel, std::vector<float>& buffer, std::size_t sample_rate) const;
 
   public:
     Midi(const std::string& filename);
