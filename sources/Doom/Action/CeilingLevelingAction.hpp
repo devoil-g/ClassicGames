@@ -31,11 +31,11 @@ namespace DOOM
       if (Direction == DOOM::EnumAction::Direction::DirectionDown) {
         sf::Time  original = elapsed;
 
-        elapsed = updateCeilingLower(doom, sector, elapsed, _target, Speed / 8.f);
+        elapsed = updateCeilingLower(doom, sector, elapsed, _target, (float)Speed / 8.f);
 
         // Crush things
         if (Crush == true && elapsed > sf::Time::Zero)
-          elapsed = updateCeilingCrush(doom, sector, elapsed, _target, Speed / 8.f);
+          elapsed = updateCeilingCrush(doom, sector, elapsed, _target, (float)Speed / 8.f);
 
         // Collision, stop sound
         if (elapsed > sf::Time::Zero && sector.ceiling_current != _target)
@@ -48,7 +48,7 @@ namespace DOOM
 
       // Raise ceiling
       else
-        updateCeilingRaise(doom, sector, elapsed, _target, Speed / 8.f);
+        updateCeilingRaise(doom, sector, elapsed, _target, (float)Speed / 8.f);
 
       // Detect end of action
       if (sector.ceiling_current == _target) {

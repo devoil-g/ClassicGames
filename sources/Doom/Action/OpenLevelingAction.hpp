@@ -25,8 +25,8 @@ namespace DOOM
     void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) override  // Update door action
     {
       // Update floor and ceiling height
-      updateFloorLower(doom, sector, elapsed, _target_floor, Speed / 8.f);
-      updateCeilingRaise(doom, sector, elapsed, _target_ceiling, Speed / 8.f);
+      updateFloorLower(doom, sector, elapsed, _target_floor, (float)Speed / 8.f);
+      updateCeilingRaise(doom, sector, elapsed, _target_ceiling, (float)Speed / 8.f);
 
       // Detect end of action
       if (sector.floor_current == _target_floor && sector.ceiling_current == _target_ceiling) {

@@ -49,7 +49,7 @@ namespace DOOM
         {
         case State::Raise:
           // Raise floor
-          elapsed = updateFloorRaise(doom, sector, elapsed, _high, Speed / 8.f);
+          elapsed = updateFloorRaise(doom, sector, elapsed, _high, (float)Speed / 8.f);
 
           // Reached top
           if (sector.floor_current == _high) {
@@ -72,7 +72,7 @@ namespace DOOM
 
         case State::Lower:
           // Lower floor
-          elapsed = updateFloorLower(doom, sector, elapsed, _low, Speed / 8.f);
+          elapsed = updateFloorLower(doom, sector, elapsed, _low, (float)Speed / 8.f);
 
           // Reached bottom
           if (sector.floor_current == _low) {

@@ -29,7 +29,7 @@ void  DOOM::Camera::render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<i
     return;
 
   // Reset optimization structure
-  _buffer.assign(rect.width * rect.height, { -1, std::numeric_limits<float>::quiet_NaN(), -1, -1 });
+  _buffer.assign(rect.width * rect.height, { .segment = -1, .height = std::numeric_limits<float>::quiet_NaN(), .colormap = -1, .color = -1 });
   _vertical.assign(rect.width, { 0, rect.height });
   _horizontal = { 0, rect.width };
 

@@ -27,7 +27,7 @@ Game::MidiScene::MidiScene(Game::SceneMachine& machine) :
 bool  Game::MidiScene::update(sf::Time elapsed)
 {
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Enter) == true) {
-    Game::Midi  midi(Game::Config::ExecutablePath + "/assets/levels/level1.mid");
+    Game::Midi  midi(Game::Config::ExecutablePath + "/assets/levels/beethoven.mid");
     midi.generate(midi.sequences.front(), 44100);
   }
 

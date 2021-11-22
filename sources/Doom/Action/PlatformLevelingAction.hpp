@@ -41,7 +41,7 @@ namespace DOOM
         {
         case State::Raise:
           // Raise floor
-          elapsed = DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::updateFloorRaise(doom, sector, elapsed, _target, Speed / 8.f);
+          elapsed = DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::updateFloorRaise(doom, sector, elapsed, _target, (float)Speed / 8.f);
 
           // End of state
           if (sector.floor_current == _target) {
@@ -61,7 +61,7 @@ namespace DOOM
 
         case State::Lower:
           // Lower floor
-          elapsed = DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::updateFloorLower(doom, sector, elapsed, _target, Speed / 8.f);
+          elapsed = DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::updateFloorLower(doom, sector, elapsed, _target, (float)Speed / 8.f);
 
           // End of state
           if (sector.floor_current == _target) {

@@ -11,8 +11,8 @@ const float	DOOM::AbstractThing::FloatSpeed = 4.f;
 const float	DOOM::AbstractThing::SkullSpeed = 20.f;
 const int	DOOM::AbstractThing::TargetThreshold = 100;
 const int	DOOM::AbstractThing::MaxRadius = 32;
-const float     DOOM::AbstractThing::FatSpread = Math::Pi / 16.f;
-const float     DOOM::AbstractThing::TracerAngle = 12.f / 255.f * 2.f * Math::Pi;
+const float DOOM::AbstractThing::FatSpread = Math::Pi / 16.f;
+const float DOOM::AbstractThing::TracerAngle = 12.f / 255.f * 2.f * Math::Pi;
 
 const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>	DOOM::AbstractThing::_sprites =
 {
@@ -34,4721 +34,4721 @@ const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>	D
 
 const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::State_Number>	DOOM::AbstractThing::_states =
 {
-  DOOM::AbstractThing::State{ Sprite_TROO, 0, false, -1, nullptr, State_None },			// State_None
-  DOOM::AbstractThing::State{ Sprite_BLUD, 2, false, 8, nullptr, State_BLOOD2 },		// State_BLOOD1
-  DOOM::AbstractThing::State{ Sprite_BLUD, 1, false, 8, nullptr, State_BLOOD3 },		// State_BLOOD2
-  DOOM::AbstractThing::State{ Sprite_BLUD, 0, false, 8, nullptr, State_None },			// State_BLOOD3
-  DOOM::AbstractThing::State{ Sprite_PUFF, 0, true, 4, nullptr, State_PUFF2 },			// State_PUFF1
-  DOOM::AbstractThing::State{ Sprite_PUFF, 1, false, 4, nullptr, State_PUFF3 },			// State_PUFF2
-  DOOM::AbstractThing::State{ Sprite_PUFF, 2, false, 4, nullptr, State_PUFF4 },			// State_PUFF3
-  DOOM::AbstractThing::State{ Sprite_PUFF, 3, false, 4, nullptr, State_None },			// State_PUFF4
-  DOOM::AbstractThing::State{ Sprite_BAL1, 0, true, 4, nullptr, State_TBALL2 },			// State_TBALL1
-  DOOM::AbstractThing::State{ Sprite_BAL1, 1, true, 4, nullptr, State_TBALL1 },			// State_TBALL2
-  DOOM::AbstractThing::State{ Sprite_BAL1, 2, true, 6, nullptr, State_TBALLX2 },		// State_TBALLX1
-  DOOM::AbstractThing::State{ Sprite_BAL1, 3, true, 6, nullptr, State_TBALLX3 },		// State_TBALLX2
-  DOOM::AbstractThing::State{ Sprite_BAL1, 4, true, 6, nullptr, State_None },			// State_TBALLX3
-  DOOM::AbstractThing::State{ Sprite_BAL2, 0, true, 4, nullptr, State_RBALL2 },			// State_RBALL1
-  DOOM::AbstractThing::State{ Sprite_BAL2, 1, true, 4, nullptr, State_RBALL1 },			// State_RBALL2
-  DOOM::AbstractThing::State{ Sprite_BAL2, 2, true, 6, nullptr, State_RBALLX2 },		// State_RBALLX1
-  DOOM::AbstractThing::State{ Sprite_BAL2, 3, true, 6, nullptr, State_RBALLX3 },		// State_RBALLX2
-  DOOM::AbstractThing::State{ Sprite_BAL2, 4, true, 6, nullptr, State_None },			// State_RBALLX3
-  DOOM::AbstractThing::State{ Sprite_PLSS, 0, true, 6, nullptr, State_PLASBALL2 },		// State_PLASBALL
-  DOOM::AbstractThing::State{ Sprite_PLSS, 1, true, 6, nullptr, State_PLASBALL },		// State_PLASBALL2
-  DOOM::AbstractThing::State{ Sprite_PLSE, 0, true, 4, nullptr, State_PLASEXP2 },		// State_PLASEXP
-  DOOM::AbstractThing::State{ Sprite_PLSE, 1, true, 4, nullptr, State_PLASEXP3 },		// State_PLASEXP2
-  DOOM::AbstractThing::State{ Sprite_PLSE, 2, true, 4, nullptr, State_PLASEXP4 },		// State_PLASEXP3
-  DOOM::AbstractThing::State{ Sprite_PLSE, 3, true, 4, nullptr, State_PLASEXP5 },		// State_PLASEXP4
-  DOOM::AbstractThing::State{ Sprite_PLSE, 4, true, 4, nullptr, State_None },			// State_PLASEXP5
-  DOOM::AbstractThing::State{ Sprite_MISL, 0, true, 1, &DOOM::AbstractThing::A_MissileSmoke, State_ROCKET },		// State_ROCKET
-  DOOM::AbstractThing::State{ Sprite_BFS1, 0, true, 4, nullptr, State_BFGSHOT2 },		// State_BFGSHOT
-  DOOM::AbstractThing::State{ Sprite_BFS1, 1, true, 4, nullptr, State_BFGSHOT },		// State_BFGSHOT2
-  DOOM::AbstractThing::State{ Sprite_BFE1, 0, true, 8, nullptr, State_BFGLAND2 },		// State_BFGLAND
-  DOOM::AbstractThing::State{ Sprite_BFE1, 1, true, 8, nullptr, State_BFGLAND3 },		// State_BFGLAND2
-  DOOM::AbstractThing::State{ Sprite_BFE1, 2, true, 8, &DOOM::AbstractThing::A_BFGSpray, State_BFGLAND4 },		// State_BFGLAND3
-  DOOM::AbstractThing::State{ Sprite_BFE1, 3, true, 8, nullptr, State_BFGLAND5 },		// State_BFGLAND4
-  DOOM::AbstractThing::State{ Sprite_BFE1, 4, true, 8, nullptr, State_BFGLAND6 },		// State_BFGLAND5
-  DOOM::AbstractThing::State{ Sprite_BFE1, 5, true, 8, nullptr, State_None },			// State_BFGLAND6
-  DOOM::AbstractThing::State{ Sprite_BFE2, 0, true, 8, nullptr, State_BFGEXP2 },		// State_BFGEXP
-  DOOM::AbstractThing::State{ Sprite_BFE2, 1, true, 8, nullptr, State_BFGEXP3 },		// State_BFGEXP2
-  DOOM::AbstractThing::State{ Sprite_BFE2, 2, true, 8, nullptr, State_BFGEXP4 },		// State_BFGEXP3
-  DOOM::AbstractThing::State{ Sprite_BFE2, 3, true, 8, nullptr, State_None },			// State_BFGEXP4
-  DOOM::AbstractThing::State{ Sprite_MISL, 1, true, 8, &DOOM::AbstractThing::A_Explode, State_EXPLODE2 },		// State_EXPLODE1
-  DOOM::AbstractThing::State{ Sprite_MISL, 2, true, 6, nullptr, State_EXPLODE3 },		// State_EXPLODE2
-  DOOM::AbstractThing::State{ Sprite_MISL, 3, true, 4, nullptr, State_None },			// State_EXPLODE3
-  DOOM::AbstractThing::State{ Sprite_TFOG, 0, true, 6, nullptr, State_TFOG01 },			// State_TFOG
-  DOOM::AbstractThing::State{ Sprite_TFOG, 1, true, 6, nullptr, State_TFOG02 },			// State_TFOG01
-  DOOM::AbstractThing::State{ Sprite_TFOG, 0, true, 6, nullptr, State_TFOG2 },			// State_TFOG02
-  DOOM::AbstractThing::State{ Sprite_TFOG, 1, true, 6, nullptr, State_TFOG3 },			// State_TFOG2
-  DOOM::AbstractThing::State{ Sprite_TFOG, 2, true, 6, nullptr, State_TFOG4 },			// State_TFOG3
-  DOOM::AbstractThing::State{ Sprite_TFOG, 3, true, 6, nullptr, State_TFOG5 },			// State_TFOG4
-  DOOM::AbstractThing::State{ Sprite_TFOG, 4, true, 6, nullptr, State_TFOG6 },			// State_TFOG5
-  DOOM::AbstractThing::State{ Sprite_TFOG, 5, true, 6, nullptr, State_TFOG7 },			// State_TFOG6
-  DOOM::AbstractThing::State{ Sprite_TFOG, 6, true, 6, nullptr, State_TFOG8 },			// State_TFOG7
-  DOOM::AbstractThing::State{ Sprite_TFOG, 7, true, 6, nullptr, State_TFOG9 },			// State_TFOG8
-  DOOM::AbstractThing::State{ Sprite_TFOG, 8, true, 6, nullptr, State_TFOG10 },			// State_TFOG9
-  DOOM::AbstractThing::State{ Sprite_TFOG, 9, true, 6, nullptr, State_None },			// State_TFOG10
-  DOOM::AbstractThing::State{ Sprite_IFOG, 0, true, 6, nullptr, State_IFOG01 },			// State_IFOG
-  DOOM::AbstractThing::State{ Sprite_IFOG, 1, true, 6, nullptr, State_IFOG02 },			// State_IFOG01
-  DOOM::AbstractThing::State{ Sprite_IFOG, 0, true, 6, nullptr, State_IFOG2 },			// State_IFOG02
-  DOOM::AbstractThing::State{ Sprite_IFOG, 1, true, 6, nullptr, State_IFOG3 },			// State_IFOG2
-  DOOM::AbstractThing::State{ Sprite_IFOG, 2, true, 6, nullptr, State_IFOG4 },			// State_IFOG3
-  DOOM::AbstractThing::State{ Sprite_IFOG, 3, true, 6, nullptr, State_IFOG5 },			// State_IFOG4
-  DOOM::AbstractThing::State{ Sprite_IFOG, 4, true, 6, nullptr, State_None },			// State_IFOG5
-  DOOM::AbstractThing::State{ Sprite_PLAY, 0, false, -1, nullptr, State_None },			// State_PLAY
-  DOOM::AbstractThing::State{ Sprite_PLAY, 0, false, 4, nullptr, State_PLAY_RUN2 },		// State_PLAY_RUN1
-  DOOM::AbstractThing::State{ Sprite_PLAY, 1, false, 4, nullptr, State_PLAY_RUN3 },		// State_PLAY_RUN2
-  DOOM::AbstractThing::State{ Sprite_PLAY, 2, false, 4, nullptr, State_PLAY_RUN4 },		// State_PLAY_RUN3
-  DOOM::AbstractThing::State{ Sprite_PLAY, 3, false, 4, nullptr, State_PLAY_RUN1 },		// State_PLAY_RUN4
-  DOOM::AbstractThing::State{ Sprite_PLAY, 4, false, 12, nullptr, State_PLAY },			// State_PLAY_ATK1
-  DOOM::AbstractThing::State{ Sprite_PLAY, 5, true, 6, nullptr, State_PLAY_ATK1 },		// State_PLAY_ATK2
-  DOOM::AbstractThing::State{ Sprite_PLAY, 6, false, 4, nullptr, State_PLAY_PAIN2 },		// State_PLAY_PAIN
-  DOOM::AbstractThing::State{ Sprite_PLAY, 6, false, 4, &DOOM::AbstractThing::A_Pain, State_PLAY },			// State_PLAY_PAIN2
-  DOOM::AbstractThing::State{ Sprite_PLAY, 7, false, 10, nullptr, State_PLAY_DIE2 },		// State_PLAY_DIE1
-  DOOM::AbstractThing::State{ Sprite_PLAY, 8, false, 10, &DOOM::AbstractThing::A_PlayerScream, State_PLAY_DIE3 },	// State_PLAY_DIE2
-  DOOM::AbstractThing::State{ Sprite_PLAY, 9, false, 10, &DOOM::AbstractThing::A_Fall, State_PLAY_DIE4 },		// State_PLAY_DIE3
-  DOOM::AbstractThing::State{ Sprite_PLAY, 10, false, 10, nullptr, State_PLAY_DIE5 },		// State_PLAY_DIE4
-  DOOM::AbstractThing::State{ Sprite_PLAY, 11, false, 10, nullptr, State_PLAY_DIE6 },		// State_PLAY_DIE5
-  DOOM::AbstractThing::State{ Sprite_PLAY, 12, false, 10, nullptr, State_PLAY_DIE7 },		// State_PLAY_DIE6
-  DOOM::AbstractThing::State{ Sprite_PLAY, 13, false, -1, nullptr, State_None },		// State_PLAY_DIE7
-  DOOM::AbstractThing::State{ Sprite_PLAY, 14, false, 5, nullptr, State_PLAY_XDIE2 },		// State_PLAY_XDIE1
-  DOOM::AbstractThing::State{ Sprite_PLAY, 15, false, 5, &DOOM::AbstractThing::A_XScream, State_PLAY_XDIE3 },	// State_PLAY_XDIE2
-  DOOM::AbstractThing::State{ Sprite_PLAY, 16, false, 5, &DOOM::AbstractThing::A_Fall, State_PLAY_XDIE4 },		// State_PLAY_XDIE3
-  DOOM::AbstractThing::State{ Sprite_PLAY, 17, false, 5, nullptr, State_PLAY_XDIE5 },		// State_PLAY_XDIE4
-  DOOM::AbstractThing::State{ Sprite_PLAY, 18, false, 5, nullptr, State_PLAY_XDIE6 },		// State_PLAY_XDIE5
-  DOOM::AbstractThing::State{ Sprite_PLAY, 19, false, 5, nullptr, State_PLAY_XDIE7 },		// State_PLAY_XDIE6
-  DOOM::AbstractThing::State{ Sprite_PLAY, 20, false, 5, nullptr, State_PLAY_XDIE8 },		// State_PLAY_XDIE7
-  DOOM::AbstractThing::State{ Sprite_PLAY, 21, false, 5, nullptr, State_PLAY_XDIE9 },		// State_PLAY_XDIE8
-  DOOM::AbstractThing::State{ Sprite_PLAY, 22, false, -1, nullptr, State_None },		// State_PLAY_XDIE9
-  DOOM::AbstractThing::State{ Sprite_POSS, 0, false, 10, &DOOM::AbstractThing::A_Look, State_POSS_STND2 },		// State_POSS_STND
-  DOOM::AbstractThing::State{ Sprite_POSS, 1, false, 10, &DOOM::AbstractThing::A_Look, State_POSS_STND },		// State_POSS_STND2
-  DOOM::AbstractThing::State{ Sprite_POSS, 0, false, 4, &DOOM::AbstractThing::A_Chase, State_POSS_RUN2 },		// State_POSS_RUN1
-  DOOM::AbstractThing::State{ Sprite_POSS, 0, false, 4, &DOOM::AbstractThing::A_Chase, State_POSS_RUN3 },		// State_POSS_RUN2
-  DOOM::AbstractThing::State{ Sprite_POSS, 1, false, 4, &DOOM::AbstractThing::A_Chase, State_POSS_RUN4 },		// State_POSS_RUN3
-  DOOM::AbstractThing::State{ Sprite_POSS, 1, false, 4, &DOOM::AbstractThing::A_Chase, State_POSS_RUN5 },		// State_POSS_RUN4
-  DOOM::AbstractThing::State{ Sprite_POSS, 2, false, 4, &DOOM::AbstractThing::A_Chase, State_POSS_RUN6 },		// State_POSS_RUN5
-  DOOM::AbstractThing::State{ Sprite_POSS, 2, false, 4, &DOOM::AbstractThing::A_Chase, State_POSS_RUN7 },		// State_POSS_RUN6
-  DOOM::AbstractThing::State{ Sprite_POSS, 3, false, 4, &DOOM::AbstractThing::A_Chase, State_POSS_RUN8 },		// State_POSS_RUN7
-  DOOM::AbstractThing::State{ Sprite_POSS, 3, false, 4, &DOOM::AbstractThing::A_Chase, State_POSS_RUN1 },		// State_POSS_RUN8
-  DOOM::AbstractThing::State{ Sprite_POSS, 4, false, 10, &DOOM::AbstractThing::A_FaceTarget, State_POSS_ATK2 },	// State_POSS_ATK1
-  DOOM::AbstractThing::State{ Sprite_POSS, 5, false, 8, &DOOM::AbstractThing::A_PosAttack, State_POSS_ATK3 },	// State_POSS_ATK2
-  DOOM::AbstractThing::State{ Sprite_POSS, 4, false, 8, nullptr, State_POSS_RUN1 },		// State_POSS_ATK3
-  DOOM::AbstractThing::State{ Sprite_POSS, 6, false, 3, nullptr, State_POSS_PAIN2 },		// State_POSS_PAIN
-  DOOM::AbstractThing::State{ Sprite_POSS, 6, false, 3, &DOOM::AbstractThing::A_Pain, State_POSS_RUN1 },		// State_POSS_PAIN2
-  DOOM::AbstractThing::State{ Sprite_POSS, 7, false, 5, nullptr, State_POSS_DIE2 },		// State_POSS_DIE1
-  DOOM::AbstractThing::State{ Sprite_POSS, 8, false, 5, &DOOM::AbstractThing::A_Scream, State_POSS_DIE3 },		// State_POSS_DIE2
-  DOOM::AbstractThing::State{ Sprite_POSS, 9, false, 5, &DOOM::AbstractThing::A_Fall, State_POSS_DIE4 },		// State_POSS_DIE3
-  DOOM::AbstractThing::State{ Sprite_POSS, 10, false, 5, nullptr, State_POSS_DIE5 },		// State_POSS_DIE4
-  DOOM::AbstractThing::State{ Sprite_POSS, 11, false, -1, nullptr, State_None },		// State_POSS_DIE5
-  DOOM::AbstractThing::State{ Sprite_POSS, 12, false, 5, nullptr, State_POSS_XDIE2 },		// State_POSS_XDIE1
-  DOOM::AbstractThing::State{ Sprite_POSS, 13, false, 5, &DOOM::AbstractThing::A_XScream, State_POSS_XDIE3 },	// State_POSS_XDIE2
-  DOOM::AbstractThing::State{ Sprite_POSS, 14, false, 5, &DOOM::AbstractThing::A_Fall, State_POSS_XDIE4 },		// State_POSS_XDIE3
-  DOOM::AbstractThing::State{ Sprite_POSS, 15, false, 5, nullptr, State_POSS_XDIE5 },		// State_POSS_XDIE4
-  DOOM::AbstractThing::State{ Sprite_POSS, 16, false, 5, nullptr, State_POSS_XDIE6 },		// State_POSS_XDIE5
-  DOOM::AbstractThing::State{ Sprite_POSS, 17, false, 5, nullptr, State_POSS_XDIE7 },		// State_POSS_XDIE6
-  DOOM::AbstractThing::State{ Sprite_POSS, 18, false, 5, nullptr, State_POSS_XDIE8 },		// State_POSS_XDIE7
-  DOOM::AbstractThing::State{ Sprite_POSS, 19, false, 5, nullptr, State_POSS_XDIE9 },		// State_POSS_XDIE8
-  DOOM::AbstractThing::State{ Sprite_POSS, 20, false, -1, nullptr, State_None },		// State_POSS_XDIE9
-  DOOM::AbstractThing::State{ Sprite_POSS, 10, false, 5, nullptr, State_POSS_RAISE2 },		// State_POSS_RAISE1
-  DOOM::AbstractThing::State{ Sprite_POSS, 9, false, 5, nullptr, State_POSS_RAISE3 },		// State_POSS_RAISE2
-  DOOM::AbstractThing::State{ Sprite_POSS, 8, false, 5, nullptr, State_POSS_RAISE4 },		// State_POSS_RAISE3
-  DOOM::AbstractThing::State{ Sprite_POSS, 7, false, 5, nullptr, State_POSS_RUN1 },		// State_POSS_RAISE4
-  DOOM::AbstractThing::State{ Sprite_SPOS, 0, false, 10, &DOOM::AbstractThing::A_Look, State_SPOS_STND2 },		// State_SPOS_STND
-  DOOM::AbstractThing::State{ Sprite_SPOS, 1, false, 10, &DOOM::AbstractThing::A_Look, State_SPOS_STND },		// State_SPOS_STND2
-  DOOM::AbstractThing::State{ Sprite_SPOS, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_SPOS_RUN2 },		// State_SPOS_RUN1
-  DOOM::AbstractThing::State{ Sprite_SPOS, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_SPOS_RUN3 },		// State_SPOS_RUN2
-  DOOM::AbstractThing::State{ Sprite_SPOS, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_SPOS_RUN4 },		// State_SPOS_RUN3
-  DOOM::AbstractThing::State{ Sprite_SPOS, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_SPOS_RUN5 },		// State_SPOS_RUN4
-  DOOM::AbstractThing::State{ Sprite_SPOS, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_SPOS_RUN6 },		// State_SPOS_RUN5
-  DOOM::AbstractThing::State{ Sprite_SPOS, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_SPOS_RUN7 },		// State_SPOS_RUN6
-  DOOM::AbstractThing::State{ Sprite_SPOS, 3, false, 3, &DOOM::AbstractThing::A_Chase, State_SPOS_RUN8 },		// State_SPOS_RUN7
-  DOOM::AbstractThing::State{ Sprite_SPOS, 3, false, 3, &DOOM::AbstractThing::A_Chase, State_SPOS_RUN1 },		// State_SPOS_RUN8
-  DOOM::AbstractThing::State{ Sprite_SPOS, 4, false, 10, &DOOM::AbstractThing::A_FaceTarget, State_SPOS_ATK2 },	// State_SPOS_ATK1
-  DOOM::AbstractThing::State{ Sprite_SPOS, 5, true, 10, &DOOM::AbstractThing::A_SPosAttack, State_SPOS_ATK3 },	// State_SPOS_ATK2
-  DOOM::AbstractThing::State{ Sprite_SPOS, 4, false, 10, nullptr, State_SPOS_RUN1 },		// State_SPOS_ATK3
-  DOOM::AbstractThing::State{ Sprite_SPOS, 6, false, 3, nullptr, State_SPOS_PAIN2 },		// State_SPOS_PAIN
-  DOOM::AbstractThing::State{ Sprite_SPOS, 6, false, 3, &DOOM::AbstractThing::A_Pain, State_SPOS_RUN1 },		// State_SPOS_PAIN2
-  DOOM::AbstractThing::State{ Sprite_SPOS, 7, false, 5, nullptr, State_SPOS_DIE2 },		// State_SPOS_DIE1
-  DOOM::AbstractThing::State{ Sprite_SPOS, 8, false, 5, &DOOM::AbstractThing::A_Scream, State_SPOS_DIE3 },		// State_SPOS_DIE2
-  DOOM::AbstractThing::State{ Sprite_SPOS, 9, false, 5, &DOOM::AbstractThing::A_Fall, State_SPOS_DIE4 },		// State_SPOS_DIE3
-  DOOM::AbstractThing::State{ Sprite_SPOS, 10, false, 5, nullptr, State_SPOS_DIE5 },		// State_SPOS_DIE4
-  DOOM::AbstractThing::State{ Sprite_SPOS, 11, false, -1, nullptr, State_None },		// State_SPOS_DIE5
-  DOOM::AbstractThing::State{ Sprite_SPOS, 12, false, 5, nullptr, State_SPOS_XDIE2 },		// State_SPOS_XDIE1
-  DOOM::AbstractThing::State{ Sprite_SPOS, 13, false, 5, &DOOM::AbstractThing::A_XScream, State_SPOS_XDIE3 },	// State_SPOS_XDIE2
-  DOOM::AbstractThing::State{ Sprite_SPOS, 14, false, 5, &DOOM::AbstractThing::A_Fall, State_SPOS_XDIE4 },		// State_SPOS_XDIE3
-  DOOM::AbstractThing::State{ Sprite_SPOS, 15, false, 5, nullptr, State_SPOS_XDIE5 },		// State_SPOS_XDIE4
-  DOOM::AbstractThing::State{ Sprite_SPOS, 16, false, 5, nullptr, State_SPOS_XDIE6 },		// State_SPOS_XDIE5
-  DOOM::AbstractThing::State{ Sprite_SPOS, 17, false, 5, nullptr, State_SPOS_XDIE7 },		// State_SPOS_XDIE6
-  DOOM::AbstractThing::State{ Sprite_SPOS, 18, false, 5, nullptr, State_SPOS_XDIE8 },		// State_SPOS_XDIE7
-  DOOM::AbstractThing::State{ Sprite_SPOS, 19, false, 5, nullptr, State_SPOS_XDIE9 },		// State_SPOS_XDIE8
-  DOOM::AbstractThing::State{ Sprite_SPOS, 20, false, -1, nullptr, State_None },		// State_SPOS_XDIE9
-  DOOM::AbstractThing::State{ Sprite_SPOS, 11, false, 5, nullptr, State_SPOS_RAISE2 },		// State_SPOS_RAISE1
-  DOOM::AbstractThing::State{ Sprite_SPOS, 10, false, 5, nullptr, State_SPOS_RAISE3 },		// State_SPOS_RAISE2
-  DOOM::AbstractThing::State{ Sprite_SPOS, 9, false, 5, nullptr, State_SPOS_RAISE4 },		// State_SPOS_RAISE3
-  DOOM::AbstractThing::State{ Sprite_SPOS, 8, false, 5, nullptr, State_SPOS_RAISE5 },		// State_SPOS_RAISE4
-  DOOM::AbstractThing::State{ Sprite_SPOS, 7, false, 5, nullptr, State_SPOS_RUN1 },		// State_SPOState_RAISE5
-  DOOM::AbstractThing::State{ Sprite_VILE, 0, false, 10, &DOOM::AbstractThing::A_Look, State_VILE_STND2 },		// State_VILE_STND
-  DOOM::AbstractThing::State{ Sprite_VILE, 1, false, 10, &DOOM::AbstractThing::A_Look, State_VILE_STND },		// State_VILE_STND2
-  DOOM::AbstractThing::State{ Sprite_VILE, 0, false, 2, &DOOM::AbstractThing::A_VileChase, State_VILE_RUN2 },	// State_VILE_RUN1
-  DOOM::AbstractThing::State{ Sprite_VILE, 0, false, 2, &DOOM::AbstractThing::A_VileChase, State_VILE_RUN3 },	// State_VILE_RUN2
-  DOOM::AbstractThing::State{ Sprite_VILE, 1, false, 2, &DOOM::AbstractThing::A_VileChase, State_VILE_RUN4 },	// State_VILE_RUN3
-  DOOM::AbstractThing::State{ Sprite_VILE, 1, false, 2, &DOOM::AbstractThing::A_VileChase, State_VILE_RUN5 },	// State_VILE_RUN4
-  DOOM::AbstractThing::State{ Sprite_VILE, 2, false, 2, &DOOM::AbstractThing::A_VileChase, State_VILE_RUN6 },	// State_VILE_RUN5
-  DOOM::AbstractThing::State{ Sprite_VILE, 2, false, 2, &DOOM::AbstractThing::A_VileChase, State_VILE_RUN7 },	// State_VILE_RUN6
-  DOOM::AbstractThing::State{ Sprite_VILE, 3, false, 2, &DOOM::AbstractThing::A_VileChase, State_VILE_RUN8 },	// State_VILE_RUN7
-  DOOM::AbstractThing::State{ Sprite_VILE, 3, false, 2, &DOOM::AbstractThing::A_VileChase, State_VILE_RUN9 },	// State_VILE_RUN8
-  DOOM::AbstractThing::State{ Sprite_VILE, 4, false, 2, &DOOM::AbstractThing::A_VileChase, State_VILE_RUN10 },	// State_VILE_RUN9
-  DOOM::AbstractThing::State{ Sprite_VILE, 4, false, 2, &DOOM::AbstractThing::A_VileChase, State_VILE_RUN11 },	// State_VILE_RUN10
-  DOOM::AbstractThing::State{ Sprite_VILE, 5, false, 2, &DOOM::AbstractThing::A_VileChase, State_VILE_RUN12 },	// State_VILE_RUN11
-  DOOM::AbstractThing::State{ Sprite_VILE, 5, false, 2, &DOOM::AbstractThing::A_VileChase, State_VILE_RUN1 },	// State_VILE_RUN12
-  DOOM::AbstractThing::State{ Sprite_VILE, 6, true, 0, &DOOM::AbstractThing::A_VileStart, State_VILE_ATK2 },		// State_VILE_ATK1
-  DOOM::AbstractThing::State{ Sprite_VILE, 6, true, 10, &DOOM::AbstractThing::A_FaceTarget, State_VILE_ATK3 },	// State_VILE_ATK2
-  DOOM::AbstractThing::State{ Sprite_VILE, 7, true, 8, &DOOM::AbstractThing::A_VileTarget, State_VILE_ATK4 },	// State_VILE_ATK3
-  DOOM::AbstractThing::State{ Sprite_VILE, 8, true, 8, &DOOM::AbstractThing::A_FaceTarget, State_VILE_ATK5 },	// State_VILE_ATK4
-  DOOM::AbstractThing::State{ Sprite_VILE, 9, true, 8, &DOOM::AbstractThing::A_FaceTarget, State_VILE_ATK6 },	// State_VILE_ATK5
-  DOOM::AbstractThing::State{ Sprite_VILE, 10, true, 8, &DOOM::AbstractThing::A_FaceTarget, State_VILE_ATK7 },	// State_VILE_ATK6
-  DOOM::AbstractThing::State{ Sprite_VILE, 11, true, 8, &DOOM::AbstractThing::A_FaceTarget, State_VILE_ATK8 },	// State_VILE_ATK7
-  DOOM::AbstractThing::State{ Sprite_VILE, 12, true, 8, &DOOM::AbstractThing::A_FaceTarget, State_VILE_ATK9 },	// State_VILE_ATK8
-  DOOM::AbstractThing::State{ Sprite_VILE, 13, true, 8, &DOOM::AbstractThing::A_FaceTarget, State_VILE_ATK10 },	// State_VILE_ATK9
-  DOOM::AbstractThing::State{ Sprite_VILE, 14, true, 8, &DOOM::AbstractThing::A_VileAttack, State_VILE_ATK11 },	// State_VILE_ATK10
-  DOOM::AbstractThing::State{ Sprite_VILE, 15, true, 20, nullptr, State_VILE_RUN1 },		// State_VILE_ATK11
-  DOOM::AbstractThing::State{ Sprite_VILE, 26, true, 10, nullptr, State_VILE_HEAL2 },		// State_VILE_HEAL1
-  DOOM::AbstractThing::State{ Sprite_VILE, 27, true, 10, nullptr, State_VILE_HEAL3 },		// State_VILE_HEAL2
-  DOOM::AbstractThing::State{ Sprite_VILE, 28, true, 10, nullptr, State_VILE_RUN1 },		// State_VILE_HEAL3
-  DOOM::AbstractThing::State{ Sprite_VILE, 16, false, 5, nullptr, State_VILE_PAIN2 },		// State_VILE_PAIN
-  DOOM::AbstractThing::State{ Sprite_VILE, 16, false, 5, &DOOM::AbstractThing::A_Pain, State_VILE_RUN1 },		// State_VILE_PAIN2
-  DOOM::AbstractThing::State{ Sprite_VILE, 16, false, 7, nullptr, State_VILE_DIE2 },		// State_VILE_DIE1
-  DOOM::AbstractThing::State{ Sprite_VILE, 17, false, 7, &DOOM::AbstractThing::A_Scream, State_VILE_DIE3 },		// State_VILE_DIE2
-  DOOM::AbstractThing::State{ Sprite_VILE, 18, false, 7, &DOOM::AbstractThing::A_Fall, State_VILE_DIE4 },		// State_VILE_DIE3
-  DOOM::AbstractThing::State{ Sprite_VILE, 19, false, 7, nullptr, State_VILE_DIE5 },		// State_VILE_DIE4
-  DOOM::AbstractThing::State{ Sprite_VILE, 20, false, 7, nullptr, State_VILE_DIE6 },		// State_VILE_DIE5
-  DOOM::AbstractThing::State{ Sprite_VILE, 21, false, 7, nullptr, State_VILE_DIE7 },		// State_VILE_DIE6
-  DOOM::AbstractThing::State{ Sprite_VILE, 22, false, 7, nullptr, State_VILE_DIE8 },		// State_VILE_DIE7
-  DOOM::AbstractThing::State{ Sprite_VILE, 23, false, 5, nullptr, State_VILE_DIE9 },		// State_VILE_DIE8
-  DOOM::AbstractThing::State{ Sprite_VILE, 24, false, 5, nullptr, State_VILE_DIE10 },		// State_VILE_DIE9
-  DOOM::AbstractThing::State{ Sprite_VILE, 25, false, -1, nullptr, State_None },		// State_VILE_DIE10
-  DOOM::AbstractThing::State{ Sprite_FIRE, 0, true, 2, &DOOM::AbstractThing::A_StartFire, State_FIRE2 },		// State_FIRE1
-  DOOM::AbstractThing::State{ Sprite_FIRE, 1, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE3 },			// State_FIRE2
-  DOOM::AbstractThing::State{ Sprite_FIRE, 0, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE4 },			// State_FIRE3
-  DOOM::AbstractThing::State{ Sprite_FIRE, 1, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE5 },			// State_FIRE4
-  DOOM::AbstractThing::State{ Sprite_FIRE, 2, true, 2, &DOOM::AbstractThing::A_FireCrackle, State_FIRE6 },		// State_FIRE5
-  DOOM::AbstractThing::State{ Sprite_FIRE, 1, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE7 },			// State_FIRE6
-  DOOM::AbstractThing::State{ Sprite_FIRE, 2, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE8 },			// State_FIRE7
-  DOOM::AbstractThing::State{ Sprite_FIRE, 1, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE9 },			// State_FIRE8
-  DOOM::AbstractThing::State{ Sprite_FIRE, 2, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE10 },			// State_FIRE9
-  DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE11 },			// State_FIRE10
-  DOOM::AbstractThing::State{ Sprite_FIRE, 2, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE12 },			// State_FIRE11
-  DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE13 },			// State_FIRE12
-  DOOM::AbstractThing::State{ Sprite_FIRE, 2, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE14 },			// State_FIRE13
-  DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE15 },			// State_FIRE14
-  DOOM::AbstractThing::State{ Sprite_FIRE, 4, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE16 },			// State_FIRE15
-  DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE17 },			// State_FIRE16
-  DOOM::AbstractThing::State{ Sprite_FIRE, 4, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE18 },			// State_FIRE17
-  DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE19 },			// State_FIRE18
-  DOOM::AbstractThing::State{ Sprite_FIRE, 4, true, 2, &DOOM::AbstractThing::A_FireCrackle, State_FIRE20 },		// State_FIRE19
-  DOOM::AbstractThing::State{ Sprite_FIRE, 5, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE21 },			// State_FIRE20
-  DOOM::AbstractThing::State{ Sprite_FIRE, 4, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE22 },			// State_FIRE21
-  DOOM::AbstractThing::State{ Sprite_FIRE, 5, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE23 },			// State_FIRE22
-  DOOM::AbstractThing::State{ Sprite_FIRE, 4, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE24 },			// State_FIRE23
-  DOOM::AbstractThing::State{ Sprite_FIRE, 5, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE25 },			// State_FIRE24
-  DOOM::AbstractThing::State{ Sprite_FIRE, 6, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE26 },			// State_FIRE25
-  DOOM::AbstractThing::State{ Sprite_FIRE, 7, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE27 },			// State_FIRE26
-  DOOM::AbstractThing::State{ Sprite_FIRE, 6, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE28 },			// State_FIRE27
-  DOOM::AbstractThing::State{ Sprite_FIRE, 7, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE29 },			// State_FIRE28
-  DOOM::AbstractThing::State{ Sprite_FIRE, 6, true, 2, &DOOM::AbstractThing::A_Fire, State_FIRE30 },			// State_FIRE29
-  DOOM::AbstractThing::State{ Sprite_FIRE, 7, true, 2, &DOOM::AbstractThing::A_Fire, State_None },			// State_FIRE30
-  DOOM::AbstractThing::State{ Sprite_PUFF, 1, false, 4, nullptr, State_SMOKE2 },		// State_SMOKE1
-  DOOM::AbstractThing::State{ Sprite_PUFF, 2, false, 4, nullptr, State_SMOKE3 },		// State_SMOKE2
-  DOOM::AbstractThing::State{ Sprite_PUFF, 1, false, 4, nullptr, State_SMOKE4 },		// State_SMOKE3
-  DOOM::AbstractThing::State{ Sprite_PUFF, 2, false, 4, nullptr, State_SMOKE5 },		// State_SMOKE4
-  DOOM::AbstractThing::State{ Sprite_PUFF, 3, false, 4, nullptr, State_None },			// State_SMOKE5
-  DOOM::AbstractThing::State{ Sprite_FATB, 0, true, 2, &DOOM::AbstractThing::A_Tracer, State_TRACER2 },		// State_TRACER
-  DOOM::AbstractThing::State{ Sprite_FATB, 1, true, 2, &DOOM::AbstractThing::A_Tracer, State_TRACER },		// State_TRACER2
-  DOOM::AbstractThing::State{ Sprite_FBXP, 0, true, 8, nullptr, State_TRACEEXP2 },		// State_TRACEEXP1
-  DOOM::AbstractThing::State{ Sprite_FBXP, 1, true, 6, nullptr, State_TRACEEXP3 },		// State_TRACEEXP2
-  DOOM::AbstractThing::State{ Sprite_FBXP, 2, true, 4, nullptr, State_None },			// State_TRACEEXP3
-  DOOM::AbstractThing::State{ Sprite_SKEL, 0, false, 10, &DOOM::AbstractThing::A_Look, State_SKEL_STND2 },		// State_SKEL_STND
-  DOOM::AbstractThing::State{ Sprite_SKEL, 1, false, 10, &DOOM::AbstractThing::A_Look, State_SKEL_STND },		// State_SKEL_STND2
-  DOOM::AbstractThing::State{ Sprite_SKEL, 0, false, 2, &DOOM::AbstractThing::A_Chase, State_SKEL_RUN2 },		// State_SKEL_RUN1
-  DOOM::AbstractThing::State{ Sprite_SKEL, 0, false, 2, &DOOM::AbstractThing::A_Chase, State_SKEL_RUN3 },		// State_SKEL_RUN2
-  DOOM::AbstractThing::State{ Sprite_SKEL, 1, false, 2, &DOOM::AbstractThing::A_Chase, State_SKEL_RUN4 },		// State_SKEL_RUN3
-  DOOM::AbstractThing::State{ Sprite_SKEL, 1, false, 2, &DOOM::AbstractThing::A_Chase, State_SKEL_RUN5 },		// State_SKEL_RUN4
-  DOOM::AbstractThing::State{ Sprite_SKEL, 2, false, 2, &DOOM::AbstractThing::A_Chase, State_SKEL_RUN6 },		// State_SKEL_RUN5
-  DOOM::AbstractThing::State{ Sprite_SKEL, 2, false, 2, &DOOM::AbstractThing::A_Chase, State_SKEL_RUN7 },		// State_SKEL_RUN6
-  DOOM::AbstractThing::State{ Sprite_SKEL, 3, false, 2, &DOOM::AbstractThing::A_Chase, State_SKEL_RUN8 },		// State_SKEL_RUN7
-  DOOM::AbstractThing::State{ Sprite_SKEL, 3, false, 2, &DOOM::AbstractThing::A_Chase, State_SKEL_RUN9 },		// State_SKEL_RUN8
-  DOOM::AbstractThing::State{ Sprite_SKEL, 4, false, 2, &DOOM::AbstractThing::A_Chase, State_SKEL_RUN10 },		// State_SKEL_RUN9
-  DOOM::AbstractThing::State{ Sprite_SKEL, 4, false, 2, &DOOM::AbstractThing::A_Chase, State_SKEL_RUN11 },		// State_SKEL_RUN10
-  DOOM::AbstractThing::State{ Sprite_SKEL, 5, false, 2, &DOOM::AbstractThing::A_Chase, State_SKEL_RUN12 },		// State_SKEL_RUN11
-  DOOM::AbstractThing::State{ Sprite_SKEL, 5, false, 2, &DOOM::AbstractThing::A_Chase, State_SKEL_RUN1 },		// State_SKEL_RUN12
-  DOOM::AbstractThing::State{ Sprite_SKEL, 6, false, 0, &DOOM::AbstractThing::A_FaceTarget, State_SKEL_FIST2 },	// State_SKEL_FIST1
-  DOOM::AbstractThing::State{ Sprite_SKEL, 6, false, 6, &DOOM::AbstractThing::A_SkelWhoosh, State_SKEL_FIST3 },	// State_SKEL_FIST2
-  DOOM::AbstractThing::State{ Sprite_SKEL, 7, false, 6, &DOOM::AbstractThing::A_FaceTarget, State_SKEL_FIST4 },	// State_SKEL_FIST3
-  DOOM::AbstractThing::State{ Sprite_SKEL, 8, false, 6, &DOOM::AbstractThing::A_SkelFist, State_SKEL_RUN1 },		// State_SKEL_FIST4
-  DOOM::AbstractThing::State{ Sprite_SKEL, 9, true, 0, &DOOM::AbstractThing::A_FaceTarget, State_SKEL_MISS2 },	// State_SKEL_MISS1
-  DOOM::AbstractThing::State{ Sprite_SKEL, 9, true, 10, &DOOM::AbstractThing::A_FaceTarget, State_SKEL_MISS3 },	// State_SKEL_MISS2
-  DOOM::AbstractThing::State{ Sprite_SKEL, 10, false, 10, &DOOM::AbstractThing::A_SkelMissile, State_SKEL_MISS4 },	// State_SKEL_MISS3
-  DOOM::AbstractThing::State{ Sprite_SKEL, 10, false, 10, &DOOM::AbstractThing::A_FaceTarget, State_SKEL_RUN1 },	// State_SKEL_MISS4
-  DOOM::AbstractThing::State{ Sprite_SKEL, 11, false, 5, nullptr, State_SKEL_PAIN2 },		// State_SKEL_PAIN
-  DOOM::AbstractThing::State{ Sprite_SKEL, 11, false, 5, &DOOM::AbstractThing::A_Pain, State_SKEL_RUN1 },		// State_SKEL_PAIN2
-  DOOM::AbstractThing::State{ Sprite_SKEL, 11, false, 7, nullptr, State_SKEL_DIE2 },		// State_SKEL_DIE1
-  DOOM::AbstractThing::State{ Sprite_SKEL, 12, false, 7, nullptr, State_SKEL_DIE3 },		// State_SKEL_DIE2
-  DOOM::AbstractThing::State{ Sprite_SKEL, 13, false, 7, &DOOM::AbstractThing::A_Scream, State_SKEL_DIE4 },		// State_SKEL_DIE3
-  DOOM::AbstractThing::State{ Sprite_SKEL, 14, false, 7, &DOOM::AbstractThing::A_Fall, State_SKEL_DIE5 },		// State_SKEL_DIE4
-  DOOM::AbstractThing::State{ Sprite_SKEL, 15, false, 7, nullptr, State_SKEL_DIE6 },		// State_SKEL_DIE5
-  DOOM::AbstractThing::State{ Sprite_SKEL, 16, false, -1, nullptr, State_None },		// State_SKEL_DIE6
-  DOOM::AbstractThing::State{ Sprite_SKEL, 16, false, 5, nullptr, State_SKEL_RAISE2 },		// State_SKEL_RAISE1
-  DOOM::AbstractThing::State{ Sprite_SKEL, 15, false, 5, nullptr, State_SKEL_RAISE3 },		// State_SKEL_RAISE2
-  DOOM::AbstractThing::State{ Sprite_SKEL, 14, false, 5, nullptr, State_SKEL_RAISE4 },		// State_SKEL_RAISE3
-  DOOM::AbstractThing::State{ Sprite_SKEL, 13, false, 5, nullptr, State_SKEL_RAISE5 },		// State_SKEL_RAISE4
-  DOOM::AbstractThing::State{ Sprite_SKEL, 12, false, 5, nullptr, State_SKEL_RAISE6 },		// State_SKEL_RAISE5
-  DOOM::AbstractThing::State{ Sprite_SKEL, 11, false, 5, nullptr, State_SKEL_RUN1 },		// State_SKEL_RAISE6
-  DOOM::AbstractThing::State{ Sprite_MANF, 0, true, 4, nullptr, State_FATSHOT2 },		// State_FATSHOT1
-  DOOM::AbstractThing::State{ Sprite_MANF, 1, true, 4, nullptr, State_FATSHOT1 },		// State_FATSHOT2
-  DOOM::AbstractThing::State{ Sprite_MISL, 1, true, 8, nullptr, State_FATSHOTX2 },		// State_FATSHOTX1
-  DOOM::AbstractThing::State{ Sprite_MISL, 2, true, 6, nullptr, State_FATSHOTX3 },		// State_FATSHOTX2
-  DOOM::AbstractThing::State{ Sprite_MISL, 3, true, 4, nullptr, State_None },			// State_FATSHOTX3
-  DOOM::AbstractThing::State{ Sprite_FATT, 0, false, 15, &DOOM::AbstractThing::A_Look, State_FATT_STND2 },		// State_FATT_STND
-  DOOM::AbstractThing::State{ Sprite_FATT, 1, false, 15, &DOOM::AbstractThing::A_Look, State_FATT_STND },		// State_FATT_STND2
-  DOOM::AbstractThing::State{ Sprite_FATT, 0, false, 4, &DOOM::AbstractThing::A_Chase, State_FATT_RUN2 },		// State_FATT_RUN1
-  DOOM::AbstractThing::State{ Sprite_FATT, 0, false, 4, &DOOM::AbstractThing::A_Chase, State_FATT_RUN3 },		// State_FATT_RUN2
-  DOOM::AbstractThing::State{ Sprite_FATT, 1, false, 4, &DOOM::AbstractThing::A_Chase, State_FATT_RUN4 },		// State_FATT_RUN3
-  DOOM::AbstractThing::State{ Sprite_FATT, 1, false, 4, &DOOM::AbstractThing::A_Chase, State_FATT_RUN5 },		// State_FATT_RUN4
-  DOOM::AbstractThing::State{ Sprite_FATT, 2, false, 4, &DOOM::AbstractThing::A_Chase, State_FATT_RUN6 },		// State_FATT_RUN5
-  DOOM::AbstractThing::State{ Sprite_FATT, 2, false, 4, &DOOM::AbstractThing::A_Chase, State_FATT_RUN7 },		// State_FATT_RUN6
-  DOOM::AbstractThing::State{ Sprite_FATT, 3, false, 4, &DOOM::AbstractThing::A_Chase, State_FATT_RUN8 },		// State_FATT_RUN7
-  DOOM::AbstractThing::State{ Sprite_FATT, 3, false, 4, &DOOM::AbstractThing::A_Chase, State_FATT_RUN9 },		// State_FATT_RUN8
-  DOOM::AbstractThing::State{ Sprite_FATT, 4, false, 4, &DOOM::AbstractThing::A_Chase, State_FATT_RUN10 },		// State_FATT_RUN9
-  DOOM::AbstractThing::State{ Sprite_FATT, 4, false, 4, &DOOM::AbstractThing::A_Chase, State_FATT_RUN11 },		// State_FATT_RUN10
-  DOOM::AbstractThing::State{ Sprite_FATT, 5, false, 4, &DOOM::AbstractThing::A_Chase, State_FATT_RUN12 },		// State_FATT_RUN11
-  DOOM::AbstractThing::State{ Sprite_FATT, 5, false, 4, &DOOM::AbstractThing::A_Chase, State_FATT_RUN1 },		// State_FATT_RUN12
-  DOOM::AbstractThing::State{ Sprite_FATT, 6, false, 20, &DOOM::AbstractThing::A_FatRaise, State_FATT_ATK2 },	// State_FATT_ATK1
-  DOOM::AbstractThing::State{ Sprite_FATT, 7, true, 10, &DOOM::AbstractThing::A_FatAttack1, State_FATT_ATK3 },	// State_FATT_ATK2
-  DOOM::AbstractThing::State{ Sprite_FATT, 8, false, 5, &DOOM::AbstractThing::A_FaceTarget, State_FATT_ATK4 },	// State_FATT_ATK3
-  DOOM::AbstractThing::State{ Sprite_FATT, 6, false, 5, &DOOM::AbstractThing::A_FaceTarget, State_FATT_ATK5 },	// State_FATT_ATK4
-  DOOM::AbstractThing::State{ Sprite_FATT, 7, true, 10, &DOOM::AbstractThing::A_FatAttack2, State_FATT_ATK6 },	// State_FATT_ATK5
-  DOOM::AbstractThing::State{ Sprite_FATT, 8, false, 5, &DOOM::AbstractThing::A_FaceTarget, State_FATT_ATK7 },	// State_FATT_ATK6
-  DOOM::AbstractThing::State{ Sprite_FATT, 6, false, 5, &DOOM::AbstractThing::A_FaceTarget, State_FATT_ATK8 },	// State_FATT_ATK7
-  DOOM::AbstractThing::State{ Sprite_FATT, 7, true, 10, &DOOM::AbstractThing::A_FatAttack3, State_FATT_ATK9 },	// State_FATT_ATK8
-  DOOM::AbstractThing::State{ Sprite_FATT, 8, false, 5, &DOOM::AbstractThing::A_FaceTarget, State_FATT_ATK10 },	// State_FATT_ATK9
-  DOOM::AbstractThing::State{ Sprite_FATT, 6, false, 5, &DOOM::AbstractThing::A_FaceTarget, State_FATT_RUN1 },	// State_FATT_ATK10
-  DOOM::AbstractThing::State{ Sprite_FATT, 9, false, 3, nullptr, State_FATT_PAIN2 },		// State_FATT_PAIN
-  DOOM::AbstractThing::State{ Sprite_FATT, 9, false, 3, &DOOM::AbstractThing::A_Pain, State_FATT_RUN1 },		// State_FATT_PAIN2
-  DOOM::AbstractThing::State{ Sprite_FATT, 10, false, 6, nullptr, State_FATT_DIE2 },		// State_FATT_DIE1
-  DOOM::AbstractThing::State{ Sprite_FATT, 11, false, 6, &DOOM::AbstractThing::A_Scream, State_FATT_DIE3 },		// State_FATT_DIE2
-  DOOM::AbstractThing::State{ Sprite_FATT, 12, false, 6, &DOOM::AbstractThing::A_Fall, State_FATT_DIE4 },		// State_FATT_DIE3
-  DOOM::AbstractThing::State{ Sprite_FATT, 13, false, 6, nullptr, State_FATT_DIE5 },		// State_FATT_DIE4
-  DOOM::AbstractThing::State{ Sprite_FATT, 14, false, 6, nullptr, State_FATT_DIE6 },		// State_FATT_DIE5
-  DOOM::AbstractThing::State{ Sprite_FATT, 15, false, 6, nullptr, State_FATT_DIE7 },		// State_FATT_DIE6
-  DOOM::AbstractThing::State{ Sprite_FATT, 16, false, 6, nullptr, State_FATT_DIE8 },		// State_FATT_DIE7
-  DOOM::AbstractThing::State{ Sprite_FATT, 17, false, 6, nullptr, State_FATT_DIE9 },		// State_FATT_DIE8
-  DOOM::AbstractThing::State{ Sprite_FATT, 18, false, 6, nullptr, State_FATT_DIE10 },		// State_FATT_DIE9
-  DOOM::AbstractThing::State{ Sprite_FATT, 19, false, -1, &DOOM::AbstractThing::A_BossDeath, State_None },		// State_FATT_DIE10
-  DOOM::AbstractThing::State{ Sprite_FATT, 17, false, 5, nullptr, State_FATT_RAISE2 },		// State_FATT_RAISE1
-  DOOM::AbstractThing::State{ Sprite_FATT, 16, false, 5, nullptr, State_FATT_RAISE3 },		// State_FATT_RAISE2
-  DOOM::AbstractThing::State{ Sprite_FATT, 15, false, 5, nullptr, State_FATT_RAISE4 },		// State_FATT_RAISE3
-  DOOM::AbstractThing::State{ Sprite_FATT, 14, false, 5, nullptr, State_FATT_RAISE5 },		// State_FATT_RAISE4
-  DOOM::AbstractThing::State{ Sprite_FATT, 13, false, 5, nullptr, State_FATT_RAISE6 },		// State_FATT_RAISE5
-  DOOM::AbstractThing::State{ Sprite_FATT, 12, false, 5, nullptr, State_FATT_RAISE7 },		// State_FATT_RAISE6
-  DOOM::AbstractThing::State{ Sprite_FATT, 11, false, 5, nullptr, State_FATT_RAISE8 },		// State_FATT_RAISE7
-  DOOM::AbstractThing::State{ Sprite_FATT, 10, false, 5, nullptr, State_FATT_RUN1 },		// State_FATT_RAISE8
-  DOOM::AbstractThing::State{ Sprite_CPOS, 0, false, 10, &DOOM::AbstractThing::A_Look, State_CPOS_STND2 },		// State_CPOS_STND
-  DOOM::AbstractThing::State{ Sprite_CPOS, 1, false, 10, &DOOM::AbstractThing::A_Look, State_CPOS_STND },		// State_CPOS_STND2
-  DOOM::AbstractThing::State{ Sprite_CPOS, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_CPOS_RUN2 },		// State_CPOS_RUN1
-  DOOM::AbstractThing::State{ Sprite_CPOS, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_CPOS_RUN3 },		// State_CPOS_RUN2
-  DOOM::AbstractThing::State{ Sprite_CPOS, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_CPOS_RUN4 },		// State_CPOS_RUN3
-  DOOM::AbstractThing::State{ Sprite_CPOS, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_CPOS_RUN5 },		// State_CPOS_RUN4
-  DOOM::AbstractThing::State{ Sprite_CPOS, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_CPOS_RUN6 },		// State_CPOS_RUN5
-  DOOM::AbstractThing::State{ Sprite_CPOS, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_CPOS_RUN7 },		// State_CPOS_RUN6
-  DOOM::AbstractThing::State{ Sprite_CPOS, 3, false, 3, &DOOM::AbstractThing::A_Chase, State_CPOS_RUN8 },		// State_CPOS_RUN7
-  DOOM::AbstractThing::State{ Sprite_CPOS, 3, false, 3, &DOOM::AbstractThing::A_Chase, State_CPOS_RUN1 },		// State_CPOS_RUN8
-  DOOM::AbstractThing::State{ Sprite_CPOS, 4, false, 10, &DOOM::AbstractThing::A_FaceTarget, State_CPOS_ATK2 },	// State_CPOS_ATK1
-  DOOM::AbstractThing::State{ Sprite_CPOS, 5, true, 4, &DOOM::AbstractThing::A_CPosAttack, State_CPOS_ATK3 },	// State_CPOS_ATK2
-  DOOM::AbstractThing::State{ Sprite_CPOS, 4, true, 4, &DOOM::AbstractThing::A_CPosAttack, State_CPOS_ATK4 },	// State_CPOS_ATK3
-  DOOM::AbstractThing::State{ Sprite_CPOS, 5, false, 1, &DOOM::AbstractThing::A_CPosRefire, State_CPOS_ATK2 },	// State_CPOS_ATK4
-  DOOM::AbstractThing::State{ Sprite_CPOS, 6, false, 3, nullptr, State_CPOS_PAIN2 },		// State_CPOS_PAIN
-  DOOM::AbstractThing::State{ Sprite_CPOS, 6, false, 3, &DOOM::AbstractThing::A_Pain, State_CPOS_RUN1 },		// State_CPOS_PAIN2
-  DOOM::AbstractThing::State{ Sprite_CPOS, 7, false, 5, nullptr, State_CPOS_DIE2 },		// State_CPOS_DIE1
-  DOOM::AbstractThing::State{ Sprite_CPOS, 8, false, 5, &DOOM::AbstractThing::A_Scream, State_CPOS_DIE3 },		// State_CPOS_DIE2
-  DOOM::AbstractThing::State{ Sprite_CPOS, 9, false, 5, &DOOM::AbstractThing::A_Fall, State_CPOS_DIE4 },		// State_CPOS_DIE3
-  DOOM::AbstractThing::State{ Sprite_CPOS, 10, false, 5, nullptr, State_CPOS_DIE5 },		// State_CPOS_DIE4
-  DOOM::AbstractThing::State{ Sprite_CPOS, 11, false, 5, nullptr, State_CPOS_DIE6 },		// State_CPOS_DIE5
-  DOOM::AbstractThing::State{ Sprite_CPOS, 12, false, 5, nullptr, State_CPOS_DIE7 },		// State_CPOS_DIE6
-  DOOM::AbstractThing::State{ Sprite_CPOS, 13, false, -1, nullptr, State_None },		// State_CPOS_DIE7
-  DOOM::AbstractThing::State{ Sprite_CPOS, 14, false, 5, nullptr, State_CPOS_XDIE2 },		// State_CPOS_XDIE1
-  DOOM::AbstractThing::State{ Sprite_CPOS, 15, false, 5, &DOOM::AbstractThing::A_XScream, State_CPOS_XDIE3 },	// State_CPOS_XDIE2
-  DOOM::AbstractThing::State{ Sprite_CPOS, 16, false, 5, &DOOM::AbstractThing::A_Fall, State_CPOS_XDIE4 },		// State_CPOS_XDIE3
-  DOOM::AbstractThing::State{ Sprite_CPOS, 17, false, 5, nullptr, State_CPOS_XDIE5 },		// State_CPOS_XDIE4
-  DOOM::AbstractThing::State{ Sprite_CPOS, 18, false, 5, nullptr, State_CPOS_XDIE6 },		// State_CPOS_XDIE5
-  DOOM::AbstractThing::State{ Sprite_CPOS, 19, false, -1, nullptr, State_None },		// State_CPOS_XDIE6
-  DOOM::AbstractThing::State{ Sprite_CPOS, 13, false, 5, nullptr, State_CPOS_RAISE2 },		// State_CPOS_RAISE1
-  DOOM::AbstractThing::State{ Sprite_CPOS, 12, false, 5, nullptr, State_CPOS_RAISE3 },		// State_CPOS_RAISE2
-  DOOM::AbstractThing::State{ Sprite_CPOS, 11, false, 5, nullptr, State_CPOS_RAISE4 },		// State_CPOS_RAISE3
-  DOOM::AbstractThing::State{ Sprite_CPOS, 10, false, 5, nullptr, State_CPOS_RAISE5 },		// State_CPOS_RAISE4
-  DOOM::AbstractThing::State{ Sprite_CPOS, 9, false, 5, nullptr, State_CPOS_RAISE6 },		// State_CPOS_RAISE5
-  DOOM::AbstractThing::State{ Sprite_CPOS, 8, false, 5, nullptr, State_CPOS_RAISE7 },		// State_CPOS_RAISE6
-  DOOM::AbstractThing::State{ Sprite_CPOS, 7, false, 5, nullptr, State_CPOS_RUN1 },		// State_CPOState_RAISE7
-  DOOM::AbstractThing::State{ Sprite_TROO, 0, false, 10, &DOOM::AbstractThing::A_Look, State_TROO_STND2 },		// State_TROO_STND
-  DOOM::AbstractThing::State{ Sprite_TROO, 1, false, 10, &DOOM::AbstractThing::A_Look, State_TROO_STND },		// State_TROO_STND2
-  DOOM::AbstractThing::State{ Sprite_TROO, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_TROO_RUN2 },		// State_TROO_RUN1
-  DOOM::AbstractThing::State{ Sprite_TROO, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_TROO_RUN3 },		// State_TROO_RUN2
-  DOOM::AbstractThing::State{ Sprite_TROO, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_TROO_RUN4 },		// State_TROO_RUN3
-  DOOM::AbstractThing::State{ Sprite_TROO, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_TROO_RUN5 },		// State_TROO_RUN4
-  DOOM::AbstractThing::State{ Sprite_TROO, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_TROO_RUN6 },		// State_TROO_RUN5
-  DOOM::AbstractThing::State{ Sprite_TROO, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_TROO_RUN7 },		// State_TROO_RUN6
-  DOOM::AbstractThing::State{ Sprite_TROO, 3, false, 3, &DOOM::AbstractThing::A_Chase, State_TROO_RUN8 },		// State_TROO_RUN7
-  DOOM::AbstractThing::State{ Sprite_TROO, 3, false, 3, &DOOM::AbstractThing::A_Chase, State_TROO_RUN1 },		// State_TROO_RUN8
-  DOOM::AbstractThing::State{ Sprite_TROO, 4, false, 8, &DOOM::AbstractThing::A_FaceTarget, State_TROO_ATK2 },	// State_TROO_ATK1
-  DOOM::AbstractThing::State{ Sprite_TROO, 5, false, 8, &DOOM::AbstractThing::A_FaceTarget, State_TROO_ATK3 },	// State_TROO_ATK2
-  DOOM::AbstractThing::State{ Sprite_TROO, 6, false, 6, &DOOM::AbstractThing::A_TroopAttack, State_TROO_RUN1 },	// State_TROO_ATK3
-  DOOM::AbstractThing::State{ Sprite_TROO, 7, false, 2, nullptr, State_TROO_PAIN2 },		// State_TROO_PAIN
-  DOOM::AbstractThing::State{ Sprite_TROO, 7, false, 2, &DOOM::AbstractThing::A_Pain, State_TROO_RUN1 },		// State_TROO_PAIN2
-  DOOM::AbstractThing::State{ Sprite_TROO, 8, false, 8, nullptr, State_TROO_DIE2 },		// State_TROO_DIE1
-  DOOM::AbstractThing::State{ Sprite_TROO, 9, false, 8, &DOOM::AbstractThing::A_Scream, State_TROO_DIE3 },		// State_TROO_DIE2
-  DOOM::AbstractThing::State{ Sprite_TROO, 10, false, 6, nullptr, State_TROO_DIE4 },		// State_TROO_DIE3
-  DOOM::AbstractThing::State{ Sprite_TROO, 11, false, 6, &DOOM::AbstractThing::A_Fall, State_TROO_DIE5 },		// State_TROO_DIE4
-  DOOM::AbstractThing::State{ Sprite_TROO, 12, false, -1, nullptr, State_None },		// State_TROO_DIE5
-  DOOM::AbstractThing::State{ Sprite_TROO, 13, false, 5, nullptr, State_TROO_XDIE2 },		// State_TROO_XDIE1
-  DOOM::AbstractThing::State{ Sprite_TROO, 14, false, 5, &DOOM::AbstractThing::A_XScream, State_TROO_XDIE3 },	// State_TROO_XDIE2
-  DOOM::AbstractThing::State{ Sprite_TROO, 15, false, 5, nullptr, State_TROO_XDIE4 },		// State_TROO_XDIE3
-  DOOM::AbstractThing::State{ Sprite_TROO, 16, false, 5, &DOOM::AbstractThing::A_Fall, State_TROO_XDIE5 },		// State_TROO_XDIE4
-  DOOM::AbstractThing::State{ Sprite_TROO, 17, false, 5, nullptr, State_TROO_XDIE6 },		// State_TROO_XDIE5
-  DOOM::AbstractThing::State{ Sprite_TROO, 18, false, 5, nullptr, State_TROO_XDIE7 },		// State_TROO_XDIE6
-  DOOM::AbstractThing::State{ Sprite_TROO, 19, false, 5, nullptr, State_TROO_XDIE8 },		// State_TROO_XDIE7
-  DOOM::AbstractThing::State{ Sprite_TROO, 20, false, -1, nullptr, State_None },		// State_TROO_XDIE8
-  DOOM::AbstractThing::State{ Sprite_TROO, 12, false, 8, nullptr, State_TROO_RAISE2 },		// State_TROO_RAISE1
-  DOOM::AbstractThing::State{ Sprite_TROO, 11, false, 8, nullptr, State_TROO_RAISE3 },		// State_TROO_RAISE2
-  DOOM::AbstractThing::State{ Sprite_TROO, 10, false, 6, nullptr, State_TROO_RAISE4 },		// State_TROO_RAISE3
-  DOOM::AbstractThing::State{ Sprite_TROO, 9, false, 6, nullptr, State_TROO_RAISE5 },		// State_TROO_RAISE4
-  DOOM::AbstractThing::State{ Sprite_TROO, 8, false, 6, nullptr, State_TROO_RUN1 },		// State_TROO_RAISE5
-  DOOM::AbstractThing::State{ Sprite_SARG, 0, false, 10, &DOOM::AbstractThing::A_Look, State_SARG_STND2 },		// State_SARG_STND
-  DOOM::AbstractThing::State{ Sprite_SARG, 1, false, 10, &DOOM::AbstractThing::A_Look, State_SARG_STND },		// State_SARG_STND2
-  DOOM::AbstractThing::State{ Sprite_SARG, 0, false, 2, &DOOM::AbstractThing::A_Chase, State_SARG_RUN2 },		// State_SARG_RUN1
-  DOOM::AbstractThing::State{ Sprite_SARG, 0, false, 2, &DOOM::AbstractThing::A_Chase, State_SARG_RUN3 },		// State_SARG_RUN2
-  DOOM::AbstractThing::State{ Sprite_SARG, 1, false, 2, &DOOM::AbstractThing::A_Chase, State_SARG_RUN4 },		// State_SARG_RUN3
-  DOOM::AbstractThing::State{ Sprite_SARG, 1, false, 2, &DOOM::AbstractThing::A_Chase, State_SARG_RUN5 },		// State_SARG_RUN4
-  DOOM::AbstractThing::State{ Sprite_SARG, 2, false, 2, &DOOM::AbstractThing::A_Chase, State_SARG_RUN6 },		// State_SARG_RUN5
-  DOOM::AbstractThing::State{ Sprite_SARG, 2, false, 2, &DOOM::AbstractThing::A_Chase, State_SARG_RUN7 },		// State_SARG_RUN6
-  DOOM::AbstractThing::State{ Sprite_SARG, 3, false, 2, &DOOM::AbstractThing::A_Chase, State_SARG_RUN8 },		// State_SARG_RUN7
-  DOOM::AbstractThing::State{ Sprite_SARG, 3, false, 2, &DOOM::AbstractThing::A_Chase, State_SARG_RUN1 },		// State_SARG_RUN8
-  DOOM::AbstractThing::State{ Sprite_SARG, 4, false, 8, &DOOM::AbstractThing::A_FaceTarget, State_SARG_ATK2 },	// State_SARG_ATK1
-  DOOM::AbstractThing::State{ Sprite_SARG, 5, false, 8, &DOOM::AbstractThing::A_FaceTarget, State_SARG_ATK3 },	// State_SARG_ATK2
-  DOOM::AbstractThing::State{ Sprite_SARG, 6, false, 8, &DOOM::AbstractThing::A_SargAttack, State_SARG_RUN1 },	// State_SARG_ATK3
-  DOOM::AbstractThing::State{ Sprite_SARG, 7, false, 2, nullptr, State_SARG_PAIN2 },		// State_SARG_PAIN
-  DOOM::AbstractThing::State{ Sprite_SARG, 7, false, 2, &DOOM::AbstractThing::A_Pain, State_SARG_RUN1 },		// State_SARG_PAIN2
-  DOOM::AbstractThing::State{ Sprite_SARG, 8, false, 8, nullptr, State_SARG_DIE2 },		// State_SARG_DIE1
-  DOOM::AbstractThing::State{ Sprite_SARG, 9, false, 8, &DOOM::AbstractThing::A_Scream, State_SARG_DIE3 },		// State_SARG_DIE2
-  DOOM::AbstractThing::State{ Sprite_SARG, 10, false, 4, nullptr, State_SARG_DIE4 },		// State_SARG_DIE3
-  DOOM::AbstractThing::State{ Sprite_SARG, 11, false, 4, &DOOM::AbstractThing::A_Fall, State_SARG_DIE5 },		// State_SARG_DIE4
-  DOOM::AbstractThing::State{ Sprite_SARG, 12, false, 4, nullptr, State_SARG_DIE6 },		// State_SARG_DIE5
-  DOOM::AbstractThing::State{ Sprite_SARG, 13, false, -1, nullptr, State_None },		// State_SARG_DIE6
-  DOOM::AbstractThing::State{ Sprite_SARG, 13, false, 5, nullptr, State_SARG_RAISE2 },		// State_SARG_RAISE1
-  DOOM::AbstractThing::State{ Sprite_SARG, 12, false, 5, nullptr, State_SARG_RAISE3 },		// State_SARG_RAISE2
-  DOOM::AbstractThing::State{ Sprite_SARG, 11, false, 5, nullptr, State_SARG_RAISE4 },		// State_SARG_RAISE3
-  DOOM::AbstractThing::State{ Sprite_SARG, 10, false, 5, nullptr, State_SARG_RAISE5 },		// State_SARG_RAISE4
-  DOOM::AbstractThing::State{ Sprite_SARG, 9, false, 5, nullptr, State_SARG_RAISE6 },		// State_SARG_RAISE5
-  DOOM::AbstractThing::State{ Sprite_SARG, 8, false, 5, nullptr, State_SARG_RUN1 },		// State_SARG_RAISE6
-  DOOM::AbstractThing::State{ Sprite_HEAD, 0, false, 10, &DOOM::AbstractThing::A_Look, State_HEAD_STND },		// State_HEAD_STND
-  DOOM::AbstractThing::State{ Sprite_HEAD, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_HEAD_RUN1 },		// State_HEAD_RUN1
-  DOOM::AbstractThing::State{ Sprite_HEAD, 1, false, 5, &DOOM::AbstractThing::A_FaceTarget, State_HEAD_ATK2 },	// State_HEAD_ATK1
-  DOOM::AbstractThing::State{ Sprite_HEAD, 2, false, 5, &DOOM::AbstractThing::A_FaceTarget, State_HEAD_ATK3 },	// State_HEAD_ATK2
-  DOOM::AbstractThing::State{ Sprite_HEAD, 3, true, 5, &DOOM::AbstractThing::A_HeadAttack, State_HEAD_RUN1 },	// State_HEAD_ATK3
-  DOOM::AbstractThing::State{ Sprite_HEAD, 4, false, 3, nullptr, State_HEAD_PAIN2 },		// State_HEAD_PAIN
-  DOOM::AbstractThing::State{ Sprite_HEAD, 4, false, 3, &DOOM::AbstractThing::A_Pain, State_HEAD_PAIN3 },		// State_HEAD_PAIN2
-  DOOM::AbstractThing::State{ Sprite_HEAD, 5, false, 6, nullptr, State_HEAD_RUN1 },		// State_HEAD_PAIN3
-  DOOM::AbstractThing::State{ Sprite_HEAD, 6, false, 8, nullptr, State_HEAD_DIE2 },		// State_HEAD_DIE1
-  DOOM::AbstractThing::State{ Sprite_HEAD, 7, false, 8, &DOOM::AbstractThing::A_Scream, State_HEAD_DIE3 },		// State_HEAD_DIE2
-  DOOM::AbstractThing::State{ Sprite_HEAD, 8, false, 8, nullptr, State_HEAD_DIE4 },		// State_HEAD_DIE3
-  DOOM::AbstractThing::State{ Sprite_HEAD, 9, false, 8, nullptr, State_HEAD_DIE5 },		// State_HEAD_DIE4
-  DOOM::AbstractThing::State{ Sprite_HEAD, 10, false, 8, &DOOM::AbstractThing::A_Fall, State_HEAD_DIE6 },		// State_HEAD_DIE5
-  DOOM::AbstractThing::State{ Sprite_HEAD, 11, false, -1, nullptr, State_None },		// State_HEAD_DIE6
-  DOOM::AbstractThing::State{ Sprite_HEAD, 11, false, 8, nullptr, State_HEAD_RAISE2 },		// State_HEAD_RAISE1
-  DOOM::AbstractThing::State{ Sprite_HEAD, 10, false, 8, nullptr, State_HEAD_RAISE3 },		// State_HEAD_RAISE2
-  DOOM::AbstractThing::State{ Sprite_HEAD, 9, false, 8, nullptr, State_HEAD_RAISE4 },		// State_HEAD_RAISE3
-  DOOM::AbstractThing::State{ Sprite_HEAD, 8, false, 8, nullptr, State_HEAD_RAISE5 },		// State_HEAD_RAISE4
-  DOOM::AbstractThing::State{ Sprite_HEAD, 7, false, 8, nullptr, State_HEAD_RAISE6 },		// State_HEAD_RAISE5
-  DOOM::AbstractThing::State{ Sprite_HEAD, 6, false, 8, nullptr, State_HEAD_RUN1 },		// State_HEAD_RAISE6
-  DOOM::AbstractThing::State{ Sprite_BAL7, 0, true, 4, nullptr, State_BRBALL2 },		// State_BRBALL1
-  DOOM::AbstractThing::State{ Sprite_BAL7, 1, true, 4, nullptr, State_BRBALL1 },		// State_BRBALL2
-  DOOM::AbstractThing::State{ Sprite_BAL7, 2, true, 6, nullptr, State_BRBALLX2 },		// State_BRBALLX1
-  DOOM::AbstractThing::State{ Sprite_BAL7, 3, true, 6, nullptr, State_BRBALLX3 },		// State_BRBALLX2
-  DOOM::AbstractThing::State{ Sprite_BAL7, 4, true, 6, nullptr, State_None },			// State_BRBALLX3
-  DOOM::AbstractThing::State{ Sprite_BOSS, 0, false, 10, &DOOM::AbstractThing::A_Look, State_BOSS_STND2 },		// State_BOSS_STND
-  DOOM::AbstractThing::State{ Sprite_BOSS, 1, false, 10, &DOOM::AbstractThing::A_Look, State_BOSS_STND },		// State_BOSS_STND2
-  DOOM::AbstractThing::State{ Sprite_BOSS, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_BOSS_RUN2 },		// State_BOSS_RUN1
-  DOOM::AbstractThing::State{ Sprite_BOSS, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_BOSS_RUN3 },		// State_BOSS_RUN2
-  DOOM::AbstractThing::State{ Sprite_BOSS, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_BOSS_RUN4 },		// State_BOSS_RUN3
-  DOOM::AbstractThing::State{ Sprite_BOSS, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_BOSS_RUN5 },		// State_BOSS_RUN4
-  DOOM::AbstractThing::State{ Sprite_BOSS, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_BOSS_RUN6 },		// State_BOSS_RUN5
-  DOOM::AbstractThing::State{ Sprite_BOSS, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_BOSS_RUN7 },		// State_BOSS_RUN6
-  DOOM::AbstractThing::State{ Sprite_BOSS, 3, false, 3, &DOOM::AbstractThing::A_Chase, State_BOSS_RUN8 },		// State_BOSS_RUN7
-  DOOM::AbstractThing::State{ Sprite_BOSS, 3, false, 3, &DOOM::AbstractThing::A_Chase, State_BOSS_RUN1 },		// State_BOSS_RUN8
-  DOOM::AbstractThing::State{ Sprite_BOSS, 4, false, 8, &DOOM::AbstractThing::A_FaceTarget, State_BOSS_ATK2 },	// State_BOSS_ATK1
-  DOOM::AbstractThing::State{ Sprite_BOSS, 5, false, 8, &DOOM::AbstractThing::A_FaceTarget, State_BOSS_ATK3 },	// State_BOSS_ATK2
-  DOOM::AbstractThing::State{ Sprite_BOSS, 6, false, 8, &DOOM::AbstractThing::A_BruisAttack, State_BOSS_RUN1 },	// State_BOSS_ATK3
-  DOOM::AbstractThing::State{ Sprite_BOSS, 7, false, 2, nullptr, State_BOSS_PAIN2 },		// State_BOSS_PAIN
-  DOOM::AbstractThing::State{ Sprite_BOSS, 7, false, 2, &DOOM::AbstractThing::A_Pain, State_BOSS_RUN1 },		// State_BOSS_PAIN2
-  DOOM::AbstractThing::State{ Sprite_BOSS, 8, false, 8, nullptr, State_BOSS_DIE2 },		// State_BOSS_DIE1
-  DOOM::AbstractThing::State{ Sprite_BOSS, 9, false, 8, &DOOM::AbstractThing::A_Scream, State_BOSS_DIE3 },		// State_BOSS_DIE2
-  DOOM::AbstractThing::State{ Sprite_BOSS, 10, false, 8, nullptr, State_BOSS_DIE4 },		// State_BOSS_DIE3
-  DOOM::AbstractThing::State{ Sprite_BOSS, 11, false, 8, &DOOM::AbstractThing::A_Fall, State_BOSS_DIE5 },		// State_BOSS_DIE4
-  DOOM::AbstractThing::State{ Sprite_BOSS, 12, false, 8, nullptr, State_BOSS_DIE6 },		// State_BOSS_DIE5
-  DOOM::AbstractThing::State{ Sprite_BOSS, 13, false, 8, nullptr, State_BOSS_DIE7 },		// State_BOSS_DIE6
-  DOOM::AbstractThing::State{ Sprite_BOSS, 14, false, -1, &DOOM::AbstractThing::A_BossDeath, State_None },		// State_BOSS_DIE7
-  DOOM::AbstractThing::State{ Sprite_BOSS, 14, false, 8, nullptr, State_BOSS_RAISE2 },		// State_BOSS_RAISE1
-  DOOM::AbstractThing::State{ Sprite_BOSS, 13, false, 8, nullptr, State_BOSS_RAISE3 },		// State_BOSS_RAISE2
-  DOOM::AbstractThing::State{ Sprite_BOSS, 12, false, 8, nullptr, State_BOSS_RAISE4 },		// State_BOSS_RAISE3
-  DOOM::AbstractThing::State{ Sprite_BOSS, 11, false, 8, nullptr, State_BOSS_RAISE5 },		// State_BOSS_RAISE4
-  DOOM::AbstractThing::State{ Sprite_BOSS, 10, false, 8, nullptr, State_BOSS_RAISE6 },		// State_BOSS_RAISE5
-  DOOM::AbstractThing::State{ Sprite_BOSS, 9, false, 8, nullptr, State_BOSS_RAISE7 },		// State_BOSS_RAISE6
-  DOOM::AbstractThing::State{ Sprite_BOSS, 8, false, 8, nullptr, State_BOSS_RUN1 },		// State_BOSS_RAISE7
-  DOOM::AbstractThing::State{ Sprite_BOS2, 0, false, 10, &DOOM::AbstractThing::A_Look, State_BOS2_STND2 },		// State_BOS2_STND
-  DOOM::AbstractThing::State{ Sprite_BOS2, 1, false, 10, &DOOM::AbstractThing::A_Look, State_BOS2_STND },		// State_BOS2_STND2
-  DOOM::AbstractThing::State{ Sprite_BOS2, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_BOS2_RUN2 },		// State_BOS2_RUN1
-  DOOM::AbstractThing::State{ Sprite_BOS2, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_BOS2_RUN3 },		// State_BOS2_RUN2
-  DOOM::AbstractThing::State{ Sprite_BOS2, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_BOS2_RUN4 },		// State_BOS2_RUN3
-  DOOM::AbstractThing::State{ Sprite_BOS2, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_BOS2_RUN5 },		// State_BOS2_RUN4
-  DOOM::AbstractThing::State{ Sprite_BOS2, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_BOS2_RUN6 },		// State_BOS2_RUN5
-  DOOM::AbstractThing::State{ Sprite_BOS2, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_BOS2_RUN7 },		// State_BOS2_RUN6
-  DOOM::AbstractThing::State{ Sprite_BOS2, 3, false, 3, &DOOM::AbstractThing::A_Chase, State_BOS2_RUN8 },		// State_BOS2_RUN7
-  DOOM::AbstractThing::State{ Sprite_BOS2, 3, false, 3, &DOOM::AbstractThing::A_Chase, State_BOS2_RUN1 },		// State_BOS2_RUN8
-  DOOM::AbstractThing::State{ Sprite_BOS2, 4, false, 8, &DOOM::AbstractThing::A_FaceTarget, State_BOS2_ATK2 },	// State_BOS2_ATK1
-  DOOM::AbstractThing::State{ Sprite_BOS2, 5, false, 8, &DOOM::AbstractThing::A_FaceTarget, State_BOS2_ATK3 },	// State_BOS2_ATK2
-  DOOM::AbstractThing::State{ Sprite_BOS2, 6, false, 8, &DOOM::AbstractThing::A_BruisAttack, State_BOS2_RUN1 },	// State_BOS2_ATK3
-  DOOM::AbstractThing::State{ Sprite_BOS2, 7, false, 2, nullptr, State_BOS2_PAIN2 },		// State_BOS2_PAIN
-  DOOM::AbstractThing::State{ Sprite_BOS2, 7, false, 2, &DOOM::AbstractThing::A_Pain, State_BOS2_RUN1 },		// State_BOS2_PAIN2
-  DOOM::AbstractThing::State{ Sprite_BOS2, 8, false, 8, nullptr, State_BOS2_DIE2 },		// State_BOS2_DIE1
-  DOOM::AbstractThing::State{ Sprite_BOS2, 9, false, 8, &DOOM::AbstractThing::A_Scream, State_BOS2_DIE3 },		// State_BOS2_DIE2
-  DOOM::AbstractThing::State{ Sprite_BOS2, 10, false, 8, nullptr, State_BOS2_DIE4 },		// State_BOS2_DIE3
-  DOOM::AbstractThing::State{ Sprite_BOS2, 11, false, 8, &DOOM::AbstractThing::A_Fall, State_BOS2_DIE5 },		// State_BOS2_DIE4
-  DOOM::AbstractThing::State{ Sprite_BOS2, 12, false, 8, nullptr, State_BOS2_DIE6 },		// State_BOS2_DIE5
-  DOOM::AbstractThing::State{ Sprite_BOS2, 13, false, 8, nullptr, State_BOS2_DIE7 },		// State_BOS2_DIE6
-  DOOM::AbstractThing::State{ Sprite_BOS2, 14, false, -1, nullptr, State_None },		// State_BOS2_DIE7
-  DOOM::AbstractThing::State{ Sprite_BOS2, 14, false, 8, nullptr, State_BOS2_RAISE2 },		// State_BOS2_RAISE1
-  DOOM::AbstractThing::State{ Sprite_BOS2, 13, false, 8, nullptr, State_BOS2_RAISE3 },		// State_BOS2_RAISE2
-  DOOM::AbstractThing::State{ Sprite_BOS2, 12, false, 8, nullptr, State_BOS2_RAISE4 },		// State_BOS2_RAISE3
-  DOOM::AbstractThing::State{ Sprite_BOS2, 11, false, 8, nullptr, State_BOS2_RAISE5 },		// State_BOS2_RAISE4
-  DOOM::AbstractThing::State{ Sprite_BOS2, 10, false, 8, nullptr, State_BOS2_RAISE6 },		// State_BOS2_RAISE5
-  DOOM::AbstractThing::State{ Sprite_BOS2, 9, false, 8, nullptr, State_BOS2_RAISE7 },		// State_BOS2_RAISE6
-  DOOM::AbstractThing::State{ Sprite_BOS2, 8, false, 8, nullptr, State_BOS2_RUN1 },		// State_BOS2_RAISE7
-  DOOM::AbstractThing::State{ Sprite_SKUL, 0, true, 10, &DOOM::AbstractThing::A_Look, State_SKULL_STND2 },		// State_SKULL_STND
-  DOOM::AbstractThing::State{ Sprite_SKUL, 1, true, 10, &DOOM::AbstractThing::A_Look, State_SKULL_STND },		// State_SKULL_STND2
-  DOOM::AbstractThing::State{ Sprite_SKUL, 0, true, 6, &DOOM::AbstractThing::A_Chase, State_SKULL_RUN2 },		// State_SKULL_RUN1
-  DOOM::AbstractThing::State{ Sprite_SKUL, 1, true, 6, &DOOM::AbstractThing::A_Chase, State_SKULL_RUN1 },		// State_SKULL_RUN2
-  DOOM::AbstractThing::State{ Sprite_SKUL, 2, true, 10, &DOOM::AbstractThing::A_FaceTarget, State_SKULL_ATK2 },	// State_SKULL_ATK1
-  DOOM::AbstractThing::State{ Sprite_SKUL, 3, true, 4, &DOOM::AbstractThing::A_SkullAttack, State_SKULL_ATK3 },	// State_SKULL_ATK2
-  DOOM::AbstractThing::State{ Sprite_SKUL, 2, true, 4, nullptr, State_SKULL_ATK4 },		// State_SKULL_ATK3
-  DOOM::AbstractThing::State{ Sprite_SKUL, 3, true, 4, nullptr, State_SKULL_ATK3 },		// State_SKULL_ATK4
-  DOOM::AbstractThing::State{ Sprite_SKUL, 4, true, 3, nullptr, State_SKULL_PAIN2 },		// State_SKULL_PAIN
-  DOOM::AbstractThing::State{ Sprite_SKUL, 4, true, 3, &DOOM::AbstractThing::A_Pain, State_SKULL_RUN1 },		// State_SKULL_PAIN2
-  DOOM::AbstractThing::State{ Sprite_SKUL, 5, true, 6, nullptr, State_SKULL_DIE2 },		// State_SKULL_DIE1
-  DOOM::AbstractThing::State{ Sprite_SKUL, 6, true, 6, &DOOM::AbstractThing::A_Scream, State_SKULL_DIE3 },		// State_SKULL_DIE2
-  DOOM::AbstractThing::State{ Sprite_SKUL, 7, true, 6, nullptr, State_SKULL_DIE4 },		// State_SKULL_DIE3
-  DOOM::AbstractThing::State{ Sprite_SKUL, 8, true, 6, &DOOM::AbstractThing::A_Fall, State_SKULL_DIE5 },		// State_SKULL_DIE4
-  DOOM::AbstractThing::State{ Sprite_SKUL, 9, false, 6, nullptr, State_SKULL_DIE6 },		// State_SKULL_DIE5
-  DOOM::AbstractThing::State{ Sprite_SKUL, 10, false, 6, nullptr, State_None },			// State_SKULL_DIE6
-  DOOM::AbstractThing::State{ Sprite_SPID, 0, false, 10, &DOOM::AbstractThing::A_Look, State_SPID_STND2 },		// State_SPID_STND
-  DOOM::AbstractThing::State{ Sprite_SPID, 1, false, 10, &DOOM::AbstractThing::A_Look, State_SPID_STND },		// State_SPID_STND2
-  DOOM::AbstractThing::State{ Sprite_SPID, 0, false, 3, &DOOM::AbstractThing::A_Metal, State_SPID_RUN2 },		// State_SPID_RUN1
-  DOOM::AbstractThing::State{ Sprite_SPID, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_SPID_RUN3 },		// State_SPID_RUN2
-  DOOM::AbstractThing::State{ Sprite_SPID, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_SPID_RUN4 },		// State_SPID_RUN3
-  DOOM::AbstractThing::State{ Sprite_SPID, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_SPID_RUN5 },		// State_SPID_RUN4
-  DOOM::AbstractThing::State{ Sprite_SPID, 2, false, 3, &DOOM::AbstractThing::A_Metal, State_SPID_RUN6 },		// State_SPID_RUN5
-  DOOM::AbstractThing::State{ Sprite_SPID, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_SPID_RUN7 },		// State_SPID_RUN6
-  DOOM::AbstractThing::State{ Sprite_SPID, 3, false, 3, &DOOM::AbstractThing::A_Chase, State_SPID_RUN8 },		// State_SPID_RUN7
-  DOOM::AbstractThing::State{ Sprite_SPID, 3, false, 3, &DOOM::AbstractThing::A_Chase, State_SPID_RUN9 },		// State_SPID_RUN8
-  DOOM::AbstractThing::State{ Sprite_SPID, 4, false, 3, &DOOM::AbstractThing::A_Metal, State_SPID_RUN10 },		// State_SPID_RUN9
-  DOOM::AbstractThing::State{ Sprite_SPID, 4, false, 3, &DOOM::AbstractThing::A_Chase, State_SPID_RUN11 },		// State_SPID_RUN10
-  DOOM::AbstractThing::State{ Sprite_SPID, 5, false, 3, &DOOM::AbstractThing::A_Chase, State_SPID_RUN12 },		// State_SPID_RUN11
-  DOOM::AbstractThing::State{ Sprite_SPID, 5, false, 3, &DOOM::AbstractThing::A_Chase, State_SPID_RUN1 },		// State_SPID_RUN12
-  DOOM::AbstractThing::State{ Sprite_SPID, 0, true, 20, &DOOM::AbstractThing::A_FaceTarget, State_SPID_ATK2 },	// State_SPID_ATK1
-  DOOM::AbstractThing::State{ Sprite_SPID, 6, true, 4, &DOOM::AbstractThing::A_SPosAttack, State_SPID_ATK3 },	// State_SPID_ATK2
-  DOOM::AbstractThing::State{ Sprite_SPID, 7, true, 4, &DOOM::AbstractThing::A_SPosAttack, State_SPID_ATK4 },	// State_SPID_ATK3
-  DOOM::AbstractThing::State{ Sprite_SPID, 7, true, 1, &DOOM::AbstractThing::A_SpidRefire, State_SPID_ATK2 },	// State_SPID_ATK4
-  DOOM::AbstractThing::State{ Sprite_SPID, 8, false, 3, nullptr, State_SPID_PAIN2 },		// State_SPID_PAIN
-  DOOM::AbstractThing::State{ Sprite_SPID, 8, false, 3, &DOOM::AbstractThing::A_Pain, State_SPID_RUN1 },		// State_SPID_PAIN2
-  DOOM::AbstractThing::State{ Sprite_SPID, 9, false, 20, &DOOM::AbstractThing::A_Scream, State_SPID_DIE2 },		// State_SPID_DIE1
-  DOOM::AbstractThing::State{ Sprite_SPID, 10, false, 10, &DOOM::AbstractThing::A_Fall, State_SPID_DIE3 },		// State_SPID_DIE2
-  DOOM::AbstractThing::State{ Sprite_SPID, 11, false, 10, nullptr, State_SPID_DIE4 },		// State_SPID_DIE3
-  DOOM::AbstractThing::State{ Sprite_SPID, 12, false, 10, nullptr, State_SPID_DIE5 },		// State_SPID_DIE4
-  DOOM::AbstractThing::State{ Sprite_SPID, 13, false, 10, nullptr, State_SPID_DIE6 },		// State_SPID_DIE5
-  DOOM::AbstractThing::State{ Sprite_SPID, 14, false, 10, nullptr, State_SPID_DIE7 },		// State_SPID_DIE6
-  DOOM::AbstractThing::State{ Sprite_SPID, 15, false, 10, nullptr, State_SPID_DIE8 },		// State_SPID_DIE7
-  DOOM::AbstractThing::State{ Sprite_SPID, 16, false, 10, nullptr, State_SPID_DIE9 },		// State_SPID_DIE8
-  DOOM::AbstractThing::State{ Sprite_SPID, 17, false, 10, nullptr, State_SPID_DIE10 },		// State_SPID_DIE9
-  DOOM::AbstractThing::State{ Sprite_SPID, 18, false, 30, nullptr, State_SPID_DIE11 },		// State_SPID_DIE10
-  DOOM::AbstractThing::State{ Sprite_SPID, 18, false, -1, &DOOM::AbstractThing::A_BossDeath, State_None },		// State_SPID_DIE11
-  DOOM::AbstractThing::State{ Sprite_BSPI, 0, false, 10, &DOOM::AbstractThing::A_Look, State_BSPI_STND2 },		// State_BSPI_STND
-  DOOM::AbstractThing::State{ Sprite_BSPI, 1, false, 10, &DOOM::AbstractThing::A_Look, State_BSPI_STND },		// State_BSPI_STND2
-  DOOM::AbstractThing::State{ Sprite_BSPI, 0, false, 20, nullptr, State_BSPI_RUN1 },		// State_BSPI_SIGHT
-  DOOM::AbstractThing::State{ Sprite_BSPI, 0, false, 3, &DOOM::AbstractThing::A_BabyMetal, State_BSPI_RUN2 },	// State_BSPI_RUN1
-  DOOM::AbstractThing::State{ Sprite_BSPI, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_BSPI_RUN3 },		// State_BSPI_RUN2
-  DOOM::AbstractThing::State{ Sprite_BSPI, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_BSPI_RUN4 },		// State_BSPI_RUN3
-  DOOM::AbstractThing::State{ Sprite_BSPI, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_BSPI_RUN5 },		// State_BSPI_RUN4
-  DOOM::AbstractThing::State{ Sprite_BSPI, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_BSPI_RUN6 },		// State_BSPI_RUN5
-  DOOM::AbstractThing::State{ Sprite_BSPI, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_BSPI_RUN7 },		// State_BSPI_RUN6
-  DOOM::AbstractThing::State{ Sprite_BSPI, 3, false, 3, &DOOM::AbstractThing::A_BabyMetal, State_BSPI_RUN8 },	// State_BSPI_RUN7
-  DOOM::AbstractThing::State{ Sprite_BSPI, 3, false, 3, &DOOM::AbstractThing::A_Chase, State_BSPI_RUN9 },		// State_BSPI_RUN8
-  DOOM::AbstractThing::State{ Sprite_BSPI, 4, false, 3, &DOOM::AbstractThing::A_Chase, State_BSPI_RUN10 },		// State_BSPI_RUN9
-  DOOM::AbstractThing::State{ Sprite_BSPI, 4, false, 3, &DOOM::AbstractThing::A_Chase, State_BSPI_RUN11 },		// State_BSPI_RUN10
-  DOOM::AbstractThing::State{ Sprite_BSPI, 5, false, 3, &DOOM::AbstractThing::A_Chase, State_BSPI_RUN12 },		// State_BSPI_RUN11
-  DOOM::AbstractThing::State{ Sprite_BSPI, 5, false, 3, &DOOM::AbstractThing::A_Chase, State_BSPI_RUN1 },		// State_BSPI_RUN12
-  DOOM::AbstractThing::State{ Sprite_BSPI, 0, true, 20, &DOOM::AbstractThing::A_FaceTarget, State_BSPI_ATK2 },	// State_BSPI_ATK1
-  DOOM::AbstractThing::State{ Sprite_BSPI, 6, true, 4, &DOOM::AbstractThing::A_BspiAttack, State_BSPI_ATK3 },	// State_BSPI_ATK2
-  DOOM::AbstractThing::State{ Sprite_BSPI, 7, true, 4, nullptr, State_BSPI_ATK4 },		// State_BSPI_ATK3
-  DOOM::AbstractThing::State{ Sprite_BSPI, 7, true, 1, &DOOM::AbstractThing::A_SpidRefire, State_BSPI_ATK2 },	// State_BSPI_ATK4
-  DOOM::AbstractThing::State{ Sprite_BSPI, 8, false, 3, nullptr, State_BSPI_PAIN2 },		// State_BSPI_PAIN
-  DOOM::AbstractThing::State{ Sprite_BSPI, 8, false, 3, &DOOM::AbstractThing::A_Pain, State_BSPI_RUN1 },		// State_BSPI_PAIN2
-  DOOM::AbstractThing::State{ Sprite_BSPI, 9, false, 20, &DOOM::AbstractThing::A_Scream, State_BSPI_DIE2 },		// State_BSPI_DIE1
-  DOOM::AbstractThing::State{ Sprite_BSPI, 10, false, 7, &DOOM::AbstractThing::A_Fall, State_BSPI_DIE3 },		// State_BSPI_DIE2
-  DOOM::AbstractThing::State{ Sprite_BSPI, 11, false, 7, nullptr, State_BSPI_DIE4 },		// State_BSPI_DIE3
-  DOOM::AbstractThing::State{ Sprite_BSPI, 12, false, 7, nullptr, State_BSPI_DIE5 },		// State_BSPI_DIE4
-  DOOM::AbstractThing::State{ Sprite_BSPI, 13, false, 7, nullptr, State_BSPI_DIE6 },		// State_BSPI_DIE5
-  DOOM::AbstractThing::State{ Sprite_BSPI, 14, false, 7, nullptr, State_BSPI_DIE7 },		// State_BSPI_DIE6
-  DOOM::AbstractThing::State{ Sprite_BSPI, 15, false, -1, &DOOM::AbstractThing::A_BossDeath, State_None },		// State_BSPI_DIE7
-  DOOM::AbstractThing::State{ Sprite_BSPI, 15, false, 5, nullptr, State_BSPI_RAISE2 },		// State_BSPI_RAISE1
-  DOOM::AbstractThing::State{ Sprite_BSPI, 14, false, 5, nullptr, State_BSPI_RAISE3 },		// State_BSPI_RAISE2
-  DOOM::AbstractThing::State{ Sprite_BSPI, 13, false, 5, nullptr, State_BSPI_RAISE4 },		// State_BSPI_RAISE3
-  DOOM::AbstractThing::State{ Sprite_BSPI, 12, false, 5, nullptr, State_BSPI_RAISE5 },		// State_BSPI_RAISE4
-  DOOM::AbstractThing::State{ Sprite_BSPI, 11, false, 5, nullptr, State_BSPI_RAISE6 },		// State_BSPI_RAISE5
-  DOOM::AbstractThing::State{ Sprite_BSPI, 10, false, 5, nullptr, State_BSPI_RAISE7 },		// State_BSPI_RAISE6
-  DOOM::AbstractThing::State{ Sprite_BSPI, 9, false, 5, nullptr, State_BSPI_RUN1 },		// State_BSPI_RAISE7
-  DOOM::AbstractThing::State{ Sprite_APLS, 0, true, 5, nullptr, State_ARACH_PLAZ2 },		// State_ARACH_PLAZ
-  DOOM::AbstractThing::State{ Sprite_APLS, 1, true, 5, nullptr, State_ARACH_PLAZ },		// State_ARACH_PLAZ2
-  DOOM::AbstractThing::State{ Sprite_APBX, 0, true, 5, nullptr, State_ARACH_PLEX2 },		// State_ARACH_PLEX
-  DOOM::AbstractThing::State{ Sprite_APBX, 1, true, 5, nullptr, State_ARACH_PLEX3 },		// State_ARACH_PLEX2
-  DOOM::AbstractThing::State{ Sprite_APBX, 2, true, 5, nullptr, State_ARACH_PLEX4 },		// State_ARACH_PLEX3
-  DOOM::AbstractThing::State{ Sprite_APBX, 3, true, 5, nullptr, State_ARACH_PLEX5 },		// State_ARACH_PLEX4
-  DOOM::AbstractThing::State{ Sprite_APBX, 4, true, 5, nullptr, State_None },			// State_ARACH_PLEX5
-  DOOM::AbstractThing::State{ Sprite_CYBR, 0, false, 10, &DOOM::AbstractThing::A_Look, State_CYBER_STND2 },		// State_CYBER_STND
-  DOOM::AbstractThing::State{ Sprite_CYBR, 1, false, 10, &DOOM::AbstractThing::A_Look, State_CYBER_STND },		// State_CYBER_STND2
-  DOOM::AbstractThing::State{ Sprite_CYBR, 0, false, 3, &DOOM::AbstractThing::A_Hoof, State_CYBER_RUN2 },		// State_CYBER_RUN1
-  DOOM::AbstractThing::State{ Sprite_CYBR, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_CYBER_RUN3 },		// State_CYBER_RUN2
-  DOOM::AbstractThing::State{ Sprite_CYBR, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_CYBER_RUN4 },		// State_CYBER_RUN3
-  DOOM::AbstractThing::State{ Sprite_CYBR, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_CYBER_RUN5 },		// State_CYBER_RUN4
-  DOOM::AbstractThing::State{ Sprite_CYBR, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_CYBER_RUN6 },		// State_CYBER_RUN5
-  DOOM::AbstractThing::State{ Sprite_CYBR, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_CYBER_RUN7 },		// State_CYBER_RUN6
-  DOOM::AbstractThing::State{ Sprite_CYBR, 3, false, 3, &DOOM::AbstractThing::A_Metal, State_CYBER_RUN8 },		// State_CYBER_RUN7
-  DOOM::AbstractThing::State{ Sprite_CYBR, 3, false, 3, &DOOM::AbstractThing::A_Chase, State_CYBER_RUN1 },		// State_CYBER_RUN8
-  DOOM::AbstractThing::State{ Sprite_CYBR, 4, false, 6, &DOOM::AbstractThing::A_FaceTarget, State_CYBER_ATK2 },	// State_CYBER_ATK1
-  DOOM::AbstractThing::State{ Sprite_CYBR, 5, false, 12, &DOOM::AbstractThing::A_CyberAttack, State_CYBER_ATK3 },	// State_CYBER_ATK2
-  DOOM::AbstractThing::State{ Sprite_CYBR, 4, false, 12, &DOOM::AbstractThing::A_FaceTarget, State_CYBER_ATK4 },	// State_CYBER_ATK3
-  DOOM::AbstractThing::State{ Sprite_CYBR, 5, false, 12, &DOOM::AbstractThing::A_CyberAttack, State_CYBER_ATK5 },	// State_CYBER_ATK4
-  DOOM::AbstractThing::State{ Sprite_CYBR, 4, false, 12, &DOOM::AbstractThing::A_FaceTarget, State_CYBER_ATK6 },	// State_CYBER_ATK5
-  DOOM::AbstractThing::State{ Sprite_CYBR, 5, false, 12, &DOOM::AbstractThing::A_CyberAttack, State_CYBER_RUN1 },	// State_CYBER_ATK6
-  DOOM::AbstractThing::State{ Sprite_CYBR, 6, false, 10, &DOOM::AbstractThing::A_Pain, State_CYBER_RUN1 },		// State_CYBER_PAIN
-  DOOM::AbstractThing::State{ Sprite_CYBR, 7, false, 10, nullptr, State_CYBER_DIE2 },		// State_CYBER_DIE1
-  DOOM::AbstractThing::State{ Sprite_CYBR, 8, false, 10, &DOOM::AbstractThing::A_Scream, State_CYBER_DIE3 },		// State_CYBER_DIE2
-  DOOM::AbstractThing::State{ Sprite_CYBR, 9, false, 10, nullptr, State_CYBER_DIE4 },		// State_CYBER_DIE3
-  DOOM::AbstractThing::State{ Sprite_CYBR, 10, false, 10, nullptr, State_CYBER_DIE5 },		// State_CYBER_DIE4
-  DOOM::AbstractThing::State{ Sprite_CYBR, 11, false, 10, nullptr, State_CYBER_DIE6 },		// State_CYBER_DIE5
-  DOOM::AbstractThing::State{ Sprite_CYBR, 12, false, 10, &DOOM::AbstractThing::A_Fall, State_CYBER_DIE7 },		// State_CYBER_DIE6
-  DOOM::AbstractThing::State{ Sprite_CYBR, 13, false, 10, nullptr, State_CYBER_DIE8 },		// State_CYBER_DIE7
-  DOOM::AbstractThing::State{ Sprite_CYBR, 14, false, 10, nullptr, State_CYBER_DIE9 },		// State_CYBER_DIE8
-  DOOM::AbstractThing::State{ Sprite_CYBR, 15, false, 30, nullptr, State_CYBER_DIE10 },		// State_CYBER_DIE9
-  DOOM::AbstractThing::State{ Sprite_CYBR, 15, false, -1, &DOOM::AbstractThing::A_BossDeath, State_None },		// State_CYBER_DIE10
-  DOOM::AbstractThing::State{ Sprite_PAIN, 0, false, 10, &DOOM::AbstractThing::A_Look, State_PAIN_STND },		// State_PAIN_STND
-  DOOM::AbstractThing::State{ Sprite_PAIN, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_PAIN_RUN2 },		// State_PAIN_RUN1
-  DOOM::AbstractThing::State{ Sprite_PAIN, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_PAIN_RUN3 },		// State_PAIN_RUN2
-  DOOM::AbstractThing::State{ Sprite_PAIN, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_PAIN_RUN4 },		// State_PAIN_RUN3
-  DOOM::AbstractThing::State{ Sprite_PAIN, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_PAIN_RUN5 },		// State_PAIN_RUN4
-  DOOM::AbstractThing::State{ Sprite_PAIN, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_PAIN_RUN6 },		// State_PAIN_RUN5
-  DOOM::AbstractThing::State{ Sprite_PAIN, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_PAIN_RUN1 },		// State_PAIN_RUN6
-  DOOM::AbstractThing::State{ Sprite_PAIN, 3, false, 5, &DOOM::AbstractThing::A_FaceTarget, State_PAIN_ATK2 },	// State_PAIN_ATK1
-  DOOM::AbstractThing::State{ Sprite_PAIN, 4, false, 5, &DOOM::AbstractThing::A_FaceTarget, State_PAIN_ATK3 },	// State_PAIN_ATK2
-  DOOM::AbstractThing::State{ Sprite_PAIN, 5, true, 5, &DOOM::AbstractThing::A_FaceTarget, State_PAIN_ATK4 },	// State_PAIN_ATK3
-  DOOM::AbstractThing::State{ Sprite_PAIN, 5, true, 0, &DOOM::AbstractThing::A_PainAttack, State_PAIN_RUN1 },	// State_PAIN_ATK4
-  DOOM::AbstractThing::State{ Sprite_PAIN, 6, false, 6, nullptr, State_PAIN_PAIN2 },		// State_PAIN_PAIN
-  DOOM::AbstractThing::State{ Sprite_PAIN, 6, false, 6, &DOOM::AbstractThing::A_Pain, State_PAIN_RUN1 },		// State_PAIN_PAIN2
-  DOOM::AbstractThing::State{ Sprite_PAIN, 7, true, 8, nullptr, State_PAIN_DIE2 },		// State_PAIN_DIE1
-  DOOM::AbstractThing::State{ Sprite_PAIN, 8, true, 8, &DOOM::AbstractThing::A_Scream, State_PAIN_DIE3 },		// State_PAIN_DIE2
-  DOOM::AbstractThing::State{ Sprite_PAIN, 9, true, 8, nullptr, State_PAIN_DIE4 },		// State_PAIN_DIE3
-  DOOM::AbstractThing::State{ Sprite_PAIN, 10, true, 8, nullptr, State_PAIN_DIE5 },		// State_PAIN_DIE4
-  DOOM::AbstractThing::State{ Sprite_PAIN, 11, true, 8, &DOOM::AbstractThing::A_PainDie, State_PAIN_DIE6 },		// State_PAIN_DIE5
-  DOOM::AbstractThing::State{ Sprite_PAIN, 12, true, 8, nullptr, State_None },			// State_PAIN_DIE6
-  DOOM::AbstractThing::State{ Sprite_PAIN, 12, false, 8, nullptr, State_PAIN_RAISE2 },		// State_PAIN_RAISE1
-  DOOM::AbstractThing::State{ Sprite_PAIN, 11, false, 8, nullptr, State_PAIN_RAISE3 },		// State_PAIN_RAISE2
-  DOOM::AbstractThing::State{ Sprite_PAIN, 10, false, 8, nullptr, State_PAIN_RAISE4 },		// State_PAIN_RAISE3
-  DOOM::AbstractThing::State{ Sprite_PAIN, 9, false, 8, nullptr, State_PAIN_RAISE5 },		// State_PAIN_RAISE4
-  DOOM::AbstractThing::State{ Sprite_PAIN, 8, false, 8, nullptr, State_PAIN_RAISE6 },		// State_PAIN_RAISE5
-  DOOM::AbstractThing::State{ Sprite_PAIN, 7, false, 8, nullptr, State_PAIN_RUN1 },		// State_PAIN_RAISE6
-  DOOM::AbstractThing::State{ Sprite_SSWV, 0, false, 10, &DOOM::AbstractThing::A_Look, State_SSWV_STND2 },		// State_SSWV_STND
-  DOOM::AbstractThing::State{ Sprite_SSWV, 1, false, 10, &DOOM::AbstractThing::A_Look, State_SSWV_STND },		// State_SSWV_STND2
-  DOOM::AbstractThing::State{ Sprite_SSWV, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_SSWV_RUN2 },		// State_SSWV_RUN1
-  DOOM::AbstractThing::State{ Sprite_SSWV, 0, false, 3, &DOOM::AbstractThing::A_Chase, State_SSWV_RUN3 },		// State_SSWV_RUN2
-  DOOM::AbstractThing::State{ Sprite_SSWV, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_SSWV_RUN4 },		// State_SSWV_RUN3
-  DOOM::AbstractThing::State{ Sprite_SSWV, 1, false, 3, &DOOM::AbstractThing::A_Chase, State_SSWV_RUN5 },		// State_SSWV_RUN4
-  DOOM::AbstractThing::State{ Sprite_SSWV, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_SSWV_RUN6 },		// State_SSWV_RUN5
-  DOOM::AbstractThing::State{ Sprite_SSWV, 2, false, 3, &DOOM::AbstractThing::A_Chase, State_SSWV_RUN7 },		// State_SSWV_RUN6
-  DOOM::AbstractThing::State{ Sprite_SSWV, 3, false, 3, &DOOM::AbstractThing::A_Chase, State_SSWV_RUN8 },		// State_SSWV_RUN7
-  DOOM::AbstractThing::State{ Sprite_SSWV, 3, false, 3, &DOOM::AbstractThing::A_Chase, State_SSWV_RUN1 },		// State_SSWV_RUN8
-  DOOM::AbstractThing::State{ Sprite_SSWV, 4, false, 10, &DOOM::AbstractThing::A_FaceTarget, State_SSWV_ATK2 },	// State_SSWV_ATK1
-  DOOM::AbstractThing::State{ Sprite_SSWV, 5, false, 10, &DOOM::AbstractThing::A_FaceTarget, State_SSWV_ATK3 },	// State_SSWV_ATK2
-  DOOM::AbstractThing::State{ Sprite_SSWV, 6, true, 4, &DOOM::AbstractThing::A_CPosAttack, State_SSWV_ATK4 },	// State_SSWV_ATK3
-  DOOM::AbstractThing::State{ Sprite_SSWV, 5, false, 6, &DOOM::AbstractThing::A_FaceTarget, State_SSWV_ATK5 },	// State_SSWV_ATK4
-  DOOM::AbstractThing::State{ Sprite_SSWV, 6, true, 4, &DOOM::AbstractThing::A_CPosAttack, State_SSWV_ATK6 },	// State_SSWV_ATK5
-  DOOM::AbstractThing::State{ Sprite_SSWV, 5, false, 1, &DOOM::AbstractThing::A_CPosRefire, State_SSWV_ATK2 },	// State_SSWV_ATK6
-  DOOM::AbstractThing::State{ Sprite_SSWV, 7, false, 3, nullptr, State_SSWV_PAIN2 },		// State_SSWV_PAIN
-  DOOM::AbstractThing::State{ Sprite_SSWV, 7, false, 3, &DOOM::AbstractThing::A_Pain, State_SSWV_RUN1 },		// State_SSWV_PAIN2
-  DOOM::AbstractThing::State{ Sprite_SSWV, 8, false, 5, nullptr, State_SSWV_DIE2 },		// State_SSWV_DIE1
-  DOOM::AbstractThing::State{ Sprite_SSWV, 9, false, 5, &DOOM::AbstractThing::A_Scream, State_SSWV_DIE3 },		// State_SSWV_DIE2
-  DOOM::AbstractThing::State{ Sprite_SSWV, 10, false, 5, &DOOM::AbstractThing::A_Fall, State_SSWV_DIE4 },		// State_SSWV_DIE3
-  DOOM::AbstractThing::State{ Sprite_SSWV, 11, false, 5, nullptr, State_SSWV_DIE5 },		// State_SSWV_DIE4
-  DOOM::AbstractThing::State{ Sprite_SSWV, 12, false, -1, nullptr, State_None },		// State_SSWV_DIE5
-  DOOM::AbstractThing::State{ Sprite_SSWV, 13, false, 5, nullptr, State_SSWV_XDIE2 },		// State_SSWV_XDIE1
-  DOOM::AbstractThing::State{ Sprite_SSWV, 14, false, 5, &DOOM::AbstractThing::A_XScream, State_SSWV_XDIE3 },	// State_SSWV_XDIE2
-  DOOM::AbstractThing::State{ Sprite_SSWV, 15, false, 5, &DOOM::AbstractThing::A_Fall, State_SSWV_XDIE4 },		// State_SSWV_XDIE3
-  DOOM::AbstractThing::State{ Sprite_SSWV, 16, false, 5, nullptr, State_SSWV_XDIE5 },		// State_SSWV_XDIE4
-  DOOM::AbstractThing::State{ Sprite_SSWV, 17, false, 5, nullptr, State_SSWV_XDIE6 },		// State_SSWV_XDIE5
-  DOOM::AbstractThing::State{ Sprite_SSWV, 18, false, 5, nullptr, State_SSWV_XDIE7 },		// State_SSWV_XDIE6
-  DOOM::AbstractThing::State{ Sprite_SSWV, 19, false, 5, nullptr, State_SSWV_XDIE8 },		// State_SSWV_XDIE7
-  DOOM::AbstractThing::State{ Sprite_SSWV, 20, false, 5, nullptr, State_SSWV_XDIE9 },		// State_SSWV_XDIE8
-  DOOM::AbstractThing::State{ Sprite_SSWV, 21, false, -1, nullptr, State_None },		// State_SSWV_XDIE9
-  DOOM::AbstractThing::State{ Sprite_SSWV, 12, false, 5, nullptr, State_SSWV_RAISE2 },		// State_SSWV_RAISE1
-  DOOM::AbstractThing::State{ Sprite_SSWV, 11, false, 5, nullptr, State_SSWV_RAISE3 },		// State_SSWV_RAISE2
-  DOOM::AbstractThing::State{ Sprite_SSWV, 10, false, 5, nullptr, State_SSWV_RAISE4 },		// State_SSWV_RAISE3
-  DOOM::AbstractThing::State{ Sprite_SSWV, 9, false, 5, nullptr, State_SSWV_RAISE5 },		// State_SSWV_RAISE4
-  DOOM::AbstractThing::State{ Sprite_SSWV, 8, false, 5, nullptr, State_SSWV_RUN1 },		// State_SSWV_RAISE5
-  DOOM::AbstractThing::State{ Sprite_KEEN, 0, false, -1, nullptr, State_KEENSTND },		// State_KEENSTND
-  DOOM::AbstractThing::State{ Sprite_KEEN, 0, false, 6, nullptr, State_COMMKEEN2 },		// State_COMMKEEN
-  DOOM::AbstractThing::State{ Sprite_KEEN, 1, false, 6, nullptr, State_COMMKEEN3 },		// State_COMMKEEN2
-  DOOM::AbstractThing::State{ Sprite_KEEN, 2, false, 6, &DOOM::AbstractThing::A_Scream, State_COMMKEEN4 },		// State_COMMKEEN3
-  DOOM::AbstractThing::State{ Sprite_KEEN, 3, false, 6, nullptr, State_COMMKEEN5 },		// State_COMMKEEN4
-  DOOM::AbstractThing::State{ Sprite_KEEN, 4, false, 6, nullptr, State_COMMKEEN6 },		// State_COMMKEEN5
-  DOOM::AbstractThing::State{ Sprite_KEEN, 5, false, 6, nullptr, State_COMMKEEN7 },		// State_COMMKEEN6
-  DOOM::AbstractThing::State{ Sprite_KEEN, 6, false, 6, nullptr, State_COMMKEEN8 },		// State_COMMKEEN7
-  DOOM::AbstractThing::State{ Sprite_KEEN, 7, false, 6, nullptr, State_COMMKEEN9 },		// State_COMMKEEN8
-  DOOM::AbstractThing::State{ Sprite_KEEN, 8, false, 6, nullptr, State_COMMKEEN10 },		// State_COMMKEEN9
-  DOOM::AbstractThing::State{ Sprite_KEEN, 9, false, 6, nullptr, State_COMMKEEN11 },		// State_COMMKEEN10
-  DOOM::AbstractThing::State{ Sprite_KEEN, 10, false, 6, &DOOM::AbstractThing::A_KeenDie, State_COMMKEEN12 },	// State_COMMKEEN11
-  DOOM::AbstractThing::State{ Sprite_KEEN, 11, false, -1, nullptr, State_None },		// State_COMMKEEN12
-  DOOM::AbstractThing::State{ Sprite_KEEN, 12, false, 4, nullptr, State_KEENPAIN2 },		// State_KEENPAIN
-  DOOM::AbstractThing::State{ Sprite_KEEN, 12, false, 8, &DOOM::AbstractThing::A_Pain, State_KEENSTND },		// State_KEENPAIN2
-  DOOM::AbstractThing::State{ Sprite_BBRN, 0, false, -1, nullptr, State_None },			// State_BRAIN
-  DOOM::AbstractThing::State{ Sprite_BBRN, 1, false, 36, &DOOM::AbstractThing::A_BrainPain, State_BRAIN },		// State_BRAIN_PAIN
-  DOOM::AbstractThing::State{ Sprite_BBRN, 0, false, 100, &DOOM::AbstractThing::A_BrainScream, State_BRAIN_DIE2 },	// State_BRAIN_DIE1
-  DOOM::AbstractThing::State{ Sprite_BBRN, 0, false, 10, nullptr, State_BRAIN_DIE3 },		// State_BRAIN_DIE2
-  DOOM::AbstractThing::State{ Sprite_BBRN, 0, false, 10, nullptr, State_BRAIN_DIE4 },		// State_BRAIN_DIE3
-  DOOM::AbstractThing::State{ Sprite_BBRN, 0, false, -1, &DOOM::AbstractThing::A_BrainDie, State_None },		// State_BRAIN_DIE4
-  DOOM::AbstractThing::State{ Sprite_SSWV, 0, false, 10, &DOOM::AbstractThing::A_Look, State_BRAINEYE },		// State_BRAINEYE
-  DOOM::AbstractThing::State{ Sprite_SSWV, 0, false, 181, &DOOM::AbstractThing::A_BrainAwake, State_BRAINEYE1 },	// State_BRAINEYESEE
-  DOOM::AbstractThing::State{ Sprite_SSWV, 0, false, 150, &DOOM::AbstractThing::A_BrainSpit, State_BRAINEYE1 },	// State_BRAINEYE1
-  DOOM::AbstractThing::State{ Sprite_BOSF, 0, true, 3, &DOOM::AbstractThing::A_SpawnSound, State_SPAWN2 },		// State_SPAWN1
-  DOOM::AbstractThing::State{ Sprite_BOSF, 1, true, 3, &DOOM::AbstractThing::A_SpawnFly, State_SPAWN3 },		// State_SPAWN2
-  DOOM::AbstractThing::State{ Sprite_BOSF, 2, true, 3, &DOOM::AbstractThing::A_SpawnFly, State_SPAWN4 },		// State_SPAWN3
-  DOOM::AbstractThing::State{ Sprite_BOSF, 3, true, 3, &DOOM::AbstractThing::A_SpawnFly, State_SPAWN1 },		// State_SPAWN4
-  DOOM::AbstractThing::State{ Sprite_FIRE, 0, true, 4, &DOOM::AbstractThing::A_Fire, State_SPAWNFIRE2 },		// State_SPAWNFIRE1
-  DOOM::AbstractThing::State{ Sprite_FIRE, 1, true, 4, &DOOM::AbstractThing::A_Fire, State_SPAWNFIRE3 },		// State_SPAWNFIRE2
-  DOOM::AbstractThing::State{ Sprite_FIRE, 2, true, 4, &DOOM::AbstractThing::A_Fire, State_SPAWNFIRE4 },		// State_SPAWNFIRE3
-  DOOM::AbstractThing::State{ Sprite_FIRE, 3, true, 4, &DOOM::AbstractThing::A_Fire, State_SPAWNFIRE5 },		// State_SPAWNFIRE4
-  DOOM::AbstractThing::State{ Sprite_FIRE, 4, true, 4, &DOOM::AbstractThing::A_Fire, State_SPAWNFIRE6 },		// State_SPAWNFIRE5
-  DOOM::AbstractThing::State{ Sprite_FIRE, 5, true, 4, &DOOM::AbstractThing::A_Fire, State_SPAWNFIRE7 },		// State_SPAWNFIRE6
-  DOOM::AbstractThing::State{ Sprite_FIRE, 6, true, 4, &DOOM::AbstractThing::A_Fire, State_SPAWNFIRE8 },		// State_SPAWNFIRE7
-  DOOM::AbstractThing::State{ Sprite_FIRE, 7, true, 4, &DOOM::AbstractThing::A_Fire, State_None },			// State_SPAWNFIRE8
-  DOOM::AbstractThing::State{ Sprite_MISL, 1, true, 10, nullptr, State_BRAINEXPLODE2 },		// State_BRAINEXPLODE1
-  DOOM::AbstractThing::State{ Sprite_MISL, 2, true, 10, nullptr, State_BRAINEXPLODE3 },		// State_BRAINEXPLODE2
-  DOOM::AbstractThing::State{ Sprite_MISL, 3, true, 10, &DOOM::AbstractThing::A_BrainExplode, State_None },		// State_BRAINEXPLODE3
-  DOOM::AbstractThing::State{ Sprite_ARM1, 0, false, 6, nullptr, State_ARM1A },			// State_ARM1
-  DOOM::AbstractThing::State{ Sprite_ARM1, 1, true, 7, nullptr, State_ARM1 },			// State_ARM1A
-  DOOM::AbstractThing::State{ Sprite_ARM2, 0, false, 6, nullptr, State_ARM2A },			// State_ARM2
-  DOOM::AbstractThing::State{ Sprite_ARM2, 1, true, 6, nullptr, State_ARM2 },			// State_ARM2A
-  DOOM::AbstractThing::State{ Sprite_BAR1, 0, false, 6, nullptr, State_BAR2 },			// State_BAR1
-  DOOM::AbstractThing::State{ Sprite_BAR1, 1, false, 6, nullptr, State_BAR1 },			// State_BAR2
-  DOOM::AbstractThing::State{ Sprite_BEXP, 0, true, 5, nullptr, State_BEXP2 },			// State_BEXP
-  DOOM::AbstractThing::State{ Sprite_BEXP, 1, true, 5, &DOOM::AbstractThing::A_Scream, State_BEXP3 },		// State_BEXP2
-  DOOM::AbstractThing::State{ Sprite_BEXP, 2, true, 5, nullptr, State_BEXP4 },			// State_BEXP3
-  DOOM::AbstractThing::State{ Sprite_BEXP, 3, true, 10, &DOOM::AbstractThing::A_Explode, State_BEXP5 },		// State_BEXP4
-  DOOM::AbstractThing::State{ Sprite_BEXP, 4, true, 10, nullptr, State_None },			// State_BEXP5
-  DOOM::AbstractThing::State{ Sprite_FCAN, 0, true, 4, nullptr, State_BBAR2 },			// State_BBAR1
-  DOOM::AbstractThing::State{ Sprite_FCAN, 1, true, 4, nullptr, State_BBAR3 },			// State_BBAR2
-  DOOM::AbstractThing::State{ Sprite_FCAN, 2, true, 4, nullptr, State_BBAR1 },			// State_BBAR3
-  DOOM::AbstractThing::State{ Sprite_BON1, 0, false, 6, nullptr, State_BON1A },			// State_BON1
-  DOOM::AbstractThing::State{ Sprite_BON1, 1, false, 6, nullptr, State_BON1B },			// State_BON1A
-  DOOM::AbstractThing::State{ Sprite_BON1, 2, false, 6, nullptr, State_BON1C },			// State_BON1B
-  DOOM::AbstractThing::State{ Sprite_BON1, 3, false, 6, nullptr, State_BON1D },			// State_BON1C
-  DOOM::AbstractThing::State{ Sprite_BON1, 2, false, 6, nullptr, State_BON1E },			// State_BON1D
-  DOOM::AbstractThing::State{ Sprite_BON1, 1, false, 6, nullptr, State_BON1 },			// State_BON1E
-  DOOM::AbstractThing::State{ Sprite_BON2, 0, false, 6, nullptr, State_BON2A },			// State_BON2
-  DOOM::AbstractThing::State{ Sprite_BON2, 1, false, 6, nullptr, State_BON2B },			// State_BON2A
-  DOOM::AbstractThing::State{ Sprite_BON2, 2, false, 6, nullptr, State_BON2C },			// State_BON2B
-  DOOM::AbstractThing::State{ Sprite_BON2, 3, false, 6, nullptr, State_BON2D },			// State_BON2C
-  DOOM::AbstractThing::State{ Sprite_BON2, 2, false, 6, nullptr, State_BON2E },			// State_BON2D
-  DOOM::AbstractThing::State{ Sprite_BON2, 1, false, 6, nullptr, State_BON2 },			// State_BON2E
-  DOOM::AbstractThing::State{ Sprite_BKEY, 0, false, 10, nullptr, State_BKEY2 },		// State_BKEY
-  DOOM::AbstractThing::State{ Sprite_BKEY, 1, true, 10, nullptr, State_BKEY },			// State_BKEY2
-  DOOM::AbstractThing::State{ Sprite_RKEY, 0, false, 10, nullptr, State_RKEY2 },		// State_RKEY
-  DOOM::AbstractThing::State{ Sprite_RKEY, 1, true, 10, nullptr, State_RKEY },			// State_RKEY2
-  DOOM::AbstractThing::State{ Sprite_YKEY, 0, false, 10, nullptr, State_YKEY2 },		// State_YKEY
-  DOOM::AbstractThing::State{ Sprite_YKEY, 1, true, 10, nullptr, State_YKEY },			// State_YKEY2
-  DOOM::AbstractThing::State{ Sprite_BSKU, 0, false, 10, nullptr, State_BSKULL2 },		// State_BSKULL
-  DOOM::AbstractThing::State{ Sprite_BSKU, 1, true, 10, nullptr, State_BSKULL },		// State_BSKULL2
-  DOOM::AbstractThing::State{ Sprite_RSKU, 0, false, 10, nullptr, State_RSKULL2 },		// State_RSKULL
-  DOOM::AbstractThing::State{ Sprite_RSKU, 1, true, 10, nullptr, State_RSKULL },		// State_RSKULL2
-  DOOM::AbstractThing::State{ Sprite_YSKU, 0, false, 10, nullptr, State_YSKULL2 },		// State_YSKULL
-  DOOM::AbstractThing::State{ Sprite_YSKU, 1, true, 10, nullptr, State_YSKULL },		// State_YSKULL2
-  DOOM::AbstractThing::State{ Sprite_STIM, 0, false, -1, nullptr, State_None },			// State_STIM
-  DOOM::AbstractThing::State{ Sprite_MEDI, 0, false, -1, nullptr, State_None },			// State_MEDI
-  DOOM::AbstractThing::State{ Sprite_SOUL, 0, true, 6, nullptr, State_SOUL2 },			// State_SOUL
-  DOOM::AbstractThing::State{ Sprite_SOUL, 1, true, 6, nullptr, State_SOUL3 },			// State_SOUL2
-  DOOM::AbstractThing::State{ Sprite_SOUL, 2, true, 6, nullptr, State_SOUL4 },			// State_SOUL3
-  DOOM::AbstractThing::State{ Sprite_SOUL, 3, true, 6, nullptr, State_SOUL5 },			// State_SOUL4
-  DOOM::AbstractThing::State{ Sprite_SOUL, 2, true, 6, nullptr, State_SOUL6 },			// State_SOUL5
-  DOOM::AbstractThing::State{ Sprite_SOUL, 1, true, 6, nullptr, State_SOUL },			// State_SOUL6
-  DOOM::AbstractThing::State{ Sprite_PINV, 0, true, 6, nullptr, State_PINV2 },			// State_PINV
-  DOOM::AbstractThing::State{ Sprite_PINV, 1, true, 6, nullptr, State_PINV3 },			// State_PINV2
-  DOOM::AbstractThing::State{ Sprite_PINV, 2, true, 6, nullptr, State_PINV4 },			// State_PINV3
-  DOOM::AbstractThing::State{ Sprite_PINV, 3, true, 6, nullptr, State_PINV },			// State_PINV4
-  DOOM::AbstractThing::State{ Sprite_PSTR, 0, true, -1, nullptr, State_None },			// State_PSTR
-  DOOM::AbstractThing::State{ Sprite_PINS, 0, true, 6, nullptr, State_PINS2 },			// State_PINS
-  DOOM::AbstractThing::State{ Sprite_PINS, 1, true, 6, nullptr, State_PINS3 },			// State_PINS2
-  DOOM::AbstractThing::State{ Sprite_PINS, 2, true, 6, nullptr, State_PINS4 },			// State_PINS3
-  DOOM::AbstractThing::State{ Sprite_PINS, 3, true, 6, nullptr, State_PINS },			// State_PINS4
-  DOOM::AbstractThing::State{ Sprite_MEGA, 0, true, 6, nullptr, State_MEGA2 },			// State_MEGA
-  DOOM::AbstractThing::State{ Sprite_MEGA, 1, true, 6, nullptr, State_MEGA3 },			// State_MEGA2
-  DOOM::AbstractThing::State{ Sprite_MEGA, 2, true, 6, nullptr, State_MEGA4 },			// State_MEGA3
-  DOOM::AbstractThing::State{ Sprite_MEGA, 3, true, 6, nullptr, State_MEGA },			// State_MEGA4
-  DOOM::AbstractThing::State{ Sprite_SUIT, 0, true, -1, nullptr, State_None },			// State_SUIT
-  DOOM::AbstractThing::State{ Sprite_PMAP, 0, true, 6, nullptr, State_PMAP2 },			// State_PMAP
-  DOOM::AbstractThing::State{ Sprite_PMAP, 1, true, 6, nullptr, State_PMAP3 },			// State_PMAP2
-  DOOM::AbstractThing::State{ Sprite_PMAP, 2, true, 6, nullptr, State_PMAP4 },			// State_PMAP3
-  DOOM::AbstractThing::State{ Sprite_PMAP, 3, true, 6, nullptr, State_PMAP5 },			// State_PMAP4
-  DOOM::AbstractThing::State{ Sprite_PMAP, 2, true, 6, nullptr, State_PMAP6 },			// State_PMAP5
-  DOOM::AbstractThing::State{ Sprite_PMAP, 1, true, 6, nullptr, State_PMAP },			// State_PMAP6
-  DOOM::AbstractThing::State{ Sprite_PVIS, 0, true, 6, nullptr, State_PVIS2 },			// State_PVIS
-  DOOM::AbstractThing::State{ Sprite_PVIS, 1, false, 6, nullptr, State_PVIS },			// State_PVIS2
-  DOOM::AbstractThing::State{ Sprite_CLIP, 0, false, -1, nullptr, State_None },			// State_CLIP
-  DOOM::AbstractThing::State{ Sprite_AMMO, 0, false, -1, nullptr, State_None },			// State_AMMO
-  DOOM::AbstractThing::State{ Sprite_ROCK, 0, false, -1, nullptr, State_None },			// State_ROCK
-  DOOM::AbstractThing::State{ Sprite_BROK, 0, false, -1, nullptr, State_None },			// State_BROK
-  DOOM::AbstractThing::State{ Sprite_CELL, 0, false, -1, nullptr, State_None },			// State_CELL
-  DOOM::AbstractThing::State{ Sprite_CELP, 0, false, -1, nullptr, State_None },			// State_CELP
-  DOOM::AbstractThing::State{ Sprite_SHEL, 0, false, -1, nullptr, State_None },			// State_SHEL
-  DOOM::AbstractThing::State{ Sprite_SBOX, 0, false, -1, nullptr, State_None },			// State_SBOX
-  DOOM::AbstractThing::State{ Sprite_BPAK, 0, false, -1, nullptr, State_None },			// State_BPAK
-  DOOM::AbstractThing::State{ Sprite_BFUG, 0, false, -1, nullptr, State_None },			// State_BFUG
-  DOOM::AbstractThing::State{ Sprite_MGUN, 0, false, -1, nullptr, State_None },			// State_MGUN
-  DOOM::AbstractThing::State{ Sprite_CSAW, 0, false, -1, nullptr, State_None },			// State_CSAW
-  DOOM::AbstractThing::State{ Sprite_LAUN, 0, false, -1, nullptr, State_None },			// State_LAUN
-  DOOM::AbstractThing::State{ Sprite_PLAS, 0, false, -1, nullptr, State_None },			// State_PLAS
-  DOOM::AbstractThing::State{ Sprite_SHOT, 0, false, -1, nullptr, State_None },			// State_SHOT
-  DOOM::AbstractThing::State{ Sprite_SGN2, 0, false, -1, nullptr, State_None },			// State_SHOT2
-  DOOM::AbstractThing::State{ Sprite_COLU, 0, true, -1, nullptr, State_None },			// State_COLU
-  DOOM::AbstractThing::State{ Sprite_SMT2, 0, false, -1, nullptr, State_None },			// State_STALAG
-  DOOM::AbstractThing::State{ Sprite_GOR1, 0, false, 10, nullptr, State_BLOODYTWITCH2 },	// State_BLOODYTWITCH
-  DOOM::AbstractThing::State{ Sprite_GOR1, 1, false, 15, nullptr, State_BLOODYTWITCH3 },	// State_BLOODYTWITCH2
-  DOOM::AbstractThing::State{ Sprite_GOR1, 2, false, 8, nullptr, State_BLOODYTWITCH4 },		// State_BLOODYTWITCH3
-  DOOM::AbstractThing::State{ Sprite_GOR1, 1, false, 6, nullptr, State_BLOODYTWITCH },		// State_BLOODYTWITCH4
-  DOOM::AbstractThing::State{ Sprite_PLAY, 13, false, -1, nullptr, State_None },		// State_DEADTORSO
-  DOOM::AbstractThing::State{ Sprite_PLAY, 18, false, -1, nullptr, State_None },		// State_DEADBOTTOM
-  DOOM::AbstractThing::State{ Sprite_POL2, 0, false, -1, nullptr, State_None },			// State_HEADSONSTICK
-  DOOM::AbstractThing::State{ Sprite_POL5, 0, false, -1, nullptr, State_None },			// State_GIBS
-  DOOM::AbstractThing::State{ Sprite_POL4, 0, false, -1, nullptr, State_None },			// State_HEADONASTICK
-  DOOM::AbstractThing::State{ Sprite_POL3, 0, true, 6, nullptr, State_HEADCANDLES2 },		// State_HEADCANDLES
-  DOOM::AbstractThing::State{ Sprite_POL3, 1, true, 6, nullptr, State_HEADCANDLES },		// State_HEADCANDLES2
-  DOOM::AbstractThing::State{ Sprite_POL1, 0, false, -1, nullptr, State_None },			// State_DEADSTICK
-  DOOM::AbstractThing::State{ Sprite_POL6, 0, false, 6, nullptr, State_LIVESTICK2 },		// State_LIVESTICK
-  DOOM::AbstractThing::State{ Sprite_POL6, 1, false, 8, nullptr, State_LIVESTICK },		// State_LIVESTICK2
-  DOOM::AbstractThing::State{ Sprite_GOR2, 0, false, -1, nullptr, State_None },			// State_MEAT2
-  DOOM::AbstractThing::State{ Sprite_GOR3, 0, false, -1, nullptr, State_None },			// State_MEAT3
-  DOOM::AbstractThing::State{ Sprite_GOR4, 0, false, -1, nullptr, State_None },			// State_MEAT4
-  DOOM::AbstractThing::State{ Sprite_GOR5, 0, false, -1, nullptr, State_None },			// State_MEAT5
-  DOOM::AbstractThing::State{ Sprite_SMIT, 0, false, -1, nullptr, State_None },			// State_STALAGTITE
-  DOOM::AbstractThing::State{ Sprite_COL1, 0, false, -1, nullptr, State_None },			// State_TALLGRNCOL
-  DOOM::AbstractThing::State{ Sprite_COL2, 0, false, -1, nullptr, State_None },			// State_SHRTGRNCOL
-  DOOM::AbstractThing::State{ Sprite_COL3, 0, false, -1, nullptr, State_None },			// State_TALLREDCOL
-  DOOM::AbstractThing::State{ Sprite_COL4, 0, false, -1, nullptr, State_None },			// State_SHRTREDCOL
-  DOOM::AbstractThing::State{ Sprite_CAND, 0, true, -1, nullptr, State_None },			// State_CANDLESTIK
-  DOOM::AbstractThing::State{ Sprite_CBRA, 0, true, -1, nullptr, State_None },			// State_CANDELABRA
-  DOOM::AbstractThing::State{ Sprite_COL6, 0, false, -1, nullptr, State_None },			// State_SKULLCOL
-  DOOM::AbstractThing::State{ Sprite_TRE1, 0, false, -1, nullptr, State_None },			// State_TORCHTREE
-  DOOM::AbstractThing::State{ Sprite_TRE2, 0, false, -1, nullptr, State_None },			// State_BIGTREE
-  DOOM::AbstractThing::State{ Sprite_ELEC, 0, false, -1, nullptr, State_None },			// State_TECHPILLAR
-  DOOM::AbstractThing::State{ Sprite_CEYE, 0, true, 6, nullptr, State_EVILEYE2 },		// State_EVILEYE
-  DOOM::AbstractThing::State{ Sprite_CEYE, 1, true, 6, nullptr, State_EVILEYE3 },		// State_EVILEYE2
-  DOOM::AbstractThing::State{ Sprite_CEYE, 2, true, 6, nullptr, State_EVILEYE4 },		// State_EVILEYE3
-  DOOM::AbstractThing::State{ Sprite_CEYE, 1, true, 6, nullptr, State_EVILEYE },		// State_EVILEYE4
-  DOOM::AbstractThing::State{ Sprite_FSKU, 0, true, 6, nullptr, State_FLOATSKULL2 },		// State_FLOATSKULL
-  DOOM::AbstractThing::State{ Sprite_FSKU, 1, true, 6, nullptr, State_FLOATSKULL3 },		// State_FLOATSKULL2
-  DOOM::AbstractThing::State{ Sprite_FSKU, 2, true, 6, nullptr, State_FLOATSKULL },		// State_FLOATSKULL3
-  DOOM::AbstractThing::State{ Sprite_COL5, 0, false, 14, nullptr, State_HEARTCOL2 },		// State_HEARTCOL
-  DOOM::AbstractThing::State{ Sprite_COL5, 1, false, 14, nullptr, State_HEARTCOL },		// State_HEARTCOL2
-  DOOM::AbstractThing::State{ Sprite_TBLU, 0, true, 4, nullptr, State_BLUETORCH2 },		// State_BLUETORCH
-  DOOM::AbstractThing::State{ Sprite_TBLU, 1, true, 4, nullptr, State_BLUETORCH3 },		// State_BLUETORCH2
-  DOOM::AbstractThing::State{ Sprite_TBLU, 2, true, 4, nullptr, State_BLUETORCH4 },		// State_BLUETORCH3
-  DOOM::AbstractThing::State{ Sprite_TBLU, 3, true, 4, nullptr, State_BLUETORCH },		// State_BLUETORCH4
-  DOOM::AbstractThing::State{ Sprite_TGRN, 0, true, 4, nullptr, State_GREENTORCH2 },		// State_GREENTORCH
-  DOOM::AbstractThing::State{ Sprite_TGRN, 1, true, 4, nullptr, State_GREENTORCH3 },		// State_GREENTORCH2
-  DOOM::AbstractThing::State{ Sprite_TGRN, 2, true, 4, nullptr, State_GREENTORCH4 },		// State_GREENTORCH3
-  DOOM::AbstractThing::State{ Sprite_TGRN, 3, true, 4, nullptr, State_GREENTORCH },		// State_GREENTORCH4
-  DOOM::AbstractThing::State{ Sprite_TRED, 0, true, 4, nullptr, State_REDTORCH2 },		// State_REDTORCH
-  DOOM::AbstractThing::State{ Sprite_TRED, 1, true, 4, nullptr, State_REDTORCH3 },		// State_REDTORCH2
-  DOOM::AbstractThing::State{ Sprite_TRED, 2, true, 4, nullptr, State_REDTORCH4 },		// State_REDTORCH3
-  DOOM::AbstractThing::State{ Sprite_TRED, 3, true, 4, nullptr, State_REDTORCH },		// State_REDTORCH4
-  DOOM::AbstractThing::State{ Sprite_SMBT, 0, true, 4, nullptr, State_BTORCHSHRT2 },		// State_BTORCHSHRT
-  DOOM::AbstractThing::State{ Sprite_SMBT, 1, true, 4, nullptr, State_BTORCHSHRT3 },		// State_BTORCHSHRT2
-  DOOM::AbstractThing::State{ Sprite_SMBT, 2, true, 4, nullptr, State_BTORCHSHRT4 },		// State_BTORCHSHRT3
-  DOOM::AbstractThing::State{ Sprite_SMBT, 3, true, 4, nullptr, State_BTORCHSHRT },		// State_BTORCHSHRT4
-  DOOM::AbstractThing::State{ Sprite_SMGT, 0, true, 4, nullptr, State_GTORCHSHRT2 },		// State_GTORCHSHRT
-  DOOM::AbstractThing::State{ Sprite_SMGT, 1, true, 4, nullptr, State_GTORCHSHRT3 },		// State_GTORCHSHRT2
-  DOOM::AbstractThing::State{ Sprite_SMGT, 2, true, 4, nullptr, State_GTORCHSHRT4 },		// State_GTORCHSHRT3
-  DOOM::AbstractThing::State{ Sprite_SMGT, 3, true, 4, nullptr, State_GTORCHSHRT },		// State_GTORCHSHRT4
-  DOOM::AbstractThing::State{ Sprite_SMRT, 0, true, 4, nullptr, State_RTORCHSHRT2 },		// State_RTORCHSHRT
-  DOOM::AbstractThing::State{ Sprite_SMRT, 1, true, 4, nullptr, State_RTORCHSHRT3 },		// State_RTORCHSHRT2
-  DOOM::AbstractThing::State{ Sprite_SMRT, 2, true, 4, nullptr, State_RTORCHSHRT4 },		// State_RTORCHSHRT3
-  DOOM::AbstractThing::State{ Sprite_SMRT, 3, true, 4, nullptr, State_RTORCHSHRT },		// State_RTORCHSHRT4
-  DOOM::AbstractThing::State{ Sprite_HDB1, 0, false, -1, nullptr, State_None },			// State_HANGNOGUTS
-  DOOM::AbstractThing::State{ Sprite_HDB2, 0, false, -1, nullptr, State_None },			// State_HANGBNOBRAIN
-  DOOM::AbstractThing::State{ Sprite_HDB3, 0, false, -1, nullptr, State_None },			// State_HANGTLOOKDN
-  DOOM::AbstractThing::State{ Sprite_HDB4, 0, false, -1, nullptr, State_None },			// State_HANGTSKULL
-  DOOM::AbstractThing::State{ Sprite_HDB5, 0, false, -1, nullptr, State_None },			// State_HANGTLOOKUP
-  DOOM::AbstractThing::State{ Sprite_HDB6, 0, false, -1, nullptr, State_None },			// State_HANGTNOBRAIN
-  DOOM::AbstractThing::State{ Sprite_POB1, 0, false, -1, nullptr, State_None },			// State_COLONGIBS
-  DOOM::AbstractThing::State{ Sprite_POB2, 0, false, -1, nullptr, State_None },			// State_SMALLPOOL
-  DOOM::AbstractThing::State{ Sprite_BRS1, 0, false, -1, nullptr, State_None },			// State_BRAINSTEM
-  DOOM::AbstractThing::State{ Sprite_TLMP, 0, true, 4, nullptr, State_TECHLAMP2 },		// State_TECHLAMP
-  DOOM::AbstractThing::State{ Sprite_TLMP, 1, true, 4, nullptr, State_TECHLAMP3 },		// State_TECHLAMP2
-  DOOM::AbstractThing::State{ Sprite_TLMP, 2, true, 4, nullptr, State_TECHLAMP4 },		// State_TECHLAMP3
-  DOOM::AbstractThing::State{ Sprite_TLMP, 3, true, 4, nullptr, State_TECHLAMP },		// State_TECHLAMP4
-  DOOM::AbstractThing::State{ Sprite_TLP2, 0, true, 4, nullptr, State_TECH2LAMP2 },		// State_TECH2LAMP
-  DOOM::AbstractThing::State{ Sprite_TLP2, 1, true, 4, nullptr, State_TECH2LAMP3 },		// State_TECH2LAMP2
-  DOOM::AbstractThing::State{ Sprite_TLP2, 2, true, 4, nullptr, State_TECH2LAMP4 },		// State_TECH2LAMP3
-  DOOM::AbstractThing::State{ Sprite_TLP2, 3, true, 4, nullptr, State_TECH2LAMP }		// State_TECH2LAMP4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_None
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BLUD, .frame = 2, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BLOOD2 }, // State_BLOOD1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BLUD, .frame = 1, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BLOOD3 }, // State_BLOOD2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BLUD, .frame = 0, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_None }, // State_BLOOD3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_PUFF2 }, // State_PUFF1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 1, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PUFF3 }, // State_PUFF2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 2, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PUFF4 }, // State_PUFF3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 3, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_PUFF4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL1, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TBALL2 }, // State_TBALL1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL1, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TBALL1 }, // State_TBALL2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL1, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TBALLX2 }, // State_TBALLX1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL1, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TBALLX3 }, // State_TBALLX2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL1, .frame = 4, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_TBALLX3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL2, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RBALL2 }, // State_RBALL1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL2, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RBALL1 }, // State_RBALL2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL2, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_RBALLX2 }, // State_RBALLX1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL2, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_RBALLX3 }, // State_RBALLX2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL2, .frame = 4, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_RBALLX3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLSS, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PLASBALL2 }, // State_PLASBALL
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLSS, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PLASBALL }, // State_PLASBALL2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLSE, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_PLASEXP2 }, // State_PLASEXP
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLSE, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_PLASEXP3 }, // State_PLASEXP2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLSE, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_PLASEXP4 }, // State_PLASEXP3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLSE, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_PLASEXP5 }, // State_PLASEXP4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLSE, .frame = 4, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_PLASEXP5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 0, .brightness = true, .duration = 1, .action = &DOOM::AbstractThing::A_MissileSmoke, .next = ThingState::State_ROCKET }, // State_ROCKET
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFS1, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BFGSHOT2 }, // State_BFGSHOT
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFS1, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BFGSHOT }, // State_BFGSHOT2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE1, .frame = 0, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGLAND2 }, // State_BFGLAND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE1, .frame = 1, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGLAND3 }, // State_BFGLAND2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE1, .frame = 2, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_BFGSpray, .next = ThingState::State_BFGLAND4 }, // State_BFGLAND3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE1, .frame = 3, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGLAND5 }, // State_BFGLAND4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE1, .frame = 4, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGLAND6 }, // State_BFGLAND5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE1, .frame = 5, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_None }, // State_BFGLAND6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE2, .frame = 0, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGEXP2 }, // State_BFGEXP
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE2, .frame = 1, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGEXP3 }, // State_BFGEXP2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE2, .frame = 2, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGEXP4 }, // State_BFGEXP3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE2, .frame = 3, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_None }, // State_BFGEXP4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 1, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_Explode, .next = ThingState::State_EXPLODE2 }, // State_EXPLODE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_EXPLODE3 }, // State_EXPLODE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_EXPLODE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG01 }, // State_TFOG
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG02 }, // State_TFOG01
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG2 }, // State_TFOG02
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG3 }, // State_TFOG2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG4 }, // State_TFOG3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG5 }, // State_TFOG4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 4, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG6 }, // State_TFOG5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 5, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG7 }, // State_TFOG6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 6, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG8 }, // State_TFOG7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 7, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG9 }, // State_TFOG8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 8, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG10 }, // State_TFOG9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 9, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_TFOG10
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_IFOG, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG01 }, // State_IFOG
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_IFOG, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG02 }, // State_IFOG01
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_IFOG, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG2 }, // State_IFOG02
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_IFOG, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG3 }, // State_IFOG2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_IFOG, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG4 }, // State_IFOG3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_IFOG, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG5 }, // State_IFOG4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_IFOG, .frame = 4, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_IFOG5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_PLAY
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 0, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PLAY_RUN2 }, // State_PLAY_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 1, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PLAY_RUN3 }, // State_PLAY_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 2, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PLAY_RUN4 }, // State_PLAY_RUN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 3, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PLAY_RUN1 }, // State_PLAY_RUN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 4, .brightness = false, .duration = 12, .action = nullptr, .next = ThingState::State_PLAY }, // State_PLAY_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 5, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PLAY_ATK1 }, // State_PLAY_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 6, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PLAY_PAIN2 }, // State_PLAY_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 6, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_PLAY }, // State_PLAY_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 7, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_PLAY_DIE2 }, // State_PLAY_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 8, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_PlayerScream, .next = ThingState::State_PLAY_DIE3 }, // State_PLAY_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 9, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_PLAY_DIE4 }, // State_PLAY_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 10, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_PLAY_DIE5 }, // State_PLAY_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 11, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_PLAY_DIE6 }, // State_PLAY_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 12, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_PLAY_DIE7 }, // State_PLAY_DIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 13, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_PLAY_DIE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 14, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE2 }, // State_PLAY_XDIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 15, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_PLAY_XDIE3 }, // State_PLAY_XDIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 16, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_PLAY_XDIE4 }, // State_PLAY_XDIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE5 }, // State_PLAY_XDIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE6 }, // State_PLAY_XDIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 19, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE7 }, // State_PLAY_XDIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 20, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE8 }, // State_PLAY_XDIE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 21, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE9 }, // State_PLAY_XDIE8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 22, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_PLAY_XDIE9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_POSS_STND2 }, // State_POSS_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_POSS_STND }, // State_POSS_STND2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 0, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN2 }, // State_POSS_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 0, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN3 }, // State_POSS_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 1, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN4 }, // State_POSS_RUN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 1, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN5 }, // State_POSS_RUN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 2, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN6 }, // State_POSS_RUN5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 2, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN7 }, // State_POSS_RUN6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 3, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN8 }, // State_POSS_RUN7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 3, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN1 }, // State_POSS_RUN8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 4, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_POSS_ATK2 }, // State_POSS_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 5, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_PosAttack, .next = ThingState::State_POSS_ATK3 }, // State_POSS_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 4, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_POSS_RUN1 }, // State_POSS_ATK3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 6, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_POSS_PAIN2 }, // State_POSS_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 6, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_POSS_RUN1 }, // State_POSS_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_DIE2 }, // State_POSS_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_POSS_DIE3 }, // State_POSS_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 9, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_POSS_DIE4 }, // State_POSS_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_DIE5 }, // State_POSS_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 11, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_POSS_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE2 }, // State_POSS_XDIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 13, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_POSS_XDIE3 }, // State_POSS_XDIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 14, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_POSS_XDIE4 }, // State_POSS_XDIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE5 }, // State_POSS_XDIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE6 }, // State_POSS_XDIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE7 }, // State_POSS_XDIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE8 }, // State_POSS_XDIE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 19, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE9 }, // State_POSS_XDIE8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 20, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_POSS_XDIE9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_RAISE2 }, // State_POSS_RAISE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_RAISE3 }, // State_POSS_RAISE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_RAISE4 }, // State_POSS_RAISE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_RUN1 }, // State_POSS_RAISE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SPOS_STND2 }, // State_SPOS_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SPOS_STND }, // State_SPOS_STND2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN2 }, // State_SPOS_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN3 }, // State_SPOS_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN4 }, // State_SPOS_RUN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN5 }, // State_SPOS_RUN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN6 }, // State_SPOS_RUN5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN7 }, // State_SPOS_RUN6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN8 }, // State_SPOS_RUN7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN1 }, // State_SPOS_RUN8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 4, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SPOS_ATK2 }, // State_SPOS_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 5, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_SPosAttack, .next = ThingState::State_SPOS_ATK3 }, // State_SPOS_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 4, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPOS_RUN1 }, // State_SPOS_ATK3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 6, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_SPOS_PAIN2 }, // State_SPOS_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 6, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SPOS_RUN1 }, // State_SPOS_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_DIE2 }, // State_SPOS_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SPOS_DIE3 }, // State_SPOS_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 9, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SPOS_DIE4 }, // State_SPOS_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_DIE5 }, // State_SPOS_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 11, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SPOS_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE2 }, // State_SPOS_XDIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 13, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_SPOS_XDIE3 }, // State_SPOS_XDIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 14, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SPOS_XDIE4 }, // State_SPOS_XDIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE5 }, // State_SPOS_XDIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE6 }, // State_SPOS_XDIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE7 }, // State_SPOS_XDIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE8 }, // State_SPOS_XDIE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 19, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE9 }, // State_SPOS_XDIE8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 20, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SPOS_XDIE9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_RAISE2 }, // State_SPOS_RAISE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_RAISE3 }, // State_SPOS_RAISE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_RAISE4 }, // State_SPOS_RAISE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_RAISE5 }, // State_SPOS_RAISE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_RUN1 }, // State_SPO.next = ThingState::State_RAISE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_VILE_STND2 }, // State_VILE_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_VILE_STND }, // State_VILE_STND2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN2 }, // State_VILE_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN3 }, // State_VILE_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN4 }, // State_VILE_RUN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN5 }, // State_VILE_RUN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN6 }, // State_VILE_RUN5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN7 }, // State_VILE_RUN6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN8 }, // State_VILE_RUN7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN9 }, // State_VILE_RUN8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 4, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN10 }, // State_VILE_RUN9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 4, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN11 }, // State_VILE_RUN10
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 5, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN12 }, // State_VILE_RUN11
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 5, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN1 }, // State_VILE_RUN12
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 6, .brightness = true, .duration = 0, .action = &DOOM::AbstractThing::A_VileStart, .next = ThingState::State_VILE_ATK2 }, // State_VILE_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 6, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK3 }, // State_VILE_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 7, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_VileTarget, .next = ThingState::State_VILE_ATK4 }, // State_VILE_ATK3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 8, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK5 }, // State_VILE_ATK4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 9, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK6 }, // State_VILE_ATK5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 10, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK7 }, // State_VILE_ATK6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 11, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK8 }, // State_VILE_ATK7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 12, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK9 }, // State_VILE_ATK8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 13, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK10 }, // State_VILE_ATK9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 14, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_VileAttack, .next = ThingState::State_VILE_ATK11 }, // State_VILE_ATK10
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 15, .brightness = true, .duration = 20, .action = nullptr, .next = ThingState::State_VILE_RUN1 }, // State_VILE_ATK11
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 26, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_VILE_HEAL2 }, // State_VILE_HEAL1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 27, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_VILE_HEAL3 }, // State_VILE_HEAL2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 28, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_VILE_RUN1 }, // State_VILE_HEAL3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_VILE_PAIN2 }, // State_VILE_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 16, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_VILE_RUN1 }, // State_VILE_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 16, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_VILE_DIE2 }, // State_VILE_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 17, .brightness = false, .duration = 7, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_VILE_DIE3 }, // State_VILE_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 18, .brightness = false, .duration = 7, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_VILE_DIE4 }, // State_VILE_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 19, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_VILE_DIE5 }, // State_VILE_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 20, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_VILE_DIE6 }, // State_VILE_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 21, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_VILE_DIE7 }, // State_VILE_DIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 22, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_VILE_DIE8 }, // State_VILE_DIE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 23, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_VILE_DIE9 }, // State_VILE_DIE8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 24, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_VILE_DIE10 }, // State_VILE_DIE9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 25, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_VILE_DIE10
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 0, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_StartFire, .next = ThingState::State_FIRE2 }, // State_FIRE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 1, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE3 }, // State_FIRE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 0, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE4 }, // State_FIRE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 1, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE5 }, // State_FIRE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_FireCrackle, .next = ThingState::State_FIRE6 }, // State_FIRE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 1, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE7 }, // State_FIRE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE8 }, // State_FIRE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 1, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE9 }, // State_FIRE8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE10 }, // State_FIRE9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE11 }, // State_FIRE10
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE12 }, // State_FIRE11
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE13 }, // State_FIRE12
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE14 }, // State_FIRE13
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE15 }, // State_FIRE14
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE16 }, // State_FIRE15
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE17 }, // State_FIRE16
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE18 }, // State_FIRE17
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE19 }, // State_FIRE18
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_FireCrackle, .next = ThingState::State_FIRE20 }, // State_FIRE19
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 5, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE21 }, // State_FIRE20
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE22 }, // State_FIRE21
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 5, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE23 }, // State_FIRE22
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE24 }, // State_FIRE23
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 5, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE25 }, // State_FIRE24
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 6, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE26 }, // State_FIRE25
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 7, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE27 }, // State_FIRE26
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 6, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE28 }, // State_FIRE27
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 7, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE29 }, // State_FIRE28
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 6, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE30 }, // State_FIRE29
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 7, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_None }, // State_FIRE30
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 1, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SMOKE2 }, // State_SMOKE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 2, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SMOKE3 }, // State_SMOKE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 1, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SMOKE4 }, // State_SMOKE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 2, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SMOKE5 }, // State_SMOKE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 3, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_SMOKE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATB, .frame = 0, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Tracer, .next = ThingState::State_TRACER2 }, // State_TRACER
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATB, .frame = 1, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Tracer, .next = ThingState::State_TRACER }, // State_TRACER2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FBXP, .frame = 0, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_TRACEEXP2 }, // State_TRACEEXP1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FBXP, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TRACEEXP3 }, // State_TRACEEXP2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FBXP, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_TRACEEXP3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SKEL_STND2 }, // State_SKEL_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SKEL_STND }, // State_SKEL_STND2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN2 }, // State_SKEL_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN3 }, // State_SKEL_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN4 }, // State_SKEL_RUN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN5 }, // State_SKEL_RUN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN6 }, // State_SKEL_RUN5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN7 }, // State_SKEL_RUN6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN8 }, // State_SKEL_RUN7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN9 }, // State_SKEL_RUN8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 4, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN10 }, // State_SKEL_RUN9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 4, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN11 }, // State_SKEL_RUN10
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 5, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN12 }, // State_SKEL_RUN11
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 5, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN1 }, // State_SKEL_RUN12
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 6, .brightness = false, .duration = 0, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKEL_FIST2 }, // State_SKEL_FIST1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 6, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_SkelWhoosh, .next = ThingState::State_SKEL_FIST3 }, // State_SKEL_FIST2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 7, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKEL_FIST4 }, // State_SKEL_FIST3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 8, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_SkelFist, .next = ThingState::State_SKEL_RUN1 }, // State_SKEL_FIST4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 9, .brightness = true, .duration = 0, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKEL_MISS2 }, // State_SKEL_MISS1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 9, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKEL_MISS3 }, // State_SKEL_MISS2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 10, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_SkelMissile, .next = ThingState::State_SKEL_MISS4 }, // State_SKEL_MISS3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 10, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKEL_RUN1 }, // State_SKEL_MISS4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_PAIN2 }, // State_SKEL_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 11, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SKEL_RUN1 }, // State_SKEL_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 11, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_SKEL_DIE2 }, // State_SKEL_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 12, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_SKEL_DIE3 }, // State_SKEL_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 13, .brightness = false, .duration = 7, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SKEL_DIE4 }, // State_SKEL_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 14, .brightness = false, .duration = 7, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SKEL_DIE5 }, // State_SKEL_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 15, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_SKEL_DIE6 }, // State_SKEL_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 16, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SKEL_DIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RAISE2 }, // State_SKEL_RAISE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RAISE3 }, // State_SKEL_RAISE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 14, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RAISE4 }, // State_SKEL_RAISE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RAISE5 }, // State_SKEL_RAISE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RAISE6 }, // State_SKEL_RAISE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RUN1 }, // State_SKEL_RAISE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MANF, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_FATSHOT2 }, // State_FATSHOT1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MANF, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_FATSHOT1 }, // State_FATSHOT2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 1, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_FATSHOTX2 }, // State_FATSHOTX1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_FATSHOTX3 }, // State_FATSHOTX2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_FATSHOTX3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 0, .brightness = false, .duration = 15, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_FATT_STND2 }, // State_FATT_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 1, .brightness = false, .duration = 15, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_FATT_STND }, // State_FATT_STND2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 0, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN2 }, // State_FATT_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 0, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN3 }, // State_FATT_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 1, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN4 }, // State_FATT_RUN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 1, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN5 }, // State_FATT_RUN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 2, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN6 }, // State_FATT_RUN5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 2, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN7 }, // State_FATT_RUN6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 3, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN8 }, // State_FATT_RUN7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 3, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN9 }, // State_FATT_RUN8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 4, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN10 }, // State_FATT_RUN9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 4, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN11 }, // State_FATT_RUN10
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 5, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN12 }, // State_FATT_RUN11
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 5, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN1 }, // State_FATT_RUN12
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 6, .brightness = false, .duration = 20, .action = &DOOM::AbstractThing::A_FatRaise, .next = ThingState::State_FATT_ATK2 }, // State_FATT_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 7, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FatAttack1, .next = ThingState::State_FATT_ATK3 }, // State_FATT_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_ATK4 }, // State_FATT_ATK3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 6, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_ATK5 }, // State_FATT_ATK4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 7, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FatAttack2, .next = ThingState::State_FATT_ATK6 }, // State_FATT_ATK5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_ATK7 }, // State_FATT_ATK6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 6, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_ATK8 }, // State_FATT_ATK7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 7, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FatAttack3, .next = ThingState::State_FATT_ATK9 }, // State_FATT_ATK8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_ATK10 }, // State_FATT_ATK9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 6, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_RUN1 }, // State_FATT_ATK10
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 9, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_FATT_PAIN2 }, // State_FATT_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 9, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_FATT_RUN1 }, // State_FATT_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 10, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE2 }, // State_FATT_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 11, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_FATT_DIE3 }, // State_FATT_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 12, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_FATT_DIE4 }, // State_FATT_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 13, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE5 }, // State_FATT_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 14, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE6 }, // State_FATT_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 15, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE7 }, // State_FATT_DIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 16, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE8 }, // State_FATT_DIE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 17, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE9 }, // State_FATT_DIE8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 18, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE10 }, // State_FATT_DIE9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 19, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BossDeath, .next = ThingState::State_None }, // State_FATT_DIE10
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE2 }, // State_FATT_RAISE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE3 }, // State_FATT_RAISE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE4 }, // State_FATT_RAISE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 14, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE5 }, // State_FATT_RAISE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE6 }, // State_FATT_RAISE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE7 }, // State_FATT_RAISE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE8 }, // State_FATT_RAISE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RUN1 }, // State_FATT_RAISE8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_CPOS_STND2 }, // State_CPOS_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_CPOS_STND }, // State_CPOS_STND2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN2 }, // State_CPOS_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN3 }, // State_CPOS_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN4 }, // State_CPOS_RUN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN5 }, // State_CPOS_RUN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN6 }, // State_CPOS_RUN5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN7 }, // State_CPOS_RUN6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN8 }, // State_CPOS_RUN7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN1 }, // State_CPOS_RUN8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 4, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_CPOS_ATK2 }, // State_CPOS_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 5, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_CPosAttack, .next = ThingState::State_CPOS_ATK3 }, // State_CPOS_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 4, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_CPosAttack, .next = ThingState::State_CPOS_ATK4 }, // State_CPOS_ATK3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 5, .brightness = false, .duration = 1, .action = &DOOM::AbstractThing::A_CPosRefire, .next = ThingState::State_CPOS_ATK2 }, // State_CPOS_ATK4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 6, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_CPOS_PAIN2 }, // State_CPOS_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 6, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_CPOS_RUN1 }, // State_CPOS_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_DIE2 }, // State_CPOS_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_CPOS_DIE3 }, // State_CPOS_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 9, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_CPOS_DIE4 }, // State_CPOS_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_DIE5 }, // State_CPOS_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_DIE6 }, // State_CPOS_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_DIE7 }, // State_CPOS_DIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 13, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CPOS_DIE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 14, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_XDIE2 }, // State_CPOS_XDIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 15, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_CPOS_XDIE3 }, // State_CPOS_XDIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 16, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_CPOS_XDIE4 }, // State_CPOS_XDIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_XDIE5 }, // State_CPOS_XDIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_XDIE6 }, // State_CPOS_XDIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 19, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CPOS_XDIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE2 }, // State_CPOS_RAISE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE3 }, // State_CPOS_RAISE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE4 }, // State_CPOS_RAISE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE5 }, // State_CPOS_RAISE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE6 }, // State_CPOS_RAISE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE7 }, // State_CPOS_RAISE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RUN1 }, // State_CPO.next = ThingState::State_RAISE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_TROO_STND2 }, // State_TROO_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_TROO_STND }, // State_TROO_STND2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN2 }, // State_TROO_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN3 }, // State_TROO_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN4 }, // State_TROO_RUN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN5 }, // State_TROO_RUN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN6 }, // State_TROO_RUN5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN7 }, // State_TROO_RUN6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN8 }, // State_TROO_RUN7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN1 }, // State_TROO_RUN8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 4, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_TROO_ATK2 }, // State_TROO_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 5, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_TROO_ATK3 }, // State_TROO_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 6, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_TroopAttack, .next = ThingState::State_TROO_RUN1 }, // State_TROO_ATK3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 7, .brightness = false, .duration = 2, .action = nullptr, .next = ThingState::State_TROO_PAIN2 }, // State_TROO_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 7, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_TROO_RUN1 }, // State_TROO_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_TROO_DIE2 }, // State_TROO_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 9, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_TROO_DIE3 }, // State_TROO_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 10, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_TROO_DIE4 }, // State_TROO_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 11, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_TROO_DIE5 }, // State_TROO_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 12, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TROO_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_TROO_XDIE2 }, // State_TROO_XDIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 14, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_TROO_XDIE3 }, // State_TROO_XDIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_TROO_XDIE4 }, // State_TROO_XDIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 16, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_TROO_XDIE5 }, // State_TROO_XDIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_TROO_XDIE6 }, // State_TROO_XDIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_TROO_XDIE7 }, // State_TROO_XDIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 19, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_TROO_XDIE8 }, // State_TROO_XDIE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 20, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TROO_XDIE8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_TROO_RAISE2 }, // State_TROO_RAISE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 11, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_TROO_RAISE3 }, // State_TROO_RAISE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 10, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_TROO_RAISE4 }, // State_TROO_RAISE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 9, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_TROO_RAISE5 }, // State_TROO_RAISE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 8, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_TROO_RUN1 }, // State_TROO_RAISE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SARG_STND2 }, // State_SARG_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SARG_STND }, // State_SARG_STND2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN2 }, // State_SARG_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN3 }, // State_SARG_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN4 }, // State_SARG_RUN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN5 }, // State_SARG_RUN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN6 }, // State_SARG_RUN5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN7 }, // State_SARG_RUN6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN8 }, // State_SARG_RUN7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN1 }, // State_SARG_RUN8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 4, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SARG_ATK2 }, // State_SARG_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 5, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SARG_ATK3 }, // State_SARG_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 6, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_SargAttack, .next = ThingState::State_SARG_RUN1 }, // State_SARG_ATK3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 7, .brightness = false, .duration = 2, .action = nullptr, .next = ThingState::State_SARG_PAIN2 }, // State_SARG_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 7, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SARG_RUN1 }, // State_SARG_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_SARG_DIE2 }, // State_SARG_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 9, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SARG_DIE3 }, // State_SARG_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 10, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SARG_DIE4 }, // State_SARG_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 11, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SARG_DIE5 }, // State_SARG_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 12, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SARG_DIE6 }, // State_SARG_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 13, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SARG_DIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RAISE2 }, // State_SARG_RAISE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RAISE3 }, // State_SARG_RAISE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RAISE4 }, // State_SARG_RAISE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RAISE5 }, // State_SARG_RAISE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RAISE6 }, // State_SARG_RAISE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RUN1 }, // State_SARG_RAISE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_HEAD_STND }, // State_HEAD_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_HEAD_RUN1 }, // State_HEAD_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 1, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_HEAD_ATK2 }, // State_HEAD_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 2, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_HEAD_ATK3 }, // State_HEAD_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 3, .brightness = true, .duration = 5, .action = &DOOM::AbstractThing::A_HeadAttack, .next = ThingState::State_HEAD_RUN1 }, // State_HEAD_ATK3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 4, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_HEAD_PAIN2 }, // State_HEAD_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 4, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_HEAD_PAIN3 }, // State_HEAD_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 5, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_HEAD_RUN1 }, // State_HEAD_PAIN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 6, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_DIE2 }, // State_HEAD_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 7, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_HEAD_DIE3 }, // State_HEAD_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_DIE4 }, // State_HEAD_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 9, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_DIE5 }, // State_HEAD_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 10, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_HEAD_DIE6 }, // State_HEAD_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 11, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HEAD_DIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 11, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RAISE2 }, // State_HEAD_RAISE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RAISE3 }, // State_HEAD_RAISE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 9, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RAISE4 }, // State_HEAD_RAISE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RAISE5 }, // State_HEAD_RAISE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 7, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RAISE6 }, // State_HEAD_RAISE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 6, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RUN1 }, // State_HEAD_RAISE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL7, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BRBALL2 }, // State_BRBALL1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL7, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BRBALL1 }, // State_BRBALL2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL7, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_BRBALLX2 }, // State_BRBALLX1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL7, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_BRBALLX3 }, // State_BRBALLX2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL7, .frame = 4, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_BRBALLX3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BOSS_STND2 }, // State_BOSS_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BOSS_STND }, // State_BOSS_STND2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN2 }, // State_BOSS_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN3 }, // State_BOSS_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN4 }, // State_BOSS_RUN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN5 }, // State_BOSS_RUN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN6 }, // State_BOSS_RUN5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN7 }, // State_BOSS_RUN6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN8 }, // State_BOSS_RUN7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN1 }, // State_BOSS_RUN8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 4, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_BOSS_ATK2 }, // State_BOSS_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 5, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_BOSS_ATK3 }, // State_BOSS_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 6, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_BruisAttack, .next = ThingState::State_BOSS_RUN1 }, // State_BOSS_ATK3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 7, .brightness = false, .duration = 2, .action = nullptr, .next = ThingState::State_BOSS_PAIN2 }, // State_BOSS_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 7, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_BOSS_RUN1 }, // State_BOSS_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_DIE2 }, // State_BOSS_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 9, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_BOSS_DIE3 }, // State_BOSS_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_DIE4 }, // State_BOSS_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 11, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_BOSS_DIE5 }, // State_BOSS_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_DIE6 }, // State_BOSS_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 13, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_DIE7 }, // State_BOSS_DIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 14, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BossDeath, .next = ThingState::State_None }, // State_BOSS_DIE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 14, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE2 }, // State_BOSS_RAISE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 13, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE3 }, // State_BOSS_RAISE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE4 }, // State_BOSS_RAISE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 11, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE5 }, // State_BOSS_RAISE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE6 }, // State_BOSS_RAISE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 9, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE7 }, // State_BOSS_RAISE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RUN1 }, // State_BOSS_RAISE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BOS2_STND2 }, // State_BOS2_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BOS2_STND }, // State_BOS2_STND2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN2 }, // State_BOS2_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN3 }, // State_BOS2_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN4 }, // State_BOS2_RUN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN5 }, // State_BOS2_RUN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN6 }, // State_BOS2_RUN5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN7 }, // State_BOS2_RUN6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN8 }, // State_BOS2_RUN7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN1 }, // State_BOS2_RUN8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 4, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_BOS2_ATK2 }, // State_BOS2_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 5, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_BOS2_ATK3 }, // State_BOS2_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 6, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_BruisAttack, .next = ThingState::State_BOS2_RUN1 }, // State_BOS2_ATK3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 7, .brightness = false, .duration = 2, .action = nullptr, .next = ThingState::State_BOS2_PAIN2 }, // State_BOS2_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 7, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_BOS2_RUN1 }, // State_BOS2_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_DIE2 }, // State_BOS2_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 9, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_BOS2_DIE3 }, // State_BOS2_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_DIE4 }, // State_BOS2_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 11, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_BOS2_DIE5 }, // State_BOS2_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_DIE6 }, // State_BOS2_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 13, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_DIE7 }, // State_BOS2_DIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 14, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BOS2_DIE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 14, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE2 }, // State_BOS2_RAISE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 13, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE3 }, // State_BOS2_RAISE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE4 }, // State_BOS2_RAISE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 11, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE5 }, // State_BOS2_RAISE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE6 }, // State_BOS2_RAISE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 9, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE7 }, // State_BOS2_RAISE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RUN1 }, // State_BOS2_RAISE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 0, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SKULL_STND2 }, // State_SKULL_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 1, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SKULL_STND }, // State_SKULL_STND2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 0, .brightness = true, .duration = 6, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKULL_RUN2 }, // State_SKULL_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 1, .brightness = true, .duration = 6, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKULL_RUN1 }, // State_SKULL_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 2, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKULL_ATK2 }, // State_SKULL_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 3, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_SkullAttack, .next = ThingState::State_SKULL_ATK3 }, // State_SKULL_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_SKULL_ATK4 }, // State_SKULL_ATK3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_SKULL_ATK3 }, // State_SKULL_ATK4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 4, .brightness = true, .duration = 3, .action = nullptr, .next = ThingState::State_SKULL_PAIN2 }, // State_SKULL_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 4, .brightness = true, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SKULL_RUN1 }, // State_SKULL_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 5, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SKULL_DIE2 }, // State_SKULL_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 6, .brightness = true, .duration = 6, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SKULL_DIE3 }, // State_SKULL_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 7, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SKULL_DIE4 }, // State_SKULL_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 8, .brightness = true, .duration = 6, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SKULL_DIE5 }, // State_SKULL_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 9, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_SKULL_DIE6 }, // State_SKULL_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 10, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_SKULL_DIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SPID_STND2 }, // State_SPID_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SPID_STND }, // State_SPID_STND2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Metal, .next = ThingState::State_SPID_RUN2 }, // State_SPID_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN3 }, // State_SPID_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN4 }, // State_SPID_RUN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN5 }, // State_SPID_RUN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Metal, .next = ThingState::State_SPID_RUN6 }, // State_SPID_RUN5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN7 }, // State_SPID_RUN6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN8 }, // State_SPID_RUN7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN9 }, // State_SPID_RUN8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 4, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Metal, .next = ThingState::State_SPID_RUN10 }, // State_SPID_RUN9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 4, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN11 }, // State_SPID_RUN10
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 5, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN12 }, // State_SPID_RUN11
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 5, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN1 }, // State_SPID_RUN12
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 0, .brightness = true, .duration = 20, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SPID_ATK2 }, // State_SPID_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 6, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_SPosAttack, .next = ThingState::State_SPID_ATK3 }, // State_SPID_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 7, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_SPosAttack, .next = ThingState::State_SPID_ATK4 }, // State_SPID_ATK3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 7, .brightness = true, .duration = 1, .action = &DOOM::AbstractThing::A_SpidRefire, .next = ThingState::State_SPID_ATK2 }, // State_SPID_ATK4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 8, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_SPID_PAIN2 }, // State_SPID_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 8, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SPID_RUN1 }, // State_SPID_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 9, .brightness = false, .duration = 20, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SPID_DIE2 }, // State_SPID_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 10, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SPID_DIE3 }, // State_SPID_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 11, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE4 }, // State_SPID_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 12, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE5 }, // State_SPID_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 13, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE6 }, // State_SPID_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 14, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE7 }, // State_SPID_DIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 15, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE8 }, // State_SPID_DIE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 16, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE9 }, // State_SPID_DIE8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 17, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE10 }, // State_SPID_DIE9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 18, .brightness = false, .duration = 30, .action = nullptr, .next = ThingState::State_SPID_DIE11 }, // State_SPID_DIE10
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 18, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BossDeath, .next = ThingState::State_None }, // State_SPID_DIE11
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BSPI_STND2 }, // State_BSPI_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BSPI_STND }, // State_BSPI_STND2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 0, .brightness = false, .duration = 20, .action = nullptr, .next = ThingState::State_BSPI_RUN1 }, // State_BSPI_SIGHT
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_BabyMetal, .next = ThingState::State_BSPI_RUN2 }, // State_BSPI_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN3 }, // State_BSPI_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN4 }, // State_BSPI_RUN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN5 }, // State_BSPI_RUN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN6 }, // State_BSPI_RUN5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN7 }, // State_BSPI_RUN6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_BabyMetal, .next = ThingState::State_BSPI_RUN8 }, // State_BSPI_RUN7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN9 }, // State_BSPI_RUN8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 4, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN10 }, // State_BSPI_RUN9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 4, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN11 }, // State_BSPI_RUN10
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 5, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN12 }, // State_BSPI_RUN11
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 5, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN1 }, // State_BSPI_RUN12
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 0, .brightness = true, .duration = 20, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_BSPI_ATK2 }, // State_BSPI_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 6, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_BspiAttack, .next = ThingState::State_BSPI_ATK3 }, // State_BSPI_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 7, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BSPI_ATK4 }, // State_BSPI_ATK3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 7, .brightness = true, .duration = 1, .action = &DOOM::AbstractThing::A_SpidRefire, .next = ThingState::State_BSPI_ATK2 }, // State_BSPI_ATK4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 8, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_BSPI_PAIN2 }, // State_BSPI_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 8, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_BSPI_RUN1 }, // State_BSPI_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 9, .brightness = false, .duration = 20, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_BSPI_DIE2 }, // State_BSPI_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 10, .brightness = false, .duration = 7, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_BSPI_DIE3 }, // State_BSPI_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 11, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_BSPI_DIE4 }, // State_BSPI_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 12, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_BSPI_DIE5 }, // State_BSPI_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 13, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_BSPI_DIE6 }, // State_BSPI_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 14, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_BSPI_DIE7 }, // State_BSPI_DIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 15, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BossDeath, .next = ThingState::State_None }, // State_BSPI_DIE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE2 }, // State_BSPI_RAISE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 14, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE3 }, // State_BSPI_RAISE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE4 }, // State_BSPI_RAISE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE5 }, // State_BSPI_RAISE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE6 }, // State_BSPI_RAISE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE7 }, // State_BSPI_RAISE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RUN1 }, // State_BSPI_RAISE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_APLS, .frame = 0, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLAZ2 }, // State_ARACH_PLAZ
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_APLS, .frame = 1, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLAZ }, // State_ARACH_PLAZ2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_APBX, .frame = 0, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLEX2 }, // State_ARACH_PLEX
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_APBX, .frame = 1, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLEX3 }, // State_ARACH_PLEX2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_APBX, .frame = 2, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLEX4 }, // State_ARACH_PLEX3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_APBX, .frame = 3, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLEX5 }, // State_ARACH_PLEX4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_APBX, .frame = 4, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_None }, // State_ARACH_PLEX5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_CYBER_STND2 }, // State_CYBER_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_CYBER_STND }, // State_CYBER_STND2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Hoof, .next = ThingState::State_CYBER_RUN2 }, // State_CYBER_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN3 }, // State_CYBER_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN4 }, // State_CYBER_RUN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN5 }, // State_CYBER_RUN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN6 }, // State_CYBER_RUN5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN7 }, // State_CYBER_RUN6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Metal, .next = ThingState::State_CYBER_RUN8 }, // State_CYBER_RUN7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN1 }, // State_CYBER_RUN8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 4, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_CYBER_ATK2 }, // State_CYBER_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 5, .brightness = false, .duration = 12, .action = &DOOM::AbstractThing::A_CyberAttack, .next = ThingState::State_CYBER_ATK3 }, // State_CYBER_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 4, .brightness = false, .duration = 12, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_CYBER_ATK4 }, // State_CYBER_ATK3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 5, .brightness = false, .duration = 12, .action = &DOOM::AbstractThing::A_CyberAttack, .next = ThingState::State_CYBER_ATK5 }, // State_CYBER_ATK4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 4, .brightness = false, .duration = 12, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_CYBER_ATK6 }, // State_CYBER_ATK5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 5, .brightness = false, .duration = 12, .action = &DOOM::AbstractThing::A_CyberAttack, .next = ThingState::State_CYBER_RUN1 }, // State_CYBER_ATK6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 6, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_CYBER_RUN1 }, // State_CYBER_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 7, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE2 }, // State_CYBER_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 8, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_CYBER_DIE3 }, // State_CYBER_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 9, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE4 }, // State_CYBER_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 10, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE5 }, // State_CYBER_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 11, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE6 }, // State_CYBER_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 12, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_CYBER_DIE7 }, // State_CYBER_DIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 13, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE8 }, // State_CYBER_DIE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 14, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE9 }, // State_CYBER_DIE8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 15, .brightness = false, .duration = 30, .action = nullptr, .next = ThingState::State_CYBER_DIE10 }, // State_CYBER_DIE9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 15, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BossDeath, .next = ThingState::State_None }, // State_CYBER_DIE10
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_PAIN_STND }, // State_PAIN_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN2 }, // State_PAIN_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN3 }, // State_PAIN_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN4 }, // State_PAIN_RUN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN5 }, // State_PAIN_RUN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN6 }, // State_PAIN_RUN5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN1 }, // State_PAIN_RUN6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 3, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_PAIN_ATK2 }, // State_PAIN_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 4, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_PAIN_ATK3 }, // State_PAIN_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 5, .brightness = true, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_PAIN_ATK4 }, // State_PAIN_ATK3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 5, .brightness = true, .duration = 0, .action = &DOOM::AbstractThing::A_PainAttack, .next = ThingState::State_PAIN_RUN1 }, // State_PAIN_ATK4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 6, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_PAIN_PAIN2 }, // State_PAIN_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 6, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_PAIN_RUN1 }, // State_PAIN_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 7, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_DIE2 }, // State_PAIN_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 8, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_PAIN_DIE3 }, // State_PAIN_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 9, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_DIE4 }, // State_PAIN_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 10, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_DIE5 }, // State_PAIN_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 11, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_PainDie, .next = ThingState::State_PAIN_DIE6 }, // State_PAIN_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 12, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_None }, // State_PAIN_DIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RAISE2 }, // State_PAIN_RAISE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 11, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RAISE3 }, // State_PAIN_RAISE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RAISE4 }, // State_PAIN_RAISE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 9, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RAISE5 }, // State_PAIN_RAISE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RAISE6 }, // State_PAIN_RAISE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 7, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RUN1 }, // State_PAIN_RAISE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SSWV_STND2 }, // State_SSWV_STND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SSWV_STND }, // State_SSWV_STND2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN2 }, // State_SSWV_RUN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN3 }, // State_SSWV_RUN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN4 }, // State_SSWV_RUN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN5 }, // State_SSWV_RUN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN6 }, // State_SSWV_RUN5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN7 }, // State_SSWV_RUN6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN8 }, // State_SSWV_RUN7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN1 }, // State_SSWV_RUN8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 4, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SSWV_ATK2 }, // State_SSWV_ATK1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 5, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SSWV_ATK3 }, // State_SSWV_ATK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 6, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_CPosAttack, .next = ThingState::State_SSWV_ATK4 }, // State_SSWV_ATK3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 5, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SSWV_ATK5 }, // State_SSWV_ATK4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 6, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_CPosAttack, .next = ThingState::State_SSWV_ATK6 }, // State_SSWV_ATK5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 5, .brightness = false, .duration = 1, .action = &DOOM::AbstractThing::A_CPosRefire, .next = ThingState::State_SSWV_ATK2 }, // State_SSWV_ATK6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 7, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_SSWV_PAIN2 }, // State_SSWV_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 7, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SSWV_RUN1 }, // State_SSWV_PAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_DIE2 }, // State_SSWV_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 9, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SSWV_DIE3 }, // State_SSWV_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 10, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SSWV_DIE4 }, // State_SSWV_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_DIE5 }, // State_SSWV_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 12, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SSWV_DIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE2 }, // State_SSWV_XDIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 14, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_SSWV_XDIE3 }, // State_SSWV_XDIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 15, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SSWV_XDIE4 }, // State_SSWV_XDIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE5 }, // State_SSWV_XDIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE6 }, // State_SSWV_XDIE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE7 }, // State_SSWV_XDIE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 19, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE8 }, // State_SSWV_XDIE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 20, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE9 }, // State_SSWV_XDIE8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 21, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SSWV_XDIE9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_RAISE2 }, // State_SSWV_RAISE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_RAISE3 }, // State_SSWV_RAISE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_RAISE4 }, // State_SSWV_RAISE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_RAISE5 }, // State_SSWV_RAISE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_RUN1 }, // State_SSWV_RAISE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_KEENSTND }, // State_KEENSTND
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN2 }, // State_COMMKEEN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN3 }, // State_COMMKEEN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 2, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_COMMKEEN4 }, // State_COMMKEEN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 3, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN5 }, // State_COMMKEEN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 4, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN6 }, // State_COMMKEEN5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 5, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN7 }, // State_COMMKEEN6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 6, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN8 }, // State_COMMKEEN7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 7, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN9 }, // State_COMMKEEN8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 8, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN10 }, // State_COMMKEEN9
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 9, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN11 }, // State_COMMKEEN10
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 10, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_KeenDie, .next = ThingState::State_COMMKEEN12 }, // State_COMMKEEN11
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 11, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_COMMKEEN12
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 12, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_KEENPAIN2 }, // State_KEENPAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 12, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_KEENSTND }, // State_KEENPAIN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BBRN, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BRAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BBRN, .frame = 1, .brightness = false, .duration = 36, .action = &DOOM::AbstractThing::A_BrainPain, .next = ThingState::State_BRAIN }, // State_BRAIN_PAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BBRN, .frame = 0, .brightness = false, .duration = 100, .action = &DOOM::AbstractThing::A_BrainScream, .next = ThingState::State_BRAIN_DIE2 }, // State_BRAIN_DIE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BBRN, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_BRAIN_DIE3 }, // State_BRAIN_DIE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BBRN, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_BRAIN_DIE4 }, // State_BRAIN_DIE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BBRN, .frame = 0, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BrainDie, .next = ThingState::State_None }, // State_BRAIN_DIE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BRAINEYE }, // State_BRAINEYE
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 181, .action = &DOOM::AbstractThing::A_BrainAwake, .next = ThingState::State_BRAINEYE1 }, // State_BRAINEYESEE
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 150, .action = &DOOM::AbstractThing::A_BrainSpit, .next = ThingState::State_BRAINEYE1 }, // State_BRAINEYE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSF, .frame = 0, .brightness = true, .duration = 3, .action = &DOOM::AbstractThing::A_SpawnSound, .next = ThingState::State_SPAWN2 }, // State_SPAWN1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSF, .frame = 1, .brightness = true, .duration = 3, .action = &DOOM::AbstractThing::A_SpawnFly, .next = ThingState::State_SPAWN3 }, // State_SPAWN2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSF, .frame = 2, .brightness = true, .duration = 3, .action = &DOOM::AbstractThing::A_SpawnFly, .next = ThingState::State_SPAWN4 }, // State_SPAWN3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSF, .frame = 3, .brightness = true, .duration = 3, .action = &DOOM::AbstractThing::A_SpawnFly, .next = ThingState::State_SPAWN1 }, // State_SPAWN4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 0, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE2 }, // State_SPAWNFIRE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 1, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE3 }, // State_SPAWNFIRE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE4 }, // State_SPAWNFIRE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE5 }, // State_SPAWNFIRE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE6 }, // State_SPAWNFIRE5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 5, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE7 }, // State_SPAWNFIRE6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 6, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE8 }, // State_SPAWNFIRE7
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 7, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_None }, // State_SPAWNFIRE8
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_BRAINEXPLODE2 }, // State_BRAINEXPLODE1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 2, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_BRAINEXPLODE3 }, // State_BRAINEXPLODE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 3, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_BrainExplode, .next = ThingState::State_None }, // State_BRAINEXPLODE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_ARM1, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_ARM1A }, // State_ARM1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_ARM1, .frame = 1, .brightness = true, .duration = 7, .action = nullptr, .next = ThingState::State_ARM1 }, // State_ARM1A
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_ARM2, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_ARM2A }, // State_ARM2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_ARM2, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_ARM2 }, // State_ARM2A
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAR1, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BAR2 }, // State_BAR1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAR1, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BAR1 }, // State_BAR2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BEXP, .frame = 0, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_BEXP2 }, // State_BEXP
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BEXP, .frame = 1, .brightness = true, .duration = 5, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_BEXP3 }, // State_BEXP2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BEXP, .frame = 2, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_BEXP4 }, // State_BEXP3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BEXP, .frame = 3, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_Explode, .next = ThingState::State_BEXP5 }, // State_BEXP4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BEXP, .frame = 4, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_None }, // State_BEXP5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FCAN, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BBAR2 }, // State_BBAR1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FCAN, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BBAR3 }, // State_BBAR2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FCAN, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BBAR1 }, // State_BBAR3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON1, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1A }, // State_BON1
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON1, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1B }, // State_BON1A
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON1, .frame = 2, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1C }, // State_BON1B
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON1, .frame = 3, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1D }, // State_BON1C
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON1, .frame = 2, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1E }, // State_BON1D
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON1, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1 }, // State_BON1E
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON2, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2A }, // State_BON2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON2, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2B }, // State_BON2A
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON2, .frame = 2, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2C }, // State_BON2B
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON2, .frame = 3, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2D }, // State_BON2C
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON2, .frame = 2, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2E }, // State_BON2D
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON2, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2 }, // State_BON2E
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BKEY, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_BKEY2 }, // State_BKEY
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BKEY, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_BKEY }, // State_BKEY2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_RKEY, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_RKEY2 }, // State_RKEY
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_RKEY, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_RKEY }, // State_RKEY2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_YKEY, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_YKEY2 }, // State_YKEY
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_YKEY, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_YKEY }, // State_YKEY2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSKU, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_BSKULL2 }, // State_BSKULL
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSKU, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_BSKULL }, // State_BSKULL2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_RSKU, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_RSKULL2 }, // State_RSKULL
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_RSKU, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_RSKULL }, // State_RSKULL2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_YSKU, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_YSKULL2 }, // State_YSKULL
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_YSKU, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_YSKULL }, // State_YSKULL2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_STIM, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_STIM
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MEDI, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MEDI
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SOUL, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL2 }, // State_SOUL
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SOUL, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL3 }, // State_SOUL2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SOUL, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL4 }, // State_SOUL3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SOUL, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL5 }, // State_SOUL4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SOUL, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL6 }, // State_SOUL5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SOUL, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL }, // State_SOUL6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PINV, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINV2 }, // State_PINV
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PINV, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINV3 }, // State_PINV2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PINV, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINV4 }, // State_PINV3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PINV, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINV }, // State_PINV4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PSTR, .frame = 0, .brightness = true, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_PSTR
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PINS, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINS2 }, // State_PINS
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PINS, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINS3 }, // State_PINS2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PINS, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINS4 }, // State_PINS3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PINS, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINS }, // State_PINS4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MEGA, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_MEGA2 }, // State_MEGA
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MEGA, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_MEGA3 }, // State_MEGA2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MEGA, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_MEGA4 }, // State_MEGA3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MEGA, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_MEGA }, // State_MEGA4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SUIT, .frame = 0, .brightness = true, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SUIT
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PMAP, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP2 }, // State_PMAP
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PMAP, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP3 }, // State_PMAP2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PMAP, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP4 }, // State_PMAP3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PMAP, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP5 }, // State_PMAP4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PMAP, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP6 }, // State_PMAP5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PMAP, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP }, // State_PMAP6
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PVIS, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PVIS2 }, // State_PVIS
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PVIS, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_PVIS }, // State_PVIS2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CLIP, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CLIP
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_AMMO, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_AMMO
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_ROCK, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_ROCK
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BROK, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BROK
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CELL, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CELL
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CELP, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CELP
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SHEL, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SHEL
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SBOX, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SBOX
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BPAK, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BPAK
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFUG, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BFUG
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MGUN, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MGUN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CSAW, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CSAW
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_LAUN, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_LAUN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAS, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_PLAS
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SHOT, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SHOT
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SGN2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SHOT2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_COLU, .frame = 0, .brightness = true, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_COLU
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMT2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_STALAG
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_GOR1, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_BLOODYTWITCH2 }, // State_BLOODYTWITCH
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_GOR1, .frame = 1, .brightness = false, .duration = 15, .action = nullptr, .next = ThingState::State_BLOODYTWITCH3 }, // State_BLOODYTWITCH2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_GOR1, .frame = 2, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BLOODYTWITCH4 }, // State_BLOODYTWITCH3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_GOR1, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BLOODYTWITCH }, // State_BLOODYTWITCH4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 13, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_DEADTORSO
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 18, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_DEADBOTTOM
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POL2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HEADSONSTICK
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POL5, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_GIBS
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POL4, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HEADONASTICK
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POL3, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_HEADCANDLES2 }, // State_HEADCANDLES
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POL3, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_HEADCANDLES }, // State_HEADCANDLES2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POL1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_DEADSTICK
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POL6, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_LIVESTICK2 }, // State_LIVESTICK
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POL6, .frame = 1, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_LIVESTICK }, // State_LIVESTICK2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_GOR2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MEAT2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_GOR3, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MEAT3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_GOR4, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MEAT4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_GOR5, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MEAT5
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMIT, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_STALAGTITE
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_COL1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TALLGRNCOL
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_COL2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SHRTGRNCOL
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_COL3, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TALLREDCOL
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_COL4, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SHRTREDCOL
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CAND, .frame = 0, .brightness = true, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CANDLESTIK
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CBRA, .frame = 0, .brightness = true, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CANDELABRA
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_COL6, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SKULLCOL
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TRE1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TORCHTREE
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TRE2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BIGTREE
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_ELEC, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TECHPILLAR
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CEYE, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_EVILEYE2 }, // State_EVILEYE
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CEYE, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_EVILEYE3 }, // State_EVILEYE2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CEYE, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_EVILEYE4 }, // State_EVILEYE3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CEYE, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_EVILEYE }, // State_EVILEYE4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FSKU, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_FLOATSKULL2 }, // State_FLOATSKULL
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FSKU, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_FLOATSKULL3 }, // State_FLOATSKULL2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FSKU, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_FLOATSKULL }, // State_FLOATSKULL3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_COL5, .frame = 0, .brightness = false, .duration = 14, .action = nullptr, .next = ThingState::State_HEARTCOL2 }, // State_HEARTCOL
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_COL5, .frame = 1, .brightness = false, .duration = 14, .action = nullptr, .next = ThingState::State_HEARTCOL }, // State_HEARTCOL2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TBLU, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BLUETORCH2 }, // State_BLUETORCH
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TBLU, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BLUETORCH3 }, // State_BLUETORCH2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TBLU, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BLUETORCH4 }, // State_BLUETORCH3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TBLU, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BLUETORCH }, // State_BLUETORCH4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TGRN, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GREENTORCH2 }, // State_GREENTORCH
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TGRN, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GREENTORCH3 }, // State_GREENTORCH2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TGRN, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GREENTORCH4 }, // State_GREENTORCH3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TGRN, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GREENTORCH }, // State_GREENTORCH4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TRED, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_REDTORCH2 }, // State_REDTORCH
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TRED, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_REDTORCH3 }, // State_REDTORCH2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TRED, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_REDTORCH4 }, // State_REDTORCH3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TRED, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_REDTORCH }, // State_REDTORCH4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMBT, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BTORCHSHRT2 }, // State_BTORCHSHRT
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMBT, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BTORCHSHRT3 }, // State_BTORCHSHRT2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMBT, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BTORCHSHRT4 }, // State_BTORCHSHRT3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMBT, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BTORCHSHRT }, // State_BTORCHSHRT4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMGT, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GTORCHSHRT2 }, // State_GTORCHSHRT
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMGT, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GTORCHSHRT3 }, // State_GTORCHSHRT2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMGT, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GTORCHSHRT4 }, // State_GTORCHSHRT3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMGT, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GTORCHSHRT }, // State_GTORCHSHRT4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMRT, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RTORCHSHRT2 }, // State_RTORCHSHRT
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMRT, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RTORCHSHRT3 }, // State_RTORCHSHRT2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMRT, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RTORCHSHRT4 }, // State_RTORCHSHRT3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMRT, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RTORCHSHRT }, // State_RTORCHSHRT4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HDB1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGNOGUTS
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HDB2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGBNOBRAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HDB3, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGTLOOKDN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HDB4, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGTSKULL
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HDB5, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGTLOOKUP
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HDB6, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGTNOBRAIN
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POB1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_COLONGIBS
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POB2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SMALLPOOL
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BRS1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BRAINSTEM
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TLMP, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECHLAMP2 }, // State_TECHLAMP
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TLMP, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECHLAMP3 }, // State_TECHLAMP2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TLMP, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECHLAMP4 }, // State_TECHLAMP3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TLMP, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECHLAMP }, // State_TECHLAMP4
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TLP2, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECH2LAMP2 }, // State_TECH2LAMP
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TLP2, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECH2LAMP3 }, // State_TECH2LAMP2
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TLP2, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECH2LAMP4 }, // State_TECH2LAMP3
+  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TLP2, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECH2LAMP } // State_TECH2LAMP4
 };
 
-const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingType_Number>	DOOM::AbstractThing::_attributs =
+const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingType_Number>DOOM::AbstractThing::_attributs =
 {
-  DOOM::AbstractThing::Attributs{	// Type_PLAYER
-    -1,		// id
-    100,	// spawnhealth
-    0,		// reactiontime
-    255,	// painchance
-    0,		// speed
-    16,		// radius
-    56,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_PickUp | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_PLAYER
+    .id = -1,
+    .spawnhealth = 100,
+    .reactiontime = 0,
+    .painchance = 255,
+    .speed = 0,
+    .radius = 16,
+    .height = 56,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_PickUp | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),
 
-    State_PLAY,		// state_spawn
-    State_PLAY_RUN1,	// state_see
-    State_PLAY_PAIN,	// state_pain
-    State_None,		// state_melee
-    State_PLAY_ATK1,	// state_missile
-    State_PLAY_DIE1,	// state_death
-    State_PLAY_XDIE1,	// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_PLAY,
+    .state_see = ThingState::State_PLAY_RUN1,
+    .state_pain = ThingState::State_PLAY_PAIN,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_PLAY_ATK1,
+    .state_death = ThingState::State_PLAY_DIE1,
+    .state_xdeath = ThingState::State_PLAY_XDIE1,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_plpain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_pldeth,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_plpain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_pldeth,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_POSSESSED
-    3004,	// id
-    20,		// spawnhealth
-    8,		// reactiontime
-    200,	// painchance
-    8,		// speed
-    20,		// radius
-    56,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_POSSESSED
+    .id = 3004,
+    .spawnhealth = 20,
+    .reactiontime = 8,
+    .painchance = 200,
+    .speed = 8,
+    .radius = 20,
+    .height = 56,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_POSS_STND,	// state_spawn
-    State_POSS_RUN1,	// state_see
-    State_POSS_PAIN,	// state_pain
-    State_None,		// state_melee
-    State_POSS_ATK1,	// state_missile
-    State_POSS_DIE1,	// state_death
-    State_POSS_XDIE1,	// state_xdeath
-    State_POSS_RAISE1,	// state_raise
+    .state_spawn = ThingState::State_POSS_STND,
+    .state_see = ThingState::State_POSS_RUN1,
+    .state_pain = ThingState::State_POSS_PAIN,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_POSS_ATK1,
+    .state_death = ThingState::State_POSS_DIE1,
+    .state_xdeath = ThingState::State_POSS_XDIE1,
+    .state_raise = ThingState::State_POSS_RAISE1,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_posit1,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_popain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_podth1,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_posact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_posit1,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_popain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_podth1,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_posact
   },
-  DOOM::AbstractThing::Attributs{	// Type_SHOTGUY
-    9,		// id
-    30,		// spawnhealth
-    8,		// reactiontime
-    170,	// painchance
-    8,		// speed
-    20,		// radius
-    56,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_SHOTGUY
+    .id = 9,
+    .spawnhealth = 30,
+    .reactiontime = 8,
+    .painchance = 170,
+    .speed = 8,
+    .radius = 20,
+    .height = 56,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_SPOS_STND,	// state_spawn
-    State_SPOS_RUN1,	// state_see
-    State_SPOS_PAIN,	// state_pain
-    State_None,		// state_melee
-    State_SPOS_ATK1,	// state_missile
-    State_SPOS_DIE1,	// state_death
-    State_SPOS_XDIE1,	// state_xdeath
-    State_SPOS_RAISE1,	// state_raise
+    .state_spawn = ThingState::State_SPOS_STND,
+    .state_see = ThingState::State_SPOS_RUN1,
+    .state_pain = ThingState::State_SPOS_PAIN,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_SPOS_ATK1,
+    .state_death = ThingState::State_SPOS_DIE1,
+    .state_xdeath = ThingState::State_SPOS_XDIE1,
+    .state_raise = ThingState::State_SPOS_RAISE1,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_posit2,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_popain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_podth2,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_posact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_posit2,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_popain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_podth2,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_posact
   },
-  DOOM::AbstractThing::Attributs{	// Type_VILE
-    64,		// id
-    700,	// spawnhealth
-    8,		// reactiontime
-    10,		// painchance
-    15,		// speed
-    20,		// radius
-    56,		// height
-    500,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_VILE
+    .id = 64,
+    .spawnhealth = 700,
+    .reactiontime = 8,
+    .painchance = 10,
+    .speed = 15,
+    .radius = 20,
+    .height = 56,
+    .mass = 500,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_VILE_STND,	// state_spawn
-    State_VILE_RUN1,	// state_see
-    State_VILE_PAIN,	// state_pain
-    State_None,		// state_melee
-    State_VILE_ATK1,	// state_missile
-    State_VILE_DIE1,	// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_VILE_STND,
+    .state_see = ThingState::State_VILE_RUN1,
+    .state_pain = ThingState::State_VILE_PAIN,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_VILE_ATK1,
+    .state_death = ThingState::State_VILE_DIE1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_vilsit,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_vipain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_vildth,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_vilact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_vilsit,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_vipain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_vildth,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_vilact
   },
-  DOOM::AbstractThing::Attributs{	// Type_FIRE
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_FIRE
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_FIRE1,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-      
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .state_spawn = ThingState::State_FIRE1,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_UNDEAD
-    66,		// id
-    300,	// spawnhealth
-    8,		// reactiontime
-    100,	// painchance
-    10,		// speed
-    20,		// radius
-    66,		// height
-    500,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_UNDEAD
+    .id = 66,
+    .spawnhealth = 300,
+    .reactiontime = 8,
+    .painchance = 100,
+    .speed = 10,
+    .radius = 20,
+    .height = 66,
+    .mass = 500,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_SKEL_STND,	// state_spawn
-    State_SKEL_RUN1,	// state_see
-    State_SKEL_PAIN,	// state_pain
-    State_SKEL_FIST1,	// state_melee
-    State_SKEL_MISS1,	// state_missile
-    State_SKEL_DIE1,	// state_death
-    State_None,		// state_xdeath
-    State_SKEL_RAISE1,	// state_raise
+    .state_spawn = ThingState::State_SKEL_STND,
+    .state_see = ThingState::State_SKEL_RUN1,
+    .state_pain = ThingState::State_SKEL_PAIN,
+    .state_melee = ThingState::State_SKEL_FIST1,
+    .state_missile = ThingState::State_SKEL_MISS1,
+    .state_death = ThingState::State_SKEL_DIE1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_SKEL_RAISE1,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_skesit,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_popain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_skedth,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_skeact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_skesit,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_popain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_skedth,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_skeact
   },
-  DOOM::AbstractThing::Attributs{	// Type_TRACER
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    10,		// speed
-    11,		// radius
-    8,		// height
-    100,	// mass
-    10,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_TRACER
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 10,
+    .radius = 11,
+    .height = 8,
+    .mass = 100,
+    .damage = 10,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_TRACER,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_TRACEEXP1,	// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_TRACER,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_TRACEEXP1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_skeatk,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_barexp,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_skeatk,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_barexp,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_SMOKE
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    0,		// radius
-    1,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_SMOKE
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 0,
+    .height = 1,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_SMOKE1,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_SMOKE1,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_FATSO
-    67,		// id
-    600,	// spawnhealth
-    8,		// reactiontime
-    80,		// painchance
-    8,		// speed
-    48,		// radius
-    64,		// height
-    1000,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_FATSO
+    .id = 67,
+    .spawnhealth = 600,
+    .reactiontime = 8,
+    .painchance = 80,
+    .speed = 8,
+    .radius = 48,
+    .height = 64,
+    .mass = 1000,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_FATT_STND,	// state_spawn
-    State_FATT_RUN1,	// state_see
-    State_FATT_PAIN,	// state_pain
-    State_None,		// state_melee
-    State_FATT_ATK1,	// state_missile
-    State_FATT_DIE1,	// state_death
-    State_None,		// state_xdeath
-    State_FATT_RAISE1,	// state_raise
+    .state_spawn = ThingState::State_FATT_STND,
+    .state_see = ThingState::State_FATT_RUN1,
+    .state_pain = ThingState::State_FATT_PAIN,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_FATT_ATK1,
+    .state_death = ThingState::State_FATT_DIE1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_FATT_RAISE1,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_mansit,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_mnpain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_mandth,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_posact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_mansit,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_mnpain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_mandth,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_posact
   },
-  DOOM::AbstractThing::Attributs{	// Type_FATSHOT
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    20,		// speed
-    6,		// radius
-    8,		// height
-    100,	// mass
-    8,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_FATSHOT
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 20,
+    .radius = 6,
+    .height = 8,
+    .mass = 100,
+    .damage = 8,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_FATSHOT1,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_FATSHOTX1,	// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_FATSHOT1,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_FATSHOTX1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_firsht,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_firxpl,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_firsht,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_firxpl,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_CHAINGUY
-    65,		// id
-    70,		// spawnhealth
-    8,		// reactiontime
-    170,	// painchance
-    8,		// speed
-    20,		// radius
-    56,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_CHAINGUY
+    .id = 65,
+    .spawnhealth = 70,
+    .reactiontime = 8,
+    .painchance = 170,
+    .speed = 8,
+    .radius = 20,
+    .height = 56,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_CPOS_STND,	// state_spawn
-    State_CPOS_RUN1,	// state_see
-    State_CPOS_PAIN,	// state_pain
-    State_None,		// state_melee
-    State_CPOS_ATK1,	// state_missile
-    State_CPOS_DIE1,	// state_death
-    State_CPOS_XDIE1,	// state_xdeath
-    State_CPOS_RAISE1,	// state_raise
+    .state_spawn = ThingState::State_CPOS_STND,
+    .state_see = ThingState::State_CPOS_RUN1,
+    .state_pain = ThingState::State_CPOS_PAIN,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_CPOS_ATK1,
+    .state_death = ThingState::State_CPOS_DIE1,
+    .state_xdeath = ThingState::State_CPOS_XDIE1,
+    .state_raise = ThingState::State_CPOS_RAISE1,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_posit2,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_popain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_podth2,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_posact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_posit2,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_popain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_podth2,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_posact
   },
-  DOOM::AbstractThing::Attributs{	// Type_TROOP
-    3001,	// id
-    60,		// spawnhealth
-    8,		// reactiontime
-    200,	// painchance
-    8,		// speed
-    20,		// radius
-    56,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_TROOP
+    .id = 3001,
+    .spawnhealth = 60,
+    .reactiontime = 8,
+    .painchance = 200,
+    .speed = 8,
+    .radius = 20,
+    .height = 56,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_TROO_STND,	// state_spawn
-    State_TROO_RUN1,	// state_see
-    State_TROO_PAIN,	// state_pain
-    State_TROO_ATK1,	// state_melee
-    State_TROO_ATK1,	// state_missile
-    State_TROO_DIE1,	// state_death
-    State_TROO_XDIE1,	// state_xdeath
-    State_TROO_RAISE1,	// state_raise
+    .state_spawn = ThingState::State_TROO_STND,
+    .state_see = ThingState::State_TROO_RUN1,
+    .state_pain = ThingState::State_TROO_PAIN,
+    .state_melee = ThingState::State_TROO_ATK1,
+    .state_missile = ThingState::State_TROO_ATK1,
+    .state_death = ThingState::State_TROO_DIE1,
+    .state_xdeath = ThingState::State_TROO_XDIE1,
+    .state_raise = ThingState::State_TROO_RAISE1,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_bgsit1,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_popain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_bgdth1,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_bgact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_bgsit1,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_popain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_bgdth1,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_bgact
   },
-  DOOM::AbstractThing::Attributs{	// Type_SERGEANT
-    3002,	// id
-    150,	// spawnhealth
-    8,		// reactiontime
-    180,	// painchance
-    10,		// speed
-    30,		// radius
-    56,		// height
-    400,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_SERGEANT
+    .id = 3002,
+    .spawnhealth = 150,
+    .reactiontime = 8,
+    .painchance = 180,
+    .speed = 10,
+    .radius = 30,
+    .height = 56,
+    .mass = 400,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_SARG_STND,	// state_spawn
-    State_SARG_RUN1,	// state_see
-    State_SARG_PAIN,	// state_pain
-    State_SARG_ATK1,	// state_melee
-    State_None,		// state_missile
-    State_SARG_DIE1,	// state_death
-    State_None,		// state_xdeath
-    State_SARG_RAISE1,	// state_raise
+    .state_spawn = ThingState::State_SARG_STND,
+    .state_see = ThingState::State_SARG_RUN1,
+    .state_pain = ThingState::State_SARG_PAIN,
+    .state_melee = ThingState::State_SARG_ATK1,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_SARG_DIE1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_SARG_RAISE1,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_sgtsit,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_sgtatk,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_sgtdth,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_sgtsit,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_sgtatk,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_sgtdth,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact
   },
-  DOOM::AbstractThing::Attributs{	// Type_SHADOWS
-    58,		// id
-    150,	// spawnhealth
-    8,		// reactiontime
-    180,	// painchance
-    10,		// speed
-    30,		// radius
-    56,		// height
-    400,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Shadow | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_SHADOWS
+    .id = 58,
+    .spawnhealth = 150,
+    .reactiontime = 8,
+    .painchance = 180,
+    .speed = 10,
+    .radius = 30,
+    .height = 56,
+    .mass = 400,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Shadow | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_SARG_STND,	// state_spawn
-    State_SARG_RUN1,	// state_see
-    State_SARG_PAIN,	// state_pain
-    State_SARG_ATK1,	// state_melee
-    State_None,		// state_missile
-    State_SARG_DIE1,	// state_death
-    State_None,		// state_xdeath
-    State_SARG_RAISE1,	// state_raise
+    .state_spawn = ThingState::State_SARG_STND,
+    .state_see = ThingState::State_SARG_RUN1,
+    .state_pain = ThingState::State_SARG_PAIN,
+    .state_melee = ThingState::State_SARG_ATK1,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_SARG_DIE1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_SARG_RAISE1,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_sgtsit,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_sgtatk,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_sgtdth,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_sgtsit,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_sgtatk,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_sgtdth,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact
   },
-  DOOM::AbstractThing::Attributs{	// Type_HEAD
-    3005,	// id
-    400,	// spawnhealth
-    8,		// reactiontime
-    128,	// painchance
-    8,		// speed
-    31,		// radius
-    56,		// height
-    400,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_NoGravity | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_HEAD
+    .id = 3005,
+    .spawnhealth = 400,
+    .reactiontime = 8,
+    .painchance = 128,
+    .speed = 8,
+    .radius = 31,
+    .height = 56,
+    .mass = 400,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_NoGravity | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_HEAD_STND,	// state_spawn
-    State_HEAD_RUN1,	// state_see
-    State_HEAD_PAIN,	// state_pain
-    State_None,		// state_melee
-    State_HEAD_ATK1,	// state_missile
-    State_HEAD_DIE1,	// state_death
-    State_None,		// state_xdeath
-    State_HEAD_RAISE1,	// state_raise
+    .state_spawn = ThingState::State_HEAD_STND,
+    .state_see = ThingState::State_HEAD_RUN1,
+    .state_pain = ThingState::State_HEAD_PAIN,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_HEAD_ATK1,
+    .state_death = ThingState::State_HEAD_DIE1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_HEAD_RAISE1,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_cacsit,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_cacdth,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_cacsit,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_cacdth,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact
   },
-  DOOM::AbstractThing::Attributs{	// Type_BRUISER
-    3003,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    50,		// painchance
-    8,		// speed
-    24,		// radius
-    64,		// height
-    1000,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_BRUISER
+    .id = 3003,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 50,
+    .speed = 8,
+    .radius = 24,
+    .height = 64,
+    .mass = 1000,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_BOSS_STND,	// state_spawn
-    State_BOSS_RUN1,	// state_see
-    State_BOSS_PAIN,	// state_pain
-    State_BOSS_ATK1,	// state_melee
-    State_BOSS_ATK1,	// state_missile
-    State_BOSS_DIE1,	// state_death
-    State_None,		// state_xdeath
-    State_BOSS_RAISE1,	// state_raise
+    .state_spawn = ThingState::State_BOSS_STND,
+    .state_see = ThingState::State_BOSS_RUN1,
+    .state_pain = ThingState::State_BOSS_PAIN,
+    .state_melee = ThingState::State_BOSS_ATK1,
+    .state_missile = ThingState::State_BOSS_ATK1,
+    .state_death = ThingState::State_BOSS_DIE1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_BOSS_RAISE1,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_brssit,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_brsdth,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_brssit,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_brsdth,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact
   },
-  DOOM::AbstractThing::Attributs{	// Type_BRUISERSHOT
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    15,		// speed
-    6,		// radius
-    8,		// height
-    100,	// mass
-    8,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_BRUISERSHOT
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 15,
+    .radius = 6,
+    .height = 8,
+    .mass = 100,
+    .damage = 8,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_BRBALL1,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_BRBALLX1,	// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_BRBALL1,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_BRBALLX1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_firsht,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_firxpl,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_firsht,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_firxpl,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_KNIGHT
-    69,		// id
-    500,	// spawnhealth
-    8,		// reactiontime
-    50,		// painchance
-    8,		// speed
-    24,		// radius
-    64,		// height
-    1000,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_KNIGHT
+    .id = 69,
+    .spawnhealth = 500,
+    .reactiontime = 8,
+    .painchance = 50,
+    .speed = 8,
+    .radius = 24,
+    .height = 64,
+    .mass = 1000,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_BOS2_STND,	// state_spawn
-    State_BOS2_RUN1,	// state_see
-    State_BOS2_PAIN,	// state_pain
-    State_BOS2_ATK1,	// state_melee
-    State_BOS2_ATK1,	// state_missile
-    State_BOS2_DIE1,	// state_death
-    State_None,		// state_xdeath
-    State_BOS2_RAISE1,	// state_raise
+    .state_spawn = ThingState::State_BOS2_STND,
+    .state_see = ThingState::State_BOS2_RUN1,
+    .state_pain = ThingState::State_BOS2_PAIN,
+    .state_melee = ThingState::State_BOS2_ATK1,
+    .state_missile = ThingState::State_BOS2_ATK1,
+    .state_death = ThingState::State_BOS2_DIE1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_BOS2_RAISE1,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_kntsit,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_kntdth,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_kntsit,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_kntdth,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact
   },
-  DOOM::AbstractThing::Attributs{	// Type_SKULL
-    3006,	// id
-    100,	// spawnhealth
-    8,		// reactiontime
-    256,	// painchance
-    8,		// speed
-    16,		// radius
-    56,		// height
-    50,		// mass
-    3,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_SKULL
+    .id = 3006,
+    .spawnhealth = 100,
+    .reactiontime = 8,
+    .painchance = 256,
+    .speed = 8,
+    .radius = 16,
+    .height = 56,
+    .mass = 50,
+    .damage = 3,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_SKULL_STND,	// state_spawn
-    State_SKULL_RUN1,	// state_see
-    State_SKULL_PAIN,	// state_pain
-    State_None,		// state_melee
-    State_SKULL_ATK1,	// state_missile
-    State_SKULL_DIE1,	// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_SKULL_STND,
+    .state_see = ThingState::State_SKULL_RUN1,
+    .state_pain = ThingState::State_SKULL_PAIN,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_SKULL_ATK1,
+    .state_death = ThingState::State_SKULL_DIE1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_sklatk,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_firxpl,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_sklatk,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_firxpl,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact
   },
-  DOOM::AbstractThing::Attributs{	// Type_SPIDER
-    7,		// id
-    3000,	// spawnhealth
-    8,		// reactiontime
-    40,		// painchance
-    12,		// speed
-    128,	// radius
-    100,	// height
-    1000,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_SPIDER
+    .id = 7,
+    .spawnhealth = 3000,
+    .reactiontime = 8,
+    .painchance = 40,
+    .speed = 12,
+    .radius = 128,
+    .height = 100,
+    .mass = 1000,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_SPID_STND,	// state_spawn
-    State_SPID_RUN1,	// state_see
-    State_SPID_PAIN,	// state_pain
-    State_None,		// state_melee
-    State_SPID_ATK1,	// state_missile
-    State_SPID_DIE1,	// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_SPID_STND,
+    .state_see = ThingState::State_SPID_RUN1,
+    .state_pain = ThingState::State_SPID_PAIN,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_SPID_ATK1,
+    .state_death = ThingState::State_SPID_DIE1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_spisit,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_shotgn,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_spidth,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_spisit,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_shotgn,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_spidth,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact
   },
-  DOOM::AbstractThing::Attributs{	// Type_BABY
-    68,		// id
-    500,	// spawnhealth
-    8,		// reactiontime
-    128,	// painchance
-    12,		// speed
-    64,		// radius
-    64,		// height
-    600,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_BABY
+    .id = 68,
+    .spawnhealth = 500,
+    .reactiontime = 8,
+    .painchance = 128,
+    .speed = 12,
+    .radius = 64,
+    .height = 64,
+    .mass = 600,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_BSPI_STND,	// state_spawn
-    State_BSPI_SIGHT,	// state_see
-    State_BSPI_PAIN,	// state_pain
-    State_None,		// state_melee
-    State_BSPI_ATK1,	// state_missile
-    State_BSPI_DIE1,	// state_death
-    State_None,		// state_xdeath
-    State_BSPI_RAISE1,	// state_raise
+    .state_spawn = ThingState::State_BSPI_STND,
+    .state_see = ThingState::State_BSPI_SIGHT,
+    .state_pain = ThingState::State_BSPI_PAIN,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_BSPI_ATK1,
+    .state_death = ThingState::State_BSPI_DIE1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_BSPI_RAISE1,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_bspsit,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_bspdth,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_bspact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_bspsit,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_bspdth,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_bspact
   },
-  DOOM::AbstractThing::Attributs{	// Type_CYBORG
-    16,		// id
-    4000,	// spawnhealth
-    8,		// reactiontime
-    20,		// painchance
-    16,		// speed
-    40,		// radius
-    110,	// height
-    1000,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_CYBORG
+    .id = 16,
+    .spawnhealth = 4000,
+    .reactiontime = 8,
+    .painchance = 20,
+    .speed = 16,
+    .radius = 40,
+    .height = 110,
+    .mass = 1000,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_CYBER_STND,	// state_spawn
-    State_CYBER_RUN1,	// state_see
-    State_CYBER_PAIN,	// state_pain
-    State_None,		// state_melee
-    State_CYBER_ATK1,	// state_missile
-    State_CYBER_DIE1,	// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_CYBER_STND,
+    .state_see = ThingState::State_CYBER_RUN1,
+    .state_pain = ThingState::State_CYBER_PAIN,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_CYBER_ATK1,
+    .state_death = ThingState::State_CYBER_DIE1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_cybsit,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_cybdth,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_cybsit,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmpain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_cybdth,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact
   },
-  DOOM::AbstractThing::Attributs{	// Type_PAIN
-    71,		// id
-    400,	// spawnhealth
-    8,		// reactiontime
-    128,	// painchance
-    8,		// speed
-    31,		// radius
-    56,		// height
-    400,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_NoGravity | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_PAIN
+    .id = 71,
+    .spawnhealth = 400,
+    .reactiontime = 8,
+    .painchance = 128,
+    .speed = 8,
+    .radius = 31,
+    .height = 56,
+    .mass = 400,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_Float | DOOM::Enum::ThingProperty::ThingProperty_NoGravity | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_PAIN_STND,	// state_spawn
-    State_PAIN_RUN1,	// state_see
-    State_PAIN_PAIN,	// state_pain
-    State_None,		// state_melee
-    State_PAIN_ATK1,	// state_missile
-    State_PAIN_DIE1,	// state_death
-    State_None,		// state_xdeath
-    State_PAIN_RAISE1,	// state_raise
+    .state_spawn = ThingState::State_PAIN_STND,
+    .state_see = ThingState::State_PAIN_RUN1,
+    .state_pain = ThingState::State_PAIN_PAIN,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_PAIN_ATK1,
+    .state_death = ThingState::State_PAIN_DIE1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_PAIN_RAISE1,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_pesit,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_pepain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_pedth,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_pesit,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_pepain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_pedth,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_dmact
   },
-  DOOM::AbstractThing::Attributs{	// Type_WOLFSS
-    84,		// id
-    50,		// spawnhealth
-    8,		// reactiontime
-    170,	// painchance
-    8,		// speed
-    20,		// radius
-    56,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_WOLFSS
+    .id = 84,
+    .spawnhealth = 50,
+    .reactiontime = 8,
+    .painchance = 170,
+    .speed = 8,
+    .radius = 20,
+    .height = 56,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_SSWV_STND,	// state_spawn
-    State_SSWV_RUN1,	// state_see
-    State_SSWV_PAIN,	// state_pain
-    State_None,		// state_melee
-    State_SSWV_ATK1,	// state_missile
-    State_SSWV_DIE1,	// state_death
-    State_SSWV_XDIE1,	// state_xdeath
-    State_SSWV_RAISE1,	// state_raise
+    .state_spawn = ThingState::State_SSWV_STND,
+    .state_see = ThingState::State_SSWV_RUN1,
+    .state_pain = ThingState::State_SSWV_PAIN,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_SSWV_ATK1,
+    .state_death = ThingState::State_SSWV_DIE1,
+    .state_xdeath = ThingState::State_SSWV_XDIE1,
+    .state_raise = ThingState::State_SSWV_RAISE1,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_sssit,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_popain,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_ssdth,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_posact	// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_sssit,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_popain,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_ssdth,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_posact
   },
-  DOOM::AbstractThing::Attributs{	// Type_KEEN
-    72,		// id
-    100,	// spawnhealth
-    8,		// reactiontime
-    256,	// painchance
-    0,		// speed
-    16,		// radius
-    72,		// height
-    10000000,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_KEEN
+    .id = 72,
+    .spawnhealth = 100,
+    .reactiontime = 8,
+    .painchance = 256,
+    .speed = 0,
+    .radius = 16,
+    .height = 72,
+    .mass = 10000000,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_CountKill),
 
-    State_KEENSTND,	// state_spawn
-    State_None,		// state_see
-    State_KEENPAIN,	// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_COMMKEEN,	// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_KEENSTND,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_KEENPAIN,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_COMMKEEN,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_keenpn,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_keendt,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_keenpn,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_keendt,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_BOSSBRAIN
-    88,		// id
-    250,	// spawnhealth
-    8,		// reactiontime
-    255,	// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    10000000,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_BOSSBRAIN
+    .id = 88,
+    .spawnhealth = 250,
+    .reactiontime = 8,
+    .painchance = 255,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 10000000,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable),
 
-    State_BRAIN,	// state_spawn
-    State_None,		// state_see
-    State_BRAIN_PAIN,	// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_BRAIN_DIE1,	// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_BRAIN,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_BRAIN_PAIN,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_BRAIN_DIE1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_bospn,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_bosdth,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_bospn,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_bosdth,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_BOSSSPIT
-    89,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    64,		// radius
-    32,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_BOSSSPIT
+    .id = 89,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 64,
+    .height = 32,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector),
 
-    State_BRAINEYE,	// state_spawn
-    State_BRAINEYESEE,	// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_BRAINEYE,
+    .state_see = ThingState::State_BRAINEYESEE,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_BOSSTARGET
-    87,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    32,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_BOSSTARGET
+    .id = 87,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 32,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector),
 
-    State_None,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_None,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_SPAWNSHOT
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    10,		// speed
-    6,		// radius
-    32,		// height
-    100,	// mass
-    3,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity | DOOM::Enum::ThingProperty::ThingProperty_NoClip),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_SPAWNSHOT
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 10,
+    .radius = 6,
+    .height = 32,
+    .mass = 100,
+    .damage = 3,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity | DOOM::Enum::ThingProperty::ThingProperty_NoClip),
 
-    State_SPAWN1,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_SPAWN1,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_bospit,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_firxpl,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_bospit,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_firxpl,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_SPAWNFIRE
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_SPAWNFIRE
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_SPAWNFIRE1,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_SPAWNFIRE1,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_BARREL
-    2035,	// id
-    20,		// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    10,		// radius
-    42,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_NoBlood),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_BARREL
+    .id = 2035,
+    .spawnhealth = 20,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 10,
+    .height = 42,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_Shootable | DOOM::Enum::ThingProperty::ThingProperty_NoBlood),
 
-    State_BAR1,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_BEXP,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_BAR1,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_BEXP,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_barexp,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_barexp,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_TROOPSHOT
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    10,		// speed
-    6,		// radius
-    8,		// height
-    100,	// mass
-    3,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_TROOPSHOT
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 10,
+    .radius = 6,
+    .height = 8,
+    .mass = 100,
+    .damage = 3,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_TBALL1,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_TBALLX1,	// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_TBALL1,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_TBALLX1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_firsht,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_firxpl,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_firsht,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_firxpl,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_HEADSHOT
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    10,		// speed
-    6,		// radius
-    8,		// height
-    100,	// mass
-    5,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_HEADSHOT
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 10,
+    .radius = 6,
+    .height = 8,
+    .mass = 100,
+    .damage = 5,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_RBALL1,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_RBALLX1,	// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_RBALL1,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_RBALLX1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_firsht,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_firxpl,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_firsht,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_firxpl,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_ROCKET
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    20,		// speed
-    11,		// radius
-    8,		// height
-    100,	// mass
-    20,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_ROCKET
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 20,
+    .radius = 11,
+    .height = 8,
+    .mass = 100,
+    .damage = 20,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_ROCKET,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_EXPLODE1,	// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_ROCKET,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_EXPLODE1,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_rlaunc,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_barexp,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_rlaunc,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_barexp,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_PLASMA
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    25,		// speed
-    13,		// radius
-    8,		// height
-    100,	// mass
-    5,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_PLASMA
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 25,
+    .radius = 13,
+    .height = 8,
+    .mass = 100,
+    .damage = 5,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_PLASBALL,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_PLASEXP,	// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_PLASBALL,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_PLASEXP,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_plasma,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_firxpl,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_plasma,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_firxpl,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_BFG
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    25,		// speed
-    13,		// radius
-    8,		// height
-    100,	// mass
-    100,	// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_BFG
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 25,
+    .radius = 13,
+    .height = 8,
+    .mass = 100,
+    .damage = 100,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_BFGSHOT,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_BFGLAND,	// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_BFGSHOT,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_BFGLAND,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_rxplod,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_rxplod,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_ARACHPLAZ
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    25,		// speed
-    13,		// radius
-    8,		// height
-    100,	// mass
-    5,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_ARACHPLAZ
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 25,
+    .radius = 13,
+    .height = 8,
+    .mass = 100,
+    .damage = 5,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_DropOff | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_ARACH_PLAZ,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_ARACH_PLEX,	// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_ARACH_PLAZ,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_ARACH_PLEX,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_plasma,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_firxpl,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_plasma,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_firxpl,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_PUFF
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_PUFF
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_PUFF1,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_PUFF1,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_BLOOD
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_BLOOD
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap),
 
-    State_BLOOD1,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_BLOOD1,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_TFOG
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_TFOG
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_TFOG,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_TFOG,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_IFOG
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_IFOG
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_IFOG,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_IFOG,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_TELEPORTMAN
-    14,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_TELEPORTMAN
+    .id = 14,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector),
 
-    State_None,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_None,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_EXTRABFG
-    -1,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_EXTRABFG
+    .id = -1,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
 
-    State_BFGEXP,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_BFGEXP,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_MISC0
-    2018,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_MISC0
+    .id = 2018,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
 
-    State_ARM1,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_ARM1,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_MISC1
-    2019,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_MISC1
+    .id = 2019,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
 
-    State_ARM2,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_ARM2,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },
-  DOOM::AbstractThing::Attributs{	// Type_MISC2
-    2014,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
+  DOOM::AbstractThing::Attributs{ // Type_MISC2
+    .id = 2014,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),
 
-    State_BON1,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
+    .state_spawn = ThingState::State_BON1,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
 
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   },  
-  DOOM::AbstractThing::Attributs{	// Type_MISC3
-    2015,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
-
-    State_BON2,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC4
-    5,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
-
-    State_BKEY,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC5
-    13,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
-
-    State_RKEY,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC6
-    6,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
-
-    State_YKEY,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC7
-    39,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
-
-    State_YSKULL,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC8
-    38,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
-
-    State_RSKULL,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC9
-    40,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
-
-    State_BSKULL,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC10
-    2011,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_STIM,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC11
-    2012,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_MEDI,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC12
-    2013,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
-
-    State_SOUL,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_INV
-    2022,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
-
-    State_PINV,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC13
-    2023,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
-
-    State_PSTR,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_INS
-    2024,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
-
-    State_PINS,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC14
-    2025,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_SUIT,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC15
-    2026,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
-
-    State_PMAP,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC16
-    2045,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
-
-    State_PVIS,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MEGA
-    83,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),	// properties
-
-    State_MEGA,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_CLIP
-    2007,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_CLIP,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC17
-    2048,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_AMMO,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC18
-    2010,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_ROCK,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC19
-    2046,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_BROK,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC20
-    2047,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_CELL,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC21
-    17,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_CELP,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC22
-    2008,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_SHEL,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC23
-    2049,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_SBOX,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC24
-    8,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_BPAK,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC25
-    2006,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_BFUG,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_CHAINGUN
-    2002,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_MGUN,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC26
-    2005,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_CSAW,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC27
-    2003,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_LAUN,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC28
-    2004,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_PLAS,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_SHOTGUN
-    2001,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_SHOT,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_SUPERSHOTGUN
-    82,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),	// properties
-
-    State_SHOT2,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC29
-    85,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_TECHLAMP,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC30
-    86,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_TECH2LAMP,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC31
-    2028,	// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_COLU,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC32
-    30,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_TALLGRNCOL,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC33
-    31,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_SHRTGRNCOL,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC34
-    32,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_TALLREDCOL,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC35
-    33,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_SHRTREDCOL,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC36
-    37,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_SKULLCOL,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC37
-    36,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_HEARTCOL,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC38
-    41,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_EVILEYE,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC39
-    42,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_FLOATSKULL,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC40
-    43,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_TORCHTREE,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC41
-    44,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_BLUETORCH,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC42
-    45,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_GREENTORCH,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC43
-    46,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_REDTORCH,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC44
-    55,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_BTORCHSHRT,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC45
-    56,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_GTORCHSHRT,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC46
-    57,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_RTORCHSHRT,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC47
-    47,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_STALAGTITE,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC48
-    48,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_TECHPILLAR,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC49
-    34,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
-
-    State_CANDLESTIK,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC50
-    35,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_CANDELABRA,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC51
-    49,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    68,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
-
-    State_BLOODYTWITCH,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC52
-    50,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    84,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
-
-    State_MEAT2,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC53
-    51,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    84,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
-
-    State_MEAT3,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC54
-    52,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    68,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
-
-    State_MEAT4,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC55
-    53,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    52,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
-
-    State_MEAT5,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC56
-    59,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    84,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
-
-    State_MEAT2,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC57
-    60,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    68,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
-
-    State_MEAT4,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC58
-    61,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    52,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
-
-    State_MEAT3,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC59
-    62,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    52,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
-
-    State_MEAT5,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC60
-    63,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    68,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
-
-    State_BLOODYTWITCH,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC61
-    22,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
-
-    State_HEAD_DIE6,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC62
-    15,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
-
-    State_PLAY_DIE7,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC63
-    18,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
-
-    State_POSS_DIE5,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC64
-    21,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
-
-    State_SARG_DIE6,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC65
-    23,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
-
-    State_SKULL_DIE6,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC66
-    20,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
-
-    State_TROO_DIE5,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC67
-    19,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
-
-    State_SPOS_DIE5,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC68
-    10,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
-
-    State_PLAY_XDIE9,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC69
-    12,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
-
-    State_PLAY_XDIE9,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC70
-    28,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_HEADSONSTICK,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC71
-    24,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),	// properties
-
-    State_GIBS,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC72
-    27,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_HEADONASTICK,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC73
-    29,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_HEADCANDLES,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC74
-    25,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_DEADSTICK,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC75
-    26,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_LIVESTICK,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC76
-    54,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    32,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_BIGTREE,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC77
-    70,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),	// properties
-
-    State_BBAR1,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC78
-    73,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    88,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
-
-    State_HANGNOGUTS,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC79
-    74,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    88,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
-
-    State_HANGBNOBRAIN,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC80
-    75,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    64,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
-
-    State_HANGTLOOKDN,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC81
-    76,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    64,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
-
-    State_HANGTSKULL,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC82
-    77,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    64,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
-
-    State_HANGTLOOKUP,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC83
-    78,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    16,		// radius
-    64,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),	// properties
-
-    State_HANGTNOBRAIN,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC84
-    79,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap),	// properties
-
-    State_COLONGIBS,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC85
-    80,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap),	// properties
-
-    State_SMALLPOOL,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_MISC86
-    81,		// id
-    1000,	// spawnhealth
-    8,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap),	// properties
-
-    State_BRAINSTEM,	// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_PLAYER_SPAWN1
-    1,		// id
-    1000,	// spawnhealth
-    0,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
-
-    State_None,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_PLAYER_SPAWN2
-    2,		// id
-    1000,	// spawnhealth
-    0,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
-
-    State_None,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_PLAYER_SPAWN3
-    3,		// id
-    1000,	// spawnhealth
-    0,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
-
-    State_None,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_PLAYER_SPAWN4
-    4,		// id
-    1000,	// spawnhealth
-    0,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
-
-    State_None,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
-  },
-  DOOM::AbstractThing::Attributs{	// Type_PLAYER_SPAWNDM
-    11,		// id
-    1000,	// spawnhealth
-    0,		// reactiontime
-    0,		// painchance
-    0,		// speed
-    20,		// radius
-    16,		// height
-    100,	// mass
-    0,		// damage
-    (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),	// properties
-
-    State_None,		// state_spawn
-    State_None,		// state_see
-    State_None,		// state_pain
-    State_None,		// state_melee
-    State_None,		// state_missile
-    State_None,		// state_death
-    State_None,		// state_xdeath
-    State_None,		// state_raise
-
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_see
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_attack
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_pain
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None,	// sound_death
-    DOOM::Doom::Resources::Sound::EnumSound::Sound_None		// sound_active
+  DOOM::AbstractThing::Attributs{ // Type_MISC3
+    .id = 2015,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),
+
+    .state_spawn = ThingState::State_BON2,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC4
+    .id = 5,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),
+
+    .state_spawn = ThingState::State_BKEY,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC5
+    .id = 13,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),
+
+    .state_spawn = ThingState::State_RKEY,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC6
+    .id = 6,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),
+
+    .state_spawn = ThingState::State_YKEY,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC7
+    .id = 39,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),
+
+    .state_spawn = ThingState::State_YSKULL,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC8
+    .id = 38,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),
+
+    .state_spawn = ThingState::State_RSKULL,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC9
+    .id = 40,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),
+
+    .state_spawn = ThingState::State_BSKULL,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC10
+    .id = 2011,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_STIM,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC11
+    .id = 2012,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_MEDI,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC12
+    .id = 2013,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),
+
+    .state_spawn = ThingState::State_SOUL,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_INV
+    .id = 2022,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),
+
+    .state_spawn = ThingState::State_PINV,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC13
+    .id = 2023,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),
+
+    .state_spawn = ThingState::State_PSTR,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_INS
+    .id = 2024,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),
+
+    .state_spawn = ThingState::State_PINS,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC14
+    .id = 2025,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_SUIT,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC15
+    .id = 2026,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),
+
+    .state_spawn = ThingState::State_PMAP,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC16
+    .id = 2045,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),
+
+    .state_spawn = ThingState::State_PVIS,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MEGA
+    .id = 83,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special | DOOM::Enum::ThingProperty::ThingProperty_CountItem),
+
+    .state_spawn = ThingState::State_MEGA,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_CLIP
+    .id = 2007,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_CLIP,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC17
+    .id = 2048,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_AMMO,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC18
+    .id = 2010,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_ROCK,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC19
+    .id = 2046,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_BROK,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC20
+    .id = 2047,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_CELL,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC21
+    .id = 17,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_CELP,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC22
+    .id = 2008,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_SHEL,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC23
+    .id = 2049,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_SBOX,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC24
+    .id = 8,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_BPAK,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC25
+    .id = 2006,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_BFUG,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_CHAINGUN
+    .id = 2002,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_MGUN,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC26
+    .id = 2005,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_CSAW,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC27
+    .id = 2003,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_LAUN,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC28
+    .id = 2004,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_PLAS,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_SHOTGUN
+    .id = 2001,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_SHOT,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_SUPERSHOTGUN
+    .id = 82,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Special),
+
+    .state_spawn = ThingState::State_SHOT2,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC29
+    .id = 85,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_TECHLAMP,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC30
+    .id = 86,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_TECH2LAMP,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC31
+    .id = 2028,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_COLU,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC32
+    .id = 30,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_TALLGRNCOL,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC33
+    .id = 31,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_SHRTGRNCOL,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC34
+    .id = 32,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_TALLREDCOL,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC35
+    .id = 33,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_SHRTREDCOL,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC36
+    .id = 37,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_SKULLCOL,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC37
+    .id = 36,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_HEARTCOL,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC38
+    .id = 41,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_EVILEYE,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC39
+    .id = 42,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_FLOATSKULL,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC40
+    .id = 43,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_TORCHTREE,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC41
+    .id = 44,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_BLUETORCH,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC42
+    .id = 45,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_GREENTORCH,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC43
+    .id = 46,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_REDTORCH,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC44
+    .id = 55,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_BTORCHSHRT,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC45
+    .id = 56,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_GTORCHSHRT,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC46
+    .id = 57,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_RTORCHSHRT,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC47
+    .id = 47,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_STALAGTITE,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC48
+    .id = 48,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_TECHPILLAR,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC49
+    .id = 34,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),
+
+    .state_spawn = ThingState::State_CANDLESTIK,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC50
+    .id = 35,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_CANDELABRA,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC51
+    .id = 49,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 68,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
+
+    .state_spawn = ThingState::State_BLOODYTWITCH,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC52
+    .id = 50,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 84,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
+
+    .state_spawn = ThingState::State_MEAT2,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC53
+    .id = 51,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 84,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
+
+    .state_spawn = ThingState::State_MEAT3,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC54
+    .id = 52,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 68,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
+
+    .state_spawn = ThingState::State_MEAT4,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC55
+    .id = 53,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 52,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
+
+    .state_spawn = ThingState::State_MEAT5,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC56
+    .id = 59,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 84,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
+
+    .state_spawn = ThingState::State_MEAT2,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC57
+    .id = 60,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 68,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
+
+    .state_spawn = ThingState::State_MEAT4,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC58
+    .id = 61,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 52,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
+
+    .state_spawn = ThingState::State_MEAT3,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC59
+    .id = 62,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 52,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
+
+    .state_spawn = ThingState::State_MEAT5,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC60
+    .id = 63,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 68,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
+
+    .state_spawn = ThingState::State_BLOODYTWITCH,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC61
+    .id = 22,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),
+
+    .state_spawn = ThingState::State_HEAD_DIE6,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC62
+    .id = 15,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),
+
+    .state_spawn = ThingState::State_PLAY_DIE7,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC63
+    .id = 18,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),
+
+    .state_spawn = ThingState::State_POSS_DIE5,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC64
+    .id = 21,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),
+
+    .state_spawn = ThingState::State_SARG_DIE6,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC65
+    .id = 23,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),
+
+    .state_spawn = ThingState::State_SKULL_DIE6,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC66
+    .id = 20,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),
+
+    .state_spawn = ThingState::State_TROO_DIE5,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC67
+    .id = 19,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),
+
+    .state_spawn = ThingState::State_SPOS_DIE5,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC68
+    .id = 10,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),
+
+    .state_spawn = ThingState::State_PLAY_XDIE9,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC69
+    .id = 12,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),
+
+    .state_spawn = ThingState::State_PLAY_XDIE9,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC70
+    .id = 28,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_HEADSONSTICK,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC71
+    .id = 24,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_None),
+
+    .state_spawn = ThingState::State_GIBS,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC72
+    .id = 27,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_HEADONASTICK,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC73
+    .id = 29,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_HEADCANDLES,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC74
+    .id = 25,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_DEADSTICK,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC75
+    .id = 26,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_LIVESTICK,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC76
+    .id = 54,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 32,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_BIGTREE,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC77
+    .id = 70,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid),
+
+    .state_spawn = ThingState::State_BBAR1,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC78
+    .id = 73,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 88,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
+
+    .state_spawn = ThingState::State_HANGNOGUTS,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC79
+    .id = 74,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 88,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
+
+    .state_spawn = ThingState::State_HANGBNOBRAIN,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC80
+    .id = 75,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 64,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
+
+    .state_spawn = ThingState::State_HANGTLOOKDN,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC81
+    .id = 76,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 64,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
+
+    .state_spawn = ThingState::State_HANGTSKULL,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC82
+    .id = 77,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 64,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
+
+    .state_spawn = ThingState::State_HANGTLOOKUP,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC83
+    .id = 78,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 16,
+    .height = 64,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_Solid | DOOM::Enum::ThingProperty::ThingProperty_SpawnCeiling | DOOM::Enum::ThingProperty::ThingProperty_NoGravity),
+
+    .state_spawn = ThingState::State_HANGTNOBRAIN,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC84
+    .id = 79,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap),
+
+    .state_spawn = ThingState::State_COLONGIBS,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC85
+    .id = 80,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap),
+
+    .state_spawn = ThingState::State_SMALLPOOL,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_MISC86
+    .id = 81,
+    .spawnhealth = 1000,
+    .reactiontime = 8,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap),
+
+    .state_spawn = ThingState::State_BRAINSTEM,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_PLAYER_SPAWN1
+    .id = 1,
+    .spawnhealth = 1000,
+    .reactiontime = 0,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),
+
+    .state_spawn = ThingState::State_None,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_PLAYER_SPAWN2
+    .id = 2,
+    .spawnhealth = 1000,
+    .reactiontime = 0,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),
+
+    .state_spawn = ThingState::State_None,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_PLAYER_SPAWN3
+    .id = 3,
+    .spawnhealth = 1000,
+    .reactiontime = 0,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),
+
+    .state_spawn = ThingState::State_None,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_PLAYER_SPAWN4
+    .id = 4,
+    .spawnhealth = 1000,
+    .reactiontime = 0,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),
+
+    .state_spawn = ThingState::State_None,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
+  },
+  DOOM::AbstractThing::Attributs{ // Type_PLAYER_SPAWNDM
+    .id = 11,
+    .spawnhealth = 1000,
+    .reactiontime = 0,
+    .painchance = 0,
+    .speed = 0,
+    .radius = 20,
+    .height = 16,
+    .mass = 100,
+    .damage = 0,
+    .properties = (DOOM::Enum::ThingProperty)(DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap | DOOM::Enum::ThingProperty::ThingProperty_NoSector | DOOM::Enum::ThingProperty::ThingProperty_NoTDMatch),
+
+    .state_spawn = ThingState::State_None,
+    .state_see = ThingState::State_None,
+    .state_pain = ThingState::State_None,
+    .state_melee = ThingState::State_None,
+    .state_missile = ThingState::State_None,
+    .state_death = ThingState::State_None,
+    .state_xdeath = ThingState::State_None,
+    .state_raise = ThingState::State_None,
+
+    .sound_see = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_attack = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
+    .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
   }
 };
 
@@ -5635,7 +5635,7 @@ void  DOOM::AbstractThing::A_Chase(DOOM::Doom& doom)
     if (_move_direction != Direction::DirectionNone) {
       angle = Math::Modulo(angle, 2.f * Math::Pi);
 
-      int thing_direction = Math::Modulo<Direction::DirectionNumber>((int)(0.5f + angle / (2.f * Math::Pi / Direction::DirectionNumber)));
+      int thing_direction = Math::Modulo<Direction::DirectionNumber>((int)(0.5f + angle / (2.f * Math::Pi / (float)Direction::DirectionNumber)));
 
       if (thing_direction != _move_direction) {
 	if (Math::Modulo<Direction::DirectionNumber>(thing_direction - _move_direction) < Direction::DirectionNumber / 2)

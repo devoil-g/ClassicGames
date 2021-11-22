@@ -157,9 +157,8 @@ namespace DOOM
     };
 
   private:
-    class State
+    struct State
     {
-    public:
       using Action = void(DOOM::AbstractThing::*)(DOOM::Doom&);
 
       DOOM::AbstractThing::ThingSprite  sprite;     // Sprite sequence to use
@@ -168,14 +167,10 @@ namespace DOOM
       int                               duration;   // Duration of the state
       Action                            action;     // Action to be taken at the start of the state (nullptr if none)
       DOOM::AbstractThing::ThingState   next;       // Index of the next state
-
-      State() = default;
-      ~State() = default;
     };
 
-    class Attributs
+    struct Attributs
     {
-    public:
       int                       id;           // Thing ID
       int                       spawnhealth;  // Health points at spawn
       int                       reactiontime; // Reaction time of monster (tics)
@@ -203,9 +198,6 @@ namespace DOOM
       DOOM::Doom::Resources::Sound::EnumSound sound_pain;
       DOOM::Doom::Resources::Sound::EnumSound sound_death;
       DOOM::Doom::Resources::Sound::EnumSound sound_active;
-
-      Attributs() = default;
-      ~Attributs() = default;
     };
 
     enum Direction

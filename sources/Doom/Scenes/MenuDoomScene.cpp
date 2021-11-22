@@ -19,85 +19,85 @@ DOOM::MenuDoomScene::MenuDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom
   _menuCursor(1),
   _menuDesc({
     Menu{ // MenuMain
-      {
-        { DOOM::str_to_key("M_DOOM"), false, 94, 2, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_NGAME"), true, 97, 64, sf::Keyboard::N, [this]() { if (_doom.mode == DOOM::Enum::Mode::ModeCommercial) { _episode = 1; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; } else { _menuIndex = MenuEpisode; _menuCursor = 1; } _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, []() {}, []() {} },
-        { DOOM::str_to_key("M_OPTION"), true, 97, 80, sf::Keyboard::O, [this]() { _menuIndex = MenuOptions; _menuCursor = 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, []() {}, []() {} },
-        { DOOM::str_to_key("M_LOADG"), false, 97, 96, sf::Keyboard::L, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_SAVEG"), false, 97, 112, sf::Keyboard::S, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_RDTHIS"), true, 97, 128, sf::Keyboard::R, [this]() { _menuIndex = MenuRead1; _menuCursor = 0; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, []() {}, []() {} },
-        { DOOM::str_to_key("M_QUITG"), true, 97, 144, sf::Keyboard::Q, [this]() { _machine.clear(); }, []() {}, []() {} }
+      .items = {
+        { .texture = DOOM::str_to_key("M_DOOM"), .selectable = false, .x = 94, .y = 2, .hotkey = sf::Keyboard::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_NGAME"), .selectable = true, .x = 97, .y = 64, .hotkey = sf::Keyboard::N, .select = [this]() { if (_doom.mode == DOOM::Enum::Mode::ModeCommercial) { _episode = 1; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; } else { _menuIndex = MenuEpisode; _menuCursor = 1; } _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_OPTION"), .selectable = true, .x = 97, .y = 80, .hotkey = sf::Keyboard::O, .select = [this]() { _menuIndex = MenuOptions; _menuCursor = 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_LOADG"), .selectable = false, .x = 97, .y = 96, .hotkey = sf::Keyboard::L, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_SAVEG"), .selectable = false, .x = 97, .y = 112, .hotkey = sf::Keyboard::S, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_RDTHIS"), .selectable = true, .x = 97, .y = 128, .hotkey = sf::Keyboard::R, .select = [this]() { _menuIndex = MenuRead1; _menuCursor = 0; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_QUITG"), .selectable = true, .x = 97, .y = 144, .hotkey = sf::Keyboard::Q, .select = [this]() { _machine.clear(); }, .left = []() {}, .right = []() {} }
       },
-      {},
-      [this]() { _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchx); _machine.pop(); }
+      .sliders = {},
+      .escape = [this]() { _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchx); _machine.pop(); }
     },
     Menu{ // MenuEpisode
-      {
-        { DOOM::str_to_key("M_EPISOD"), false, 54, 38, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_EPI1"), true, 48, 63, sf::Keyboard::K, [this]() { _episode = 1; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, []() {}, []() {} },
-        { DOOM::str_to_key("M_EPI2"), true, 48, 79, sf::Keyboard::T, [this]() { _episode = 2; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, []() {}, []() {} },
-        { DOOM::str_to_key("M_EPI3"), true, 48, 95, sf::Keyboard::I, [this]() { _episode = 3; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, []() {}, []() {} },
-        { DOOM::str_to_key("M_EPI4"), true, 48, 111, sf::Keyboard::T, [this]() { _episode = 4; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, []() {}, []() {} }
+      .items = {
+        { .texture = DOOM::str_to_key("M_EPISOD"), .selectable = false, .x = 54, .y = 38, .hotkey = sf::Keyboard::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_EPI1"), .selectable = true, .x = 48, .y = 63, .hotkey = sf::Keyboard::K, .select = [this]() { _episode = 1; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_EPI2"), .selectable = true, .x = 48, .y = 79, .hotkey = sf::Keyboard::T, .select = [this]() { _episode = 2; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_EPI3"), .selectable = true, .x = 48, .y = 95, .hotkey = sf::Keyboard::I, .select = [this]() { _episode = 3; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_EPI4"), .selectable = true, .x = 48, .y = 111, .hotkey = sf::Keyboard::T, .select = [this]() { _episode = 4; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} }
       },
-      {},
-      [this]() { _menuIndex = MenuMain; _menuCursor = 1; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
+      .sliders = {},
+      .escape = [this]() { _menuIndex = MenuMain; _menuCursor = 1; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
     },
     Menu{ // MenuSkill
-      {
-        { DOOM::str_to_key("M_NEWG"), false, 96, 14, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_SKILL"), false, 54, 38, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_JKILL"), true, 48, 63, sf::Keyboard::I, [this]() { _doom.skill = DOOM::Enum::Skill::SkillBaby; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, []() {}, []() {} },
-        { DOOM::str_to_key("M_ROUGH"), true, 48, 79, sf::Keyboard::H, [this]() { _doom.skill = DOOM::Enum::Skill::SkillEasy; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, []() {}, []() {} },
-        { DOOM::str_to_key("M_HURT"), true, 48, 95, sf::Keyboard::H, [this]() { _doom.skill = DOOM::Enum::Skill::SkillMedium; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, []() {}, []() {} },
-        { DOOM::str_to_key("M_ULTRA"), true, 48, 111, sf::Keyboard::U, [this]() { _doom.skill = DOOM::Enum::Skill::SkillHard; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, []() {}, []() {} },
-        { DOOM::str_to_key("M_NMARE"), true, 48, 127, sf::Keyboard::N, [this]() { _doom.skill = DOOM::Enum::Skill::SkillNightmare; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, []() {}, []() {} }
+      .items = {
+        { .texture = DOOM::str_to_key("M_NEWG"), .selectable = false, .x = 96, .y = 14, .hotkey = sf::Keyboard::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_SKILL"), .selectable = false, .x = 54, .y = 38, .hotkey = sf::Keyboard::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_JKILL"), .selectable = true, .x = 48, .y = 63, .hotkey = sf::Keyboard::I, .select = [this]() { _doom.skill = DOOM::Enum::Skill::SkillBaby; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_ROUGH"), .selectable = true, .x = 48, .y = 79, .hotkey = sf::Keyboard::H, .select = [this]() { _doom.skill = DOOM::Enum::Skill::SkillEasy; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_HURT"), .selectable = true, .x = 48, .y = 95, .hotkey = sf::Keyboard::H, .select = [this]() { _doom.skill = DOOM::Enum::Skill::SkillMedium; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_ULTRA"), .selectable = true, .x = 48, .y = 111, .hotkey = sf::Keyboard::U, .select = [this]() { _doom.skill = DOOM::Enum::Skill::SkillHard; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_NMARE"), .selectable = true, .x = 48, .y = 127, .hotkey = sf::Keyboard::N, .select = [this]() { _doom.skill = DOOM::Enum::Skill::SkillNightmare; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, .left = []() {}, .right = []() {} }
       },
-      {},
-      [this]() { _menuIndex = MenuEpisode; _menuCursor = _episode; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
+      .sliders = {},
+      .escape = [this]() { _menuIndex = MenuEpisode; _menuCursor = _episode; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
     },
     Menu{ // MenuOptions
-      {
-        { DOOM::str_to_key("M_OPTTTL"), false, 108, 15, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_ENDGAM"), false, 60, 37, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_MESSG"), true, 60, 53, sf::Keyboard::M, [this]() { _doom.message = !_doom.message; std::next(_menuDesc[MenuOptions].items.begin(), 3)->texture = DOOM::str_to_key(_doom.message == true ? "M_MSGON" : "M_MSGOFF"); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, []() {}, []() {} },
-        { DOOM::str_to_key(_doom.message == true ? "M_MSGON" : "M_MSGOFF"), false, 180, 53, sf::Keyboard::Unknown, [this]() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_DETAIL"), true, 60, 69, sf::Keyboard::G, [this]() { DOOM::Doom::RenderScale = DOOM::Doom::RenderScale % 2 + 1; std::next(_menuDesc[MenuOptions].items.begin(), 5)->texture = DOOM::str_to_key(DOOM::Doom::RenderScale == 1 ? "M_GDLOW" : "M_GDHIGH"); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, []() {}, []() {} },
-        { DOOM::str_to_key(DOOM::Doom::RenderScale == 1 ? "M_GDLOW" : "M_GDHIGH"), false, 235, 69, sf::Keyboard::Unknown, [this]() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_SCRNSZ"), false, 60, 85, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_MSENS"), true, 60, 117, sf::Keyboard::M, [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) - 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); } },
-        { DOOM::str_to_key("M_SVOL"), true, 60, 149, sf::Keyboard::S, [this]() { _menuIndex = MenuVolume; _menuCursor = 1; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, []() {}, []() {} }
+      .items = {
+        { .texture = DOOM::str_to_key("M_OPTTTL"), .selectable = false, .x = 108, .y = 15, .hotkey = sf::Keyboard::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_ENDGAM"), .selectable = false, .x = 60, .y = 37, .hotkey = sf::Keyboard::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_MESSG"), .selectable = true, .x = 60, .y = 53, .hotkey = sf::Keyboard::M, .select = [this]() { _doom.message = !_doom.message; std::next(_menuDesc[MenuOptions].items.begin(), 3)->texture = DOOM::str_to_key(_doom.message == true ? "M_MSGON" : "M_MSGOFF"); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key(_doom.message == true ? "M_MSGON" : "M_MSGOFF"), .selectable = false, .x = 180, .y = 53, .hotkey = sf::Keyboard::Unknown, .select = [this]() {}, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_DETAIL"), .selectable = true, .x = 60, .y = 69, .hotkey = sf::Keyboard::G, .select = [this]() { DOOM::Doom::RenderScale = DOOM::Doom::RenderScale % 2 + 1; std::next(_menuDesc[MenuOptions].items.begin(), 5)->texture = DOOM::str_to_key(DOOM::Doom::RenderScale == 1 ? "M_GDLOW" : "M_GDHIGH"); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key(DOOM::Doom::RenderScale == 1 ? "M_GDLOW" : "M_GDHIGH"), .selectable = false, .x = 235, .y = 69, .hotkey = sf::Keyboard::Unknown, .select = [this]() {}, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_SCRNSZ"), .selectable = false, .x = 60, .y = 85, .hotkey = sf::Keyboard::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_MSENS"), .selectable = true, .x = 60, .y = 117, .hotkey = sf::Keyboard::M, .select = [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .left = [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) - 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .right = [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); } },
+        { .texture = DOOM::str_to_key("M_SVOL"), .selectable = true, .x = 60, .y = 149, .hotkey = sf::Keyboard::S, .select = [this]() { _menuIndex = MenuVolume; _menuCursor = 1; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} }
       },
-      {
-        { 60, 101, [this]() { return 8; } },
-        { 60, 133, [this]() { return (int)(_doom.sensivity * 8); } }
+      .sliders = {
+        { .x = 60, .y = 101, .get = [this]() { return 8; } },
+        { .x = 60, .y = 133, .get = [this]() { return (int)(_doom.sensivity * 8); } }
       },
-      [this]() { _menuIndex = MenuMain; _menuCursor = 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
+      .escape = [this]() { _menuIndex = MenuMain; _menuCursor = 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
     },
     Menu{ // MenuVolume
-      {
-        { DOOM::str_to_key("M_SVOL"), false, 60, 38, sf::Keyboard::Unknown, []() {}, []() {}, []() {} },
-        { DOOM::str_to_key("M_SFXVOL"), true, 80, 64, sf::Keyboard::S, [this]() { _doom.sfx = std::clamp(((int)(_doom.sfx * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, [this]() { _doom.sfx = std::clamp(((int)(_doom.sfx * 8) - 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, [this]() { _doom.sfx = std::clamp(((int)(_doom.sfx * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); } },
-        { DOOM::str_to_key("M_MUSVOL"), true, 80, 96, sf::Keyboard::M, [this]() { _doom.music = std::clamp(((int)(_doom.music * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, [this]() { _doom.music = std::clamp(((int)(_doom.music * 8) - 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, [this]() { _doom.music = std::clamp(((int)(_doom.music * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); } }
+      .items = {
+        { .texture = DOOM::str_to_key("M_SVOL"), .selectable = false, .x = 60, .y = 38, .hotkey = sf::Keyboard::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = DOOM::str_to_key("M_SFXVOL"), .selectable = true, .x = 80, .y = 64, .hotkey = sf::Keyboard::S, .select = [this]() { _doom.sfx = std::clamp(((int)(_doom.sfx * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .left = [this]() { _doom.sfx = std::clamp(((int)(_doom.sfx * 8) - 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .right = [this]() { _doom.sfx = std::clamp(((int)(_doom.sfx * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); } },
+        { .texture = DOOM::str_to_key("M_MUSVOL"), .selectable = true, .x = 80, .y = 96, .hotkey = sf::Keyboard::M, .select = [this]() { _doom.music = std::clamp(((int)(_doom.music * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .left = [this]() { _doom.music = std::clamp(((int)(_doom.music * 8) - 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .right = [this]() { _doom.music = std::clamp(((int)(_doom.music * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); } }
       },
-      {
-        { 80, 80, [this]() { return (int)(_doom.sfx * 8); } },
-        { 80, 112, [this]() { return (int)(_doom.music * 8); } }
+      .sliders = {
+        { .x = 80, .y = 80, .get = [this]() { return (int)(_doom.sfx * 8); } },
+        { .x = 80, .y = 112, .get = [this]() { return (int)(_doom.music * 8); } }
       },
-      [this]() { _menuIndex = MenuOptions; _menuCursor = 6; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
+      .escape = [this]() { _menuIndex = MenuOptions; _menuCursor = 6; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
     },
     Menu{ // MenuRead1
-      {
-        { DOOM::str_to_key("HELP1"), true, 0, 0, sf::Keyboard::Unknown, [this]() { _menuIndex = MenuRead2; _menuCursor = 0; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, []() {}, []() {} }
+      .items = {
+        { .texture = DOOM::str_to_key("HELP1"), .selectable = true, .x = 0, .y = 0, .hotkey = sf::Keyboard::Unknown, .select = [this]() { _menuIndex = MenuRead2; _menuCursor = 0; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} }
       },
-      {},
-      [this]() { _menuIndex = MenuMain; _menuCursor = 5; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
+      .sliders = {},
+      .escape = [this]() { _menuIndex = MenuMain; _menuCursor = 5; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
     },
     Menu{ // MenuRead2
-      {
-        { DOOM::str_to_key("HELP2"), true, 0, 0, sf::Keyboard::Unknown, [this]() { _menuIndex = MenuMain; _menuCursor = 5; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, []() {}, []() {} }
+      .items = {
+        { .texture = DOOM::str_to_key("HELP2"), .selectable = true, .x = 0, .y = 0, .hotkey = sf::Keyboard::Unknown, .select = [this]() { _menuIndex = MenuMain; _menuCursor = 5; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} }
       },
-      {},
-      [this]() { _menuIndex = MenuMain; _menuCursor = 5; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
+      .sliders = {},
+      .escape = [this]() { _menuIndex = MenuMain; _menuCursor = 5; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
     }
   }),
   _menuElapsed(sf::Time::Zero),

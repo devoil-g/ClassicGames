@@ -31,9 +31,8 @@ namespace DOOM
       State_Number
     };
 
-    class State
+    struct State
     {
-    public:
       using Action = void(DOOM::PlayerThing::*)(DOOM::Doom&);
 
       DOOM::AbstractThing::ThingSprite  sprite;     // Sprite sequence to use
@@ -42,14 +41,10 @@ namespace DOOM
       int                               duration;   // Duration of the state
       Action                            action;     // Action to be taken at the start of the state (nullptr if none)
       DOOM::PlayerThing::WeaponState    next;       // Index of the next state
-
-      State() = default;
-      ~State() = default;
     };
 
-    class Attributs
+    struct Attributs
     {
-    public:
       DOOM::Enum::Ammo                ammo;   // Ammo type
       unsigned int                    count;  // Ammo count to fire
       DOOM::PlayerThing::WeaponState  up;     // Up state
@@ -57,9 +52,6 @@ namespace DOOM
       DOOM::PlayerThing::WeaponState  ready;  // Ready state
       DOOM::PlayerThing::WeaponState  attack; // Attack state
       DOOM::PlayerThing::WeaponState  flash;  // Flash state
-
-      Attributs() = default;
-      ~Attributs() = default;
     };
 
     static const std::array<DOOM::PlayerThing::State, DOOM::PlayerThing::WeaponState::State_Number> _states;      // Table of weapon states

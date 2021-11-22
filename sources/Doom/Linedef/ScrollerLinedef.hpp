@@ -17,7 +17,7 @@ namespace DOOM
     void  update(DOOM::Doom& doom, sf::Time elapsed) override // Update linedef
     {
       // Scroll sidedef texture using offset
-      doom.level.sidedefs[front].x += elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds() * (Speed / 8.f);
+      doom.level.sidedefs[front].x += elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds() * ((float)Speed / 8.f);
     }
   };
 }

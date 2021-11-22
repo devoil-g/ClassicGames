@@ -58,35 +58,35 @@ const std::array<std::array<sf::Vector2i, 9>, 3> DOOM::IntermissionDoomScene::_p
 const std::array<std::vector<DOOM::IntermissionDoomScene::Animation>, 3>  DOOM::IntermissionDoomScene::_animations =
 {
   std::vector<DOOM::IntermissionDoomScene::Animation>{
-    { 11, std::rand() % 11, { DOOM::str_to_key("WIA00000"), DOOM::str_to_key("WIA00001"), DOOM::str_to_key("WIA00002") }, { 224, 104 }, 0 },
-    { 11, std::rand() % 11, { DOOM::str_to_key("WIA00100"), DOOM::str_to_key("WIA00101"), DOOM::str_to_key("WIA00102") }, { 184, 160 }, 0 },
-    { 11, std::rand() % 11, { DOOM::str_to_key("WIA00200"), DOOM::str_to_key("WIA00201"), DOOM::str_to_key("WIA00202") }, { 112, 136 }, 0 },
-    { 11, std::rand() % 11, { DOOM::str_to_key("WIA00300"), DOOM::str_to_key("WIA00301"), DOOM::str_to_key("WIA00302") }, { 72, 112 }, 0 },
-    { 11, std::rand() % 11, { DOOM::str_to_key("WIA00400"), DOOM::str_to_key("WIA00401"), DOOM::str_to_key("WIA00402") }, { 88, 96 }, 0 },
-    { 11, std::rand() % 11, { DOOM::str_to_key("WIA00500"), DOOM::str_to_key("WIA00501"), DOOM::str_to_key("WIA00502") }, { 64, 48 }, 0 },
-    { 11, std::rand() % 11, { DOOM::str_to_key("WIA00600"), DOOM::str_to_key("WIA00601"), DOOM::str_to_key("WIA00602") }, { 192, 40 }, 0 },
-    { 11, std::rand() % 11, { DOOM::str_to_key("WIA00700"), DOOM::str_to_key("WIA00701"), DOOM::str_to_key("WIA00702") }, { 136, 16 }, 0 },
-    { 11, std::rand() % 11, { DOOM::str_to_key("WIA00800"), DOOM::str_to_key("WIA00801"), DOOM::str_to_key("WIA00802") }, { 80, 16 }, 0 },
-    { 11, std::rand() % 11, { DOOM::str_to_key("WIA00900"), DOOM::str_to_key("WIA00901"), DOOM::str_to_key("WIA00902") }, { 64, 24 }, 0 }
+    { .duration = 11, .offset = std::rand() % 11, .frames = { DOOM::str_to_key("WIA00000"), DOOM::str_to_key("WIA00001"), DOOM::str_to_key("WIA00002") }, .position = { 224, 104 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { DOOM::str_to_key("WIA00100"), DOOM::str_to_key("WIA00101"), DOOM::str_to_key("WIA00102") }, .position = { 184, 160 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { DOOM::str_to_key("WIA00200"), DOOM::str_to_key("WIA00201"), DOOM::str_to_key("WIA00202") }, .position = { 112, 136 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { DOOM::str_to_key("WIA00300"), DOOM::str_to_key("WIA00301"), DOOM::str_to_key("WIA00302") }, .position = { 72, 112 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { DOOM::str_to_key("WIA00400"), DOOM::str_to_key("WIA00401"), DOOM::str_to_key("WIA00402") }, .position = { 88, 96 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { DOOM::str_to_key("WIA00500"), DOOM::str_to_key("WIA00501"), DOOM::str_to_key("WIA00502") }, .position = { 64, 48 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { DOOM::str_to_key("WIA00600"), DOOM::str_to_key("WIA00601"), DOOM::str_to_key("WIA00602") }, .position = { 192, 40 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { DOOM::str_to_key("WIA00700"), DOOM::str_to_key("WIA00701"), DOOM::str_to_key("WIA00702") }, .position = { 136, 16 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { DOOM::str_to_key("WIA00800"), DOOM::str_to_key("WIA00801"), DOOM::str_to_key("WIA00802") }, .position = { 80, 16 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { DOOM::str_to_key("WIA00900"), DOOM::str_to_key("WIA00901"), DOOM::str_to_key("WIA00902") }, .position = { 64, 24 }, .level = 0 }
   },
   std::vector<DOOM::IntermissionDoomScene::Animation>{
-    { 11, 0, { DOOM::str_to_key("WIA10000") }, { 128, 136 }, 2 },
-    { 11, 0, { DOOM::str_to_key("WIA10100") }, { 128, 136 }, 3 },
-    { 11, 0, { DOOM::str_to_key("WIA10200") }, { 128, 136 }, 4 },
-    { 11, 0, { DOOM::str_to_key("WIA10300") }, { 128, 136 }, 5 },
-    { 11, 0, { DOOM::str_to_key("WIA10400") }, { 128, 136 }, 6 },
-    { 11, 0, { DOOM::str_to_key("WIA10500") }, { 128, 136 }, 7 },
-    { 11, 0, { DOOM::str_to_key("WIA10600") }, { 128, 136 }, 8 },
-    { 11, 0, { DOOM::str_to_key("WIA10700"), DOOM::str_to_key("WIA10701"), DOOM::str_to_key("WIA10702") }, { 192, 144 }, 9 },
-    { 11, 0, { DOOM::str_to_key("WIA10400") }, { 128, 136 }, 9 }
+    { .duration = 11, .offset = 0, .frames = { DOOM::str_to_key("WIA10000") }, .position = { 128, 136 }, .level = 2 },
+    { .duration = 11, .offset = 0, .frames = { DOOM::str_to_key("WIA10100") }, .position = { 128, 136 }, .level = 3 },
+    { .duration = 11, .offset = 0, .frames = { DOOM::str_to_key("WIA10200") }, .position = { 128, 136 }, .level = 4 },
+    { .duration = 11, .offset = 0, .frames = { DOOM::str_to_key("WIA10300") }, .position = { 128, 136 }, .level = 5 },
+    { .duration = 11, .offset = 0, .frames = { DOOM::str_to_key("WIA10400") }, .position = { 128, 136 }, .level = 6 },
+    { .duration = 11, .offset = 0, .frames = { DOOM::str_to_key("WIA10500") }, .position = { 128, 136 }, .level = 7 },
+    { .duration = 11, .offset = 0, .frames = { DOOM::str_to_key("WIA10600") }, .position = { 128, 136 }, .level = 8 },
+    { .duration = 11, .offset = 0, .frames = { DOOM::str_to_key("WIA10700"), DOOM::str_to_key("WIA10701"), DOOM::str_to_key("WIA10702") }, .position = { 192, 144 }, .level = 9 },
+    { .duration = 11, .offset = 0, .frames = { DOOM::str_to_key("WIA10400") }, .position = { 128, 136 }, .level = 9 }
   },
   std::vector<DOOM::IntermissionDoomScene::Animation>{
-    { 11, std::rand() % 11, { DOOM::str_to_key("WIA20000"), DOOM::str_to_key("WIA20001"), DOOM::str_to_key("WIA20002") }, { 104, 168 }, 0 },
-    { 11, std::rand() % 11, { DOOM::str_to_key("WIA20100"), DOOM::str_to_key("WIA20101"), DOOM::str_to_key("WIA20102") }, { 40, 136 }, 0 },
-    { 11, std::rand() % 11, { DOOM::str_to_key("WIA20200"), DOOM::str_to_key("WIA20201"), DOOM::str_to_key("WIA20202") }, { 160, 96 }, 0 },
-    { 11, std::rand() % 11, { DOOM::str_to_key("WIA20300"), DOOM::str_to_key("WIA20301"), DOOM::str_to_key("WIA20302") }, { 104, 80 }, 0 },
-    { 11, std::rand() % 11, { DOOM::str_to_key("WIA20400"), DOOM::str_to_key("WIA20401"), DOOM::str_to_key("WIA20402") }, { 120, 32 }, 0 },
-    { 8, std::rand() % 8, { DOOM::str_to_key("WIA20500"), DOOM::str_to_key("WIA20501"), DOOM::str_to_key("WIA20502") }, { 40, 0 }, 0 }
+    { .duration = 11, .offset = std::rand() % 11, .frames = { DOOM::str_to_key("WIA20000"), DOOM::str_to_key("WIA20001"), DOOM::str_to_key("WIA20002") }, .position = { 104, 168 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { DOOM::str_to_key("WIA20100"), DOOM::str_to_key("WIA20101"), DOOM::str_to_key("WIA20102") }, .position = { 40, 136 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { DOOM::str_to_key("WIA20200"), DOOM::str_to_key("WIA20201"), DOOM::str_to_key("WIA20202") }, .position = { 160, 96 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { DOOM::str_to_key("WIA20300"), DOOM::str_to_key("WIA20301"), DOOM::str_to_key("WIA20302") }, .position = { 104, 80 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { DOOM::str_to_key("WIA20400"), DOOM::str_to_key("WIA20401"), DOOM::str_to_key("WIA20402") }, .position = { 120, 32 }, .level = 0 },
+    { .duration = 8, .offset = std::rand() % 8, .frames = { DOOM::str_to_key("WIA20500"), DOOM::str_to_key("WIA20501"), DOOM::str_to_key("WIA20502") }, .position = { 40, 0 }, .level = 0 }
   }
 };
 

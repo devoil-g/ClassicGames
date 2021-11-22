@@ -42,7 +42,7 @@ namespace DOOM
         switch (_state) {
         case State::Raise:
           // Raise ceiling
-          elapsed = updateCeilingRaise(doom, sector, elapsed, sector.ceiling_base, Speed / 8.f);
+          elapsed = updateCeilingRaise(doom, sector, elapsed, sector.ceiling_base, (float)Speed / 8.f);
 
           // End of state
           if (elapsed > sf::Time::Zero) {
@@ -54,11 +54,11 @@ namespace DOOM
           break;
         case State::Lower:
           // Lower ceiling
-          elapsed = updateCeilingLower(doom, sector, elapsed, sector.floor_base + 8.f, Speed / 8.f);
+          elapsed = updateCeilingLower(doom, sector, elapsed, sector.floor_base + 8.f, (float)Speed / 8.f);
 
           // Crush things
           if (elapsed > sf::Time::Zero)
-            elapsed = updateCeilingCrush(doom, sector, elapsed, sector.floor_base + 8.f, Speed / 8.f / (Speed <= DOOM::EnumAction::Speed::SpeedNormal ? 8.f : 1.f));
+            elapsed = updateCeilingCrush(doom, sector, elapsed, sector.floor_base + 8.f, (float)Speed / 8.f / (Speed <= DOOM::EnumAction::Speed::SpeedNormal ? 8.f : 1.f));
 
           // End of state
           if (elapsed > sf::Time::Zero) {

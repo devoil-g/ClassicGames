@@ -200,8 +200,8 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/sources/)
 ADD_EXECUTABLE(Game ${GAME_SRCS} ${GAME_RSRC})
 TARGET_LINK_LIBRARIES(Game Threads::Threads sfml-system sfml-window sfml-network sfml-graphics sfml-audio)
 
-# Force C++17
-SET_PROPERTY(TARGET Game PROPERTY CXX_STANDARD 17)
+# Force C++20
+SET_PROPERTY(TARGET Game PROPERTY CXX_STANDARD 20)
 
 # Copy assets to build directory
 ADD_CUSTOM_COMMAND(TARGET Game POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets/ $<TARGET_FILE_DIR:Game>/assets/)

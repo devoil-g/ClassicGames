@@ -33,11 +33,11 @@ namespace DOOM
       if (Direction == DOOM::EnumAction::Direction::DirectionUp) {
         sf::Time  original = elapsed;
 
-        elapsed = DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::updateFloorRaise(doom, sector, elapsed, _target, Speed / 8.f);
+        elapsed = DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::updateFloorRaise(doom, sector, elapsed, _target, (float)Speed / 8.f);
 
         // Crush things
         if (Crush == true && elapsed > sf::Time::Zero)
-          elapsed = DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::updateFloorCrush(doom, sector, elapsed, _target, Speed / 8.f);
+          elapsed = DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::updateFloorCrush(doom, sector, elapsed, _target, (float)Speed / 8.f);
 
         // Collision, stop sound
         if (elapsed > sf::Time::Zero && sector.floor_current != _target)
@@ -50,7 +50,7 @@ namespace DOOM
 
       // Raise ceiling
       else
-        DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::updateFloorLower(doom, sector, elapsed, _target, Speed / 8.f);
+        DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::updateFloorLower(doom, sector, elapsed, _target, (float)Speed / 8.f);
 
       // Detect end of action
       if (sector.floor_current == _target) {

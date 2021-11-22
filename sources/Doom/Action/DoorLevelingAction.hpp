@@ -94,12 +94,12 @@ namespace DOOM
         {
         case State::Open:
           // Raise door
-          elapsed = updateCeilingRaise(doom, sector, elapsed, sector.getNeighborLowestCeiling(doom).second - 4.f, Speed / 8.f);
+          elapsed = updateCeilingRaise(doom, sector, elapsed, sector.getNeighborLowestCeiling(doom).second - 4.f, (float)Speed / 8.f);
           break;
 
         case State::Close:
           // Lower door
-          elapsed = updateCeilingLower(doom, sector, elapsed, sector.floor_base, Speed / 8.f);
+          elapsed = updateCeilingLower(doom, sector, elapsed, sector.floor_base, (float)Speed / 8.f);
 
           // Obstacles
           if (elapsed > sf::Time::Zero && sector.ceiling_current != sector.floor_base) {
@@ -118,7 +118,7 @@ namespace DOOM
 
         case State::ForceClose:
           // Lower door
-          elapsed = updateCeilingLower(doom, sector, elapsed, sector.floor_base, Speed / 8.f);
+          elapsed = updateCeilingLower(doom, sector, elapsed, sector.floor_base, (float)Speed / 8.f);
 
           // Stop on obstacles
           if (sector.ceiling_current != sector.floor_base)
