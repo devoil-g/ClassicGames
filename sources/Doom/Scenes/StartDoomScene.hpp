@@ -7,7 +7,7 @@
 
 #include "Doom/Doom.hpp"
 #include "Scenes/AbstractScene.hpp"
-  
+
 namespace DOOM
 {
   class StartDoomScene : public Game::AbstractScene
