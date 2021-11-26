@@ -1175,7 +1175,7 @@ DOOM::Doom::Level::Sidedef::Sidedef(DOOM::Doom& doom, const DOOM::Wad::RawLevel:
 std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>> DOOM::Doom::Level::Sidedef::animation(const DOOM::Doom& doom, uint64_t name) const
 {
   // Check for null texture
-  if (DOOM::key_to_str(name) == "-")
+  if (name == DOOM::str_to_key("-"))
     return { DOOM::Doom::Resources::Texture::Null };
 
   // List of registered animations

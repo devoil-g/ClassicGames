@@ -5,7 +5,7 @@
 
 Game::TextureLibrary::TextureLibrary()
 {
-  // Pre-load textures here
+  // NOTE: pre-load textures here
 }
 
 void  Game::TextureLibrary::load(const std::string& path)

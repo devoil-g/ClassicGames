@@ -20,8 +20,8 @@ Game::Window::Window() :
 
 #ifdef _WIN32
   // Get system handle of window
-  CoInitialize(nullptr);
-  CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (void **)&_taskbar);
+  ::CoInitialize(nullptr);
+  ::CoCreateInstance(::CLSID_TaskbarList, nullptr, ::tagCLSCTX::CLSCTX_INPROC_SERVER, ::IID_ITaskbarList3, (void **)&_taskbar);
   if (_taskbar == nullptr)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());  
 #endif
@@ -121,7 +121,7 @@ bool  Game::Window::update(sf::Time elapsed)
   if (_elapsed >= Game::Window::FpsRefresh)
   {
     // Display new FPS in window title
-    // NOTE: in unknown cases, we can't get stuck in setTitle
+    // NOTE: in unknown cases, we can get stuck in setTitle
     _window.setTitle(Game::Window::DefaultTitle + " (" + std::to_string((int)(_tick / _elapsed.asSeconds())) + "." + std::to_string((int)(10 * _tick / _elapsed.asSeconds()) % 10) + " FPS)");
 
     // Reset FPS counters
@@ -135,12 +135,12 @@ bool  Game::Window::update(sf::Time elapsed)
 void  Game::Window::create(const sf::VideoMode& video, sf::Uint32 style, const sf::ContextSettings& context, bool sync)
 {
 #ifdef _WIN32
-  COLORREF  pcrKey = RGB(0, 0, 0);
-  BYTE	    pbAlpha = 255;
-  DWORD	    pdwFlags = 0;
+  ::COLORREF  pcrKey = RGB(0, 0, 0);
+  ::BYTE      pbAlpha = 255;
+  ::DWORD     pdwFlags = 0;
 
   // Save actual window transparency configuration
-  GetLayeredWindowAttributes(_window.getSystemHandle(), &pcrKey, &pbAlpha, &pdwFlags);
+  ::GetLayeredWindowAttributes(_window.getSystemHandle(), &pcrKey, &pbAlpha, &pdwFlags);
 #endif
 
   // Create window with parameters
@@ -163,18 +163,18 @@ void  Game::Window::create(const sf::VideoMode& video, sf::Uint32 style, const s
 
 #ifdef _WIN32
   // Initialize window transparency
-  SetWindowLongPtr(_window.getSystemHandle(), GWL_EXSTYLE, GetWindowLongPtr(_window.getSystemHandle(), GWL_EXSTYLE) | WS_EX_LAYERED);
+  ::SetWindowLongPtr(_window.getSystemHandle(), GWL_EXSTYLE, ::GetWindowLongPtr(_window.getSystemHandle(), GWL_EXSTYLE) | WS_EX_LAYERED);
 
-  if (SetLayeredWindowAttributes(_window.getSystemHandle(), pcrKey, pbAlpha, pdwFlags) == FALSE)
+  if (::SetLayeredWindowAttributes(_window.getSystemHandle(), pcrKey, pbAlpha, pdwFlags) == FALSE)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-  RedrawWindow(_window.getSystemHandle(), NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+  ::RedrawWindow(_window.getSystemHandle(), NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
 #endif
 }
 
 void  Game::Window::taskbar(Game::Window::WindowFlag flag)
 {
 #ifdef _WIN32
-  _taskbar->SetProgressState(_window.getSystemHandle(), (TBPFLAG)flag);
+  _taskbar->SetProgressState(_window.getSystemHandle(), (::TBPFLAG)flag);
 #endif
 }
 
@@ -187,16 +187,16 @@ void  Game::Window::taskbar(Game::Window::WindowFlag flag, float progress)
   progress = std::clamp(progress, 0.f, 1.f);
 
 #ifdef _WIN32
-  _taskbar->SetProgressValue(_window.getSystemHandle(), (ULONGLONG)(progress * 1000), 1000);
+  _taskbar->SetProgressValue(_window.getSystemHandle(), (::ULONGLONG)(progress * 1000), 1000);
 #endif
 }
 
 void  Game::Window::transparency(sf::Uint8 transparency)
 {
 #ifdef _WIN32
-  if (SetLayeredWindowAttributes(_window.getSystemHandle(), RGB(0, 0, 0), 255 - transparency, LWA_ALPHA) == FALSE)
+  if (::SetLayeredWindowAttributes(_window.getSystemHandle(), RGB(0, 0, 0), 255 - transparency, LWA_ALPHA) == FALSE)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-  RedrawWindow(_window.getSystemHandle(), NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+  ::RedrawWindow(_window.getSystemHandle(), NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
 #endif
 }
 

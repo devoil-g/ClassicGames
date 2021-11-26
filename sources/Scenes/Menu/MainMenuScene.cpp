@@ -16,7 +16,6 @@ Game::MainMenuScene::MainMenuScene(Game::SceneMachine& machine) :
   // Get menu font
   const auto& font = Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf");
 
-  // TODO: remove MIDI (test)
   // Set menu items/handlers
   menu() = {
     Game::AbstractMenuScene::Item("DOOM", font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath + "assets/levels/doom.wad", DOOM::Enum::Mode::ModeRetail))),

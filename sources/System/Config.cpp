@@ -25,8 +25,8 @@ namespace Game
 void  Game::Config::initialize(int argc, char** argv)
 {
 #ifdef _WIN32
-  HMODULE handle;
-  WCHAR   path[MAX_PATH + 1] = { 0 };
+  ::HMODULE handle;
+  ::WCHAR   path[MAX_PATH + 1] = { 0 };
 
   // This error should never happen...
   handle = ::GetModuleHandle(nullptr);

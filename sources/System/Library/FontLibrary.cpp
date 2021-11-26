@@ -3,7 +3,7 @@
 
 Game::FontLibrary::FontLibrary()
 {
-  // Pre-load fonts here
+  // NOTE: pre-load fonts here
   load(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf");
 }
 

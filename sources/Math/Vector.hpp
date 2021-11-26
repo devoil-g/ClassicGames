@@ -40,7 +40,7 @@ namespace Math
     inline Math::Vector<wSize>& convert() // Cast current vector to a lower dimension
     {
       // Check that requested dimension is valid
-      static_assert(wSize > 0 && wSize <= vSize, "Invalid vector convertion parameters.");
+      static_assert(wSize <= vSize, "Invalid vector convertion parameters.");
 
       return *reinterpret_cast<Math::Vector<wSize>*>(this);
     }
@@ -49,7 +49,7 @@ namespace Math
     inline const Math::Vector<wSize>& convert() const // Cast current vector to a lower dimension
     {
       // Check that requested dimension is valid
-      static_assert(wSize > 0 && wSize <= vSize, "Invalid vector convertion parameters.");
+      static_assert(wSize <= vSize, "Invalid vector convertion parameters.");
 
       return *reinterpret_cast<const Math::Vector<wSize>*>(this);
     }
@@ -66,7 +66,7 @@ namespace Math
     inline float  x() const { return (*this)(0); }  // Get first component of vector
     inline float  y() const { return (*this)(1); }  // Get second component of vector
     inline float  z() const { return (*this)(2); }  // Get third component of vector
-    inline float  w() const { return (*this)(2); }  // Get fourth component of vector
+    inline float  w() const { return (*this)(3); }  // Get fourth component of vector
 
     inline bool operator==(const Math::Vector<vSize>& v)  // Vector comparison
     {
