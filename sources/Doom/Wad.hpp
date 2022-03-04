@@ -15,26 +15,6 @@
 
 namespace DOOM
 {
-  constexpr uint64_t str_to_key(std::string_view str)
-  {
-    uint64_t  key = 0;
-
-    // Copy string in key
-    for (unsigned int i = 0; i < std::min(sizeof(uint64_t), str.length()); i++)
-      ((char*)&key)[i] = str.at(i);
-
-    return key;
-  }
-  
-  inline std::string  key_to_str(const uint64_t key)
-  {
-    char  str[sizeof(uint64_t) + 1] = { 0 };
-
-    // Copy key in string (ignore warning of std::strncpy)
-#pragma warning(suppress:6053; suppress:4996)
-    return std::strncpy(str, (const char*)&key, sizeof(uint64_t));
-  }
-
   class Wad
   {
   private:
@@ -386,17 +366,10 @@ namespace DOOM
 
     static inline uint64_t& uppercase(uint64_t& key)  // Force uppercase in WAD name
     {
-      std::transform((char*)&key, (char*)&key + 8, (char*)&key, ::toupper);
+      std::transform((char*)&key, (char*)&key + sizeof(key), (char*)&key, ::toupper);
+#pragma warning(suppress:4996; suppress:6053)
+      std::strncpy((char*)&key, (char*)&key, sizeof(key));
       return key;
-    }
-
-    template<typename Type>
-    static inline std::istream& read(std::istream& stream, Type* ptr, std::size_t number = 1)
-    {
-      // Safe read, throw exception in case of error
-      if (stream.read((char*)ptr, number * sizeof(Type)).good() == false)
-        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-      return stream;
     }
 
   public:

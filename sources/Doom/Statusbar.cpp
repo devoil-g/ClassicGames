@@ -6,69 +6,69 @@
 
 const std::array<std::array<uint64_t, DOOM::Statusbar::FaceSprite::SpriteCount>, DOOM::Statusbar::FacePain::PainCount>  DOOM::Statusbar::_sprites{
   std::array<uint64_t, DOOM::Statusbar::FaceSprite::SpriteCount>{ // 00-19 % health
-    DOOM::str_to_key("STFST40"),  // SpriteLookForward
-    DOOM::str_to_key("STFST41"),  // SpriteLookLeft
-    DOOM::str_to_key("STFST42"),  // SpriteLookRight
-    DOOM::str_to_key("STFKILL4"), // SpriteDamageForward
-    DOOM::str_to_key("STFTL40"),  // SpriteDamageLeft
-    DOOM::str_to_key("STFTR40"),  // SpriteDamageRight
-    DOOM::str_to_key("STFOUCH4"), // SpriteOuch
-    DOOM::str_to_key("STFEVL4"),  // SpriteEvil
-    DOOM::str_to_key("STFKILL4"), // SpriteRampage
-    DOOM::str_to_key("STFGOD0"),  // SpriteGod
-    DOOM::str_to_key("STFDEAD0")  // SpriteDead
+    Game::Utilities::str_to_key<uint64_t>("STFST40"),  // SpriteLookForward
+    Game::Utilities::str_to_key<uint64_t>("STFST41"),  // SpriteLookLeft
+    Game::Utilities::str_to_key<uint64_t>("STFST42"),  // SpriteLookRight
+    Game::Utilities::str_to_key<uint64_t>("STFKILL4"), // SpriteDamageForward
+    Game::Utilities::str_to_key<uint64_t>("STFTL40"),  // SpriteDamageLeft
+    Game::Utilities::str_to_key<uint64_t>("STFTR40"),  // SpriteDamageRight
+    Game::Utilities::str_to_key<uint64_t>("STFOUCH4"), // SpriteOuch
+    Game::Utilities::str_to_key<uint64_t>("STFEVL4"),  // SpriteEvil
+    Game::Utilities::str_to_key<uint64_t>("STFKILL4"), // SpriteRampage
+    Game::Utilities::str_to_key<uint64_t>("STFGOD0"),  // SpriteGod
+    Game::Utilities::str_to_key<uint64_t>("STFDEAD0")  // SpriteDead
   },
   std::array<uint64_t, DOOM::Statusbar::FaceSprite::SpriteCount>{ // 20-39 % health
-    DOOM::str_to_key("STFST30"),  // SpriteLookForward
-    DOOM::str_to_key("STFST31"),  // SpriteLookLeft
-    DOOM::str_to_key("STFST32"),  // SpriteLookRight
-    DOOM::str_to_key("STFKILL3"), // SpriteDamageForward
-    DOOM::str_to_key("STFTL30"),  // SpriteDamageLeft
-    DOOM::str_to_key("STFTR30"),  // SpriteDamageRight
-    DOOM::str_to_key("STFOUCH3"), // SpriteOuch
-    DOOM::str_to_key("STFEVL3"),  // SpriteEvil
-    DOOM::str_to_key("STFKILL3"), // SpriteRampage
-    DOOM::str_to_key("STFGOD0"),  // SpriteGod
-    DOOM::str_to_key("STFDEAD0")  // SpriteDead
+    Game::Utilities::str_to_key<uint64_t>("STFST30"),  // SpriteLookForward
+    Game::Utilities::str_to_key<uint64_t>("STFST31"),  // SpriteLookLeft
+    Game::Utilities::str_to_key<uint64_t>("STFST32"),  // SpriteLookRight
+    Game::Utilities::str_to_key<uint64_t>("STFKILL3"), // SpriteDamageForward
+    Game::Utilities::str_to_key<uint64_t>("STFTL30"),  // SpriteDamageLeft
+    Game::Utilities::str_to_key<uint64_t>("STFTR30"),  // SpriteDamageRight
+    Game::Utilities::str_to_key<uint64_t>("STFOUCH3"), // SpriteOuch
+    Game::Utilities::str_to_key<uint64_t>("STFEVL3"),  // SpriteEvil
+    Game::Utilities::str_to_key<uint64_t>("STFKILL3"), // SpriteRampage
+    Game::Utilities::str_to_key<uint64_t>("STFGOD0"),  // SpriteGod
+    Game::Utilities::str_to_key<uint64_t>("STFDEAD0")  // SpriteDead
   },
   std::array<uint64_t, DOOM::Statusbar::FaceSprite::SpriteCount>{ // 40-59 % health
-    DOOM::str_to_key("STFST20"),  // SpriteLookForward
-    DOOM::str_to_key("STFST21"),  // SpriteLookLeft
-    DOOM::str_to_key("STFST22"),  // SpriteLookRight
-    DOOM::str_to_key("STFKILL2"), // SpriteDamageForward
-    DOOM::str_to_key("STFTL20"),  // SpriteDamageLeft
-    DOOM::str_to_key("STFTR20"),  // SpriteDamageRight
-    DOOM::str_to_key("STFOUCH2"), // SpriteOuch
-    DOOM::str_to_key("STFEVL2"),  // SpriteEvil
-    DOOM::str_to_key("STFKILL2"), // SpriteRampage
-    DOOM::str_to_key("STFGOD0"),  // SpriteGod
-    DOOM::str_to_key("STFDEAD0")  // SpriteDead
+    Game::Utilities::str_to_key<uint64_t>("STFST20"),  // SpriteLookForward
+    Game::Utilities::str_to_key<uint64_t>("STFST21"),  // SpriteLookLeft
+    Game::Utilities::str_to_key<uint64_t>("STFST22"),  // SpriteLookRight
+    Game::Utilities::str_to_key<uint64_t>("STFKILL2"), // SpriteDamageForward
+    Game::Utilities::str_to_key<uint64_t>("STFTL20"),  // SpriteDamageLeft
+    Game::Utilities::str_to_key<uint64_t>("STFTR20"),  // SpriteDamageRight
+    Game::Utilities::str_to_key<uint64_t>("STFOUCH2"), // SpriteOuch
+    Game::Utilities::str_to_key<uint64_t>("STFEVL2"),  // SpriteEvil
+    Game::Utilities::str_to_key<uint64_t>("STFKILL2"), // SpriteRampage
+    Game::Utilities::str_to_key<uint64_t>("STFGOD0"),  // SpriteGod
+    Game::Utilities::str_to_key<uint64_t>("STFDEAD0")  // SpriteDead
   },
   std::array<uint64_t, DOOM::Statusbar::FaceSprite::SpriteCount>{ // 60-79 % health
-    DOOM::str_to_key("STFST10"),  // SpriteLookForward
-    DOOM::str_to_key("STFST11"),  // SpriteLookLeft
-    DOOM::str_to_key("STFST12"),  // SpriteLookRight
-    DOOM::str_to_key("STFKILL1"), // SpriteDamageForward
-    DOOM::str_to_key("STFTL10"),  // SpriteDamageLeft
-    DOOM::str_to_key("STFTR10"),  // SpriteDamageRight
-    DOOM::str_to_key("STFOUCH1"), // SpriteOuch
-    DOOM::str_to_key("STFEVL1"),  // SpriteEvil
-    DOOM::str_to_key("STFKILL1"), // SpriteRampage
-    DOOM::str_to_key("STFGOD0"),  // SpriteGod
-    DOOM::str_to_key("STFDEAD0")  // SpriteDead
+    Game::Utilities::str_to_key<uint64_t>("STFST10"),  // SpriteLookForward
+    Game::Utilities::str_to_key<uint64_t>("STFST11"),  // SpriteLookLeft
+    Game::Utilities::str_to_key<uint64_t>("STFST12"),  // SpriteLookRight
+    Game::Utilities::str_to_key<uint64_t>("STFKILL1"), // SpriteDamageForward
+    Game::Utilities::str_to_key<uint64_t>("STFTL10"),  // SpriteDamageLeft
+    Game::Utilities::str_to_key<uint64_t>("STFTR10"),  // SpriteDamageRight
+    Game::Utilities::str_to_key<uint64_t>("STFOUCH1"), // SpriteOuch
+    Game::Utilities::str_to_key<uint64_t>("STFEVL1"),  // SpriteEvil
+    Game::Utilities::str_to_key<uint64_t>("STFKILL1"), // SpriteRampage
+    Game::Utilities::str_to_key<uint64_t>("STFGOD0"),  // SpriteGod
+    Game::Utilities::str_to_key<uint64_t>("STFDEAD0")  // SpriteDead
   },
   std::array<uint64_t, DOOM::Statusbar::FaceSprite::SpriteCount>{ // 80-200 % health
-    DOOM::str_to_key("STFST00"),  // SpriteLookForward
-    DOOM::str_to_key("STFST01"),  // SpriteLookLeft
-    DOOM::str_to_key("STFST02"),  // SpriteLookRight
-    DOOM::str_to_key("STFKILL0"), // SpriteDamageForward
-    DOOM::str_to_key("STFTL00"),  // SpriteDamageLeft
-    DOOM::str_to_key("STFTR00"),  // SpriteDamageRight
-    DOOM::str_to_key("STFOUCH0"), // SpriteOuch
-    DOOM::str_to_key("STFEVL0"),  // SpriteEvil
-    DOOM::str_to_key("STFKILL0"), // SpriteRampage
-    DOOM::str_to_key("STFGOD0"),  // SpriteGod
-    DOOM::str_to_key("STFDEAD0")  // SpriteDead
+    Game::Utilities::str_to_key<uint64_t>("STFST00"),  // SpriteLookForward
+    Game::Utilities::str_to_key<uint64_t>("STFST01"),  // SpriteLookLeft
+    Game::Utilities::str_to_key<uint64_t>("STFST02"),  // SpriteLookRight
+    Game::Utilities::str_to_key<uint64_t>("STFKILL0"), // SpriteDamageForward
+    Game::Utilities::str_to_key<uint64_t>("STFTL00"),  // SpriteDamageLeft
+    Game::Utilities::str_to_key<uint64_t>("STFTR00"),  // SpriteDamageRight
+    Game::Utilities::str_to_key<uint64_t>("STFOUCH0"), // SpriteOuch
+    Game::Utilities::str_to_key<uint64_t>("STFEVL0"),  // SpriteEvil
+    Game::Utilities::str_to_key<uint64_t>("STFKILL0"), // SpriteRampage
+    Game::Utilities::str_to_key<uint64_t>("STFGOD0"),  // SpriteGod
+    Game::Utilities::str_to_key<uint64_t>("STFDEAD0")  // SpriteDead
   }
 };
 
@@ -143,9 +143,9 @@ void  DOOM::Statusbar::render(const DOOM::Doom& doom, sf::Image& target, sf::Rec
 void  DOOM::Statusbar::renderBackground(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const
 {
   // Draw statusbar background
-  renderTexture(doom, target, rect, doom.resources.getMenu(DOOM::str_to_key("STBAR")), 0, 0, palette);
-  renderTexture(doom, target, rect, doom.resources.getMenu(DOOM::str_to_key("STARMS")), 104, 0, palette);
-  renderTexture(doom, target, rect, doom.level.players.size() == 1 ? DOOM::Doom::Resources::Texture::Null : doom.resources.getMenu(DOOM::str_to_key(std::string("STFB") + (char)('0' + Math::Modulo<4>(id - 1)))), 143, 1, palette);
+  renderTexture(doom, target, rect, doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("STBAR")), 0, 0, palette);
+  renderTexture(doom, target, rect, doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("STARMS")), 104, 0, palette);
+  renderTexture(doom, target, rect, doom.level.players.size() == 1 ? DOOM::Doom::Resources::Texture::Null : doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>(std::string("STFB") + (char)('0' + Math::Modulo<4>(id - 1)))), 143, 1, palette);
 }
 
 void  DOOM::Statusbar::renderAmmo(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const
@@ -158,18 +158,18 @@ void  DOOM::Statusbar::renderHealth(const DOOM::Doom& doom, sf::Image& target, s
 {
   // Draw health in big red digits
   renderDecimal(doom, target, rect, "STTNUM", (int)std::ceil(health), 90, 3, palette);
-  renderTexture(doom, target, rect, doom.resources.getMenu(DOOM::str_to_key("STTPRCNT")), 90, 3, palette);
+  renderTexture(doom, target, rect, doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("STTPRCNT")), 90, 3, palette);
 }
 
 void  DOOM::Statusbar::renderWeapons(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const
 {
   // Draw arms numbers if small grey/yellow digits
-  renderTexture(doom, target, rect, doom.resources.getMenu(DOOM::str_to_key(weapons.at(1) == true ? "STYSNUM2" : "STGNUM2")), 111, 4, palette);
-  renderTexture(doom, target, rect, doom.resources.getMenu(DOOM::str_to_key(weapons.at(2) == true ? "STYSNUM3" : "STGNUM3")), 123, 4, palette);
-  renderTexture(doom, target, rect, doom.resources.getMenu(DOOM::str_to_key(weapons.at(3) == true ? "STYSNUM4" : "STGNUM4")), 135, 4, palette);
-  renderTexture(doom, target, rect, doom.resources.getMenu(DOOM::str_to_key(weapons.at(4) == true ? "STYSNUM5" : "STGNUM5")), 111, 14, palette);
-  renderTexture(doom, target, rect, doom.resources.getMenu(DOOM::str_to_key(weapons.at(5) == true ? "STYSNUM6" : "STGNUM6")), 123, 14, palette);
-  renderTexture(doom, target, rect, doom.resources.getMenu(DOOM::str_to_key(weapons.at(6) == true ? "STYSNUM7" : "STGNUM7")), 135, 14, palette);
+  renderTexture(doom, target, rect, doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>(weapons.at(1) == true ? "STYSNUM2" : "STGNUM2")), 111, 4, palette);
+  renderTexture(doom, target, rect, doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>(weapons.at(2) == true ? "STYSNUM3" : "STGNUM3")), 123, 4, palette);
+  renderTexture(doom, target, rect, doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>(weapons.at(3) == true ? "STYSNUM4" : "STGNUM4")), 135, 4, palette);
+  renderTexture(doom, target, rect, doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>(weapons.at(4) == true ? "STYSNUM5" : "STGNUM5")), 111, 14, palette);
+  renderTexture(doom, target, rect, doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>(weapons.at(5) == true ? "STYSNUM6" : "STGNUM6")), 123, 14, palette);
+  renderTexture(doom, target, rect, doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>(weapons.at(6) == true ? "STYSNUM7" : "STGNUM7")), 135, 14, palette);
 }
 
 void  DOOM::Statusbar::renderFace(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const
@@ -184,14 +184,14 @@ void  DOOM::Statusbar::renderArmor(const DOOM::Doom& doom, sf::Image& target, sf
 {
   // Draw armor in big red digits
   renderDecimal(doom, target, rect, "STTNUM", (int)std::ceil(armor), 221, 3, palette);
-  renderTexture(doom, target, rect, doom.resources.getMenu(DOOM::str_to_key("STTPRCNT")), 221, 3, palette);
+  renderTexture(doom, target, rect, doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("STTPRCNT")), 221, 3, palette);
 }
 
 void  DOOM::Statusbar::renderKey(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const
 {
   for (int index = 0; index < keys.size(); index++)
     if (keys.at(index) != DOOM::Enum::KeyType::KeyTypeNone)
-      renderTexture(doom, target, rect, doom.resources.getMenu(DOOM::str_to_key(std::string("STKEYS") + (char)('0' + index + (keys.at(index) - 1) * 3))), 239, 4 + index * 10 - (keys.at(index) - 1), palette);
+      renderTexture(doom, target, rect, doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>(std::string("STKEYS") + (char)('0' + index + (keys.at(index) - 1) * 3))), 239, 4 + index * 10 - (keys.at(index) - 1), palette);
 }
 
 void  DOOM::Statusbar::renderAmmos(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const
@@ -215,7 +215,7 @@ void  DOOM::Statusbar::renderDecimal(const DOOM::Doom& doom, sf::Image& target, 
 
   // Render digits of decimal from right to left
   for (int index = (int)text.str().length() - 1; index >= 0; index--) {
-    const auto& texture = (bool)std::isdigit(string.at(index)) == true ? doom.resources.getMenu(DOOM::str_to_key(font + string.at(index))) : DOOM::Doom::Resources::Texture::Null;
+    const auto& texture = (bool)std::isdigit(string.at(index)) == true ? doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>(font + string.at(index))) : DOOM::Doom::Resources::Texture::Null;
 
     x -= texture.width;
     renderTexture(doom, target, rect, texture, x, y, palette);

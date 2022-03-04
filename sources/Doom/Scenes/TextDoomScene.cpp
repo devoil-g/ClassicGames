@@ -50,7 +50,7 @@ bool  DOOM::TextDoomScene::update(sf::Time elapsed)
 
     // Draw character
     try {
-      const auto& character = _doom.resources.getMenu(DOOM::str_to_key(std::string("STCFN") + std::to_string((int)_text.front() / 100 % 10) + std::to_string((int)_text.front() / 10 % 10) + std::to_string((int)_text.front() / 1 % 10)));
+      const auto& character = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>(std::string("STCFN") + std::to_string((int)_text.front() / 100 % 10) + std::to_string((int)_text.front() / 10 % 10) + std::to_string((int)_text.front() / 1 % 10)));
 
       character.draw(_doom, _image, sf::Vector2i(_x, _y), sf::Vector2i(1, 1));
       _x += character.width;

@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "Doom/Action/AbstractAction.hpp"
+#include "System/Audio/Sound.hpp"
 
 namespace DOOM
 {
@@ -37,7 +38,7 @@ namespace DOOM
     int16_t                 _model; // Model for properties copy
 
   protected:
-    Game::Sound::Reference  _sound; // Sound reference of sector action
+    Game::Audio::Sound::Reference _sound; // Sound reference of sector action
 
     void  changeTexture(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector)
     {
@@ -127,7 +128,7 @@ namespace DOOM
     AbstractTypeAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, int16_t model = -1) :
       DOOM::AbstractAction(doom, sector),
       _model(model),
-      _sound(Game::Sound::Instance().get())
+      _sound(Game::Audio::Sound::Instance().get())
     {
       // Warn for errors
       if (ChangeType != DOOM::EnumAction::Change::Type::None && _model == -1)

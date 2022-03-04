@@ -217,8 +217,8 @@ bool  DOOM::Camera::renderSeg(const DOOM::Doom& doom, sf::Rect<int16_t> rect, in
     int texture_offset_x = seg.offset + (int)(sidedef_front.x + ((seg_end - seg_start).length() * (((bool)seg.direction == side) ? seg_offset : (1.f - seg_offset))));
 
     // Draw ceiling/sky
-    if (sector_front.ceiling_name == DOOM::str_to_key("F_SKY1")) {
-      if (linedef.back == -1 || sector_back.ceiling_name != DOOM::str_to_key("F_SKY1")) {
+    if (sector_front.ceiling_name == Game::Utilities::str_to_key<uint64_t>("F_SKY1")) {
+      if (linedef.back == -1 || sector_back.ceiling_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1")) {
         renderSky(doom, rect, special, column, 0, (int)std::lroundf(std::min(upper_front, upper_back)), sector_front.ceiling_current, index);
         _vertical[column].first = std::max(_vertical[column].first, (int)std::lroundf(std::min(upper_front, upper_back)));
       }
@@ -229,8 +229,8 @@ bool  DOOM::Camera::renderSeg(const DOOM::Doom& doom, sf::Rect<int16_t> rect, in
     }
 
     // Draw floor/sky
-    if (sector_front.floor_name == DOOM::str_to_key("F_SKY1")) {
-      if (linedef.back == -1 || sector_back.floor_name != DOOM::str_to_key("F_SKY1")) {
+    if (sector_front.floor_name == Game::Utilities::str_to_key<uint64_t>("F_SKY1")) {
+      if (linedef.back == -1 || sector_back.floor_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1")) {
         renderSky(doom, rect, special, column, (int)std::lroundf(std::max(lower_front, lower_back)), rect.height, sector_front.floor_current, index);
         _vertical[column].second = std::min(_vertical[column].second, (int)std::lroundf(std::max(lower_front, lower_back)));
       }
@@ -241,9 +241,9 @@ bool  DOOM::Camera::renderSeg(const DOOM::Doom& doom, sf::Rect<int16_t> rect, in
     }
 
     // Draw upper/lower/middle walls
-    if (upper_front < upper_back && texture_upper.height != 0 && (sector_front.ceiling_name != DOOM::str_to_key("F_SKY1") || sector_back.ceiling_name != DOOM::str_to_key("F_SKY1")))
+    if (upper_front < upper_back && texture_upper.height != 0 && (sector_front.ceiling_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1") || sector_back.ceiling_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1")))
       renderTexture(doom, rect, extralight, special, texture_upper, column, upper_front, upper_back, std::abs(sector_front.ceiling_current - sector_back.ceiling_current), texture_offset_x, upper_offset_y, shaded, index);
-    if (lower_front > lower_back && texture_lower.height != 0 && (sector_front.floor_name != DOOM::str_to_key("F_SKY1") || sector_back.floor_name != DOOM::str_to_key("F_SKY1")))
+    if (lower_front > lower_back && texture_lower.height != 0 && (sector_front.floor_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1") || sector_back.floor_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1")))
       renderTexture(doom, rect, extralight, special, texture_lower, column, lower_back, lower_front, std::abs(sector_front.floor_current - sector_back.floor_current), texture_offset_x, lower_offset_y, shaded, index);
     if (upper_front < lower_front && texture_middle.height != 0)
       renderTexture(doom, rect, extralight, special, texture_middle, column, upper_front, lower_front, std::abs(sector_front.ceiling_current - sector_front.floor_current), texture_offset_x, middle_offset_y, shaded, index);

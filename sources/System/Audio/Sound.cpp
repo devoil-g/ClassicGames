@@ -1,20 +1,20 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "System/Sound.hpp"
+#include "System/Audio/Sound.hpp"
 
-Game::Sound::Reference::Reference(sf::Sound& sound, int& lock) :
+Game::Audio::Sound::Reference::Reference(sf::Sound& sound, int& lock) :
   _lock(lock), sound(sound)
 {
   // Lock instance
   _lock++;
 }
 
-Game::Sound::Reference::Reference(const Game::Sound::Reference& ref) :
-  Game::Sound::Reference(ref.sound, ref._lock)
+Game::Audio::Sound::Reference::Reference(const Game::Audio::Sound::Reference& ref) :
+  Game::Audio::Sound::Reference(ref.sound, ref._lock)
 {}
 
-Game::Sound::Reference::~Reference()
+Game::Audio::Sound::Reference::~Reference()
 {
   // Release instance
   _lock--;
@@ -24,7 +24,7 @@ Game::Sound::Reference::~Reference()
     std::cout << "[Game::Sound]: Warning, no reference held on looping sound." << std::endl;
 }
 
-bool  Game::Sound::update(sf::Time elapsed)
+bool  Game::Audio::Sound::update(sf::Time elapsed)
 {
   // Remove unreferenced and not playing sounds
   _sounds.remove_if([](const std::pair<sf::Sound, int>& pair) { return pair.second == 0 && pair.first.getStatus() == sf::Sound::Status::Stopped; });
@@ -33,21 +33,21 @@ bool  Game::Sound::update(sf::Time elapsed)
   return false;
 }
 
-void  Game::Sound::clear()
+void  Game::Audio::Sound::clear()
 {
   // Stops every playing sounds
   for (auto& sound : _sounds)
     sound.first.stop();
 }
 
-Game::Sound::Reference  Game::Sound::get()
+Game::Audio::Sound::Reference Game::Audio::Sound::get()
 {
   // Check if internal limit has been reached
-  if (_sounds.size() + 1 > Game::Sound::MaxSound)
+  if (_sounds.size() + 1 > Game::Audio::Sound::MaxSound)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Push a new sound in buffer
   _sounds.emplace_back();
 
-  return Game::Sound::Reference(_sounds.back().first, _sounds.back().second);
+  return Game::Audio::Sound::Reference(_sounds.back().first, _sounds.back().second);
 }

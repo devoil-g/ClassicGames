@@ -135,14 +135,22 @@ SET(GAME_STATES_MENU_SRCS
 SET(GAME_SYSTEM_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Config.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Config.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Midi.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Midi.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Sound.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Sound.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Pitch.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Pitch.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Utilities.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Utilities.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Window.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Window.hpp
+)
+SET(GAME_SYSTEM_AUDIO_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Audio/Midi.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Audio/Midi.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Audio/Sound.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Audio/Sound.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Audio/Soundfont.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Audio/Soundfont.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Audio/Synthesizer.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Audio/Synthesizer.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Audio/Pitch.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Audio/Pitch.hpp
 )
 SET(GAME_SYSTEM_LIBRARY_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Library/AbstractLibrary.cpp
@@ -163,6 +171,7 @@ SET(GAME_SRCS
 	${GAME_STATES_SRCS}
 	${GAME_STATES_MENU_SRCS}
 	${GAME_SYSTEM_SRCS}
+	${GAME_SYSTEM_AUDIO_SRCS}
 	${GAME_SYSTEM_LIBRARY_SRCS}
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp
 )
@@ -186,6 +195,7 @@ SOURCE_GROUP("\\Math\\" FILES ${GAME_MATH_SRCS})
 SOURCE_GROUP("\\Scenes\\" FILES ${GAME_STATES_SRCS})
 SOURCE_GROUP("\\Scenes\\Menu\\" FILES ${GAME_STATES_MENU_SRCS})
 SOURCE_GROUP("\\System\\" FILES ${GAME_SYSTEM_SRCS})
+SOURCE_GROUP("\\System\\Audio\\" FILES ${GAME_SYSTEM_AUDIO_SRCS})
 SOURCE_GROUP("\\System\\Library\\" FILES ${GAME_SYSTEM_LIBRARY_SRCS})
 SOURCE_GROUP("\\Resources\\" FILES ${GAME_RSRC})
 

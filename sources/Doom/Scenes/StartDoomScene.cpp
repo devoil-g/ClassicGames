@@ -34,7 +34,7 @@ DOOM::StartDoomScene::StartDoomScene(Game::SceneMachine& machine, DOOM::Doom& do
     _textureController.loadFromFile(Game::Config::ExecutablePath + "assets/textures/controller.png") == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-  sf::Image image = _doom.resources.getMenu(DOOM::str_to_key("M_DOOM")).image(_doom);
+  sf::Image image = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("M_DOOM")).image(_doom);
 
   // Load title texture
   _textureTitle.create(image.getSize().x, image.getSize().y);

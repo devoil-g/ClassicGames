@@ -73,7 +73,7 @@ namespace DOOM
     DOOM::PlayerThing::WeaponState  _weaponState;     // Current state of weapon
     sf::Time                        _weaponElapsed;   // Elapsed time since beginning of weapon state
     sf::Time                        _weaponRampage;   // Elapsed time attack key is down
-    Game::Sound::Reference          _weaponSound;     // Sound of weapon
+    Game::Audio::Sound::Reference   _weaponSound;     // Sound of weapon
     Math::Vector<2>                 _weaponPosition;  // Position of weapon on screen
     bool                            _weaponRefire;    // True if shot is a refire (less accurate)
     bool                            _weaponFire;      // Fire trigger for BFG and rocket launcher

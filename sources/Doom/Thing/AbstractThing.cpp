@@ -3,7 +3,7 @@
 #include "Doom/Doom.hpp"
 #include "Doom/Thing/AbstractThing.hpp"
 #include "Doom/Thing/PlayerThing.hpp"
-#include "System/Sound.hpp"
+#include "System/Audio/Sound.hpp"
 
 const float	DOOM::AbstractThing::MeleeRange = 64.f;
 const float	DOOM::AbstractThing::MissileRange = 32.f * 64.f;
@@ -11,8 +11,8 @@ const float	DOOM::AbstractThing::FloatSpeed = 4.f;
 const float	DOOM::AbstractThing::SkullSpeed = 20.f;
 const int	DOOM::AbstractThing::TargetThreshold = 100;
 const int	DOOM::AbstractThing::MaxRadius = 32;
-const float DOOM::AbstractThing::FatSpread = Math::Pi / 16.f;
-const float DOOM::AbstractThing::TracerAngle = 12.f / 255.f * 2.f * Math::Pi;
+const float     DOOM::AbstractThing::FatSpread = Math::Pi / 16.f;
+const float     DOOM::AbstractThing::TracerAngle = 12.f / 255.f * 2.f * Math::Pi;
 
 const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>	DOOM::AbstractThing::_sprites =
 {
@@ -4932,7 +4932,7 @@ DOOM::AbstractThing::Sprite DOOM::AbstractThing::sprite(const DOOM::Doom & doom,
   if (_state == DOOM::AbstractThing::ThingState::State_None)
     return { DOOM::Doom::Resources::Texture::Null, false, false };
 
-  auto  iterator = doom.resources.animations.find(DOOM::str_to_key(_sprites[_states[_state].sprite]));
+  auto  iterator = doom.resources.animations.find(Game::Utilities::str_to_key<uint64_t>(_sprites[_states[_state].sprite]));
 
   // Cancel if sequence or frame not found
   if (iterator == doom.resources.animations.cend() || iterator->second.size() < _states[_state].frame)
@@ -5230,10 +5230,10 @@ void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapse
 
         // Remove missile if colliding the sky
         if (linedef.back == -1 ||
-          (doom.level.sectors[doom.level.sidedefs[linedef.front].sector].floor_name != DOOM::str_to_key("F_SKY1") ||
-            doom.level.sectors[doom.level.sidedefs[linedef.back].sector].floor_name != DOOM::str_to_key("F_SKY1")) &&
-          (doom.level.sectors[doom.level.sidedefs[linedef.front].sector].ceiling_name != DOOM::str_to_key("F_SKY1") ||
-            doom.level.sectors[doom.level.sidedefs[linedef.back].sector].ceiling_name != DOOM::str_to_key("F_SKY1")))
+          (doom.level.sectors[doom.level.sidedefs[linedef.front].sector].floor_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1") ||
+            doom.level.sectors[doom.level.sidedefs[linedef.back].sector].floor_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1")) &&
+          (doom.level.sectors[doom.level.sidedefs[linedef.front].sector].ceiling_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1") ||
+            doom.level.sectors[doom.level.sidedefs[linedef.back].sector].ceiling_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1")))
           P_ExplodeMissile(doom);
         else
           setState(doom, DOOM::AbstractThing::ThingState::State_None);
@@ -5500,7 +5500,7 @@ void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elaps
 
   // Missile collision with wall/sky
   const auto collideMissile = [this, &doom](uint64_t flat) {
-    if (flat == DOOM::str_to_key("F_SKY1"))
+    if (flat == Game::Utilities::str_to_key<uint64_t>("F_SKY1"))
       setState(doom, DOOM::AbstractThing::ThingState::State_None);
     else
       P_ExplodeMissile(doom);
@@ -6401,8 +6401,8 @@ bool  DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const
     (things_list.empty() || things_list.front().first > sector.first) &&
     (linedefs_list.empty() || linedefs_list.front().first > sector.first)) {
     // Don't spawn puff on sky
-    if ((atk_direction.z() < 0.f && doom.level.sectors[sector.second].floor_name != DOOM::str_to_key("F_SKY1")) ||
-      (atk_direction.z() > 0.f && doom.level.sectors[sector.second].ceiling_name != DOOM::str_to_key("F_SKY1")))
+    if ((atk_direction.z() < 0.f && doom.level.sectors[sector.second].floor_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1")) ||
+      (atk_direction.z() > 0.f && doom.level.sectors[sector.second].ceiling_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1")))
       P_SpawnPuff(doom, atk_origin + atk_direction * sector.first);
 
     // Floor is not a valid target
@@ -6434,10 +6434,10 @@ bool  DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const
 
     // Spawn smoke puff
     if (linedef.back == -1 ||
-      (doom.level.sectors[doom.level.sidedefs[linedef.front].sector].floor_name != DOOM::str_to_key("F_SKY1") ||
-       doom.level.sectors[doom.level.sidedefs[linedef.back].sector].floor_name != DOOM::str_to_key("F_SKY1")) &&
-      (doom.level.sectors[doom.level.sidedefs[linedef.front].sector].ceiling_name != DOOM::str_to_key("F_SKY1") ||
-       doom.level.sectors[doom.level.sidedefs[linedef.back].sector].ceiling_name != DOOM::str_to_key("F_SKY1")))
+      (doom.level.sectors[doom.level.sidedefs[linedef.front].sector].floor_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1") ||
+       doom.level.sectors[doom.level.sidedefs[linedef.back].sector].floor_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1")) &&
+      (doom.level.sectors[doom.level.sidedefs[linedef.front].sector].ceiling_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1") ||
+       doom.level.sectors[doom.level.sidedefs[linedef.back].sector].ceiling_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1")))
       P_SpawnPuff(doom, atk_origin + atk_direction * linedefs_list.front().first + linedef_normal);
 
     // Gunfire trigger

@@ -29,5 +29,5 @@ bool  DOOM::SplashDoomScene::update(sf::Time elapsed)
 void  DOOM::SplashDoomScene::draw()
 {
   // Draw splash screen
-  _doom.image = _doom.resources.getMenu(DOOM::str_to_key("TITLEPIC")).image(_doom);
+  _doom.image = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("TITLEPIC")).image(_doom);
 }

@@ -16,15 +16,15 @@ std::unique_ptr<DOOM::AbstractFlat> DOOM::AbstractFlat::factory(DOOM::Doom& doom
 {
   // List of animated flats and their frames
   static std::vector<std::vector<uint64_t>> const	animations = {
-    { DOOM::str_to_key("NUKAGE1"), DOOM::str_to_key("NUKAGE2"), DOOM::str_to_key("NUKAGE3") },                              // Green slime, nukage
-    { DOOM::str_to_key("FWATER1"), DOOM::str_to_key("FWATER2"), DOOM::str_to_key("FWATER3"), DOOM::str_to_key("FWATER4") }, // Blue water
-    { DOOM::str_to_key("SWATER1"), DOOM::str_to_key("SWATER2"), DOOM::str_to_key("SWATER3"), DOOM::str_to_key("SWATER4") }, // Blue water
-    { DOOM::str_to_key("LAVA1"), DOOM::str_to_key("LAVA2"), DOOM::str_to_key("LAVA3"), DOOM::str_to_key("LAVA4") },         // Lava
-    { DOOM::str_to_key("BLOOD1"), DOOM::str_to_key("BLOOD2"), DOOM::str_to_key("BLOOD3") },                                 // Blood
-    { DOOM::str_to_key("RROCK05"), DOOM::str_to_key("RROCK06"), DOOM::str_to_key("RROCK07"), DOOM::str_to_key("RROCK08") }, // Large molten rock
-    { DOOM::str_to_key("SLIME01"), DOOM::str_to_key("SLIME02"), DOOM::str_to_key("SLIME03"), DOOM::str_to_key("SLIME04") }, // Brown water
-    { DOOM::str_to_key("SLIME05"), DOOM::str_to_key("SLIME06"), DOOM::str_to_key("SLIME07"), DOOM::str_to_key("SLIME08") }, // Brown slime
-    { DOOM::str_to_key("SLIME09"), DOOM::str_to_key("SLIME10"), DOOM::str_to_key("SLIME11"), DOOM::str_to_key("SLIME12") }  // Small molten rock
+    { Game::Utilities::str_to_key<uint64_t>("NUKAGE1"), Game::Utilities::str_to_key<uint64_t>("NUKAGE2"), Game::Utilities::str_to_key<uint64_t>("NUKAGE3") },                              // Green slime, nukage
+    { Game::Utilities::str_to_key<uint64_t>("FWATER1"), Game::Utilities::str_to_key<uint64_t>("FWATER2"), Game::Utilities::str_to_key<uint64_t>("FWATER3"), Game::Utilities::str_to_key<uint64_t>("FWATER4") }, // Blue water
+    { Game::Utilities::str_to_key<uint64_t>("SWATER1"), Game::Utilities::str_to_key<uint64_t>("SWATER2"), Game::Utilities::str_to_key<uint64_t>("SWATER3"), Game::Utilities::str_to_key<uint64_t>("SWATER4") }, // Blue water
+    { Game::Utilities::str_to_key<uint64_t>("LAVA1"), Game::Utilities::str_to_key<uint64_t>("LAVA2"), Game::Utilities::str_to_key<uint64_t>("LAVA3"), Game::Utilities::str_to_key<uint64_t>("LAVA4") },         // Lava
+    { Game::Utilities::str_to_key<uint64_t>("BLOOD1"), Game::Utilities::str_to_key<uint64_t>("BLOOD2"), Game::Utilities::str_to_key<uint64_t>("BLOOD3") },                                 // Blood
+    { Game::Utilities::str_to_key<uint64_t>("RROCK05"), Game::Utilities::str_to_key<uint64_t>("RROCK06"), Game::Utilities::str_to_key<uint64_t>("RROCK07"), Game::Utilities::str_to_key<uint64_t>("RROCK08") }, // Large molten rock
+    { Game::Utilities::str_to_key<uint64_t>("SLIME01"), Game::Utilities::str_to_key<uint64_t>("SLIME02"), Game::Utilities::str_to_key<uint64_t>("SLIME03"), Game::Utilities::str_to_key<uint64_t>("SLIME04") }, // Brown water
+    { Game::Utilities::str_to_key<uint64_t>("SLIME05"), Game::Utilities::str_to_key<uint64_t>("SLIME06"), Game::Utilities::str_to_key<uint64_t>("SLIME07"), Game::Utilities::str_to_key<uint64_t>("SLIME08") }, // Brown slime
+    { Game::Utilities::str_to_key<uint64_t>("SLIME09"), Game::Utilities::str_to_key<uint64_t>("SLIME10"), Game::Utilities::str_to_key<uint64_t>("SLIME11"), Game::Utilities::str_to_key<uint64_t>("SLIME12") }  // Small molten rock
   };
 
   // Check if flat is part of an animated sequence

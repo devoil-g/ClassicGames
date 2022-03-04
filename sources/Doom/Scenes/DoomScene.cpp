@@ -4,7 +4,7 @@
 #include "Doom/Scenes/StartDoomScene.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
-#include "System/Sound.hpp"
+#include "System/Audio/Sound.hpp"
 
 const sf::Time  DOOM::DoomScene::ForcedExit = sf::seconds(1.f);
 
@@ -35,7 +35,7 @@ DOOM::DoomScene::DoomScene(Game::SceneMachine& machine, const std::string& wad, 
 DOOM::DoomScene::~DoomScene()
 {
   // Interrupt playing DOOM sounds to avoid reading deleted buffers
-  Game::Sound::Instance().clear();
+  Game::Audio::Sound::Instance().clear();
 }
 
 bool  DOOM::DoomScene::update(sf::Time elapsed)

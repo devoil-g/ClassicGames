@@ -1,8 +1,6 @@
 #include <cassert>
 
 #include "Scenes/SceneMachine.hpp"
-#include "System/Window.hpp"
-#include "System/Sound.hpp"
 
 Game::SceneMachine::SceneMachine() :
   Game::AbstractScene(*this)

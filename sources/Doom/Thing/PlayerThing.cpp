@@ -201,7 +201,7 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom& doom, int id, int controller) :
   _radiation(sf::Time::Zero),
   _sector(sf::Time::Zero),
   _berserk(false),
-  _weapon(DOOM::Enum::Weapon::WeaponPistol), _weaponNext(DOOM::Enum::Weapon::WeaponPistol), _weaponState(_attributs[_weapon].up), _weaponElapsed(sf::Time::Zero), _weaponRampage(sf::Time::Zero), _weaponSound(Game::Sound::Instance().get()), _weaponPosition(), _weaponRefire(false), _weaponFire(false),
+  _weapon(DOOM::Enum::Weapon::WeaponPistol), _weaponNext(DOOM::Enum::Weapon::WeaponPistol), _weaponState(_attributs[_weapon].up), _weaponElapsed(sf::Time::Zero), _weaponRampage(sf::Time::Zero), _weaponSound(Game::Audio::Sound::Instance().get()), _weaponPosition(), _weaponRefire(false), _weaponFire(false),
   _flash(0), _flashState(DOOM::PlayerThing::WeaponState::State_None), _flashElapsed(sf::Time::Zero),
   _palettePickup(sf::Time::Zero), _paletteDamage(sf::Time::Zero), _paletteBerserk(sf::Time::Zero),
   id(id),
@@ -724,7 +724,7 @@ void  DOOM::PlayerThing::drawWeapon(DOOM::Doom& doom, sf::Image& target, sf::Rec
 
   // Render muzzle flash
   if (_flashState != DOOM::PlayerThing::WeaponState::State_None) {
-    auto  iterator = doom.resources.animations.find(DOOM::str_to_key(_sprites[_states[_flashState].sprite]));
+    auto  iterator = doom.resources.animations.find(Game::Utilities::str_to_key<uint64_t>(_sprites[_states[_flashState].sprite]));
 
     if (iterator != doom.resources.animations.cend() && _states[_flashState].frame < iterator->second.size()) {
       iterator->second[_states[_flashState].frame][0].first.get().draw(
@@ -742,7 +742,7 @@ void  DOOM::PlayerThing::drawWeapon(DOOM::Doom& doom, sf::Image& target, sf::Rec
 
   // Render weapon
   if (_weaponState != DOOM::PlayerThing::WeaponState::State_None) {
-    auto  iterator = doom.resources.animations.find(DOOM::str_to_key(_sprites[_states[_weaponState].sprite]));
+    auto  iterator = doom.resources.animations.find(Game::Utilities::str_to_key<uint64_t>(_sprites[_states[_weaponState].sprite]));
 
     if (iterator != doom.resources.animations.cend() && _states[_weaponState].frame < iterator->second.size()) {
       iterator->second[_states[_weaponState].frame][0].first.get().draw(

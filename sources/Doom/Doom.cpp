@@ -221,19 +221,19 @@ void  DOOM::Doom::addPlayer(int controller)
 
 void  DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound, bool loop)
 {
-  auto ref = Game::Sound::Instance().get();
+  auto ref = Game::Audio::Sound::Instance().get();
 
   this->sound(ref, sound, loop);
 }
 
 void  DOOM::Doom::sound(DOOM::Doom::Resources::Sound::EnumSound sound, const Math::Vector<3>& position, bool loop)
 {
-  auto ref = Game::Sound::Instance().get();
+  auto ref = Game::Audio::Sound::Instance().get();
 
   this->sound(ref, sound, position, loop);
 }
 
-void  DOOM::Doom::sound(Game::Sound::Reference& ref, DOOM::Doom::Resources::Sound::EnumSound sound, bool loop)
+void  DOOM::Doom::sound(Game::Audio::Sound::Reference& ref, DOOM::Doom::Resources::Sound::EnumSound sound, bool loop)
 {
   // Does nothing if no sound
   if (sound == DOOM::Doom::Resources::Sound::EnumSound::Sound_None) {
@@ -241,7 +241,7 @@ void  DOOM::Doom::sound(Game::Sound::Reference& ref, DOOM::Doom::Resources::Soun
     return;
   }
 
-  std::unordered_map<uint64_t, DOOM::Doom::Resources::Sound>::const_iterator  iterator = resources.sounds.find(DOOM::str_to_key(std::string("DS") + DOOM::Doom::Resources::Sound::sound_info[sound].name));
+  std::unordered_map<uint64_t, DOOM::Doom::Resources::Sound>::const_iterator  iterator = resources.sounds.find(Game::Utilities::str_to_key<uint64_t>(std::string("DS") + DOOM::Doom::Resources::Sound::sound_info[sound].name));
 
   // Cancel if no sound found
   if (iterator == resources.sounds.cend())
@@ -255,7 +255,7 @@ void  DOOM::Doom::sound(Game::Sound::Reference& ref, DOOM::Doom::Resources::Soun
   ref.sound.play();
 }
 
-void  DOOM::Doom::sound(Game::Sound::Reference& ref, DOOM::Doom::Resources::Sound::EnumSound sound, const Math::Vector<3>& position, bool loop)
+void  DOOM::Doom::sound(Game::Audio::Sound::Reference& ref, DOOM::Doom::Resources::Sound::EnumSound sound, const Math::Vector<3>& position, bool loop)
 {
   // Does nothing if no sound
   if (sound == DOOM::Doom::Resources::Sound::EnumSound::Sound_None) {
@@ -263,7 +263,7 @@ void  DOOM::Doom::sound(Game::Sound::Reference& ref, DOOM::Doom::Resources::Soun
     return;
   }
 
-  auto  iterator = resources.sounds.find(DOOM::str_to_key(std::string("DS") + DOOM::Doom::Resources::Sound::sound_info[sound].name));
+  auto  iterator = resources.sounds.find(Game::Utilities::str_to_key<uint64_t>(std::string("DS") + DOOM::Doom::Resources::Sound::sound_info[sound].name));
 
   // Cancel if no sound found
   if (iterator == resources.sounds.cend())
@@ -404,7 +404,7 @@ void  DOOM::Doom::buildResourcesSprites()
 {
   // Load sprites textures from WAD resources
   for (const auto& patch : wad.resources.sprites) {
-    std::string name = DOOM::key_to_str(patch.first);
+    std::string name = Game::Utilities::key_to_str(patch.first);
 
     // Build sprite and get its reference
     auto  sprite = std::ref(resources.sprites.emplace(std::piecewise_construct, std::forward_as_tuple(patch.first), std::forward_as_tuple(*this, patch.second)).first->second);
@@ -412,8 +412,8 @@ void  DOOM::Doom::buildResourcesSprites()
     if (name.length() >= 6)
     {
       // Resize animation sequence
-      if (resources.animations[DOOM::str_to_key(name.substr(0, 4))].size() < name.at(4) - 'A' + 1)
-        resources.animations[DOOM::str_to_key(name.substr(0, 4))].resize(name.at(4) - 'A' + 1, { {
+      if (resources.animations[Game::Utilities::str_to_key<uint64_t>(name.substr(0, 4))].size() < name.at(4) - 'A' + 1)
+        resources.animations[Game::Utilities::str_to_key<uint64_t>(name.substr(0, 4))].resize(name.at(4) - 'A' + 1, { {
           { std::ref(DOOM::Doom::Resources::Texture::Null), false },
           { std::ref(DOOM::Doom::Resources::Texture::Null), false },
           { std::ref(DOOM::Doom::Resources::Texture::Null), false },
@@ -426,17 +426,17 @@ void  DOOM::Doom::buildResourcesSprites()
 
       // Push sprite in animation sequence
       if (name.at(5) == '0')
-        for (auto& frame : resources.animations[DOOM::str_to_key(name.substr(0, 4))][name.at(4) - 'A'])
+        for (auto& frame : resources.animations[Game::Utilities::str_to_key<uint64_t>(name.substr(0, 4))][name.at(4) - 'A'])
           frame = { sprite, false };
       else
-        resources.animations[DOOM::str_to_key(name.substr(0, 4))][name.at(4) - 'A'][name.at(5) - '1'] = { sprite, false };
+        resources.animations[Game::Utilities::str_to_key<uint64_t>(name.substr(0, 4))][name.at(4) - 'A'][name.at(5) - '1'] = { sprite, false };
     }
 
     if (name.length() >= 8)
     {
       // Resize animation sequence
-      if (resources.animations[DOOM::str_to_key(name.substr(0, 4))].size() < name.at(6) - 'A' + 1)
-        resources.animations[DOOM::str_to_key(name.substr(0, 4))].resize(name.at(6) - 'A' + 1, { {
+      if (resources.animations[Game::Utilities::str_to_key<uint64_t>(name.substr(0, 4))].size() < name.at(6) - 'A' + 1)
+        resources.animations[Game::Utilities::str_to_key<uint64_t>(name.substr(0, 4))].resize(name.at(6) - 'A' + 1, { {
           { std::ref(DOOM::Doom::Resources::Texture::Null), false },
           { std::ref(DOOM::Doom::Resources::Texture::Null), false },
           { std::ref(DOOM::Doom::Resources::Texture::Null), false },
@@ -449,10 +449,10 @@ void  DOOM::Doom::buildResourcesSprites()
 
       // Push sprite in animation sequence
       if (name.at(7) == '0')
-        for (auto& frame : resources.animations[DOOM::str_to_key(name.substr(0, 4))][name.at(6) - 'A'])
+        for (auto& frame : resources.animations[Game::Utilities::str_to_key<uint64_t>(name.substr(0, 4))][name.at(6) - 'A'])
           frame = { sprite, true };
       else
-        resources.animations[DOOM::str_to_key(name.substr(0, 4))][name.at(6) - 'A'][name.at(7) - '1'] = { sprite, true };
+        resources.animations[Game::Utilities::str_to_key<uint64_t>(name.substr(0, 4))][name.at(6) - 'A'][name.at(7) - '1'] = { sprite, true };
     }
   }
 }
@@ -502,16 +502,16 @@ void  DOOM::Doom::buildLevel(const std::pair<uint8_t, uint8_t>& level)
 
   this->level.episode = level;
   this->level.end = DOOM::Enum::End::EndNone;
-  this->level.sky = std::cref(resources.textures.find(DOOM::str_to_key(std::string("SKY") + std::to_string((int)level.first)))->second);
+  this->level.sky = std::cref(resources.textures.find(Game::Utilities::str_to_key<uint64_t>(std::string("SKY") + std::to_string((int)level.first)))->second);
 
   // DOOM 2 sky
   if (mode == DOOM::Enum::Mode::ModeCommercial) {
     if (level.second < 12)
-      this->level.sky = std::cref(resources.textures.find(DOOM::str_to_key("SKY1"))->second);
+      this->level.sky = std::cref(resources.textures.find(Game::Utilities::str_to_key<uint64_t>("SKY1"))->second);
     else if (level.second < 21)
-      this->level.sky = std::cref(resources.textures.find(DOOM::str_to_key("SKY2"))->second);
+      this->level.sky = std::cref(resources.textures.find(Game::Utilities::str_to_key<uint64_t>("SKY2"))->second);
     else
-      this->level.sky = std::cref(resources.textures.find(DOOM::str_to_key("SKY3"))->second);
+      this->level.sky = std::cref(resources.textures.find(Game::Utilities::str_to_key<uint64_t>("SKY3"))->second);
   }
 
   // Build every component of resources
@@ -1175,23 +1175,23 @@ DOOM::Doom::Level::Sidedef::Sidedef(DOOM::Doom& doom, const DOOM::Wad::RawLevel:
 std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>> DOOM::Doom::Level::Sidedef::animation(const DOOM::Doom& doom, uint64_t name) const
 {
   // Check for null texture
-  if (name == DOOM::str_to_key("-"))
+  if (name == Game::Utilities::str_to_key<uint64_t>("-"))
     return { DOOM::Doom::Resources::Texture::Null };
 
   // List of registered animations
   const static std::vector<std::vector<uint64_t>> animations = {
-    { DOOM::str_to_key("BLODGR1"), DOOM::str_to_key("BLODGR2"), DOOM::str_to_key("BLODGR3"), DOOM::str_to_key("BLODGR4") },
-    { DOOM::str_to_key("BLODRIP1"), DOOM::str_to_key("BLODRIP2"), DOOM::str_to_key("BLODRIP3"), DOOM::str_to_key("BLODRIP4") },
-    { DOOM::str_to_key("FIREBLU1"), DOOM::str_to_key("FIREBLU2") },
-    { DOOM::str_to_key("FIRLAV3"), DOOM::str_to_key("FIRLAVA") },
-    { DOOM::str_to_key("FIREWALA"), DOOM::str_to_key("FIREWALB"), DOOM::str_to_key("FIREWALL") },
-    { DOOM::str_to_key("GSTFONT1"), DOOM::str_to_key("GSTFONT2"), DOOM::str_to_key("GSTFONT3") },
-    { DOOM::str_to_key("ROCKRED1"), DOOM::str_to_key("ROCKRED2"), DOOM::str_to_key("ROCKRED3") },
-    { DOOM::str_to_key("SLADRIP1"), DOOM::str_to_key("SLADRIP2"), DOOM::str_to_key("SLADRIP3") },
-    { DOOM::str_to_key("BFALL1"), DOOM::str_to_key("BFALL2"), DOOM::str_to_key("BFALL3"), DOOM::str_to_key("BFALL4") },
-    { DOOM::str_to_key("SFALL1"), DOOM::str_to_key("SFALL2"), DOOM::str_to_key("SFALL3"), DOOM::str_to_key("SFALL4") },
-    { DOOM::str_to_key("WFALL1"), DOOM::str_to_key("WFALL2"), DOOM::str_to_key("WFALL3"), DOOM::str_to_key("WFALL4") },
-    { DOOM::str_to_key("DBRAIN1"), DOOM::str_to_key("DBRAIN2"), DOOM::str_to_key("DBRAIN3"), DOOM::str_to_key("DBRAIN4") }
+    { Game::Utilities::str_to_key<uint64_t>("BLODGR1"), Game::Utilities::str_to_key<uint64_t>("BLODGR2"), Game::Utilities::str_to_key<uint64_t>("BLODGR3"), Game::Utilities::str_to_key<uint64_t>("BLODGR4") },
+    { Game::Utilities::str_to_key<uint64_t>("BLODRIP1"), Game::Utilities::str_to_key<uint64_t>("BLODRIP2"), Game::Utilities::str_to_key<uint64_t>("BLODRIP3"), Game::Utilities::str_to_key<uint64_t>("BLODRIP4") },
+    { Game::Utilities::str_to_key<uint64_t>("FIREBLU1"), Game::Utilities::str_to_key<uint64_t>("FIREBLU2") },
+    { Game::Utilities::str_to_key<uint64_t>("FIRLAV3"), Game::Utilities::str_to_key<uint64_t>("FIRLAVA") },
+    { Game::Utilities::str_to_key<uint64_t>("FIREWALA"), Game::Utilities::str_to_key<uint64_t>("FIREWALB"), Game::Utilities::str_to_key<uint64_t>("FIREWALL") },
+    { Game::Utilities::str_to_key<uint64_t>("GSTFONT1"), Game::Utilities::str_to_key<uint64_t>("GSTFONT2"), Game::Utilities::str_to_key<uint64_t>("GSTFONT3") },
+    { Game::Utilities::str_to_key<uint64_t>("ROCKRED1"), Game::Utilities::str_to_key<uint64_t>("ROCKRED2"), Game::Utilities::str_to_key<uint64_t>("ROCKRED3") },
+    { Game::Utilities::str_to_key<uint64_t>("SLADRIP1"), Game::Utilities::str_to_key<uint64_t>("SLADRIP2"), Game::Utilities::str_to_key<uint64_t>("SLADRIP3") },
+    { Game::Utilities::str_to_key<uint64_t>("BFALL1"), Game::Utilities::str_to_key<uint64_t>("BFALL2"), Game::Utilities::str_to_key<uint64_t>("BFALL3"), Game::Utilities::str_to_key<uint64_t>("BFALL4") },
+    { Game::Utilities::str_to_key<uint64_t>("SFALL1"), Game::Utilities::str_to_key<uint64_t>("SFALL2"), Game::Utilities::str_to_key<uint64_t>("SFALL3"), Game::Utilities::str_to_key<uint64_t>("SFALL4") },
+    { Game::Utilities::str_to_key<uint64_t>("WFALL1"), Game::Utilities::str_to_key<uint64_t>("WFALL2"), Game::Utilities::str_to_key<uint64_t>("WFALL3"), Game::Utilities::str_to_key<uint64_t>("WFALL4") },
+    { Game::Utilities::str_to_key<uint64_t>("DBRAIN1"), Game::Utilities::str_to_key<uint64_t>("DBRAIN2"), Game::Utilities::str_to_key<uint64_t>("DBRAIN3"), Game::Utilities::str_to_key<uint64_t>("DBRAIN4") }
   };
 
   std::vector<uint64_t> animation = { name };
@@ -1206,8 +1206,10 @@ std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>> DOOM::
 
   // Check if frames are registered in resources
   for (uint64_t frame : animation) {
-    if (doom.resources.textures.find(frame) == doom.resources.textures.end())
+    if (doom.resources.textures.find(frame) == doom.resources.textures.end()) {
+      std::cout << Game::Utilities::key_to_str(frame) << std::endl;
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+    }
 
     result.push_back(doom.resources.textures.find(frame)->second);
   }
@@ -1295,7 +1297,7 @@ bool  DOOM::Doom::Level::Sidedef::switched(DOOM::Doom& doom, std::vector<std::re
   // NOTE: the switched is performed using name convention method,
   // switches should be hard coded
 
-  std::string name_str = DOOM::key_to_str(name);
+  std::string name_str = Game::Utilities::key_to_str(name);
 
   // Check if texture name is switchable
   if (name_str.substr(0, 3) == "SW1")
@@ -1306,7 +1308,7 @@ bool  DOOM::Doom::Level::Sidedef::switched(DOOM::Doom& doom, std::vector<std::re
     return false;
 
   // Find new texture set
-  name = DOOM::str_to_key(name_str);
+  name = Game::Utilities::str_to_key<uint64_t>(name_str);
   textures = animation(doom, name);
 
   return true;
@@ -1509,9 +1511,9 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom& doom, const DOOM::Wad::RawLevel::S
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Retrieve flat textures
-  if (floor_name != DOOM::str_to_key("F_SKY1"))
+  if (floor_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1"))
     floor_flat = std::cref(doom.resources.getFlat(floor_name));
-  if (ceiling_name != DOOM::str_to_key("F_SKY1"))
+  if (ceiling_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1"))
     ceiling_flat = std::cref(doom.resources.getFlat(ceiling_name));
 
   // Index of this sector

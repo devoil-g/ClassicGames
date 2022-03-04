@@ -12,7 +12,8 @@
 
 #include "Doom/Wad.hpp"
 #include "Math/Vector.hpp"
-#include "System/Sound.hpp"
+#include "System/Audio/Sound.hpp"
+#include "System/Utilities.hpp"
 
 namespace DOOM
 {
@@ -491,7 +492,7 @@ namespace DOOM
 
         // Error if not found
         if (iterator == container.end())
-          throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__) + " " + DOOM::key_to_str(key)).c_str());
+          throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__) + " " + Game::Utilities::key_to_str(key)).c_str());
 
         return iterator->second;
       }
@@ -855,10 +856,10 @@ namespace DOOM
 
     void  addPlayer(int controller);  // Add player to current game
 
-    void  sound(DOOM::Doom::Resources::Sound::EnumSound sound, bool loop = false);                                                               // Play a sound
-    void  sound(DOOM::Doom::Resources::Sound::EnumSound sound, const Math::Vector<3>& position, bool loop = false);                              // Play a sound relatively to a position
-    void  sound(Game::Sound::Reference& ref, DOOM::Doom::Resources::Sound::EnumSound sound, bool loop = false);                                  // Play a sound with given reference
-    void  sound(Game::Sound::Reference& ref, DOOM::Doom::Resources::Sound::EnumSound sound, const Math::Vector<3>& position, bool loop = false); // Play a sound relatively to a position with given reference
+    void  sound(DOOM::Doom::Resources::Sound::EnumSound sound, bool loop = false);                                                                      // Play a sound
+    void  sound(DOOM::Doom::Resources::Sound::EnumSound sound, const Math::Vector<3>& position, bool loop = false);                                     // Play a sound relatively to a position
+    void  sound(Game::Audio::Sound::Reference& ref, DOOM::Doom::Resources::Sound::EnumSound sound, bool loop = false);                                  // Play a sound with given reference
+    void  sound(Game::Audio::Sound::Reference& ref, DOOM::Doom::Resources::Sound::EnumSound sound, const Math::Vector<3>& position, bool loop = false); // Play a sound relatively to a position with given reference
   };
 }
 

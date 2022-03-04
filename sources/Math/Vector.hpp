@@ -55,18 +55,24 @@ namespace Math
     }
 
     inline float& operator()(unsigned int c) { return _vector[c]; } // Get nth component of vector
-    
-    inline float  operator()(unsigned int c) const { return _vector[c]; } // Get nth component of vector
-    
-    inline float& x() { return (*this)(0); }  // Get first component of vector
-    inline float& y() { return (*this)(1); }  // Get second component of vector
-    inline float& z() { return (*this)(2); }  // Get third component of vector
-    inline float& w() { return (*this)(3); }  // Get fourth component of vector
 
-    inline float  x() const { return (*this)(0); }  // Get first component of vector
-    inline float  y() const { return (*this)(1); }  // Get second component of vector
-    inline float  z() const { return (*this)(2); }  // Get third component of vector
-    inline float  w() const { return (*this)(3); }  // Get fourth component of vector
+    inline float  operator()(unsigned int c) const { return _vector[c]; } // Get nth component of vector
+
+    template<unsigned int N>
+    inline float& get() { return _vector[N]; } // Get nth component of vector
+
+    template<unsigned int N>
+    inline float  get() const { return _vector[N]; } // Get nth component of vector
+
+    inline float& x() { return get<0>(); }  // Get first component of vector
+    inline float& y() { return get<1>(); }  // Get second component of vector
+    inline float& z() { return get<2>(); }  // Get third component of vector
+    inline float& w() { return get<3>(); }  // Get fourth component of vector
+
+    inline float  x() const { return get<0>(); }  // Get first component of vector
+    inline float  y() const { return get<1>(); }  // Get second component of vector
+    inline float  z() const { return get<2>(); }  // Get third component of vector
+    inline float  w() const { return get<3>(); }  // Get fourth component of vector
 
     inline bool operator==(const Math::Vector<vSize>& v)  // Vector comparison
     {

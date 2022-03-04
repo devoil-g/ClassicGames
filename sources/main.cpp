@@ -7,7 +7,7 @@
 #include "Scenes/MidiScene.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
-#include "System/Sound.hpp"
+#include "System/Audio/Sound.hpp"
 
 #ifdef _WIN32
 # include <windows.h>
@@ -34,7 +34,7 @@ namespace Game
     game.push<Game::SplashScene>();
 
     // TODO: remove this
-    game.push<Game::MidiScene>();
+    //game.push<Game::MidiScene>();
 
     // Run the game !
     while (Game::Window::Instance().window().isOpen()) {
@@ -42,7 +42,7 @@ namespace Game
 
       // Stop if update return true
       if (Game::Window::Instance().update(elapsed) == true ||
-        Game::Sound::Instance().update(elapsed) == true ||
+        Game::Audio::Sound::Instance().update(elapsed) == true ||
         game.update(elapsed) == true)
         return;
 
@@ -55,7 +55,6 @@ namespace Game
     }
   }
 };
-
 
 int main(int argc, char ** argv)
 {
