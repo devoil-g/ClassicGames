@@ -12,11 +12,12 @@
 #include "System/Config.hpp"
 #include "System/Utilities.hpp"
 
-Game::Audio::Midi::Midi(const std::string& filename) :
-  _soundfont(Game::Config::ExecutablePath + "/assets/levels/gzdoom.sf2")
+Game::Audio::Midi::Midi(const std::string& filename)
 {
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << std::endl << "[MIDI] filename: " << filename << ":" << std::endl << std::endl;
+#endif
 
   // Load MIDI file
   load(filename);
@@ -86,12 +87,14 @@ void  Game::Audio::Midi::loadHeader(std::ifstream& file)
   }
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout
     << "  [MTHD] format:      " << _format << std::endl
     << "  [MTHD] tracks:      " << _trackNumber << std::endl
     << "  [MTHD] time format: " << _timeFormat << std::endl
     << "  [MTHD] time value:  " << _timeValue << std::endl
     ;
+#endif
 }
 
 void  Game::Audio::Midi::loadTracks(std::ifstream& file)
@@ -130,7 +133,9 @@ void  Game::Audio::Midi::loadTracks(std::ifstream& file)
 void  Game::Audio::Midi::loadTrack(std::ifstream& file, const Game::Audio::Midi::MidiHeader& header, Game::Audio::Midi::Sequence& sequence, std::size_t track)
 {
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << std::endl << "  [SUBTRACK] " << track << std::endl;
+#endif
 
   using Command = std::tuple<uint8_t, uint8_t, void(Game::Audio::Midi::*)(std::ifstream&, Game::Audio::Midi::Sequence&, std::size_t, uint8_t, std::size_t)>;
 
@@ -228,12 +233,14 @@ void  Game::Audio::Midi::loadTrackSysexF0(std::ifstream& file, Game::Audio::Midi
   Game::Utilities::read(file, buffer.data(), buffer.size());
 
   // TODO: remove this
+#ifdef _DEBUG
   std::ios_base::fmtflags save(std::cout.flags());
   std::cout << "  [SYSEX] F0";
   for (const auto& byte : buffer)
     std::cout << " " << std::hex << std::setw(2) << std::setfill('0') << (int)byte;
   std::cout << std::endl;
   std::cout.flags(save);
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackSysexF7(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
@@ -247,12 +254,14 @@ void  Game::Audio::Midi::loadTrackSysexF7(std::ifstream& file, Game::Audio::Midi
   Game::Utilities::read(file, buffer.data(), buffer.size());
 
   // TODO: remove this
+#ifdef _DEBUG
   std::ios_base::fmtflags save(std::cout.flags());
   std::cout << "  [SYSEX]";
   for (const auto& byte : buffer)
     std::cout << " " << std::hex << std::setw(2) << std::setfill('0') << (int)byte;
   std::cout << std::endl;
   std::cout.flags(save);
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMeta(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
@@ -289,9 +298,11 @@ void  Game::Audio::Midi::loadTrackMeta(std::ifstream& file, Game::Audio::Midi::S
   Game::Utilities::read(file, &meta);
 
   // TODO: remove this
+#ifdef _DEBUG
   std::ios_base::fmtflags save(std::cout.flags());
   std::cout << "  [META][" << std::hex << std::setw(2) << std::setfill('0') << (int)meta << "] " << std::flush;
   std::cout.flags(save);
+#endif
 
   // Find command to execute
   auto command = std::find_if(meta_commands.begin(), meta_commands.end(),
@@ -319,10 +330,12 @@ void  Game::Audio::Midi::loadTrackMetaName(std::ifstream& file, Game::Audio::Mid
   sequence.tracks[track].name = name;
 
   // TODO: remove this
+#ifdef _DEBUG
   if (track == 0)
     std::cout << "sequence name: " << sequence.metadata.name << std::endl;
   else
     std::cout << "track " << track << " name: " << sequence.tracks[track].name << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMetaCopyright(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
@@ -330,7 +343,9 @@ void  Game::Audio::Midi::loadTrackMetaCopyright(std::ifstream& file, Game::Audio
   sequence.metadata.copyright = loadText(file);
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << "copyright: " << sequence.metadata.copyright << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMetaInstrument(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
@@ -338,7 +353,9 @@ void  Game::Audio::Midi::loadTrackMetaInstrument(std::ifstream& file, Game::Audi
   sequence.metadata.instrument = loadText(file);
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << "instrument: " << sequence.metadata.instrument << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMetaLyrics(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
@@ -346,15 +363,19 @@ void  Game::Audio::Midi::loadTrackMetaLyrics(std::ifstream& file, Game::Audio::M
   sequence.metadata.lyrics.push_back({ duration(sequence, clock), loadText(file) });
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << "lyric: '" << sequence.metadata.lyrics.back().second << "' at " << sequence.metadata.lyrics.back().first << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMetaMarkers(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
 {
   sequence.metadata.markers.push_back({ duration(sequence, clock), loadText(file) });
 
-    // TODO: remove this
-    std::cout << "marker: '" << sequence.metadata.markers.back().second << "' at " << sequence.metadata.markers.back().first << std::endl;
+  // TODO: remove this
+#ifdef _DEBUG
+  std::cout << "marker: '" << sequence.metadata.markers.back().second << "' at " << sequence.metadata.markers.back().first << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMetaCues(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
@@ -362,7 +383,9 @@ void  Game::Audio::Midi::loadTrackMetaCues(std::ifstream& file, Game::Audio::Mid
   sequence.metadata.cues.push_back({ duration(sequence, clock), loadText(file) });
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << "cue: '" << sequence.metadata.cues.back().second << "' at " << sequence.metadata.cues.back().first << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMetaTexts(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
@@ -370,7 +393,9 @@ void  Game::Audio::Midi::loadTrackMetaTexts(std::ifstream& file, Game::Audio::Mi
   sequence.metadata.texts.push_back({ duration(sequence, clock), loadText(file) });
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << "text: '" << sequence.metadata.texts.back().second << "' at " << sequence.metadata.texts.back().first << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMetaSequence(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
@@ -395,7 +420,9 @@ void  Game::Audio::Midi::loadTrackMetaSequence(std::ifstream& file, Game::Audio:
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << "sequence: " << sequence.metadata.sequence << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMetaTempos(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
@@ -414,7 +441,9 @@ void  Game::Audio::Midi::loadTrackMetaTempos(std::ifstream& file, Game::Audio::M
   sequence.metadata.tempos.push_back({ clock, Game::Utilities::swap_endianness(tempo) });
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << "tempo: " << 60000000 / sequence.metadata.tempos.back().second << " BPM at " << sequence.metadata.tempos.back().first << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMetaSmpte(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
@@ -441,6 +470,7 @@ void  Game::Audio::Midi::loadTrackMetaSmpte(std::ifstream& file, Game::Audio::Mi
   sequence.metadata.smpte.hours = (sequence.metadata.smpte.hours & 0b00011111);
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << "smpte: "
     << (int)sequence.metadata.smpte.hours << "h "
     << (int)sequence.metadata.smpte.minutes << "m "
@@ -448,6 +478,7 @@ void  Game::Audio::Midi::loadTrackMetaSmpte(std::ifstream& file, Game::Audio::Mi
     << (int)sequence.metadata.smpte.frames << "/" << (int)sequence.metadata.smpte.framerate << "f "
     << (int)sequence.metadata.smpte.fractionals << " 100e"
     << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMetaSignatures(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
@@ -473,7 +504,9 @@ void  Game::Audio::Midi::loadTrackMetaSignatures(std::ifstream& file, Game::Audi
   sequence.metadata.signatures.push_back({ duration(sequence, clock), signature });
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << "signature: " << (int)sequence.metadata.signatures.back().second.numerator << "/" << (int)sequence.metadata.signatures.back().second.denominator << " at " << sequence.metadata.signatures.back().first << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMetaKeys(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
@@ -494,7 +527,9 @@ void  Game::Audio::Midi::loadTrackMetaKeys(std::ifstream& file, Game::Audio::Mid
   sequence.metadata.keys.push_back({ duration(sequence, clock), key });
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << "key: " << (int)sequence.metadata.keys.back().second.key << " " << (sequence.metadata.keys.back().second.major ? "major" : "minor") << " at " << sequence.metadata.keys.back().first << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMetaProgram(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
@@ -502,7 +537,9 @@ void  Game::Audio::Midi::loadTrackMetaProgram(std::ifstream& file, Game::Audio::
   sequence.metadata.program = loadText(file);
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << "program: " << sequence.metadata.program << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMetaDevices(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
@@ -510,7 +547,9 @@ void  Game::Audio::Midi::loadTrackMetaDevices(std::ifstream& file, Game::Audio::
   sequence.metadata.devices.push_back({ duration(sequence, clock), loadText(file) });
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << "device: '" << sequence.metadata.devices.back().second << "' at " << sequence.metadata.devices.back().first << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMetaChannels(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
@@ -553,7 +592,9 @@ void  Game::Audio::Midi::loadTrackMetaDatas(std::ifstream& file, Game::Audio::Mi
   Game::Utilities::read(file, sequence.metadata.datas.data(), sequence.metadata.datas.size());
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << "datas: " << length << " bytes" << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMetaTags(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
@@ -567,7 +608,9 @@ void  Game::Audio::Midi::loadTrackMetaTags(std::ifstream& file, Game::Audio::Mid
   sequence.metadata.tags[tag] = text.data();
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << "tag: [" << (int)tag << "] '" << sequence.metadata.tags[tag] << "'" << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMetaEnd(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, std::size_t clock)
@@ -586,7 +629,9 @@ void  Game::Audio::Midi::loadTrackMetaEnd(std::ifstream& file, Game::Audio::Midi
   sequence.metadata.end = (std::isnan(sequence.metadata.end) == true) ? seconds : std::max(sequence.metadata.end, seconds);
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout << "end clock: " << seconds << "s" << std::endl << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMidiNoteOff(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
@@ -617,11 +662,13 @@ void  Game::Audio::Midi::loadTrackMidiNoteOff(std::ifstream& file, Game::Audio::
   sequence.tracks[track].channel[channel].events.push_back(event);
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout
     << "  [MIDI] note off at " << clock << ":" << std::endl
     << "    channel:  " << (int)channel << std::endl
     << "    key:      " << (int)key << std::endl
     << "    velocity: " << (int)velocity << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMidiNoteOn(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
@@ -645,11 +692,13 @@ void  Game::Audio::Midi::loadTrackMidiNoteOn(std::ifstream& file, Game::Audio::M
   sequence.tracks[track].channel[channel].events.push_back(event);
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout
     << "  [MIDI] note on at " << clock << ":" << std::endl
     << "    channel:    " << (int)channel << std::endl
     << "    key:        " << (int)key << std::endl
     << "    velocity:   " << (int)velocity << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMidiPolyphonicKeyPressure(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
@@ -673,11 +722,13 @@ void  Game::Audio::Midi::loadTrackMidiPolyphonicKeyPressure(std::ifstream& file,
   sequence.tracks[track].channel[channel].events.push_back(event);
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout
     << "  [MIDI] polyphonic key pressure at " << clock << ":" << std::endl
     << "    channel:    " << (int)channel << std::endl
     << "    key:        " << (int)key << std::endl
     << "    pressure:   " << (int)pressure << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMidiControlChange(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
@@ -701,11 +752,13 @@ void  Game::Audio::Midi::loadTrackMidiControlChange(std::ifstream& file, Game::A
   sequence.tracks[track].channel[channel].events.push_back(event);
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout
     << "  [MIDI] control change at " << clock << ":" << std::endl
     << "    channel:    " << (int)channel << std::endl
     << "    controller: " << (int)controller << std::endl
     << "    value:      " << (int)value << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMidiProgramChange(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
@@ -726,10 +779,12 @@ void  Game::Audio::Midi::loadTrackMidiProgramChange(std::ifstream& file, Game::A
   sequence.tracks[track].channel[channel].events.push_back(event);
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout
     << "  [MIDI] program change at " << clock << ":" << std::endl
     << "    channel:    " << (int)channel << std::endl
     << "    program:    " << (int)program << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMidiChannelPressure(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
@@ -751,10 +806,12 @@ void  Game::Audio::Midi::loadTrackMidiChannelPressure(std::ifstream& file, Game:
     sequence.tracks[track].channel[channel].events.push_back(event);
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout
     << "  [MIDI] channel pressure at " << clock << ":" << std::endl
     << "    channel:    " << (int)channel << std::endl
     << "    pressure:   " << (int)pressure << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackMidiPitchWheelChange(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)
@@ -778,10 +835,12 @@ void  Game::Audio::Midi::loadTrackMidiPitchWheelChange(std::ifstream& file, Game
   sequence.tracks[track].channel[channel].events.push_back(event);
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout
     << "  [MIDI] channel pitch wheel change at " << clock << ":" << std::endl
     << "    channel:    " << (int)channel << std::endl
     << "    pitch:      " << (int)pitch << std::endl;
+#endif
 }
 
 void  Game::Audio::Midi::loadTrackUndefined(std::ifstream& file, Game::Audio::Midi::Sequence& sequence, std::size_t track, uint8_t status, std::size_t clock)

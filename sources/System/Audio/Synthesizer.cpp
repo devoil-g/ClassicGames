@@ -52,6 +52,10 @@ Game::Audio::Synthesizer::Synthesizer(const std::string& midi, const std::string
 
 std::vector<float>  Game::Audio::Synthesizer::generate(std::size_t sequenceId, std::size_t sampleRate) const
 {
+  // Handle invalid sequence ID
+  if (sequenceId >= midi.sequences.size())
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
   // TODO: remove this
   sf::Clock clock;
 
@@ -91,9 +95,9 @@ std::vector<float>  Game::Audio::Synthesizer::generate(std::size_t sequenceId, s
   for (float& sample : buffer)
     sample = sample / max;
 
-  std::cout << "generation time: " << clock.getElapsedTime().asSeconds() << "s." << std::endl;
+  std::cout << "Generation time: " << clock.getElapsedTime().asSeconds() << "s." << std::endl;
 
-  puts("Generate WAVE file...");
+  puts("Creating WAVE file...");
   ::toWave(Game::Config::ExecutablePath + "/generated.wav", buffer, sampleRate);
   puts("Done.");
 

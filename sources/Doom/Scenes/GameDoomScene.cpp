@@ -76,6 +76,8 @@ bool  DOOM::GameDoomScene::update(sf::Time elapsed)
   // TODO: remove this
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::F4) == true) {
     for (const auto& player : _doom.level.players) {
+      // Toogle clip
+      player.get().flags = (DOOM::Enum::ThingProperty)((int32_t)player.get().flags ^ (int32_t)DOOM::Enum::ThingProperty::ThingProperty_NoClip);
       // Max ammos
       for (int i = 0; i < player.get().statusbar.ammos.size(); i++)
         player.get().statusbar.ammos[i] = player.get().statusbar.maximum[i];

@@ -4876,6 +4876,10 @@ std::unique_ptr<DOOM::AbstractThing>  DOOM::AbstractThing::factory(DOOM::Doom & 
 
 bool  DOOM::AbstractThing::teleport(DOOM::Doom& doom, const Math::Vector<2>& destination, float orientation, bool telefrag, bool silent)
 {
+  // Missiles don't teleport
+  if (flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)
+    return false;
+
   // Telefrag this on landing or cancel jump
   for (const auto& thing : doom.level.getThings(destination, (float)attributs.radius)) {
     if (thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable) {
@@ -4903,7 +4907,7 @@ bool  DOOM::AbstractThing::teleport(DOOM::Doom& doom, const Math::Vector<2>& des
   angle = orientation;
 
   // Update thing vertical position
-  // TODO: handle floating objects ?
+  // NOTE: handle floating objects ?
   position.z() = doom.level.sectors[doom.level.getSector(destination).first].floor_current;
 
   // Spawn teleport fog at end
@@ -4935,7 +4939,7 @@ DOOM::AbstractThing::Sprite DOOM::AbstractThing::sprite(const DOOM::Doom & doom,
   auto  iterator = doom.resources.animations.find(Game::Utilities::str_to_key<uint64_t>(_sprites[_states[_state].sprite]));
 
   // Cancel if sequence or frame not found
-  if (iterator == doom.resources.animations.cend() || iterator->second.size() < _states[_state].frame)
+  if (iterator == doom.resources.animations.cend() || iterator->second.size() <= _states[_state].frame)
     return { DOOM::Doom::Resources::Texture::Null, false, false };
 
   const auto& texture = iterator->second[_states[_state].frame][Math::Modulo<8>((int)((std::fmod(angle, Math::Pi * 2.f) + Math::Pi * 2.f) * 4.f / Math::Pi + 16.5f))];
@@ -5132,7 +5136,7 @@ void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapse
     std::pair<float, Math::Vector<2>>	intersection = updatePhysicsThrustLinedef(doom, movement, linedef_index, linedef_ignored);
 
     // Get nearest linedef
-    if (intersection.first < closest_distance) {
+    if (intersection.first < closest_distance && !(flags & DOOM::Enum::ThingProperty::ThingProperty_NoClip)) {
       closest_linedef = linedef_index;
       closest_thing = nullptr;
       closest_distance = intersection.first;
@@ -5154,7 +5158,7 @@ void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapse
         continue;
 
       // Get nearest thing
-      if (intersection.first < closest_distance) {
+      if (intersection.first < closest_distance && !(flags & DOOM::Enum::ThingProperty::ThingProperty_NoClip)) {
 	closest_linedef = -1;
 	closest_thing = &thing.get();
 	closest_distance = intersection.first;
@@ -5516,7 +5520,7 @@ void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elaps
       collideMissile(doom.level.sectors[doom.level.getSector(position.convert<2>()).first].floor_name);
   }
   // Lower thing is upper than the ceiling (limit to floor)
-  else if (position.z() > ceiling - height) {
+  else if (position.z() > ceiling - height && position.z() > floor) {
     position.z() = std::max(std::max(ceiling - height, floor), position.z() + std::min(_thrust.z(), ((ceiling - attributs.height) - position.z()) / 2.f + 2.f) / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
     _thrust.z() = std::min(_thrust.z(), (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly) ? -std::abs(_thrust.z()) : 0.f);
 

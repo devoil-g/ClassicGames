@@ -37,6 +37,7 @@ void  Game::Audio::Soundfont::load(const std::string& filename)
   Game::Utilities::read(file, &header);
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout
     << "[SOUNDFONT] filename: " << filename << std::endl
     << std::endl
@@ -44,6 +45,7 @@ void  Game::Audio::Soundfont::load(const std::string& filename)
     << "  [HEADER] size:  " << header.size << std::endl
     << "  [HEADER] type:  " << Game::Utilities::key_to_str(header.type) << std::endl
     ;
+#endif
 
   // Check header data
   if (std::memcmp(&header.magic, "RIFF", sizeof(header.magic)) != 0 ||
@@ -70,12 +72,14 @@ void  Game::Audio::Soundfont::loadSections(std::ifstream& file, const Game::Audi
     Game::Utilities::read(file, &section);
 
     // TODO: remove this
+#ifdef _DEBUG
     std::cout
       << std::endl
       << "  [SECTION] type: " << Game::Utilities::key_to_str(section.type) << std::endl
       << "  [SECTION] size: " << section.size << std::endl
       << "  [SECTION] name: " << Game::Utilities::key_to_str(section.name) << std::endl
       ;
+#endif
 
     // Matching sections
     std::unordered_map<uint32_t, std::function<void()>> section_commands = {
@@ -147,6 +151,7 @@ void  Game::Audio::Soundfont::loadSectionListInfo(std::ifstream& file, const Gam
   }
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout
     << "    [INFO] version:     " << this->info.version.first << "." << this->info.version.second << std::endl
     << "    [INFO] engine:      " << this->info.engine << std::endl
@@ -160,6 +165,7 @@ void  Game::Audio::Soundfont::loadSectionListInfo(std::ifstream& file, const Gam
     << "    [INFO] comment:     " << this->info.comment << std::endl
     << "    [INFO] tool:        " << this->info.tool << std::endl
     ;
+#endif
 }
 
 void  Game::Audio::Soundfont::loadSectionListInfoIfil(std::ifstream& file, const Game::Audio::Soundfont::Sf2SubsectionHeader& info)
@@ -270,10 +276,12 @@ void  Game::Audio::Soundfont::loadSectionListSdta(std::ifstream& file, const Gam
   }
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout
     << "    [SDTA] samples16: " << samples16.size() << std::endl
     << "    [SDTA] samples24: " << samples24.size() << std::endl
     ;
+#endif
 
   // Set 24 bits complementary to 0 if absent or incomplete
   if (samples24.size() < samples16.size())
@@ -332,6 +340,7 @@ void  Game::Audio::Soundfont::loadSectionListPdta(std::ifstream& file, const Gam
   }
 
   // TODO: remove this
+#ifdef _DEBUG
   std::cout
     << "    [PDTA] presets:               " << presetHeaders.size() << std::endl
     << "    [PDTA] preset bags:           " << presetBags.size() << std::endl
@@ -343,6 +352,7 @@ void  Game::Audio::Soundfont::loadSectionListPdta(std::ifstream& file, const Gam
     << "    [PDTA] instrument generators: " << instrumentGenerators.size() << std::endl
     << "    [PDTA] samples:               " << sampleHeaders.size() << std::endl
     << std::endl;
+#endif
 
   // Build presets
   for (int preset_index = 0; preset_index < presetHeaders.size() - 1; preset_index++) {

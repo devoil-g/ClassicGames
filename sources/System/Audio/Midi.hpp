@@ -9,8 +9,6 @@
 #include <mutex>
 #include <unordered_map>
 
-#include "System/Audio/Soundfont.hpp"
-
 namespace Game
 {
   namespace Audio
@@ -222,20 +220,6 @@ namespace Game
               } data; // Data of the event
             };
 
-            struct Context
-            {
-              std::array<int8_t, 128>                                         keys;         // Velocity of channel keys
-              std::array<uint8_t, 128>                                        polyphonics;  // Pressure on channel keys
-              std::array<uint8_t, Channel::Controller::Type::ControllerCount> controllers;  // Controllers of channel
-              uint8_t                                                         program;      // Current program of channel
-              uint16_t                                                        pitch;        // Current pitch of channel
-
-              Context();
-              ~Context() = default;
-
-              void  update(const Channel::Event& event);
-            };
-
             std::list<Channel::Event> events;
           };
 
@@ -248,7 +232,6 @@ namespace Game
       };
 
     private:
-      Game::Audio::Soundfont              _soundfont;   // Sound library
       Game::Audio::Midi::MidiTrackFormat  _format;      // MIDI file format 
       uint16_t                            _trackNumber; // Number of tracks in the file
       Game::Audio::Midi::MidiTimeFormat   _timeFormat;  // Track time format
