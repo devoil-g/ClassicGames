@@ -1,0 +1,296 @@
+#pragma once
+
+#include <array>
+#include <cstdint>
+#include <string>
+#include <vector>
+#include <functional>
+
+#include <SFML/Graphics/Image.hpp>
+
+#include "Scenes/AbstractScene.hpp"
+
+namespace GBC
+{
+  class GameBoyColor
+  {
+  private:
+    struct Header
+    {
+      enum CGBFlag
+      {
+        CGBSupport, // Game supports CGB functions, but works on old gameboys also.
+        CGBOnly,    // Game works on CGB only (physically the same as CGBSupport).
+        CGBNone     // No flag (older cartridges)
+      };
+
+      enum SGBFlag
+      {
+        SGBSupport, // Game supports SGB functions
+        SGBNone     // No SGB functions (Normal Gameboy or CGB only game)
+      };
+
+      enum MemoryBankController
+      {
+        MBCRomOnly, // None (32KByte ROM only)
+        MBC1,       // MBC1 (max 2MByte ROM and/or 32KByte RAM)
+        MBC2,       // MBC2 (max 256KByte ROM and 512x4 bits RAM)
+        MBC3,       // MBC3 (max 2MByte ROM and/or 64KByte RAM and Timer)
+        MBC5,       // MBC5 (max 8MByte ROM and/or 128KByte RAM)
+        MBCUnknow   // Unknow MBC
+      };
+
+      enum Region
+      {
+        RegionJP,     // Japanese
+        RegionUSEU,   // US and Europe
+        RegionUnknow  // Unknow region
+      };
+
+      bool                          logo;             // False if unofficial logo
+      std::string                   title;            // Name of the game
+      std::string                   manufacturer;     // Manufacturer code (newer cartridges only)
+      Header::CGBFlag               cgb;              // CGB support flag
+      std::uint16_t                 licensee;         // Licensee Code
+      Header::SGBFlag               sgb;              // Support of the SGB functions
+      Header::MemoryBankController  mbc;              // Memory Bank Controller format
+      std::size_t                   rom_size;         // Size of ROM
+      std::size_t                   ram_size;         // Size of RAM
+      Header::Region                region;           // Game region
+      std::uint8_t                  version;          // Specifies the version number of the game
+      bool                          header_checksum;  // Checksum of the ROM header
+      bool                          global_checksum;  // Global checksum of the ROM
+    };
+
+    union Register
+    {
+      enum
+      {
+        Lo = 0, // Access lower 8 bits of register
+        Hi = 1  // Access higher 8 bits of register
+      };
+
+      enum
+      {
+        Z = 0b10000000, // Zero, set when the result of a math operation is zero or two values match when using CP
+        N = 0b01000000, // Subtract, set if a subtraction was performed in the last math instruction
+        H = 0b00100000, // Half carry, set if a carry occurred from the lower nibble in the last math operation
+        C = 0b00010000  // Carry, set if a carry occurred from the last math operation or if register A is the smaller value when executing the CP instruction
+      };
+
+      std::uint16_t               u16;  // Unsigned 16 bits value
+      std::int16_t                s16;  // Signed 16 bits value
+      std::array<std::uint8_t, 2> u8;   // Low/High unsigned 8 bits value
+      std::array<std::int8_t, 2>  s8;   // Low/High signed 8 bits value
+    };
+
+    enum Interrupt  // Used by 0xFFFF IE (Interrupt Enable) & 0xFF0F IF (Interrupt Flag)
+    {
+      InterruptVBlank = 0b00000001,
+      InterruptLcdStat = 0b00000010,
+      InterruptTimer = 0b00000100,
+      InterruptSerial = 0b00001000,
+      InterruptJoypad = 0b00010000
+    };
+
+    enum Registers
+    {
+      RegisterJOYP = 0x00,  // Joypad, R/W, bits 7-6 always set
+      RegisterSB = 0x01,
+      RegisterSC = 0x02,
+      RegisterDIVLo = 0x03, // Low byte of DIV, not accessible
+      RegisterDIVHi = 0x04, // High byte of DIV, R/W (always set to zero when written)
+      RegisterTIMA = 0x05,  // Timer Counter, R/W
+      RegisterTMA = 0x06,   // Timer Modulo, R/W
+      RegisterTAC = 0x07,   // Time Control, R/W of bit 2-1-0
+
+      RegisterIF = 0x0F,    // Interrupt Flags, bits set when an event occured, bits 7-6-5 always set
+      RegisterNR10 = 0x10,
+      RegisterNR11 = 0x11,
+      RegisterNR12 = 0x12,
+      RegisterNR13 = 0x13,
+      RegisterNR14 = 0x14,
+
+      RegisterNR21 = 0x16,
+      RegisterNR22 = 0x17,
+      RegisterNR23 = 0x18,
+      RegisterNR24 = 0x19,
+      RegisterNR30 = 0x1A,
+      RegisterNR31 = 0x1B,
+      RegisterNR32 = 0x1C,
+      RegisterNR33 = 0x1D,
+      RegisterNR34 = 0x1E,
+
+      RegisterNR41 = 0x20,
+      RegisterNR42 = 0x21,
+      RegisterNR43 = 0x22,
+      RegisterNR44 = 0x23,
+      RegisterNR50 = 0x24,
+      RegisterNR51 = 0x25,
+      RegisterNR52 = 0x26,
+
+      RegisterLCDC = 0x40,  // LCD Control, R/W (see enum)
+      RegisterSTAT = 0x41,  // LCD Status, R/W (see enum)
+      RegisterSCY = 0x42,   // Scroll Y, R/W
+      RegisterSCX = 0x43,   // Scroll X, R/W
+      RegisterLY = 0x44,    // LCD Y Coordinate, R
+      RegisterLYC = 0x45,   // LCD Y Coordinate Compare, R/W
+      RegisterDMA = 0x46,   // DMA Transfer and Start Address, R/W
+      RegisterBGP = 0x47,   // Background and Window Palette Data, R/W, non CGB mode only
+      RegisterOBP0 = 0x48,  // OBJ 0 Palette Data, R/W, non CGB mode only
+      RegisterOBP1 = 0x49,  // OBJ 1 Palette Data, R/W, non CGB mode only  
+      RegisterWY = 0x4A,    // Window Y Position, R/W
+      RegisterWX = 0x4B,    // Window X Position, R/W
+
+      RegisterKEY1 = 0x4D,
+
+      RegisterVBK = 0x4F,   // Video RAM Bank, R/W, CGB mode only
+      RegisterBANK = 0x50,  // Boot Bank Controller, R/W, 0 to enable Boot mapping in ROM
+      RegisterHDMA1 = 0x51, // New DMA Transfers source high byte, W, CGB mode only
+      RegisterHDMA2 = 0x52, // New DMA Transfers source low byte, W, CGB mode only
+      RegisterHDMA3 = 0x53, // New DMA Transfers destination high byte, W, CGB mode only
+      RegisterHDMA4 = 0x54, // New DMA Transfers destination low byte, W, CGB mode only
+      RegisterHDMA5 = 0x55,
+      RegisterRP = 0x56,
+
+      RegisterBCPI = 0x68,  // Background Color Palette Index, R/W, CGB mode only
+      RegisterBCPD = 0x69,  // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
+      RegisterOCPI = 0x6A,  // OBJ Color Palette Index, R/W, CGB mode only
+      RegisterOCPD = 0x6B,  // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
+
+      RegisterSVBK = 0x70   // Work Ram Bank, R/W, CGB mode only
+    };
+
+    enum LcdControl
+    {
+      LcdControlEnable = 0b10000000,                  // LCD and PPU enable (0=Off, 1=On)
+      LcdControlWindowTilemap = 0b01000000,           // Window tile map area (0=9800-9BFF, 1=9C00-9FFF)
+      LcdControlWindowEnable = 0b00100000,            // Window enable (0=Off, 1=On)
+      LcdControlData = 0b00010000,                    // Background and Window tile data area (0=8800-97FF, 1=8000-8FFF)
+      LcdControlBackgroundTilemap = 0b00001000,       // Background tile map area (0=9800-9BFF, 1=9C00-9FFF)
+      LcdControlObjSize = 0b00000100,                 // OBJ size (0=8x8, 1=8x16)
+      LcdControlObjEnable = 0b00000010,               // OBJ enable (0=Off, 1=On)
+      LcdControlWindowBackgroundEnable = 0b00000001,  // Background and Window enable (0=Off, 1=On), non-CGB mode only
+      LcdControlPriority = 0b00000001,                // Background and Window Master Priority (0=Off, 1=On), CGB mode only
+    };
+
+    enum LcdStatus
+    {
+      LcdStatusCompare = 0b01000000,  // LYC=LY STAT Interrupt source (1: Enable) (Read/Write)
+      LcdStatusMode2 = 0b00100000,    // Mode 2 OAM STAT Interrupt source (1: Enable) (Read/Write)
+      LcdStatusMode1 = 0b00010000,    // Mode 1 VBlank STAT Interrupt source (1: Enable) (Read/Write)
+      LcdStatusMode0 = 0b00001000,    // Mode 0 HBlank STAT Interrupt source (1: Enable) (Read/Write)
+      LcdStatusEqual = 0b00000100,    // LYC=LY Flag (0: Different, 1: Equal) (Read Only)
+      LcdStatusMode = 0b00000011      // Mode Flag(0: HBlank, 1: VBlank, 2: Searching OAM, 3: Transferring Data to LCD Controller) (Read Only)
+    };
+
+    enum IME
+    {
+      IMEDisabled,  // Interrupt disabled
+      IMEEnabled,   // Interrupt enabled
+      IMEScheduled  // Enable interrupt after next instruction
+    };
+
+    struct Instruction
+    {
+      std::string                                 description;  // Description of the instruction
+      std::function<void(GBC::GameBoyColor& gbc)> instruction;  // Code to execute
+    };
+
+    static const std::array<GBC::GameBoyColor::Instruction, 256>  _instructions;    // Processor instructions by OP code (8 bits)
+    static const std::array<GBC::GameBoyColor::Instruction, 256>  _instructionsCB;  // Processor 2 bytes instructions (CB) by OP code (8 bits)
+
+    std::vector<std::uint8_t>           _boot;      // Bootstrap sequence memory
+    std::vector<std::uint8_t>           _rom;       // Raw ROM memory
+    std::array<std::uint8_t, 16 * 1024> _vRam;      // Raw Video RAM memory
+    std::vector<std::uint8_t>           _eRam;      // Raw External RAM memory
+    std::array<std::uint8_t, 32 * 1024> _wRam;      // Raw Work RAM memory
+    std::array<std::uint8_t, 160>       _oam;       // Sprite (Obj) Attribute Table
+    std::array<std::uint8_t, 128>       _io;        // IO registers
+    std::array<std::uint8_t, 127>       _hRam;      // Raw High RAM memory
+    std::uint8_t                        _ie;        // Interrupt Enable register
+    std::array<std::uint8_t, 64>        _bgcRam;    // Background color RAM (CGB mode only)
+    std::array<std::uint8_t, 64>        _obcRam;    // OBJ color RAM (CGB mode only)
+    
+    GameBoyColor::IME _ime; // Interrupt Master Enable
+
+    std::uint64_t           _cpuCycle;  // Number of CPU cycle since boot
+    std::uint64_t           _ppuCycle;  // Number of PPU cycle since last frame
+    std::list<std::uint8_t> _ppuObj;    // OBJ index of sprite to be drawn on the current line
+    sf::Image               _ppuLcd;    // Image representing the LCD Screen
+
+    GameBoyColor::Header  _header;  // Main info of the RAM
+
+    GameBoyColor::Register  _rAF; // AF register (accumulator + flags)
+    GameBoyColor::Register  _rBC; // BC register
+    GameBoyColor::Register  _rDE; // DE register
+    GameBoyColor::Register  _rHL; // HL register
+    GameBoyColor::Register  _rSP; // SP register (stack pointer)
+    GameBoyColor::Register  _rPC; // PC register (program counter / pointer)
+
+    void  load(const std::string& filename);                                              // Load a new ROM in memory
+    void  loadFile(const std::string& filename, std::vector<std::uint8_t>& destination);  // Load file to vector
+    void  loadHeader();                                                                   // Get header data
+    
+    std::uint8_t  read(std::uint16_t addr);     // Read one byte from memory
+    std::uint8_t  readRom(std::uint16_t addr);  // Read one byte from ROM
+    std::uint8_t  readVRam(std::uint16_t addr); // Read one byte from VRAM
+    std::uint8_t  readERam(std::uint16_t addr); // Read one byte from ERAM
+    std::uint8_t  readWRam(std::uint16_t addr); // Read one byte from WRAM
+    std::uint8_t  readOam(std::uint16_t addr);  // Read one byte from Obj Attribute Table
+    std::uint8_t  readIo(std::uint16_t addr);   // Read one byte from IO register
+    std::uint8_t  readHRam(std::uint16_t addr); // Read one byte from HRAM
+    
+    template<typename Type>
+    Type  read(std::uint16_t addr)
+    {
+      union {
+        Type                                    value;
+        std::array<std::uint8_t, sizeof(Type)>  data;
+      } output = { .value = 0 };
+      
+      // Extract each byte individually
+      for (unsigned int index = 0; index < output.data.size(); index++)
+        output.data[index] = read(addr + index);
+      
+      return output.value;
+    }
+
+    void  write(std::uint16_t addr, std::uint8_t value);      // Write one byte to memory
+    void  writeRom(std::uint16_t addr, std::uint8_t value);   // Write one byte to ROM
+    void  writeVRam(std::uint16_t addr, std::uint8_t value);  // Write one byte to VRAM
+    void  writeERam(std::uint16_t addr, std::uint8_t value);  // Write one byte to ERAM
+    void  writeWRam(std::uint16_t addr, std::uint8_t value);  // Write one byte to WRAM
+    void  writeOam(std::uint16_t addr, std::uint8_t value);   // Write one byte to Obj Attribute Table
+    void  writeIo(std::uint16_t addr, std::uint8_t value);    // Write one byte to IO register
+    void  writeHRam(std::uint16_t addr, std::uint8_t value);  // Write one byte to HRAM
+
+    template<typename Type>
+    void  write(std::uint16_t addr, Type value)
+    {
+      union {
+        Type                                    value;
+        std::array<std::uint8_t, sizeof(Type)>  data;
+      } input = { .value = value };
+      
+      // Write each byte individually
+      for (unsigned int index = 0; index < input.data.size(); index++)
+        write(addr + index, input.data[index]);
+    }
+
+    void  simulateInterrupt();      // Detect interrupt
+    void  simulateInstruction();    // Run an instruction
+    void  simulateGraphics();       // Update 4 CPU cycles of graphics
+    void  simulateGraphicsMode2();  // Search OAM for OBJs that overlap current line
+    void  simulateGraphicsMode3();  // Generate the picture
+    void  simulateAudio();          // Update 4 CPU cycles of audio
+    void  simulateTimer();          // Update 4 CPU cycle of TIMA/TMA/DIV timer registers
+
+  public:
+    GameBoyColor(const std::string& filename);
+    ~GameBoyColor();
+
+    void              simulate();     // Simulate a frame
+    const sf::Image&  screen() const; // Get current LCD screen image
+  };
+}

@@ -25,8 +25,6 @@ DOOM::DoomScene::DoomScene(Game::SceneMachine& machine, const std::string& wad, 
   // Push initial state
   _game.push<DOOM::StartDoomScene>(_doom);
 
-  sf::Image image;
-
   // Initialize force exit bar
   _bar.setSize(sf::Vector2f(1.f, 1.f));
   _bar.setFillColor(sf::Color::White);

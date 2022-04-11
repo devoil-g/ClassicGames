@@ -604,7 +604,7 @@ float DOOM::IntermissionDoomScene::getPar(std::pair<uint8_t, uint8_t> level) con
     // DOOM II
   case DOOM::Enum::Mode::ModeCommercial:
     if (level.first == 1 && level.second - 1 < doom2.size())
-      return doom2[level.second];
+      return doom2[level.second - 1];
     else
       return std::nanf("");
 

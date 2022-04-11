@@ -4,10 +4,12 @@
 #include "Scenes/SplashScene.hpp"
 #include "Scenes/Menu/MainMenuScene.hpp"
 #include "Scenes/SceneMachine.hpp"
-#include "Scenes/MidiScene.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 #include "System/Audio/Sound.hpp"
+
+#include "Scenes/MidiScene.hpp"
+#include "GameBoyColor/EmulationScene.hpp"
 
 #ifdef _WIN32
 # include <windows.h>
@@ -34,7 +36,7 @@ namespace Game
     game.push<Game::SplashScene>();
 
     // TODO: remove this
-    //game.push<Game::MidiScene>();
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tetris.gb");
 
     // Run the game !
     while (Game::Window::Instance().window().isOpen()) {

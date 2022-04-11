@@ -8,9 +8,9 @@ std::string const   Game::Window::DefaultTitle = "Classical Games";
 unsigned int const  Game::Window::DefaultWidth = 640;
 unsigned int const  Game::Window::DefaultHeight = 480;
 unsigned int const  Game::Window::DefaultAntialiasing = 4;
-sf::Time const	    Game::Window::FpsRefresh = sf::seconds(1.f);
-bool const	        Game::Window::DefaultVerticalSync = true;
-float const	        Game::Window::Joystick::DeadZone = 20.f;
+sf::Time const      Game::Window::FpsRefresh = sf::seconds(1.f);
+bool const          Game::Window::DefaultVerticalSync = true;
+float const         Game::Window::Joystick::DeadZone = 20.f;
 
 Game::Window::Window() :
   _window(), _mouse(), _keyboard(), _joystick(), _elapsed(), _tick(), _sync(Game::Window::DefaultVerticalSync)
@@ -60,47 +60,47 @@ bool  Game::Window::update(sf::Time elapsed)
     {
       switch (event.type)
       {
-	// Get mouse events
+        // Get mouse events
       case sf::Event::MouseButtonPressed:
-	_mouse._pressed[event.mouseButton.button] = true;
-	break;
+        _mouse._pressed[event.mouseButton.button] = true;
+        break;
       case sf::Event::MouseButtonReleased:
-	_mouse._released[event.mouseButton.button] = true;
-	break;
+        _mouse._released[event.mouseButton.button] = true;
+        break;
       case sf::Event::MouseWheelMoved:
-	_mouse._wheel += event.mouseWheel.delta;
-	break;
+        _mouse._wheel += event.mouseWheel.delta;
+        break;
 
-	// Get keyboard events
+        // Get keyboard events
       case sf::Event::KeyPressed:
-	if (event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount)
-	  _keyboard._pressed[event.key.code] = true;
-	break;
+        if (event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount)
+          _keyboard._pressed[event.key.code] = true;
+        break;
       case sf::Event::KeyReleased:
-	if (event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount)
-	  _keyboard._released[event.key.code] = true;
-	break;
+        if (event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount)
+          _keyboard._released[event.key.code] = true;
+        break;
       case sf::Event::TextEntered:
-	_keyboard._text.push_back((wchar_t)event.text.unicode);
-	break;
+        _keyboard._text.push_back((wchar_t)event.text.unicode);
+        break;
 
-	// Get joystick events
+        // Get joystick events
       case sf::Event::JoystickButtonPressed:
-	_joystick._pressed[event.joystickButton.joystickId][event.joystickButton.button] = true;
-	break;
+        _joystick._pressed[event.joystickButton.joystickId][event.joystickButton.button] = true;
+        break;
       case sf::Event::JoystickButtonReleased:
-	_joystick._released[event.joystickButton.joystickId][event.joystickButton.button] = true;
-	break;
+        _joystick._released[event.joystickButton.joystickId][event.joystickButton.button] = true;
+        break;
 
       default:
-	break;
+        break;
       }
       
     }
   }
 
   // Update mouse position
-  sf::Vector2i	position = sf::Mouse::getPosition(_window);
+  sf::Vector2i  position = sf::Mouse::getPosition(_window);
   _mouse._relative = position - _mouse._position;
   _mouse._position = position;
   

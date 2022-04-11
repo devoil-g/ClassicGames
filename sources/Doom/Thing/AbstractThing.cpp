@@ -34,884 +34,884 @@ const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>	D
 
 const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::State_Number>	DOOM::AbstractThing::_states =
 {
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_None
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BLUD, .frame = 2, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BLOOD2 }, // State_BLOOD1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BLUD, .frame = 1, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BLOOD3 }, // State_BLOOD2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BLUD, .frame = 0, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_None }, // State_BLOOD3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_PUFF2 }, // State_PUFF1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 1, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PUFF3 }, // State_PUFF2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 2, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PUFF4 }, // State_PUFF3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 3, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_PUFF4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL1, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TBALL2 }, // State_TBALL1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL1, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TBALL1 }, // State_TBALL2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL1, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TBALLX2 }, // State_TBALLX1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL1, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TBALLX3 }, // State_TBALLX2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL1, .frame = 4, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_TBALLX3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL2, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RBALL2 }, // State_RBALL1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL2, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RBALL1 }, // State_RBALL2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL2, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_RBALLX2 }, // State_RBALLX1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL2, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_RBALLX3 }, // State_RBALLX2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL2, .frame = 4, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_RBALLX3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLSS, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PLASBALL2 }, // State_PLASBALL
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLSS, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PLASBALL }, // State_PLASBALL2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLSE, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_PLASEXP2 }, // State_PLASEXP
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLSE, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_PLASEXP3 }, // State_PLASEXP2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLSE, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_PLASEXP4 }, // State_PLASEXP3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLSE, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_PLASEXP5 }, // State_PLASEXP4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLSE, .frame = 4, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_PLASEXP5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 0, .brightness = true, .duration = 1, .action = &DOOM::AbstractThing::A_MissileSmoke, .next = ThingState::State_ROCKET }, // State_ROCKET
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFS1, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BFGSHOT2 }, // State_BFGSHOT
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFS1, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BFGSHOT }, // State_BFGSHOT2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE1, .frame = 0, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGLAND2 }, // State_BFGLAND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE1, .frame = 1, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGLAND3 }, // State_BFGLAND2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE1, .frame = 2, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_BFGSpray, .next = ThingState::State_BFGLAND4 }, // State_BFGLAND3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE1, .frame = 3, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGLAND5 }, // State_BFGLAND4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE1, .frame = 4, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGLAND6 }, // State_BFGLAND5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE1, .frame = 5, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_None }, // State_BFGLAND6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE2, .frame = 0, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGEXP2 }, // State_BFGEXP
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE2, .frame = 1, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGEXP3 }, // State_BFGEXP2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE2, .frame = 2, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGEXP4 }, // State_BFGEXP3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFE2, .frame = 3, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_None }, // State_BFGEXP4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 1, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_Explode, .next = ThingState::State_EXPLODE2 }, // State_EXPLODE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_EXPLODE3 }, // State_EXPLODE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_EXPLODE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG01 }, // State_TFOG
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG02 }, // State_TFOG01
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG2 }, // State_TFOG02
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG3 }, // State_TFOG2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG4 }, // State_TFOG3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG5 }, // State_TFOG4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 4, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG6 }, // State_TFOG5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 5, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG7 }, // State_TFOG6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 6, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG8 }, // State_TFOG7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 7, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG9 }, // State_TFOG8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 8, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG10 }, // State_TFOG9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TFOG, .frame = 9, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_TFOG10
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_IFOG, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG01 }, // State_IFOG
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_IFOG, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG02 }, // State_IFOG01
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_IFOG, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG2 }, // State_IFOG02
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_IFOG, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG3 }, // State_IFOG2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_IFOG, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG4 }, // State_IFOG3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_IFOG, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG5 }, // State_IFOG4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_IFOG, .frame = 4, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_IFOG5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_PLAY
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 0, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PLAY_RUN2 }, // State_PLAY_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 1, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PLAY_RUN3 }, // State_PLAY_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 2, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PLAY_RUN4 }, // State_PLAY_RUN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 3, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PLAY_RUN1 }, // State_PLAY_RUN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 4, .brightness = false, .duration = 12, .action = nullptr, .next = ThingState::State_PLAY }, // State_PLAY_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 5, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PLAY_ATK1 }, // State_PLAY_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 6, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PLAY_PAIN2 }, // State_PLAY_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 6, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_PLAY }, // State_PLAY_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 7, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_PLAY_DIE2 }, // State_PLAY_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 8, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_PlayerScream, .next = ThingState::State_PLAY_DIE3 }, // State_PLAY_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 9, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_PLAY_DIE4 }, // State_PLAY_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 10, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_PLAY_DIE5 }, // State_PLAY_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 11, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_PLAY_DIE6 }, // State_PLAY_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 12, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_PLAY_DIE7 }, // State_PLAY_DIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 13, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_PLAY_DIE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 14, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE2 }, // State_PLAY_XDIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 15, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_PLAY_XDIE3 }, // State_PLAY_XDIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 16, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_PLAY_XDIE4 }, // State_PLAY_XDIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE5 }, // State_PLAY_XDIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE6 }, // State_PLAY_XDIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 19, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE7 }, // State_PLAY_XDIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 20, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE8 }, // State_PLAY_XDIE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 21, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE9 }, // State_PLAY_XDIE8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 22, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_PLAY_XDIE9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_POSS_STND2 }, // State_POSS_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_POSS_STND }, // State_POSS_STND2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 0, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN2 }, // State_POSS_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 0, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN3 }, // State_POSS_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 1, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN4 }, // State_POSS_RUN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 1, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN5 }, // State_POSS_RUN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 2, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN6 }, // State_POSS_RUN5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 2, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN7 }, // State_POSS_RUN6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 3, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN8 }, // State_POSS_RUN7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 3, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN1 }, // State_POSS_RUN8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 4, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_POSS_ATK2 }, // State_POSS_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 5, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_PosAttack, .next = ThingState::State_POSS_ATK3 }, // State_POSS_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 4, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_POSS_RUN1 }, // State_POSS_ATK3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 6, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_POSS_PAIN2 }, // State_POSS_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 6, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_POSS_RUN1 }, // State_POSS_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_DIE2 }, // State_POSS_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_POSS_DIE3 }, // State_POSS_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 9, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_POSS_DIE4 }, // State_POSS_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_DIE5 }, // State_POSS_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 11, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_POSS_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE2 }, // State_POSS_XDIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 13, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_POSS_XDIE3 }, // State_POSS_XDIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 14, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_POSS_XDIE4 }, // State_POSS_XDIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE5 }, // State_POSS_XDIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE6 }, // State_POSS_XDIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE7 }, // State_POSS_XDIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE8 }, // State_POSS_XDIE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 19, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE9 }, // State_POSS_XDIE8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 20, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_POSS_XDIE9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_RAISE2 }, // State_POSS_RAISE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_RAISE3 }, // State_POSS_RAISE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_RAISE4 }, // State_POSS_RAISE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POSS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_RUN1 }, // State_POSS_RAISE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SPOS_STND2 }, // State_SPOS_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SPOS_STND }, // State_SPOS_STND2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN2 }, // State_SPOS_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN3 }, // State_SPOS_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN4 }, // State_SPOS_RUN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN5 }, // State_SPOS_RUN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN6 }, // State_SPOS_RUN5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN7 }, // State_SPOS_RUN6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN8 }, // State_SPOS_RUN7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN1 }, // State_SPOS_RUN8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 4, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SPOS_ATK2 }, // State_SPOS_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 5, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_SPosAttack, .next = ThingState::State_SPOS_ATK3 }, // State_SPOS_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 4, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPOS_RUN1 }, // State_SPOS_ATK3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 6, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_SPOS_PAIN2 }, // State_SPOS_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 6, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SPOS_RUN1 }, // State_SPOS_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_DIE2 }, // State_SPOS_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SPOS_DIE3 }, // State_SPOS_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 9, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SPOS_DIE4 }, // State_SPOS_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_DIE5 }, // State_SPOS_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 11, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SPOS_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE2 }, // State_SPOS_XDIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 13, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_SPOS_XDIE3 }, // State_SPOS_XDIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 14, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SPOS_XDIE4 }, // State_SPOS_XDIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE5 }, // State_SPOS_XDIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE6 }, // State_SPOS_XDIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE7 }, // State_SPOS_XDIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE8 }, // State_SPOS_XDIE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 19, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE9 }, // State_SPOS_XDIE8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 20, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SPOS_XDIE9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_RAISE2 }, // State_SPOS_RAISE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_RAISE3 }, // State_SPOS_RAISE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_RAISE4 }, // State_SPOS_RAISE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_RAISE5 }, // State_SPOS_RAISE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPOS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_RUN1 }, // State_SPO.next = ThingState::State_RAISE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_VILE_STND2 }, // State_VILE_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_VILE_STND }, // State_VILE_STND2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN2 }, // State_VILE_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN3 }, // State_VILE_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN4 }, // State_VILE_RUN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN5 }, // State_VILE_RUN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN6 }, // State_VILE_RUN5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN7 }, // State_VILE_RUN6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN8 }, // State_VILE_RUN7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN9 }, // State_VILE_RUN8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 4, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN10 }, // State_VILE_RUN9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 4, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN11 }, // State_VILE_RUN10
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 5, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN12 }, // State_VILE_RUN11
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 5, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN1 }, // State_VILE_RUN12
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 6, .brightness = true, .duration = 0, .action = &DOOM::AbstractThing::A_VileStart, .next = ThingState::State_VILE_ATK2 }, // State_VILE_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 6, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK3 }, // State_VILE_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 7, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_VileTarget, .next = ThingState::State_VILE_ATK4 }, // State_VILE_ATK3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 8, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK5 }, // State_VILE_ATK4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 9, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK6 }, // State_VILE_ATK5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 10, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK7 }, // State_VILE_ATK6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 11, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK8 }, // State_VILE_ATK7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 12, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK9 }, // State_VILE_ATK8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 13, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK10 }, // State_VILE_ATK9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 14, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_VileAttack, .next = ThingState::State_VILE_ATK11 }, // State_VILE_ATK10
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 15, .brightness = true, .duration = 20, .action = nullptr, .next = ThingState::State_VILE_RUN1 }, // State_VILE_ATK11
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 26, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_VILE_HEAL2 }, // State_VILE_HEAL1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 27, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_VILE_HEAL3 }, // State_VILE_HEAL2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 28, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_VILE_RUN1 }, // State_VILE_HEAL3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_VILE_PAIN2 }, // State_VILE_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 16, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_VILE_RUN1 }, // State_VILE_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 16, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_VILE_DIE2 }, // State_VILE_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 17, .brightness = false, .duration = 7, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_VILE_DIE3 }, // State_VILE_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 18, .brightness = false, .duration = 7, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_VILE_DIE4 }, // State_VILE_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 19, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_VILE_DIE5 }, // State_VILE_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 20, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_VILE_DIE6 }, // State_VILE_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 21, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_VILE_DIE7 }, // State_VILE_DIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 22, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_VILE_DIE8 }, // State_VILE_DIE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 23, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_VILE_DIE9 }, // State_VILE_DIE8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 24, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_VILE_DIE10 }, // State_VILE_DIE9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_VILE, .frame = 25, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_VILE_DIE10
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 0, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_StartFire, .next = ThingState::State_FIRE2 }, // State_FIRE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 1, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE3 }, // State_FIRE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 0, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE4 }, // State_FIRE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 1, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE5 }, // State_FIRE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_FireCrackle, .next = ThingState::State_FIRE6 }, // State_FIRE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 1, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE7 }, // State_FIRE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE8 }, // State_FIRE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 1, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE9 }, // State_FIRE8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE10 }, // State_FIRE9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE11 }, // State_FIRE10
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE12 }, // State_FIRE11
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE13 }, // State_FIRE12
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE14 }, // State_FIRE13
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE15 }, // State_FIRE14
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE16 }, // State_FIRE15
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE17 }, // State_FIRE16
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE18 }, // State_FIRE17
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE19 }, // State_FIRE18
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_FireCrackle, .next = ThingState::State_FIRE20 }, // State_FIRE19
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 5, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE21 }, // State_FIRE20
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE22 }, // State_FIRE21
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 5, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE23 }, // State_FIRE22
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE24 }, // State_FIRE23
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 5, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE25 }, // State_FIRE24
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 6, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE26 }, // State_FIRE25
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 7, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE27 }, // State_FIRE26
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 6, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE28 }, // State_FIRE27
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 7, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE29 }, // State_FIRE28
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 6, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE30 }, // State_FIRE29
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 7, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_None }, // State_FIRE30
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 1, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SMOKE2 }, // State_SMOKE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 2, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SMOKE3 }, // State_SMOKE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 1, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SMOKE4 }, // State_SMOKE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 2, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SMOKE5 }, // State_SMOKE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PUFF, .frame = 3, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_SMOKE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATB, .frame = 0, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Tracer, .next = ThingState::State_TRACER2 }, // State_TRACER
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATB, .frame = 1, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Tracer, .next = ThingState::State_TRACER }, // State_TRACER2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FBXP, .frame = 0, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_TRACEEXP2 }, // State_TRACEEXP1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FBXP, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TRACEEXP3 }, // State_TRACEEXP2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FBXP, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_TRACEEXP3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SKEL_STND2 }, // State_SKEL_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SKEL_STND }, // State_SKEL_STND2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN2 }, // State_SKEL_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN3 }, // State_SKEL_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN4 }, // State_SKEL_RUN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN5 }, // State_SKEL_RUN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN6 }, // State_SKEL_RUN5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN7 }, // State_SKEL_RUN6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN8 }, // State_SKEL_RUN7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN9 }, // State_SKEL_RUN8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 4, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN10 }, // State_SKEL_RUN9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 4, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN11 }, // State_SKEL_RUN10
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 5, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN12 }, // State_SKEL_RUN11
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 5, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN1 }, // State_SKEL_RUN12
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 6, .brightness = false, .duration = 0, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKEL_FIST2 }, // State_SKEL_FIST1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 6, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_SkelWhoosh, .next = ThingState::State_SKEL_FIST3 }, // State_SKEL_FIST2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 7, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKEL_FIST4 }, // State_SKEL_FIST3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 8, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_SkelFist, .next = ThingState::State_SKEL_RUN1 }, // State_SKEL_FIST4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 9, .brightness = true, .duration = 0, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKEL_MISS2 }, // State_SKEL_MISS1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 9, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKEL_MISS3 }, // State_SKEL_MISS2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 10, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_SkelMissile, .next = ThingState::State_SKEL_MISS4 }, // State_SKEL_MISS3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 10, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKEL_RUN1 }, // State_SKEL_MISS4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_PAIN2 }, // State_SKEL_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 11, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SKEL_RUN1 }, // State_SKEL_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 11, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_SKEL_DIE2 }, // State_SKEL_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 12, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_SKEL_DIE3 }, // State_SKEL_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 13, .brightness = false, .duration = 7, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SKEL_DIE4 }, // State_SKEL_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 14, .brightness = false, .duration = 7, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SKEL_DIE5 }, // State_SKEL_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 15, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_SKEL_DIE6 }, // State_SKEL_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 16, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SKEL_DIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RAISE2 }, // State_SKEL_RAISE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RAISE3 }, // State_SKEL_RAISE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 14, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RAISE4 }, // State_SKEL_RAISE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RAISE5 }, // State_SKEL_RAISE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RAISE6 }, // State_SKEL_RAISE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKEL, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RUN1 }, // State_SKEL_RAISE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MANF, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_FATSHOT2 }, // State_FATSHOT1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MANF, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_FATSHOT1 }, // State_FATSHOT2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 1, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_FATSHOTX2 }, // State_FATSHOTX1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_FATSHOTX3 }, // State_FATSHOTX2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_FATSHOTX3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 0, .brightness = false, .duration = 15, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_FATT_STND2 }, // State_FATT_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 1, .brightness = false, .duration = 15, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_FATT_STND }, // State_FATT_STND2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 0, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN2 }, // State_FATT_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 0, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN3 }, // State_FATT_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 1, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN4 }, // State_FATT_RUN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 1, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN5 }, // State_FATT_RUN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 2, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN6 }, // State_FATT_RUN5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 2, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN7 }, // State_FATT_RUN6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 3, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN8 }, // State_FATT_RUN7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 3, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN9 }, // State_FATT_RUN8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 4, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN10 }, // State_FATT_RUN9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 4, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN11 }, // State_FATT_RUN10
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 5, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN12 }, // State_FATT_RUN11
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 5, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN1 }, // State_FATT_RUN12
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 6, .brightness = false, .duration = 20, .action = &DOOM::AbstractThing::A_FatRaise, .next = ThingState::State_FATT_ATK2 }, // State_FATT_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 7, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FatAttack1, .next = ThingState::State_FATT_ATK3 }, // State_FATT_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_ATK4 }, // State_FATT_ATK3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 6, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_ATK5 }, // State_FATT_ATK4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 7, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FatAttack2, .next = ThingState::State_FATT_ATK6 }, // State_FATT_ATK5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_ATK7 }, // State_FATT_ATK6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 6, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_ATK8 }, // State_FATT_ATK7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 7, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FatAttack3, .next = ThingState::State_FATT_ATK9 }, // State_FATT_ATK8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_ATK10 }, // State_FATT_ATK9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 6, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_RUN1 }, // State_FATT_ATK10
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 9, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_FATT_PAIN2 }, // State_FATT_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 9, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_FATT_RUN1 }, // State_FATT_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 10, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE2 }, // State_FATT_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 11, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_FATT_DIE3 }, // State_FATT_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 12, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_FATT_DIE4 }, // State_FATT_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 13, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE5 }, // State_FATT_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 14, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE6 }, // State_FATT_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 15, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE7 }, // State_FATT_DIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 16, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE8 }, // State_FATT_DIE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 17, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE9 }, // State_FATT_DIE8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 18, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE10 }, // State_FATT_DIE9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 19, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BossDeath, .next = ThingState::State_None }, // State_FATT_DIE10
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE2 }, // State_FATT_RAISE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE3 }, // State_FATT_RAISE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE4 }, // State_FATT_RAISE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 14, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE5 }, // State_FATT_RAISE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE6 }, // State_FATT_RAISE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE7 }, // State_FATT_RAISE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE8 }, // State_FATT_RAISE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FATT, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RUN1 }, // State_FATT_RAISE8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_CPOS_STND2 }, // State_CPOS_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_CPOS_STND }, // State_CPOS_STND2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN2 }, // State_CPOS_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN3 }, // State_CPOS_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN4 }, // State_CPOS_RUN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN5 }, // State_CPOS_RUN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN6 }, // State_CPOS_RUN5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN7 }, // State_CPOS_RUN6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN8 }, // State_CPOS_RUN7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN1 }, // State_CPOS_RUN8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 4, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_CPOS_ATK2 }, // State_CPOS_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 5, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_CPosAttack, .next = ThingState::State_CPOS_ATK3 }, // State_CPOS_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 4, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_CPosAttack, .next = ThingState::State_CPOS_ATK4 }, // State_CPOS_ATK3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 5, .brightness = false, .duration = 1, .action = &DOOM::AbstractThing::A_CPosRefire, .next = ThingState::State_CPOS_ATK2 }, // State_CPOS_ATK4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 6, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_CPOS_PAIN2 }, // State_CPOS_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 6, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_CPOS_RUN1 }, // State_CPOS_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_DIE2 }, // State_CPOS_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_CPOS_DIE3 }, // State_CPOS_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 9, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_CPOS_DIE4 }, // State_CPOS_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_DIE5 }, // State_CPOS_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_DIE6 }, // State_CPOS_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_DIE7 }, // State_CPOS_DIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 13, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CPOS_DIE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 14, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_XDIE2 }, // State_CPOS_XDIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 15, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_CPOS_XDIE3 }, // State_CPOS_XDIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 16, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_CPOS_XDIE4 }, // State_CPOS_XDIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_XDIE5 }, // State_CPOS_XDIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_XDIE6 }, // State_CPOS_XDIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 19, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CPOS_XDIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE2 }, // State_CPOS_RAISE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE3 }, // State_CPOS_RAISE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE4 }, // State_CPOS_RAISE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE5 }, // State_CPOS_RAISE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE6 }, // State_CPOS_RAISE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE7 }, // State_CPOS_RAISE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CPOS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RUN1 }, // State_CPO.next = ThingState::State_RAISE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_TROO_STND2 }, // State_TROO_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_TROO_STND }, // State_TROO_STND2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN2 }, // State_TROO_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN3 }, // State_TROO_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN4 }, // State_TROO_RUN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN5 }, // State_TROO_RUN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN6 }, // State_TROO_RUN5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN7 }, // State_TROO_RUN6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN8 }, // State_TROO_RUN7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN1 }, // State_TROO_RUN8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 4, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_TROO_ATK2 }, // State_TROO_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 5, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_TROO_ATK3 }, // State_TROO_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 6, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_TroopAttack, .next = ThingState::State_TROO_RUN1 }, // State_TROO_ATK3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 7, .brightness = false, .duration = 2, .action = nullptr, .next = ThingState::State_TROO_PAIN2 }, // State_TROO_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 7, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_TROO_RUN1 }, // State_TROO_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_TROO_DIE2 }, // State_TROO_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 9, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_TROO_DIE3 }, // State_TROO_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 10, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_TROO_DIE4 }, // State_TROO_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 11, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_TROO_DIE5 }, // State_TROO_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 12, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TROO_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_TROO_XDIE2 }, // State_TROO_XDIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 14, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_TROO_XDIE3 }, // State_TROO_XDIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_TROO_XDIE4 }, // State_TROO_XDIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 16, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_TROO_XDIE5 }, // State_TROO_XDIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_TROO_XDIE6 }, // State_TROO_XDIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_TROO_XDIE7 }, // State_TROO_XDIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 19, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_TROO_XDIE8 }, // State_TROO_XDIE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 20, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TROO_XDIE8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_TROO_RAISE2 }, // State_TROO_RAISE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 11, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_TROO_RAISE3 }, // State_TROO_RAISE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 10, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_TROO_RAISE4 }, // State_TROO_RAISE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 9, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_TROO_RAISE5 }, // State_TROO_RAISE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 8, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_TROO_RUN1 }, // State_TROO_RAISE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SARG_STND2 }, // State_SARG_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SARG_STND }, // State_SARG_STND2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN2 }, // State_SARG_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN3 }, // State_SARG_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN4 }, // State_SARG_RUN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN5 }, // State_SARG_RUN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN6 }, // State_SARG_RUN5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN7 }, // State_SARG_RUN6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN8 }, // State_SARG_RUN7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN1 }, // State_SARG_RUN8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 4, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SARG_ATK2 }, // State_SARG_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 5, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SARG_ATK3 }, // State_SARG_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 6, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_SargAttack, .next = ThingState::State_SARG_RUN1 }, // State_SARG_ATK3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 7, .brightness = false, .duration = 2, .action = nullptr, .next = ThingState::State_SARG_PAIN2 }, // State_SARG_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 7, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SARG_RUN1 }, // State_SARG_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_SARG_DIE2 }, // State_SARG_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 9, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SARG_DIE3 }, // State_SARG_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 10, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SARG_DIE4 }, // State_SARG_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 11, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SARG_DIE5 }, // State_SARG_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 12, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SARG_DIE6 }, // State_SARG_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 13, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SARG_DIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RAISE2 }, // State_SARG_RAISE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RAISE3 }, // State_SARG_RAISE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RAISE4 }, // State_SARG_RAISE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RAISE5 }, // State_SARG_RAISE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RAISE6 }, // State_SARG_RAISE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SARG, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RUN1 }, // State_SARG_RAISE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_HEAD_STND }, // State_HEAD_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_HEAD_RUN1 }, // State_HEAD_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 1, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_HEAD_ATK2 }, // State_HEAD_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 2, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_HEAD_ATK3 }, // State_HEAD_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 3, .brightness = true, .duration = 5, .action = &DOOM::AbstractThing::A_HeadAttack, .next = ThingState::State_HEAD_RUN1 }, // State_HEAD_ATK3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 4, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_HEAD_PAIN2 }, // State_HEAD_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 4, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_HEAD_PAIN3 }, // State_HEAD_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 5, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_HEAD_RUN1 }, // State_HEAD_PAIN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 6, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_DIE2 }, // State_HEAD_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 7, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_HEAD_DIE3 }, // State_HEAD_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_DIE4 }, // State_HEAD_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 9, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_DIE5 }, // State_HEAD_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 10, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_HEAD_DIE6 }, // State_HEAD_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 11, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HEAD_DIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 11, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RAISE2 }, // State_HEAD_RAISE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RAISE3 }, // State_HEAD_RAISE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 9, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RAISE4 }, // State_HEAD_RAISE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RAISE5 }, // State_HEAD_RAISE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 7, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RAISE6 }, // State_HEAD_RAISE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HEAD, .frame = 6, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RUN1 }, // State_HEAD_RAISE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL7, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BRBALL2 }, // State_BRBALL1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL7, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BRBALL1 }, // State_BRBALL2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL7, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_BRBALLX2 }, // State_BRBALLX1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL7, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_BRBALLX3 }, // State_BRBALLX2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAL7, .frame = 4, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_BRBALLX3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BOSS_STND2 }, // State_BOSS_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BOSS_STND }, // State_BOSS_STND2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN2 }, // State_BOSS_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN3 }, // State_BOSS_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN4 }, // State_BOSS_RUN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN5 }, // State_BOSS_RUN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN6 }, // State_BOSS_RUN5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN7 }, // State_BOSS_RUN6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN8 }, // State_BOSS_RUN7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN1 }, // State_BOSS_RUN8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 4, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_BOSS_ATK2 }, // State_BOSS_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 5, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_BOSS_ATK3 }, // State_BOSS_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 6, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_BruisAttack, .next = ThingState::State_BOSS_RUN1 }, // State_BOSS_ATK3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 7, .brightness = false, .duration = 2, .action = nullptr, .next = ThingState::State_BOSS_PAIN2 }, // State_BOSS_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 7, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_BOSS_RUN1 }, // State_BOSS_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_DIE2 }, // State_BOSS_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 9, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_BOSS_DIE3 }, // State_BOSS_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_DIE4 }, // State_BOSS_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 11, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_BOSS_DIE5 }, // State_BOSS_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_DIE6 }, // State_BOSS_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 13, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_DIE7 }, // State_BOSS_DIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 14, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BossDeath, .next = ThingState::State_None }, // State_BOSS_DIE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 14, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE2 }, // State_BOSS_RAISE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 13, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE3 }, // State_BOSS_RAISE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE4 }, // State_BOSS_RAISE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 11, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE5 }, // State_BOSS_RAISE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE6 }, // State_BOSS_RAISE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 9, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE7 }, // State_BOSS_RAISE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSS, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RUN1 }, // State_BOSS_RAISE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BOS2_STND2 }, // State_BOS2_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BOS2_STND }, // State_BOS2_STND2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN2 }, // State_BOS2_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN3 }, // State_BOS2_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN4 }, // State_BOS2_RUN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN5 }, // State_BOS2_RUN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN6 }, // State_BOS2_RUN5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN7 }, // State_BOS2_RUN6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN8 }, // State_BOS2_RUN7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN1 }, // State_BOS2_RUN8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 4, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_BOS2_ATK2 }, // State_BOS2_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 5, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_BOS2_ATK3 }, // State_BOS2_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 6, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_BruisAttack, .next = ThingState::State_BOS2_RUN1 }, // State_BOS2_ATK3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 7, .brightness = false, .duration = 2, .action = nullptr, .next = ThingState::State_BOS2_PAIN2 }, // State_BOS2_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 7, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_BOS2_RUN1 }, // State_BOS2_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_DIE2 }, // State_BOS2_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 9, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_BOS2_DIE3 }, // State_BOS2_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_DIE4 }, // State_BOS2_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 11, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_BOS2_DIE5 }, // State_BOS2_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_DIE6 }, // State_BOS2_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 13, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_DIE7 }, // State_BOS2_DIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 14, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BOS2_DIE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 14, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE2 }, // State_BOS2_RAISE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 13, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE3 }, // State_BOS2_RAISE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE4 }, // State_BOS2_RAISE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 11, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE5 }, // State_BOS2_RAISE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE6 }, // State_BOS2_RAISE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 9, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE7 }, // State_BOS2_RAISE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOS2, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RUN1 }, // State_BOS2_RAISE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 0, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SKULL_STND2 }, // State_SKULL_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 1, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SKULL_STND }, // State_SKULL_STND2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 0, .brightness = true, .duration = 6, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKULL_RUN2 }, // State_SKULL_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 1, .brightness = true, .duration = 6, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKULL_RUN1 }, // State_SKULL_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 2, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKULL_ATK2 }, // State_SKULL_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 3, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_SkullAttack, .next = ThingState::State_SKULL_ATK3 }, // State_SKULL_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_SKULL_ATK4 }, // State_SKULL_ATK3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_SKULL_ATK3 }, // State_SKULL_ATK4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 4, .brightness = true, .duration = 3, .action = nullptr, .next = ThingState::State_SKULL_PAIN2 }, // State_SKULL_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 4, .brightness = true, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SKULL_RUN1 }, // State_SKULL_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 5, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SKULL_DIE2 }, // State_SKULL_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 6, .brightness = true, .duration = 6, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SKULL_DIE3 }, // State_SKULL_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 7, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SKULL_DIE4 }, // State_SKULL_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 8, .brightness = true, .duration = 6, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SKULL_DIE5 }, // State_SKULL_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 9, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_SKULL_DIE6 }, // State_SKULL_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SKUL, .frame = 10, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_SKULL_DIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SPID_STND2 }, // State_SPID_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SPID_STND }, // State_SPID_STND2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Metal, .next = ThingState::State_SPID_RUN2 }, // State_SPID_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN3 }, // State_SPID_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN4 }, // State_SPID_RUN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN5 }, // State_SPID_RUN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Metal, .next = ThingState::State_SPID_RUN6 }, // State_SPID_RUN5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN7 }, // State_SPID_RUN6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN8 }, // State_SPID_RUN7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN9 }, // State_SPID_RUN8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 4, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Metal, .next = ThingState::State_SPID_RUN10 }, // State_SPID_RUN9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 4, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN11 }, // State_SPID_RUN10
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 5, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN12 }, // State_SPID_RUN11
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 5, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN1 }, // State_SPID_RUN12
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 0, .brightness = true, .duration = 20, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SPID_ATK2 }, // State_SPID_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 6, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_SPosAttack, .next = ThingState::State_SPID_ATK3 }, // State_SPID_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 7, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_SPosAttack, .next = ThingState::State_SPID_ATK4 }, // State_SPID_ATK3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 7, .brightness = true, .duration = 1, .action = &DOOM::AbstractThing::A_SpidRefire, .next = ThingState::State_SPID_ATK2 }, // State_SPID_ATK4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 8, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_SPID_PAIN2 }, // State_SPID_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 8, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SPID_RUN1 }, // State_SPID_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 9, .brightness = false, .duration = 20, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SPID_DIE2 }, // State_SPID_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 10, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SPID_DIE3 }, // State_SPID_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 11, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE4 }, // State_SPID_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 12, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE5 }, // State_SPID_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 13, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE6 }, // State_SPID_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 14, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE7 }, // State_SPID_DIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 15, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE8 }, // State_SPID_DIE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 16, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE9 }, // State_SPID_DIE8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 17, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE10 }, // State_SPID_DIE9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 18, .brightness = false, .duration = 30, .action = nullptr, .next = ThingState::State_SPID_DIE11 }, // State_SPID_DIE10
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SPID, .frame = 18, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BossDeath, .next = ThingState::State_None }, // State_SPID_DIE11
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BSPI_STND2 }, // State_BSPI_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BSPI_STND }, // State_BSPI_STND2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 0, .brightness = false, .duration = 20, .action = nullptr, .next = ThingState::State_BSPI_RUN1 }, // State_BSPI_SIGHT
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_BabyMetal, .next = ThingState::State_BSPI_RUN2 }, // State_BSPI_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN3 }, // State_BSPI_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN4 }, // State_BSPI_RUN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN5 }, // State_BSPI_RUN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN6 }, // State_BSPI_RUN5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN7 }, // State_BSPI_RUN6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_BabyMetal, .next = ThingState::State_BSPI_RUN8 }, // State_BSPI_RUN7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN9 }, // State_BSPI_RUN8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 4, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN10 }, // State_BSPI_RUN9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 4, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN11 }, // State_BSPI_RUN10
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 5, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN12 }, // State_BSPI_RUN11
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 5, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN1 }, // State_BSPI_RUN12
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 0, .brightness = true, .duration = 20, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_BSPI_ATK2 }, // State_BSPI_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 6, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_BspiAttack, .next = ThingState::State_BSPI_ATK3 }, // State_BSPI_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 7, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BSPI_ATK4 }, // State_BSPI_ATK3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 7, .brightness = true, .duration = 1, .action = &DOOM::AbstractThing::A_SpidRefire, .next = ThingState::State_BSPI_ATK2 }, // State_BSPI_ATK4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 8, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_BSPI_PAIN2 }, // State_BSPI_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 8, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_BSPI_RUN1 }, // State_BSPI_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 9, .brightness = false, .duration = 20, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_BSPI_DIE2 }, // State_BSPI_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 10, .brightness = false, .duration = 7, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_BSPI_DIE3 }, // State_BSPI_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 11, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_BSPI_DIE4 }, // State_BSPI_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 12, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_BSPI_DIE5 }, // State_BSPI_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 13, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_BSPI_DIE6 }, // State_BSPI_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 14, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_BSPI_DIE7 }, // State_BSPI_DIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 15, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BossDeath, .next = ThingState::State_None }, // State_BSPI_DIE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE2 }, // State_BSPI_RAISE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 14, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE3 }, // State_BSPI_RAISE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE4 }, // State_BSPI_RAISE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE5 }, // State_BSPI_RAISE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE6 }, // State_BSPI_RAISE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE7 }, // State_BSPI_RAISE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSPI, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RUN1 }, // State_BSPI_RAISE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_APLS, .frame = 0, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLAZ2 }, // State_ARACH_PLAZ
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_APLS, .frame = 1, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLAZ }, // State_ARACH_PLAZ2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_APBX, .frame = 0, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLEX2 }, // State_ARACH_PLEX
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_APBX, .frame = 1, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLEX3 }, // State_ARACH_PLEX2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_APBX, .frame = 2, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLEX4 }, // State_ARACH_PLEX3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_APBX, .frame = 3, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLEX5 }, // State_ARACH_PLEX4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_APBX, .frame = 4, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_None }, // State_ARACH_PLEX5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_CYBER_STND2 }, // State_CYBER_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_CYBER_STND }, // State_CYBER_STND2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Hoof, .next = ThingState::State_CYBER_RUN2 }, // State_CYBER_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN3 }, // State_CYBER_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN4 }, // State_CYBER_RUN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN5 }, // State_CYBER_RUN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN6 }, // State_CYBER_RUN5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN7 }, // State_CYBER_RUN6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Metal, .next = ThingState::State_CYBER_RUN8 }, // State_CYBER_RUN7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN1 }, // State_CYBER_RUN8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 4, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_CYBER_ATK2 }, // State_CYBER_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 5, .brightness = false, .duration = 12, .action = &DOOM::AbstractThing::A_CyberAttack, .next = ThingState::State_CYBER_ATK3 }, // State_CYBER_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 4, .brightness = false, .duration = 12, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_CYBER_ATK4 }, // State_CYBER_ATK3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 5, .brightness = false, .duration = 12, .action = &DOOM::AbstractThing::A_CyberAttack, .next = ThingState::State_CYBER_ATK5 }, // State_CYBER_ATK4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 4, .brightness = false, .duration = 12, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_CYBER_ATK6 }, // State_CYBER_ATK5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 5, .brightness = false, .duration = 12, .action = &DOOM::AbstractThing::A_CyberAttack, .next = ThingState::State_CYBER_RUN1 }, // State_CYBER_ATK6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 6, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_CYBER_RUN1 }, // State_CYBER_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 7, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE2 }, // State_CYBER_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 8, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_CYBER_DIE3 }, // State_CYBER_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 9, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE4 }, // State_CYBER_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 10, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE5 }, // State_CYBER_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 11, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE6 }, // State_CYBER_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 12, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_CYBER_DIE7 }, // State_CYBER_DIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 13, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE8 }, // State_CYBER_DIE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 14, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE9 }, // State_CYBER_DIE8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 15, .brightness = false, .duration = 30, .action = nullptr, .next = ThingState::State_CYBER_DIE10 }, // State_CYBER_DIE9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CYBR, .frame = 15, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BossDeath, .next = ThingState::State_None }, // State_CYBER_DIE10
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_PAIN_STND }, // State_PAIN_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN2 }, // State_PAIN_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN3 }, // State_PAIN_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN4 }, // State_PAIN_RUN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN5 }, // State_PAIN_RUN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN6 }, // State_PAIN_RUN5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN1 }, // State_PAIN_RUN6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 3, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_PAIN_ATK2 }, // State_PAIN_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 4, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_PAIN_ATK3 }, // State_PAIN_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 5, .brightness = true, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_PAIN_ATK4 }, // State_PAIN_ATK3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 5, .brightness = true, .duration = 0, .action = &DOOM::AbstractThing::A_PainAttack, .next = ThingState::State_PAIN_RUN1 }, // State_PAIN_ATK4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 6, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_PAIN_PAIN2 }, // State_PAIN_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 6, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_PAIN_RUN1 }, // State_PAIN_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 7, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_DIE2 }, // State_PAIN_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 8, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_PAIN_DIE3 }, // State_PAIN_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 9, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_DIE4 }, // State_PAIN_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 10, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_DIE5 }, // State_PAIN_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 11, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_PainDie, .next = ThingState::State_PAIN_DIE6 }, // State_PAIN_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 12, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_None }, // State_PAIN_DIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RAISE2 }, // State_PAIN_RAISE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 11, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RAISE3 }, // State_PAIN_RAISE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RAISE4 }, // State_PAIN_RAISE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 9, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RAISE5 }, // State_PAIN_RAISE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RAISE6 }, // State_PAIN_RAISE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PAIN, .frame = 7, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RUN1 }, // State_PAIN_RAISE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SSWV_STND2 }, // State_SSWV_STND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SSWV_STND }, // State_SSWV_STND2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN2 }, // State_SSWV_RUN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN3 }, // State_SSWV_RUN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN4 }, // State_SSWV_RUN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN5 }, // State_SSWV_RUN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN6 }, // State_SSWV_RUN5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN7 }, // State_SSWV_RUN6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN8 }, // State_SSWV_RUN7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN1 }, // State_SSWV_RUN8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 4, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SSWV_ATK2 }, // State_SSWV_ATK1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 5, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SSWV_ATK3 }, // State_SSWV_ATK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 6, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_CPosAttack, .next = ThingState::State_SSWV_ATK4 }, // State_SSWV_ATK3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 5, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SSWV_ATK5 }, // State_SSWV_ATK4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 6, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_CPosAttack, .next = ThingState::State_SSWV_ATK6 }, // State_SSWV_ATK5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 5, .brightness = false, .duration = 1, .action = &DOOM::AbstractThing::A_CPosRefire, .next = ThingState::State_SSWV_ATK2 }, // State_SSWV_ATK6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 7, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_SSWV_PAIN2 }, // State_SSWV_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 7, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SSWV_RUN1 }, // State_SSWV_PAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_DIE2 }, // State_SSWV_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 9, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SSWV_DIE3 }, // State_SSWV_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 10, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SSWV_DIE4 }, // State_SSWV_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_DIE5 }, // State_SSWV_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 12, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SSWV_DIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE2 }, // State_SSWV_XDIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 14, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_SSWV_XDIE3 }, // State_SSWV_XDIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 15, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SSWV_XDIE4 }, // State_SSWV_XDIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE5 }, // State_SSWV_XDIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE6 }, // State_SSWV_XDIE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE7 }, // State_SSWV_XDIE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 19, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE8 }, // State_SSWV_XDIE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 20, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE9 }, // State_SSWV_XDIE8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 21, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SSWV_XDIE9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_RAISE2 }, // State_SSWV_RAISE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_RAISE3 }, // State_SSWV_RAISE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_RAISE4 }, // State_SSWV_RAISE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_RAISE5 }, // State_SSWV_RAISE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_RUN1 }, // State_SSWV_RAISE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_KEENSTND }, // State_KEENSTND
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN2 }, // State_COMMKEEN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN3 }, // State_COMMKEEN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 2, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_COMMKEEN4 }, // State_COMMKEEN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 3, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN5 }, // State_COMMKEEN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 4, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN6 }, // State_COMMKEEN5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 5, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN7 }, // State_COMMKEEN6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 6, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN8 }, // State_COMMKEEN7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 7, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN9 }, // State_COMMKEEN8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 8, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN10 }, // State_COMMKEEN9
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 9, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN11 }, // State_COMMKEEN10
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 10, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_KeenDie, .next = ThingState::State_COMMKEEN12 }, // State_COMMKEEN11
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 11, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_COMMKEEN12
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 12, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_KEENPAIN2 }, // State_KEENPAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_KEEN, .frame = 12, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_KEENSTND }, // State_KEENPAIN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BBRN, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BRAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BBRN, .frame = 1, .brightness = false, .duration = 36, .action = &DOOM::AbstractThing::A_BrainPain, .next = ThingState::State_BRAIN }, // State_BRAIN_PAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BBRN, .frame = 0, .brightness = false, .duration = 100, .action = &DOOM::AbstractThing::A_BrainScream, .next = ThingState::State_BRAIN_DIE2 }, // State_BRAIN_DIE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BBRN, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_BRAIN_DIE3 }, // State_BRAIN_DIE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BBRN, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_BRAIN_DIE4 }, // State_BRAIN_DIE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BBRN, .frame = 0, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BrainDie, .next = ThingState::State_None }, // State_BRAIN_DIE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BRAINEYE }, // State_BRAINEYE
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 181, .action = &DOOM::AbstractThing::A_BrainAwake, .next = ThingState::State_BRAINEYE1 }, // State_BRAINEYESEE
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 150, .action = &DOOM::AbstractThing::A_BrainSpit, .next = ThingState::State_BRAINEYE1 }, // State_BRAINEYE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSF, .frame = 0, .brightness = true, .duration = 3, .action = &DOOM::AbstractThing::A_SpawnSound, .next = ThingState::State_SPAWN2 }, // State_SPAWN1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSF, .frame = 1, .brightness = true, .duration = 3, .action = &DOOM::AbstractThing::A_SpawnFly, .next = ThingState::State_SPAWN3 }, // State_SPAWN2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSF, .frame = 2, .brightness = true, .duration = 3, .action = &DOOM::AbstractThing::A_SpawnFly, .next = ThingState::State_SPAWN4 }, // State_SPAWN3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BOSF, .frame = 3, .brightness = true, .duration = 3, .action = &DOOM::AbstractThing::A_SpawnFly, .next = ThingState::State_SPAWN1 }, // State_SPAWN4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 0, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE2 }, // State_SPAWNFIRE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 1, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE3 }, // State_SPAWNFIRE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE4 }, // State_SPAWNFIRE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE5 }, // State_SPAWNFIRE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE6 }, // State_SPAWNFIRE5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 5, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE7 }, // State_SPAWNFIRE6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 6, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE8 }, // State_SPAWNFIRE7
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FIRE, .frame = 7, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_None }, // State_SPAWNFIRE8
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_BRAINEXPLODE2 }, // State_BRAINEXPLODE1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 2, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_BRAINEXPLODE3 }, // State_BRAINEXPLODE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MISL, .frame = 3, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_BrainExplode, .next = ThingState::State_None }, // State_BRAINEXPLODE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_ARM1, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_ARM1A }, // State_ARM1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_ARM1, .frame = 1, .brightness = true, .duration = 7, .action = nullptr, .next = ThingState::State_ARM1 }, // State_ARM1A
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_ARM2, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_ARM2A }, // State_ARM2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_ARM2, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_ARM2 }, // State_ARM2A
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAR1, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BAR2 }, // State_BAR1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BAR1, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BAR1 }, // State_BAR2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BEXP, .frame = 0, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_BEXP2 }, // State_BEXP
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BEXP, .frame = 1, .brightness = true, .duration = 5, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_BEXP3 }, // State_BEXP2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BEXP, .frame = 2, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_BEXP4 }, // State_BEXP3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BEXP, .frame = 3, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_Explode, .next = ThingState::State_BEXP5 }, // State_BEXP4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BEXP, .frame = 4, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_None }, // State_BEXP5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FCAN, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BBAR2 }, // State_BBAR1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FCAN, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BBAR3 }, // State_BBAR2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FCAN, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BBAR1 }, // State_BBAR3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON1, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1A }, // State_BON1
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON1, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1B }, // State_BON1A
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON1, .frame = 2, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1C }, // State_BON1B
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON1, .frame = 3, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1D }, // State_BON1C
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON1, .frame = 2, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1E }, // State_BON1D
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON1, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1 }, // State_BON1E
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON2, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2A }, // State_BON2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON2, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2B }, // State_BON2A
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON2, .frame = 2, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2C }, // State_BON2B
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON2, .frame = 3, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2D }, // State_BON2C
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON2, .frame = 2, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2E }, // State_BON2D
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BON2, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2 }, // State_BON2E
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BKEY, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_BKEY2 }, // State_BKEY
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BKEY, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_BKEY }, // State_BKEY2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_RKEY, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_RKEY2 }, // State_RKEY
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_RKEY, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_RKEY }, // State_RKEY2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_YKEY, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_YKEY2 }, // State_YKEY
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_YKEY, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_YKEY }, // State_YKEY2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSKU, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_BSKULL2 }, // State_BSKULL
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BSKU, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_BSKULL }, // State_BSKULL2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_RSKU, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_RSKULL2 }, // State_RSKULL
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_RSKU, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_RSKULL }, // State_RSKULL2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_YSKU, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_YSKULL2 }, // State_YSKULL
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_YSKU, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_YSKULL }, // State_YSKULL2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_STIM, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_STIM
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MEDI, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MEDI
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SOUL, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL2 }, // State_SOUL
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SOUL, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL3 }, // State_SOUL2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SOUL, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL4 }, // State_SOUL3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SOUL, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL5 }, // State_SOUL4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SOUL, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL6 }, // State_SOUL5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SOUL, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL }, // State_SOUL6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PINV, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINV2 }, // State_PINV
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PINV, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINV3 }, // State_PINV2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PINV, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINV4 }, // State_PINV3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PINV, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINV }, // State_PINV4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PSTR, .frame = 0, .brightness = true, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_PSTR
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PINS, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINS2 }, // State_PINS
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PINS, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINS3 }, // State_PINS2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PINS, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINS4 }, // State_PINS3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PINS, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINS }, // State_PINS4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MEGA, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_MEGA2 }, // State_MEGA
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MEGA, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_MEGA3 }, // State_MEGA2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MEGA, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_MEGA4 }, // State_MEGA3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MEGA, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_MEGA }, // State_MEGA4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SUIT, .frame = 0, .brightness = true, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SUIT
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PMAP, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP2 }, // State_PMAP
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PMAP, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP3 }, // State_PMAP2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PMAP, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP4 }, // State_PMAP3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PMAP, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP5 }, // State_PMAP4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PMAP, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP6 }, // State_PMAP5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PMAP, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP }, // State_PMAP6
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PVIS, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PVIS2 }, // State_PVIS
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PVIS, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_PVIS }, // State_PVIS2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CLIP, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CLIP
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_AMMO, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_AMMO
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_ROCK, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_ROCK
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BROK, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BROK
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CELL, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CELL
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CELP, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CELP
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SHEL, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SHEL
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SBOX, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SBOX
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BPAK, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BPAK
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BFUG, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BFUG
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_MGUN, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MGUN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CSAW, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CSAW
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_LAUN, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_LAUN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAS, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_PLAS
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SHOT, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SHOT
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SGN2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SHOT2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_COLU, .frame = 0, .brightness = true, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_COLU
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMT2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_STALAG
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_GOR1, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_BLOODYTWITCH2 }, // State_BLOODYTWITCH
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_GOR1, .frame = 1, .brightness = false, .duration = 15, .action = nullptr, .next = ThingState::State_BLOODYTWITCH3 }, // State_BLOODYTWITCH2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_GOR1, .frame = 2, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BLOODYTWITCH4 }, // State_BLOODYTWITCH3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_GOR1, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BLOODYTWITCH }, // State_BLOODYTWITCH4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 13, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_DEADTORSO
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_PLAY, .frame = 18, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_DEADBOTTOM
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POL2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HEADSONSTICK
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POL5, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_GIBS
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POL4, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HEADONASTICK
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POL3, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_HEADCANDLES2 }, // State_HEADCANDLES
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POL3, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_HEADCANDLES }, // State_HEADCANDLES2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POL1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_DEADSTICK
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POL6, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_LIVESTICK2 }, // State_LIVESTICK
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POL6, .frame = 1, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_LIVESTICK }, // State_LIVESTICK2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_GOR2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MEAT2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_GOR3, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MEAT3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_GOR4, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MEAT4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_GOR5, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MEAT5
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMIT, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_STALAGTITE
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_COL1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TALLGRNCOL
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_COL2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SHRTGRNCOL
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_COL3, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TALLREDCOL
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_COL4, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SHRTREDCOL
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CAND, .frame = 0, .brightness = true, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CANDLESTIK
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CBRA, .frame = 0, .brightness = true, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CANDELABRA
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_COL6, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SKULLCOL
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TRE1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TORCHTREE
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TRE2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BIGTREE
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_ELEC, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TECHPILLAR
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CEYE, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_EVILEYE2 }, // State_EVILEYE
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CEYE, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_EVILEYE3 }, // State_EVILEYE2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CEYE, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_EVILEYE4 }, // State_EVILEYE3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_CEYE, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_EVILEYE }, // State_EVILEYE4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FSKU, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_FLOATSKULL2 }, // State_FLOATSKULL
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FSKU, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_FLOATSKULL3 }, // State_FLOATSKULL2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_FSKU, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_FLOATSKULL }, // State_FLOATSKULL3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_COL5, .frame = 0, .brightness = false, .duration = 14, .action = nullptr, .next = ThingState::State_HEARTCOL2 }, // State_HEARTCOL
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_COL5, .frame = 1, .brightness = false, .duration = 14, .action = nullptr, .next = ThingState::State_HEARTCOL }, // State_HEARTCOL2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TBLU, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BLUETORCH2 }, // State_BLUETORCH
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TBLU, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BLUETORCH3 }, // State_BLUETORCH2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TBLU, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BLUETORCH4 }, // State_BLUETORCH3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TBLU, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BLUETORCH }, // State_BLUETORCH4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TGRN, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GREENTORCH2 }, // State_GREENTORCH
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TGRN, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GREENTORCH3 }, // State_GREENTORCH2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TGRN, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GREENTORCH4 }, // State_GREENTORCH3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TGRN, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GREENTORCH }, // State_GREENTORCH4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TRED, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_REDTORCH2 }, // State_REDTORCH
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TRED, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_REDTORCH3 }, // State_REDTORCH2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TRED, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_REDTORCH4 }, // State_REDTORCH3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TRED, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_REDTORCH }, // State_REDTORCH4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMBT, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BTORCHSHRT2 }, // State_BTORCHSHRT
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMBT, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BTORCHSHRT3 }, // State_BTORCHSHRT2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMBT, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BTORCHSHRT4 }, // State_BTORCHSHRT3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMBT, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BTORCHSHRT }, // State_BTORCHSHRT4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMGT, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GTORCHSHRT2 }, // State_GTORCHSHRT
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMGT, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GTORCHSHRT3 }, // State_GTORCHSHRT2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMGT, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GTORCHSHRT4 }, // State_GTORCHSHRT3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMGT, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GTORCHSHRT }, // State_GTORCHSHRT4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMRT, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RTORCHSHRT2 }, // State_RTORCHSHRT
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMRT, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RTORCHSHRT3 }, // State_RTORCHSHRT2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMRT, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RTORCHSHRT4 }, // State_RTORCHSHRT3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_SMRT, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RTORCHSHRT }, // State_RTORCHSHRT4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HDB1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGNOGUTS
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HDB2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGBNOBRAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HDB3, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGTLOOKDN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HDB4, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGTSKULL
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HDB5, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGTLOOKUP
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_HDB6, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGTNOBRAIN
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POB1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_COLONGIBS
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_POB2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SMALLPOOL
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_BRS1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BRAINSTEM
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TLMP, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECHLAMP2 }, // State_TECHLAMP
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TLMP, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECHLAMP3 }, // State_TECHLAMP2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TLMP, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECHLAMP4 }, // State_TECHLAMP3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TLMP, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECHLAMP }, // State_TECHLAMP4
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TLP2, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECH2LAMP2 }, // State_TECH2LAMP
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TLP2, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECH2LAMP3 }, // State_TECH2LAMP2
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TLP2, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECH2LAMP4 }, // State_TECH2LAMP3
-  DOOM::AbstractThing::State{ .sprite = ThingSprite::Sprite_TLP2, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECH2LAMP } // State_TECH2LAMP4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_None
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BLUD, .frame = 2, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BLOOD2 }, // State_BLOOD1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BLUD, .frame = 1, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BLOOD3 }, // State_BLOOD2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BLUD, .frame = 0, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_None }, // State_BLOOD3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PUFF, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_PUFF2 }, // State_PUFF1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PUFF, .frame = 1, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PUFF3 }, // State_PUFF2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PUFF, .frame = 2, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PUFF4 }, // State_PUFF3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PUFF, .frame = 3, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_PUFF4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAL1, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TBALL2 }, // State_TBALL1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAL1, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TBALL1 }, // State_TBALL2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAL1, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TBALLX2 }, // State_TBALLX1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAL1, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TBALLX3 }, // State_TBALLX2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAL1, .frame = 4, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_TBALLX3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAL2, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RBALL2 }, // State_RBALL1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAL2, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RBALL1 }, // State_RBALL2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAL2, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_RBALLX2 }, // State_RBALLX1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAL2, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_RBALLX3 }, // State_RBALLX2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAL2, .frame = 4, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_RBALLX3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLSS, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PLASBALL2 }, // State_PLASBALL
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLSS, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PLASBALL }, // State_PLASBALL2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLSE, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_PLASEXP2 }, // State_PLASEXP
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLSE, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_PLASEXP3 }, // State_PLASEXP2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLSE, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_PLASEXP4 }, // State_PLASEXP3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLSE, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_PLASEXP5 }, // State_PLASEXP4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLSE, .frame = 4, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_PLASEXP5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MISL, .frame = 0, .brightness = true, .duration = 1, .action = &DOOM::AbstractThing::A_MissileSmoke, .next = ThingState::State_ROCKET }, // State_ROCKET
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BFS1, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BFGSHOT2 }, // State_BFGSHOT
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BFS1, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BFGSHOT }, // State_BFGSHOT2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BFE1, .frame = 0, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGLAND2 }, // State_BFGLAND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BFE1, .frame = 1, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGLAND3 }, // State_BFGLAND2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BFE1, .frame = 2, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_BFGSpray, .next = ThingState::State_BFGLAND4 }, // State_BFGLAND3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BFE1, .frame = 3, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGLAND5 }, // State_BFGLAND4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BFE1, .frame = 4, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGLAND6 }, // State_BFGLAND5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BFE1, .frame = 5, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_None }, // State_BFGLAND6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BFE2, .frame = 0, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGEXP2 }, // State_BFGEXP
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BFE2, .frame = 1, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGEXP3 }, // State_BFGEXP2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BFE2, .frame = 2, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_BFGEXP4 }, // State_BFGEXP3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BFE2, .frame = 3, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_None }, // State_BFGEXP4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MISL, .frame = 1, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_Explode, .next = ThingState::State_EXPLODE2 }, // State_EXPLODE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MISL, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_EXPLODE3 }, // State_EXPLODE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MISL, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_EXPLODE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TFOG, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG01 }, // State_TFOG
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TFOG, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG02 }, // State_TFOG01
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TFOG, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG2 }, // State_TFOG02
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TFOG, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG3 }, // State_TFOG2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TFOG, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG4 }, // State_TFOG3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TFOG, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG5 }, // State_TFOG4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TFOG, .frame = 4, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG6 }, // State_TFOG5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TFOG, .frame = 5, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG7 }, // State_TFOG6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TFOG, .frame = 6, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG8 }, // State_TFOG7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TFOG, .frame = 7, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG9 }, // State_TFOG8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TFOG, .frame = 8, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TFOG10 }, // State_TFOG9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TFOG, .frame = 9, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_TFOG10
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_IFOG, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG01 }, // State_IFOG
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_IFOG, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG02 }, // State_IFOG01
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_IFOG, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG2 }, // State_IFOG02
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_IFOG, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG3 }, // State_IFOG2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_IFOG, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG4 }, // State_IFOG3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_IFOG, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_IFOG5 }, // State_IFOG4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_IFOG, .frame = 4, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_IFOG5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_PLAY
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 0, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PLAY_RUN2 }, // State_PLAY_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 1, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PLAY_RUN3 }, // State_PLAY_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 2, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PLAY_RUN4 }, // State_PLAY_RUN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 3, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PLAY_RUN1 }, // State_PLAY_RUN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 4, .brightness = false, .duration = 12, .action = nullptr, .next = ThingState::State_PLAY }, // State_PLAY_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 5, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PLAY_ATK1 }, // State_PLAY_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 6, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_PLAY_PAIN2 }, // State_PLAY_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 6, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_PLAY }, // State_PLAY_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 7, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_PLAY_DIE2 }, // State_PLAY_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 8, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_PlayerScream, .next = ThingState::State_PLAY_DIE3 }, // State_PLAY_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 9, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_PLAY_DIE4 }, // State_PLAY_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 10, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_PLAY_DIE5 }, // State_PLAY_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 11, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_PLAY_DIE6 }, // State_PLAY_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 12, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_PLAY_DIE7 }, // State_PLAY_DIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 13, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_PLAY_DIE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 14, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE2 }, // State_PLAY_XDIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 15, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_PLAY_XDIE3 }, // State_PLAY_XDIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 16, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_PLAY_XDIE4 }, // State_PLAY_XDIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE5 }, // State_PLAY_XDIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE6 }, // State_PLAY_XDIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 19, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE7 }, // State_PLAY_XDIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 20, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE8 }, // State_PLAY_XDIE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 21, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_PLAY_XDIE9 }, // State_PLAY_XDIE8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 22, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_PLAY_XDIE9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_POSS_STND2 }, // State_POSS_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_POSS_STND }, // State_POSS_STND2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 0, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN2 }, // State_POSS_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 0, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN3 }, // State_POSS_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 1, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN4 }, // State_POSS_RUN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 1, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN5 }, // State_POSS_RUN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 2, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN6 }, // State_POSS_RUN5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 2, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN7 }, // State_POSS_RUN6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 3, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN8 }, // State_POSS_RUN7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 3, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_POSS_RUN1 }, // State_POSS_RUN8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 4, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_POSS_ATK2 }, // State_POSS_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 5, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_PosAttack, .next = ThingState::State_POSS_ATK3 }, // State_POSS_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 4, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_POSS_RUN1 }, // State_POSS_ATK3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 6, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_POSS_PAIN2 }, // State_POSS_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 6, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_POSS_RUN1 }, // State_POSS_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_DIE2 }, // State_POSS_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_POSS_DIE3 }, // State_POSS_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 9, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_POSS_DIE4 }, // State_POSS_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_DIE5 }, // State_POSS_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 11, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_POSS_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE2 }, // State_POSS_XDIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 13, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_POSS_XDIE3 }, // State_POSS_XDIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 14, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_POSS_XDIE4 }, // State_POSS_XDIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE5 }, // State_POSS_XDIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE6 }, // State_POSS_XDIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE7 }, // State_POSS_XDIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE8 }, // State_POSS_XDIE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 19, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_XDIE9 }, // State_POSS_XDIE8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 20, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_POSS_XDIE9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_RAISE2 }, // State_POSS_RAISE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_RAISE3 }, // State_POSS_RAISE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_RAISE4 }, // State_POSS_RAISE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POSS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_POSS_RUN1 }, // State_POSS_RAISE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SPOS_STND2 }, // State_SPOS_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SPOS_STND }, // State_SPOS_STND2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN2 }, // State_SPOS_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN3 }, // State_SPOS_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN4 }, // State_SPOS_RUN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN5 }, // State_SPOS_RUN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN6 }, // State_SPOS_RUN5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN7 }, // State_SPOS_RUN6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN8 }, // State_SPOS_RUN7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPOS_RUN1 }, // State_SPOS_RUN8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 4, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SPOS_ATK2 }, // State_SPOS_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 5, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_SPosAttack, .next = ThingState::State_SPOS_ATK3 }, // State_SPOS_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 4, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPOS_RUN1 }, // State_SPOS_ATK3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 6, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_SPOS_PAIN2 }, // State_SPOS_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 6, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SPOS_RUN1 }, // State_SPOS_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_DIE2 }, // State_SPOS_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SPOS_DIE3 }, // State_SPOS_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 9, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SPOS_DIE4 }, // State_SPOS_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_DIE5 }, // State_SPOS_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 11, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SPOS_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE2 }, // State_SPOS_XDIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 13, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_SPOS_XDIE3 }, // State_SPOS_XDIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 14, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SPOS_XDIE4 }, // State_SPOS_XDIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE5 }, // State_SPOS_XDIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE6 }, // State_SPOS_XDIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE7 }, // State_SPOS_XDIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE8 }, // State_SPOS_XDIE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 19, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_XDIE9 }, // State_SPOS_XDIE8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 20, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SPOS_XDIE9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_RAISE2 }, // State_SPOS_RAISE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_RAISE3 }, // State_SPOS_RAISE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_RAISE4 }, // State_SPOS_RAISE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_RAISE5 }, // State_SPOS_RAISE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPOS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SPOS_RUN1 }, // State_SPO.next = ThingState::State_RAISE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_VILE_STND2 }, // State_VILE_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_VILE_STND }, // State_VILE_STND2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN2 }, // State_VILE_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN3 }, // State_VILE_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN4 }, // State_VILE_RUN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN5 }, // State_VILE_RUN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN6 }, // State_VILE_RUN5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN7 }, // State_VILE_RUN6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN8 }, // State_VILE_RUN7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN9 }, // State_VILE_RUN8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 4, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN10 }, // State_VILE_RUN9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 4, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN11 }, // State_VILE_RUN10
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 5, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN12 }, // State_VILE_RUN11
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 5, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_VileChase, .next = ThingState::State_VILE_RUN1 }, // State_VILE_RUN12
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 6, .brightness = true, .duration = 0, .action = &DOOM::AbstractThing::A_VileStart, .next = ThingState::State_VILE_ATK2 }, // State_VILE_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 6, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK3 }, // State_VILE_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 7, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_VileTarget, .next = ThingState::State_VILE_ATK4 }, // State_VILE_ATK3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 8, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK5 }, // State_VILE_ATK4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 9, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK6 }, // State_VILE_ATK5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 10, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK7 }, // State_VILE_ATK6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 11, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK8 }, // State_VILE_ATK7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 12, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK9 }, // State_VILE_ATK8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 13, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_VILE_ATK10 }, // State_VILE_ATK9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 14, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_VileAttack, .next = ThingState::State_VILE_ATK11 }, // State_VILE_ATK10
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 15, .brightness = true, .duration = 20, .action = nullptr, .next = ThingState::State_VILE_RUN1 }, // State_VILE_ATK11
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 26, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_VILE_HEAL2 }, // State_VILE_HEAL1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 27, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_VILE_HEAL3 }, // State_VILE_HEAL2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 28, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_VILE_RUN1 }, // State_VILE_HEAL3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_VILE_PAIN2 }, // State_VILE_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 16, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_VILE_RUN1 }, // State_VILE_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 16, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_VILE_DIE2 }, // State_VILE_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 17, .brightness = false, .duration = 7, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_VILE_DIE3 }, // State_VILE_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 18, .brightness = false, .duration = 7, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_VILE_DIE4 }, // State_VILE_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 19, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_VILE_DIE5 }, // State_VILE_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 20, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_VILE_DIE6 }, // State_VILE_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 21, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_VILE_DIE7 }, // State_VILE_DIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 22, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_VILE_DIE8 }, // State_VILE_DIE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 23, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_VILE_DIE9 }, // State_VILE_DIE8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 24, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_VILE_DIE10 }, // State_VILE_DIE9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_VILE, .frame = 25, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_VILE_DIE10
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 0, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_StartFire, .next = ThingState::State_FIRE2 }, // State_FIRE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 1, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE3 }, // State_FIRE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 0, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE4 }, // State_FIRE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 1, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE5 }, // State_FIRE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_FireCrackle, .next = ThingState::State_FIRE6 }, // State_FIRE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 1, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE7 }, // State_FIRE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE8 }, // State_FIRE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 1, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE9 }, // State_FIRE8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE10 }, // State_FIRE9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE11 }, // State_FIRE10
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE12 }, // State_FIRE11
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE13 }, // State_FIRE12
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE14 }, // State_FIRE13
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE15 }, // State_FIRE14
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE16 }, // State_FIRE15
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE17 }, // State_FIRE16
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE18 }, // State_FIRE17
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE19 }, // State_FIRE18
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_FireCrackle, .next = ThingState::State_FIRE20 }, // State_FIRE19
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 5, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE21 }, // State_FIRE20
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE22 }, // State_FIRE21
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 5, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE23 }, // State_FIRE22
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE24 }, // State_FIRE23
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 5, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE25 }, // State_FIRE24
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 6, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE26 }, // State_FIRE25
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 7, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE27 }, // State_FIRE26
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 6, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE28 }, // State_FIRE27
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 7, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE29 }, // State_FIRE28
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 6, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_FIRE30 }, // State_FIRE29
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 7, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_None }, // State_FIRE30
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PUFF, .frame = 1, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SMOKE2 }, // State_SMOKE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PUFF, .frame = 2, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SMOKE3 }, // State_SMOKE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PUFF, .frame = 1, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SMOKE4 }, // State_SMOKE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PUFF, .frame = 2, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SMOKE5 }, // State_SMOKE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PUFF, .frame = 3, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_SMOKE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATB, .frame = 0, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Tracer, .next = ThingState::State_TRACER2 }, // State_TRACER
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATB, .frame = 1, .brightness = true, .duration = 2, .action = &DOOM::AbstractThing::A_Tracer, .next = ThingState::State_TRACER }, // State_TRACER2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FBXP, .frame = 0, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_TRACEEXP2 }, // State_TRACEEXP1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FBXP, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_TRACEEXP3 }, // State_TRACEEXP2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FBXP, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_TRACEEXP3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SKEL_STND2 }, // State_SKEL_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SKEL_STND }, // State_SKEL_STND2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN2 }, // State_SKEL_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN3 }, // State_SKEL_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN4 }, // State_SKEL_RUN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN5 }, // State_SKEL_RUN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN6 }, // State_SKEL_RUN5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN7 }, // State_SKEL_RUN6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN8 }, // State_SKEL_RUN7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN9 }, // State_SKEL_RUN8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 4, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN10 }, // State_SKEL_RUN9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 4, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN11 }, // State_SKEL_RUN10
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 5, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN12 }, // State_SKEL_RUN11
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 5, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKEL_RUN1 }, // State_SKEL_RUN12
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 6, .brightness = false, .duration = 0, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKEL_FIST2 }, // State_SKEL_FIST1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 6, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_SkelWhoosh, .next = ThingState::State_SKEL_FIST3 }, // State_SKEL_FIST2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 7, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKEL_FIST4 }, // State_SKEL_FIST3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 8, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_SkelFist, .next = ThingState::State_SKEL_RUN1 }, // State_SKEL_FIST4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 9, .brightness = true, .duration = 0, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKEL_MISS2 }, // State_SKEL_MISS1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 9, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKEL_MISS3 }, // State_SKEL_MISS2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 10, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_SkelMissile, .next = ThingState::State_SKEL_MISS4 }, // State_SKEL_MISS3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 10, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKEL_RUN1 }, // State_SKEL_MISS4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_PAIN2 }, // State_SKEL_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 11, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SKEL_RUN1 }, // State_SKEL_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 11, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_SKEL_DIE2 }, // State_SKEL_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 12, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_SKEL_DIE3 }, // State_SKEL_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 13, .brightness = false, .duration = 7, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SKEL_DIE4 }, // State_SKEL_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 14, .brightness = false, .duration = 7, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SKEL_DIE5 }, // State_SKEL_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 15, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_SKEL_DIE6 }, // State_SKEL_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 16, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SKEL_DIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RAISE2 }, // State_SKEL_RAISE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RAISE3 }, // State_SKEL_RAISE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 14, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RAISE4 }, // State_SKEL_RAISE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RAISE5 }, // State_SKEL_RAISE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RAISE6 }, // State_SKEL_RAISE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKEL, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SKEL_RUN1 }, // State_SKEL_RAISE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MANF, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_FATSHOT2 }, // State_FATSHOT1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MANF, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_FATSHOT1 }, // State_FATSHOT2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MISL, .frame = 1, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_FATSHOTX2 }, // State_FATSHOTX1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MISL, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_FATSHOTX3 }, // State_FATSHOTX2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MISL, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_None }, // State_FATSHOTX3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 0, .brightness = false, .duration = 15, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_FATT_STND2 }, // State_FATT_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 1, .brightness = false, .duration = 15, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_FATT_STND }, // State_FATT_STND2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 0, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN2 }, // State_FATT_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 0, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN3 }, // State_FATT_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 1, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN4 }, // State_FATT_RUN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 1, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN5 }, // State_FATT_RUN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 2, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN6 }, // State_FATT_RUN5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 2, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN7 }, // State_FATT_RUN6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 3, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN8 }, // State_FATT_RUN7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 3, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN9 }, // State_FATT_RUN8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 4, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN10 }, // State_FATT_RUN9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 4, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN11 }, // State_FATT_RUN10
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 5, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN12 }, // State_FATT_RUN11
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 5, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_FATT_RUN1 }, // State_FATT_RUN12
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 6, .brightness = false, .duration = 20, .action = &DOOM::AbstractThing::A_FatRaise, .next = ThingState::State_FATT_ATK2 }, // State_FATT_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 7, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FatAttack1, .next = ThingState::State_FATT_ATK3 }, // State_FATT_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_ATK4 }, // State_FATT_ATK3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 6, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_ATK5 }, // State_FATT_ATK4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 7, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FatAttack2, .next = ThingState::State_FATT_ATK6 }, // State_FATT_ATK5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_ATK7 }, // State_FATT_ATK6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 6, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_ATK8 }, // State_FATT_ATK7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 7, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FatAttack3, .next = ThingState::State_FATT_ATK9 }, // State_FATT_ATK8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_ATK10 }, // State_FATT_ATK9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 6, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_FATT_RUN1 }, // State_FATT_ATK10
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 9, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_FATT_PAIN2 }, // State_FATT_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 9, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_FATT_RUN1 }, // State_FATT_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 10, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE2 }, // State_FATT_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 11, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_FATT_DIE3 }, // State_FATT_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 12, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_FATT_DIE4 }, // State_FATT_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 13, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE5 }, // State_FATT_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 14, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE6 }, // State_FATT_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 15, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE7 }, // State_FATT_DIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 16, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE8 }, // State_FATT_DIE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 17, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE9 }, // State_FATT_DIE8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 18, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_FATT_DIE10 }, // State_FATT_DIE9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 19, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BossDeath, .next = ThingState::State_None }, // State_FATT_DIE10
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE2 }, // State_FATT_RAISE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE3 }, // State_FATT_RAISE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE4 }, // State_FATT_RAISE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 14, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE5 }, // State_FATT_RAISE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE6 }, // State_FATT_RAISE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE7 }, // State_FATT_RAISE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RAISE8 }, // State_FATT_RAISE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FATT, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_FATT_RUN1 }, // State_FATT_RAISE8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_CPOS_STND2 }, // State_CPOS_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_CPOS_STND }, // State_CPOS_STND2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN2 }, // State_CPOS_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN3 }, // State_CPOS_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN4 }, // State_CPOS_RUN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN5 }, // State_CPOS_RUN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN6 }, // State_CPOS_RUN5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN7 }, // State_CPOS_RUN6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN8 }, // State_CPOS_RUN7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CPOS_RUN1 }, // State_CPOS_RUN8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 4, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_CPOS_ATK2 }, // State_CPOS_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 5, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_CPosAttack, .next = ThingState::State_CPOS_ATK3 }, // State_CPOS_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 4, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_CPosAttack, .next = ThingState::State_CPOS_ATK4 }, // State_CPOS_ATK3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 5, .brightness = false, .duration = 1, .action = &DOOM::AbstractThing::A_CPosRefire, .next = ThingState::State_CPOS_ATK2 }, // State_CPOS_ATK4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 6, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_CPOS_PAIN2 }, // State_CPOS_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 6, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_CPOS_RUN1 }, // State_CPOS_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_DIE2 }, // State_CPOS_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 8, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_CPOS_DIE3 }, // State_CPOS_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 9, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_CPOS_DIE4 }, // State_CPOS_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_DIE5 }, // State_CPOS_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_DIE6 }, // State_CPOS_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_DIE7 }, // State_CPOS_DIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 13, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CPOS_DIE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 14, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_XDIE2 }, // State_CPOS_XDIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 15, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_CPOS_XDIE3 }, // State_CPOS_XDIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 16, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_CPOS_XDIE4 }, // State_CPOS_XDIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_XDIE5 }, // State_CPOS_XDIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_XDIE6 }, // State_CPOS_XDIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 19, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CPOS_XDIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE2 }, // State_CPOS_RAISE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE3 }, // State_CPOS_RAISE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE4 }, // State_CPOS_RAISE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE5 }, // State_CPOS_RAISE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE6 }, // State_CPOS_RAISE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RAISE7 }, // State_CPOS_RAISE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CPOS, .frame = 7, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_CPOS_RUN1 }, // State_CPO.next = ThingState::State_RAISE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_TROO_STND2 }, // State_TROO_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_TROO_STND }, // State_TROO_STND2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN2 }, // State_TROO_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN3 }, // State_TROO_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN4 }, // State_TROO_RUN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN5 }, // State_TROO_RUN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN6 }, // State_TROO_RUN5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN7 }, // State_TROO_RUN6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN8 }, // State_TROO_RUN7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_TROO_RUN1 }, // State_TROO_RUN8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 4, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_TROO_ATK2 }, // State_TROO_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 5, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_TROO_ATK3 }, // State_TROO_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 6, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_TroopAttack, .next = ThingState::State_TROO_RUN1 }, // State_TROO_ATK3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 7, .brightness = false, .duration = 2, .action = nullptr, .next = ThingState::State_TROO_PAIN2 }, // State_TROO_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 7, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_TROO_RUN1 }, // State_TROO_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_TROO_DIE2 }, // State_TROO_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 9, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_TROO_DIE3 }, // State_TROO_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 10, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_TROO_DIE4 }, // State_TROO_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 11, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_TROO_DIE5 }, // State_TROO_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 12, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TROO_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_TROO_XDIE2 }, // State_TROO_XDIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 14, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_TROO_XDIE3 }, // State_TROO_XDIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_TROO_XDIE4 }, // State_TROO_XDIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 16, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_TROO_XDIE5 }, // State_TROO_XDIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_TROO_XDIE6 }, // State_TROO_XDIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_TROO_XDIE7 }, // State_TROO_XDIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 19, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_TROO_XDIE8 }, // State_TROO_XDIE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 20, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TROO_XDIE8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_TROO_RAISE2 }, // State_TROO_RAISE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 11, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_TROO_RAISE3 }, // State_TROO_RAISE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 10, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_TROO_RAISE4 }, // State_TROO_RAISE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 9, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_TROO_RAISE5 }, // State_TROO_RAISE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 8, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_TROO_RUN1 }, // State_TROO_RAISE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SARG_STND2 }, // State_SARG_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SARG_STND }, // State_SARG_STND2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN2 }, // State_SARG_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 0, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN3 }, // State_SARG_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN4 }, // State_SARG_RUN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 1, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN5 }, // State_SARG_RUN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN6 }, // State_SARG_RUN5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 2, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN7 }, // State_SARG_RUN6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN8 }, // State_SARG_RUN7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 3, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SARG_RUN1 }, // State_SARG_RUN8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 4, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SARG_ATK2 }, // State_SARG_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 5, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SARG_ATK3 }, // State_SARG_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 6, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_SargAttack, .next = ThingState::State_SARG_RUN1 }, // State_SARG_ATK3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 7, .brightness = false, .duration = 2, .action = nullptr, .next = ThingState::State_SARG_PAIN2 }, // State_SARG_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 7, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SARG_RUN1 }, // State_SARG_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_SARG_DIE2 }, // State_SARG_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 9, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SARG_DIE3 }, // State_SARG_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 10, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SARG_DIE4 }, // State_SARG_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 11, .brightness = false, .duration = 4, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SARG_DIE5 }, // State_SARG_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 12, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_SARG_DIE6 }, // State_SARG_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 13, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SARG_DIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RAISE2 }, // State_SARG_RAISE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RAISE3 }, // State_SARG_RAISE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RAISE4 }, // State_SARG_RAISE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RAISE5 }, // State_SARG_RAISE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RAISE6 }, // State_SARG_RAISE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SARG, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SARG_RUN1 }, // State_SARG_RAISE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_HEAD_STND }, // State_HEAD_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_HEAD_RUN1 }, // State_HEAD_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 1, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_HEAD_ATK2 }, // State_HEAD_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 2, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_HEAD_ATK3 }, // State_HEAD_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 3, .brightness = true, .duration = 5, .action = &DOOM::AbstractThing::A_HeadAttack, .next = ThingState::State_HEAD_RUN1 }, // State_HEAD_ATK3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 4, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_HEAD_PAIN2 }, // State_HEAD_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 4, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_HEAD_PAIN3 }, // State_HEAD_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 5, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_HEAD_RUN1 }, // State_HEAD_PAIN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 6, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_DIE2 }, // State_HEAD_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 7, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_HEAD_DIE3 }, // State_HEAD_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_DIE4 }, // State_HEAD_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 9, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_DIE5 }, // State_HEAD_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 10, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_HEAD_DIE6 }, // State_HEAD_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 11, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HEAD_DIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 11, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RAISE2 }, // State_HEAD_RAISE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RAISE3 }, // State_HEAD_RAISE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 9, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RAISE4 }, // State_HEAD_RAISE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RAISE5 }, // State_HEAD_RAISE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 7, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RAISE6 }, // State_HEAD_RAISE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HEAD, .frame = 6, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_HEAD_RUN1 }, // State_HEAD_RAISE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAL7, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BRBALL2 }, // State_BRBALL1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAL7, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BRBALL1 }, // State_BRBALL2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAL7, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_BRBALLX2 }, // State_BRBALLX1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAL7, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_BRBALLX3 }, // State_BRBALLX2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAL7, .frame = 4, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_BRBALLX3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BOSS_STND2 }, // State_BOSS_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BOSS_STND }, // State_BOSS_STND2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN2 }, // State_BOSS_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN3 }, // State_BOSS_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN4 }, // State_BOSS_RUN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN5 }, // State_BOSS_RUN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN6 }, // State_BOSS_RUN5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN7 }, // State_BOSS_RUN6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN8 }, // State_BOSS_RUN7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOSS_RUN1 }, // State_BOSS_RUN8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 4, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_BOSS_ATK2 }, // State_BOSS_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 5, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_BOSS_ATK3 }, // State_BOSS_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 6, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_BruisAttack, .next = ThingState::State_BOSS_RUN1 }, // State_BOSS_ATK3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 7, .brightness = false, .duration = 2, .action = nullptr, .next = ThingState::State_BOSS_PAIN2 }, // State_BOSS_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 7, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_BOSS_RUN1 }, // State_BOSS_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_DIE2 }, // State_BOSS_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 9, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_BOSS_DIE3 }, // State_BOSS_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_DIE4 }, // State_BOSS_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 11, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_BOSS_DIE5 }, // State_BOSS_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_DIE6 }, // State_BOSS_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 13, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_DIE7 }, // State_BOSS_DIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 14, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BossDeath, .next = ThingState::State_None }, // State_BOSS_DIE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 14, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE2 }, // State_BOSS_RAISE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 13, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE3 }, // State_BOSS_RAISE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE4 }, // State_BOSS_RAISE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 11, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE5 }, // State_BOSS_RAISE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE6 }, // State_BOSS_RAISE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 9, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RAISE7 }, // State_BOSS_RAISE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSS, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOSS_RUN1 }, // State_BOSS_RAISE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BOS2_STND2 }, // State_BOS2_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BOS2_STND }, // State_BOS2_STND2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN2 }, // State_BOS2_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN3 }, // State_BOS2_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN4 }, // State_BOS2_RUN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN5 }, // State_BOS2_RUN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN6 }, // State_BOS2_RUN5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN7 }, // State_BOS2_RUN6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN8 }, // State_BOS2_RUN7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BOS2_RUN1 }, // State_BOS2_RUN8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 4, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_BOS2_ATK2 }, // State_BOS2_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 5, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_BOS2_ATK3 }, // State_BOS2_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 6, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_BruisAttack, .next = ThingState::State_BOS2_RUN1 }, // State_BOS2_ATK3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 7, .brightness = false, .duration = 2, .action = nullptr, .next = ThingState::State_BOS2_PAIN2 }, // State_BOS2_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 7, .brightness = false, .duration = 2, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_BOS2_RUN1 }, // State_BOS2_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_DIE2 }, // State_BOS2_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 9, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_BOS2_DIE3 }, // State_BOS2_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_DIE4 }, // State_BOS2_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 11, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_BOS2_DIE5 }, // State_BOS2_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_DIE6 }, // State_BOS2_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 13, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_DIE7 }, // State_BOS2_DIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 14, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BOS2_DIE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 14, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE2 }, // State_BOS2_RAISE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 13, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE3 }, // State_BOS2_RAISE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE4 }, // State_BOS2_RAISE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 11, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE5 }, // State_BOS2_RAISE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE6 }, // State_BOS2_RAISE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 9, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RAISE7 }, // State_BOS2_RAISE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOS2, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BOS2_RUN1 }, // State_BOS2_RAISE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKUL, .frame = 0, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SKULL_STND2 }, // State_SKULL_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKUL, .frame = 1, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SKULL_STND }, // State_SKULL_STND2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKUL, .frame = 0, .brightness = true, .duration = 6, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKULL_RUN2 }, // State_SKULL_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKUL, .frame = 1, .brightness = true, .duration = 6, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SKULL_RUN1 }, // State_SKULL_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKUL, .frame = 2, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SKULL_ATK2 }, // State_SKULL_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKUL, .frame = 3, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_SkullAttack, .next = ThingState::State_SKULL_ATK3 }, // State_SKULL_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKUL, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_SKULL_ATK4 }, // State_SKULL_ATK3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKUL, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_SKULL_ATK3 }, // State_SKULL_ATK4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKUL, .frame = 4, .brightness = true, .duration = 3, .action = nullptr, .next = ThingState::State_SKULL_PAIN2 }, // State_SKULL_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKUL, .frame = 4, .brightness = true, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SKULL_RUN1 }, // State_SKULL_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKUL, .frame = 5, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SKULL_DIE2 }, // State_SKULL_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKUL, .frame = 6, .brightness = true, .duration = 6, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SKULL_DIE3 }, // State_SKULL_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKUL, .frame = 7, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SKULL_DIE4 }, // State_SKULL_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKUL, .frame = 8, .brightness = true, .duration = 6, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SKULL_DIE5 }, // State_SKULL_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKUL, .frame = 9, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_SKULL_DIE6 }, // State_SKULL_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SKUL, .frame = 10, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_None }, // State_SKULL_DIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SPID_STND2 }, // State_SPID_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SPID_STND }, // State_SPID_STND2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Metal, .next = ThingState::State_SPID_RUN2 }, // State_SPID_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN3 }, // State_SPID_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN4 }, // State_SPID_RUN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN5 }, // State_SPID_RUN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Metal, .next = ThingState::State_SPID_RUN6 }, // State_SPID_RUN5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN7 }, // State_SPID_RUN6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN8 }, // State_SPID_RUN7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN9 }, // State_SPID_RUN8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 4, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Metal, .next = ThingState::State_SPID_RUN10 }, // State_SPID_RUN9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 4, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN11 }, // State_SPID_RUN10
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 5, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN12 }, // State_SPID_RUN11
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 5, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SPID_RUN1 }, // State_SPID_RUN12
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 0, .brightness = true, .duration = 20, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SPID_ATK2 }, // State_SPID_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 6, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_SPosAttack, .next = ThingState::State_SPID_ATK3 }, // State_SPID_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 7, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_SPosAttack, .next = ThingState::State_SPID_ATK4 }, // State_SPID_ATK3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 7, .brightness = true, .duration = 1, .action = &DOOM::AbstractThing::A_SpidRefire, .next = ThingState::State_SPID_ATK2 }, // State_SPID_ATK4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 8, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_SPID_PAIN2 }, // State_SPID_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 8, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SPID_RUN1 }, // State_SPID_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 9, .brightness = false, .duration = 20, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SPID_DIE2 }, // State_SPID_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 10, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SPID_DIE3 }, // State_SPID_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 11, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE4 }, // State_SPID_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 12, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE5 }, // State_SPID_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 13, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE6 }, // State_SPID_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 14, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE7 }, // State_SPID_DIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 15, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE8 }, // State_SPID_DIE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 16, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE9 }, // State_SPID_DIE8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 17, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_SPID_DIE10 }, // State_SPID_DIE9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 18, .brightness = false, .duration = 30, .action = nullptr, .next = ThingState::State_SPID_DIE11 }, // State_SPID_DIE10
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SPID, .frame = 18, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BossDeath, .next = ThingState::State_None }, // State_SPID_DIE11
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BSPI_STND2 }, // State_BSPI_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BSPI_STND }, // State_BSPI_STND2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 0, .brightness = false, .duration = 20, .action = nullptr, .next = ThingState::State_BSPI_RUN1 }, // State_BSPI_SIGHT
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_BabyMetal, .next = ThingState::State_BSPI_RUN2 }, // State_BSPI_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN3 }, // State_BSPI_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN4 }, // State_BSPI_RUN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN5 }, // State_BSPI_RUN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN6 }, // State_BSPI_RUN5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN7 }, // State_BSPI_RUN6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_BabyMetal, .next = ThingState::State_BSPI_RUN8 }, // State_BSPI_RUN7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN9 }, // State_BSPI_RUN8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 4, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN10 }, // State_BSPI_RUN9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 4, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN11 }, // State_BSPI_RUN10
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 5, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN12 }, // State_BSPI_RUN11
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 5, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_BSPI_RUN1 }, // State_BSPI_RUN12
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 0, .brightness = true, .duration = 20, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_BSPI_ATK2 }, // State_BSPI_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 6, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_BspiAttack, .next = ThingState::State_BSPI_ATK3 }, // State_BSPI_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 7, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BSPI_ATK4 }, // State_BSPI_ATK3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 7, .brightness = true, .duration = 1, .action = &DOOM::AbstractThing::A_SpidRefire, .next = ThingState::State_BSPI_ATK2 }, // State_BSPI_ATK4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 8, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_BSPI_PAIN2 }, // State_BSPI_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 8, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_BSPI_RUN1 }, // State_BSPI_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 9, .brightness = false, .duration = 20, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_BSPI_DIE2 }, // State_BSPI_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 10, .brightness = false, .duration = 7, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_BSPI_DIE3 }, // State_BSPI_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 11, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_BSPI_DIE4 }, // State_BSPI_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 12, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_BSPI_DIE5 }, // State_BSPI_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 13, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_BSPI_DIE6 }, // State_BSPI_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 14, .brightness = false, .duration = 7, .action = nullptr, .next = ThingState::State_BSPI_DIE7 }, // State_BSPI_DIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 15, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BossDeath, .next = ThingState::State_None }, // State_BSPI_DIE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 15, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE2 }, // State_BSPI_RAISE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 14, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE3 }, // State_BSPI_RAISE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE4 }, // State_BSPI_RAISE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE5 }, // State_BSPI_RAISE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE6 }, // State_BSPI_RAISE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RAISE7 }, // State_BSPI_RAISE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSPI, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_BSPI_RUN1 }, // State_BSPI_RAISE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_APLS, .frame = 0, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLAZ2 }, // State_ARACH_PLAZ
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_APLS, .frame = 1, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLAZ }, // State_ARACH_PLAZ2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_APBX, .frame = 0, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLEX2 }, // State_ARACH_PLEX
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_APBX, .frame = 1, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLEX3 }, // State_ARACH_PLEX2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_APBX, .frame = 2, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLEX4 }, // State_ARACH_PLEX3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_APBX, .frame = 3, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_ARACH_PLEX5 }, // State_ARACH_PLEX4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_APBX, .frame = 4, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_None }, // State_ARACH_PLEX5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_CYBER_STND2 }, // State_CYBER_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_CYBER_STND }, // State_CYBER_STND2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Hoof, .next = ThingState::State_CYBER_RUN2 }, // State_CYBER_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN3 }, // State_CYBER_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN4 }, // State_CYBER_RUN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN5 }, // State_CYBER_RUN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN6 }, // State_CYBER_RUN5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN7 }, // State_CYBER_RUN6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Metal, .next = ThingState::State_CYBER_RUN8 }, // State_CYBER_RUN7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_CYBER_RUN1 }, // State_CYBER_RUN8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 4, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_CYBER_ATK2 }, // State_CYBER_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 5, .brightness = false, .duration = 12, .action = &DOOM::AbstractThing::A_CyberAttack, .next = ThingState::State_CYBER_ATK3 }, // State_CYBER_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 4, .brightness = false, .duration = 12, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_CYBER_ATK4 }, // State_CYBER_ATK3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 5, .brightness = false, .duration = 12, .action = &DOOM::AbstractThing::A_CyberAttack, .next = ThingState::State_CYBER_ATK5 }, // State_CYBER_ATK4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 4, .brightness = false, .duration = 12, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_CYBER_ATK6 }, // State_CYBER_ATK5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 5, .brightness = false, .duration = 12, .action = &DOOM::AbstractThing::A_CyberAttack, .next = ThingState::State_CYBER_RUN1 }, // State_CYBER_ATK6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 6, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_CYBER_RUN1 }, // State_CYBER_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 7, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE2 }, // State_CYBER_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 8, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_CYBER_DIE3 }, // State_CYBER_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 9, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE4 }, // State_CYBER_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 10, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE5 }, // State_CYBER_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 11, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE6 }, // State_CYBER_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 12, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_CYBER_DIE7 }, // State_CYBER_DIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 13, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE8 }, // State_CYBER_DIE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 14, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_CYBER_DIE9 }, // State_CYBER_DIE8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 15, .brightness = false, .duration = 30, .action = nullptr, .next = ThingState::State_CYBER_DIE10 }, // State_CYBER_DIE9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CYBR, .frame = 15, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BossDeath, .next = ThingState::State_None }, // State_CYBER_DIE10
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_PAIN_STND }, // State_PAIN_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN2 }, // State_PAIN_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN3 }, // State_PAIN_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN4 }, // State_PAIN_RUN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN5 }, // State_PAIN_RUN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN6 }, // State_PAIN_RUN5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_PAIN_RUN1 }, // State_PAIN_RUN6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 3, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_PAIN_ATK2 }, // State_PAIN_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 4, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_PAIN_ATK3 }, // State_PAIN_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 5, .brightness = true, .duration = 5, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_PAIN_ATK4 }, // State_PAIN_ATK3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 5, .brightness = true, .duration = 0, .action = &DOOM::AbstractThing::A_PainAttack, .next = ThingState::State_PAIN_RUN1 }, // State_PAIN_ATK4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 6, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_PAIN_PAIN2 }, // State_PAIN_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 6, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_PAIN_RUN1 }, // State_PAIN_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 7, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_DIE2 }, // State_PAIN_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 8, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_PAIN_DIE3 }, // State_PAIN_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 9, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_DIE4 }, // State_PAIN_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 10, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_DIE5 }, // State_PAIN_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 11, .brightness = true, .duration = 8, .action = &DOOM::AbstractThing::A_PainDie, .next = ThingState::State_PAIN_DIE6 }, // State_PAIN_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 12, .brightness = true, .duration = 8, .action = nullptr, .next = ThingState::State_None }, // State_PAIN_DIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 12, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RAISE2 }, // State_PAIN_RAISE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 11, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RAISE3 }, // State_PAIN_RAISE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 10, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RAISE4 }, // State_PAIN_RAISE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 9, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RAISE5 }, // State_PAIN_RAISE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 8, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RAISE6 }, // State_PAIN_RAISE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PAIN, .frame = 7, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_PAIN_RUN1 }, // State_PAIN_RAISE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SSWV_STND2 }, // State_SSWV_STND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_SSWV_STND }, // State_SSWV_STND2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN2 }, // State_SSWV_RUN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN3 }, // State_SSWV_RUN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN4 }, // State_SSWV_RUN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 1, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN5 }, // State_SSWV_RUN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN6 }, // State_SSWV_RUN5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 2, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN7 }, // State_SSWV_RUN6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN8 }, // State_SSWV_RUN7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 3, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Chase, .next = ThingState::State_SSWV_RUN1 }, // State_SSWV_RUN8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 4, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SSWV_ATK2 }, // State_SSWV_ATK1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 5, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SSWV_ATK3 }, // State_SSWV_ATK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 6, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_CPosAttack, .next = ThingState::State_SSWV_ATK4 }, // State_SSWV_ATK3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 5, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_FaceTarget, .next = ThingState::State_SSWV_ATK5 }, // State_SSWV_ATK4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 6, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_CPosAttack, .next = ThingState::State_SSWV_ATK6 }, // State_SSWV_ATK5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 5, .brightness = false, .duration = 1, .action = &DOOM::AbstractThing::A_CPosRefire, .next = ThingState::State_SSWV_ATK2 }, // State_SSWV_ATK6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 7, .brightness = false, .duration = 3, .action = nullptr, .next = ThingState::State_SSWV_PAIN2 }, // State_SSWV_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 7, .brightness = false, .duration = 3, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_SSWV_RUN1 }, // State_SSWV_PAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_DIE2 }, // State_SSWV_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 9, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_SSWV_DIE3 }, // State_SSWV_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 10, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SSWV_DIE4 }, // State_SSWV_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_DIE5 }, // State_SSWV_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 12, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SSWV_DIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 13, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE2 }, // State_SSWV_XDIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 14, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_XScream, .next = ThingState::State_SSWV_XDIE3 }, // State_SSWV_XDIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 15, .brightness = false, .duration = 5, .action = &DOOM::AbstractThing::A_Fall, .next = ThingState::State_SSWV_XDIE4 }, // State_SSWV_XDIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 16, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE5 }, // State_SSWV_XDIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 17, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE6 }, // State_SSWV_XDIE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 18, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE7 }, // State_SSWV_XDIE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 19, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE8 }, // State_SSWV_XDIE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 20, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_XDIE9 }, // State_SSWV_XDIE8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 21, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SSWV_XDIE9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 12, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_RAISE2 }, // State_SSWV_RAISE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 11, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_RAISE3 }, // State_SSWV_RAISE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 10, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_RAISE4 }, // State_SSWV_RAISE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 9, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_RAISE5 }, // State_SSWV_RAISE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 8, .brightness = false, .duration = 5, .action = nullptr, .next = ThingState::State_SSWV_RUN1 }, // State_SSWV_RAISE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_KEEN, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_KEENSTND }, // State_KEENSTND
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_KEEN, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN2 }, // State_COMMKEEN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_KEEN, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN3 }, // State_COMMKEEN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_KEEN, .frame = 2, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_COMMKEEN4 }, // State_COMMKEEN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_KEEN, .frame = 3, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN5 }, // State_COMMKEEN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_KEEN, .frame = 4, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN6 }, // State_COMMKEEN5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_KEEN, .frame = 5, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN7 }, // State_COMMKEEN6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_KEEN, .frame = 6, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN8 }, // State_COMMKEEN7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_KEEN, .frame = 7, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN9 }, // State_COMMKEEN8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_KEEN, .frame = 8, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN10 }, // State_COMMKEEN9
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_KEEN, .frame = 9, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_COMMKEEN11 }, // State_COMMKEEN10
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_KEEN, .frame = 10, .brightness = false, .duration = 6, .action = &DOOM::AbstractThing::A_KeenDie, .next = ThingState::State_COMMKEEN12 }, // State_COMMKEEN11
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_KEEN, .frame = 11, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_COMMKEEN12
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_KEEN, .frame = 12, .brightness = false, .duration = 4, .action = nullptr, .next = ThingState::State_KEENPAIN2 }, // State_KEENPAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_KEEN, .frame = 12, .brightness = false, .duration = 8, .action = &DOOM::AbstractThing::A_Pain, .next = ThingState::State_KEENSTND }, // State_KEENPAIN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BBRN, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BRAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BBRN, .frame = 1, .brightness = false, .duration = 36, .action = &DOOM::AbstractThing::A_BrainPain, .next = ThingState::State_BRAIN }, // State_BRAIN_PAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BBRN, .frame = 0, .brightness = false, .duration = 100, .action = &DOOM::AbstractThing::A_BrainScream, .next = ThingState::State_BRAIN_DIE2 }, // State_BRAIN_DIE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BBRN, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_BRAIN_DIE3 }, // State_BRAIN_DIE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BBRN, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_BRAIN_DIE4 }, // State_BRAIN_DIE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BBRN, .frame = 0, .brightness = false, .duration = -1, .action = &DOOM::AbstractThing::A_BrainDie, .next = ThingState::State_None }, // State_BRAIN_DIE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 10, .action = &DOOM::AbstractThing::A_Look, .next = ThingState::State_BRAINEYE }, // State_BRAINEYE
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 181, .action = &DOOM::AbstractThing::A_BrainAwake, .next = ThingState::State_BRAINEYE1 }, // State_BRAINEYESEE
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SSWV, .frame = 0, .brightness = false, .duration = 150, .action = &DOOM::AbstractThing::A_BrainSpit, .next = ThingState::State_BRAINEYE1 }, // State_BRAINEYE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSF, .frame = 0, .brightness = true, .duration = 3, .action = &DOOM::AbstractThing::A_SpawnSound, .next = ThingState::State_SPAWN2 }, // State_SPAWN1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSF, .frame = 1, .brightness = true, .duration = 3, .action = &DOOM::AbstractThing::A_SpawnFly, .next = ThingState::State_SPAWN3 }, // State_SPAWN2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSF, .frame = 2, .brightness = true, .duration = 3, .action = &DOOM::AbstractThing::A_SpawnFly, .next = ThingState::State_SPAWN4 }, // State_SPAWN3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BOSF, .frame = 3, .brightness = true, .duration = 3, .action = &DOOM::AbstractThing::A_SpawnFly, .next = ThingState::State_SPAWN1 }, // State_SPAWN4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 0, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE2 }, // State_SPAWNFIRE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 1, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE3 }, // State_SPAWNFIRE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 2, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE4 }, // State_SPAWNFIRE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 3, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE5 }, // State_SPAWNFIRE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 4, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE6 }, // State_SPAWNFIRE5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 5, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE7 }, // State_SPAWNFIRE6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 6, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_SPAWNFIRE8 }, // State_SPAWNFIRE7
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FIRE, .frame = 7, .brightness = true, .duration = 4, .action = &DOOM::AbstractThing::A_Fire, .next = ThingState::State_None }, // State_SPAWNFIRE8
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MISL, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_BRAINEXPLODE2 }, // State_BRAINEXPLODE1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MISL, .frame = 2, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_BRAINEXPLODE3 }, // State_BRAINEXPLODE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MISL, .frame = 3, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_BrainExplode, .next = ThingState::State_None }, // State_BRAINEXPLODE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_ARM1, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_ARM1A }, // State_ARM1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_ARM1, .frame = 1, .brightness = true, .duration = 7, .action = nullptr, .next = ThingState::State_ARM1 }, // State_ARM1A
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_ARM2, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_ARM2A }, // State_ARM2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_ARM2, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_ARM2 }, // State_ARM2A
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAR1, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BAR2 }, // State_BAR1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BAR1, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BAR1 }, // State_BAR2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BEXP, .frame = 0, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_BEXP2 }, // State_BEXP
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BEXP, .frame = 1, .brightness = true, .duration = 5, .action = &DOOM::AbstractThing::A_Scream, .next = ThingState::State_BEXP3 }, // State_BEXP2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BEXP, .frame = 2, .brightness = true, .duration = 5, .action = nullptr, .next = ThingState::State_BEXP4 }, // State_BEXP3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BEXP, .frame = 3, .brightness = true, .duration = 10, .action = &DOOM::AbstractThing::A_Explode, .next = ThingState::State_BEXP5 }, // State_BEXP4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BEXP, .frame = 4, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_None }, // State_BEXP5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FCAN, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BBAR2 }, // State_BBAR1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FCAN, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BBAR3 }, // State_BBAR2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FCAN, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BBAR1 }, // State_BBAR3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BON1, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1A }, // State_BON1
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BON1, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1B }, // State_BON1A
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BON1, .frame = 2, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1C }, // State_BON1B
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BON1, .frame = 3, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1D }, // State_BON1C
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BON1, .frame = 2, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1E }, // State_BON1D
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BON1, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON1 }, // State_BON1E
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BON2, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2A }, // State_BON2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BON2, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2B }, // State_BON2A
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BON2, .frame = 2, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2C }, // State_BON2B
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BON2, .frame = 3, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2D }, // State_BON2C
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BON2, .frame = 2, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2E }, // State_BON2D
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BON2, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BON2 }, // State_BON2E
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BKEY, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_BKEY2 }, // State_BKEY
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BKEY, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_BKEY }, // State_BKEY2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_RKEY, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_RKEY2 }, // State_RKEY
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_RKEY, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_RKEY }, // State_RKEY2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_YKEY, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_YKEY2 }, // State_YKEY
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_YKEY, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_YKEY }, // State_YKEY2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSKU, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_BSKULL2 }, // State_BSKULL
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BSKU, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_BSKULL }, // State_BSKULL2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_RSKU, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_RSKULL2 }, // State_RSKULL
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_RSKU, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_RSKULL }, // State_RSKULL2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_YSKU, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_YSKULL2 }, // State_YSKULL
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_YSKU, .frame = 1, .brightness = true, .duration = 10, .action = nullptr, .next = ThingState::State_YSKULL }, // State_YSKULL2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_STIM, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_STIM
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MEDI, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MEDI
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SOUL, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL2 }, // State_SOUL
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SOUL, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL3 }, // State_SOUL2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SOUL, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL4 }, // State_SOUL3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SOUL, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL5 }, // State_SOUL4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SOUL, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL6 }, // State_SOUL5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SOUL, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_SOUL }, // State_SOUL6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PINV, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINV2 }, // State_PINV
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PINV, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINV3 }, // State_PINV2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PINV, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINV4 }, // State_PINV3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PINV, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINV }, // State_PINV4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PSTR, .frame = 0, .brightness = true, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_PSTR
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PINS, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINS2 }, // State_PINS
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PINS, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINS3 }, // State_PINS2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PINS, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINS4 }, // State_PINS3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PINS, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PINS }, // State_PINS4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MEGA, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_MEGA2 }, // State_MEGA
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MEGA, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_MEGA3 }, // State_MEGA2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MEGA, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_MEGA4 }, // State_MEGA3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MEGA, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_MEGA }, // State_MEGA4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SUIT, .frame = 0, .brightness = true, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SUIT
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PMAP, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP2 }, // State_PMAP
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PMAP, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP3 }, // State_PMAP2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PMAP, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP4 }, // State_PMAP3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PMAP, .frame = 3, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP5 }, // State_PMAP4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PMAP, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP6 }, // State_PMAP5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PMAP, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PMAP }, // State_PMAP6
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PVIS, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_PVIS2 }, // State_PVIS
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PVIS, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_PVIS }, // State_PVIS2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CLIP, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CLIP
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_AMMO, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_AMMO
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_ROCK, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_ROCK
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BROK, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BROK
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CELL, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CELL
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CELP, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CELP
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SHEL, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SHEL
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SBOX, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SBOX
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BPAK, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BPAK
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BFUG, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BFUG
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_MGUN, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MGUN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CSAW, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CSAW
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_LAUN, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_LAUN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAS, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_PLAS
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SHOT, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SHOT
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SGN2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SHOT2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_COLU, .frame = 0, .brightness = true, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_COLU
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SMT2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_STALAG
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_GOR1, .frame = 0, .brightness = false, .duration = 10, .action = nullptr, .next = ThingState::State_BLOODYTWITCH2 }, // State_BLOODYTWITCH
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_GOR1, .frame = 1, .brightness = false, .duration = 15, .action = nullptr, .next = ThingState::State_BLOODYTWITCH3 }, // State_BLOODYTWITCH2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_GOR1, .frame = 2, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BLOODYTWITCH4 }, // State_BLOODYTWITCH3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_GOR1, .frame = 1, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_BLOODYTWITCH }, // State_BLOODYTWITCH4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 13, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_DEADTORSO
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_PLAY, .frame = 18, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_DEADBOTTOM
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POL2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HEADSONSTICK
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POL5, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_GIBS
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POL4, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HEADONASTICK
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POL3, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_HEADCANDLES2 }, // State_HEADCANDLES
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POL3, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_HEADCANDLES }, // State_HEADCANDLES2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POL1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_DEADSTICK
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POL6, .frame = 0, .brightness = false, .duration = 6, .action = nullptr, .next = ThingState::State_LIVESTICK2 }, // State_LIVESTICK
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POL6, .frame = 1, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_LIVESTICK }, // State_LIVESTICK2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_GOR2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MEAT2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_GOR3, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MEAT3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_GOR4, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MEAT4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_GOR5, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_MEAT5
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SMIT, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_STALAGTITE
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_COL1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TALLGRNCOL
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_COL2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SHRTGRNCOL
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_COL3, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TALLREDCOL
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_COL4, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SHRTREDCOL
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CAND, .frame = 0, .brightness = true, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CANDLESTIK
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CBRA, .frame = 0, .brightness = true, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_CANDELABRA
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_COL6, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SKULLCOL
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TRE1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TORCHTREE
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TRE2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BIGTREE
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_ELEC, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_TECHPILLAR
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CEYE, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_EVILEYE2 }, // State_EVILEYE
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CEYE, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_EVILEYE3 }, // State_EVILEYE2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CEYE, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_EVILEYE4 }, // State_EVILEYE3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_CEYE, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_EVILEYE }, // State_EVILEYE4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FSKU, .frame = 0, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_FLOATSKULL2 }, // State_FLOATSKULL
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FSKU, .frame = 1, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_FLOATSKULL3 }, // State_FLOATSKULL2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_FSKU, .frame = 2, .brightness = true, .duration = 6, .action = nullptr, .next = ThingState::State_FLOATSKULL }, // State_FLOATSKULL3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_COL5, .frame = 0, .brightness = false, .duration = 14, .action = nullptr, .next = ThingState::State_HEARTCOL2 }, // State_HEARTCOL
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_COL5, .frame = 1, .brightness = false, .duration = 14, .action = nullptr, .next = ThingState::State_HEARTCOL }, // State_HEARTCOL2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TBLU, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BLUETORCH2 }, // State_BLUETORCH
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TBLU, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BLUETORCH3 }, // State_BLUETORCH2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TBLU, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BLUETORCH4 }, // State_BLUETORCH3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TBLU, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BLUETORCH }, // State_BLUETORCH4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TGRN, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GREENTORCH2 }, // State_GREENTORCH
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TGRN, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GREENTORCH3 }, // State_GREENTORCH2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TGRN, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GREENTORCH4 }, // State_GREENTORCH3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TGRN, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GREENTORCH }, // State_GREENTORCH4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TRED, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_REDTORCH2 }, // State_REDTORCH
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TRED, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_REDTORCH3 }, // State_REDTORCH2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TRED, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_REDTORCH4 }, // State_REDTORCH3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TRED, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_REDTORCH }, // State_REDTORCH4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SMBT, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BTORCHSHRT2 }, // State_BTORCHSHRT
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SMBT, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BTORCHSHRT3 }, // State_BTORCHSHRT2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SMBT, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BTORCHSHRT4 }, // State_BTORCHSHRT3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SMBT, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_BTORCHSHRT }, // State_BTORCHSHRT4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SMGT, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GTORCHSHRT2 }, // State_GTORCHSHRT
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SMGT, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GTORCHSHRT3 }, // State_GTORCHSHRT2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SMGT, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GTORCHSHRT4 }, // State_GTORCHSHRT3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SMGT, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_GTORCHSHRT }, // State_GTORCHSHRT4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SMRT, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RTORCHSHRT2 }, // State_RTORCHSHRT
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SMRT, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RTORCHSHRT3 }, // State_RTORCHSHRT2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SMRT, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RTORCHSHRT4 }, // State_RTORCHSHRT3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_SMRT, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_RTORCHSHRT }, // State_RTORCHSHRT4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HDB1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGNOGUTS
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HDB2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGBNOBRAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HDB3, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGTLOOKDN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HDB4, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGTSKULL
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HDB5, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGTLOOKUP
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_HDB6, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_HANGTNOBRAIN
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POB1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_COLONGIBS
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_POB2, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_SMALLPOOL
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BRS1, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_BRAINSTEM
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TLMP, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECHLAMP2 }, // State_TECHLAMP
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TLMP, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECHLAMP3 }, // State_TECHLAMP2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TLMP, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECHLAMP4 }, // State_TECHLAMP3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TLMP, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECHLAMP }, // State_TECHLAMP4
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TLP2, .frame = 0, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECH2LAMP2 }, // State_TECH2LAMP
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TLP2, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECH2LAMP3 }, // State_TECH2LAMP2
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TLP2, .frame = 2, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECH2LAMP4 }, // State_TECH2LAMP3
+  DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TLP2, .frame = 3, .brightness = true, .duration = 4, .action = nullptr, .next = ThingState::State_TECH2LAMP } // State_TECH2LAMP4
 };
 
 const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingType_Number>DOOM::AbstractThing::_attributs =
@@ -2157,7 +2157,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
     .sound_pain = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
     .sound_death = DOOM::Doom::Resources::Sound::EnumSound::Sound_None,
     .sound_active = DOOM::Doom::Resources::Sound::EnumSound::Sound_None
-  },  
+  },
   DOOM::AbstractThing::Attributs{ // Type_MISC3
     .id = 2015,
     .spawnhealth = 1000,
@@ -6956,7 +6956,9 @@ void  DOOM::AbstractThing::A_KeenDie(DOOM::Doom& doom)
   // Lower floor to lowest neighbor
   for (DOOM::Doom::Level::Sector& sector : doom.level.sectors)
     if (sector.tag == 666)
-      sector.action<DOOM::Doom::Level::Sector::Action::Leveling>(doom, 23);
+      sector.action<DOOM::Doom::Level::Sector::Action::Leveling>(doom, 2);
+
+  // NOTE: because of sphere collision instead of square, player can't jump on Keen platform
 }
 
 void  DOOM::AbstractThing::A_BossDeath(DOOM::Doom& doom)

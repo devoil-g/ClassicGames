@@ -1356,7 +1356,7 @@ bool  DOOM::PlayerThing::control(DOOM::PlayerThing::Control action, bool pressed
     else if (action == DOOM::PlayerThing::Control::ControlMode)
       return (pressed == true) ? Game::Window::Instance().joystick().buttonPressed(controller - 1, 3) : Game::Window::Instance().joystick().buttonDown(controller - 1, 3);
     else if (action == DOOM::PlayerThing::Control::ControlGrid)
-      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovX) != 0.f : Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovX) != 0.f;
+      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovX) > 0.f : Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovX) != 0.f;
     else if (action == DOOM::PlayerThing::Control::ControlZoom)
       return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovY) > 0.f : Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovY) > 0.f;
     else if (action == DOOM::PlayerThing::Control::ControlUnzoom)
