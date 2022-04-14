@@ -2,6 +2,7 @@
 
 #include "System/Library/FontLibrary.hpp"
 #include "Doom/Scenes/DoomScene.hpp"
+#include "GameBoyColor/EmulationScene.hpp"
 #include "Scenes/Menu/MainMenuScene.hpp"
 #include "Scenes/Menu/OptionsMenuScene.hpp"
 #include "Scenes/LoadingScene.hpp"
@@ -20,7 +21,8 @@ Game::MainMenuScene::MainMenuScene(Game::SceneMachine& machine) :
   menu() = {
     Game::AbstractMenuScene::Item("DOOM", font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath + "assets/levels/doom.wad", DOOM::Enum::Mode::ModeRetail))),
     Game::AbstractMenuScene::Item("DOOM II", font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath + "assets/levels/doom2.wad", DOOM::Enum::Mode::ModeCommercial))),
-    Game::AbstractMenuScene::Item("Options", font, std::function<void(Game::AbstractMenuScene::Item &)>(std::bind(&Game::MainMenuScene::selectOptions, this, std::placeholders::_1))),
+    Game::AbstractMenuScene::Item("Game Boy", font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectGameBoy, this, std::placeholders::_1))),
+    Game::AbstractMenuScene::Item("Options", font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectOptions, this, std::placeholders::_1))),
     Game::AbstractMenuScene::Item("Exit", font, std::function<void(Game::AbstractMenuScene::Item &)>(std::bind(&Game::MainMenuScene::selectExit, this, std::placeholders::_1)))
   };
 }
@@ -54,6 +56,13 @@ void  Game::MainMenuScene::selectDoom(Game::AbstractMenuScene::Item&, const std:
       machine.swap<Game::MessageScene>(exception.what());
     }
     }).detach();
+}
+
+void  Game::MainMenuScene::selectGameBoy(Game::AbstractMenuScene::Item&)
+{
+  // Go to Game Boy emulator
+  // TODO: menu to select ROM
+  _machine.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tetris.gb");
 }
 
 void  Game::MainMenuScene::selectOptions(Game::AbstractMenuScene::Item&)

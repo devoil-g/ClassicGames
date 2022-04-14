@@ -208,7 +208,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   },  // 0x0F, 0b00001111: RRCA
   GBC::GameBoyColor::Instruction {
     .description = "STOP (0x10 & 0x00)",
-    .instruction = [](GBC::GameBoyColor& gbc) {}
+    .instruction = [](GBC::GameBoyColor& gbc) { std::cout << "STOP not implemented" << std::endl; }
   },  // 0x10, 0b00010000: STOP (0x10 & 0x00)
   GBC::GameBoyColor::Instruction {
     .description = "LD DE, nn",
@@ -1234,7 +1234,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   },  // 0x75, 0b01110101: LD (HL), L
   GBC::GameBoyColor::Instruction {
     .description = "HALT",
-    .instruction = [](GBC::GameBoyColor& gbc) {}
+    .instruction = [](GBC::GameBoyColor& gbc) { std::cout << "HALT not implemented" << std::endl; }
   },  // 0x76, 0b01110110: HALT
   GBC::GameBoyColor::Instruction {
     .description = "LD (HL), A",
@@ -1847,8 +1847,8 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SUB (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rPC.u16) + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rPC.u16) + 1) & 0b00001111);
+      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rHL.u16) + 1) & 0b11111111);
+      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rHL.u16) + 1) & 0b00001111);
 
       gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
       if ((r8 & 0b11111111) == 0)
@@ -2099,10 +2099,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2114,10 +2114,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2129,10 +2129,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2144,10 +2144,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2159,10 +2159,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2174,10 +2174,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2189,10 +2189,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -2204,10 +2204,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2219,10 +2219,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2234,10 +2234,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2249,10 +2249,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2264,10 +2264,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2279,10 +2279,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2294,10 +2294,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2309,10 +2309,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -2324,10 +2324,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2339,10 +2339,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2354,10 +2354,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2369,10 +2369,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2384,10 +2384,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2399,10 +2399,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2414,10 +2414,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2429,10 +2429,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -2444,10 +2444,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2667,7 +2667,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
         gbc._cpuCycle += 16;
       }
       else {
-        gbc._rPC.u16 += 2;
+        gbc._rPC.u16 += 3;
         gbc._cpuCycle += 12;
       }
     }
@@ -2766,7 +2766,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
         gbc._cpuCycle += 16;
       }
       else {
-        gbc._rPC.u16 += 2;
+        gbc._rPC.u16 += 3;
         gbc._cpuCycle += 12;
       }
     }
@@ -2867,7 +2867,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
         gbc._cpuCycle += 16;
       }
       else {
-        gbc._rPC.u16 += 2;
+        gbc._rPC.u16 += 3;
         gbc._cpuCycle += 12;
       }
     }
@@ -2906,8 +2906,8 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SUB n",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rPC.u16 + 1)) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rPC.u16 + 1)) & 0b00001111);
+      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rPC.u16 + 1) + 1) & 0b11111111);
+      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rPC.u16 + 1) + 1) & 0b00001111);
 
       gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
       if ((r8 & 0b11111111) == 0)
@@ -2967,7 +2967,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
         gbc._cpuCycle += 16;
       }
       else {
-        gbc._rPC.u16 += 2;
+        gbc._rPC.u16 += 3;
         gbc._cpuCycle += 12;
       }
     }
@@ -3005,8 +3005,8 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .description = "SBC A, n",
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rPC.u16 + 1)) & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rPC.u16 + 1)) & 0b00001111) + carry;
+      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rPC.u16 + 1) + 1) & 0b11111111) + carry;
+      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rPC.u16 + 1) + 1) & 0b00001111) + carry;
 
       gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
       if ((r8 & 0b11111111) == 0)
@@ -3090,10 +3090,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 2;
       gbc._cpuCycle += 8;
     }
@@ -3171,10 +3171,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 2;
       gbc._cpuCycle += 8;
     }
@@ -3244,10 +3244,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
-        gbc._rAF.u8[Register::Lo] &= !Register::Z;
-      gbc._rAF.u8[Register::Lo] &= !Register::N;
-      gbc._rAF.u8[Register::Lo] &= !Register::H;
-      gbc._rAF.u8[Register::Lo] &= !Register::C;
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+      gbc._rAF.u8[Register::Lo] &= ~Register::N;
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 2;
       gbc._cpuCycle += 8;
     }
@@ -6490,7 +6490,8 @@ GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
   _bgcRam.fill(0);
   _obcRam.fill(0);
 
-  Game::Window::Instance().window().setFramerateLimit(60);
+  // Initialize Joypad
+  _io[Registers::RegisterJOYP] = 0b11111111;
 }
 
 GBC::GameBoyColor::~GameBoyColor()
@@ -6738,6 +6739,9 @@ void  GBC::GameBoyColor::simulate()
   std::uint64_t frame = _ppuCycle / (456 * 154);
   std::uint64_t cycle = _cpuCycle;
 
+  // Simulate Joypad
+  simulateKeys();
+
   // Execution loop
   while (frame == _ppuCycle / (456 * 154))
   {
@@ -6755,6 +6759,37 @@ void  GBC::GameBoyColor::simulate()
       simulateTimer();
     }
   }
+}
+
+void  GBC::GameBoyColor::simulateKeys()
+{
+  std::array<bool, Key::KeyCount> keys = {
+    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) < -0.5f,
+    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) > +0.5f,
+    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovX) < -0.5f,
+    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovX) > +0.5f,
+    Game::Window::Instance().joystick().buttonDown(0, 7),
+    Game::Window::Instance().joystick().buttonDown(0, 6),
+    Game::Window::Instance().joystick().buttonDown(0, 1),
+    Game::Window::Instance().joystick().buttonDown(0, 0)
+  };
+
+  // Joypad interrupt when a selected key is pressed
+  if ((!(_io[Registers::RegisterJOYP] & 0b00010000) &&
+    (_keys[Key::KeyDown] == false && keys[Key::KeyDown] == true ||
+      _keys[Key::KeyUp] == false && keys[Key::KeyUp] == true ||
+      _keys[Key::KeyLeft] == false && keys[Key::KeyLeft] == true ||
+      _keys[Key::KeyRight] == false && keys[Key::KeyRight] == true))
+    ||
+    (!(_io[Registers::RegisterJOYP] & 0b00100000) &&
+      (_keys[Key::KeyStart] == false && keys[Key::KeyStart] == true ||
+        _keys[Key::KeySelect] == false && keys[Key::KeySelect] == true ||
+        _keys[Key::KeyB] == false && keys[Key::KeyB] == true ||
+        _keys[Key::KeyA] == false && keys[Key::KeyA] == true)))
+    _io[Registers::RegisterIF] |= Interrupt::InterruptJoypad;
+
+  // Save new key map
+  _keys = keys;
 }
 
 void  GBC::GameBoyColor::simulateInterrupt()
@@ -6799,7 +6834,7 @@ void  GBC::GameBoyColor::simulateInterrupt()
 
     // Call interrupt handler
     _rSP.u16 -= 2;
-    write(_rSP.u16, _rPC.u16);
+    write<std::uint16_t>(_rSP.u16, _rPC.u16);
     _rPC.u16 = 0x0040;
     while ((interrupt = (GameBoyColor::Interrupt)(interrupt >> 1)) != 0)
       _rPC.u16 += 0x0008;
@@ -6815,7 +6850,7 @@ void  GBC::GameBoyColor::simulateInstruction()
   auto opcode = read<std::uint8_t>(_rPC.u16);
 
   // TODO: remove this
-  if (false) {
+  if (false && _io[Registers::RegisterBANK] != 0) {
     std::printf("\n");
     std::printf("  A: %3d 0x%02X    Z: %d   N: %d   H: %d   C: %d\n", _rAF.u8[Register::Hi], _rAF.u8[Register::Hi], (_rAF.u8[Register::Lo] & Register::Z) ? 1 : 0, (_rAF.u8[Register::Lo] & Register::N) ? 1 : 0, (_rAF.u8[Register::Lo] & Register::H) ? 1 : 0, (_rAF.u8[Register::Lo] & Register::C) ? 1 : 0);
     std::printf("  B: %3d 0x%02X    C: %3d 0x%02X   BC: %5d 0x%04X\n", _rBC.u8[Register::Hi], _rBC.u8[Register::Hi], _rBC.u8[Register::Lo], _rBC.u8[Register::Lo], _rBC.u16, _rBC.u16);
@@ -6828,16 +6863,107 @@ void  GBC::GameBoyColor::simulateInstruction()
 
   // Execute instruction
   _instructions[opcode].instruction(*this);
+
+  return;
+  switch (_rPC.u16) {
+  case 0x0150: puts("Start"); break;
+  case 0x020c: puts("Set ram from d000 to dfff to 0"); break;
+  case 0x021b: puts("Clear Interrupt Flag & Enable Registers"); break;
+  case 0x0222: puts("Set scroll regs, LCDC Status, & Serial port to 0"); break;
+  case 0x022f: puts("Set LCD control to Operation"); break;
+  case 0x0233: puts("Loop until LCDC Y-Coord = 148"); break;
+  case 0x0239: puts("Set LCD control to Stop completely"); break;
+  case 0x023d: puts("Setup colors for Background & Sprites"); break;
+  case 0x0247: puts("Setup sound channel outputs"); break;
+  case 0x0252: puts("Set Rom bank to zero (Not needed since the original has no MBC.)"); break;
+  case 0x0257: puts("Initialize stack pointer"); break;
+  case 0x025a: puts("Set ram from df00 to dfff to 0"); break;
+  case 0x0264: puts("Set ram from c000 to cfff to 0"); break;
+  case 0x0272: puts("Set ram from 8000 to 9fff to 0"); break;
+  case 0x0281: puts("Set ram from fe00 to feff to 0"); break;
+  case 0x028a: puts("Set ram from ff7f to fffe to 0"); break;
+  case 0x0293: puts("Copy DMA transfer routine to ffb6"); break;
+  case 0x02a0: puts("Fill screen with 2f"); break;
+  case 0x02a3: puts("Reset sound registers"); break;
+  case 0x02a6: puts("Enable serial i/o & v blank interrupts"); break;
+  case 0x02b2: puts("Setup branch point for routine at 2f8"); break;
+  case 0x02b6: puts("Set LCD control to Operation"); break;
+  case 0x02bc: puts("Clear all interrupt flags"); break;
+  case 0x02be: puts("Set window x & y position to 0"); break;
+  case 0x02c2: puts("Set timer modulo to 0"); break;
+  case 0x02c4: puts("Read buttons & return values 1"); break;
+  case 0x02c7: puts("Read buttons & return values 2"); break;
+  case 0x02ca: puts("Read buttons & return values 3"); break;
+  case 0x02cd: puts("If all arrow keys are down at the same time, then jump to 21b"); break;
+  case 0x02ed: puts("Wait for a VBlank interrupt to occur"); break;
+  case 0x0369: puts("Display credits screen"); break;
+  case 0x038a: puts("This is responsible for the credit screen ignoring the start button for so long. Lower this value to make it respond sooner."); break;
+  case 0x0393: puts("Wait for initial credit screen timer to run out."); break;
+  case 0x03a0: puts("Look for user pressing a button. If not found, continue credit screen for another delay period."); break;
+  case 0x03ae: puts("Display Intro Select Players Screen"); break;
+  case 0x041f: puts("Start demo mode"); break;
+  case 0x0474: puts("This routine is not used."); break;
+  case 0x048b: puts("Send 55h out serial port using external clock."); break;
+  case 0x0498: puts("Serial Transfer is complete"); break;
+  case 0x04a7: puts("Test for Up button"); break;
+  case 0x04ab: puts("Test for A button"); break;
+  case 0x04af: puts("Test for B button"); break;
+  case 0x04b3: puts("Test for Down button"); break;
+  case 0x04c5: puts("Send 29h out serial port using internal clock."); break;
+  case 0x057d: puts("This routine is not used."); break;
+  case 0x0582: puts("This instruction is not used."); break;
+  case 0x0677: puts("Display Mario VS Luigi screen"); break;
+  case 0x0725: printf("Move a block of memory ; HL = Start Addr 0x%04x ;  DE = End Addr 0x%04x ;  B = Length of data %d\n", _rHL.u16, _rDE.u16, _rBC.u8[Register::Hi]); break;
+  case 0x0a98: puts("Delay routine ?"); break;
+  case 0x10a8: puts("The next 3 instructions are not used."); break;
+  case 0x1444: puts("Select Game & Music Type screen"); break;
+  case 0x157b: puts("Display Type-A Level Select / Top Score screen"); break;
+  case 0x1629: puts("Display Type-B Level Select / High / Top Score screen"); break;
+  case 0x1a07: puts("Display Falling Blocks screen"); break;
+  case 0x2665: puts("This routine is not used."); break;
+  case 0x2795: puts("Fill 9800 to 9bff with 2f"); break;
+  case 0x27a4: printf("Move a block of memory (Same as z80 LDIR) ;  HL = Start Addr 0x%04x ;  DE = End Addr 0x%04x ;  BC = Length of data %d 0x%04x\n", _rHL.u16, _rDE.u16, _rBC.u16, _rBC.u16); break;
+  case 0x27c3: puts("Copy characters with only two colors"); break;
+  case 0x27d7: puts("Copy character set to character ram"); break;
+  case 0x27e1: puts("This instruction is not used."); break;
+  case 0x27eb: puts("Copy a screen from DE to screen ram"); break;
+  case 0x2820: puts("Prepare for screen memory update by halting LCD controller"); break;
+  case 0x29a6: puts("Read buttons & return value at ff81 ; $80 - Start ; $8 - Down ; $40 - Select ; $4 - Up ; $20 - B ; $2 - Left ; $10 - A ; $1 - Right"); break;
+  case 0x29d4: puts("debounce keys to minimize errors"); break;
+  case 0x2a10: puts("This routine is not used."); break;
+  case 0x2a7f: puts("Initiate DMA transfer from c000 to fe00"); break;
+  case 0x6956: puts("Set sound #1 regs"); break;
+  case 0x695d: puts("Set sound #2 regs"); break;
+  case 0x6964: puts("Set sound #3 regs"); break;
+  case 0x696b: puts("Set sound #4 regs"); break;
+  case 0x6998: puts("Copy from hl to sound wave pattern ram"); break;
+  case 0x69a5: puts("Reset some sound registers"); break;
+  case 0x6b0d: puts("Copy 2 bytes from (hl) to (de) ; (Copy can't cross page boundary.)"); break;
+  case 0x6bb9: puts("Increment 16-bit number pointed to by hl"); break;
+  case 0x6bc5: puts("Increment twice 16-bit number pointed to by hl"); break;
+  case 0x6bce: puts("b = ((hl))"); break;
+  case 0x6d9d: puts("The next 4 instructions are not used."); break;
+
+  default: break;
+  }
 }
 
 void  GBC::GameBoyColor::simulateGraphics()
 {
+  if (!(_io[Registers::RegisterLCDC] & LcdControl::LcdControlEnable))
+    return;
+
   // Only render lines 0 to 143
   if (_io[Registers::RegisterLY] < 144)
   {
     // Search OAM for OBJs that overlap current line
-    if (_ppuCycle % 456 == 0)
+    if (_ppuCycle % 456 == 0) {
       simulateGraphicsMode2();
+
+      // STAT mode 2 (OAM) interrupt
+      if (_io[Registers::RegisterSTAT] & LcdStatus::LcdStatusMode2)
+        _io[Registers::RegisterIF] |= Interrupt::InterruptLcdStat;
+    }
 
     // Generate the picture
     else if (_ppuCycle % 456 == 80)
@@ -6849,7 +6975,9 @@ void  GBC::GameBoyColor::simulateGraphics()
       // Set LCD status mode 0
       _io[Registers::RegisterSTAT] = (_io[Registers::RegisterSTAT] & 0b11111100) | 0b00000000;
 
-      // TODO: trigger HBlank interrupt
+      // STAT mode 0 (HBlank) interrupt
+      if (_io[Registers::RegisterSTAT] & LcdStatus::LcdStatusMode0)
+        _io[Registers::RegisterIF] |= Interrupt::InterruptLcdStat;
     }
   }
 
@@ -6858,7 +6986,12 @@ void  GBC::GameBoyColor::simulateGraphics()
     // Set LCD status mode 1
     _io[Registers::RegisterSTAT] = (_io[Registers::RegisterSTAT] & 0b11111100) | 0b00000011;
 
-    // TODO: trigger VBlank interrupt
+    // VBlank interrupt
+    _io[Registers::RegisterIF] |= Interrupt::InterruptVBlank;
+
+    // STAT mode 2 (VBlank) interrupt
+    if (_io[Registers::RegisterSTAT] & LcdStatus::LcdStatusMode1)
+      _io[Registers::RegisterIF] |= Interrupt::InterruptLcdStat;
   }
 
   // Next line
@@ -6871,7 +7004,16 @@ void  GBC::GameBoyColor::simulateGraphics()
     if (_io[Registers::RegisterLY] >= 144 + 10)
       _io[Registers::RegisterLY] = 0;
 
-    // TODO: trigger STAT compare LCY LY interrupt
+    // LY / LCY register comparison
+    if (_io[Registers::RegisterLY] == _io[Registers::RegisterLYC]) {
+      _io[Registers::RegisterSTAT] |= LcdStatus::LcdStatusEqual;
+
+      // STAT compare (LY/LYC) interrupt
+      if (_io[Registers::RegisterSTAT] & LcdStatus::LcdStatusCompare)
+        _io[Registers::RegisterIF] |= Interrupt::InterruptLcdStat;
+    }
+    else
+      _io[Registers::RegisterSTAT] &= ~LcdStatus::LcdStatusEqual;
   }
 
   // Advance in PPU simulation
@@ -6907,17 +7049,19 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
 
   // White screen if LCD disabled
   if (!(_io[Registers::RegisterLCDC] & LcdControl::LcdControlEnable)) {
-    std::memset((std::uint8_t*)_ppuLcd.getPixelsPtr(), 0xFF, _ppuLcd.getSize().x * _ppuLcd.getSize().y * 4);
+    //std::memset((std::uint8_t*)_ppuLcd.getPixelsPtr(), 0xFF, _ppuLcd.getSize().x * _ppuLcd.getSize().y * 4);
     return;
   }
 
   std::uint8_t  sc_y = _io[Registers::RegisterLY];
   std::uint8_t  bg_y = sc_y + _io[Registers::RegisterSCY];
-  std::int16_t  wn_y = (std::int16_t)sc_y - (std::int16_t)_io[Registers::RegisterWY];
+  std::uint8_t  wn_y = sc_y - _io[Registers::RegisterWY];
 
-  for (std::uint8_t sc_x = 0; sc_x < 160; sc_x++)
+  for (std::uint8_t sc_x = 0; sc_x < _ppuLcd.getSize().x; sc_x++)
   {
-    std::uint8_t  bg_color_r, bg_color_g, bg_color_b;
+    std::uint8_t  bg_color_id = 0, bg_color_r, bg_color_g, bg_color_b;
+    std::uint8_t  wn_color_id = 0, wn_color_r, wn_color_g, wn_color_b;
+    std::uint8_t  sp_color_id = 0, sp_attributes, sp_color_r, sp_color_g, sp_color_b;
 
     // Background
     {
@@ -6928,7 +7072,7 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
         ((_io[Registers::RegisterLCDC] & LcdControl::LcdControlData) ?
           0x0000 :
           ((bg_tile_id < 128) ? 0x1000 : 0x0000));
-      std::uint8_t  bg_color_id =
+      bg_color_id =
         ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 0] & (0b10000000 >> (bg_x % 8))) ? 1 : 0) +
         ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 1] & (0b10000000 >> (bg_x % 8))) ? 2 : 0);
 
@@ -6950,10 +7094,118 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
 
     // Window
     {
-      std::int16_t  wn_x = (std::int16_t)sc_x - (std::int16_t)_io[Registers::RegisterWX] - 7;
+      std::uint8_t  wn_x = sc_x - _io[Registers::RegisterWX] - 7;
+      std::uint16_t wn_tilemap = (_io[Registers::RegisterLCDC] & LcdControl::LcdControlWindowTilemap) ? 0x1C00 : 0x1800;
+      std::uint8_t  wn_tile_id = _vRam[wn_tilemap + (((std::uint16_t)wn_y / 8) * 32) + ((std::uint16_t)wn_x / 8)];
+      std::uint16_t wn_tile_index = ((std::uint16_t)wn_tile_id * 16) +
+        ((_io[Registers::RegisterLCDC] & LcdControl::LcdControlData) ?
+          0x0000 :
+          ((wn_tile_id < 128) ? 0x1000 : 0x0000));
+      wn_color_id =
+        ((_vRam[wn_tile_index + (wn_y % 8) * 2 + 0] & (0b10000000 >> (wn_x % 8))) ? 1 : 0) +
+        ((_vRam[wn_tile_index + (wn_y % 8) * 2 + 1] & (0b10000000 >> (wn_x % 8))) ? 2 : 0);
+
+      // Non-CGB mode, shade of grey
+      if (_header.cgb == Header::CGBFlag::CGBNone) {
+        wn_color_r = 196 - ((_io[Registers::RegisterBGP] >> (wn_color_id * 2)) & 0b00000011) * 64;
+        wn_color_g = wn_color_r;
+        wn_color_b = wn_color_r;
+      }
+
+      // CGB mode, get color from palette
+      else {
+        // TODO
+        wn_color_r = 0;
+        wn_color_g = 0;
+        wn_color_b = 0;
+      }
     }
 
-    _ppuLcd.setPixel(sc_x, sc_y, sf::Color(bg_color_r, bg_color_g, bg_color_b));
+    // Sprite
+    {
+      // Find first matching sprite
+      for (const auto& sp_index : _ppuObj) {
+        std::uint8_t  sp_y = sc_y - _oam[sp_index * 4 + 0] + 16;
+        std::uint8_t  sp_x = sc_x - _oam[sp_index * 4 + 1] + 8;
+
+        // Sprite not on column
+        if (sp_x >= 8)
+          continue;
+
+        std::uint8_t  sp_height = (_io[Registers::RegisterLCDC] & LcdControl::LcdControlObjSize) ? 16 : 8;
+        sp_attributes = _oam[sp_index * 4 + 3];
+
+        // Flip sprite coordinates
+        if (sp_attributes & SpriteAttributes::SpriteAttributesYFlip)
+          sp_y = (sp_height - 1) - sp_y % sp_height;
+        if (sp_attributes & SpriteAttributes::SpriteAttributesXFlip)
+          sp_x = (8 - 1) - sp_x % 8;
+
+        std::uint8_t  sp_tile_id = _oam[sp_index * 4 + 2] * (sp_height / 8) + ((sp_y < 8) ? 0 : 1);
+        std::uint16_t sp_tile_index = ((std::uint16_t)sp_tile_id * 16) +
+          ((_header.cgb == Header::CGBFlag::CGBNone || !(sp_attributes & SpriteAttributes::SpriteAttributesBank)) ?
+            0x0000 :
+            0x2000);
+        sp_color_id =
+          ((_vRam[sp_tile_index + (sp_y % 8) * 2 + 0] & (0b10000000 >> (sp_x % 8))) ? 1 : 0) +
+          ((_vRam[sp_tile_index + (sp_y % 8) * 2 + 1] & (0b10000000 >> (sp_x % 8))) ? 2 : 0);
+
+        // ID 0 is transparency
+        if (sp_color_id == 0)
+          continue;
+
+        // Non-CGB mode, shade of grey
+        if (_header.cgb == Header::CGBFlag::CGBNone) {
+          sp_color_r = 196 - ((_io[(sp_attributes & SpriteAttributes::SpriteAttributesPaletteNonCgb) ? Registers::RegisterOBP1 : Registers::RegisterOBP0] >> (sp_color_id * 2)) & 0b00000011) * 64;
+          sp_color_g = sp_color_r;
+          sp_color_b = sp_color_r;
+        }
+
+        // CGB mode, get color from palette
+        else {
+          // TODO
+          sp_color_r = 0;
+          sp_color_g = 0;
+          sp_color_b = 0;
+        }
+
+        break;
+      }
+    }
+
+    // Select color to display
+    if (_header.cgb == Header::CGBFlag::CGBNone) {
+      if (_io[Registers::RegisterLCDC] & LcdControl::LcdControlWindowBackgroundEnable) {
+        if ((_io[Registers::RegisterLCDC] & LcdControl::LcdControlWindowEnable) && sc_x >= _io[Registers::RegisterWX] - 7 && sc_y >= _io[Registers::RegisterWY]) {
+          if (_io[Registers::RegisterLCDC] & LcdControl::LcdControlObjEnable && sp_color_id != 0 &&
+            (!(sp_attributes & SpriteAttributes::SpriteAttributesOverObj) || wn_color_id == 0))
+            _ppuLcd.setPixel(sc_x, sc_y, sf::Color(sp_color_r, sp_color_g, sp_color_b));
+          else
+            _ppuLcd.setPixel(sc_x, sc_y, sf::Color(wn_color_r, wn_color_g, wn_color_b));
+        }
+        else {
+          if (_io[Registers::RegisterLCDC] & LcdControl::LcdControlObjEnable && sp_color_id != 0 &&
+            (!(sp_attributes & SpriteAttributes::SpriteAttributesOverObj) || bg_color_id == 0))
+            _ppuLcd.setPixel(sc_x, sc_y, sf::Color(sp_color_r, sp_color_g, sp_color_b));
+          else
+            _ppuLcd.setPixel(sc_x, sc_y, sf::Color(bg_color_r, bg_color_g, bg_color_b));
+        }
+      }
+      else {
+        if (_io[Registers::RegisterLCDC] & LcdControl::LcdControlObjEnable && sp_color_id != 0)
+          _ppuLcd.setPixel(sc_x, sc_y, sf::Color(sp_color_r, sp_color_g, sp_color_b));
+        else
+          _ppuLcd.setPixel(sc_x, sc_y, sf::Color(255, 255, 255));
+      }
+
+      // Green tint of screen
+      _ppuLcd.setPixel(sc_x, sc_y, _ppuLcd.getPixel(sc_x, sc_y) * sf::Color(224, 255, 224));
+    }
+    else {
+      // TODO
+    }
+
+    
   }
 
   // TODO
@@ -6970,7 +7222,7 @@ void  GBC::GameBoyColor::simulateTimer()
 
   // Update DIV timer
   _io[Registers::RegisterDIVHi] = (div >> 8) & 0b11111111;
-  _io[Registers::RegisterDIVHi] = div & 0b11111111;
+  _io[Registers::RegisterDIVLo] = div & 0b11111111;
 
   // Update Timer only when enabled
   if (_io[Registers::RegisterTAC] & 0b00000100) {
@@ -7032,8 +7284,10 @@ std::uint8_t  GBC::GameBoyColor::read(std::uint16_t addr)
 
   // Not Usable
   // Nintendo says use of this area is prohibited
-  else if (addr < 0xFF00)
+  else if (addr < 0xFF00) {
+    puts("error");
     return 0x00;
+  }
 
   // I/O Registers
   else if (addr < 0xFF80)
@@ -7143,31 +7397,8 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
 
   switch (addr) {
   case Registers::RegisterJOYP: // Joypad, R/W
-  {
     // Bits 7-6 are always set
-    std::uint8_t  value = Registers::RegisterJOYP | 0b11000000;
-
-    // Select Action buttons
-    if (value & 0b00010000) {
-      value |= 0b00001111;
-      value &= Game::Window::Instance().joystick().buttonDown(0, 7) ? 0b11110111 : 0b11111111;  // Start
-      value &= Game::Window::Instance().joystick().buttonDown(0, 6) ? 0b11111011 : 0b11111111;  // Select
-      value &= Game::Window::Instance().joystick().buttonDown(0, 1) ? 0b11111101 : 0b11111111;  // B
-      value &= Game::Window::Instance().joystick().buttonDown(0, 0) ? 0b11111110 : 0b11111111;  // A
-    }
-
-    // Select Direction buttons
-    else if (value & 0b00100000) {
-      value |= 0b00001111;
-      value &= Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) < -0.5f ? 0b11110111 : 0b11111111;  // Down
-      value &= Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) > +0.5f ? 0b11111011 : 0b11111111;  // Up
-      value &= Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovX) < -0.5f ? 0b11111101 : 0b11111111;  // Left
-      value &= Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovX) > +0.5f ? 0b11111110 : 0b11111111;  // Right
-    }
-
-    // Register inputs
-    return value;
-  }
+    return _io[Registers::RegisterJOYP] | 0b11000000;
 
   case Registers::RegisterDIVHi:  // High byte of DIV
   case Registers::RegisterTIMA:   // Timer Modulo, R/W
@@ -7363,7 +7594,32 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
 
   switch (addr) {
   case Registers::RegisterJOYP: // Joypad, R/W
-    _io[Registers::RegisterJOYP] = value;
+    // Reset pressed keys and force bits 7-6 to true
+    _io[Registers::RegisterJOYP] = value | 0b11001111;
+
+    // Direction buttons
+    if (!(_io[Registers::RegisterJOYP] & 0b00010000)) {
+      if (_keys[Key::KeyDown] == true)
+        _io[Registers::RegisterJOYP] &= 0b11110111;
+      if (_keys[Key::KeyUp] == true)
+        _io[Registers::RegisterJOYP] &= 0b11111011;
+      if (_keys[Key::KeyLeft] == true)
+        _io[Registers::RegisterJOYP] &= 0b11111101;
+      if (_keys[Key::KeyRight] == true)
+        _io[Registers::RegisterJOYP] &= 0b11111110;
+    }
+
+    // Action buttons
+    if (!(_io[Registers::RegisterJOYP] & 0b00100000)) {
+      if (_keys[Key::KeyStart] == true)
+        _io[Registers::RegisterJOYP] &= 0b11110111;
+      if (_keys[Key::KeySelect] == true)
+        _io[Registers::RegisterJOYP] &= 0b11111011;
+      if (_keys[Key::KeyB] == true)
+        _io[Registers::RegisterJOYP] &= 0b11111101;
+      if (_keys[Key::KeyA] == true)
+        _io[Registers::RegisterJOYP] &= 0b11111110;
+    }
     break;
 
   case Registers::RegisterDIVHi:
@@ -7387,13 +7643,29 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     _io[Registers::RegisterSTAT] = (_io[Registers::RegisterSTAT] & 0b00000111) | (value & 0b01111000);
     break;
 
+  case Registers::RegisterLYC:
+    // Write value to register
+    _io[Registers::RegisterLYC] = value;
+
+    // LY / LCY register comparison
+    if (_io[Registers::RegisterLY] == _io[Registers::RegisterLYC]) {
+      _io[Registers::RegisterSTAT] |= LcdStatus::LcdStatusEqual;
+
+      // STAT compare (LY/LYC) interrupt
+      if (_io[Registers::RegisterSTAT] & LcdStatus::LcdStatusCompare)
+        _io[Registers::RegisterIF] |= Interrupt::InterruptLcdStat;
+    }
+    else
+      _io[Registers::RegisterSTAT] &= ~LcdStatus::LcdStatusEqual;
+    break;
+
   case Registers::RegisterDMA:
     // Write value to register
     _io[Registers::RegisterDMA] = value;
 
     // Transfer data to OAM
     for (std::uint16_t index = 0; index < _oam.size(); index++)
-      write(0xFE00 + index, read(((std::uint16_t)_io[Registers::RegisterDMA]) << 8));
+      writeOam(index, read<std::uint8_t>(((std::uint16_t)_io[Registers::RegisterDMA] << 8) + index));
 
     // TODO: DMA transfer is 160 cycles long, lock memory access
     break;
@@ -7421,7 +7693,6 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
   case Registers::RegisterLCDC:   // LCD Control, R/W (see enum)
   case Registers::RegisterSCY:    // Scroll Y, R/W
   case Registers::RegisterSCX:    // Scroll X, R/W
-  case Registers::RegisterLYC:    // LCD Y Coordinate Compare, R/W
   case Registers::RegisterBGP:    // Background Palette Data, R/W, non CGB mode only
   case Registers::RegisterOBP0:   // OBJ 0 Palette Data, R/W, non CGB mode only
   case Registers::RegisterOBP1:   // OBJ 1 Palette Data, R/W, non CGB mode only

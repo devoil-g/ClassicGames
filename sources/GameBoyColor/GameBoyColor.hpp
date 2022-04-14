@@ -181,7 +181,7 @@ namespace GBC
       LcdStatusMode1 = 0b00010000,    // Mode 1 VBlank STAT Interrupt source (1: Enable) (Read/Write)
       LcdStatusMode0 = 0b00001000,    // Mode 0 HBlank STAT Interrupt source (1: Enable) (Read/Write)
       LcdStatusEqual = 0b00000100,    // LYC=LY Flag (0: Different, 1: Equal) (Read Only)
-      LcdStatusMode = 0b00000011      // Mode Flag(0: HBlank, 1: VBlank, 2: Searching OAM, 3: Transferring Data to LCD Controller) (Read Only)
+      LcdStatusMode = 0b00000011      // Mode Flag (0: HBlank, 1: VBlank, 2: Searching OAM, 3: Transferring Data to LCD Controller) (Read Only)
     };
 
     enum IME
@@ -189,6 +189,16 @@ namespace GBC
       IMEDisabled,  // Interrupt disabled
       IMEEnabled,   // Interrupt enabled
       IMEScheduled  // Enable interrupt after next instruction
+    };
+
+    enum SpriteAttributes
+    {
+      SpriteAttributesOverObj = 0b10000000,       // BG and Window over OBJ (0=No, 1=BG and Window colors 1-3 over the OBJ)
+      SpriteAttributesYFlip = 0b01000000,         // Vertical flip (0=Normal, 1=Vertically mirrored)
+      SpriteAttributesXFlip = 0b00100000,         // Horitontal flip (0=Normal, 1=Horizontally mirrored)
+      SpriteAttributesPaletteNonCgb = 0b00010000, // Palette in non-CGB mode (0=OBP0, 1=OBP1)
+      SpriteAttributesBank = 0b00001000,          // VRAM bank in CBG mode (0=Bank 0, 1=Bank 1)
+      SpriteAttributesPaletteCbg = 0b00000111     // Palette in CGB mode (OBP0-7)
     };
 
     struct Instruction
@@ -227,6 +237,22 @@ namespace GBC
     GameBoyColor::Register  _rHL; // HL register
     GameBoyColor::Register  _rSP; // SP register (stack pointer)
     GameBoyColor::Register  _rPC; // PC register (program counter / pointer)
+
+    enum Key
+    {
+      KeyDown,
+      KeyUp,
+      KeyLeft,
+      KeyRight,
+      KeyStart,
+      KeySelect,
+      KeyB,
+      KeyA,
+
+      KeyCount
+    };
+
+    std::array<bool, Key::KeyCount> _keys;
 
     void  load(const std::string& filename);                                              // Load a new ROM in memory
     void  loadFile(const std::string& filename, std::vector<std::uint8_t>& destination);  // Load file to vector
@@ -278,6 +304,7 @@ namespace GBC
         write(addr + index, input.data[index]);
     }
 
+    void  simulateKeys();         // Handle keys
     void  simulateInterrupt();      // Detect interrupt
     void  simulateInstruction();    // Run an instruction
     void  simulateGraphics();       // Update 4 CPU cycles of graphics
