@@ -15,6 +15,28 @@ namespace GBC
   class GameBoyColor
   {
   private:
+    union MemoryBankController
+    {
+      enum Type
+      {
+        None,     // None (32KByte ROM only)
+        MBC1,     // MBC1 (max 2MByte ROM and/or 32KByte RAM)
+        MBC2,     // MBC2 (max 256KByte ROM and 512x4 bits RAM)
+        MBC3,     // MBC3 (max 2MByte ROM and/or 64KByte RAM and Timer)
+        MBC5,     // MBC5 (max 8MByte ROM and/or 128KByte RAM)
+        MBCUnknow // Unknow MBC
+      };
+
+      struct {
+      } none; // No MBC
+
+      struct {
+        std::uint8_t  enable; // RAM enable flag (0x0A to enable)
+        std::uint8_t  bank;   // RAM & ROM bank number, ROM bits 4-3-2-1-0, RAM/ROM upper bits 5-6, Mode bits 7
+      } mbc1; // MBC1
+
+    };
+
     struct Header
     {
       enum CGBFlag
@@ -30,16 +52,6 @@ namespace GBC
         SGBNone     // No SGB functions (Normal Gameboy or CGB only game)
       };
 
-      enum MemoryBankController
-      {
-        MBCRomOnly, // None (32KByte ROM only)
-        MBC1,       // MBC1 (max 2MByte ROM and/or 32KByte RAM)
-        MBC2,       // MBC2 (max 256KByte ROM and 512x4 bits RAM)
-        MBC3,       // MBC3 (max 2MByte ROM and/or 64KByte RAM and Timer)
-        MBC5,       // MBC5 (max 8MByte ROM and/or 128KByte RAM)
-        MBCUnknow   // Unknow MBC
-      };
-
       enum Region
       {
         RegionJP,     // Japanese
@@ -47,19 +59,19 @@ namespace GBC
         RegionUnknow  // Unknow region
       };
 
-      bool                          logo;             // False if unofficial logo
-      std::string                   title;            // Name of the game
-      std::string                   manufacturer;     // Manufacturer code (newer cartridges only)
-      Header::CGBFlag               cgb;              // CGB support flag
-      std::uint16_t                 licensee;         // Licensee Code
-      Header::SGBFlag               sgb;              // Support of the SGB functions
-      Header::MemoryBankController  mbc;              // Memory Bank Controller format
-      std::size_t                   rom_size;         // Size of ROM
-      std::size_t                   ram_size;         // Size of RAM
-      Header::Region                region;           // Game region
-      std::uint8_t                  version;          // Specifies the version number of the game
-      bool                          header_checksum;  // Checksum of the ROM header
-      bool                          global_checksum;  // Global checksum of the ROM
+      bool                                          logo;             // False if unofficial logo
+      std::string                                   title;            // Name of the game
+      std::string                                   manufacturer;     // Manufacturer code (newer cartridges only)
+      Header::CGBFlag                               cgb;              // CGB support flag
+      std::uint16_t                                 licensee;         // Licensee Code
+      Header::SGBFlag                               sgb;              // Support of the SGB functions
+      GBC::GameBoyColor::MemoryBankController::Type mbc;              // Memory Bank Controller format
+      std::size_t                                   rom_size;         // Size of ROM
+      std::size_t                                   ram_size;         // Size of RAM
+      Header::Region                                region;           // Game region
+      std::uint8_t                                  version;          // Specifies the version number of the game
+      bool                                          header_checksum;  // Checksum of the ROM header
+      bool                                          global_checksum;  // Global checksum of the ROM
     };
 
     union Register
@@ -157,6 +169,7 @@ namespace GBC
       RegisterBCPD = 0x69,  // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
       RegisterOCPI = 0x6A,  // OBJ Color Palette Index, R/W, CGB mode only
       RegisterOCPD = 0x6B,  // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
+      RegisterOPRI = 0x6C,
 
       RegisterSVBK = 0x70   // Work Ram Bank, R/W, CGB mode only
     };
@@ -210,6 +223,43 @@ namespace GBC
     static const std::array<GBC::GameBoyColor::Instruction, 256>  _instructions;    // Processor instructions by OP code (8 bits)
     static const std::array<GBC::GameBoyColor::Instruction, 256>  _instructionsCB;  // Processor 2 bytes instructions (CB) by OP code (8 bits)
 
+
+    void  instructionAdd(std::uint8_t left, std::uint8_t right, std::uint8_t carry, std::uint8_t& result);
+    void  instructionAdd(std::uint16_t left, std::uint16_t right, std::uint16_t& result);
+    void  instructionSub(std::uint8_t left, std::uint8_t right, std::uint8_t carry, std::uint8_t& result);
+    void  instructionCp(std::uint8_t left, std::uint8_t right);
+    void  instructionInc(std::uint8_t& value);
+    void  instructionDec(std::uint8_t& value);
+    void  instructionAnd(std::uint8_t left, std::uint8_t right, std::uint8_t& result);
+    void  instructionOr(std::uint8_t left, std::uint8_t right, std::uint8_t& result);
+    void  instructionXor(std::uint8_t left, std::uint8_t right, std::uint8_t& result);
+    void  instructionRlc(std::uint8_t& value);
+    void  instructionRrc(std::uint8_t& value);
+    void  instructionRl(std::uint8_t& value);
+    void  instructionRr(std::uint8_t& value);
+    void  instructionSla(std::uint8_t& value);
+    void  instructionSra(std::uint8_t& value);
+    void  instructionSwap(std::uint8_t& value);
+    void  instructionSrl(std::uint8_t& value);
+    void  instructionPush(std::uint16_t value);
+    void  instructionPop(std::uint16_t& result);
+    void  instructionCall(std::uint16_t addr, std::uint16_t ret);
+    void  instructionRet();
+
+    template <unsigned int Bit>
+    void  instructionBit(std::uint8_t value)
+    {
+      if (value & (0b00000001 << Bit))
+        _rAF.u8[Register::Lo] &= ~Register::Z;
+      else
+        _rAF.u8[Register::Lo] |= Register::Z;
+      _rAF.u8[Register::Lo] &= ~Register::N;
+      _rAF.u8[Register::Lo] |= Register::H;
+    }
+
+    void  instructionSet(std::uint8_t& result, std::uint8_t position);
+    void  instructionReset(std::uint8_t& result, std::uint8_t position);
+
     std::vector<std::uint8_t>           _boot;      // Bootstrap sequence memory
     std::vector<std::uint8_t>           _rom;       // Raw ROM memory
     std::array<std::uint8_t, 16 * 1024> _vRam;      // Raw Video RAM memory
@@ -237,6 +287,8 @@ namespace GBC
     GameBoyColor::Register  _rHL; // HL register
     GameBoyColor::Register  _rSP; // SP register (stack pointer)
     GameBoyColor::Register  _rPC; // PC register (program counter / pointer)
+
+    GameBoyColor::MemoryBankController  _mbc;
 
     enum Key
     {

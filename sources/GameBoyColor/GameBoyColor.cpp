@@ -45,16 +45,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "INC B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] += 1;
-      if (gbc._rBC.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if ((gbc._rBC.u8[Register::Hi] & 0b00001111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc.instructionInc(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -62,16 +53,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "DEC B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] -= 1;
-      if (gbc._rBC.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if ((gbc._rBC.u8[Register::Hi] & 0b00001111) == 0b00001111)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc.instructionDec(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -87,17 +69,8 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RLCA",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] = (gbc._rAF.u8[Register::Hi] << 1) | ((gbc._rAF.u8[Register::Hi] & 0b10000000) ? 0b00000001 : 0b00000000);
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rAF.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionRlc(gbc._rAF.u8[Register::Hi]);
+      gbc._rAF.u8[Register::Lo] &= ~Register::Z;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -113,19 +86,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADD HL, BC",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint32_t r16 = (std::uint32_t)(gbc._rHL.u16 & 0b1111111111111111) + (std::uint32_t)(gbc._rBC.u16 & 0b1111111111111111);
-      std::uint32_t r12 = (std::uint32_t)(gbc._rHL.u16 & 0b0000111111111111) + (std::uint32_t)(gbc._rBC.u16 & 0b0000111111111111);
-
-      gbc._rHL.u16 = (std::uint16_t)r16;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r12 & 0b1000000000000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r16 & 0b10000000000000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rHL.u16, gbc._rBC.u16, gbc._rHL.u16);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -149,16 +110,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "INC C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] += 1;
-      if (gbc._rBC.u8[Register::Lo] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if ((gbc._rBC.u8[Register::Lo] & 0b00001111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc.instructionInc(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -166,16 +118,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "DEC C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] -= 1;
-      if (gbc._rBC.u8[Register::Lo] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if ((gbc._rBC.u8[Register::Lo] & 0b00001111) == 0b00001111)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc.instructionDec(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -191,17 +134,8 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RRCA",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] = (gbc._rAF.u8[Register::Hi] >> 1) | ((gbc._rAF.u8[Register::Hi] & 0b00000001) ? 0b10000000 : 0b00000000);
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rAF.u8[Register::Hi] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionRrc(gbc._rAF.u8[Register::Hi]);
+      gbc._rAF.u8[Register::Lo] &= ~Register::Z;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -237,16 +171,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "INC D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] += 1;
-      if (gbc._rDE.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if ((gbc._rDE.u8[Register::Hi] & 0b00001111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc.instructionInc(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -254,16 +179,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "DEC D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] -= 1;
-      if (gbc._rDE.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if ((gbc._rDE.u8[Register::Hi] & 0b00001111) == 0b00001111)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc.instructionDec(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -279,19 +195,8 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RLA",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  r = (gbc._rAF.u8[Register::Hi] << 1) | ((gbc._rAF.u8[Register::Lo] & Register::C) ? 0b00000001 : 0b00000000);
-
-      if (r == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rAF.u8[Register::Hi] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rAF.u8[Register::Hi] = r;
+      gbc.instructionRl(gbc._rAF.u8[Register::Hi]);
+      gbc._rAF.u8[Register::Lo] &= ~Register::Z;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -307,19 +212,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADD HL, DE",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint32_t r16 = (std::uint32_t)(gbc._rHL.u16 & 0b1111111111111111) + (std::uint32_t)(gbc._rDE.u16 & 0b1111111111111111);
-      std::uint32_t r12 = (std::uint32_t)(gbc._rHL.u16 & 0b0000111111111111) + (std::uint32_t)(gbc._rDE.u16 & 0b0000111111111111);
-
-      gbc._rHL.u16 = (std::uint16_t)r16;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r12 & 0b1000000000000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r16 & 0b10000000000000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rHL.u16, gbc._rDE.u16, gbc._rHL.u16);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -343,16 +236,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "INC E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] += 1;
-      if (gbc._rDE.u8[Register::Lo] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if ((gbc._rDE.u8[Register::Lo] & 0b00001111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc.instructionInc(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -360,16 +244,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "DEC E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] -= 1;
-      if (gbc._rDE.u8[Register::Lo] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if ((gbc._rDE.u8[Register::Lo] & 0b00001111) == 0b00001111)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc.instructionDec(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -385,19 +260,8 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RRA",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  r = (gbc._rAF.u8[Register::Hi] >> 1) | ((gbc._rAF.u8[Register::Lo] & Register::C) ? 0b10000000 : 0b00000000);
-
-      if (r == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rAF.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rAF.u8[Register::Hi] = r;
+      gbc.instructionRr(gbc._rAF.u8[Register::Hi]);
+      gbc._rAF.u8[Register::Lo] &= ~Register::Z;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -442,16 +306,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "INC H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] += 1;
-      if (gbc._rHL.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if ((gbc._rHL.u8[Register::Hi] & 0b00001111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc.instructionInc(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -459,16 +314,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "DEC H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] -= 1;
-      if (gbc._rHL.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if ((gbc._rHL.u8[Register::Hi] & 0b00001111) == 0b00001111)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc.instructionDec(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -486,11 +332,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint16_t r = gbc._rAF.u8[Register::Hi];
 
-      if ((r & 0b00001111) > 0b00001001) {
+      if ((r & 0b00001111) > 0b00001001)
         r += 0b00000110;
-        if ((r & 0b11110000) > 0b10010000)
-          r += 0b01100000;
-      }
+      if ((r & 0b11110000) > 0b10010000)
+        r += 0b01100000;
       gbc._rAF.u8[Register::Hi] = (r & 0b11111111);
       if (gbc._rAF.u8[Register::Hi] == 0)
         gbc._rAF.u8[Register::Lo] |= Register::Z;
@@ -520,19 +365,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADD HL, HL",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint32_t r16 = (std::uint32_t)(gbc._rHL.u16 & 0b1111111111111111) + (std::uint32_t)(gbc._rHL.u16 & 0b1111111111111111);
-      std::uint32_t r12 = (std::uint32_t)(gbc._rHL.u16 & 0b0000111111111111) + (std::uint32_t)(gbc._rHL.u16 & 0b0000111111111111);
-
-      gbc._rHL.u16 = (std::uint16_t)r16;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r12 & 0b1000000000000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r16 & 0b10000000000000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rHL.u16, gbc._rHL.u16, gbc._rHL.u16);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -557,16 +390,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "INC L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] += 1;
-      if (gbc._rHL.u8[Register::Lo] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if ((gbc._rHL.u8[Register::Lo] & 0b00001111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc.instructionInc(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -574,16 +398,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "DEC L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] -= 1;
-      if (gbc._rHL.u8[Register::Lo] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if ((gbc._rHL.u8[Register::Lo] & 0b00001111) == 0b00001111)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc.instructionDec(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -646,18 +461,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "INC (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16) + 1;
+      std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
+      gbc.instructionInc(r);
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
-      if (r == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if ((r & 0b00001111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 12;
     }
@@ -665,18 +472,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "DEC (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16) - 1;
+      std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
+      gbc.instructionDec(r);
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
-      if (r == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if ((r & 0b00001111) == 0b00001111)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 12;
     }
@@ -714,19 +513,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADD HL, SP",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint32_t r16 = (std::uint32_t)(gbc._rHL.u16 & 0b1111111111111111) + (std::uint32_t)(gbc._rSP.u16 & 0b1111111111111111);
-      std::uint32_t r12 = (std::uint32_t)(gbc._rHL.u16 & 0b0000111111111111) + (std::uint32_t)(gbc._rSP.u16 & 0b0000111111111111);
-
-      gbc._rHL.u16 = (std::uint16_t)r16;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r12 & 0b1000000000000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r16 & 0b10000000000000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rHL.u16, gbc._rSP.u16, gbc._rHL.u16);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -751,16 +538,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "INC A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] += 1;
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if ((gbc._rAF.u8[Register::Hi] & 0b00001111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc.instructionInc(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -768,16 +546,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "DEC A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] -= 1;
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if ((gbc._rAF.u8[Register::Hi] & 0b00001111) == 0b00001111)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      gbc.instructionDec(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1311,23 +1080,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADD A, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc._rBC.u8[Register::Hi] & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc._rBC.u8[Register::Hi] & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc._rBC.u8[Register::Hi], 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1335,23 +1088,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADD A, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc._rBC.u8[Register::Lo] & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc._rBC.u8[Register::Lo] & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc._rBC.u8[Register::Lo], 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1359,23 +1096,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADD A, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc._rDE.u8[Register::Hi] & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc._rDE.u8[Register::Hi] & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc._rDE.u8[Register::Hi], 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1383,23 +1104,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADD A, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc._rDE.u8[Register::Lo] & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc._rDE.u8[Register::Lo] & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc._rDE.u8[Register::Lo], 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1407,23 +1112,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADD A, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc._rHL.u8[Register::Hi] & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc._rHL.u8[Register::Hi] & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc._rHL.u8[Register::Hi], 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1431,23 +1120,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADD A, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc._rHL.u8[Register::Lo] & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc._rHL.u8[Register::Lo] & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc._rHL.u8[Register::Lo], 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1455,23 +1128,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADD A, (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc.read<std::uint8_t>(gbc._rHL.u16) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc.read<std::uint8_t>(gbc._rHL.u16) & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rHL.u16), 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -1479,23 +1136,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADD A, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc._rAF.u8[Register::Hi], 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1503,24 +1144,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADC A, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc._rBC.u8[Register::Hi] & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc._rBC.u8[Register::Hi] & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc._rBC.u8[Register::Hi], (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1528,24 +1152,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADC A, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc._rBC.u8[Register::Lo] & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc._rBC.u8[Register::Lo] & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc._rBC.u8[Register::Lo], (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1553,24 +1160,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADC A, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc._rDE.u8[Register::Hi] & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc._rDE.u8[Register::Hi] & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc._rDE.u8[Register::Hi], (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1578,24 +1168,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADC A, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc._rDE.u8[Register::Lo] & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc._rDE.u8[Register::Lo] & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc._rDE.u8[Register::Lo], (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1603,24 +1176,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADC A, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc._rHL.u8[Register::Hi] & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc._rHL.u8[Register::Hi] & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc._rHL.u8[Register::Hi], (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1628,24 +1184,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADC A, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc._rHL.u8[Register::Lo] & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc._rHL.u8[Register::Lo] & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc._rHL.u8[Register::Lo], (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1653,24 +1192,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADC A, (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc.read<std::uint8_t>(gbc._rHL.u16) & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc.read<std::uint8_t>(gbc._rHL.u16) & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rHL.u16), (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -1678,24 +1200,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADC A, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc._rAF.u8[Register::Hi], (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1703,23 +1208,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SUB B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rBC.u8[Register::Hi] + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rBC.u8[Register::Hi] + 1) & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc._rBC.u8[Register::Hi], 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1727,23 +1216,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SUB C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rBC.u8[Register::Lo] + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rBC.u8[Register::Lo] + 1) & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc._rBC.u8[Register::Lo], 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1751,23 +1224,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SUB D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rDE.u8[Register::Hi] + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rDE.u8[Register::Hi] + 1) & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc._rDE.u8[Register::Hi], 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1775,23 +1232,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SUB E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rDE.u8[Register::Lo] + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rDE.u8[Register::Lo] + 1) & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc._rDE.u8[Register::Lo], 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1799,23 +1240,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SUB H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rHL.u8[Register::Hi] + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rHL.u8[Register::Hi] + 1) & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc._rHL.u8[Register::Hi], 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1823,23 +1248,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SUB L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rHL.u8[Register::Lo] + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rHL.u8[Register::Lo] + 1) & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc._rHL.u8[Register::Lo], 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1847,23 +1256,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SUB (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rHL.u16) + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rHL.u16) + 1) & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rHL.u16), 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -1871,23 +1264,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SUB A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rAF.u8[Register::Hi] + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rAF.u8[Register::Hi] + 1) & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc._rAF.u8[Register::Hi], 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1895,24 +1272,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SBC A, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rBC.u8[Register::Hi] + 1) & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rBC.u8[Register::Hi] + 1) & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc._rBC.u8[Register::Hi], (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1920,24 +1280,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SBC A, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rBC.u8[Register::Lo] + 1) & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rBC.u8[Register::Lo] + 1) & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc._rBC.u8[Register::Lo], (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1945,24 +1288,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SBC A, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rDE.u8[Register::Hi] + 1) & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rDE.u8[Register::Hi] + 1) & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc._rDE.u8[Register::Hi], (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1970,24 +1296,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SBC A, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rDE.u8[Register::Lo] + 1) & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rDE.u8[Register::Lo] + 1) & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc._rDE.u8[Register::Lo], (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1995,24 +1304,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SBC A, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rHL.u8[Register::Hi] + 1) & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rHL.u8[Register::Hi] + 1) & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc._rHL.u8[Register::Hi], (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2020,24 +1312,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SBC A, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rHL.u8[Register::Lo] + 1) & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rHL.u8[Register::Lo] + 1) & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc._rHL.u8[Register::Lo], (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2045,24 +1320,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SBC A, (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rHL.u16) + 1) & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rHL.u16) + 1) & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rHL.u16), (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -2070,24 +1328,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SBC A, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rAF.u8[Register::Hi] + 1) & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rAF.u8[Register::Hi] + 1) & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc._rAF.u8[Register::Hi], (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2095,14 +1336,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "AND B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= gbc._rBC.u8[Register::Hi];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAnd(gbc._rAF.u8[Register::Hi], gbc._rBC.u8[Register::Hi], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2110,14 +1344,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "AND C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= gbc._rBC.u8[Register::Lo];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAnd(gbc._rAF.u8[Register::Hi], gbc._rBC.u8[Register::Lo], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2125,14 +1352,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "AND D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= gbc._rDE.u8[Register::Hi];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAnd(gbc._rAF.u8[Register::Hi], gbc._rDE.u8[Register::Hi], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2140,14 +1360,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "AND E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= gbc._rDE.u8[Register::Lo];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAnd(gbc._rAF.u8[Register::Hi], gbc._rDE.u8[Register::Lo], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2155,14 +1368,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "AND H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= gbc._rHL.u8[Register::Hi];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAnd(gbc._rAF.u8[Register::Hi], gbc._rHL.u8[Register::Hi], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2170,14 +1376,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "AND L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= gbc._rHL.u8[Register::Lo];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAnd(gbc._rAF.u8[Register::Hi], gbc._rHL.u8[Register::Lo], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2185,14 +1384,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "AND (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= gbc.read<std::uint8_t>(gbc._rHL.u16);
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAnd(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rHL.u16), gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -2200,14 +1392,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "AND A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= gbc._rAF.u8[Register::Hi];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAnd(gbc._rAF.u8[Register::Hi], gbc._rAF.u8[Register::Hi], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2215,14 +1400,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "XOR B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] ^= gbc._rBC.u8[Register::Hi];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionXor(gbc._rAF.u8[Register::Hi], gbc._rBC.u8[Register::Hi], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2230,14 +1408,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "XOR C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] ^= gbc._rBC.u8[Register::Lo];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionXor(gbc._rAF.u8[Register::Hi], gbc._rBC.u8[Register::Lo], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2245,14 +1416,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "XOR D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] ^= gbc._rDE.u8[Register::Hi];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionXor(gbc._rAF.u8[Register::Hi], gbc._rDE.u8[Register::Hi], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2260,14 +1424,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "XOR E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] ^= gbc._rDE.u8[Register::Lo];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionXor(gbc._rAF.u8[Register::Hi], gbc._rDE.u8[Register::Lo], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2275,14 +1432,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "XOR H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] ^= gbc._rHL.u8[Register::Hi];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionXor(gbc._rAF.u8[Register::Hi], gbc._rHL.u8[Register::Hi], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2290,14 +1440,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "XOR L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] ^= gbc._rHL.u8[Register::Lo];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionXor(gbc._rAF.u8[Register::Hi], gbc._rHL.u8[Register::Lo], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2305,14 +1448,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "XOR (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] ^= gbc.read<std::uint8_t>(gbc._rHL.u16);
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionXor(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rHL.u16), gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -2320,14 +1456,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "XOR A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] ^= gbc._rAF.u8[Register::Hi];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionXor(gbc._rAF.u8[Register::Hi], gbc._rAF.u8[Register::Hi], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2335,14 +1464,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "OR B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] |= gbc._rBC.u8[Register::Hi];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionOr(gbc._rAF.u8[Register::Hi], gbc._rBC.u8[Register::Hi], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2350,14 +1472,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "OR C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] |= gbc._rBC.u8[Register::Lo];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionOr(gbc._rAF.u8[Register::Hi], gbc._rBC.u8[Register::Lo], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2365,14 +1480,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "OR D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] |= gbc._rDE.u8[Register::Hi];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionOr(gbc._rAF.u8[Register::Hi], gbc._rDE.u8[Register::Hi], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2380,14 +1488,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "OR E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] |= gbc._rDE.u8[Register::Lo];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionOr(gbc._rAF.u8[Register::Hi], gbc._rDE.u8[Register::Lo], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2395,14 +1496,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "OR H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] |= gbc._rHL.u8[Register::Hi];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionOr(gbc._rAF.u8[Register::Hi], gbc._rHL.u8[Register::Hi], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2410,14 +1504,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "OR L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] |= gbc._rHL.u8[Register::Lo];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionOr(gbc._rAF.u8[Register::Hi], gbc._rHL.u8[Register::Lo], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2425,14 +1512,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "OR (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] |= gbc.read<std::uint8_t>(gbc._rHL.u16);
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionOr(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rHL.u16), gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -2440,14 +1520,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "OR A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] |= gbc._rAF.u8[Register::Hi];
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionOr(gbc._rAF.u8[Register::Hi], gbc._rAF.u8[Register::Hi], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2455,22 +1528,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "CP B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rBC.u8[Register::Hi] + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rBC.u8[Register::Hi] + 1) & 0b00001111);
-
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionCp(gbc._rAF.u8[Register::Hi], gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2478,22 +1536,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "CP C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rBC.u8[Register::Lo] + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rBC.u8[Register::Lo] + 1) & 0b00001111);
-
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionCp(gbc._rAF.u8[Register::Hi], gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2501,22 +1544,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "CP D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rDE.u8[Register::Hi] + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rDE.u8[Register::Hi] + 1) & 0b00001111);
-
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionCp(gbc._rAF.u8[Register::Hi], gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2524,22 +1552,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "CP E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rDE.u8[Register::Lo] + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rDE.u8[Register::Lo] + 1) & 0b00001111);
-
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionCp(gbc._rAF.u8[Register::Hi], gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2547,22 +1560,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "CP H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rHL.u8[Register::Hi] + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rHL.u8[Register::Hi] + 1) & 0b00001111);
-
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionCp(gbc._rAF.u8[Register::Hi], gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2570,22 +1568,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "CP L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rHL.u8[Register::Lo] + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rHL.u8[Register::Lo] + 1) & 0b00001111);
-
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionCp(gbc._rAF.u8[Register::Hi], gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2593,22 +1576,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "CP (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rHL.u16) + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rHL.u16) + 1) & 0b00001111);
-
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionCp(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rHL.u16));
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -2616,22 +1584,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "CP A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc._rAF.u8[Register::Hi] + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc._rAF.u8[Register::Hi] + 1) & 0b00001111);
-
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionCp(gbc._rAF.u8[Register::Hi], gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -2640,8 +1593,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .description = "RET NZ",
     .instruction = [](GBC::GameBoyColor& gbc) {
       if (!(gbc._rAF.u8[Register::Lo] & Register::Z)) {
-        gbc._rPC.u16 = gbc.read<std::uint16_t>(gbc._rSP.u16);
-        gbc._rSP.u16 += 2;
+        gbc.instructionRet();
         gbc._cpuCycle += 20;
       }
       else {
@@ -2653,8 +1605,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "POP BC",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u16 = gbc.read<std::uint16_t>(gbc._rSP.u16);
-      gbc._rSP.u16 += 2;
+      gbc.instructionPop(gbc._rBC.u16);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 12;
     }
@@ -2683,9 +1634,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .description = "CALL NZ, nn",
     .instruction = [](GBC::GameBoyColor& gbc) {
       if (!(gbc._rAF.u8[Register::Lo] & Register::Z)) {
-        gbc._rSP.u16 -= 2;
-        gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rPC.u16 + 3);
-        gbc._rPC.u16 = gbc.read<std::uint16_t>(gbc._rPC.u16 + 1);
+        gbc.instructionCall(gbc.read<std::uint16_t>(gbc._rPC.u16 + 1), gbc._rPC.u16 + 3);
         gbc._cpuCycle += 24;
       }
       else {
@@ -2697,8 +1646,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "PUSH BC",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rSP.u16 -= 2;
-      gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rBC.u16);
+      gbc.instructionPush(gbc._rBC.u16);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -2706,23 +1654,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADD A, n",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc.read<std::uint8_t>(gbc._rPC.u16 + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc.read<std::uint8_t>(gbc._rPC.u16 + 1) & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rPC.u16 + 1), 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 2;
       gbc._cpuCycle += 8;
     }
@@ -2730,9 +1662,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RST 00",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rSP.u16 -= 2;
-      gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rPC.u16 + 1);
-      gbc._rPC.u16 = 0x0000;
+      gbc.instructionCall(0x0000, gbc._rPC.u16 + 1);
       gbc._cpuCycle += 16;
     }
   },  // 0xC7, 0b11000111: RST 00
@@ -2740,8 +1670,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .description = "RET Z",
     .instruction = [](GBC::GameBoyColor& gbc) {
       if (gbc._rAF.u8[Register::Lo] & Register::Z) {
-        gbc._rPC.u16 = gbc.read<std::uint16_t>(gbc._rSP.u16);
-        gbc._rSP.u16 += 2;
+        gbc.instructionRet();
         gbc._cpuCycle += 20;
       }
       else {
@@ -2753,8 +1682,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RET",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rPC.u16 = gbc.read<std::uint16_t>(gbc._rSP.u16);
-      gbc._rSP.u16 += 2;
+      gbc.instructionRet();
       gbc._cpuCycle += 16;
     }
   },  // 0xC9, 0b11001001: RET
@@ -2782,9 +1710,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .description = "CALL Z, nn",
     .instruction = [](GBC::GameBoyColor& gbc) {
       if (gbc._rAF.u8[Register::Lo] & Register::Z) {
-        gbc._rSP.u16 -= 2;
-        gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rPC.u16 + 3);
-        gbc._rPC.u16 = gbc.read<std::uint16_t>(gbc._rPC.u16 + 1);
+        gbc.instructionCall(gbc.read<std::uint16_t>(gbc._rPC.u16 + 1), gbc._rPC.u16 + 3);
         gbc._cpuCycle += 24;
       }
       else {
@@ -2796,33 +1722,14 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "CALL nn",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rSP.u16 -= 2;
-      gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rPC.u16 + 3);
-      gbc._rPC.u16 = gbc.read<std::uint16_t>(gbc._rPC.u16 + 1);
+      gbc.instructionCall(gbc.read<std::uint16_t>(gbc._rPC.u16 + 1), gbc._rPC.u16 + 3);
       gbc._cpuCycle += 24;
     }
   },  // 0xCD, 0b11001101: CALL nn
   GBC::GameBoyColor::Instruction {
     .description = "ADC A, n",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)(gbc.read<std::uint8_t>(gbc._rPC.u16 + 1) & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)(gbc.read<std::uint8_t>(gbc._rPC.u16 + 1) & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rPC.u16 + 1), (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -2830,9 +1737,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RST 08",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rSP.u16 -= 2;
-      gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rPC.u16 + 1);
-      gbc._rPC.u16 = 0x0008;
+      gbc.instructionCall(0x0008, gbc._rPC.u16 + 1);
       gbc._cpuCycle += 16;
     }
   },  // 0xCF, 0b11001111: RST 08
@@ -2840,8 +1745,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .description = "RET NC",
     .instruction = [](GBC::GameBoyColor& gbc) {
       if (!(gbc._rAF.u8[Register::Lo] & Register::C)) {
-        gbc._rPC.u16 = gbc.read<std::uint16_t>(gbc._rSP.u16);
-        gbc._rSP.u16 += 2;
+        gbc.instructionRet();
         gbc._cpuCycle += 20;
       }
       else {
@@ -2853,8 +1757,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "POP DE",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u16 = gbc.read<std::uint16_t>(gbc._rSP.u16);
-      gbc._rSP.u16 += 2;
+      gbc.instructionPop(gbc._rDE.u16);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 12;
     }
@@ -2883,9 +1786,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .description = "CALL NC, nn",
     .instruction = [](GBC::GameBoyColor& gbc) {
       if (!(gbc._rAF.u8[Register::Lo] & Register::C)) {
-        gbc._rSP.u16 -= 2;
-        gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rPC.u16 + 3);
-        gbc._rPC.u16 = gbc.read<std::uint16_t>(gbc._rPC.u16 + 1);
+        gbc.instructionCall(gbc.read<std::uint16_t>(gbc._rPC.u16 + 1), gbc._rPC.u16 + 3);
         gbc._cpuCycle += 24;
       }
       else {
@@ -2897,8 +1798,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "PUSH DE",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rSP.u16 -= 2;
-      gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rDE.u16);
+      gbc.instructionPush(gbc._rDE.u16);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -2906,23 +1806,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SUB n",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rPC.u16 + 1) + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rPC.u16 + 1) + 1) & 0b00001111);
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rPC.u16 + 1), 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 2;
       gbc._cpuCycle += 8;
     }
@@ -2930,9 +1814,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RST 10",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rSP.u16 -= 2;
-      gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rPC.u16 + 1);
-      gbc._rPC.u16 = 0x0010;
+      gbc.instructionCall(0x0010, gbc._rPC.u16 + 1);
       gbc._cpuCycle += 16;
     }
   },  // 0xD7, 0b11010111: RST 10
@@ -2940,8 +1822,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .description = "RET C",
     .instruction = [](GBC::GameBoyColor& gbc) {
       if (gbc._rAF.u8[Register::Lo] & Register::C) {
-        gbc._rPC.u16 = gbc.read<std::uint16_t>(gbc._rSP.u16);
-        gbc._rSP.u16 += 2;
+        gbc.instructionRet();
         gbc._cpuCycle += 20;
       }
       else {
@@ -2953,9 +1834,8 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RETI",
     .instruction = [](GBC::GameBoyColor& gbc) {
+      gbc.instructionRet();
       gbc._ime = GBC::GameBoyColor::IME::IMEEnabled;
-      gbc._rPC.u16 = gbc.read<std::uint16_t>(gbc._rSP.u16);
-      gbc._rSP.u16 += 2;
       gbc._cpuCycle += 16;
     }
   },  // 0xD9, 0b11011001: RETI
@@ -2983,9 +1863,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .description = "CALL C, nn",
     .instruction = [](GBC::GameBoyColor& gbc) {
       if (gbc._rAF.u8[Register::Lo] & Register::C) {
-        gbc._rSP.u16 -= 2;
-        gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rPC.u16 + 3);
-        gbc._rPC.u16 = gbc.read<std::uint16_t>(gbc._rPC.u16 + 1);
+        gbc.instructionCall(gbc.read<std::uint16_t>(gbc._rPC.u16 + 1), gbc._rPC.u16 + 3);
         gbc._cpuCycle += 24;
       }
       else {
@@ -3004,34 +1882,15 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SBC A, n",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0;
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rPC.u16 + 1) + 1) & 0b11111111) + carry;
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rPC.u16 + 1) + 1) & 0b00001111) + carry;
-
-      gbc._rAF.u8[Register::Hi] = (std::uint8_t)r8;
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSub(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rPC.u16 + 1), (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 2;
       gbc._cpuCycle += 8;
     }
-  },  // 0xDE, 0b11011110: SBC A, d8
+  },  // 0xDE, 0b11011110: SBC A, n
   GBC::GameBoyColor::Instruction {
     .description = "RST 18",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rSP.u16 -= 2;
-      gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rPC.u16 + 1);
-      gbc._rPC.u16 = 0x0018;
+      gbc.instructionCall(0x0018, gbc._rPC.u16 + 1);
       gbc._cpuCycle += 16;
     }
   },  // 0xDF, 0b11011111: RST 18
@@ -3046,8 +1905,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "POP HL",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u16 = gbc.read<std::uint16_t>(gbc._rSP.u16);
-      gbc._rSP.u16 += 2;
+      gbc.instructionPop(gbc._rHL.u16);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 12;
     }
@@ -3077,8 +1935,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "PUSH HL",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rSP.u16 -= 2;
-      gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rHL.u16);
+      gbc.instructionPush(gbc._rHL.u16);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -3086,14 +1943,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "AND n",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= gbc.read<std::uint8_t>(gbc._rPC.u16 + 1);
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionAnd(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rPC.u16 + 1), gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 2;
       gbc._cpuCycle += 8;
     }
@@ -3101,9 +1951,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RST 20",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rSP.u16 -= 2;
-      gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rPC.u16 + 1);
-      gbc._rPC.u16 = 0x0020;
+      gbc.instructionCall(0x0020, gbc._rPC.u16 + 1);
       gbc._cpuCycle += 16;
     }
   },  // 0xE7, 0b11100111: RST 20
@@ -3167,14 +2015,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "XOR n",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] ^= gbc.read<std::uint8_t>(gbc._rPC.u16 + 1);
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionXor(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rPC.u16 + 1), gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 2;
       gbc._cpuCycle += 8;
     }
@@ -3182,9 +2023,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RST 28",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rSP.u16 -= 2;
-      gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rPC.u16 + 1);
-      gbc._rPC.u16 = 0x0028;
+      gbc.instructionCall(0x0028, gbc._rPC.u16 + 1);
       gbc._cpuCycle += 16;
     }
   },  // 0xEF, 0b11101111: RST 28
@@ -3199,8 +2038,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "POP AF",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u16 = gbc.read<std::uint16_t>(gbc._rSP.u16);
-      gbc._rSP.u16 += 2;
+      gbc.instructionPop(gbc._rAF.u16);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 12;
     }
@@ -3231,8 +2069,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "PUSH AF",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rSP.u16 -= 2;
-      gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rAF.u16);
+      gbc.instructionPush(gbc._rAF.u16);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -3240,14 +2077,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "OR n",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] |= gbc.read<std::uint8_t>(gbc._rPC.u16 + 1);
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionOr(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rPC.u16 + 1), gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 2;
       gbc._cpuCycle += 8;
     }
@@ -3255,18 +2085,16 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RST 30",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rSP.u16 -= 2;
-      gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rPC.u16 + 1);
-      gbc._rPC.u16 = 0x0030;
+      gbc.instructionCall(0x0030, gbc._rPC.u16 + 1);
       gbc._cpuCycle += 16;
     }
   },  // 0xF7, 0b11110111: RST 30
   GBC::GameBoyColor::Instruction {
-    .description = "LD HL, (SP+n)",
+    .description = "LD HL, SP+n",
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::int8_t n = gbc.read<std::int8_t>(gbc._rPC.u16 + 1);
 
-      gbc._rHL.u16 = gbc.read<std::uint16_t>(gbc._rSP.u16 + n);
+      gbc._rHL.u16 = gbc._rSP.u16 + n;
       if (n >= 0) {
         if (((gbc._rSP.u16 & 0b0000000011111111) + n) & 0b0000000100000000)
           gbc._rAF.u8[Register::Lo] |= Register::C;
@@ -3334,22 +2162,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "CP n",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint16_t r8 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b11111111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rPC.u16 + 1) + 1) & 0b11111111);
-      std::uint16_t r4 = (std::uint16_t)(gbc._rAF.u8[Register::Hi] & 0b00001111) + (std::uint16_t)((~gbc.read<std::uint8_t>(gbc._rPC.u16 + 1) + 1) & 0b00001111);
-
-      if ((r8 & 0b11111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] |= Register::N;
-      if (r4 & 0b10000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r8 & 0b100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionCp(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rPC.u16 + 1));
       gbc._rPC.u16 += 2;
       gbc._cpuCycle += 8;
     }
@@ -3357,31 +2170,17 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RST 38",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rSP.u16 -= 2;
-      gbc.write<std::uint16_t>(gbc._rSP.u16, gbc._rPC.u16 + 1);
-      gbc._rPC.u16 = 0x0038;
+      gbc.instructionCall(0x0038, gbc._rPC.u16 + 1);
       gbc._cpuCycle += 4;
     }
   }   // 0xFF, 0b11111111: RST 38
-
-  // 0x??, 0b????????: SBC A, # 
 };
 
 const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instructionsCB = {
   GBC::GameBoyColor::Instruction {
     .description = "RLC B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rBC.u8[Register::Hi] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rBC.u8[Register::Hi] = (gbc._rBC.u8[Register::Hi] << 1) + ((gbc._rBC.u8[Register::Hi] & 0b10000000) ? 0b00000001 : 0b00000000);
+      gbc.instructionRlc(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3389,17 +2188,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RLC C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Lo] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rBC.u8[Register::Lo] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rBC.u8[Register::Lo] = (gbc._rBC.u8[Register::Lo] << 1) + ((gbc._rBC.u8[Register::Lo] & 0b10000000) ? 0b00000001 : 0b00000000);
+      gbc.instructionRlc(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3407,35 +2196,15 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RLC D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rDE.u8[Register::Hi] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rDE.u8[Register::Hi] = (gbc._rDE.u8[Register::Hi] << 1) + ((gbc._rDE.u8[Register::Hi] & 0b10000000) ? 0b00000001 : 0b00000000);
+      gbc.instructionRlc(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
   },  // 0x02, 0b00000010: RLC D
   GBC::GameBoyColor::Instruction {
-    .description = "E",
+    .description = "RLC E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Lo] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rDE.u8[Register::Lo] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rDE.u8[Register::Lo] = (gbc._rDE.u8[Register::Lo] << 1) + ((gbc._rDE.u8[Register::Lo] & 0b10000000) ? 0b00000001 : 0b00000000);
+      gbc.instructionRlc(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3443,17 +2212,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RLC H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rHL.u8[Register::Hi] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rHL.u8[Register::Hi] = (gbc._rHL.u8[Register::Hi] << 1) + ((gbc._rHL.u8[Register::Hi] & 0b10000000) ? 0b00000001 : 0b00000000);
+      gbc.instructionRlc(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3461,17 +2220,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RLC L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Lo] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rHL.u8[Register::Lo] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rHL.u8[Register::Lo] = (gbc._rHL.u8[Register::Lo] << 1) + ((gbc._rHL.u8[Register::Lo] & 0b10000000) ? 0b00000001 : 0b00000000);
+      gbc.instructionRlc(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3481,17 +2230,8 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      if (r == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc.write<std::uint8_t>(gbc._rHL.u16, (r << 1) + ((r & 0b10000000) ? 0b00000001 : 0b00000000));
+      gbc.instructionRlc(r);
+      gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -3499,17 +2239,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RLC A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rAF.u8[Register::Hi] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rAF.u8[Register::Hi] = (gbc._rAF.u8[Register::Hi] << 1) + ((gbc._rAF.u8[Register::Hi] & 0b10000000) ? 0b00000001 : 0b00000000);
+      gbc.instructionRlc(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3517,17 +2247,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RRC B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rBC.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rBC.u8[Register::Hi] = (gbc._rBC.u8[Register::Hi] >> 1) + ((gbc._rBC.u8[Register::Hi] & 0b00000001) ? 0b10000000 : 0b00000000);
+      gbc.instructionRrc(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3535,17 +2255,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RRC C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Lo] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rBC.u8[Register::Lo] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rBC.u8[Register::Lo] = (gbc._rBC.u8[Register::Lo] >> 1) + ((gbc._rBC.u8[Register::Lo] & 0b00000001) ? 0b10000000 : 0b00000000);
+      gbc.instructionRrc(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3553,17 +2263,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RRC D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rDE.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rDE.u8[Register::Hi] = (gbc._rDE.u8[Register::Hi] >> 1) + ((gbc._rDE.u8[Register::Hi] & 0b00000001) ? 0b10000000 : 0b00000000);
+      gbc.instructionRrc(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3571,17 +2271,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RRC E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Lo] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rDE.u8[Register::Lo] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rDE.u8[Register::Lo] = (gbc._rDE.u8[Register::Lo] >> 1) + ((gbc._rDE.u8[Register::Lo] & 0b00000001) ? 0b10000000 : 0b00000000);
+      gbc.instructionRrc(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3589,17 +2279,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RRC H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rHL.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rHL.u8[Register::Hi] = (gbc._rHL.u8[Register::Hi] >> 1) + ((gbc._rHL.u8[Register::Hi] & 0b00000001) ? 0b10000000 : 0b00000000);
+      gbc.instructionRrc(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3607,17 +2287,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RRC L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Lo] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rHL.u8[Register::Lo] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rHL.u8[Register::Lo] = (gbc._rHL.u8[Register::Lo] >> 1) + ((gbc._rHL.u8[Register::Lo] & 0b00000001) ? 0b10000000 : 0b00000000);
+      gbc.instructionRrc(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3627,17 +2297,8 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      if (r == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc.write<std::uint8_t>(gbc._rHL.u16, (r >> 1) + ((r & 0b00000001) ? 0b10000000 : 0b00000000));
+      gbc.instructionRrc(r);
+      gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -3645,17 +2306,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RRC A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rAF.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rAF.u8[Register::Hi] = (gbc._rAF.u8[Register::Hi] >> 1) + ((gbc._rAF.u8[Register::Hi] & 0b00000001) ? 0b10000000 : 0b00000000);
+      gbc.instructionRrc(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3663,19 +2314,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RL B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 0b00000001 : 0b00000000;
-
-      if ((gbc._rBC.u8[Register::Hi] & 0b01111111) == 0 && carry == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rBC.u8[Register::Hi] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rBC.u8[Register::Hi] = (gbc._rBC.u8[Register::Hi] << 1) + carry;
+      gbc.instructionRl(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3683,19 +2322,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RL C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 0b00000001 : 0b00000000;
-
-      if ((gbc._rBC.u8[Register::Lo] & 0b01111111) == 0 && carry == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rBC.u8[Register::Lo] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rBC.u8[Register::Lo] = (gbc._rBC.u8[Register::Lo] << 1) + carry;
+      gbc.instructionRl(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3703,19 +2330,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RL D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 0b00000001 : 0b00000000;
-
-      if ((gbc._rDE.u8[Register::Hi] & 0b01111111) == 0 && carry == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rDE.u8[Register::Hi] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rDE.u8[Register::Hi] = (gbc._rDE.u8[Register::Hi] << 1) + carry;
+      gbc.instructionRl(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3723,19 +2338,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RL E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 0b00000001 : 0b00000000;
-
-      if ((gbc._rDE.u8[Register::Lo] & 0b01111111) == 0 && carry == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rDE.u8[Register::Lo] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rDE.u8[Register::Lo] = (gbc._rDE.u8[Register::Lo] << 1) + carry;
+      gbc.instructionRl(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3743,19 +2346,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RL H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 0b00000001 : 0b00000000;
-
-      if ((gbc._rHL.u8[Register::Hi] & 0b01111111) == 0 && carry == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rHL.u8[Register::Hi] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rHL.u8[Register::Hi] = (gbc._rHL.u8[Register::Hi] << 1) + carry;
+      gbc.instructionRl(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3763,19 +2354,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RL L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 0b00000001 : 0b00000000;
-
-      if ((gbc._rHL.u8[Register::Lo] & 0b01111111) == 0 && carry == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rHL.u8[Register::Lo] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rHL.u8[Register::Lo] = (gbc._rHL.u8[Register::Lo] << 1) + carry;
+      gbc.instructionRl(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3783,20 +2362,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RL (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 0b00000001 : 0b00000000;
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      if ((r & 0b01111111) == 0 && carry == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc.write<std::uint8_t>(gbc._rHL.u16, (r << 1) + carry);
+      gbc.instructionRl(r);
+      gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -3804,19 +2373,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RL A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 0b00000001 : 0b00000000;
-
-      if ((gbc._rAF.u8[Register::Hi] & 0b01111111) == 0 && carry == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rAF.u8[Register::Hi] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rAF.u8[Register::Hi] = (gbc._rAF.u8[Register::Hi] << 1) + carry;
+      gbc.instructionRl(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3824,19 +2381,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RR B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 0b10000000 : 0b00000000;
-
-      if ((gbc._rBC.u8[Register::Hi] & 0b11111110) == 0 && carry == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rBC.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rBC.u8[Register::Hi] = (gbc._rBC.u8[Register::Hi] >> 1) + carry;
+      gbc.instructionRr(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3844,19 +2389,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RR C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 0b10000000 : 0b00000000;
-
-      if ((gbc._rBC.u8[Register::Lo] & 0b11111110) == 0 && carry == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rBC.u8[Register::Lo] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rBC.u8[Register::Lo] = (gbc._rBC.u8[Register::Lo] >> 1) + carry;
+      gbc.instructionRr(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3864,19 +2397,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RR D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 0b10000000 : 0b00000000;
-
-      if ((gbc._rDE.u8[Register::Hi] & 0b11111110) == 0 && carry == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rDE.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rDE.u8[Register::Hi] = (gbc._rDE.u8[Register::Hi] >> 1) + carry;
+      gbc.instructionRr(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3884,19 +2405,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RR E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 0b10000000 : 0b00000000;
-
-      if ((gbc._rDE.u8[Register::Lo] & 0b11111110) == 0 && carry == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rDE.u8[Register::Lo] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rDE.u8[Register::Lo] = (gbc._rDE.u8[Register::Lo] >> 1) + carry;
+      gbc.instructionRr(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3904,19 +2413,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RR H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 0b10000000 : 0b00000000;
-
-      if ((gbc._rHL.u8[Register::Hi] & 0b11111110) == 0 && carry == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rHL.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rHL.u8[Register::Hi] = (gbc._rHL.u8[Register::Hi] >> 1) + carry;
+      gbc.instructionRr(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3924,19 +2421,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RR L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 0b10000000 : 0b00000000;
-
-      if ((gbc._rHL.u8[Register::Lo] & 0b11111110) == 0 && carry == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rHL.u8[Register::Lo] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rHL.u8[Register::Lo] = (gbc._rHL.u8[Register::Lo] >> 1) + carry;
+      gbc.instructionRr(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3944,20 +2429,10 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RR (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 0b10000000 : 0b00000000;
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      if ((r & 0b11111110) == 0 && carry == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc.write<std::uint8_t>(gbc._rHL.u16, (r >> 1) + carry);
+      gbc.instructionRr(r);
+      gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -3965,19 +2440,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RR A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::uint8_t  carry = (gbc._rAF.u8[Register::Lo] & Register::C) ? 0b10000000 : 0b00000000;
-
-      if ((gbc._rAF.u8[Register::Hi] & 0b11111110) == 0 && carry == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rAF.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rAF.u8[Register::Hi] = (gbc._rAF.u8[Register::Hi] >> 1) + carry;
+      gbc.instructionRr(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3985,17 +2448,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SLA B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rBC.u8[Register::Hi] & 0b01111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rBC.u8[Register::Hi] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rBC.u8[Register::Hi] = gbc._rBC.u8[Register::Hi] << 1;
+      gbc.instructionSla(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4003,17 +2456,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SLA C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rBC.u8[Register::Lo] & 0b01111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rBC.u8[Register::Lo] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rBC.u8[Register::Lo] = gbc._rBC.u8[Register::Lo] << 1;
+      gbc.instructionSla(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4021,17 +2464,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SLA D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rDE.u8[Register::Hi] & 0b01111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rDE.u8[Register::Hi] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rDE.u8[Register::Hi] = gbc._rDE.u8[Register::Hi] << 1;
+      gbc.instructionSla(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4039,17 +2472,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SLA E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rDE.u8[Register::Lo] & 0b01111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rDE.u8[Register::Lo] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rDE.u8[Register::Lo] = gbc._rDE.u8[Register::Lo] << 1;
+      gbc.instructionSla(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4057,17 +2480,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SLA H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rHL.u8[Register::Hi] & 0b01111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rHL.u8[Register::Hi] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rHL.u8[Register::Hi] = gbc._rHL.u8[Register::Hi] << 1;
+      gbc.instructionSla(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4075,17 +2488,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SLA L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rHL.u8[Register::Lo] & 0b01111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rHL.u8[Register::Lo] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rHL.u8[Register::Lo] = gbc._rHL.u8[Register::Lo] << 1;
+      gbc.instructionSla(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4095,17 +2498,8 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      if ((r & 0b01111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc.write<std::uint8_t>(gbc._rHL.u16, r << 1);
+      gbc.instructionSla(r);
+      gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -4113,17 +2507,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SLA A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rAF.u8[Register::Hi] & 0b01111111) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rAF.u8[Register::Hi] & 0b10000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rAF.u8[Register::Hi] = gbc._rAF.u8[Register::Hi] << 1;
+      gbc.instructionSla(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4131,17 +2515,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SRA B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rBC.u8[Register::Hi] & 0b11111110) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rBC.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rBC.u8[Register::Hi] = (gbc._rBC.u8[Register::Hi] >> 1) | (gbc._rBC.u8[Register::Hi] & 0b10000000);
+      gbc.instructionSra(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4149,17 +2523,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SRA C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rBC.u8[Register::Lo] & 0b11111110) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rBC.u8[Register::Lo] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rBC.u8[Register::Lo] = (gbc._rBC.u8[Register::Lo] >> 1) | (gbc._rBC.u8[Register::Lo] & 0b10000000);
+      gbc.instructionSra(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4167,17 +2531,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SRA D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rDE.u8[Register::Hi] & 0b11111110) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rDE.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rDE.u8[Register::Hi] = (gbc._rDE.u8[Register::Hi] >> 1) | (gbc._rDE.u8[Register::Hi] & 0b10000000);
+      gbc.instructionSra(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4185,17 +2539,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SRA E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rDE.u8[Register::Lo] & 0b11111110) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rDE.u8[Register::Lo] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rDE.u8[Register::Lo] = (gbc._rDE.u8[Register::Lo] >> 1) | (gbc._rDE.u8[Register::Lo] & 0b10000000);
+      gbc.instructionSra(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4203,17 +2547,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SRA H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rHL.u8[Register::Hi] & 0b11111110) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rHL.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rHL.u8[Register::Hi] = (gbc._rHL.u8[Register::Hi] >> 1) | (gbc._rHL.u8[Register::Hi] & 0b10000000);
+      gbc.instructionSra(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4221,17 +2555,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SRA L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rHL.u8[Register::Lo] & 0b11111110) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rHL.u8[Register::Lo] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rHL.u8[Register::Lo] = (gbc._rHL.u8[Register::Lo] >> 1) | (gbc._rHL.u8[Register::Lo] & 0b10000000);
+      gbc.instructionSra(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4241,17 +2565,8 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      if ((r & 0b11111110) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc.write<std::uint8_t>(gbc._rHL.u16, (r >> 1) | (r & 0b10000000));
+      gbc.instructionSra(r);
+      gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -4259,17 +2574,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SRA A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rAF.u8[Register::Hi] & 0b11111110) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rAF.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rAF.u8[Register::Hi] = (gbc._rAF.u8[Register::Hi] >> 1) | (gbc._rAF.u8[Register::Hi] & 0b10000000);
+      gbc.instructionSra(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4277,14 +2582,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SWAP B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] = (gbc._rBC.u8[Register::Hi] >> 4) | (gbc._rBC.u8[Register::Hi] << 4);
-      if (gbc._rBC.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSwap(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4292,14 +2590,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SWAP C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] = (gbc._rBC.u8[Register::Lo] >> 4) | (gbc._rBC.u8[Register::Lo] << 4);
-      if (gbc._rBC.u8[Register::Lo] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSwap(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4307,14 +2598,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SWAP D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] = (gbc._rDE.u8[Register::Hi] >> 4) | (gbc._rDE.u8[Register::Hi] << 4);
-      if (gbc._rDE.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSwap(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4322,14 +2606,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SWAP E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] = (gbc._rDE.u8[Register::Lo] >> 4) | (gbc._rDE.u8[Register::Lo] << 4);
-      if (gbc._rDE.u8[Register::Lo] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSwap(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4337,14 +2614,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SWAP H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] = (gbc._rHL.u8[Register::Hi] >> 4) | (gbc._rHL.u8[Register::Hi] << 4);
-      if (gbc._rHL.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSwap(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4352,14 +2622,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SWAP L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] = (gbc._rHL.u8[Register::Lo] >> 4) | (gbc._rHL.u8[Register::Lo] << 4);
-      if (gbc._rHL.u8[Register::Lo] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSwap(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4369,15 +2632,8 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r = (r >> 4) | (r << 4);
+      gbc.instructionSwap(r);
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
-      if (r == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -4385,14 +2641,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SWAP A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] = (gbc._rAF.u8[Register::Hi] >> 4) | (gbc._rAF.u8[Register::Hi] << 4);
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      gbc.instructionSwap(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4400,17 +2649,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SRL B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rBC.u8[Register::Hi] & 0b11111110) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rBC.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rBC.u8[Register::Hi] = gbc._rBC.u8[Register::Hi] >> 1;
+      gbc.instructionSrl(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4418,17 +2657,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SRL C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rBC.u8[Register::Lo] & 0b11111110) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rBC.u8[Register::Lo] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rBC.u8[Register::Lo] = gbc._rBC.u8[Register::Lo] >> 1;
+      gbc.instructionSrl(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4436,17 +2665,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SRL D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rDE.u8[Register::Hi] & 0b11111110) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rDE.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rDE.u8[Register::Hi] = gbc._rDE.u8[Register::Hi] >> 1;
+      gbc.instructionSrl(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4454,17 +2673,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SRL E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rDE.u8[Register::Lo] & 0b11111110) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rDE.u8[Register::Lo] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rDE.u8[Register::Lo] = gbc._rDE.u8[Register::Lo] >> 1;
+      gbc.instructionSrl(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4472,17 +2681,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SRL H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rHL.u8[Register::Hi] & 0b11111110) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rHL.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rHL.u8[Register::Hi] = gbc._rHL.u8[Register::Hi] >> 1;
+      gbc.instructionSrl(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4490,17 +2689,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SRL L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rHL.u8[Register::Lo] & 0b11111110) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rHL.u8[Register::Lo] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rHL.u8[Register::Lo] = gbc._rHL.u8[Register::Lo] >> 1;
+      gbc.instructionSrl(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4510,17 +2699,8 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      if ((r & 0b11111110) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc.write<std::uint8_t>(gbc._rHL.u16, r >> 1);
+      gbc.instructionSrl(r);
+      gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -4528,17 +2708,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SRL A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if ((gbc._rAF.u8[Register::Hi] & 0b11111110) == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (gbc._rAF.u8[Register::Hi] & 0b00000001)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      gbc._rAF.u8[Register::Hi] = gbc._rAF.u8[Register::Hi] >> 1;
+      gbc.instructionSrl(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4546,12 +2716,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 0, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Hi] & (0b00000001 << 0))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<0>(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4559,12 +2724,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 0, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Lo] & (0b00000001 << 0))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<0>(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4572,12 +2732,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 0, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Hi] & (0b00000001 << 0))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<0>(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4585,12 +2740,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 0, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Lo] & (0b00000001 << 0))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<0>(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4598,12 +2748,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 0, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Hi] & (0b00000001 << 0))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<0>(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4611,12 +2756,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 0, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Lo] & (0b00000001 << 0))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<0>(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4624,12 +2764,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 0, (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc.read<std::uint8_t>(gbc._rHL.u16) & (0b00000001 << 0))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<0>(gbc.read<std::uint8_t>(gbc._rHL.u16));
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -4637,12 +2772,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 0, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rAF.u8[Register::Hi] & (0b00000001 << 0))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<0>(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4650,12 +2780,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 1, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Hi] & (0b00000001 << 1))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<1>(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4663,12 +2788,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 1, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Lo] & (0b00000001 << 1))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<1>(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4676,12 +2796,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 1, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Hi] & (0b00000001 << 1))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<1>(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4689,12 +2804,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 1, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Lo] & (0b00000001 << 1))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<1>(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4702,12 +2812,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 1, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Hi] & (0b00000001 << 1))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<1>(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4715,12 +2820,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 1, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Lo] & (0b00000001 << 1))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<1>(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4728,12 +2828,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 1, (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc.read<std::uint8_t>(gbc._rHL.u16) & (0b00000001 << 1))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<1>(gbc.read<std::uint8_t>(gbc._rHL.u16));
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -4741,12 +2836,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 1, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rAF.u8[Register::Hi] & (0b00000001 << 1))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<1>(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4754,12 +2844,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 2, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Hi] & (0b00000001 << 2))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<2>(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4767,12 +2852,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 2, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Lo] & (0b00000001 << 2))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<2>(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4780,12 +2860,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 2, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Hi] & (0b00000001 << 2))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<2>(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4793,12 +2868,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 2, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Lo] & (0b00000001 << 2))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<2>(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4806,12 +2876,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 2, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Hi] & (0b00000001 << 2))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<2>(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4819,12 +2884,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 2, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Lo] & (0b00000001 << 2))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<2>(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4832,12 +2892,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 2, (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc.read<std::uint8_t>(gbc._rHL.u16) & (0b00000001 << 2))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<2>(gbc.read<std::uint8_t>(gbc._rHL.u16));
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -4845,12 +2900,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 2, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rAF.u8[Register::Hi] & (0b00000001 << 2))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<2>(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4858,12 +2908,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 3, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Hi] & (0b00000001 << 3))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<3>(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4871,12 +2916,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 3, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Lo] & (0b00000001 << 3))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<3>(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4884,12 +2924,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 3, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Hi] & (0b00000001 << 3))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<3>(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4897,12 +2932,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 3, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Lo] & (0b00000001 << 3))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<3>(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4910,12 +2940,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 3, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Hi] & (0b00000001 << 3))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<3>(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4923,12 +2948,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 3, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Lo] & (0b00000001 << 3))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<3>(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4936,12 +2956,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 3, (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc.read<std::uint8_t>(gbc._rHL.u16) & (0b00000001 << 3))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<3>(gbc.read<std::uint8_t>(gbc._rHL.u16));
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -4949,12 +2964,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 3, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rAF.u8[Register::Hi] & (0b00000001 << 3))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<3>(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4962,12 +2972,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 4, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Hi] & (0b00000001 << 4))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<4>(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4975,12 +2980,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 4, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Lo] & (0b00000001 << 4))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<4>(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4988,12 +2988,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 4, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Hi] & (0b00000001 << 4))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<4>(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5001,12 +2996,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 4, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Lo] & (0b00000001 << 4))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<4>(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5014,12 +3004,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 4, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Hi] & (0b00000001 << 4))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<4>(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5027,12 +3012,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 4, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Lo] & (0b00000001 << 4))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<4>(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5040,12 +3020,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 4, (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc.read<std::uint8_t>(gbc._rHL.u16) & (0b00000001 << 4))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<4>(gbc.read<std::uint8_t>(gbc._rHL.u16));
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -5053,12 +3028,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 4, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rAF.u8[Register::Hi] & (0b00000001 << 4))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<4>(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5066,12 +3036,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 5, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Hi] & (0b00000001 << 5))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<5>(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5079,12 +3044,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 5, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Lo] & (0b00000001 << 5))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<5>(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5092,12 +3052,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 5, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Hi] & (0b00000001 << 5))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<5>(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5105,12 +3060,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 5, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Lo] & (0b00000001 << 5))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<5>(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5118,12 +3068,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 5, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Hi] & (0b00000001 << 5))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<5>(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5131,12 +3076,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 5, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Lo] & (0b00000001 << 5))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<5>(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5144,12 +3084,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 5, (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc.read<std::uint8_t>(gbc._rHL.u16) & (0b00000001 << 5))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<5>(gbc.read<std::uint8_t>(gbc._rHL.u16));
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -5157,12 +3092,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 5, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rAF.u8[Register::Hi] & (0b00000001 << 5))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<5>(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5170,12 +3100,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 6, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Hi] & (0b00000001 << 6))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<6>(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5183,12 +3108,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 6, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Lo] & (0b00000001 << 6))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<6>(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5196,12 +3116,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 6, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Hi] & (0b00000001 << 6))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<6>(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5209,12 +3124,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 6, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Lo] & (0b00000001 << 6))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<6>(gbc._rDE.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5222,12 +3132,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 6, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Hi] & (0b00000001 << 6))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<6>(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5235,12 +3140,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 6, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Lo] & (0b00000001 << 6))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<6>(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5248,12 +3148,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 6, (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc.read<std::uint8_t>(gbc._rHL.u16) & (0b00000001 << 6))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<6>(gbc.read<std::uint8_t>(gbc._rHL.u16));
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -5261,12 +3156,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 6, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rAF.u8[Register::Hi] & (0b00000001 << 6))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<6>(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5274,12 +3164,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 7, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Hi] & (0b00000001 << 7))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<7>(gbc._rBC.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5287,12 +3172,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 7, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rBC.u8[Register::Lo] & (0b00000001 << 7))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<7>(gbc._rBC.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5300,12 +3180,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 7, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rDE.u8[Register::Hi] & (0b00000001 << 7))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<7>(gbc._rDE.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5313,25 +3188,15 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 7, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-    if (gbc._rDE.u8[Register::Lo] & (0b00000001 << 7))
-      gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-    else
-      gbc._rAF.u8[Register::Lo] |= Register::Z;
-    gbc._rAF.u8[Register::Lo] &= ~Register::N;
-    gbc._rAF.u8[Register::Lo] |= Register::H;
-    gbc._rPC.u16 += 1;
-    gbc._cpuCycle += 8;
+      gbc.instructionBit<7>(gbc._rDE.u8[Register::Lo]);
+      gbc._rPC.u16 += 1;
+      gbc._cpuCycle += 8;
     }
   },  // 0x7b, 0b01111011: BIT 7, E
   GBC::GameBoyColor::Instruction {
     .description = "BIT 7, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Hi] & (0b00000001 << 7))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<7>(gbc._rHL.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5339,12 +3204,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 7, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rHL.u8[Register::Lo] & (0b00000001 << 7))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<7>(gbc._rHL.u8[Register::Lo]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -5352,12 +3212,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 7, (HL)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc.read<std::uint8_t>(gbc._rHL.u16) & (0b00000001 << 7))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<7>(gbc.read<std::uint8_t>(gbc._rHL.u16));
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
     }
@@ -5365,12 +3220,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "BIT 7, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._rAF.u8[Register::Hi] & (0b00000001 << 7))
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      gbc._rAF.u8[Register::Lo] |= Register::H;
+      gbc.instructionBit<7>(gbc._rAF.u8[Register::Hi]);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -6449,6 +4299,306 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   }   // 0xff, 0b11111111: SET 7, A
 };
 
+void  GBC::GameBoyColor::instructionAdd(std::uint8_t left, std::uint8_t right, std::uint8_t carry, std::uint8_t& result)
+{
+  std::uint16_t r8 = (std::uint16_t)(left & 0b11111111) + (std::uint16_t)(right & 0b11111111) + (std::uint16_t)(carry & 0b11111111);
+  std::uint16_t r4 = (std::uint16_t)(left & 0b00001111) + (std::uint16_t)(right & 0b00001111) + (std::uint16_t)(carry & 0b00001111);
+
+  result = (std::uint8_t)r8;
+  if ((r8 & 0b0000000011111111) == 0)
+    _rAF.u8[Register::Lo] |= Register::Z;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::Z;
+  _rAF.u8[Register::Lo] &= ~Register::N;
+  if (r4 & 0b1111111111110000)
+    _rAF.u8[Register::Lo] |= Register::H;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::H;
+  if (r8 & 0b1111111100000000)
+    _rAF.u8[Register::Lo] |= Register::C;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::C;
+}
+
+void  GBC::GameBoyColor::instructionAdd(std::uint16_t left, std::uint16_t right, std::uint16_t& result)
+{
+  std::uint32_t r16 = (std::uint32_t)(left & 0b1111111111111111) + (std::uint32_t)(right & 0b1111111111111111);
+  std::uint32_t r12 = (std::uint32_t)(left & 0b0000111111111111) + (std::uint32_t)(right & 0b0000111111111111);
+
+  result = (std::uint16_t)r16;
+  _rAF.u8[Register::Lo] &= ~Register::N;
+  if (r12 & 0b1000000000000)
+    _rAF.u8[Register::Lo] |= Register::H;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::H;
+  if (r16 & 0b10000000000000000)
+    _rAF.u8[Register::Lo] |= Register::C;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::C;
+}
+
+void  GBC::GameBoyColor::instructionSub(std::uint8_t left, std::uint8_t right, std::uint8_t carry, std::uint8_t& result)
+{
+  result = left - (right + carry);
+  if (left == right + carry)
+    _rAF.u8[Register::Lo] |= Register::Z;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::Z;
+  _rAF.u8[Register::Lo] |= Register::N;
+  if ((left & 0b00001111) < ((right + carry) & 0b00001111))
+    _rAF.u8[Register::Lo] |= Register::H;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::H;
+  if (left < (right + carry))
+    _rAF.u8[Register::Lo] |= Register::C;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::C;
+
+  return;
+
+  instructionAdd(left, (~right) + 1, -carry, result);
+  _rAF.u8[Register::Lo] |= Register::N;
+  _rAF.u8[Register::Lo] ^= Register::H;
+  _rAF.u8[Register::Lo] ^= Register::C;
+
+  return;
+
+  instructionAdd(left, (~right) + 1, -carry, result);
+  _rAF.u8[Register::Lo] |= Register::N;
+}
+
+void  GBC::GameBoyColor::instructionCp(std::uint8_t left, std::uint8_t right)
+{
+  std::uint8_t  result;
+
+  instructionSub(left, right, 0, result);
+  return;
+
+  if (left == right)
+    _rAF.u8[Register::Lo] |= Register::Z;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::Z;
+  _rAF.u8[Register::Lo] |= Register::N;
+  if ((left & 0b00001111) < (right & 0b00001111))
+    _rAF.u8[Register::Lo] |= Register::H;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::H;
+  if (left < right)
+    _rAF.u8[Register::Lo] |= Register::C;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::C;
+}
+
+void  GBC::GameBoyColor::instructionInc(std::uint8_t& value)
+{
+  value += 1;
+  if (value == 0)
+    _rAF.u8[Register::Lo] |= Register::Z;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::Z;
+  _rAF.u8[Register::Lo] &= ~Register::N;
+  if ((value & 0b00001111) == 0b00000000)
+    _rAF.u8[Register::Lo] |= Register::H;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::H;
+}
+
+void  GBC::GameBoyColor::instructionDec(std::uint8_t& value)
+{
+  value -= 1;
+  if (value == 0)
+    _rAF.u8[Register::Lo] |= Register::Z;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::Z;
+  _rAF.u8[Register::Lo] |= Register::N;
+  if ((value & 0b00001111) == 0b00001111)
+    _rAF.u8[Register::Lo] &= ~Register::H;
+  else
+    _rAF.u8[Register::Lo] |= Register::H;
+}
+
+void  GBC::GameBoyColor::instructionAnd(std::uint8_t left, std::uint8_t right, std::uint8_t& result)
+{
+  result = left & right;
+  if (result == 0)
+    _rAF.u8[Register::Lo] |= Register::Z;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::Z;
+  _rAF.u8[Register::Lo] &= ~Register::N;
+  _rAF.u8[Register::Lo] |= Register::H;
+  _rAF.u8[Register::Lo] &= ~Register::C;
+}
+
+void  GBC::GameBoyColor::instructionOr(std::uint8_t left, std::uint8_t right, std::uint8_t& result)
+{
+  result = left | right;
+  if (result == 0)
+    _rAF.u8[Register::Lo] |= Register::Z;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::Z;
+  _rAF.u8[Register::Lo] &= ~Register::N;
+  _rAF.u8[Register::Lo] &= ~Register::H;
+  _rAF.u8[Register::Lo] &= ~Register::C;
+}
+
+void  GBC::GameBoyColor::instructionXor(std::uint8_t left, std::uint8_t right, std::uint8_t& result)
+{
+  result = left ^ right;
+  if (_rAF.u8[Register::Hi] == 0)
+    _rAF.u8[Register::Lo] |= Register::Z;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::Z;
+  _rAF.u8[Register::Lo] &= ~Register::N;
+  _rAF.u8[Register::Lo] &= ~Register::H;
+  _rAF.u8[Register::Lo] &= ~Register::C;
+}
+
+void  GBC::GameBoyColor::instructionRlc(std::uint8_t& value)
+{
+  if (value == 0)
+    _rAF.u8[Register::Lo] |= Register::Z;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::Z;
+  _rAF.u8[Register::Lo] &= ~Register::N;
+  _rAF.u8[Register::Lo] &= ~Register::H;
+  if (value & 0b10000000)
+    _rAF.u8[Register::Lo] |= Register::C;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::C;
+  value = (value << 1) | ((value & 0b10000000) ? 0b00000001 : 0b00000000);
+}
+
+void  GBC::GameBoyColor::instructionRrc(std::uint8_t& value)
+{
+  if ((value & 0b11111110) == 0)
+    _rAF.u8[Register::Lo] |= Register::Z;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::Z;
+  _rAF.u8[Register::Lo] &= ~Register::N;
+  _rAF.u8[Register::Lo] &= ~Register::H;
+  if (value & 0b00000001)
+    _rAF.u8[Register::Lo] |= Register::C;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::C;
+  value >>= 1;
+}
+
+void  GBC::GameBoyColor::instructionRl(std::uint8_t& value)
+{
+  std::uint8_t  carry = (_rAF.u8[Register::Lo] & Register::C) ? 0b00000001 : 0b00000000;
+
+  if ((value & 0b01111111) == 0 && carry == 0)
+    _rAF.u8[Register::Lo] |= Register::Z;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::Z;
+  _rAF.u8[Register::Lo] &= ~Register::N;
+  _rAF.u8[Register::Lo] &= ~Register::H;
+  if (value & 0b10000000)
+    _rAF.u8[Register::Lo] |= Register::C;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::C;
+  value = (value << 1) | carry;
+}
+
+void  GBC::GameBoyColor::instructionRr(std::uint8_t& value)
+{
+  std::uint8_t  carry = (_rAF.u8[Register::Lo] & Register::C) ? 0b10000000 : 0b00000000;
+
+  if ((value & 0b11111110) == 0 && carry == 0)
+    _rAF.u8[Register::Lo] |= Register::Z;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::Z;
+  _rAF.u8[Register::Lo] &= ~Register::N;
+  _rAF.u8[Register::Lo] &= ~Register::H;
+  if (value & 0b00000001)
+    _rAF.u8[Register::Lo] |= Register::C;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::C;
+  value = (value >> 1) | carry;
+}
+
+void  GBC::GameBoyColor::instructionSla(std::uint8_t& value)
+{
+  if ((value & 0b01111111) == 0)
+    _rAF.u8[Register::Lo] |= Register::Z;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::Z;
+  _rAF.u8[Register::Lo] &= ~Register::N;
+  _rAF.u8[Register::Lo] &= ~Register::H;
+  if (value & 0b10000000)
+    _rAF.u8[Register::Lo] |= Register::C;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::C;
+  value <<= 1;
+}
+
+void  GBC::GameBoyColor::instructionSra(std::uint8_t& value)
+{
+  if ((value & 0b11111110) == 0)
+    _rAF.u8[Register::Lo] |= Register::Z;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::Z;
+  _rAF.u8[Register::Lo] &= ~Register::N;
+  _rAF.u8[Register::Lo] &= ~Register::H;
+  if (value & 0b00000001)
+    _rAF.u8[Register::Lo] |= Register::C;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::C;
+  value = (value >> 1) | (value & 0b10000000);
+}
+
+void  GBC::GameBoyColor::instructionSwap(std::uint8_t& value)
+{
+  value = (value >> 4) | (value << 4);
+  if (value == 0)
+    _rAF.u8[Register::Lo] |= Register::Z;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::Z;
+  _rAF.u8[Register::Lo] &= ~Register::N;
+  _rAF.u8[Register::Lo] &= ~Register::H;
+  _rAF.u8[Register::Lo] &= ~Register::C;
+}
+
+void  GBC::GameBoyColor::instructionSrl(std::uint8_t& value)
+{
+  if ((value & 0b11111110) == 0)
+    _rAF.u8[Register::Lo] |= Register::Z;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::Z;
+  _rAF.u8[Register::Lo] &= ~Register::N;
+  _rAF.u8[Register::Lo] &= ~Register::H;
+  if (value & 0b00000001)
+    _rAF.u8[Register::Lo] |= Register::C;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::C;
+  value >>= 1;
+}
+
+void  GBC::GameBoyColor::instructionPush(std::uint16_t value)
+{
+  _rSP.u16 -= 2;
+  write<std::uint16_t>(_rSP.u16, value);
+}
+
+void  GBC::GameBoyColor::instructionPop(std::uint16_t& result)
+{
+  result = read<std::uint16_t>(_rSP.u16);
+  _rSP.u16 += 2;
+}
+
+void  GBC::GameBoyColor::instructionCall(std::uint16_t addr, std::uint16_t ret)
+{
+  _rSP.u16 -= 2;
+  write<std::uint16_t>(_rSP.u16, ret);
+  _rPC.u16 = addr;
+}
+
+void  GBC::GameBoyColor::instructionRet()
+{
+  _rPC.u16 = read<std::uint16_t>(_rSP.u16);
+  _rSP.u16 += 2;
+}
+
 GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
   _boot(),
   _rom(),
@@ -6472,7 +4622,8 @@ GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
   _rDE{ .u16 = 0x0000 },
   _rHL{ .u16 = 0x0000 },
   _rSP{ .u16 = 0xFFFE },
-  _rPC{ .u16 = 0x0000 }
+  _rPC{ .u16 = 0x0000 },
+  _mbc()
 {
   // Set screen size and initial color
   _ppuLcd.create(160, 144, sf::Color::White);
@@ -6492,6 +4643,20 @@ GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
 
   // Initialize Joypad
   _io[Registers::RegisterJOYP] = 0b11111111;
+
+  // Initialize MBC
+  switch (_header.mbc) {
+  case MemoryBankController::Type::None:
+    break;
+
+  case MemoryBankController::Type::MBC1:
+    _mbc.mbc1.enable = 0;
+    _mbc.mbc1.bank = 0b00000001;
+    break;
+
+  default:
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  }
 }
 
 GBC::GameBoyColor::~GameBoyColor()
@@ -6602,23 +4767,23 @@ void  GBC::GameBoyColor::loadHeader()
   case 0x00:
   case 0x08:
   case 0x09:
-    _header.mbc = Header::MemoryBankController::MBCRomOnly;
+    _header.mbc = MemoryBankController::Type::None;
     break;
   case 0x01:
   case 0x02:
   case 0x03:
-    _header.mbc = Header::MemoryBankController::MBC1;
+    _header.mbc = MemoryBankController::Type::MBC1;
     break;
   case 0x05:
   case 0x06:
-    _header.mbc = Header::MemoryBankController::MBC2;
+    _header.mbc = MemoryBankController::Type::MBC2;
     break;
   case 0x0F:
   case 0x10:
   case 0x11:
   case 0x12:
   case 0x13:
-    _header.mbc = Header::MemoryBankController::MBC3;
+    _header.mbc = MemoryBankController::Type::MBC3;
     break;
   case 0x19:
   case 0x1A:
@@ -6626,10 +4791,10 @@ void  GBC::GameBoyColor::loadHeader()
   case 0x1C:
   case 0x1D:
   case 0x1E:
-    _header.mbc = Header::MemoryBankController::MBC5;
+    _header.mbc = MemoryBankController::Type::MBC5;
     break;
   default:
-    _header.mbc = Header::MemoryBankController::MBCUnknow;
+    _header.mbc = MemoryBankController::Type::MBCUnknow;
   }
 
   // ROM size
@@ -6850,14 +5015,16 @@ void  GBC::GameBoyColor::simulateInstruction()
   auto opcode = read<std::uint8_t>(_rPC.u16);
 
   // TODO: remove this
-  if (false && _io[Registers::RegisterBANK] != 0) {
-    std::printf("\n");
-    std::printf("  A: %3d 0x%02X    Z: %d   N: %d   H: %d   C: %d\n", _rAF.u8[Register::Hi], _rAF.u8[Register::Hi], (_rAF.u8[Register::Lo] & Register::Z) ? 1 : 0, (_rAF.u8[Register::Lo] & Register::N) ? 1 : 0, (_rAF.u8[Register::Lo] & Register::H) ? 1 : 0, (_rAF.u8[Register::Lo] & Register::C) ? 1 : 0);
-    std::printf("  B: %3d 0x%02X    C: %3d 0x%02X   BC: %5d 0x%04X\n", _rBC.u8[Register::Hi], _rBC.u8[Register::Hi], _rBC.u8[Register::Lo], _rBC.u8[Register::Lo], _rBC.u16, _rBC.u16);
-    std::printf("  D: %3d 0x%02X    E: %3d 0x%02X   DE: %5d 0x%04X\n", _rDE.u8[Register::Hi], _rDE.u8[Register::Hi], _rDE.u8[Register::Lo], _rDE.u8[Register::Lo], _rDE.u16, _rDE.u16);
-    std::printf("  H: %3d 0x%02X    L: %3d 0x%02X   HL: %5d 0x%04X\n", _rHL.u8[Register::Hi], _rHL.u8[Register::Hi], _rHL.u8[Register::Lo], _rHL.u8[Register::Lo], _rHL.u16, _rHL.u16);
-    std::printf("  SP: %5d 0x%04X             PC: %5d 0x%04X\n", _rSP.u16, _rSP.u16, _rPC.u16, _rPC.u16);
-    std::printf("\n");
+  if (false) {
+    if (false) {
+      std::printf("\n");
+      std::printf("  A: %3d 0x%02X    Z: %d   N: %d   H: %d   C: %d\n", _rAF.u8[Register::Hi], _rAF.u8[Register::Hi], (_rAF.u8[Register::Lo] & Register::Z) ? 1 : 0, (_rAF.u8[Register::Lo] & Register::N) ? 1 : 0, (_rAF.u8[Register::Lo] & Register::H) ? 1 : 0, (_rAF.u8[Register::Lo] & Register::C) ? 1 : 0);
+      std::printf("  B: %3d 0x%02X    C: %3d 0x%02X   BC: %5d 0x%04X\n", _rBC.u8[Register::Hi], _rBC.u8[Register::Hi], _rBC.u8[Register::Lo], _rBC.u8[Register::Lo], _rBC.u16, _rBC.u16);
+      std::printf("  D: %3d 0x%02X    E: %3d 0x%02X   DE: %5d 0x%04X\n", _rDE.u8[Register::Hi], _rDE.u8[Register::Hi], _rDE.u8[Register::Lo], _rDE.u8[Register::Lo], _rDE.u16, _rDE.u16);
+      std::printf("  H: %3d 0x%02X    L: %3d 0x%02X   HL: %5d 0x%04X\n", _rHL.u8[Register::Hi], _rHL.u8[Register::Hi], _rHL.u8[Register::Lo], _rHL.u8[Register::Lo], _rHL.u16, _rHL.u16);
+      std::printf("  SP: %5d 0x%04X             PC: %5d 0x%04X\n", _rSP.u16, _rSP.u16, _rPC.u16, _rPC.u16);
+      std::printf("\n");
+    }
     std::printf("[PC 0x%04X][OP 0x%02X] %s\n", _rPC.u16, opcode, opcode == 0xCB ? _instructionsCB[read<std::uint8_t>(_rPC.u16 + 1)].description.c_str() : _instructions[opcode].description.c_str());
   }
 
@@ -6867,6 +5034,10 @@ void  GBC::GameBoyColor::simulateInstruction()
   return;
   switch (_rPC.u16) {
   case 0x0150: puts("Start"); break;
+  case 0x0153: puts("This routine is not used."); break;
+  case 0x0166: puts("Add number in DE to score at (hl). Stop counting if score reaches 999999."); break;
+  case 0x017e: puts("VBlank Interrupt Routine"); break;
+  case 0x01d5: puts("Initiate DMA transfer"); break;
   case 0x020c: puts("Set ram from d000 to dfff to 0"); break;
   case 0x021b: puts("Clear Interrupt Flag & Enable Registers"); break;
   case 0x0222: puts("Set scroll regs, LCDC Status, & Serial port to 0"); break;
@@ -6895,7 +5066,7 @@ void  GBC::GameBoyColor::simulateInstruction()
   case 0x02c7: puts("Read buttons & return values 2"); break;
   case 0x02ca: puts("Read buttons & return values 3"); break;
   case 0x02cd: puts("If all arrow keys are down at the same time, then jump to 21b"); break;
-  case 0x02ed: puts("Wait for a VBlank interrupt to occur"); break;
+  //case 0x02ed: puts("Wait for a VBlank interrupt to occur"); break;
   case 0x0369: puts("Display credits screen"); break;
   case 0x038a: puts("This is responsible for the credit screen ignoring the start button for so long. Lower this value to make it respond sooner."); break;
   case 0x0393: puts("Wait for initial credit screen timer to run out."); break;
@@ -7317,8 +5488,22 @@ std::uint8_t  GBC::GameBoyColor::readRom(std::uint16_t addr)
 
   // Handle MBC behavior
   switch (_header.mbc) {
-  case Header::MemoryBankController::MBCRomOnly:
+  case MemoryBankController::Type::None:
     return (addr < _rom.size()) ? _rom[addr] : 0xFF;
+
+  case MemoryBankController::Type::MBC1:
+  {
+    std::uint8_t  bank = 0;
+
+    if (addr < 0x4000) {
+      if (_mbc.mbc1.bank & 0b10000000)
+        bank = (_mbc.mbc1.bank & 0b01100000) % (_rom.size() / 0x4000);
+    }
+    else if (_rom.size() >= 0x4000)
+      bank = ((_mbc.mbc1.bank & 0b01100000) + std::clamp((_mbc.mbc1.bank & 0b00011111), 0b00000001, 0b00011111)) % (std::uint8_t)(_rom.size() / 0x4000);
+
+    return (((std::size_t)bank * 0x4000 + (std::size_t)addr % 0x4000) < _rom.size()) ? _rom[(std::size_t)bank * 0x4000 + (std::size_t)addr % 0x4000] : 0xFF;
+  }
 
   default:
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
@@ -7350,9 +5535,21 @@ std::uint8_t  GBC::GameBoyColor::readERam(std::uint16_t addr)
 
   // Handle MBC behavior
   switch (_header.mbc) {
-  case Header::MemoryBankController::MBCRomOnly:
+  case MemoryBankController::Type::None:
     return (addr < _eRam.size()) ? _eRam[addr] : 0xFF;
 
+  case MemoryBankController::Type::MBC1:
+  {
+    if ((_mbc.mbc1.enable & 0x0A) != 0x0A)
+      return 0xFF;
+
+    std::uint8_t  bank = 0;
+
+    if ((_mbc.mbc1.bank & 0b10000000) && _eRam.size() >= 0x2000)
+      bank = ((_mbc.mbc1.bank & 0b01100000) >> 5) % (_eRam.size() / 0x2000);
+
+    return (((std::size_t)bank * 0x2000 + (std::size_t)addr % 0x2000) < _eRam.size()) ? _eRam[((std::size_t)bank * 0x2000 + (std::size_t)addr % 0x2000)] : 0xFF;
+  }
   default:
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
   }
@@ -7400,6 +5597,12 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
     // Bits 7-6 are always set
     return _io[Registers::RegisterJOYP] | 0b11000000;
 
+  case Registers::RegisterVBK:    // Video RAM Bank, R/W, CGB mode only
+    return _io[Registers::RegisterVBK] | 0b11111110;
+
+  case Registers::RegisterSVBK:   // Work Ram Bank, R/W, CGB mode only
+    return _io[Registers::RegisterSVBK] & 0b00000111;
+
   case Registers::RegisterDIVHi:  // High byte of DIV
   case Registers::RegisterTIMA:   // Timer Modulo, R/W
   case Registers::RegisterTMA:    // Timer Modulo, R/W
@@ -7417,13 +5620,11 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
   case Registers::RegisterOBP1:   // OBJ 1 Palette Data, R/W, non CGB mode only
   case Registers::RegisterWY:     // Window Y Position, R/W
   case Registers::RegisterWX:     // Window X Position, R/W
-  case Registers::RegisterVBK:    // Video RAM Bank, R/W, CGB mode only
   case Registers::RegisterBANK:   // Boot Bank Controller, R/W, 0 to enable Boot mapping in ROM
   case Registers::RegisterBCPI:   // Background Color Palette Index, R/W, CGB mode only
   case Registers::RegisterBCPD:   // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
   case Registers::RegisterOCPI:   // OBJ Color Palette Index, R/W, CGB mode only
   case Registers::RegisterOCPD:   // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
-  case Registers::RegisterSVBK:   // Work Ram Bank, R/W, CGB mode only
   case 0x72:                      // Undocumented, R/W
   case 0x73:                      // Undocumented, R/W
   case 0x75:                      // Undocumented, R/W (bit 4-6)
@@ -7510,7 +5711,18 @@ void  GBC::GameBoyColor::writeRom(std::uint16_t addr, std::uint8_t value)
 
   // Handle MBC behavior
   switch (_header.mbc) {
-  case Header::MemoryBankController::MBCRomOnly:
+  case MemoryBankController::Type::None:
+    return;
+
+  case MemoryBankController::Type::MBC1:
+    if (addr < 0x2000)
+      _mbc.mbc1.enable = value;
+    else if (addr < 0x4000)
+      _mbc.mbc1.bank = (_mbc.mbc1.bank & 0b11100000) | ((value & 0b00011111) << 0);
+    else if (addr < 0x6000)
+      _mbc.mbc1.bank = (_mbc.mbc1.bank & 0b10011111) | ((value & 0b00000011) << 5);
+    else
+      _mbc.mbc1.bank = (_mbc.mbc1.bank & 0b01111111) | ((value & 0b00000001) << 5);
     return;
 
   default:
@@ -7543,10 +5755,21 @@ void  GBC::GameBoyColor::writeERam(std::uint16_t addr, std::uint8_t value)
 
   // Handle MBC behavior
   switch (_header.mbc) {
-  case Header::MemoryBankController::MBCRomOnly:
+  case MemoryBankController::Type::None:
     if (addr < _eRam.size())
       _eRam[addr] = value;
     break;
+
+  case MemoryBankController::Type::MBC1:
+  {
+    std::uint8_t  bank = 0;
+
+    if (_eRam.size() >= 0x2000)
+      bank = ((_mbc.mbc1.bank & 0b10000000) ? (((_mbc.mbc1.bank & 0b01100000) >> 5) % (_eRam.size() / 0x2000)) : 0);
+    if ((std::size_t)bank * 0x2000 + (std::size_t)addr < _eRam.size())
+      _eRam[(std::size_t)bank * 0x2000 + (std::size_t)addr] = value;
+    break;
+  }
 
   default:
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
@@ -7688,6 +5911,10 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
       _io[Registers::RegisterOCPI] = 0b10000000 | (((_io[Registers::RegisterOCPI] & 0b00111111) + 1) & 0b00111111);
     break;
 
+  case Registers::RegisterSVBK:   // Work Ram Bank, R/W, CGB mode only
+    _io[Registers::RegisterSVBK] = value & 0b00000111;
+    break;
+
   case Registers::RegisterTIMA:   // Timer Modulo, R/W
   case Registers::RegisterTMA:    // Timer Modulo, R/W
   case Registers::RegisterLCDC:   // LCD Control, R/W (see enum)
@@ -7706,7 +5933,6 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
   case Registers::RegisterHDMA4:  // New DMA Transfers destination low byte, W, CGB mode only
   case Registers::RegisterBCPI:   // Background Color Palette Index, R/W, CGB mode only
   case Registers::RegisterOCPI:   // OBJ Color Palette Index, R/W, CGB mode only
-  case Registers::RegisterSVBK:   // Work Ram Bank, R/W, CGB mode only
   case 0x72:                      // Undocumented, R/W
   case 0x73:                      // Undocumented, R/W
     _io[addr] = value;
