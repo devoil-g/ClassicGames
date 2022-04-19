@@ -330,6 +330,37 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "DAA",
     .instruction = [](GBC::GameBoyColor& gbc) {
+      //puts("in");
+      if (gbc._rAF.u8[Register::Lo] & Register::N) {
+        if (gbc._rAF.u8[Register::Lo] & Register::H)
+          gbc._rAF.u8[Register::Hi] += 0xFA;
+        if (gbc._rAF.u8[Register::Lo] & Register::C)
+          gbc._rAF.u8[Register::Hi] += 0xA0;
+      }
+      else {
+        std::uint16_t a = gbc._rAF.u8[Register::Hi];
+
+        if ((a & 0b0000000000001111) > 0b00001001 || (gbc._rAF.u8[Register::Lo] & Register::H))
+          a += 0b00000110;
+        if ((a & 0b0000000111110000) > 0b10010000 || (gbc._rAF.u8[Register::Lo] & Register::C)) {
+          a += 0b01100000;
+          gbc._rAF.u8[Register::Lo] |= Register::C;
+        }
+        else
+          gbc._rAF.u8[Register::Lo] &= ~Register::C;
+        gbc._rAF.u8[Register::Hi] = (std::uint8_t)a;
+      }
+      gbc._rAF.u8[Register::Lo] &= ~Register::H;
+      if (gbc._rAF.u8[Register::Hi] == 0)
+        gbc._rAF.u8[Register::Lo] |= Register::Z;
+      else
+        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
+
+      gbc._rPC.u16 += 1;
+      gbc._cpuCycle += 4;
+      //puts("out");
+      return;
+
       std::uint16_t r = gbc._rAF.u8[Register::Hi];
 
       if ((r & 0b00001111) > 0b00001001)
@@ -1003,7 +1034,11 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   },  // 0x75, 0b01110101: LD (HL), L
   GBC::GameBoyColor::Instruction {
     .description = "HALT",
-    .instruction = [](GBC::GameBoyColor& gbc) { std::cout << "HALT not implemented" << std::endl; }
+    .instruction = [](GBC::GameBoyColor& gbc) {
+      gbc._cpu = GBC::GameBoyColor::CPU::CPUHalt;
+      gbc._rPC.u16 += 1;
+      gbc._cpuCycle += 0;
+    }
   },  // 0x76, 0b01110110: HALT
   GBC::GameBoyColor::Instruction {
     .description = "LD (HL), A",
@@ -4301,20 +4336,17 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
 
 void  GBC::GameBoyColor::instructionAdd(std::uint8_t left, std::uint8_t right, std::uint8_t carry, std::uint8_t& result)
 {
-  std::uint16_t r8 = (std::uint16_t)(left & 0b11111111) + (std::uint16_t)(right & 0b11111111) + (std::uint16_t)(carry & 0b11111111);
-  std::uint16_t r4 = (std::uint16_t)(left & 0b00001111) + (std::uint16_t)(right & 0b00001111) + (std::uint16_t)(carry & 0b00001111);
-
-  result = (std::uint8_t)r8;
-  if ((r8 & 0b0000000011111111) == 0)
+  result = left + right + carry;
+  if (result == 0)
     _rAF.u8[Register::Lo] |= Register::Z;
   else
     _rAF.u8[Register::Lo] &= ~Register::Z;
   _rAF.u8[Register::Lo] &= ~Register::N;
-  if (r4 & 0b1111111111110000)
+  if ((left & 0b00001111) + (right & 0b00001111) + carry > 0b00001111)
     _rAF.u8[Register::Lo] |= Register::H;
   else
     _rAF.u8[Register::Lo] &= ~Register::H;
-  if (r8 & 0b1111111100000000)
+  if ((std::uint16_t)left + (std::uint16_t)right + (std::uint16_t)carry > 0b11111111)
     _rAF.u8[Register::Lo] |= Register::C;
   else
     _rAF.u8[Register::Lo] &= ~Register::C;
@@ -4322,16 +4354,13 @@ void  GBC::GameBoyColor::instructionAdd(std::uint8_t left, std::uint8_t right, s
 
 void  GBC::GameBoyColor::instructionAdd(std::uint16_t left, std::uint16_t right, std::uint16_t& result)
 {
-  std::uint32_t r16 = (std::uint32_t)(left & 0b1111111111111111) + (std::uint32_t)(right & 0b1111111111111111);
-  std::uint32_t r12 = (std::uint32_t)(left & 0b0000111111111111) + (std::uint32_t)(right & 0b0000111111111111);
-
-  result = (std::uint16_t)r16;
+  result = left + right;
   _rAF.u8[Register::Lo] &= ~Register::N;
-  if (r12 & 0b1000000000000)
+  if ((left & 0b0000111111111111) + (right & 0b0000111111111111) > 0b0000111111111111)
     _rAF.u8[Register::Lo] |= Register::H;
   else
     _rAF.u8[Register::Lo] &= ~Register::H;
-  if (r16 & 0b10000000000000000)
+  if ((std::uint32_t)left + (std::uint32_t)right > 0b1111111111111111)
     _rAF.u8[Register::Lo] |= Register::C;
   else
     _rAF.u8[Register::Lo] &= ~Register::C;
@@ -4340,31 +4369,19 @@ void  GBC::GameBoyColor::instructionAdd(std::uint16_t left, std::uint16_t right,
 void  GBC::GameBoyColor::instructionSub(std::uint8_t left, std::uint8_t right, std::uint8_t carry, std::uint8_t& result)
 {
   result = left - (right + carry);
-  if (left == right + carry)
+  if (result == 0)
     _rAF.u8[Register::Lo] |= Register::Z;
   else
     _rAF.u8[Register::Lo] &= ~Register::Z;
   _rAF.u8[Register::Lo] |= Register::N;
-  if ((left & 0b00001111) < ((right + carry) & 0b00001111))
+  if ((std::uint16_t)(left & 0b00001111) < (std::uint16_t)(right & 0b00001111) + (std::uint16_t)carry)
     _rAF.u8[Register::Lo] |= Register::H;
   else
     _rAF.u8[Register::Lo] &= ~Register::H;
-  if (left < (right + carry))
+  if ((std::uint16_t)left < (std::uint16_t)right + (std::uint16_t)carry)
     _rAF.u8[Register::Lo] |= Register::C;
   else
     _rAF.u8[Register::Lo] &= ~Register::C;
-
-  return;
-
-  instructionAdd(left, (~right) + 1, -carry, result);
-  _rAF.u8[Register::Lo] |= Register::N;
-  _rAF.u8[Register::Lo] ^= Register::H;
-  _rAF.u8[Register::Lo] ^= Register::C;
-
-  return;
-
-  instructionAdd(left, (~right) + 1, -carry, result);
-  _rAF.u8[Register::Lo] |= Register::N;
 }
 
 void  GBC::GameBoyColor::instructionCp(std::uint8_t left, std::uint8_t right)
@@ -4372,21 +4389,6 @@ void  GBC::GameBoyColor::instructionCp(std::uint8_t left, std::uint8_t right)
   std::uint8_t  result;
 
   instructionSub(left, right, 0, result);
-  return;
-
-  if (left == right)
-    _rAF.u8[Register::Lo] |= Register::Z;
-  else
-    _rAF.u8[Register::Lo] &= ~Register::Z;
-  _rAF.u8[Register::Lo] |= Register::N;
-  if ((left & 0b00001111) < (right & 0b00001111))
-    _rAF.u8[Register::Lo] |= Register::H;
-  else
-    _rAF.u8[Register::Lo] &= ~Register::H;
-  if (left < right)
-    _rAF.u8[Register::Lo] |= Register::C;
-  else
-    _rAF.u8[Register::Lo] &= ~Register::C;
 }
 
 void  GBC::GameBoyColor::instructionInc(std::uint8_t& value)
@@ -4611,6 +4613,7 @@ GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
   _ie(0),
   _bgcRam(),
   _obcRam(),
+  _cpu(CPU::CPURun),
   _ime(IME::IMEDisabled),
   _cpuCycle(0),
   _ppuCycle(0),
@@ -4914,7 +4917,8 @@ void  GBC::GameBoyColor::simulate()
     simulateInterrupt();
 
     // Run one instruction
-    simulateInstruction();
+    if (_cpu == CPU::CPURun)
+      simulateInstruction();
 
     // Update graphics, audio and timer for the number of cycle executed
     for (; cycle <= _cpuCycle - 4; cycle += 4) {
@@ -4966,7 +4970,7 @@ void  GBC::GameBoyColor::simulateInterrupt()
   }
 
   // Check if interrupts are enabled
-  if (_ime != IME::IMEEnabled)
+  if (_ime != IME::IMEEnabled && _cpu != CPU::CPUHalt)
     return;
 
   // Define interrupt priority
@@ -4994,19 +4998,34 @@ void  GBC::GameBoyColor::simulateInterrupt()
     // Reset interrupt flag
     writeIo(Registers::RegisterIF, rif & ~interrupt);
 
-    // Disable interrupt
-    _ime = IME::IMEDisabled;
-
     // Call interrupt handler
-    _rSP.u16 -= 2;
-    write<std::uint16_t>(_rSP.u16, _rPC.u16);
-    _rPC.u16 = 0x0040;
-    while ((interrupt = (GameBoyColor::Interrupt)(interrupt >> 1)) != 0)
-      _rPC.u16 += 0x0008;
+    if (_ime == IME::IMEEnabled && (_cpu == CPU::CPURun || _cpu == CPU::CPUHalt))
+    {
+      // Disable interrupt
+      _ime = IME::IMEDisabled;
 
-    _cpuCycle += 20;
-    break;
+      // Resume execution
+      _cpu = CPU::CPURun;
+
+      // Call interrupt handler
+      _rSP.u16 -= 2;
+      write<std::uint16_t>(_rSP.u16, _rPC.u16);
+      _rPC.u16 = 0x0040;
+      while ((interrupt = (GameBoyColor::Interrupt)(interrupt >> 1)) != 0)
+        _rPC.u16 += 0x0008;
+      _cpuCycle += 20;
+    }
+
+    // CPU is halted, resume without calling interrupt handler
+    else
+      _cpu = CPU::CPURun;
+
+    return;
   }
+
+  // No interrupt during CPU halt, increase cycle count to simulate other components
+  if (_cpu == CPU::CPUHalt)
+    _cpuCycle += 4;
 }
 
 void  GBC::GameBoyColor::simulateInstruction()
@@ -5155,7 +5174,7 @@ void  GBC::GameBoyColor::simulateGraphics()
   // Trigger VBlank
   else if (_io[Registers::RegisterLY] == 144 && _ppuCycle % 456 == 0) {
     // Set LCD status mode 1
-    _io[Registers::RegisterSTAT] = (_io[Registers::RegisterSTAT] & 0b11111100) | 0b00000011;
+    _io[Registers::RegisterSTAT] = (_io[Registers::RegisterSTAT] & 0b11111100) | 0b00000001;
 
     // VBlank interrupt
     _io[Registers::RegisterIF] |= Interrupt::InterruptVBlank;
@@ -5166,15 +5185,8 @@ void  GBC::GameBoyColor::simulateGraphics()
   }
 
   // Next line
-  if (_ppuCycle % 456 == 452)
+  if (_ppuCycle % 456 == 252)
   {
-    // Increment to next line
-    _io[Registers::RegisterLY] += 1;
-    
-    // Limit to 144 + 10 lines
-    if (_io[Registers::RegisterLY] >= 144 + 10)
-      _io[Registers::RegisterLY] = 0;
-
     // LY / LCY register comparison
     if (_io[Registers::RegisterLY] == _io[Registers::RegisterLYC]) {
       _io[Registers::RegisterSTAT] |= LcdStatus::LcdStatusEqual;
@@ -5185,6 +5197,13 @@ void  GBC::GameBoyColor::simulateGraphics()
     }
     else
       _io[Registers::RegisterSTAT] &= ~LcdStatus::LcdStatusEqual;
+
+    // Increment to next line
+    _io[Registers::RegisterLY] += 1;
+    
+    // Limit to 144 + 10 lines
+    if (_io[Registers::RegisterLY] >= 144 + 10)
+      _io[Registers::RegisterLY] = 0;
   }
 
   // Advance in PPU simulation
@@ -5215,7 +5234,7 @@ void  GBC::GameBoyColor::simulateGraphicsMode2()
 
 void  GBC::GameBoyColor::simulateGraphicsMode3()
 {
-  // Set LCD status mode 2
+  // Set LCD status mode 3
   _io[Registers::RegisterSTAT] = (_io[Registers::RegisterSTAT] & 0b11111100) | 0b00000011;
 
   // White screen if LCD disabled

@@ -35,6 +35,7 @@ namespace GBC
         std::uint8_t  bank;   // RAM & ROM bank number, ROM bits 4-3-2-1-0, RAM/ROM upper bits 5-6, Mode bits 7
       } mbc1; // MBC1
 
+      // TODO: other MBC
     };
 
     struct Header
@@ -257,8 +258,12 @@ namespace GBC
       _rAF.u8[Register::Lo] |= Register::H;
     }
 
-    void  instructionSet(std::uint8_t& result, std::uint8_t position);
-    void  instructionReset(std::uint8_t& result, std::uint8_t position);
+    enum CPU
+    {
+      CPURun,
+      CPUHalt,
+      CPUStop
+    };
 
     std::vector<std::uint8_t>           _boot;      // Bootstrap sequence memory
     std::vector<std::uint8_t>           _rom;       // Raw ROM memory
@@ -272,6 +277,7 @@ namespace GBC
     std::array<std::uint8_t, 64>        _bgcRam;    // Background color RAM (CGB mode only)
     std::array<std::uint8_t, 64>        _obcRam;    // OBJ color RAM (CGB mode only)
     
+    GameBoyColor::CPU _cpu; // Current CPU state
     GameBoyColor::IME _ime; // Interrupt Master Enable
 
     std::uint64_t           _cpuCycle;  // Number of CPU cycle since boot
