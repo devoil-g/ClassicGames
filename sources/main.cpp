@@ -36,7 +36,7 @@ namespace Game
     game.push<Game::SplashScene>();
 
     // TODO: remove this
-    game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tetris.gb");
+    game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/pokemon_red.gb");
 
     // Run the game !
     while (Game::Window::Instance().window().isOpen()) {

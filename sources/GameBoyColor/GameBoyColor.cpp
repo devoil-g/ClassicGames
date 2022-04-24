@@ -4467,12 +4467,12 @@ void  GBC::GameBoyColor::instructionRlc(std::uint8_t& value)
     _rAF.u8[Register::Lo] |= Register::C;
   else
     _rAF.u8[Register::Lo] &= ~Register::C;
-  value = (value << 1) | ((value & 0b10000000) ? 0b00000001 : 0b00000000);
+  value = (value << 1) | (value >> 7);
 }
 
 void  GBC::GameBoyColor::instructionRrc(std::uint8_t& value)
 {
-  if ((value & 0b11111110) == 0)
+  if (value == 0)
     _rAF.u8[Register::Lo] |= Register::Z;
   else
     _rAF.u8[Register::Lo] &= ~Register::Z;
@@ -4482,7 +4482,7 @@ void  GBC::GameBoyColor::instructionRrc(std::uint8_t& value)
     _rAF.u8[Register::Lo] |= Register::C;
   else
     _rAF.u8[Register::Lo] &= ~Register::C;
-  value >>= 1;
+  value =  (value >> 1) | ((value & 0b00000001) ? 0b10000000 : 0b00000000);
 }
 
 void  GBC::GameBoyColor::instructionRl(std::uint8_t& value)
@@ -4590,15 +4590,13 @@ void  GBC::GameBoyColor::instructionPop(std::uint16_t& result)
 
 void  GBC::GameBoyColor::instructionCall(std::uint16_t addr, std::uint16_t ret)
 {
-  _rSP.u16 -= 2;
-  write<std::uint16_t>(_rSP.u16, ret);
+  instructionPush(ret);
   _rPC.u16 = addr;
 }
 
 void  GBC::GameBoyColor::instructionRet()
 {
-  _rPC.u16 = read<std::uint16_t>(_rSP.u16);
-  _rSP.u16 += 2;
+  instructionPop(_rPC.u16);
 }
 
 GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
@@ -4636,7 +4634,6 @@ GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
 
   // Initialize memory banks
   _vRam.fill(0);
-  _eRam.resize(_header.ram_size, 0);
   _wRam.fill(0);
   _oam.fill(0);
   _io.fill(0);
@@ -4655,6 +4652,21 @@ GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
   case MemoryBankController::Type::MBC1:
     _mbc.mbc1.enable = 0;
     _mbc.mbc1.bank = 0b00000001;
+    _eRam.resize(_header.ram_size, 0);
+    break;
+
+  case MemoryBankController::Type::MBC2:
+    _mbc.mbc2.enable = 0;
+    _mbc.mbc2.bank = 0b00000001;
+    _eRam.resize(512, 0); // TODO: load external RAM from save file
+    break;
+
+  case MemoryBankController::Type::MBC3:
+    _mbc.mbc3.enable = 0;
+    _mbc.mbc3.rom = 1;
+    _mbc.mbc3.ram = 0;
+    _mbc.mbc3.latch = 0;
+    _eRam.resize(_header.ram_size, 0);
     break;
 
   default:
@@ -4797,7 +4809,7 @@ void  GBC::GameBoyColor::loadHeader()
     _header.mbc = MemoryBankController::Type::MBC5;
     break;
   default:
-    _header.mbc = MemoryBankController::Type::MBCUnknow;
+    _header.mbc = MemoryBankController::Type::Unknow;
   }
 
   // ROM size
@@ -4906,6 +4918,7 @@ void  GBC::GameBoyColor::simulate()
 {
   std::uint64_t frame = _ppuCycle / (456 * 154);
   std::uint64_t cycle = _cpuCycle;
+  std::uint64_t second = _cpuCycle / (4 * 1024 * 1024);
 
   // Simulate Joypad
   simulateKeys();
@@ -4926,6 +4939,13 @@ void  GBC::GameBoyColor::simulate()
       simulateGraphics();
       simulateAudio();
       simulateTimer();
+    }
+
+    // Update timer for MBC3
+    if (_header.mbc == MemoryBankController::Type::MBC3 && second != _cpuCycle / (4 * 1024 * 1024)) {
+      if (_mbc.mbc3.halt == 0)
+        _mbc.mbc3.time += _cpuCycle / (4 * 1024 * 1024) - second;
+      second = _cpuCycle / (4 * 1024 * 1024);
     }
   }
 }
@@ -5284,7 +5304,7 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
 
     // Window
     {
-      std::uint8_t  wn_x = sc_x - _io[Registers::RegisterWX] - 7;
+      std::uint8_t  wn_x = sc_x - _io[Registers::RegisterWX] + 7;
       std::uint16_t wn_tilemap = (_io[Registers::RegisterLCDC] & LcdControl::LcdControlWindowTilemap) ? 0x1C00 : 0x1800;
       std::uint8_t  wn_tile_id = _vRam[wn_tilemap + (((std::uint16_t)wn_y / 8) * 32) + ((std::uint16_t)wn_x / 8)];
       std::uint16_t wn_tile_index = ((std::uint16_t)wn_tile_id * 16) +
@@ -5508,20 +5528,47 @@ std::uint8_t  GBC::GameBoyColor::readRom(std::uint16_t addr)
   // Handle MBC behavior
   switch (_header.mbc) {
   case MemoryBankController::Type::None:
-    return (addr < _rom.size()) ? _rom[addr] : 0xFF;
+    // Get ROM value
+    return _rom[addr % _rom.size()];
 
   case MemoryBankController::Type::MBC1:
   {
     std::uint8_t  bank = 0;
 
-    if (addr < 0x4000) {
-      if (_mbc.mbc1.bank & 0b10000000)
-        bank = (_mbc.mbc1.bank & 0b01100000) % (_rom.size() / 0x4000);
-    }
-    else if (_rom.size() >= 0x4000)
-      bank = ((_mbc.mbc1.bank & 0b01100000) + std::clamp((_mbc.mbc1.bank & 0b00011111), 0b00000001, 0b00011111)) % (std::uint8_t)(_rom.size() / 0x4000);
+    // First half of ROM
+    if (addr < 0x4000 && _mbc.mbc1.bank & 0b10000000)
+        bank = _mbc.mbc1.bank & 0b01100000;
 
-    return (((std::size_t)bank * 0x4000 + (std::size_t)addr % 0x4000) < _rom.size()) ? _rom[(std::size_t)bank * 0x4000 + (std::size_t)addr % 0x4000] : 0xFF;
+    // Second half of ROM
+    else if (addr >= 0x4000)
+      bank = (_mbc.mbc1.bank & 0b01100000) + std::clamp((_mbc.mbc1.bank & 0b00011111), 0b00000001, 0b00011111);
+
+    // Get ROM value
+    return _rom[(((std::size_t)bank * 0x4000) + (addr % 0x4000)) % _rom.size()];
+  }
+
+  case MemoryBankController::Type::MBC2:
+  {
+    std::uint8_t  bank = 0;
+
+    // Get bank number for second half of ROM
+    if (addr >= 0x4000)
+      bank = std::clamp((_mbc.mbc2.bank & 0b00001111), 0b00000001, 0b00001111);
+
+    // Get ROM value
+    return _rom[(((std::size_t)bank * 0x4000) + (addr % 0x4000)) % _rom.size()];
+  }
+
+  case MemoryBankController::Type::MBC3:
+  {
+    std::uint8_t  bank = 0;
+
+    // Get bank number for second half of ROM
+    if (addr >= 0x4000 && _rom.size() >= 0x4000)
+      bank = std::clamp((_mbc.mbc3.rom & 0b01111111), 0b00000001, 0b01111111);
+
+    // Get ROM value
+    return _rom[(((std::size_t)bank * 0x4000) + (addr % 0x4000)) % _rom.size()];
   }
 
   default:
@@ -5555,20 +5602,61 @@ std::uint8_t  GBC::GameBoyColor::readERam(std::uint16_t addr)
   // Handle MBC behavior
   switch (_header.mbc) {
   case MemoryBankController::Type::None:
-    return (addr < _eRam.size()) ? _eRam[addr] : 0xFF;
+    // Get RAM value
+    return _eRam[addr % _eRam.size()];
 
   case MemoryBankController::Type::MBC1:
   {
+    // RAM not enabled
     if ((_mbc.mbc1.enable & 0x0A) != 0x0A)
       return 0xFF;
 
     std::uint8_t  bank = 0;
 
+    // Get RAM bank
     if ((_mbc.mbc1.bank & 0b10000000) && _eRam.size() >= 0x2000)
-      bank = ((_mbc.mbc1.bank & 0b01100000) >> 5) % (_eRam.size() / 0x2000);
+      bank = ((_mbc.mbc1.bank & 0b01100000) >> 5);
 
-    return (((std::size_t)bank * 0x2000 + (std::size_t)addr % 0x2000) < _eRam.size()) ? _eRam[((std::size_t)bank * 0x2000 + (std::size_t)addr % 0x2000)] : 0xFF;
+    // Get RAM value
+    return _eRam[(bank * 0x2000 + addr) % _eRam.size()];
   }
+
+  case MemoryBankController::Type::MBC2:
+    // RAM not enabled
+    if (_mbc.mbc2.enable != 0x0A)
+      return 0xFF;
+    // Get RAM value
+    else
+      return _eRam[addr % _eRam.size()];
+
+  case MemoryBankController::Type::MBC3:
+    // RAM / RTC registers not enabled
+    if (_mbc.mbc3.enable != 0x0A)
+      return 0xFF;
+    // RAM bank
+    else if (_mbc.mbc3.ram < 0x04)
+      return _eRam[(_mbc.mbc3.ram * 0x2000 + addr) % _eRam.size()];
+    // RTC seconds
+    else if (_mbc.mbc3.ram == 0x08)
+      return _mbc.mbc3.rtc / (1) % 60;
+    // RTC minutes
+    else if (_mbc.mbc3.ram == 0x09)
+      return _mbc.mbc3.rtc / (60) % 60;
+    // RTC hours
+    else if (_mbc.mbc3.ram == 0x0A)
+      return _mbc.mbc3.rtc / (60 * 60) % 60;
+    // RTC days (lower 8 bits)
+    else if (_mbc.mbc3.ram == 0x0B)
+      return (_mbc.mbc3.rtc / (60 * 60 * 24)) & 0b11111111;
+    // RTC days (9th bits, halt flag, day carry bit)
+    else if (_mbc.mbc3.ram == 0x0C)
+      return (((_mbc.mbc3.rtc / (60 * 60 * 24)) >> 9) & 0b00000001)
+      | ((_mbc.mbc3.halt == 1) ? 0b01000000 : 0b00000000)
+      | ((_mbc.mbc3.rtc / (60 * 60 * 24 * 512) > 0) ? 0b10000000 : 0b00000000);
+    // Unknow bank
+    else
+      return 0xFF;
+
   default:
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
   }
@@ -5731,18 +5819,53 @@ void  GBC::GameBoyColor::writeRom(std::uint16_t addr, std::uint8_t value)
   // Handle MBC behavior
   switch (_header.mbc) {
   case MemoryBankController::Type::None:
-    return;
+    // Does nothing
+    break;
 
   case MemoryBankController::Type::MBC1:
+    // RAM enable
     if (addr < 0x2000)
       _mbc.mbc1.enable = value;
+    // ROM bank number
     else if (addr < 0x4000)
       _mbc.mbc1.bank = (_mbc.mbc1.bank & 0b11100000) | ((value & 0b00011111) << 0);
+    // RAM/ROM upper bits 5-6
     else if (addr < 0x6000)
       _mbc.mbc1.bank = (_mbc.mbc1.bank & 0b10011111) | ((value & 0b00000011) << 5);
+    // Banking mode
     else
       _mbc.mbc1.bank = (_mbc.mbc1.bank & 0b01111111) | ((value & 0b00000001) << 5);
-    return;
+    break;
+
+  case MemoryBankController::Type::MBC2:
+    // ROM bank number
+    if (addr & 0b0000000100000000)
+      _mbc.mbc2.bank = value & 0b00001111;
+    // RAM enable
+    else {
+      _mbc.mbc2.enable = value;
+      if (_mbc.mbc2.enable != 0x0A)
+        ; // TODO: save external ram to file
+    }
+    break;
+
+  case MemoryBankController::Type::MBC3:
+    // RAM enable
+    if (addr < 0x2000)
+      _mbc.mbc3.enable = value;
+    // ROM bank number
+    else if (addr < 0x4000)
+      _mbc.mbc3.rom = value & 0b01111111;
+    // RAM bank number / RTC register select
+    else if (addr < 0x6000)
+      _mbc.mbc3.ram = value;
+    // Latch Clock Data
+    else {
+      if (_mbc.mbc3.latch == 0x00 && value == 0x01)
+        _mbc.mbc3.rtc = _mbc.mbc3.time;
+      _mbc.mbc3.latch = value;
+    }
+    break;
 
   default:
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
@@ -5775,20 +5898,69 @@ void  GBC::GameBoyColor::writeERam(std::uint16_t addr, std::uint8_t value)
   // Handle MBC behavior
   switch (_header.mbc) {
   case MemoryBankController::Type::None:
-    if (addr < _eRam.size())
-      _eRam[addr] = value;
+    // Write value to RAM
+    _eRam[addr % _eRam.size()] = value;
     break;
 
   case MemoryBankController::Type::MBC1:
   {
-    std::uint8_t  bank = 0;
-
-    if (_eRam.size() >= 0x2000)
-      bank = ((_mbc.mbc1.bank & 0b10000000) ? (((_mbc.mbc1.bank & 0b01100000) >> 5) % (_eRam.size() / 0x2000)) : 0);
-    if ((std::size_t)bank * 0x2000 + (std::size_t)addr < _eRam.size())
-      _eRam[(std::size_t)bank * 0x2000 + (std::size_t)addr] = value;
+    // RAM enabled
+    if (_mbc.mbc1.enable == 0x0A)
+      _eRam[((std::size_t)((_mbc.mbc1.bank & 0b10000000) ? ((_mbc.mbc1.bank & 0b01100000) >> 5) : 0) * 0x2000 + addr) % _eRam.size()] = value;
     break;
   }
+
+  case MemoryBankController::Type::MBC2:
+    // RAM enabled
+    if (_mbc.mbc2.enable == 0x0A)
+      _eRam[addr % _eRam.size()] = value;
+    break;
+
+  case MemoryBankController::Type::MBC3:
+    // RAM enabled
+    if (_mbc.mbc3.enable != 0x0A)
+      break;
+    // Write to RAM
+    else if (_mbc.mbc3.ram < 0x04)
+      _eRam[(_mbc.mbc3.ram * 0x2000 + addr) % _eRam.size()] = value;
+    // RTC seconds
+    else if (_mbc.mbc3.ram == 0x08) {
+      if (_mbc.mbc3.halt == 1) {
+        _mbc.mbc3.time = _mbc.mbc3.time - (_mbc.mbc3.time / (1) % 60 * (1)) + value * (1);
+        _mbc.mbc3.rtc = _mbc.mbc3.time;
+      }
+    }
+    // RTC minutes
+    else if (_mbc.mbc3.ram == 0x09) {
+      if (_mbc.mbc3.halt == 1) {
+        _mbc.mbc3.time = _mbc.mbc3.time - (_mbc.mbc3.time / (60) % 60 * (60)) + value * (60);
+        _mbc.mbc3.rtc = _mbc.mbc3.time;
+      }
+    }
+    // RTC hours
+    else if (_mbc.mbc3.ram == 0x0A) {
+      if (_mbc.mbc3.halt == 1) {
+        _mbc.mbc3.time = _mbc.mbc3.time - (_mbc.mbc3.time / (60 * 60) % 24 * (60 * 60)) + value * (60 * 60);
+        _mbc.mbc3.rtc = _mbc.mbc3.time;
+      }
+    }
+    // RTC days
+    else if (_mbc.mbc3.ram == 0x0B) {
+      if (_mbc.mbc3.halt == 1) {
+        _mbc.mbc3.time = _mbc.mbc3.time - (_mbc.mbc3.time / (60 * 60 * 24) % 256 * (60 * 60 * 24)) + value * (60 * 60 * 24);
+        _mbc.mbc3.rtc = _mbc.mbc3.time;
+      }
+    }
+    // RTC days, halt flag and day carry
+    else if (_mbc.mbc3.ram == 0x0C) {
+      if (_mbc.mbc3.halt == 1) {
+        _mbc.mbc3.time = _mbc.mbc3.time - (_mbc.mbc3.time / (60 * 60 * 24 * 256) % 512 * (60 * 60 * 24 * 256)) + (value & 0b00000001) * (60 * 60 * 24 * 256);
+        _mbc.mbc3.halt = (value & 0b01000000) ? 1 : 0;
+        _mbc.mbc3.time = _mbc.mbc3.time % (60 * 60 * 24 * 512) + ((value & 0b10000000) ? 1 : 0) * (60 * 60 * 24 * 512);
+        _mbc.mbc3.rtc = _mbc.mbc3.time;
+      }
+    }
+    break;
 
   default:
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());

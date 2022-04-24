@@ -19,12 +19,12 @@ namespace GBC
     {
       enum Type
       {
-        None,     // None (32KByte ROM only)
-        MBC1,     // MBC1 (max 2MByte ROM and/or 32KByte RAM)
-        MBC2,     // MBC2 (max 256KByte ROM and 512x4 bits RAM)
-        MBC3,     // MBC3 (max 2MByte ROM and/or 64KByte RAM and Timer)
-        MBC5,     // MBC5 (max 8MByte ROM and/or 128KByte RAM)
-        MBCUnknow // Unknow MBC
+        None,   // None (32KByte ROM only)
+        MBC1,   // MBC1 (max 2MByte ROM and/or 32KByte RAM)
+        MBC2,   // MBC2 (max 256KByte ROM and 512x4 bits RAM)
+        MBC3,   // MBC3 (max 2MByte ROM and/or 64KByte RAM and Timer)
+        MBC5,   // MBC5 (max 8MByte ROM and/or 128KByte RAM)
+        Unknow  // Unknow MBC
       };
 
       struct {
@@ -34,6 +34,21 @@ namespace GBC
         std::uint8_t  enable; // RAM enable flag (0x0A to enable)
         std::uint8_t  bank;   // RAM & ROM bank number, ROM bits 4-3-2-1-0, RAM/ROM upper bits 5-6, Mode bits 7
       } mbc1; // MBC1
+
+      struct {
+        std::uint8_t  enable; // RAM enable flag (0x0A to enable)
+        std::uint8_t  bank;   // ROM bank number, bits 3-2-1-0
+      } mbc2; // MBC2
+
+      struct {
+        std::uint8_t  enable; // RAM and RTC Register enable flag (0x0A to enable)
+        std::uint8_t  rom;    // ROM bank number, bits 6-5-4-3-2-1-0
+        std::uint8_t  ram;    // RAM bank number / RTC Register select
+        std::uint8_t  latch;  // Latch Clock Data
+        std::uint8_t  halt;   // Stop flag of clock (0=Active, 1=Stop Timer)
+        std::uint64_t rtc;    // Latched Real Time Clock registers
+        std::uint64_t time;   // Current time
+      } mbc3; // MBC3
 
       // TODO: other MBC
     };
