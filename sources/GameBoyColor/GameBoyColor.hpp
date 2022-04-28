@@ -50,6 +50,12 @@ namespace GBC
         std::uint64_t time;   // Current time
       } mbc3; // MBC3
 
+      struct {
+        std::uint8_t  enable; // RAM enable flag (0x0A to enable)
+        std::uint16_t rom;    // ROM bank number (9 bits)
+        std::uint8_t  ram;    // RAM bank number, rumble on bit 3
+      } mbc5; // MBC5
+
       // TODO: other MBC
     };
 
@@ -75,19 +81,19 @@ namespace GBC
         RegionUnknow  // Unknow region
       };
 
-      bool                                          logo;             // False if unofficial logo
-      std::string                                   title;            // Name of the game
-      std::string                                   manufacturer;     // Manufacturer code (newer cartridges only)
-      Header::CGBFlag                               cgb;              // CGB support flag
-      std::uint16_t                                 licensee;         // Licensee Code
-      Header::SGBFlag                               sgb;              // Support of the SGB functions
-      GBC::GameBoyColor::MemoryBankController::Type mbc;              // Memory Bank Controller format
-      std::size_t                                   rom_size;         // Size of ROM
-      std::size_t                                   ram_size;         // Size of RAM
-      Header::Region                                region;           // Game region
-      std::uint8_t                                  version;          // Specifies the version number of the game
-      bool                                          header_checksum;  // Checksum of the ROM header
-      bool                                          global_checksum;  // Global checksum of the ROM
+      bool                        logo;             // False if unofficial logo
+      std::string                 title;            // Name of the game
+      std::string                 manufacturer;     // Manufacturer code (newer cartridges only)
+      Header::CGBFlag             cgb;              // CGB support flag
+      std::uint16_t               licensee;         // Licensee Code
+      Header::SGBFlag             sgb;              // Support of the SGB functions
+      MemoryBankController::Type  mbc;              // Memory Bank Controller format
+      std::size_t                 rom_size;         // Size of ROM
+      std::size_t                 ram_size;         // Size of RAM
+      Header::Region              region;           // Game region
+      std::uint8_t                version;          // Specifies the version number of the game
+      bool                        header_checksum;  // Checksum of the ROM header
+      bool                        global_checksum;  // Global checksum of the ROM
     };
 
     union Register
@@ -170,7 +176,7 @@ namespace GBC
       RegisterWY = 0x4A,    // Window Y Position, R/W
       RegisterWX = 0x4B,    // Window X Position, R/W
 
-      RegisterKEY1 = 0x4D,
+      RegisterKEY1 = 0x4D,  // CPU Speed Switch, R/W, CGB mode only, bit 7: current speed (0: normal, 1: double), bit 0: prepare switch (0: no, 1: prepare)
 
       RegisterVBK = 0x4F,   // Video RAM Bank, R/W, CGB mode only
       RegisterBANK = 0x50,  // Boot Bank Controller, R/W, 0 to enable Boot mapping in ROM
@@ -178,16 +184,23 @@ namespace GBC
       RegisterHDMA2 = 0x52, // New DMA Transfers source low byte, W, CGB mode only
       RegisterHDMA3 = 0x53, // New DMA Transfers destination high byte, W, CGB mode only
       RegisterHDMA4 = 0x54, // New DMA Transfers destination low byte, W, CGB mode only
-      RegisterHDMA5 = 0x55,
+      RegisterHDMA5 = 0x55, // Start New DMA Transfer
       RegisterRP = 0x56,
 
       RegisterBCPI = 0x68,  // Background Color Palette Index, R/W, CGB mode only
       RegisterBCPD = 0x69,  // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
       RegisterOCPI = 0x6A,  // OBJ Color Palette Index, R/W, CGB mode only
       RegisterOCPD = 0x6B,  // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
-      RegisterOPRI = 0x6C,
+      RegisterOPRI = 0x6C,  // OBJ Priority Mode, R/W, CGB mode only, bit 0: mode (0 :OAM, 1: Coordinate)
 
       RegisterSVBK = 0x70   // Work Ram Bank, R/W, CGB mode only
+    };
+
+    enum IME
+    {
+      IMEDisabled,  // Interrupt disabled
+      IMEEnabled,   // Interrupt enabled
+      IMEScheduled  // Enable interrupt after next instruction
     };
 
     enum LcdControl
@@ -213,11 +226,13 @@ namespace GBC
       LcdStatusMode = 0b00000011      // Mode Flag (0: HBlank, 1: VBlank, 2: Searching OAM, 3: Transferring Data to LCD Controller) (Read Only)
     };
 
-    enum IME
+    enum BackgroundAttributes
     {
-      IMEDisabled,  // Interrupt disabled
-      IMEEnabled,   // Interrupt enabled
-      IMEScheduled  // Enable interrupt after next instruction
+      BackgroundAttributesPriority = 0b10000000,  // Background priority when set
+      BackgroundAttributesYFlip = 0b01000000,     // Vertical flip (0=Normal, 1=Vertically mirrored)
+      BackgroundAttributesXFlip = 0b00100000,     // Horitontal flip (0=Normal, 1=Horizontally mirrored)
+      BackgroundAttributesBank = 0b00001000,      // VRAM bank in CBG mode (0=Bank 0, 1=Bank 1)
+      BackgroundAttributesPalette = 0b00000111    // Palette in CGB mode (BGP0-7)
     };
 
     enum SpriteAttributes
@@ -227,7 +242,7 @@ namespace GBC
       SpriteAttributesXFlip = 0b00100000,         // Horitontal flip (0=Normal, 1=Horizontally mirrored)
       SpriteAttributesPaletteNonCgb = 0b00010000, // Palette in non-CGB mode (0=OBP0, 1=OBP1)
       SpriteAttributesBank = 0b00001000,          // VRAM bank in CBG mode (0=Bank 0, 1=Bank 1)
-      SpriteAttributesPaletteCbg = 0b00000111     // Palette in CGB mode (OBP0-7)
+      SpriteAttributesPaletteCgb = 0b00000111     // Palette in CGB mode (OBP0-7)
     };
 
     struct Instruction
@@ -275,9 +290,9 @@ namespace GBC
 
     enum CPU
     {
-      CPURun,
-      CPUHalt,
-      CPUStop
+      CPURun,             // Running CPU instructions
+      CPUHalt,            // Stop CPU waiting for events
+      CPUStop = CPUHalt   // Same as Halt, turn-off display (NOTE: handled as a simple HALT)
     };
 
     std::vector<std::uint8_t>           _boot;      // Bootstrap sequence memory

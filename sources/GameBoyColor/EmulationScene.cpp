@@ -10,7 +10,7 @@ const sf::Time  GBC::EmulationScene::ForcedExit = sf::seconds(1.f);
 GBC::EmulationScene::EmulationScene(Game::SceneMachine& machine, const std::string& filename) :
   Game::AbstractScene(machine),
   _gbc(filename),
-  _fps(sf::Time::Zero),
+  _fps(sf::seconds(-1.f)),
   _exit(sf::Time::Zero),
   _bar(sf::Vector2f(1.f, 1.f))
 {
@@ -25,8 +25,8 @@ GBC::EmulationScene::~EmulationScene()
 bool  GBC::EmulationScene::update(sf::Time elapsed)
 {
   // Update timers
-  _fps += elapsed;
   _exit += elapsed;
+  _fps += elapsed;
 
   // Reset exit timer when ESC is not pressed
   if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Escape) == false)
@@ -39,11 +39,9 @@ bool  GBC::EmulationScene::update(sf::Time elapsed)
   }
 
   // Simulate frames at 59.72 fps
-  for (; _fps.asSeconds() >= 70224.f / Math::Pow<22>(2); _fps -= sf::seconds(70224.f / Math::Pow<22>(2))) {
+  if (_fps.asSeconds() >= 70224.f / Math::Pow<22>(2)) {
     _gbc.simulate();
-
-    // TODO: remove this
-    //break;
+    _fps -= sf::seconds(70224.f / Math::Pow<22>(2));
   }
 
   return false;
