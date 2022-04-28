@@ -4939,7 +4939,6 @@ void  GBC::GameBoyColor::simulate()
 
     // Update graphics, audio and timer for the number of cycle executed
     for (; cycle < _cpuCycle; cycle += 4) {
-      //simulateInterrupt();
       simulateTimer();
       if (cycle % ((_io[Registers::RegisterKEY1] & 0b10000000) ? 8 : 4) == 0) {
         simulateGraphics();
@@ -5015,14 +5014,14 @@ void  GBC::GameBoyColor::simulateInterrupt()
     if ((_ie & interrupt) == 0)
       continue;
 
-    std::uint8_t  rif = readIo(Registers::RegisterIF);
+    std::uint8_t  rif = _io[Registers::RegisterIF];
 
     // Check interrupt flag on IF
     if ((rif & interrupt) == 0)
       continue;
 
     // Reset interrupt flag
-    writeIo(Registers::RegisterIF, rif & ~interrupt);
+    _io[Registers::RegisterIF] = rif & ~interrupt;
 
     // Call interrupt handler
     if (_ime == IME::IMEEnabled)
@@ -5185,7 +5184,7 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
     std::uint8_t  sp_color_id = 255, sp_attributes = 0, sp_color_r, sp_color_g, sp_color_b;
 
     // Window
-    if ((_header.cgb != Header::CGBFlag::CGBNone || (_io[Registers::RegisterLCDC] & LcdControl::LcdControlWindowBackgroundEnable)) &&
+    if ((!(_io[Registers::RegisterKEY0] & 0b00001100) || (_io[Registers::RegisterLCDC] & LcdControl::LcdControlWindowBackgroundEnable)) &&
       (_io[Registers::RegisterLCDC] & LcdControl::LcdControlWindowEnable) &&
       (sc_x + 7 >= _io[Registers::RegisterWX]) &&
       (sc_y >= _io[Registers::RegisterWY]))
@@ -5193,7 +5192,7 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
       std::uint8_t  wn_x = sc_x - _io[Registers::RegisterWX] + 7;
       std::uint16_t wn_tilemap = (_io[Registers::RegisterLCDC] & LcdControl::LcdControlWindowTilemap) ? 0x1C00 : 0x1800;
       std::uint16_t wn_tilemap_id = (((std::uint16_t)wn_y / 8) * 32) + ((std::uint16_t)wn_x / 8);
-      bg_attributes = (_header.cgb == Header::CGBFlag::CGBNone) ? 0b00000000 : _vRam[wn_tilemap + wn_tilemap_id + 0x2000];
+      bg_attributes = _vRam[wn_tilemap + wn_tilemap_id + 0x2000];
       std::uint8_t  wn_tile_id = _vRam[wn_tilemap + wn_tilemap_id];
       std::uint16_t wn_tile_index = ((std::uint16_t)wn_tile_id * 16)
         + ((_io[Registers::RegisterLCDC] & LcdControl::LcdControlData) ?
@@ -5213,32 +5212,27 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
         ((_vRam[wn_tile_index + (wn_y % 8) * 2 + 0] & (0b10000000 >> (wn_x % 8))) ? 1 : 0) +
         ((_vRam[wn_tile_index + (wn_y % 8) * 2 + 1] & (0b10000000 >> (wn_x % 8))) ? 2 : 0);
 
-      // Non-CGB mode, shade of grey
-      if (false && _header.cgb == Header::CGBFlag::CGBNone) {
-        bg_color_r = 196 - ((_io[Registers::RegisterBGP] >> (bg_color_id * 2)) & 0b00000011) * 64;
-        bg_color_g = bg_color_r;
-        bg_color_b = bg_color_r;
-      }
+      // DMG color palette
+      if (_io[Registers::RegisterKEY0] & 0b00001100)
+        bg_color_id = (_io[Registers::RegisterBGP] >> (bg_color_id * 2)) & 0b00000011;
 
-      // CGB mode, get color from palette
-      else {
-        std::uint16_t wn_color =
-          ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 0] << 0) +
-          ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 1] << 8);
+      // Get color from palette
+      std::uint16_t wn_color =
+        ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 0] << 0) +
+        ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 1] << 8);
 
-        bg_color_r = ((wn_color >> 0) & 0b00011111) * 8;
-        bg_color_g = ((wn_color >> 5) & 0b00011111) * 8;
-        bg_color_b = ((wn_color >> 10) & 0b00011111) * 8;
-      }
+      bg_color_r = ((wn_color >> 0) & 0b00011111) * 8;
+      bg_color_g = ((wn_color >> 5) & 0b00011111) * 8;
+      bg_color_b = ((wn_color >> 10) & 0b00011111) * 8;
     }
 
     // Background
-    else if (_header.cgb != Header::CGBFlag::CGBNone || (_io[Registers::RegisterLCDC] & LcdControl::LcdControlWindowBackgroundEnable))
+    else if (!(_io[Registers::RegisterKEY0] & 0b00001100) || (_io[Registers::RegisterLCDC] & LcdControl::LcdControlWindowBackgroundEnable))
     {
       std::uint8_t  bg_x = sc_x + _io[Registers::RegisterSCX];
       std::uint16_t bg_tilemap = (_io[Registers::RegisterLCDC] & LcdControl::LcdControlBackgroundTilemap) ? 0x1C00 : 0x1800;
       std::uint16_t bg_tilemap_id = (((std::uint16_t)bg_y / 8) * 32) + ((std::uint16_t)bg_x / 8);
-      bg_attributes = (_header.cgb == Header::CGBFlag::CGBNone) ? 0b00000000 : _vRam[bg_tilemap + bg_tilemap_id + 0x2000];
+      bg_attributes = _vRam[bg_tilemap + bg_tilemap_id + 0x2000];
       std::uint8_t  bg_tile_id = _vRam[bg_tilemap + bg_tilemap_id];
       std::uint16_t bg_tile_index = ((std::uint16_t)bg_tile_id * 16)
         + ((_io[Registers::RegisterLCDC] & LcdControl::LcdControlData) ?
@@ -5258,23 +5252,18 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
         ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 0] & (0b10000000 >> (bg_x % 8))) ? 1 : 0) +
         ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 1] & (0b10000000 >> (bg_x % 8))) ? 2 : 0);
 
-      // Non-CGB mode, shade of grey
-      if (false && _header.cgb == Header::CGBFlag::CGBNone) {
-        bg_color_r = 196 - ((_io[Registers::RegisterBGP] >> (bg_color_id * 2)) & 0b00000011) * 64;
-        bg_color_g = bg_color_r;
-        bg_color_b = bg_color_r;
-      }
+      // DMG color palette
+      if (_io[Registers::RegisterKEY0] & 0b00001100)
+        bg_color_id = (_io[Registers::RegisterBGP] >> (bg_color_id * 2)) & 0b00000011;
 
-      // CGB mode, get color from palette
-      else {
-        std::uint16_t bg_color =
-          ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 0] << 0) +
-          ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 1] << 8);
+      // Get color from palette
+      std::uint16_t bg_color =
+        ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 0] << 0) +
+        ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 1] << 8);
 
-        bg_color_r = ((bg_color >> 0) & 0b00011111) * 8;
-        bg_color_g = ((bg_color >> 5) & 0b00011111) * 8;
-        bg_color_b = ((bg_color >> 10) & 0b00011111) * 8;
-      }
+      bg_color_r = ((bg_color >> 0) & 0b00011111) * 8;
+      bg_color_g = ((bg_color >> 5) & 0b00011111) * 8;
+      bg_color_b = ((bg_color >> 10) & 0b00011111) * 8;
     }
 
     // Sprite
@@ -5300,7 +5289,7 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
 
         std::uint8_t  sp_tile_id = (_oam[sp_index * 4 + 2] & ((sp_height == 8) ? 0b11111111 : 0b11111110)) + ((sp_y < 8) ? 0 : 1);
         std::uint16_t sp_tile_index = ((std::uint16_t)sp_tile_id * 16)
-          + ((_header.cgb == Header::CGBFlag::CGBNone || !(sp_attributes & SpriteAttributes::SpriteAttributesBank)) ?
+          + (!(sp_attributes & SpriteAttributes::SpriteAttributesBank) ?
             0x0000 :
             0x2000);
         sp_color_id =
@@ -5313,23 +5302,26 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
           continue;
         }
 
-        // Non-CGB mode, shade of grey
-        if (false && _header.cgb == Header::CGBFlag::CGBNone) {
-          sp_color_r = 196 - ((_io[(sp_attributes & SpriteAttributes::SpriteAttributesPaletteNonCgb) ? Registers::RegisterOBP1 : Registers::RegisterOBP0] >> (sp_color_id * 2)) & 0b00000011) * 64;
-          sp_color_g = sp_color_r;
-          sp_color_b = sp_color_r;
+        // DMG color palette
+        if (_io[Registers::RegisterKEY0] & 0b00001100) {
+          if (sp_attributes & SpriteAttributes::SpriteAttributesPaletteNonCgb) {
+            sp_color_id = (_io[Registers::RegisterOBP1] >> (sp_color_id * 2)) & 0b00000011;
+            sp_attributes = (sp_attributes & 0b11110000) | 0b00000001;
+          }
+          else {
+            sp_color_id = (_io[Registers::RegisterOBP0] >> (sp_color_id * 2)) & 0b00000011;
+            sp_attributes = (sp_attributes & 0b11110000) | 0b00000000;
+          }
         }
 
-        // CGB mode, get color from palette
-        else {
-          std::uint16_t sp_color =
-            ((std::uint16_t)_obcRam[((sp_attributes & SpriteAttributes::SpriteAttributesPaletteCgb) * 4 + sp_color_id) * 2 + 0] << 0) +
-            ((std::uint16_t)_obcRam[((sp_attributes & SpriteAttributes::SpriteAttributesPaletteCgb) * 4 + sp_color_id) * 2 + 1] << 8);
+        // Get color from palette
+        std::uint16_t sp_color =
+          ((std::uint16_t)_obcRam[((sp_attributes & SpriteAttributes::SpriteAttributesPaletteCgb) * 4 + sp_color_id) * 2 + 0] << 0) +
+          ((std::uint16_t)_obcRam[((sp_attributes & SpriteAttributes::SpriteAttributesPaletteCgb) * 4 + sp_color_id) * 2 + 1] << 8);
 
-          sp_color_r = ((sp_color >> 0) & 0b00011111) * 8;
-          sp_color_g = ((sp_color >> 5) & 0b00011111) * 8;
-          sp_color_b = ((sp_color >> 10) & 0b00011111) * 8;
-        }
+        sp_color_r = ((sp_color >> 0) & 0b00011111) * 8;
+        sp_color_g = ((sp_color >> 5) & 0b00011111) * 8;
+        sp_color_b = ((sp_color >> 10) & 0b00011111) * 8;
 
         break;
       }
@@ -5338,7 +5330,7 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
     // Background and Window Master Priority, CGB mode only
     if (bg_color_id != 255 &&
       sp_color_id != 255 &&
-      _header.cgb != Header::CGBFlag::CGBNone &&
+      !(_io[Registers::RegisterKEY0] & 0b00001100) &&
       !(_io[Registers::RegisterLCDC] & LcdControl::LcdControlPriority))
       bg_color_id = 255;
 
@@ -5463,7 +5455,7 @@ std::uint8_t  GBC::GameBoyColor::readRom(std::uint16_t addr)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Read from boot if not disabled
-  if (readIo(Registers::RegisterBANK) == 0 && addr < _boot.size() && (addr <= 0x00FF || addr >= 0x0150))
+  if (_io[Registers::RegisterBANK] == 0 && addr < _boot.size() && (addr <= 0x00FF || addr >= 0x0150))
     return _boot[addr];
 
   // Handle MBC behavior
@@ -5535,13 +5527,8 @@ std::uint8_t  GBC::GameBoyColor::readVRam(std::uint16_t addr)
   if (addr >= 0x2000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-  // Game Boy only has 8kB VRAM
-  if (_header.cgb == Header::CGBFlag::CGBNone)
-    return _vRam[addr];
-
   // Game Boy Color has 2 VRAM banks
-  else
-    return _vRam[(std::uint16_t)(readIo(Registers::RegisterVBK) & 0b00000001) * 0x2000 + addr];
+  return _vRam[(std::uint16_t)(_io[Registers::RegisterVBK] & 0b00000001) * 0x2000 + addr];
 
   // TODO: lock when drawing ?
 }
@@ -5629,17 +5616,13 @@ std::uint8_t  GBC::GameBoyColor::readWRam(std::uint16_t addr)
   if (addr >= 0x2000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-  // Game Boy only has 8kB WRAM
-  if (_header.cgb == Header::CGBFlag::CGBNone)
-    return _wRam[addr];
-  
   // First half is alway bank 0
   if (addr < 0x1000)
     return _wRam[addr];
 
   // Second half is a WRAM bank
   else
-    return _wRam[(std::clamp(readIo(Registers::RegisterSVBK) & 0b00000111, 1, 7) * 0x1000) + (addr - 0x1000)];
+    return _wRam[(std::clamp(_io[Registers::RegisterSVBK] & 0b00000111, 1, 7) * 0x1000) + (addr - 0x1000)];
 }
 
 std::uint8_t  GBC::GameBoyColor::readOam(std::uint16_t addr)
@@ -5694,8 +5677,8 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
   case Registers::RegisterOBP1:   // OBJ 1 Palette Data, R/W, non CGB mode only
   case Registers::RegisterWY:     // Window Y Position, R/W
   case Registers::RegisterWX:     // Window X Position, R/W
+  case Registers::RegisterKEY0:   // CPU Mode, R/W, see enum
   case Registers::RegisterKEY1:   // CPU Speed Switch, R/W, CGB mode only
-  case Registers::RegisterBANK:   // Boot Bank Controller, R/W, 0 to enable Boot mapping in ROM
   case Registers::RegisterHDMA1:  // New DMA Transfers source high byte, W, CGB mode only
   case Registers::RegisterHDMA2:  // New DMA Transfers source low byte, W, CGB mode only
   case Registers::RegisterHDMA3:  // New DMA Transfers destination high byte, W, CGB mode only
@@ -5711,6 +5694,7 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
     return _io[addr];
 
   case Registers::RegisterDIVLo:  // Low byte of DIV, not accessible
+  case Registers::RegisterBANK:   // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
   default:                        // Invalid register
     // Default value in case of error
     return 0xFF;
@@ -5860,13 +5844,8 @@ void  GBC::GameBoyColor::writeVRam(std::uint16_t addr, std::uint8_t value)
   if (addr >= 0x2000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-  // Game Boy only has 8kB VRAM
-  if (_header.cgb == Header::CGBFlag::CGBNone)
-    _vRam[addr] = value;
-
   // Game Boy Color has 2 VRAM banks
-  else
-    _vRam[(readIo(Registers::RegisterVBK) & 0b00000001) * 0x2000 + addr] = value;
+  _vRam[(_io[Registers::RegisterVBK] & 0b00000001) * 0x2000 + addr] = value;
 
   // TODO: lock when drawing ?
 }
@@ -5961,19 +5940,13 @@ void  GBC::GameBoyColor::writeWRam(std::uint16_t addr, std::uint8_t value)
   if (addr >= 0x2000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-  // Game Boy only has 8kB WRAM
-  if (_header.cgb == Header::CGBFlag::CGBNone) {
-    _wRam[addr] = value;
-    return;
-  }
-
   // First half is alway bank 0
   if (addr < 0x1000)
     _wRam[addr] = value;
 
   // Second half is a WRAM bank
   else
-    _wRam[(std::clamp(readIo(Registers::RegisterSVBK) & 0b00000111, 1, 7) * 0x1000) + (addr - 0x1000)] = value;
+    _wRam[(std::clamp(_io[Registers::RegisterSVBK] & 0b00000111, 1, 7) * 0x1000) + (addr - 0x1000)] = value;
 }
 
 void  GBC::GameBoyColor::writeOam(std::uint16_t addr, std::uint8_t value)
@@ -6072,11 +6045,19 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     // TODO: DMA transfer is 160 cycles long, lock memory access
     break;
 
-  case Registers::RegisterKEY1:   // CPU Speed Switch, R/W, CGB mode only
-    _io[Registers::RegisterKEY1] = (_io[Registers::RegisterKEY1] & 0b10000000) | (value & 0b00000001);
+  case Registers::RegisterKEY0:   // CPU Mode, R/W, see enum
+    // Active only during boot mapping
+    if (_io[Registers::RegisterBANK] == 0)
+      _io[Registers::RegisterKEY0] = value;
     break;
 
-  case Registers::RegisterHDMA5:  // Start New DMA Transfer
+  case Registers::RegisterBANK:   // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
+    // Active only during boot mapping
+    if (_io[Registers::RegisterBANK] == 0)
+      _io[Registers::RegisterBANK] = value;
+    break;
+
+  case Registers::RegisterHDMA5:  // Start New DMA Transfer, R/W, CGB mode only
   {
     std::uint16_t source = (((std::uint16_t)_io[Registers::RegisterHDMA1] << 8) + (std::uint16_t)_io[Registers::RegisterHDMA2]) & 0b1111111111110000;
     std::uint16_t destination = ((((std::uint16_t)_io[Registers::RegisterHDMA3] << 8) + (std::uint16_t)_io[Registers::RegisterHDMA4]) & 0b00011111111110000) | 0b1000000000000000;
@@ -6143,11 +6124,12 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     break;
 
   case Registers::RegisterOPRI:   // OBJ Priority Mode, R/W, CGB mode only
-    _io[Registers::RegisterSVBK] = value & 0b00000001;
+    _io[Registers::RegisterOPRI] = value & 0b00000001;
     break;
 
   case Registers::RegisterSVBK:   // Work Ram Bank, R/W, CGB mode only
-    _io[Registers::RegisterSVBK] = value & 0b00000111;
+    if ((_io[Registers::RegisterKEY0] & 0b00001100) != CpuMode::CpuModeDmg)
+      _io[Registers::RegisterSVBK] = value & 0b00000111;
     break;
 
   case Registers::RegisterTIMA:   // Timer Modulo, R/W
@@ -6160,8 +6142,8 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
   case Registers::RegisterOBP1:   // OBJ 1 Palette Data, R/W, non CGB mode only
   case Registers::RegisterWY:     // Window Y Position, R/W
   case Registers::RegisterWX:     // Window X Position, R/W
+  case Registers::RegisterKEY1:   // CPU Speed Switch, R/W, CGB mode only
   case Registers::RegisterVBK:    // Video RAM Bank, R/W, CGB mode only
-  case Registers::RegisterBANK:   // Boot Bank Controller, R/W, 0 to enable Boot mapping in ROM
   case Registers::RegisterHDMA1:  // New DMA Transfers source high byte, W, CGB mode only
   case Registers::RegisterHDMA2:  // New DMA Transfers source low byte, W, CGB mode only
   case Registers::RegisterHDMA3:  // New DMA Transfers destination high byte, W, CGB mode only

@@ -36,9 +36,10 @@ namespace Game
     game.push<Game::SplashScene>();
 
     // TODO: remove this
-    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/donkey_kong_land_2.gb");
+    game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/donkey_kong_land_2.gb");
     //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/super_mario_land.gb");
-    game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tetris.gb");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tetris.gb");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/pokemon_blue.gb");
     //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/pokemon_crystal.gbc");
     //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/smurfs.gbc");
 

@@ -175,16 +175,16 @@ namespace GBC
       RegisterOBP1 = 0x49,  // OBJ 1 Palette Data, R/W, non CGB mode only  
       RegisterWY = 0x4A,    // Window Y Position, R/W
       RegisterWX = 0x4B,    // Window X Position, R/W
-
+      RegisterKEY0 = 0x4C,  // CPU Mode, R/W, see enum
       RegisterKEY1 = 0x4D,  // CPU Speed Switch, R/W, CGB mode only, bit 7: current speed (0: normal, 1: double), bit 0: prepare switch (0: no, 1: prepare)
 
       RegisterVBK = 0x4F,   // Video RAM Bank, R/W, CGB mode only
-      RegisterBANK = 0x50,  // Boot Bank Controller, R/W, 0 to enable Boot mapping in ROM
+      RegisterBANK = 0x50,  // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
       RegisterHDMA1 = 0x51, // New DMA Transfers source high byte, W, CGB mode only
       RegisterHDMA2 = 0x52, // New DMA Transfers source low byte, W, CGB mode only
       RegisterHDMA3 = 0x53, // New DMA Transfers destination high byte, W, CGB mode only
       RegisterHDMA4 = 0x54, // New DMA Transfers destination low byte, W, CGB mode only
-      RegisterHDMA5 = 0x55, // Start New DMA Transfer
+      RegisterHDMA5 = 0x55, // Start New DMA Transfer, R/W, CGB mode only
       RegisterRP = 0x56,
 
       RegisterBCPI = 0x68,  // Background Color Palette Index, R/W, CGB mode only
@@ -194,6 +194,12 @@ namespace GBC
       RegisterOPRI = 0x6C,  // OBJ Priority Mode, R/W, CGB mode only, bit 0: mode (0 :OAM, 1: Coordinate)
 
       RegisterSVBK = 0x70   // Work Ram Bank, R/W, CGB mode only
+    };
+
+    enum CpuMode
+    {
+      CpuModeDmg = 0b00000100,    // Disable all CGB functions (0: CGB, 1: DMG) RP, VBK, SVBK + ExtDmg functions
+      CpuModeExtDmg = 0b00001000, // Disable some CGB functions (0: normal, 1: Extended DMG mode) HDMA, BCPD, OCPD, KEY1
     };
 
     enum IME
