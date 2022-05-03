@@ -36,12 +36,30 @@ namespace Game
     game.push<Game::SplashScene>();
 
     // TODO: remove this
-    game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/donkey_kong_land_2.gb");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/donkey_kong_land_2.gb");
     //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/super_mario_land.gb");
-    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tetris.gb");
-    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/pokemon_blue.gb");
+    game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tetris.gb");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/pokemon_red.gb");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/pokemon_yellow.gb");
     //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/pokemon_crystal.gbc");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/zelda.gbc");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/aladdin.gbc");
     //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/smurfs.gbc");
+
+    // FAILED
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/02-interrupts.gb");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/04-op r,imm.gb");
+
+    // PASSED
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/01-special.gb");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/03-op sp,hl.gb");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/05-op rp.gb");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/06-ld r,r.gb");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/07-jr,jp,call,ret,rst.gb");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/08-misc instrs.gb");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/09-op r,r.gb");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/10-bit ops.gb");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/11-op a,(hl).gb");
 
     // Run the game !
     while (Game::Window::Instance().window().isOpen()) {

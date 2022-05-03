@@ -2000,20 +2000,20 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "ADD SP, n",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      std::int32_t  r16 = (std::int32_t)(gbc._rSP.u16 & 0b1111111111111111) + (std::int32_t)(gbc.read<std::int8_t>(gbc._rPC.u16 + 1) & 0b1111111111111111);
-      std::int32_t  r12 = (std::int32_t)(gbc._rSP.u16 & 0b0000111111111111) + (std::int32_t)(gbc.read<std::int8_t>(gbc._rPC.u16 + 1) & 0b0000111111111111);
+      std::int32_t  n = gbc.read<std::int8_t>(gbc._rPC.u16 + 1);
+      std::int32_t  sp = gbc._rSP.u16;
 
-      gbc._rSP.u16 = r16;
+      gbc._rSP.u16 = sp + n;
       gbc._rAF.u8[Register::Lo] &= ~Register::Z;
       gbc._rAF.u8[Register::Lo] &= ~Register::N;
-      if (r12 & 0b0001000000000000)
-        gbc._rAF.u8[Register::Lo] |= Register::H;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r16 & 0b10000000000000000)
+      if ((sp & 0b11111111) + (n & 0b11111111) > 0b11111111)
         gbc._rAF.u8[Register::Lo] |= Register::C;
       else
         gbc._rAF.u8[Register::Lo] &= ~Register::C;
+      if ((sp & 0b00001111) + (n & 0b00001111) > 0b00001111)
+        gbc._rAF.u8[Register::Lo] |= Register::H;
+      else
+        gbc._rAF.u8[Register::Lo] &= ~Register::H;
       gbc._rPC.u16 += 2;
       gbc._cpuCycle += 16;
     }
@@ -2081,6 +2081,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .description = "POP AF",
     .instruction = [](GBC::GameBoyColor& gbc) {
       gbc.instructionPop(gbc._rAF.u16);
+      gbc._rAF.u8[Register::Lo] &= 0b11110000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 12;
     }
@@ -2137,11 +2138,11 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
       std::int8_t n = gbc.read<std::int8_t>(gbc._rPC.u16 + 1);
 
       gbc._rHL.u16 = gbc._rSP.u16 + n;
-      if (((std::uint16_t)n & 0b11111111) + (gbc._rSP.u16 & 0b11111111) >= 0b0000000100000000)
+      if (((std::uint16_t)n & 0b11111111) + (gbc._rSP.u16 & 0b11111111) > 0b0000000011111111)
         gbc._rAF.u8[Register::Lo] |= Register::C;
       else
         gbc._rAF.u8[Register::Lo] &= ~Register::C;
-      if (((std::uint16_t)n & 0b00001111) + (gbc._rSP.u16 & 0b00001111) >= 0b0000000000010000)
+      if (((std::uint16_t)n & 0b00001111) + (gbc._rSP.u16 & 0b00001111) > 0b0000000000001111)
         gbc._rAF.u8[Register::Lo] |= Register::H;
       else
         gbc._rAF.u8[Register::Lo] &= ~Register::H;
@@ -4409,9 +4410,9 @@ void  GBC::GameBoyColor::instructionDec(std::uint8_t& value)
     _rAF.u8[Register::Lo] &= ~Register::Z;
   _rAF.u8[Register::Lo] |= Register::N;
   if ((value & 0b00001111) == 0b00001111)
-    _rAF.u8[Register::Lo] &= ~Register::H;
-  else
     _rAF.u8[Register::Lo] |= Register::H;
+  else
+    _rAF.u8[Register::Lo] &= ~Register::H;
 }
 
 void  GBC::GameBoyColor::instructionAnd(std::uint8_t left, std::uint8_t right, std::uint8_t& result)
@@ -4595,6 +4596,7 @@ void  GBC::GameBoyColor::instructionRet()
 }
 
 GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
+  _path(filename),
   _boot(),
   _rom(),
   _vRam(),
@@ -4674,6 +4676,10 @@ GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
   default:
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
   }
+
+  // Load External RAM
+  try { loadEram(); }
+  catch (...) {}
 }
 
 GBC::GameBoyColor::~GameBoyColor()
@@ -4916,6 +4922,47 @@ void  GBC::GameBoyColor::loadHeader()
   std::cout << "  global_checksum: " << (_header.global_checksum ? "true" : "false") << std::endl;
 }
 
+void  GBC::GameBoyColor::loadEram()
+{
+  std::vector<std::uint8_t> data;
+
+  // Load save file to memory
+  loadFile(_path + ".gbs", data);
+
+  // Load clock of MBC3
+  if (_header.mbc == MemoryBankController::MBC3 && data.size() == _eRam.size() + sizeof(_mbc.mbc3.time)) {
+    std::memcpy(&_mbc.mbc3.time, data.data(), sizeof(_mbc.mbc3.time));
+    data.erase(data.begin(), std::next(data.begin(), sizeof(_mbc.mbc3.time)));
+  }
+
+  // Check if sizes match
+  if (data.size() != _eRam.size())
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // Copy RAW data to External RAM
+  std::copy(data.begin(), data.end(), _eRam.begin());
+}
+
+void  GBC::GameBoyColor::saveEram()
+{
+  std::ofstream file(_path + ".gbs", std::ofstream::binary | std::ofstream::trunc);
+
+  // Check if file open properly
+  if (file.good() == false)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // Save clock of MBC3
+  if (_header.mbc == MemoryBankController::MBC3)
+    file.write((const char*)&_mbc.mbc3.time, sizeof(_mbc.mbc3.time));
+
+  // Write External RAM to save file
+  file.write((const char *)_eRam.data(), _eRam.size());
+
+  // Check for success
+  if (file.good() == false)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+}
+
 void  GBC::GameBoyColor::simulate()
 {
   std::uint64_t frame = _ppuCycle / (456 * 154);
@@ -5065,7 +5112,7 @@ void  GBC::GameBoyColor::simulateInstruction()
       std::printf("  SP: %5d 0x%04X             PC: %5d 0x%04X\n", _rSP.u16, _rSP.u16, _rPC.u16, _rPC.u16);
       std::printf("\n");
     }
-    std::printf("[PC 0x%04X](OP 0x%02X) %s\n", _rPC.u16, opcode, opcode == 0xCB ? _instructionsCB[read<std::uint8_t>(_rPC.u16 + 1)].description.c_str() : _instructions[opcode].description.c_str());
+    std::printf("[PC 0x%04X](OP 0x%02X) %s\n", _rPC.u16, opcode, opcode == 0xCB ? _instructionsCB[read<std::uint8_t>(_rPC.u16 + 1)].description.data() : _instructions[opcode].description.data());
   }
 
   // Execute instruction
@@ -5116,8 +5163,15 @@ void  GBC::GameBoyColor::simulateGraphics()
   }
 
   // Next line
-  if (_ppuCycle % 456 == 252)
+  if (_ppuCycle % 456 == 452)
   {
+    // Increment to next line
+    _io[Registers::RegisterLY] += 1;
+    
+    // Limit to 144 + 10 lines
+    if (_io[Registers::RegisterLY] >= 144 + 10)
+      _io[Registers::RegisterLY] = 0;
+
     // LY / LCY register comparison
     if (_io[Registers::RegisterLY] == _io[Registers::RegisterLYC]) {
       _io[Registers::RegisterSTAT] |= LcdStatus::LcdStatusEqual;
@@ -5128,13 +5182,6 @@ void  GBC::GameBoyColor::simulateGraphics()
     }
     else
       _io[Registers::RegisterSTAT] &= ~LcdStatus::LcdStatusEqual;
-
-    // Increment to next line
-    _io[Registers::RegisterLY] += 1;
-    
-    // Limit to 144 + 10 lines
-    if (_io[Registers::RegisterLY] >= 144 + 10)
-      _io[Registers::RegisterLY] = 0;
   }
 
   // Advance in PPU simulation
@@ -5159,7 +5206,7 @@ void  GBC::GameBoyColor::simulateGraphicsMode2()
     _ppuObj.erase(std::next(_ppuObj.begin(), 10), _ppuObj.end());
 
   // In non-CGB mode, OBJ draw priority depends on its X position
-  if (_io[Registers::RegisterOPRI] & 0b00000001)
+  if ((_io[Registers::RegisterOPRI] & 0b00000001) || (_io[Registers::RegisterKEY0] & 0b00001100))
     _ppuObj.sort([this](const auto& a, const auto& b) { return _oam[a * 4 + 1] < _oam[b * 4 + 1]; });
 }
 
@@ -5203,14 +5250,12 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
           0x0000);
 
       // Flip tile coordinates
-      if (bg_attributes & BackgroundAttributes::BackgroundAttributesYFlip)
-        wn_y = (8 - 1) - wn_y % 8;
-      if (bg_attributes & BackgroundAttributes::BackgroundAttributesXFlip)
-        wn_x = (8 - 1) - wn_x % 8;
+      std::uint8_t  wn_tile_x = (bg_attributes & BackgroundAttributes::BackgroundAttributesXFlip) ? ((8 - 1) - wn_x % 8) : (wn_x % 8);
+      std::uint8_t  wn_tile_y = (bg_attributes & BackgroundAttributes::BackgroundAttributesYFlip) ? ((8 - 1) - wn_y % 8) : (wn_y % 8);
 
       bg_color_id =
-        ((_vRam[wn_tile_index + (wn_y % 8) * 2 + 0] & (0b10000000 >> (wn_x % 8))) ? 1 : 0) +
-        ((_vRam[wn_tile_index + (wn_y % 8) * 2 + 1] & (0b10000000 >> (wn_x % 8))) ? 2 : 0);
+        ((_vRam[wn_tile_index + (wn_tile_y % 8) * 2 + 0] & (0b10000000 >> (wn_tile_x % 8))) ? 1 : 0) +
+        ((_vRam[wn_tile_index + (wn_tile_y % 8) * 2 + 1] & (0b10000000 >> (wn_tile_x % 8))) ? 2 : 0);
 
       // DMG color palette
       if (_io[Registers::RegisterKEY0] & 0b00001100)
@@ -5243,14 +5288,12 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
           0x0000);
 
       // Flip tile coordinates
-      if (bg_attributes & BackgroundAttributes::BackgroundAttributesYFlip)
-        bg_y = (8 - 1) - bg_y % 8;
-      if (bg_attributes & BackgroundAttributes::BackgroundAttributesXFlip)
-        bg_x = (8 - 1) - bg_x % 8;
-
+      std::uint8_t  bg_tile_x = (bg_attributes & BackgroundAttributes::BackgroundAttributesXFlip) ? ((8 - 1) - bg_x % 8) : (bg_x % 8);
+      std::uint8_t  bg_tile_y = (bg_attributes & BackgroundAttributes::BackgroundAttributesYFlip) ? ((8 - 1) - bg_y % 8) : (bg_y % 8);
+      
       bg_color_id =
-        ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 0] & (0b10000000 >> (bg_x % 8))) ? 1 : 0) +
-        ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 1] & (0b10000000 >> (bg_x % 8))) ? 2 : 0);
+        ((_vRam[bg_tile_index + (bg_tile_y % 8) * 2 + 0] & (0b10000000 >> (bg_tile_x % 8))) ? 1 : 0) +
+        ((_vRam[bg_tile_index + (bg_tile_y % 8) * 2 + 1] & (0b10000000 >> (bg_tile_x % 8))) ? 2 : 0);
 
       // DMG color palette
       if (_io[Registers::RegisterKEY0] & 0b00001100)
@@ -5391,6 +5434,149 @@ void  GBC::GameBoyColor::simulateTimer()
 
 const sf::Image& GBC::GameBoyColor::screen() const
 {
+
+  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Num1)) {
+    static sf::Image  back;
+
+    back.create(256, 256);
+
+    std::uint16_t bg_tilemap = 0x1800;
+
+    for (unsigned int grid_y = 0; grid_y < 32; grid_y++)
+      for (unsigned int grid_x = 0; grid_x < 32; grid_x++) {
+        std::uint16_t bg_tilemap_id = grid_y * 32 + grid_x;
+
+        std::uint8_t  bg_attributes = _vRam[bg_tilemap + bg_tilemap_id + 0x2000];
+        std::uint8_t  bg_tile_id = _vRam[bg_tilemap + bg_tilemap_id];
+        std::uint16_t bg_control = ((Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Num3)) ?
+          0x0000 :
+          ((bg_tile_id < 128) ? 0x1000 : 0x0000));
+        std::uint16_t bg_tile_index = ((std::uint16_t)bg_tile_id * 16)
+          + bg_control
+          + ((bg_attributes & BackgroundAttributes::BackgroundAttributesBank) ?
+            0x2000 :
+            0x0000);
+
+        for (unsigned int tile_y = 0; tile_y < 8; tile_y++)
+          for (unsigned int tile_x = 0; tile_x < 8; tile_x++) {
+            unsigned int bg_x = tile_x;
+            unsigned int bg_y = tile_y;
+
+            if (bg_attributes & BackgroundAttributes::BackgroundAttributesYFlip)
+              bg_y = (8 - 1) - bg_y % 8;
+            if (bg_attributes & BackgroundAttributes::BackgroundAttributesXFlip)
+              bg_x = (8 - 1) - bg_x % 8;
+
+            std::uint8_t  bg_color_id =
+              ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 0] & (0b10000000 >> (bg_x % 8))) ? 1 : 0) +
+              ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 1] & (0b10000000 >> (bg_x % 8))) ? 2 : 0);
+
+            if (_io[Registers::RegisterKEY0] & 0b00001100)
+              bg_color_id = (_io[Registers::RegisterBGP] >> (bg_color_id * 2)) & 0b00000011;
+
+            std::uint16_t bg_color =
+              ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 0] << 0) +
+              ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 1] << 8);
+
+            back.setPixel(grid_x * 8 + tile_x, grid_y * 8 + tile_y,
+              sf::Color(
+                ((bg_color >> 0) & 0b00011111) * 8,
+                ((bg_color >> 5) & 0b00011111) * 8,
+                ((bg_color >> 10) & 0b00011111) * 8
+              ));
+          }
+
+      }
+
+    return back;
+  }
+
+  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Num2)) {
+    static sf::Image  back;
+
+    back.create(256, 256);
+
+    std::uint16_t bg_tilemap = 0x1C00;
+
+    for (unsigned int grid_y = 0; grid_y < 32; grid_y++)
+      for (unsigned int grid_x = 0; grid_x < 32; grid_x++) {
+        std::uint16_t bg_tilemap_id = grid_y * 32 + grid_x;
+        std::uint8_t  bg_attributes = _vRam[bg_tilemap + bg_tilemap_id + 0x2000];
+        std::uint8_t  bg_tile_id = _vRam[bg_tilemap + bg_tilemap_id];
+        std::uint16_t bg_control = ((Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Num3)) ?
+          0x0000 :
+          ((bg_tile_id < 128) ? 0x1000 : 0x0000));
+        std::uint16_t bg_tile_index = ((std::uint16_t)bg_tile_id * 16)
+          + bg_control
+          + ((bg_attributes & BackgroundAttributes::BackgroundAttributesBank) ?
+            0x2000 :
+            0x0000);
+
+        for (unsigned int tile_y = 0; tile_y < 8; tile_y++)
+          for (unsigned int tile_x = 0; tile_x < 8; tile_x++) {
+            unsigned int bg_x = tile_x;
+            unsigned int bg_y = tile_y;
+
+            if (bg_attributes & BackgroundAttributes::BackgroundAttributesYFlip)
+              bg_y = (8 - 1) - bg_y % 8;
+            if (bg_attributes & BackgroundAttributes::BackgroundAttributesXFlip)
+              bg_x = (8 - 1) - bg_x % 8;
+
+            std::uint8_t  bg_color_id =
+              ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 0] & (0b10000000 >> (bg_x % 8))) ? 1 : 0) +
+              ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 1] & (0b10000000 >> (bg_x % 8))) ? 2 : 0);
+
+            if (_io[Registers::RegisterKEY0] & 0b00001100)
+              bg_color_id = (_io[Registers::RegisterBGP] >> (bg_color_id * 2)) & 0b00000011;
+
+            std::uint16_t bg_color =
+              ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 0] << 0) +
+              ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 1] << 8);
+
+            back.setPixel(grid_x * 8 + tile_x, grid_y * 8 + tile_y,
+              sf::Color(
+                ((bg_color >> 0) & 0b00011111) * 8,
+                ((bg_color >> 5) & 0b00011111) * 8,
+                ((bg_color >> 10) & 0b00011111) * 8
+              ));
+          }
+
+      }
+
+    return back;
+  }
+
+  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Num4)) {
+    static sf::Image  back;
+
+    back.create(8, 9);
+
+    for (unsigned int index = 0; index < 32; index++) {
+      std::uint16_t bg =
+        ((std::uint16_t)_bgcRam[index * 2 + 0] << 0) +
+        ((std::uint16_t)_bgcRam[index * 2 + 1] << 8);
+
+      back.setPixel(index % 8, index / 8 + 0,
+        sf::Color(
+          ((bg >> 0) & 0b00011111) * 8,
+          ((bg >> 5) & 0b00011111) * 8,
+          ((bg >> 10) & 0b00011111) * 8
+        ));
+
+      std::uint16_t ob =
+        ((std::uint16_t)_obcRam[index * 2 + 0] << 0) +
+        ((std::uint16_t)_obcRam[index * 2 + 1] << 8);
+
+      back.setPixel(index % 8, index / 8 + 5,
+        sf::Color(
+          ((ob >> 0) & 0b00011111) * 8,
+          ((ob >> 5) & 0b00011111) * 8,
+          ((ob >> 10) & 0b00011111) * 8
+        ));
+    }
+    return back;
+  }
+
   return _ppuLcd;
 }
 
@@ -5470,11 +5656,11 @@ std::uint8_t  GBC::GameBoyColor::readRom(std::uint16_t addr)
 
     // First half of ROM
     if (addr < 0x4000 && _mbc.mbc1.bank & 0b10000000)
-        bank = _mbc.mbc1.bank & 0b01100000;
+        bank = (_mbc.mbc1.bank & 0b01100000) % (_rom.size() / 0x4000);
 
     // Second half of ROM
     else if (addr >= 0x4000)
-      bank = (_mbc.mbc1.bank & 0b01100000) + std::clamp((_mbc.mbc1.bank & 0b00011111), 0b00000001, 0b00011111);
+      bank = ((_mbc.mbc1.bank & 0b01100000) + std::clamp((_mbc.mbc1.bank & 0b00011111), 0b00000001, 0b00011111)) % (std::uint8_t)(_rom.size() / 0x4000);
 
     // Get ROM value
     return _rom[(((std::size_t)bank * 0x4000) + (addr % 0x4000)) % _rom.size()];
@@ -5486,7 +5672,7 @@ std::uint8_t  GBC::GameBoyColor::readRom(std::uint16_t addr)
 
     // Get bank number for second half of ROM
     if (addr >= 0x4000)
-      bank = std::clamp((_mbc.mbc2.bank & 0b00001111), 0b00000001, 0b00001111);
+      bank = std::clamp((_mbc.mbc2.bank & 0b00001111) % (std::uint8_t)(_rom.size() / 0x4000), 0b00000001, 0b00001111);
 
     // Get ROM value
     return _rom[(((std::size_t)bank * 0x4000) + (addr % 0x4000)) % _rom.size()];
@@ -5498,7 +5684,7 @@ std::uint8_t  GBC::GameBoyColor::readRom(std::uint16_t addr)
 
     // Get bank number for second half of ROM
     if (addr >= 0x4000)
-      bank = std::clamp((_mbc.mbc3.rom & 0b01111111), 0b00000001, 0b01111111);
+      bank = std::clamp((_mbc.mbc3.rom & 0b01111111) % (std::uint8_t)(_rom.size() / 0x4000), 0b00000001, 0b01111111);
 
     // Get ROM value
     return _rom[(((std::size_t)bank * 0x4000) + (addr % 0x4000)) % _rom.size()];
@@ -5510,7 +5696,7 @@ std::uint8_t  GBC::GameBoyColor::readRom(std::uint16_t addr)
 
     // Get bank number for second half of ROM
     if (addr >= 0x4000)
-      bank = _mbc.mbc5.rom & 0b0000000111111111;
+      bank = (_mbc.mbc5.rom & 0b0000000111111111) % (std::uint8_t)(_rom.size() / 0x4000);
 
     // Get ROM value
     return _rom[(((std::size_t)bank * 0x4000) + (addr % 0x4000)) % _rom.size()];
@@ -5555,7 +5741,7 @@ std::uint8_t  GBC::GameBoyColor::readERam(std::uint16_t addr)
 
     // Get RAM bank
     if (_mbc.mbc1.bank & 0b10000000)
-      bank = ((_mbc.mbc1.bank & 0b01100000) >> 5);
+      bank = ((_mbc.mbc1.bank & 0b01100000) >> 5) % (_eRam.size() / 0x2000);
 
     // Get RAM value
     return _eRam[(bank * 0x2000 + addr) % _eRam.size()];
@@ -5563,7 +5749,7 @@ std::uint8_t  GBC::GameBoyColor::readERam(std::uint16_t addr)
 
   case MemoryBankController::Type::MBC2:
     // RAM not enabled
-    if (_mbc.mbc2.enable != 0x0A)
+    if ((_mbc.mbc2.enable & 0b00001111) != 0x0A)
       return 0xFF;
     // Get RAM value
     else
@@ -5776,8 +5962,15 @@ void  GBC::GameBoyColor::writeRom(std::uint16_t addr, std::uint8_t value)
 
   case MemoryBankController::Type::MBC1:
     // RAM enable
-    if (addr < 0x2000)
+    if (addr < 0x2000) {
       _mbc.mbc1.enable = value;
+
+      // Save External RAM
+      if ((_mbc.mbc1.enable & 0b00001111) != 0x0A) {
+        try { saveEram(); }
+        catch (...) {}
+      }
+    }
     // ROM bank number
     else if (addr < 0x4000)
       _mbc.mbc1.bank = (_mbc.mbc1.bank & 0b11100000) | ((value & 0b00011111) << 0);
@@ -5786,7 +5979,7 @@ void  GBC::GameBoyColor::writeRom(std::uint16_t addr, std::uint8_t value)
       _mbc.mbc1.bank = (_mbc.mbc1.bank & 0b10011111) | ((value & 0b00000011) << 5);
     // Banking mode
     else
-      _mbc.mbc1.bank = (_mbc.mbc1.bank & 0b01111111) | ((value & 0b00000001) << 5);
+      _mbc.mbc1.bank = (_mbc.mbc1.bank & 0b01111111) | ((value & 0b00000001) << 7);
     break;
 
   case MemoryBankController::Type::MBC2:
@@ -5796,15 +5989,26 @@ void  GBC::GameBoyColor::writeRom(std::uint16_t addr, std::uint8_t value)
     // RAM enable
     else {
       _mbc.mbc2.enable = value;
-      if (_mbc.mbc2.enable != 0x0A)
-        ; // TODO: save external ram to file
+
+      // Save External RAM
+      if ((_mbc.mbc2.enable & 0b00001111) != 0x0A) {
+        try { saveEram(); }
+        catch (...) {}
+      }
     }
     break;
 
   case MemoryBankController::Type::MBC3:
     // RAM enable
-    if (addr < 0x2000)
+    if (addr < 0x2000) {
       _mbc.mbc3.enable = value;
+
+      // Save External RAM
+      if ((_mbc.mbc3.enable & 0b00001111) != 0x0A) {
+        try { saveEram(); }
+        catch (...) {}
+      }
+    }
     // ROM bank number
     else if (addr < 0x4000)
       _mbc.mbc3.rom = value & 0b01111111;
@@ -5821,8 +6025,15 @@ void  GBC::GameBoyColor::writeRom(std::uint16_t addr, std::uint8_t value)
 
   case MemoryBankController::Type::MBC5:
     // RAM enable
-    if (addr < 0x2000)
+    if (addr < 0x2000) {
       _mbc.mbc5.enable = value;
+
+      // Save External RAM
+      if ((_mbc.mbc5.enable & 0b00001111) != 0x0A) {
+        try { saveEram(); }
+        catch (...) {}
+      }
+    }
     // ROM  bank number (lower 8 bits)
     else if (addr < 0x3000)
       _mbc.mbc5.rom = (_mbc.mbc5.rom & 0b1111111100000000) | value;
@@ -5864,22 +6075,20 @@ void  GBC::GameBoyColor::writeERam(std::uint16_t addr, std::uint8_t value)
     break;
 
   case MemoryBankController::Type::MBC1:
-  {
     // RAM enabled
-    if (_mbc.mbc1.enable == 0x0A)
+    if ((_mbc.mbc1.enable & 0b00001111) == 0x0A)
       _eRam[((std::size_t)((_mbc.mbc1.bank & 0b10000000) ? ((_mbc.mbc1.bank & 0b01100000) >> 5) : 0) * 0x2000 + addr) % _eRam.size()] = value;
     break;
-  }
 
   case MemoryBankController::Type::MBC2:
     // RAM enabled
-    if (_mbc.mbc2.enable == 0x0A)
+    if ((_mbc.mbc2.enable & 0b00001111) == 0x0A)
       _eRam[addr % _eRam.size()] = value;
     break;
 
   case MemoryBankController::Type::MBC3:
     // RAM enabled
-    if (_mbc.mbc3.enable != 0x0A)
+    if ((_mbc.mbc3.enable & 0b00001111) != 0x0A)
       break;
     // Write to RAM
     else if (_mbc.mbc3.ram < 0x04)
@@ -5925,8 +6134,8 @@ void  GBC::GameBoyColor::writeERam(std::uint16_t addr, std::uint8_t value)
 
   case MemoryBankController::Type::MBC5:
     // RAM enabled
-    if (_mbc.mbc5.enable == 0x0A)
-      _eRam[((std::size_t)_mbc.mbc5.ram * 0x2000 + addr) % _eRam.size()] = value;
+    if ((_mbc.mbc5.enable & 0b00001111) == 0x0A)
+      _eRam[((std::size_t)_mbc.mbc5.ram % (_eRam.size() / 0x2000) * 0x2000 + addr) % _eRam.size()] = value;
     break;
 
   default:
@@ -6007,10 +6216,7 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
 
   case Registers::RegisterIF: // Interrupt Flags, R/W
     // Bits 7-6-5 are always set
-    value |= 0b11100000;
-
-    // Write value to register
-    _io[Registers::RegisterIF] = value;
+    _io[Registers::RegisterIF] = value | 0b11100000;
     break;
 
   case Registers::RegisterSTAT: // LCD Status, R/W (see enum)
@@ -6063,8 +6269,6 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     std::uint16_t destination = ((((std::uint16_t)_io[Registers::RegisterHDMA3] << 8) + (std::uint16_t)_io[Registers::RegisterHDMA4]) & 0b00011111111110000) | 0b1000000000000000;
     std::uint16_t length = ((std::uint16_t)(value & 0b01111111) + 1) * 0x10;
     
-    printf("HDMA: mode %d, source %04x, dest %04x, length %d\n", (value & 0b10000000) ? 1 : 0, source, destination, length);
-
     // Transfer data to VRAM
     for (unsigned int count = 0; count < length; count++) {
       std::uint8_t  data;
@@ -6098,6 +6302,10 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     _io[Registers::RegisterHDMA2] = (source >> 0) & 0b11111111;
     _io[Registers::RegisterHDMA3] = (destination >> 8) & 0b11111111;
     _io[Registers::RegisterHDMA4] = (destination >> 0) & 0b11111111;
+    _io[Registers::RegisterHDMA1] = 0xFF;
+    _io[Registers::RegisterHDMA2] = 0xFF;
+    _io[Registers::RegisterHDMA3] = 0xFF;
+    _io[Registers::RegisterHDMA4] = 0xFF;
 
     _cpuCycle += length * ((_io[Registers::RegisterKEY1] & 0b10000000) ? 4 : 2);
 
@@ -6111,7 +6319,7 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
 
     // Increment pointer
     if (_io[Registers::RegisterBCPI] & 0b10000000)
-      _io[Registers::RegisterBCPI] = 0b10000000 | (((_io[Registers::RegisterBCPI] & 0b00111111) + 1) & 0b00111111);
+      _io[Registers::RegisterBCPI] = 0b10000000 | ((_io[Registers::RegisterBCPI] + 1) & 0b00111111);
     break;
 
   case Registers::RegisterOCPD:   // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
@@ -6120,7 +6328,7 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
 
     // Increment pointer
     if (_io[Registers::RegisterOCPI] & 0b10000000)
-      _io[Registers::RegisterOCPI] = 0b10000000 | (((_io[Registers::RegisterOCPI] & 0b00111111) + 1) & 0b00111111);
+      _io[Registers::RegisterOCPI] = 0b10000000 | ((_io[Registers::RegisterOCPI] + 1) & 0b00111111);
     break;
 
   case Registers::RegisterOPRI:   // OBJ Priority Mode, R/W, CGB mode only
@@ -6159,10 +6367,54 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     _io[addr] = value & 0b01110000;
     break;
 
+    // TODO: sound register
+  case Registers::RegisterNR10:
+  case Registers::RegisterNR11:
+  case Registers::RegisterNR12:
+  case Registers::RegisterNR13:
+  case Registers::RegisterNR14:
+
+  case Registers::RegisterNR21:
+  case Registers::RegisterNR22:
+  case Registers::RegisterNR23:
+  case Registers::RegisterNR24:
+  case Registers::RegisterNR30:
+  case Registers::RegisterNR31:
+  case Registers::RegisterNR32:
+  case Registers::RegisterNR33:
+  case Registers::RegisterNR34:
+
+  case Registers::RegisterNR41:
+  case Registers::RegisterNR42:
+  case Registers::RegisterNR43:
+  case Registers::RegisterNR44:
+  case Registers::RegisterNR50:
+  case Registers::RegisterNR51:
+  case Registers::RegisterNR52:
+  case 0x30:
+  case 0x31:
+  case 0x32:
+  case 0x33:
+  case 0x34:
+  case 0x35:
+  case 0x36:
+  case 0x37:
+  case 0x38:
+  case 0x39:
+  case 0x3A:
+  case 0x3B:
+  case 0x3C:
+  case 0x3D:
+  case 0x3E:
+  case 0x3F:
+    _io[addr] = value;
+    break;
+
   case Registers::RegisterDIVLo:  // Low byte of DIV, not accessible
   case Registers::RegisterLY:     // LCD Y Coordinate, R
   default:
     break;
+    //throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
   }
 }
 

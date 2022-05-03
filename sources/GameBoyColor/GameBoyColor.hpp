@@ -212,10 +212,10 @@ namespace GBC
     enum LcdControl
     {
       LcdControlEnable = 0b10000000,                  // LCD and PPU enable (0=Off, 1=On)
-      LcdControlWindowTilemap = 0b01000000,           // Window tile map area (0=9800-9BFF, 1=9C00-9FFF)
+      LcdControlWindowTilemap = 0b01000000,           // Window tilemap area (0=9800-9BFF, 1=9C00-9FFF)
       LcdControlWindowEnable = 0b00100000,            // Window enable (0=Off, 1=On)
       LcdControlData = 0b00010000,                    // Background and Window tile data area (0=8800-97FF, 1=8000-8FFF)
-      LcdControlBackgroundTilemap = 0b00001000,       // Background tile map area (0=9800-9BFF, 1=9C00-9FFF)
+      LcdControlBackgroundTilemap = 0b00001000,       // Background tilemap area (0=9800-9BFF, 1=9C00-9FFF)
       LcdControlObjSize = 0b00000100,                 // OBJ size (0=8x8, 1=8x16)
       LcdControlObjEnable = 0b00000010,               // OBJ enable (0=Off, 1=On)
       LcdControlWindowBackgroundEnable = 0b00000001,  // Background and Window enable (0=Off, 1=On), non-CGB mode only
@@ -253,7 +253,7 @@ namespace GBC
 
     struct Instruction
     {
-      std::string                                 description;  // Description of the instruction
+      std::string_view                            description;  // Description of the instruction
       std::function<void(GBC::GameBoyColor& gbc)> instruction;  // Code to execute
     };
 
@@ -301,6 +301,7 @@ namespace GBC
       CPUStop = CPUHalt   // Same as Halt, turn-off display (NOTE: handled as a simple HALT)
     };
 
+    std::string                         _path;      // Path of the ROM
     std::vector<std::uint8_t>           _boot;      // Bootstrap sequence memory
     std::vector<std::uint8_t>           _rom;       // Raw ROM memory
     std::array<std::uint8_t, 16 * 1024> _vRam;      // Raw Video RAM memory
@@ -406,6 +407,9 @@ namespace GBC
     void  simulateGraphicsMode3();  // Generate the picture
     void  simulateAudio();          // Update 4 CPU cycles of audio
     void  simulateTimer();          // Update 4 CPU cycle of TIMA/TMA/DIV timer registers
+
+    void  loadEram(); // Load External RAM from path+.gbs file
+    void  saveEram(); // Save External RAM to path+.gbs file
 
   public:
     GameBoyColor(const std::string& filename);

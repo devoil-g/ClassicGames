@@ -39,6 +39,7 @@ bool  GBC::EmulationScene::update(sf::Time elapsed)
   }
 
   // Simulate frames at 59.72 fps
+  // NOTE: simulate at most one frame per call to avoid exponential delay
   if (_fps.asSeconds() >= 70224.f / Math::Pow<22>(2)) {
     _gbc.simulate();
     _fps -= sf::seconds(70224.f / Math::Pow<22>(2));
