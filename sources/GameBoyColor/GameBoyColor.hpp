@@ -155,11 +155,11 @@ namespace GBC
       RegisterNR22 = 0x17,  // Channel 2 Envelope, R/W
       RegisterNR23 = 0x18,  // Channel 2 Frequency lower 8 bits, W
       RegisterNR24 = 0x19,  // Channel 2 Frequency higher 3 bits, limit flag, start sound, R/W
-      RegisterNR30 = 0x1A,
-      RegisterNR31 = 0x1B,
-      RegisterNR32 = 0x1C,
-      RegisterNR33 = 0x1D,
-      RegisterNR34 = 0x1E,
+      RegisterNR30 = 0x1A,  // Channel 3 Sound on/off, R/W
+      RegisterNR31 = 0x1B,  // Channel 3 Length, R/W
+      RegisterNR32 = 0x1C,  // Channel 3 Envelope, R/W
+      RegisterNR33 = 0x1D,  // Channel 3 Frequency lower 8 bits, W
+      RegisterNR34 = 0x1E,  // Channel 3 Frequency higher 3 bits, limit flag, start sound, R/W
 
       RegisterNR41 = 0x20,
       RegisterNR42 = 0x21,
@@ -168,6 +168,23 @@ namespace GBC
       RegisterNR50 = 0x24,  // Sound stereo left/right volume, R/W, 6-5-4 left volume, 2-1-0 right volume (bits 7&3 not implemented, Vin output)
       RegisterNR51 = 0x25,  // Sound stereo left/right enable, R/W, bits 7-6-5-4 output sound 4-3-2-1 to left, bits 3-2-1-0 output sound 4-3-2-1 to right
       RegisterNR52 = 0x26,  // Sound enable, R/W, bit 7 W/R all sound on/off (0: stop), bits 0-1-2-3 R Sound 1-2-3-4 ON flag
+
+      RegisterWAVE00 = 0x30,  // Channel 3 Wave pattern 00 & 01, R/W
+      RegisterWAVE02 = 0x31,  // Channel 3 Wave pattern 02 & 03, R/W
+      RegisterWAVE04 = 0x32,  // Channel 3 Wave pattern 04 & 05, R/W
+      RegisterWAVE06 = 0x33,  // Channel 3 Wave pattern 06 & 07, R/W
+      RegisterWAVE08 = 0x34,  // Channel 3 Wave pattern 08 & 09, R/W
+      RegisterWAVE10 = 0x35,  // Channel 3 Wave pattern 10 & 11, R/W
+      RegisterWAVE12 = 0x36,  // Channel 3 Wave pattern 12 & 13, R/W
+      RegisterWAVE14 = 0x37,  // Channel 3 Wave pattern 14 & 15, R/W
+      RegisterWAVE16 = 0x38,  // Channel 3 Wave pattern 16 & 17, R/W
+      RegisterWAVE18 = 0x39,  // Channel 3 Wave pattern 18 & 19, R/W
+      RegisterWAVE20 = 0x3A,  // Channel 3 Wave pattern 20 & 21, R/W
+      RegisterWAVE22 = 0x3B,  // Channel 3 Wave pattern 22 & 23, R/W
+      RegisterWAVE24 = 0x3C,  // Channel 3 Wave pattern 24 & 25, R/W
+      RegisterWAVE26 = 0x3D,  // Channel 3 Wave pattern 26 & 27, R/W
+      RegisterWAVE28 = 0x3E,  // Channel 3 Wave pattern 28 & 29, R/W
+      RegisterWAVE30 = 0x3F,  // Channel 3 Wave pattern 30 & 31, R/W
 
       RegisterLCDC = 0x40,  // LCD Control, R/W (see enum)
       RegisterSTAT = 0x41,  // LCD Status, R/W (see enum)
@@ -364,6 +381,14 @@ namespace GBC
       float frequency;          // NR23/24 - Frequency
       float clock;              // Wave clock
     } _sound2;  // Data of sound channel 2
+
+    struct {
+      std::array<float, 32> wave;       // FF30-FF3F - Wave pattern
+      float                 length;     // NR31 - Sound length (seconds)
+      float                 envelope;   // NR32 - Envelope volume
+      float                 frequency;  // NR33/34 - Frequency
+      float                 clock;      // Wave clock
+    } _sound3;  // Data of sound channel 3
 
     std::array<std::int16_t, GBC::GameBoyColor::SoundBufferSize> _sound; // Sound buffer of current frame
 

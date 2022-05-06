@@ -4644,6 +4644,7 @@ GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
   // Initialize audio
   _sound1.length = 0.f;
   _sound2.length = 0.f;
+  _sound3.length = 0.f;
 
   // Initialize MBC
   switch (_header.mbc) {
@@ -5412,12 +5413,13 @@ void  GBC::GameBoyColor::simulateAudio()
 
   std::array<float, GBC::GameBoyColor::SoundFrameSize>  channel1 = { 0 };
   std::array<float, GBC::GameBoyColor::SoundFrameSize>  channel2 = { 0 };
+  std::array<float, GBC::GameBoyColor::SoundFrameSize>  channel3 = { 0 };
 
   // Channel 1
   for (std::size_t index = 0; index < channel1.size(); index++)
   {
     // No envelope
-    if (_sound1.envelope == 0 && _sound1.envelopeDirection == false)
+    if (_sound1.envelope == 0.f && _sound1.envelopeDirection == false)
       break;
 
     // Sound duration
@@ -5448,10 +5450,10 @@ void  GBC::GameBoyColor::simulateAudio()
   }
 
   // Channel 2
-  for (std::size_t index = 0; index < channel1.size(); index++)
+  for (std::size_t index = 0; index < channel2.size(); index++)
   {
     // No envelope
-    if (_sound2.envelope == 0 && _sound2.envelopeDirection == false)
+    if (_sound2.envelope == 0.f && _sound2.envelopeDirection == false)
       break;
 
     // Sound duration
@@ -5475,7 +5477,28 @@ void  GBC::GameBoyColor::simulateAudio()
       _sound2.envelope = std::clamp(_sound2.envelope + (_sound2.envelopeDirection ? +1.f / 16.f : -1.f / 16.f), 0.f, 1.f);
   }
 
-  // TODO: Channel 3
+  // Channel 3
+  for (std::size_t index = 0; index < channel3.size(); index++)
+  {
+    // No envelope
+    if (_sound3.envelope == 0.f)
+      break;
+
+    // Sound duration
+    _sound3.length = std::max(0.f, _sound3.length - delta);
+    if (_sound3.length <= 0.f)
+      break;
+
+    // Limit wave clock to one oscillation
+    _sound3.clock = Math::Modulo(_sound3.clock, 1.f / _sound3.frequency);
+
+    // Generate wave form
+    channel3[index] = _sound3.envelope * _sound3.wave[(std::size_t)(_sound3.clock * _sound3.frequency * 32.f)];
+
+    // Tick wave clock
+    _sound3.clock += delta;
+  }
+
   // TODO: Channel 4
 
   // TODO: DAC 1
@@ -5496,12 +5519,16 @@ void  GBC::GameBoyColor::simulateAudio()
       rightSample += channel1[index];
     if (_io[Registers::RegisterNR51] & 0b00000010)
       rightSample += channel2[index];
+    if (_io[Registers::RegisterNR51] & 0b00000100)
+      rightSample += channel3[index];
 
     // Accumulate left channel
     if (_io[Registers::RegisterNR51] & 0b00010000)
       leftSample += channel1[index];
     if (_io[Registers::RegisterNR51] & 0b00100000)
       leftSample += channel2[index];
+    if (_io[Registers::RegisterNR51] & 0b01000000)
+      leftSample += channel3[index];
 
     // Normalize samples
     leftSample /= 4.f;
@@ -5949,13 +5976,16 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
     return _io[Registers::RegisterJOYP] | 0b11000000;
 
   case Registers::RegisterNR14:   // Channel 1 Frequency higher 3 bits, limit flag, start sound, R/W
+  case Registers::RegisterNR24:   // Channel 2 Frequency higher 3 bits, limit flag, start sound, R/W
+  case Registers::RegisterNR34:   // Channel 3 Frequency higher 3 bits, limit flag, start sound, R/W
     // Only limit flag is readable
-    return _io[Registers::RegisterNR14] & 0b01000000;
+    return _io[addr] & 0b01000000;
 
   case Registers::RegisterNR52:   // Sound enable, R/W
     return (_io[Registers::RegisterNR52] & 0b10000000)
       | (_sound1.length > 0.f ? 0b00000001 : 0b00000000)
-      | (_sound2.length > 0.f ? 0b00000010 : 0b00000000);
+      | (_sound2.length > 0.f ? 0b00000010 : 0b00000000)
+      | (_sound3.length > 0.f ? 0b00000100 : 0b00000000);
 
   case Registers::RegisterVBK:    // Video RAM Bank, R/W, CGB mode only
     return _io[Registers::RegisterVBK] | 0b11111110;
@@ -5979,9 +6009,27 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
   case Registers::RegisterNR12:   // Channel 1 Envelope, R/W
   case Registers::RegisterNR21:   // Channel 2 Length/wave pattern, R/W
   case Registers::RegisterNR22:   // Channel 2 Envelope, R/W
-  case Registers::RegisterNR24:   // Channel 2 Frequency higher 3 bits, limit flag, start sound, R/W
+  case Registers::RegisterNR30:   // Channel 3 Sound on/off, R/W
+  case Registers::RegisterNR31:   // Channel 3 Length, R/W
+  case Registers::RegisterNR32:   // Channel 3 Envelope, R/W
   case Registers::RegisterNR50:   // Sound stereo left/right volume, R/W
   case Registers::RegisterNR51:   // Sound stereo left/right enable, R/W
+  case Registers::RegisterWAVE00: // Channel 3 Wave pattern 00 & 01, R/W
+  case Registers::RegisterWAVE02: // Channel 3 Wave pattern 02 & 03, R/W
+  case Registers::RegisterWAVE04: // Channel 3 Wave pattern 04 & 05, R/W
+  case Registers::RegisterWAVE06: // Channel 3 Wave pattern 06 & 07, R/W
+  case Registers::RegisterWAVE08: // Channel 3 Wave pattern 08 & 09, R/W
+  case Registers::RegisterWAVE10: // Channel 3 Wave pattern 10 & 11, R/W
+  case Registers::RegisterWAVE12: // Channel 3 Wave pattern 12 & 13, R/W
+  case Registers::RegisterWAVE14: // Channel 3 Wave pattern 14 & 15, R/W
+  case Registers::RegisterWAVE16: // Channel 3 Wave pattern 16 & 17, R/W
+  case Registers::RegisterWAVE18: // Channel 3 Wave pattern 18 & 19, R/W
+  case Registers::RegisterWAVE20: // Channel 3 Wave pattern 20 & 21, R/W
+  case Registers::RegisterWAVE22: // Channel 3 Wave pattern 22 & 23, R/W
+  case Registers::RegisterWAVE24: // Channel 3 Wave pattern 24 & 25, R/W
+  case Registers::RegisterWAVE26: // Channel 3 Wave pattern 26 & 27, R/W
+  case Registers::RegisterWAVE28: // Channel 3 Wave pattern 28 & 29, R/W
+  case Registers::RegisterWAVE30: // Channel 3 Wave pattern 30 & 31, R/W
   case Registers::RegisterLCDC:   // LCD Control, R/W (see enum)
   case Registers::RegisterSTAT:   // LCD Status, R/W (see enum)
   case Registers::RegisterSCY:    // Scroll Y, R/W
@@ -6013,6 +6061,7 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
   case Registers::RegisterDIVLo:  // Low byte of DIV, not accessible
   case Registers::RegisterNR13:   // Channel 1 Frequency lower 8 bits, W
   case Registers::RegisterNR23:   // Channel 2 Frequency lower 8 bits, W
+  case Registers::RegisterNR33:   // Channel 3 Frequency lower 8 bits, W
   case Registers::RegisterBANK:   // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
   default:                        // Invalid register
     // Default value in case of error
@@ -6383,18 +6432,6 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
       _sound1.envelopeElapsed = 0.f;
       _sound1.frequency = 131072.f / (2048.f - (((std::uint16_t)_io[Registers::RegisterNR13]) + (((std::uint16_t)_io[Registers::RegisterNR14] & 0b00000111) << 8)));
       _sound1.clock = 0.f;
-
-      printf("\n");
-      printf("sound1\n");
-      printf("frequency: %f\n", _sound1.frequency);
-      printf("frequency time: %f\n", _sound1.frequencyTime);
-      printf("frequency direction: %d\n", _sound1.frequencyDirection);
-      printf("frequency shift: %f\n", _sound1.frequencyShift);
-      printf("wave: %f\n", _sound1.wave);
-      printf("length: %f\n", _sound1.length);
-      printf("envelope: %f\n", _sound1.envelope);
-      printf("envelope direction: %d\n", _sound1.envelopeDirection);
-      printf("envelope time: %f\n", _sound1.envelopeTime);
     }
     break;
 
@@ -6402,7 +6439,7 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     // Bits 7-6-5 are always set
     _io[Registers::RegisterNR24] = value & 0b01111111;
 
-    // Start sound 1
+    // Start sound 2
     if (value & 0b10000000) {
       switch ((_io[Registers::RegisterNR21] & 0b11000000) >> 6) {
       case 0b00: _sound2.wave = 0.125f; break;
@@ -6423,15 +6460,32 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
       _sound2.envelopeElapsed = 0.f;
       _sound2.frequency = 131072.f / (2048.f - (((std::uint16_t)_io[Registers::RegisterNR23]) + (((std::uint16_t)_io[Registers::RegisterNR24] & 0b00000111) << 8)));
       _sound2.clock = 0.f;
+    }
+    break;
 
-      printf("\n");
-      printf("sound2\n");
-      printf("frequency: %f\n", _sound2.frequency);
-      printf("wave: %f\n", _sound2.wave);
-      printf("length: %f\n", _sound2.length);
-      printf("envelope: %f\n", _sound2.envelope);
-      printf("envelope direction: %d\n", _sound2.envelopeDirection);
-      printf("envelope time: %f\n", _sound2.envelopeTime);
+  case Registers::RegisterNR34: // Channel 3 Frequency higher 3 bits, limit flag, start sound, R/W
+    // Bits 7-6-5 are always set
+    _io[Registers::RegisterNR34] = value & 0b01111111;
+
+    // Start sound 3
+    if (value & 0b10000000) {
+      for (std::uint8_t index = Registers::RegisterWAVE00; index <= Registers::RegisterWAVE30; index++) {
+        _sound3.wave[(index - Registers::RegisterWAVE00) * 2 + 0] = ((_io[index] & 0b11110000) >> 4) / 8.f - 1.f;
+        _sound3.wave[(index - Registers::RegisterWAVE00) * 2 + 1] = ((_io[index] & 0b00001111) >> 0) / 8.f - 1.f;
+      }
+      _sound3.length = (_io[Registers::RegisterNR34] & 0b01000000) ?
+        (256 - _io[Registers::RegisterNR31]) / 256.f :
+        1.f;
+      switch ((_io[Registers::RegisterNR32] & 0b01100000) >> 5) {
+      case 0b00: _sound3.envelope = 0.f; break;
+      case 0b01: _sound3.envelope = 1.f; break;
+      case 0b10: _sound3.envelope = 0.5f; break;
+      case 0b11: _sound3.envelope = 0.25f; break;
+      default:
+        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+      }
+      _sound3.frequency = 65536.f / (2048.f - (((std::uint16_t)_io[Registers::RegisterNR33]) + (((std::uint16_t)_io[Registers::RegisterNR34] & 0b00000111) << 8)));
+      _sound3.clock = 0.f;
     }
     break;
 
@@ -6443,6 +6497,7 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     if (!(_io[Registers::RegisterNR52] & 0b10000000)) {
       _sound1.length = 0.f;
       _sound2.length = 0.f;
+      _sound3.length = 0.f;
     }
     break;
 
@@ -6576,8 +6631,28 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
   case Registers::RegisterNR21:   // Channel 2 Length/wave pattern, R/W
   case Registers::RegisterNR22:   // Channel 2 Envelope, R/W
   case Registers::RegisterNR23:   // Channel 2 Frequency lower 8 bits, W
+  case Registers::RegisterNR30:   // Channel 3 Sound on/off, R/W
+  case Registers::RegisterNR31:   // Channel 3 Length, R/W
+  case Registers::RegisterNR32:   // Channel 3 Envelope, R/W
+  case Registers::RegisterNR33:   // Channel 3 Frequency lower 8 bits, W
   case Registers::RegisterNR50:   // Sound stereo left/right volume, R/W
   case Registers::RegisterNR51:   // Sound stereo left/right enable, R/W
+  case Registers::RegisterWAVE00: // Channel 3 Wave pattern 00 & 01, R/W
+  case Registers::RegisterWAVE02: // Channel 3 Wave pattern 02 & 03, R/W
+  case Registers::RegisterWAVE04: // Channel 3 Wave pattern 04 & 05, R/W
+  case Registers::RegisterWAVE06: // Channel 3 Wave pattern 06 & 07, R/W
+  case Registers::RegisterWAVE08: // Channel 3 Wave pattern 08 & 09, R/W
+  case Registers::RegisterWAVE10: // Channel 3 Wave pattern 10 & 11, R/W
+  case Registers::RegisterWAVE12: // Channel 3 Wave pattern 12 & 13, R/W
+  case Registers::RegisterWAVE14: // Channel 3 Wave pattern 14 & 15, R/W
+  case Registers::RegisterWAVE16: // Channel 3 Wave pattern 16 & 17, R/W
+  case Registers::RegisterWAVE18: // Channel 3 Wave pattern 18 & 19, R/W
+  case Registers::RegisterWAVE20: // Channel 3 Wave pattern 20 & 21, R/W
+  case Registers::RegisterWAVE22: // Channel 3 Wave pattern 22 & 23, R/W
+  case Registers::RegisterWAVE24: // Channel 3 Wave pattern 24 & 25, R/W
+  case Registers::RegisterWAVE26: // Channel 3 Wave pattern 26 & 27, R/W
+  case Registers::RegisterWAVE28: // Channel 3 Wave pattern 28 & 29, R/W
+  case Registers::RegisterWAVE30: // Channel 3 Wave pattern 30 & 31, R/W
   case Registers::RegisterLCDC:   // LCD Control, R/W (see enum)
   case Registers::RegisterSCY:    // Scroll Y, R/W
   case Registers::RegisterSCX:    // Scroll X, R/W
@@ -6604,32 +6679,11 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     break;
 
     // TODO: sound register
-  case Registers::RegisterNR30:
-  case Registers::RegisterNR31:
-  case Registers::RegisterNR32:
-  case Registers::RegisterNR33:
-  case Registers::RegisterNR34:
   case Registers::RegisterNR41:
   case Registers::RegisterNR42:
   case Registers::RegisterNR43:
   case Registers::RegisterNR44:
-  
-  case 0x30:
-  case 0x31:
-  case 0x32:
-  case 0x33:
-  case 0x34:
-  case 0x35:
-  case 0x36:
-  case 0x37:
-  case 0x38:
-  case 0x39:
-  case 0x3A:
-  case 0x3B:
-  case 0x3C:
-  case 0x3D:
-  case 0x3E:
-  case 0x3F:
+ 
     _io[addr] = value;
     break;
 

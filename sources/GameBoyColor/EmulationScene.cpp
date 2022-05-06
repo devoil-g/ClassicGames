@@ -152,6 +152,6 @@ void  GBC::EmulationScene::SoundStream::push(const std::array<std::int16_t, GBC:
   _sounds.push(sound);
 
   // Limit number of sounds in queue
-  if (_sounds.size() > 5)
+  if (_sounds.size() > 4)
     _sounds.pop();
 }
