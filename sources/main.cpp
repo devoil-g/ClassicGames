@@ -41,6 +41,7 @@ namespace Game
     game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tetris.gb");
     //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/pokemon_red.gb");
     //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/pokemon_yellow.gb");
+    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/pocket.gb");
     //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/pokemon_crystal.gbc");
     //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/zelda.gbc");
     //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/aladdin.gbc");

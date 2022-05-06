@@ -14,6 +14,12 @@ namespace GBC
 {
   class GameBoyColor
   {
+  public:
+    static const std::size_t  SoundSampleRate = 22050;                                            // Sample rate of sound
+    static const std::size_t  SoundFrameSize = SoundSampleRate * (456 * 154) / (4 * 1024 * 1024); // Number of sample in each frame of sound
+    static const std::size_t  SoundChannelCount = 2;                                              // Number of sound channels
+    static const std::size_t  SoundBufferSize = SoundFrameSize * SoundChannelCount;               // Size of a sound buffer
+
   private:
     union MemoryBankController
     {
@@ -139,16 +145,16 @@ namespace GBC
       RegisterTAC = 0x07,   // Time Control, R/W of bit 2-1-0
 
       RegisterIF = 0x0F,    // Interrupt Flags, bits set when an event occured, bits 7-6-5 always set
-      RegisterNR10 = 0x10,
-      RegisterNR11 = 0x11,
-      RegisterNR12 = 0x12,
-      RegisterNR13 = 0x13,
-      RegisterNR14 = 0x14,
+      RegisterNR10 = 0x10,  // Channel 1 Sweep, R/W
+      RegisterNR11 = 0x11,  // Channel 1 Length/wave pattern, R/W
+      RegisterNR12 = 0x12,  // Channel 1 Envelope, R/W
+      RegisterNR13 = 0x13,  // Channel 1 Frequency lower 8 bits, W
+      RegisterNR14 = 0x14,  // Channel 1 Frequency higher 3 bits, limit flag, start sound, R/W
 
-      RegisterNR21 = 0x16,
-      RegisterNR22 = 0x17,
-      RegisterNR23 = 0x18,
-      RegisterNR24 = 0x19,
+      RegisterNR21 = 0x16,  // Channel 2 Length/wave pattern, R/W
+      RegisterNR22 = 0x17,  // Channel 2 Envelope, R/W
+      RegisterNR23 = 0x18,  // Channel 2 Frequency lower 8 bits, W
+      RegisterNR24 = 0x19,  // Channel 2 Frequency higher 3 bits, limit flag, start sound, R/W
       RegisterNR30 = 0x1A,
       RegisterNR31 = 0x1B,
       RegisterNR32 = 0x1C,
@@ -159,9 +165,9 @@ namespace GBC
       RegisterNR42 = 0x21,
       RegisterNR43 = 0x22,
       RegisterNR44 = 0x23,
-      RegisterNR50 = 0x24,
-      RegisterNR51 = 0x25,
-      RegisterNR52 = 0x26,
+      RegisterNR50 = 0x24,  // Sound stereo left/right volume, R/W, 6-5-4 left volume, 2-1-0 right volume (bits 7&3 not implemented, Vin output)
+      RegisterNR51 = 0x25,  // Sound stereo left/right enable, R/W, bits 7-6-5-4 output sound 4-3-2-1 to left, bits 3-2-1-0 output sound 4-3-2-1 to right
+      RegisterNR52 = 0x26,  // Sound enable, R/W, bit 7 W/R all sound on/off (0: stop), bits 0-1-2-3 R Sound 1-2-3-4 ON flag
 
       RegisterLCDC = 0x40,  // LCD Control, R/W (see enum)
       RegisterSTAT = 0x41,  // LCD Status, R/W (see enum)
@@ -333,6 +339,34 @@ namespace GBC
 
     GameBoyColor::MemoryBankController  _mbc;
 
+    struct {
+      float frequencyTime;      // NR10 - Time between frequency steps (seconds)
+      bool  frequencyDirection; // NR10 - Direction of frequency sweep (false: addition, true: subtraction)
+      float frequencyShift;     // NR10 - Intensity of frequency sweep shift (F(t) = F(t-1) +/- F(t-1)*shift)
+      float frequencyElapsed;   // Elasped time since last frequency sweep
+      float wave;               // NR11 - Square wave pattern duty (percentage of time at 0)
+      float length;             // NR11/14 - Sound length (seconds)
+      float envelope;           // NR12 - Initial envelope volume
+      bool  envelopeDirection;  // NR12 - Direction of envelope (false: decrease, true: increase)
+      float envelopeTime;       // NR12 - Length of 1 step envelope (seconds)
+      float envelopeElapsed;    // Elapsed time since last envelope change
+      float frequency;          // NR13/14 - Frequency
+      float clock;              // Wave clock
+    } _sound1;  // Data of sound channel 1
+
+    struct {
+      float wave;               // NR21 - Square wave pattern duty (percentage of time at 0)
+      float length;             // NR21 - Sound length (seconds)
+      float envelope;           // NR22 - Initial envelope volume
+      bool  envelopeDirection;  // NR22 - Direction of envelope (false: decrease, true: increase)
+      float envelopeTime;       // NR22 - Length of 1 step envelope (seconds)
+      float envelopeElapsed;    // Elapsed time since last envelope change
+      float frequency;          // NR23/24 - Frequency
+      float clock;              // Wave clock
+    } _sound2;  // Data of sound channel 2
+
+    std::array<std::int16_t, GBC::GameBoyColor::SoundBufferSize> _sound; // Sound buffer of current frame
+
     enum Key
     {
       KeyDown,
@@ -405,7 +439,7 @@ namespace GBC
     void  simulateGraphics();       // Update 4 CPU cycles of graphics
     void  simulateGraphicsMode2();  // Search OAM for OBJs that overlap current line
     void  simulateGraphicsMode3();  // Generate the picture
-    void  simulateAudio();          // Update 4 CPU cycles of audio
+    void  simulateAudio();          // Update audio for one frame (4 * 1024 * 1024 cycles)
     void  simulateTimer();          // Update 4 CPU cycle of TIMA/TMA/DIV timer registers
 
     void  loadEram(); // Load External RAM from path+.gbs file
@@ -415,7 +449,8 @@ namespace GBC
     GameBoyColor(const std::string& filename);
     ~GameBoyColor();
 
-    void              simulate();     // Simulate a frame
-    const sf::Image&  screen() const; // Get current LCD screen image
+    void                                                                simulate();     // Simulate a frame
+    const sf::Image&                                                    screen() const; // Get current LCD frame
+    const std::array<std::int16_t, GBC::GameBoyColor::SoundBufferSize>& sound() const;  // Get current sound frame
   };
 }
