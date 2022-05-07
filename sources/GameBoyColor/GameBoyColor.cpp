@@ -1,3 +1,4 @@
+#include <cstring>
 #include <fstream>
 #include <filesystem>
 
@@ -143,8 +144,8 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "STOP (0x10 & 0x00)",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      if (gbc._io[Registers::RegisterKEY1] & 0b00000001)
-        gbc._io[Registers::RegisterKEY1] ^= 0b10000001;
+      if (gbc._io[IO::KEY1] & 0b00000001)
+        gbc._io[IO::KEY1] ^= 0b10000001;
       else
         gbc._cpu = GBC::GameBoyColor::CPU::CPUStop;
       gbc._rPC.u16 += 2;
@@ -4639,12 +4640,13 @@ GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
   _obcRam.fill(0);
 
   // Initialize Joypad
-  _io[Registers::RegisterJOYP] = 0b11111111;
+  _io[IO::JOYP] = 0b11111111;
 
   // Initialize audio
   _sound1.length = 0.f;
   _sound2.length = 0.f;
   _sound3.length = 0.f;
+  _sound4.length = 0.f;
 
   // Initialize MBC
   switch (_header.mbc) {
@@ -4992,7 +4994,7 @@ void  GBC::GameBoyColor::simulate()
     // Update graphics and timer for the number of cycle executed
     for (; cycle < _cpuCycle; cycle += 4) {
       simulateTimer();
-      if (cycle % ((_io[Registers::RegisterKEY1] & 0b10000000) ? 8 : 4) == 0) {
+      if (cycle % ((_io[IO::KEY1] & 0b10000000) ? 8 : 4) == 0) {
         simulateGraphics();
       }
     }
@@ -5023,18 +5025,18 @@ void  GBC::GameBoyColor::simulateKeys()
   };
 
   // Joypad interrupt when a selected key is pressed
-  if ((!(_io[Registers::RegisterJOYP] & 0b00010000) &&
+  if ((!(_io[IO::JOYP] & 0b00010000) &&
     (_keys[Key::KeyDown] == false && keys[Key::KeyDown] == true ||
       _keys[Key::KeyUp] == false && keys[Key::KeyUp] == true ||
       _keys[Key::KeyLeft] == false && keys[Key::KeyLeft] == true ||
       _keys[Key::KeyRight] == false && keys[Key::KeyRight] == true))
     ||
-    (!(_io[Registers::RegisterJOYP] & 0b00100000) &&
+    (!(_io[IO::JOYP] & 0b00100000) &&
       (_keys[Key::KeyStart] == false && keys[Key::KeyStart] == true ||
         _keys[Key::KeySelect] == false && keys[Key::KeySelect] == true ||
         _keys[Key::KeyB] == false && keys[Key::KeyB] == true ||
         _keys[Key::KeyA] == false && keys[Key::KeyA] == true)))
-    _io[Registers::RegisterIF] |= Interrupt::InterruptJoypad;
+    _io[IO::IF] |= Interrupt::InterruptJoypad;
 
   // Save new key map
   _keys = keys;
@@ -5068,14 +5070,14 @@ void  GBC::GameBoyColor::simulateInterrupt()
     if ((_ie & interrupt) == 0)
       continue;
 
-    std::uint8_t  rif = _io[Registers::RegisterIF];
+    std::uint8_t  rif = _io[IO::IF];
 
     // Check interrupt flag on IF
     if ((rif & interrupt) == 0)
       continue;
 
     // Reset interrupt flag
-    _io[Registers::RegisterIF] = rif & ~interrupt;
+    _io[IO::IF] = rif & ~interrupt;
 
     // Call interrupt handler
     if (_ime == IME::IMEEnabled)
@@ -5129,15 +5131,15 @@ void  GBC::GameBoyColor::simulateInstruction()
 void  GBC::GameBoyColor::simulateGraphics()
 {
   // Only render lines 0 to 143
-  if (_io[Registers::RegisterLY] < 144)
+  if (_io[IO::LY] < 144)
   {
     // Search OAM for OBJs that overlap current line
     if (_ppuCycle % 456 == 0) {
       simulateGraphicsMode2();
 
       // STAT mode 2 (OAM) interrupt
-      if (_io[Registers::RegisterSTAT] & LcdStatus::LcdStatusMode2)
-        _io[Registers::RegisterIF] |= Interrupt::InterruptLcdStat;
+      if (_io[IO::STAT] & LcdStatus::LcdStatusMode2)
+        _io[IO::IF] |= Interrupt::InterruptLcdStat;
     }
 
     // Generate the picture
@@ -5148,47 +5150,47 @@ void  GBC::GameBoyColor::simulateGraphics()
     else if (_ppuCycle % 456 == 252)
     {
       // Set LCD status mode 0
-      _io[Registers::RegisterSTAT] = (_io[Registers::RegisterSTAT] & 0b11111100) | 0b00000000;
+      _io[IO::STAT] = (_io[IO::STAT] & 0b11111100) | 0b00000000;
 
       // STAT mode 0 (HBlank) interrupt
-      if (_io[Registers::RegisterSTAT] & LcdStatus::LcdStatusMode0)
-        _io[Registers::RegisterIF] |= Interrupt::InterruptLcdStat;
+      if (_io[IO::STAT] & LcdStatus::LcdStatusMode0)
+        _io[IO::IF] |= Interrupt::InterruptLcdStat;
     }
   }
 
   // Trigger VBlank
-  else if (_io[Registers::RegisterLY] == 144 && _ppuCycle % 456 == 0) {
+  else if (_io[IO::LY] == 144 && _ppuCycle % 456 == 0) {
     // Set LCD status mode 1
-    _io[Registers::RegisterSTAT] = (_io[Registers::RegisterSTAT] & 0b11111100) | 0b00000001;
+    _io[IO::STAT] = (_io[IO::STAT] & 0b11111100) | 0b00000001;
 
     // VBlank interrupt
-    _io[Registers::RegisterIF] |= Interrupt::InterruptVBlank;
+    _io[IO::IF] |= Interrupt::InterruptVBlank;
 
     // STAT mode 2 (VBlank) interrupt
-    if (_io[Registers::RegisterSTAT] & LcdStatus::LcdStatusMode1)
-      _io[Registers::RegisterIF] |= Interrupt::InterruptLcdStat;
+    if (_io[IO::STAT] & LcdStatus::LcdStatusMode1)
+      _io[IO::IF] |= Interrupt::InterruptLcdStat;
   }
 
   // Next line
   if (_ppuCycle % 456 == 452)
   {
     // Increment to next line
-    _io[Registers::RegisterLY] += 1;
+    _io[IO::LY] += 1;
     
     // Limit to 144 + 10 lines
-    if (_io[Registers::RegisterLY] >= 144 + 10)
-      _io[Registers::RegisterLY] = 0;
+    if (_io[IO::LY] >= 144 + 10)
+      _io[IO::LY] = 0;
 
     // LY / LCY register comparison
-    if (_io[Registers::RegisterLY] == _io[Registers::RegisterLYC]) {
-      _io[Registers::RegisterSTAT] |= LcdStatus::LcdStatusEqual;
+    if (_io[IO::LY] == _io[IO::LYC]) {
+      _io[IO::STAT] |= LcdStatus::LcdStatusEqual;
 
       // STAT compare (LY/LYC) interrupt
-      if (_io[Registers::RegisterSTAT] & LcdStatus::LcdStatusCompare)
-        _io[Registers::RegisterIF] |= Interrupt::InterruptLcdStat;
+      if (_io[IO::STAT] & LcdStatus::LcdStatusCompare)
+        _io[IO::IF] |= Interrupt::InterruptLcdStat;
     }
     else
-      _io[Registers::RegisterSTAT] &= ~LcdStatus::LcdStatusEqual;
+      _io[IO::STAT] &= ~LcdStatus::LcdStatusEqual;
   }
 
   // Advance in PPU simulation
@@ -5198,14 +5200,14 @@ void  GBC::GameBoyColor::simulateGraphics()
 void  GBC::GameBoyColor::simulateGraphicsMode2()
 {
   // Set LCD status mode 2
-  _io[Registers::RegisterSTAT] = (_io[Registers::RegisterSTAT] & 0b11111100) | 0b00000010;
+  _io[IO::STAT] = (_io[IO::STAT] & 0b11111100) | 0b00000010;
 
   // Clear OBJ list
   _ppuObj.clear();
 
   // Push Y matching OBJ in order
   for (std::uint8_t index = 0; index < _oam.size() / 4; index++)
-    if (_oam[index * 4 + 0] <= _io[Registers::RegisterLY] + 16 && _oam[index * 4 + 0] + ((_io[Registers::RegisterLCDC] & LcdControl::LcdControlObjSize) ? 16 : 8) > _io[Registers::RegisterLY] + 16)
+    if (_oam[index * 4 + 0] <= _io[IO::LY] + 16 && _oam[index * 4 + 0] + ((_io[IO::LCDC] & LcdControl::LcdControlObjSize) ? 16 : 8) > _io[IO::LY] + 16)
       _ppuObj.push_back(index);
 
   // Limit to 10 OBJ
@@ -5213,24 +5215,24 @@ void  GBC::GameBoyColor::simulateGraphicsMode2()
     _ppuObj.erase(std::next(_ppuObj.begin(), 10), _ppuObj.end());
 
   // In non-CGB mode, OBJ draw priority depends on its X position
-  if ((_io[Registers::RegisterOPRI] & 0b00000001) || (_io[Registers::RegisterKEY0] & 0b00001100))
+  if ((_io[IO::OPRI] & 0b00000001) || (_io[IO::KEY0] & 0b00001100))
     _ppuObj.sort([this](const auto& a, const auto& b) { return _oam[a * 4 + 1] < _oam[b * 4 + 1]; });
 }
 
 void  GBC::GameBoyColor::simulateGraphicsMode3()
 {
   // Set LCD status mode 3
-  _io[Registers::RegisterSTAT] = (_io[Registers::RegisterSTAT] & 0b11111100) | 0b00000011;
+  _io[IO::STAT] = (_io[IO::STAT] & 0b11111100) | 0b00000011;
 
   // White screen if LCD disabled
-  if (!(_io[Registers::RegisterLCDC] & LcdControl::LcdControlEnable)) {
+  if (!(_io[IO::LCDC] & LcdControl::LcdControlEnable)) {
     std::memset((std::uint8_t*)_ppuLcd.getPixelsPtr(), 0xFF, _ppuLcd.getSize().x * _ppuLcd.getSize().y * 4);
     return;
   }
 
-  std::uint8_t  sc_y = _io[Registers::RegisterLY];
-  std::uint8_t  bg_y = sc_y + _io[Registers::RegisterSCY];
-  std::uint8_t  wn_y = sc_y - _io[Registers::RegisterWY];
+  std::uint8_t  sc_y = _io[IO::LY];
+  std::uint8_t  bg_y = sc_y + _io[IO::SCY];
+  std::uint8_t  wn_y = sc_y - _io[IO::WY];
 
   for (std::uint8_t sc_x = 0; sc_x < _ppuLcd.getSize().x; sc_x++)
   {
@@ -5238,18 +5240,18 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
     std::uint8_t  sp_color_id = 255, sp_attributes = 0, sp_color_r, sp_color_g, sp_color_b;
 
     // Window
-    if ((!(_io[Registers::RegisterKEY0] & 0b00001100) || (_io[Registers::RegisterLCDC] & LcdControl::LcdControlWindowBackgroundEnable)) &&
-      (_io[Registers::RegisterLCDC] & LcdControl::LcdControlWindowEnable) &&
-      (sc_x + 7 >= _io[Registers::RegisterWX]) &&
-      (sc_y >= _io[Registers::RegisterWY]))
+    if ((!(_io[IO::KEY0] & 0b00001100) || (_io[IO::LCDC] & LcdControl::LcdControlWindowBackgroundEnable)) &&
+      (_io[IO::LCDC] & LcdControl::LcdControlWindowEnable) &&
+      (sc_x + 7 >= _io[IO::WX]) &&
+      (sc_y >= _io[IO::WY]))
     {
-      std::uint8_t  wn_x = sc_x - _io[Registers::RegisterWX] + 7;
-      std::uint16_t wn_tilemap = (_io[Registers::RegisterLCDC] & LcdControl::LcdControlWindowTilemap) ? 0x1C00 : 0x1800;
+      std::uint8_t  wn_x = sc_x - _io[IO::WX] + 7;
+      std::uint16_t wn_tilemap = (_io[IO::LCDC] & LcdControl::LcdControlWindowTilemap) ? 0x1C00 : 0x1800;
       std::uint16_t wn_tilemap_id = (((std::uint16_t)wn_y / 8) * 32) + ((std::uint16_t)wn_x / 8);
       bg_attributes = _vRam[wn_tilemap + wn_tilemap_id + 0x2000];
       std::uint8_t  wn_tile_id = _vRam[wn_tilemap + wn_tilemap_id];
       std::uint16_t wn_tile_index = ((std::uint16_t)wn_tile_id * 16)
-        + ((_io[Registers::RegisterLCDC] & LcdControl::LcdControlData) ?
+        + ((_io[IO::LCDC] & LcdControl::LcdControlData) ?
           0x0000 :
           ((wn_tile_id < 128) ? 0x1000 : 0x0000))
         + ((bg_attributes & BackgroundAttributes::BackgroundAttributesBank) ?
@@ -5265,8 +5267,8 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
         ((_vRam[wn_tile_index + (wn_tile_y % 8) * 2 + 1] & (0b10000000 >> (wn_tile_x % 8))) ? 2 : 0);
 
       // DMG color palette
-      if (_io[Registers::RegisterKEY0] & 0b00001100)
-        bg_color_id = (_io[Registers::RegisterBGP] >> (bg_color_id * 2)) & 0b00000011;
+      if (_io[IO::KEY0] & 0b00001100)
+        bg_color_id = (_io[IO::BGP] >> (bg_color_id * 2)) & 0b00000011;
 
       // Get color from palette
       std::uint16_t wn_color =
@@ -5279,15 +5281,15 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
     }
 
     // Background
-    else if (!(_io[Registers::RegisterKEY0] & 0b00001100) || (_io[Registers::RegisterLCDC] & LcdControl::LcdControlWindowBackgroundEnable))
+    else if (!(_io[IO::KEY0] & 0b00001100) || (_io[IO::LCDC] & LcdControl::LcdControlWindowBackgroundEnable))
     {
-      std::uint8_t  bg_x = sc_x + _io[Registers::RegisterSCX];
-      std::uint16_t bg_tilemap = (_io[Registers::RegisterLCDC] & LcdControl::LcdControlBackgroundTilemap) ? 0x1C00 : 0x1800;
+      std::uint8_t  bg_x = sc_x + _io[IO::SCX];
+      std::uint16_t bg_tilemap = (_io[IO::LCDC] & LcdControl::LcdControlBackgroundTilemap) ? 0x1C00 : 0x1800;
       std::uint16_t bg_tilemap_id = (((std::uint16_t)bg_y / 8) * 32) + ((std::uint16_t)bg_x / 8);
       bg_attributes = _vRam[bg_tilemap + bg_tilemap_id + 0x2000];
       std::uint8_t  bg_tile_id = _vRam[bg_tilemap + bg_tilemap_id];
       std::uint16_t bg_tile_index = ((std::uint16_t)bg_tile_id * 16)
-        + ((_io[Registers::RegisterLCDC] & LcdControl::LcdControlData) ?
+        + ((_io[IO::LCDC] & LcdControl::LcdControlData) ?
           0x0000 :
           ((bg_tile_id < 128) ? 0x1000 : 0x0000))
         + ((bg_attributes & BackgroundAttributes::BackgroundAttributesBank) ?
@@ -5303,8 +5305,8 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
         ((_vRam[bg_tile_index + (bg_tile_y % 8) * 2 + 1] & (0b10000000 >> (bg_tile_x % 8))) ? 2 : 0);
 
       // DMG color palette
-      if (_io[Registers::RegisterKEY0] & 0b00001100)
-        bg_color_id = (_io[Registers::RegisterBGP] >> (bg_color_id * 2)) & 0b00000011;
+      if (_io[IO::KEY0] & 0b00001100)
+        bg_color_id = (_io[IO::BGP] >> (bg_color_id * 2)) & 0b00000011;
 
       // Get color from palette
       std::uint16_t bg_color =
@@ -5317,7 +5319,7 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
     }
 
     // Sprite
-    if (_io[Registers::RegisterLCDC] & LcdControl::LcdControlObjEnable)
+    if (_io[IO::LCDC] & LcdControl::LcdControlObjEnable)
     {
       // Find first matching sprite
       for (const auto& sp_index : _ppuObj) {
@@ -5328,7 +5330,7 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
         if (sp_x >= 8)
           continue;
 
-        std::uint8_t  sp_height = (_io[Registers::RegisterLCDC] & LcdControl::LcdControlObjSize) ? 16 : 8;
+        std::uint8_t  sp_height = (_io[IO::LCDC] & LcdControl::LcdControlObjSize) ? 16 : 8;
         sp_attributes = _oam[sp_index * 4 + 3];
 
         // Flip sprite coordinates
@@ -5353,13 +5355,13 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
         }
 
         // DMG color palette
-        if (_io[Registers::RegisterKEY0] & 0b00001100) {
+        if (_io[IO::KEY0] & 0b00001100) {
           if (sp_attributes & SpriteAttributes::SpriteAttributesPaletteNonCgb) {
-            sp_color_id = (_io[Registers::RegisterOBP1] >> (sp_color_id * 2)) & 0b00000011;
+            sp_color_id = (_io[IO::OBP1] >> (sp_color_id * 2)) & 0b00000011;
             sp_attributes = (sp_attributes & 0b11110000) | 0b00000001;
           }
           else {
-            sp_color_id = (_io[Registers::RegisterOBP0] >> (sp_color_id * 2)) & 0b00000011;
+            sp_color_id = (_io[IO::OBP0] >> (sp_color_id * 2)) & 0b00000011;
             sp_attributes = (sp_attributes & 0b11110000) | 0b00000000;
           }
         }
@@ -5380,8 +5382,8 @@ void  GBC::GameBoyColor::simulateGraphicsMode3()
     // Background and Window Master Priority, CGB mode only
     if (bg_color_id != 255 &&
       sp_color_id != 255 &&
-      !(_io[Registers::RegisterKEY0] & 0b00001100) &&
-      !(_io[Registers::RegisterLCDC] & LcdControl::LcdControlPriority))
+      !(_io[IO::KEY0] & 0b00001100) &&
+      !(_io[IO::LCDC] & LcdControl::LcdControlPriority))
       bg_color_id = 255;
 
     // Sprite priority over background and window
@@ -5414,6 +5416,7 @@ void  GBC::GameBoyColor::simulateAudio()
   std::array<float, GBC::GameBoyColor::SoundFrameSize>  channel1 = { 0 };
   std::array<float, GBC::GameBoyColor::SoundFrameSize>  channel2 = { 0 };
   std::array<float, GBC::GameBoyColor::SoundFrameSize>  channel3 = { 0 };
+  std::array<float, GBC::GameBoyColor::SoundFrameSize>  channel4 = { 0 };
 
   // Channel 1
   for (std::size_t index = 0; index < channel1.size(); index++)
@@ -5480,6 +5483,10 @@ void  GBC::GameBoyColor::simulateAudio()
   // Channel 3
   for (std::size_t index = 0; index < channel3.size(); index++)
   {
+    // Sound stopped
+    if (!(_io[IO::NR30] & 0b10000000))
+      break;
+
     // No envelope
     if (_sound3.envelope == 0.f)
       break;
@@ -5499,7 +5506,41 @@ void  GBC::GameBoyColor::simulateAudio()
     _sound3.clock += delta;
   }
 
-  // TODO: Channel 4
+  // Channel 4
+  for (std::size_t index = 0; index < channel4.size(); index++)
+  {
+    // No envelope
+    if (_sound4.envelope == 0.f && _sound4.envelopeDirection == false)
+      break;
+
+    // Sound duration
+    _sound4.length = std::max(0.f, _sound4.length - delta);
+    if (_sound4.length <= 0.f)
+      break;
+
+    // Generate wave form
+    channel4[index] = _sound4.counter * _sound4.envelope;
+
+    // Envelope change
+    for (_sound4.envelopeElapsed += delta;
+      _sound4.envelopeElapsed >= _sound4.envelopeTime;
+      _sound4.envelopeElapsed -= _sound4.envelopeTime)
+      _sound4.envelope = std::clamp(_sound4.envelope + (_sound4.envelopeDirection ? +1.f / 16.f : -1.f / 16.f), 0.f, 1.f);
+
+    // LFSR step
+    for (_sound4.counterElapsed += delta;
+      _sound4.counterElapsed >= _sound4.counterTime;
+      _sound4.counterElapsed -= _sound4.counterTime) {
+      bool  left = (_sound4.counterValue & (0b0000000000000001 << (_sound4.counterWidth - 1))) ? true : false;
+      bool  right = (_sound4.counterValue & (0b0000000000000001 << (_sound4.counterWidth - 2))) ? true : false;
+
+      _sound4.counterValue <<= 1;
+      if (left ^ right) {
+        _sound4.counter *= -1.f;
+        _sound4.counterValue |= 0b0000000000000001;
+      }
+    }
+  }
 
   // TODO: DAC 1
   // TODO: DAC 2
@@ -5507,28 +5548,32 @@ void  GBC::GameBoyColor::simulateAudio()
   // TODO: DAC 4
 
   // Mixer and amplifier
-  float leftVolume = (((_io[Registers::RegisterNR50] & 0b01110000) >> 4) + 1) / 8.f;
-  float rightVolume = (((_io[Registers::RegisterNR50] & 0b00000111) >> 0) + 1) / 8.f;
+  float leftVolume = (((_io[IO::NR50] & 0b01110000) >> 4) + 1) / 8.f;
+  float rightVolume = (((_io[IO::NR50] & 0b00000111) >> 0) + 1) / 8.f;
 
   for (std::size_t index = 0; index < _sound.size() / 2; index++) {
     float leftSample = 0.f;
     float rightSample = 0.f;
 
     // Accumulate right channel
-    if (_io[Registers::RegisterNR51] & 0b00000001)
+    if (_io[IO::NR51] & 0b00000001)
       rightSample += channel1[index];
-    if (_io[Registers::RegisterNR51] & 0b00000010)
+    if (_io[IO::NR51] & 0b00000010)
       rightSample += channel2[index];
-    if (_io[Registers::RegisterNR51] & 0b00000100)
+    if (_io[IO::NR51] & 0b00000100)
       rightSample += channel3[index];
+    if (_io[IO::NR51] & 0b00001000)
+      rightSample += channel4[index];
 
     // Accumulate left channel
-    if (_io[Registers::RegisterNR51] & 0b00010000)
+    if (_io[IO::NR51] & 0b00010000)
       leftSample += channel1[index];
-    if (_io[Registers::RegisterNR51] & 0b00100000)
+    if (_io[IO::NR51] & 0b00100000)
       leftSample += channel2[index];
-    if (_io[Registers::RegisterNR51] & 0b01000000)
+    if (_io[IO::NR51] & 0b01000000)
       leftSample += channel3[index];
+    if (_io[IO::NR51] & 0b10000000)
+      leftSample += channel4[index];
 
     // Normalize samples
     leftSample /= 4.f;
@@ -5542,27 +5587,27 @@ void  GBC::GameBoyColor::simulateAudio()
 
 void  GBC::GameBoyColor::simulateTimer()
 {
-  std::uint16_t div = ((std::uint16_t)_io[Registers::RegisterDIVHi] << 8) + (std::uint16_t)_io[Registers::RegisterDIVLo] + 4;
+  std::uint16_t div = ((std::uint16_t)_io[IO::DIVHi] << 8) + (std::uint16_t)_io[IO::DIVLo] + 4;
 
   // Update DIV timer
-  _io[Registers::RegisterDIVHi] = (div >> 8) & 0b11111111;
-  _io[Registers::RegisterDIVLo] = div & 0b11111111;
+  _io[IO::DIVHi] = (div >> 8) & 0b11111111;
+  _io[IO::DIVLo] = div & 0b11111111;
 
   // Update Timer only when enabled
-  if (_io[Registers::RegisterTAC] & 0b00000100) {
+  if (_io[IO::TAC] & 0b00000100) {
     const std::array<int, 4>  modulo = { 1024, 16, 64, 256 };
 
     // Tick the timer
-    if (div % modulo[_io[Registers::RegisterTAC] & 0b11] == 0) {
-      _io[Registers::RegisterTIMA] += 1;
+    if (div % modulo[_io[IO::TAC] & 0b11] == 0) {
+      _io[IO::TIMA] += 1;
 
       // Interrupt when overflow
-      if (_io[Registers::RegisterTIMA] == 0) {
+      if (_io[IO::TIMA] == 0) {
         // Set interrupt flags
-        _io[Registers::RegisterIF] |= Interrupt::InterruptTimer;
+        _io[IO::IF] |= Interrupt::InterruptTimer;
 
         // Reset timer
-        _io[Registers::RegisterTIMA] = _io[Registers::RegisterTMA];
+        _io[IO::TIMA] = _io[IO::TMA];
       }
     }
   }
@@ -5607,8 +5652,8 @@ const sf::Image& GBC::GameBoyColor::screen() const
               ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 0] & (0b10000000 >> (bg_x % 8))) ? 1 : 0) +
               ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 1] & (0b10000000 >> (bg_x % 8))) ? 2 : 0);
 
-            if (_io[Registers::RegisterKEY0] & 0b00001100)
-              bg_color_id = (_io[Registers::RegisterBGP] >> (bg_color_id * 2)) & 0b00000011;
+            if (_io[IO::KEY0] & 0b00001100)
+              bg_color_id = (_io[IO::BGP] >> (bg_color_id * 2)) & 0b00000011;
 
             std::uint16_t bg_color =
               ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 0] << 0) +
@@ -5662,8 +5707,8 @@ const sf::Image& GBC::GameBoyColor::screen() const
               ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 0] & (0b10000000 >> (bg_x % 8))) ? 1 : 0) +
               ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 1] & (0b10000000 >> (bg_x % 8))) ? 2 : 0);
 
-            if (_io[Registers::RegisterKEY0] & 0b00001100)
-              bg_color_id = (_io[Registers::RegisterBGP] >> (bg_color_id * 2)) & 0b00000011;
+            if (_io[IO::KEY0] & 0b00001100)
+              bg_color_id = (_io[IO::BGP] >> (bg_color_id * 2)) & 0b00000011;
 
             std::uint16_t bg_color =
               ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 0] << 0) +
@@ -5782,7 +5827,7 @@ std::uint8_t  GBC::GameBoyColor::readRom(std::uint16_t addr)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Read from boot if not disabled
-  if (_io[Registers::RegisterBANK] == 0 && addr < _boot.size() && (addr <= 0x00FF || addr >= 0x0150))
+  if (_io[IO::BANK] == 0 && addr < _boot.size() && (addr <= 0x00FF || addr >= 0x0150))
     return _boot[addr];
 
   // Handle MBC behavior
@@ -5855,7 +5900,7 @@ std::uint8_t  GBC::GameBoyColor::readVRam(std::uint16_t addr)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Game Boy Color has 2 VRAM banks
-  return _vRam[(std::uint16_t)(_io[Registers::RegisterVBK] & 0b00000001) * 0x2000 + addr];
+  return _vRam[(std::uint16_t)(_io[IO::VBK] & 0b00000001) * 0x2000 + addr];
 
   // TODO: lock when drawing ?
 }
@@ -5949,7 +5994,7 @@ std::uint8_t  GBC::GameBoyColor::readWRam(std::uint16_t addr)
 
   // Second half is a WRAM bank
   else
-    return _wRam[(std::clamp(_io[Registers::RegisterSVBK] & 0b00000111, 1, 7) * 0x1000) + (addr - 0x1000)];
+    return _wRam[(std::clamp(_io[IO::SVBK] & 0b00000111, 1, 7) * 0x1000) + (addr - 0x1000)];
 }
 
 std::uint8_t  GBC::GameBoyColor::readOam(std::uint16_t addr)
@@ -5971,99 +6016,107 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   switch (addr) {
-  case Registers::RegisterJOYP: // Joypad, R/W
+  case IO::JOYP:    // Joypad, R/W
     // Bits 7-6 are always set
-    return _io[Registers::RegisterJOYP] | 0b11000000;
+    return _io[IO::JOYP] | 0b11000000;
 
-  case Registers::RegisterNR14:   // Channel 1 Frequency higher 3 bits, limit flag, start sound, R/W
-  case Registers::RegisterNR24:   // Channel 2 Frequency higher 3 bits, limit flag, start sound, R/W
-  case Registers::RegisterNR34:   // Channel 3 Frequency higher 3 bits, limit flag, start sound, R/W
+  case IO::NR11:    // Channel 1 Length/wave pattern, R/W
+  case IO::NR21:    // Channel 2 Length/wave pattern, R/W
+    // Only wave pattern is readdable
+    return _io[addr] & 0b11000000;
+
+  case IO::NR14:    // Channel 1 Frequency higher 3 bits, limit flag, start sound, R/W
+  case IO::NR24:    // Channel 2 Frequency higher 3 bits, limit flag, start sound, R/W
+  case IO::NR34:    // Channel 3 Frequency higher 3 bits, limit flag, start sound, R/W
+  case IO::NR44:    // Channel 4 Limit flag, start sound, R/W
     // Only limit flag is readable
     return _io[addr] & 0b01000000;
 
-  case Registers::RegisterNR52:   // Sound enable, R/W
-    return (_io[Registers::RegisterNR52] & 0b10000000)
+  case IO::NR52:    // Sound enable, R/W
+    return (_io[IO::NR52] & 0b10000000)
       | (_sound1.length > 0.f ? 0b00000001 : 0b00000000)
       | (_sound2.length > 0.f ? 0b00000010 : 0b00000000)
-      | (_sound3.length > 0.f ? 0b00000100 : 0b00000000);
+      | (_sound3.length > 0.f ? 0b00000100 : 0b00000000)
+      | (_sound4.length > 0.f ? 0b00000100 : 0b00000000);
 
-  case Registers::RegisterVBK:    // Video RAM Bank, R/W, CGB mode only
-    return _io[Registers::RegisterVBK] | 0b11111110;
+  case IO::VBK:     // Video RAM Bank, R/W, CGB mode only
+    return _io[IO::VBK] | 0b11111110;
 
-  case Registers::RegisterBCPD:   // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
-    return _bgcRam[_io[Registers::RegisterBCPI] & 0b00111111];
+  case IO::BCPD:    // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
+    return _bgcRam[_io[IO::BCPI] & 0b00111111];
 
-  case Registers::RegisterOCPD:   // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
-    return _obcRam[_io[Registers::RegisterOCPI] & 0b00111111];
+  case IO::OCPD:    // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
+    return _obcRam[_io[IO::OCPI] & 0b00111111];
 
-  case Registers::RegisterSVBK:   // Work Ram Bank, R/W, CGB mode only
-    return _io[Registers::RegisterSVBK] & 0b00000111;
+  case IO::SVBK:    // Work Ram Bank, R/W, CGB mode only
+    return _io[IO::SVBK] & 0b00000111;
 
-  case Registers::RegisterDIVHi:  // High byte of DIV
-  case Registers::RegisterTIMA:   // Timer Modulo, R/W
-  case Registers::RegisterTMA:    // Timer Modulo, R/W
-  case Registers::RegisterTAC:    // Time Control, R/W of bits 2-1-0
-  case Registers::RegisterIF:     // Interrupt Flags, R/W
-  case Registers::RegisterNR10:   // Channel 1 Sweep, R/W
-  case Registers::RegisterNR11:   // Channel 1 Length/wave pattern, R/W
-  case Registers::RegisterNR12:   // Channel 1 Envelope, R/W
-  case Registers::RegisterNR21:   // Channel 2 Length/wave pattern, R/W
-  case Registers::RegisterNR22:   // Channel 2 Envelope, R/W
-  case Registers::RegisterNR30:   // Channel 3 Sound on/off, R/W
-  case Registers::RegisterNR31:   // Channel 3 Length, R/W
-  case Registers::RegisterNR32:   // Channel 3 Envelope, R/W
-  case Registers::RegisterNR50:   // Sound stereo left/right volume, R/W
-  case Registers::RegisterNR51:   // Sound stereo left/right enable, R/W
-  case Registers::RegisterWAVE00: // Channel 3 Wave pattern 00 & 01, R/W
-  case Registers::RegisterWAVE02: // Channel 3 Wave pattern 02 & 03, R/W
-  case Registers::RegisterWAVE04: // Channel 3 Wave pattern 04 & 05, R/W
-  case Registers::RegisterWAVE06: // Channel 3 Wave pattern 06 & 07, R/W
-  case Registers::RegisterWAVE08: // Channel 3 Wave pattern 08 & 09, R/W
-  case Registers::RegisterWAVE10: // Channel 3 Wave pattern 10 & 11, R/W
-  case Registers::RegisterWAVE12: // Channel 3 Wave pattern 12 & 13, R/W
-  case Registers::RegisterWAVE14: // Channel 3 Wave pattern 14 & 15, R/W
-  case Registers::RegisterWAVE16: // Channel 3 Wave pattern 16 & 17, R/W
-  case Registers::RegisterWAVE18: // Channel 3 Wave pattern 18 & 19, R/W
-  case Registers::RegisterWAVE20: // Channel 3 Wave pattern 20 & 21, R/W
-  case Registers::RegisterWAVE22: // Channel 3 Wave pattern 22 & 23, R/W
-  case Registers::RegisterWAVE24: // Channel 3 Wave pattern 24 & 25, R/W
-  case Registers::RegisterWAVE26: // Channel 3 Wave pattern 26 & 27, R/W
-  case Registers::RegisterWAVE28: // Channel 3 Wave pattern 28 & 29, R/W
-  case Registers::RegisterWAVE30: // Channel 3 Wave pattern 30 & 31, R/W
-  case Registers::RegisterLCDC:   // LCD Control, R/W (see enum)
-  case Registers::RegisterSTAT:   // LCD Status, R/W (see enum)
-  case Registers::RegisterSCY:    // Scroll Y, R/W
-  case Registers::RegisterSCX:    // Scroll X, R/W
-  case Registers::RegisterLY:     // LCD Y Coordinate, R
-  case Registers::RegisterLYC:    // LCD Y Coordinate Compare, R/W
-  case Registers::RegisterDMA:    // DMA Transfer and Start Address, R/W
-  case Registers::RegisterBGP:    // Background Palette Data, R/W, non CGB mode only
-  case Registers::RegisterOBP0:   // OBJ 0 Palette Data, R/W, non CGB mode only
-  case Registers::RegisterOBP1:   // OBJ 1 Palette Data, R/W, non CGB mode only
-  case Registers::RegisterWY:     // Window Y Position, R/W
-  case Registers::RegisterWX:     // Window X Position, R/W
-  case Registers::RegisterKEY0:   // CPU Mode, R/W, see enum
-  case Registers::RegisterKEY1:   // CPU Speed Switch, R/W, CGB mode only
-  case Registers::RegisterHDMA1:  // New DMA Transfers source high byte, W, CGB mode only
-  case Registers::RegisterHDMA2:  // New DMA Transfers source low byte, W, CGB mode only
-  case Registers::RegisterHDMA3:  // New DMA Transfers destination high byte, W, CGB mode only
-  case Registers::RegisterHDMA4:  // New DMA Transfers destination low byte, W, CGB mode only
-  case Registers::RegisterHDMA5:  // Start New DMA Transfer
-  case Registers::RegisterBCPI:   // Background Color Palette Index, R/W, CGB mode only
-  case Registers::RegisterOCPI:   // OBJ Color Palette Index, R/W, CGB mode only
-  case Registers::RegisterOPRI:   // OBJ Priority Mode, R/W, CGB mode only
-  case 0x72:                      // Undocumented, R/W
-  case 0x73:                      // Undocumented, R/W
-  case 0x75:                      // Undocumented, R/W (bit 4-6)
+  case IO::DIVHi:   // High byte of DIV
+  case IO::TIMA:    // Timer Modulo, R/W
+  case IO::TMA:     // Timer Modulo, R/W
+  case IO::TAC:     // Time Control, R/W of bits 2-1-0
+  case IO::IF:      // Interrupt Flags, R/W
+  case IO::NR10:    // Channel 1 Sweep, R/W
+  case IO::NR12:    // Channel 1 Envelope, R/W
+  case IO::NR22:    // Channel 2 Envelope, R/W
+  case IO::NR30:    // Channel 3 Sound on/off, R/W
+  case IO::NR32:    // Channel 3 Envelope, R/W
+  case IO::NR42:    // Channel 4 Envelope, R/W
+  case IO::NR43:    // Channel 4 Polynomial counter, R/W
+  case IO::NR50:    // Sound stereo left/right volume, R/W
+  case IO::NR51:    // Sound stereo left/right enable, R/W
+  case IO::WAVE00:  // Channel 3 Wave pattern 00 & 01, R/W
+  case IO::WAVE02:  // Channel 3 Wave pattern 02 & 03, R/W
+  case IO::WAVE04:  // Channel 3 Wave pattern 04 & 05, R/W
+  case IO::WAVE06:  // Channel 3 Wave pattern 06 & 07, R/W
+  case IO::WAVE08:  // Channel 3 Wave pattern 08 & 09, R/W
+  case IO::WAVE10:  // Channel 3 Wave pattern 10 & 11, R/W
+  case IO::WAVE12:  // Channel 3 Wave pattern 12 & 13, R/W
+  case IO::WAVE14:  // Channel 3 Wave pattern 14 & 15, R/W
+  case IO::WAVE16:  // Channel 3 Wave pattern 16 & 17, R/W
+  case IO::WAVE18:  // Channel 3 Wave pattern 18 & 19, R/W
+  case IO::WAVE20:  // Channel 3 Wave pattern 20 & 21, R/W
+  case IO::WAVE22:  // Channel 3 Wave pattern 22 & 23, R/W
+  case IO::WAVE24:  // Channel 3 Wave pattern 24 & 25, R/W
+  case IO::WAVE26:  // Channel 3 Wave pattern 26 & 27, R/W
+  case IO::WAVE28:  // Channel 3 Wave pattern 28 & 29, R/W
+  case IO::WAVE30:  // Channel 3 Wave pattern 30 & 31, R/W
+  case IO::LCDC:    // LCD Control, R/W (see enum)
+  case IO::STAT:    // LCD Status, R/W (see enum)
+  case IO::SCY:     // Scroll Y, R/W
+  case IO::SCX:     // Scroll X, R/W
+  case IO::LY:      // LCD Y Coordinate, R
+  case IO::LYC:     // LCD Y Coordinate Compare, R/W
+  case IO::DMA:     // DMA Transfer and Start Address, R/W
+  case IO::BGP:     // Background Palette Data, R/W, non CGB mode only
+  case IO::OBP0:    // OBJ 0 Palette Data, R/W, non CGB mode only
+  case IO::OBP1:    // OBJ 1 Palette Data, R/W, non CGB mode only
+  case IO::WY:      // Window Y Position, R/W
+  case IO::WX:      // Window X Position, R/W
+  case IO::KEY0:    // CPU Mode, R/W, see enum
+  case IO::KEY1:    // CPU Speed Switch, R/W, CGB mode only
+  case IO::HDMA1:   // New DMA Transfers source high byte, W, CGB mode only
+  case IO::HDMA2:   // New DMA Transfers source low byte, W, CGB mode only
+  case IO::HDMA3:   // New DMA Transfers destination high byte, W, CGB mode only
+  case IO::HDMA4:   // New DMA Transfers destination low byte, W, CGB mode only
+  case IO::HDMA5:   // Start New DMA Transfer
+  case IO::BCPI:    // Background Color Palette Index, R/W, CGB mode only
+  case IO::OCPI:    // OBJ Color Palette Index, R/W, CGB mode only
+  case IO::OPRI:    // OBJ Priority Mode, R/W, CGB mode only
+  case 0x72:        // Undocumented, R/W
+  case 0x73:        // Undocumented, R/W
+  case 0x75:        // Undocumented, R/W (bit 4-6)
     // Basic read, just return stored value
     return _io[addr];
 
-  case Registers::RegisterDIVLo:  // Low byte of DIV, not accessible
-  case Registers::RegisterNR13:   // Channel 1 Frequency lower 8 bits, W
-  case Registers::RegisterNR23:   // Channel 2 Frequency lower 8 bits, W
-  case Registers::RegisterNR33:   // Channel 3 Frequency lower 8 bits, W
-  case Registers::RegisterBANK:   // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
-  default:                        // Invalid register
+  case IO::DIVLo:   // Low byte of DIV, not accessible
+  case IO::NR13:    // Channel 1 Frequency lower 8 bits, W
+  case IO::NR23:    // Channel 2 Frequency lower 8 bits, W
+  case IO::NR31:    // Channel 3 Length, W
+  case IO::NR41:    // Channel 4 Length, W
+  case IO::NR33:    // Channel 3 Frequency lower 8 bits, W
+  case IO::BANK:    // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
+  default:          // Invalid register
     // Default value in case of error
     return 0xFF;
   }
@@ -6238,7 +6291,7 @@ void  GBC::GameBoyColor::writeVRam(std::uint16_t addr, std::uint8_t value)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Game Boy Color has 2 VRAM banks
-  _vRam[(_io[Registers::RegisterVBK] & 0b00000001) * 0x2000 + addr] = value;
+  _vRam[(_io[IO::VBK] & 0b00000001) * 0x2000 + addr] = value;
 
   // TODO: lock when drawing ?
 }
@@ -6337,7 +6390,7 @@ void  GBC::GameBoyColor::writeWRam(std::uint16_t addr, std::uint8_t value)
 
   // Second half is a WRAM bank
   else
-    _wRam[(std::clamp(_io[Registers::RegisterSVBK] & 0b00000111, 1, 7) * 0x1000) + (addr - 0x1000)] = value;
+    _wRam[(std::clamp(_io[IO::SVBK] & 0b00000111, 1, 7) * 0x1000) + (addr - 0x1000)] = value;
 }
 
 void  GBC::GameBoyColor::writeOam(std::uint16_t addr, std::uint8_t value)
@@ -6359,61 +6412,61 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   switch (addr) {
-  case Registers::RegisterJOYP: // Joypad, R/W
+  case IO::JOYP:    // Joypad, R/W
     // Reset pressed keys and force bits 7-6 to true
-    _io[Registers::RegisterJOYP] = value | 0b11001111;
+    _io[IO::JOYP] = value | 0b11001111;
 
     // Direction buttons
-    if (!(_io[Registers::RegisterJOYP] & 0b00010000)) {
+    if (!(_io[IO::JOYP] & 0b00010000)) {
       if (_keys[Key::KeyDown] == true)
-        _io[Registers::RegisterJOYP] &= 0b11110111;
+        _io[IO::JOYP] &= 0b11110111;
       if (_keys[Key::KeyUp] == true)
-        _io[Registers::RegisterJOYP] &= 0b11111011;
+        _io[IO::JOYP] &= 0b11111011;
       if (_keys[Key::KeyLeft] == true)
-        _io[Registers::RegisterJOYP] &= 0b11111101;
+        _io[IO::JOYP] &= 0b11111101;
       if (_keys[Key::KeyRight] == true)
-        _io[Registers::RegisterJOYP] &= 0b11111110;
+        _io[IO::JOYP] &= 0b11111110;
     }
 
     // Action buttons
-    if (!(_io[Registers::RegisterJOYP] & 0b00100000)) {
+    if (!(_io[IO::JOYP] & 0b00100000)) {
       if (_keys[Key::KeyStart] == true)
-        _io[Registers::RegisterJOYP] &= 0b11110111;
+        _io[IO::JOYP] &= 0b11110111;
       if (_keys[Key::KeySelect] == true)
-        _io[Registers::RegisterJOYP] &= 0b11111011;
+        _io[IO::JOYP] &= 0b11111011;
       if (_keys[Key::KeyB] == true)
-        _io[Registers::RegisterJOYP] &= 0b11111101;
+        _io[IO::JOYP] &= 0b11111101;
       if (_keys[Key::KeyA] == true)
-        _io[Registers::RegisterJOYP] &= 0b11111110;
+        _io[IO::JOYP] &= 0b11111110;
     }
     break;
 
-  case Registers::RegisterDIVHi:
+  case IO::DIVHi:   // High byte of DIV, R/W (always set to zero when written)
     // Always set to 0
-    _io[Registers::RegisterDIVHi] = 0;
+    _io[IO::DIVHi] = 0;
     break;
 
-  case Registers::RegisterTAC:
-    _io[Registers::RegisterTAC] = value & 0b00000111;
+  case IO::TAC:     // Time Control, R/W of bit 2-1-0
+    _io[IO::TAC] = value & 0b00000111;
 
-  case Registers::RegisterIF: // Interrupt Flags, R/W
+  case IO::IF:      // Interrupt Flags, R/W
     // Bits 7-6-5 are always set
-    _io[Registers::RegisterIF] = value | 0b11100000;
+    _io[IO::IF] = value | 0b11100000;
     break;
 
-  case Registers::RegisterNR14: // Channel 1 Frequency higher 3 bits, limit flag, start sound, R/W
+  case IO::NR14:    // Channel 1 Frequency higher 3 bits, limit flag, start sound, R/W
     // Bits 7-6-5 are always set
-    _io[Registers::RegisterNR14] = value & 0b01111111;
+    _io[IO::NR14] = value & 0b01111111;
 
     // Start sound 1
     if (value & 0b10000000) {
-      _sound1.frequencyTime = (_io[Registers::RegisterNR10] & 0b01110000) ?
-        ((_io[Registers::RegisterNR10] & 0b01110000) >> 4) / 128.f :
-        1.f;
-      _sound1.frequencyDirection = (_io[Registers::RegisterNR10] & 0b00001000) ? true : false;
-      _sound1.frequencyShift = 1.f / (float)std::pow(2.f, _io[Registers::RegisterNR10] & 0b00000111);
+      _sound1.frequencyTime = (_io[IO::NR10] & 0b01110000) ?
+        ((_io[IO::NR10] & 0b01110000) >> 4) / 128.f :
+        999.f;
+      _sound1.frequencyDirection = (_io[IO::NR10] & 0b00001000) ? true : false;
+      _sound1.frequencyShift = 1.f / (float)std::pow(2.f, _io[IO::NR10] & 0b00000111);
       _sound1.frequencyElapsed = 0.f;
-      switch ((_io[Registers::RegisterNR11] & 0b11000000) >> 6) {
+      switch ((_io[IO::NR11] & 0b11000000) >> 6) {
       case 0b00: _sound1.wave = 0.125f; break;
       case 0b01: _sound1.wave = 0.25f; break;
       case 0b10: _sound1.wave = 0.5f; break;
@@ -6421,27 +6474,27 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
       default:
         throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
       }
-      _sound1.length = (_io[Registers::RegisterNR14] & 0b01000000) ?
-        (64 - (_io[Registers::RegisterNR11] & 0b00111111)) / 256.f :
-        1.f;
-      _sound1.envelope = ((_io[Registers::RegisterNR12] & 0b11110000) >> 4) / 16.f;
-      _sound1.envelopeDirection = (_io[Registers::RegisterNR12] & 0b00001000) ? true : false;
-      _sound1.envelopeTime = (_io[Registers::RegisterNR12] & 0b00000111) ?
-        (_io[Registers::RegisterNR12] & 0b00000111) / 64.f :
-        1.f;
+      _sound1.length = (_io[IO::NR14] & 0b01000000) ?
+        (64 - (_io[IO::NR11] & 0b00111111)) / 256.f :
+        999.f;
+      _sound1.envelope = ((_io[IO::NR12] & 0b11110000) >> 4) / 16.f;
+      _sound1.envelopeDirection = (_io[IO::NR12] & 0b00001000) ? true : false;
+      _sound1.envelopeTime = (_io[IO::NR12] & 0b00000111) ?
+        (_io[IO::NR12] & 0b00000111) / 64.f :
+        999.f;
       _sound1.envelopeElapsed = 0.f;
-      _sound1.frequency = 131072.f / (2048.f - (((std::uint16_t)_io[Registers::RegisterNR13]) + (((std::uint16_t)_io[Registers::RegisterNR14] & 0b00000111) << 8)));
+      _sound1.frequency = 131072.f / (2048.f - (((std::uint16_t)_io[IO::NR13]) + (((std::uint16_t)_io[IO::NR14] & 0b00000111) << 8)));
       _sound1.clock = 0.f;
     }
     break;
 
-  case Registers::RegisterNR24: // Channel 2 Frequency higher 3 bits, limit flag, start sound, R/W
+  case IO::NR24:    // Channel 2 Frequency higher 3 bits, limit flag, start sound, R/W
     // Bits 7-6-5 are always set
-    _io[Registers::RegisterNR24] = value & 0b01111111;
+    _io[IO::NR24] = value & 0b01111111;
 
     // Start sound 2
     if (value & 0b10000000) {
-      switch ((_io[Registers::RegisterNR21] & 0b11000000) >> 6) {
+      switch ((_io[IO::NR21] & 0b11000000) >> 6) {
       case 0b00: _sound2.wave = 0.125f; break;
       case 0b01: _sound2.wave = 0.25f; break;
       case 0b10: _sound2.wave = 0.5f; break;
@@ -6449,34 +6502,34 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
       default:
         throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
       }
-      _sound2.length = (_io[Registers::RegisterNR24] & 0b01000000) ?
-        (64 - (_io[Registers::RegisterNR21] & 0b00111111)) / 256.f :
-        1.f;
-      _sound2.envelope = ((_io[Registers::RegisterNR22] & 0b11110000) >> 4) / 16.f;
-      _sound2.envelopeDirection = (_io[Registers::RegisterNR22] & 0b00001000) ? true : false;
-      _sound2.envelopeTime = (_io[Registers::RegisterNR22] & 0b00000111) ?
-        (_io[Registers::RegisterNR22] & 0b00000111) / 64.f :
-        1.f;
+      _sound2.length = (_io[IO::NR24] & 0b01000000) ?
+        (64 - (_io[IO::NR21] & 0b00111111)) / 256.f :
+        999.f;
+      _sound2.envelope = ((_io[IO::NR22] & 0b11110000) >> 4) / 16.f;
+      _sound2.envelopeDirection = (_io[IO::NR22] & 0b00001000) ? true : false;
+      _sound2.envelopeTime = (_io[IO::NR22] & 0b00000111) ?
+        (_io[IO::NR22] & 0b00000111) / 64.f :
+        999.f;
       _sound2.envelopeElapsed = 0.f;
-      _sound2.frequency = 131072.f / (2048.f - (((std::uint16_t)_io[Registers::RegisterNR23]) + (((std::uint16_t)_io[Registers::RegisterNR24] & 0b00000111) << 8)));
+      _sound2.frequency = 131072.f / (2048.f - (((std::uint16_t)_io[IO::NR23]) + (((std::uint16_t)_io[IO::NR24] & 0b00000111) << 8)));
       _sound2.clock = 0.f;
     }
     break;
 
-  case Registers::RegisterNR34: // Channel 3 Frequency higher 3 bits, limit flag, start sound, R/W
+  case IO::NR34:    // Channel 3 Frequency higher 3 bits, limit flag, start sound, R/W
     // Bits 7-6-5 are always set
-    _io[Registers::RegisterNR34] = value & 0b01111111;
+    _io[IO::NR34] = value & 0b01111111;
 
     // Start sound 3
     if (value & 0b10000000) {
-      for (std::uint8_t index = Registers::RegisterWAVE00; index <= Registers::RegisterWAVE30; index++) {
-        _sound3.wave[(index - Registers::RegisterWAVE00) * 2 + 0] = ((_io[index] & 0b11110000) >> 4) / 8.f - 1.f;
-        _sound3.wave[(index - Registers::RegisterWAVE00) * 2 + 1] = ((_io[index] & 0b00001111) >> 0) / 8.f - 1.f;
+      for (std::uint8_t index = IO::WAVE00; index <= IO::WAVE30; index++) {
+        _sound3.wave[(index - IO::WAVE00) * 2 + 0] = ((_io[index] & 0b11110000) >> 4) / 8.f - 1.f;
+        _sound3.wave[(index - IO::WAVE00) * 2 + 1] = ((_io[index] & 0b00001111) >> 0) / 8.f - 1.f;
       }
-      _sound3.length = (_io[Registers::RegisterNR34] & 0b01000000) ?
-        (256 - _io[Registers::RegisterNR31]) / 256.f :
-        1.f;
-      switch ((_io[Registers::RegisterNR32] & 0b01100000) >> 5) {
+      _sound3.length = (_io[IO::NR34] & 0b01000000) ?
+        (256 - _io[IO::NR31]) / 256.f :
+        999.f;
+      switch ((_io[IO::NR32] & 0b01100000) >> 5) {
       case 0b00: _sound3.envelope = 0.f; break;
       case 0b01: _sound3.envelope = 1.f; break;
       case 0b10: _sound3.envelope = 0.5f; break;
@@ -6484,71 +6537,95 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
       default:
         throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
       }
-      _sound3.frequency = 65536.f / (2048.f - (((std::uint16_t)_io[Registers::RegisterNR33]) + (((std::uint16_t)_io[Registers::RegisterNR34] & 0b00000111) << 8)));
+      _sound3.frequency = 65536.f / (2048.f - (((std::uint16_t)_io[IO::NR33]) + (((std::uint16_t)_io[IO::NR34] & 0b00000111) << 8)));
       _sound3.clock = 0.f;
     }
     break;
 
-  case Registers::RegisterNR52: // Sound enable, R/W
+  case IO::NR44:    // Channel 1 Frequency higher 3 bits, limit flag, start sound, R/W
+    // Bits 7-6-5 are always set
+    _io[IO::NR44] = value & 0b01000000;
+
+    // Start sound 4
+    if (value & 0b10000000) {
+      _sound4.length = (_io[IO::NR44] & 0b01000000) ?
+        (64 - (_io[IO::NR41] & 0b00111111)) / 256.f :
+        999.f;
+      _sound4.envelope = ((_io[IO::NR42] & 0b11110000) >> 4) / 16.f;
+      _sound4.envelopeDirection = (_io[IO::NR42] & 0b00001000) ? true : false;
+      _sound4.envelopeTime = (_io[IO::NR42] & 0b00000111) ?
+        (_io[IO::NR42] & 0b00000111) / 64.f :
+        999.f;
+      _sound4.envelopeElapsed = 0.f;
+      _sound4.counter = +1.f;
+      _sound4.counterValue = 0b1111111111111111;
+      _sound4.counterWidth = (_io[IO::NR43] & 0b00001000) ? 7 : 15;
+      _sound4.counterTime = 1.f / (524288.f / std::clamp((float)(_io[IO::NR43] & 0b00000111), 0.5f, 7.f) / std::pow(2.f, ((_io[IO::NR43] & 0b11110000) >> 4) + 1.f));
+      _sound4.counterElapsed = 0.f;
+    }
+    break;
+
+  case IO::NR52:    // Sound enable, R/W
     // Only write sound on/off bit
-    _io[Registers::RegisterNR52] = value & 0b10000000;
+    _io[IO::NR52] = value & 0b10000000;
 
     // Disable all sound channels
-    if (!(_io[Registers::RegisterNR52] & 0b10000000)) {
+    if (!(_io[IO::NR52] & 0b10000000)) {
       _sound1.length = 0.f;
       _sound2.length = 0.f;
       _sound3.length = 0.f;
+      _sound4.length = 0.f;
     }
     break;
 
-  case Registers::RegisterSTAT: // LCD Status, R/W (see enum)
+  case IO::STAT:    // LCD Status, R/W (see enum)
     // Only bits 6-5-4-3 are writable 
-    _io[Registers::RegisterSTAT] = (_io[Registers::RegisterSTAT] & 0b00000111) | (value & 0b01111000);
+    _io[IO::STAT] = (_io[IO::STAT] & 0b00000111) | (value & 0b01111000);
     break;
 
-  case Registers::RegisterLYC:
+  case IO::LYC:     // LCD Y Coordinate Compare, R/W
     // Write value to register
-    _io[Registers::RegisterLYC] = value;
+    _io[IO::LYC] = value;
 
     // LY / LCY register comparison
-    if (_io[Registers::RegisterLY] == _io[Registers::RegisterLYC]) {
-      _io[Registers::RegisterSTAT] |= LcdStatus::LcdStatusEqual;
+    if (_io[IO::LY] == _io[IO::LYC]) {
+      _io[IO::STAT] |= LcdStatus::LcdStatusEqual;
 
       // STAT compare (LY/LYC) interrupt
-      if (_io[Registers::RegisterSTAT] & LcdStatus::LcdStatusCompare)
-        _io[Registers::RegisterIF] |= Interrupt::InterruptLcdStat;
+      if (_io[IO::STAT] & LcdStatus::LcdStatusCompare)
+        _io[IO::IF] |= Interrupt::InterruptLcdStat;
     }
     else
-      _io[Registers::RegisterSTAT] &= ~LcdStatus::LcdStatusEqual;
+      _io[IO::STAT] &= ~LcdStatus::LcdStatusEqual;
     break;
 
-  case Registers::RegisterDMA:
+  case IO::DMA:     // DMA Transfer and Start Address, R/W
     // Write value to register
-    _io[Registers::RegisterDMA] = value;
+    _io[IO::DMA] = value;
 
     // Transfer data to OAM
     for (std::uint16_t index = 0; index < _oam.size(); index++)
-      writeOam(index, read<std::uint8_t>(((std::uint16_t)_io[Registers::RegisterDMA] << 8) + index));
+      writeOam(index, read<std::uint8_t>(((std::uint16_t)_io[IO::DMA] << 8) + index));
 
     // TODO: DMA transfer is 160 cycles long, lock memory access
     break;
 
-  case Registers::RegisterKEY0:   // CPU Mode, R/W, see enum
+  case IO::KEY0:    // CPU Mode, R/W, see enum
     // Active only during boot mapping
-    if (_io[Registers::RegisterBANK] == 0)
-      _io[Registers::RegisterKEY0] = value;
+    if (_io[IO::BANK] == 0)
+      _io[IO::KEY0] = value;
     break;
 
-  case Registers::RegisterBANK:   // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
+  case IO::BANK:    // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
     // Active only during boot mapping
-    if (_io[Registers::RegisterBANK] == 0)
-      _io[Registers::RegisterBANK] = value;
+    if (_io[IO::BANK] == 0)
+      _io[IO::BANK] = value;
     break;
 
-  case Registers::RegisterHDMA5:  // Start New DMA Transfer, R/W, CGB mode only
+  case IO::HDMA5:   // Start New DMA Transfer, R/W, CGB mode only
   {
-    std::uint16_t source = (((std::uint16_t)_io[Registers::RegisterHDMA1] << 8) + (std::uint16_t)_io[Registers::RegisterHDMA2]) & 0b1111111111110000;
-    std::uint16_t destination = ((((std::uint16_t)_io[Registers::RegisterHDMA3] << 8) + (std::uint16_t)_io[Registers::RegisterHDMA4]) & 0b00011111111110000) | 0b1000000000000000;
+    std::uint16_t source = (((std::uint16_t)_io[IO::HDMA1] << 8) + (std::uint16_t)_io[IO::HDMA2]) & 0b1111111111110000;
+    std::uint16_t destination = ((((std::uint16_t)_io[IO::HDMA3] << 8) + (std::uint16_t)_io[IO::HDMA4]) & 0b00011111111110000) | 0b1000000000000000;
     std::uint16_t length = ((std::uint16_t)(value & 0b01111111) + 1) * 0x10;
     
     // Transfer data to VRAM
@@ -6577,118 +6654,114 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     }
 
     // Set register to completed transfer value
-    _io[Registers::RegisterHDMA5] = 0xFF;
+    _io[IO::HDMA5] = 0xFF;
 
     // Write end addresses to HDMA registers
-    _io[Registers::RegisterHDMA1] = (source >> 8) & 0b11111111;
-    _io[Registers::RegisterHDMA2] = (source >> 0) & 0b11111111;
-    _io[Registers::RegisterHDMA3] = (destination >> 8) & 0b11111111;
-    _io[Registers::RegisterHDMA4] = (destination >> 0) & 0b11111111;
-    _io[Registers::RegisterHDMA1] = 0xFF;
-    _io[Registers::RegisterHDMA2] = 0xFF;
-    _io[Registers::RegisterHDMA3] = 0xFF;
-    _io[Registers::RegisterHDMA4] = 0xFF;
+    _io[IO::HDMA1] = (source >> 8) & 0b11111111;
+    _io[IO::HDMA2] = (source >> 0) & 0b11111111;
+    _io[IO::HDMA3] = (destination >> 8) & 0b11111111;
+    _io[IO::HDMA4] = (destination >> 0) & 0b11111111;
+    _io[IO::HDMA1] = 0xFF;
+    _io[IO::HDMA2] = 0xFF;
+    _io[IO::HDMA3] = 0xFF;
+    _io[IO::HDMA4] = 0xFF;
 
-    _cpuCycle += length * ((_io[Registers::RegisterKEY1] & 0b10000000) ? 4 : 2);
+    _cpuCycle += length * ((_io[IO::KEY1] & 0b10000000) ? 4 : 2);
 
     // TODO: respect HDMA transfer timing for mode 0 & 1
     break;
   }
 
-  case Registers::RegisterBCPD:   // Background Color Palette Data, R/W, reference byte in BG Color RAM at index BCPI, CGB mode only
+  case IO::BCPD:    // Background Color Palette Data, R/W, reference byte in BG Color RAM at index BCPI, CGB mode only
     // Store data in Background Color RAM
-    _bgcRam[_io[Registers::RegisterBCPI] & 0b00111111] = value;
+    _bgcRam[_io[IO::BCPI] & 0b00111111] = value;
 
     // Increment pointer
-    if (_io[Registers::RegisterBCPI] & 0b10000000)
-      _io[Registers::RegisterBCPI] = 0b10000000 | ((_io[Registers::RegisterBCPI] + 1) & 0b00111111);
+    if (_io[IO::BCPI] & 0b10000000)
+      _io[IO::BCPI] = 0b10000000 | ((_io[IO::BCPI] + 1) & 0b00111111);
     break;
 
-  case Registers::RegisterOCPD:   // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
+  case IO::OCPD:    // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
     // Store data in OBJ Color RAM
-    _obcRam[_io[Registers::RegisterOCPI] & 0b00111111] = value;
+    _obcRam[_io[IO::OCPI] & 0b00111111] = value;
 
     // Increment pointer
-    if (_io[Registers::RegisterOCPI] & 0b10000000)
-      _io[Registers::RegisterOCPI] = 0b10000000 | ((_io[Registers::RegisterOCPI] + 1) & 0b00111111);
+    if (_io[IO::OCPI] & 0b10000000)
+      _io[IO::OCPI] = 0b10000000 | ((_io[IO::OCPI] + 1) & 0b00111111);
     break;
 
-  case Registers::RegisterOPRI:   // OBJ Priority Mode, R/W, CGB mode only
-    _io[Registers::RegisterOPRI] = value & 0b00000001;
+  case IO::OPRI:    // OBJ Priority Mode, R/W, CGB mode only
+    _io[IO::OPRI] = value & 0b00000001;
     break;
 
-  case Registers::RegisterSVBK:   // Work Ram Bank, R/W, CGB mode only
-    if ((_io[Registers::RegisterKEY0] & 0b00001100) != CpuMode::CpuModeDmg)
-      _io[Registers::RegisterSVBK] = value & 0b00000111;
+  case IO::SVBK:    // Work Ram Bank, R/W, CGB mode only
+    if ((_io[IO::KEY0] & 0b00001100) != CpuMode::CpuModeDmg)
+      _io[IO::SVBK] = value & 0b00000111;
     break;
 
-  case Registers::RegisterTIMA:   // Timer Modulo, R/W
-  case Registers::RegisterTMA:    // Timer Modulo, R/W
-  case Registers::RegisterNR10:   // Channel 1 Sweep, R/W
-  case Registers::RegisterNR11:   // Channel 1 Length/wave pattern, R/W
-  case Registers::RegisterNR12:   // Channel 1 Envelope, R/W
-  case Registers::RegisterNR13:   // Channel 1 Frequency lower 8 bits, W
-  case Registers::RegisterNR21:   // Channel 2 Length/wave pattern, R/W
-  case Registers::RegisterNR22:   // Channel 2 Envelope, R/W
-  case Registers::RegisterNR23:   // Channel 2 Frequency lower 8 bits, W
-  case Registers::RegisterNR30:   // Channel 3 Sound on/off, R/W
-  case Registers::RegisterNR31:   // Channel 3 Length, R/W
-  case Registers::RegisterNR32:   // Channel 3 Envelope, R/W
-  case Registers::RegisterNR33:   // Channel 3 Frequency lower 8 bits, W
-  case Registers::RegisterNR50:   // Sound stereo left/right volume, R/W
-  case Registers::RegisterNR51:   // Sound stereo left/right enable, R/W
-  case Registers::RegisterWAVE00: // Channel 3 Wave pattern 00 & 01, R/W
-  case Registers::RegisterWAVE02: // Channel 3 Wave pattern 02 & 03, R/W
-  case Registers::RegisterWAVE04: // Channel 3 Wave pattern 04 & 05, R/W
-  case Registers::RegisterWAVE06: // Channel 3 Wave pattern 06 & 07, R/W
-  case Registers::RegisterWAVE08: // Channel 3 Wave pattern 08 & 09, R/W
-  case Registers::RegisterWAVE10: // Channel 3 Wave pattern 10 & 11, R/W
-  case Registers::RegisterWAVE12: // Channel 3 Wave pattern 12 & 13, R/W
-  case Registers::RegisterWAVE14: // Channel 3 Wave pattern 14 & 15, R/W
-  case Registers::RegisterWAVE16: // Channel 3 Wave pattern 16 & 17, R/W
-  case Registers::RegisterWAVE18: // Channel 3 Wave pattern 18 & 19, R/W
-  case Registers::RegisterWAVE20: // Channel 3 Wave pattern 20 & 21, R/W
-  case Registers::RegisterWAVE22: // Channel 3 Wave pattern 22 & 23, R/W
-  case Registers::RegisterWAVE24: // Channel 3 Wave pattern 24 & 25, R/W
-  case Registers::RegisterWAVE26: // Channel 3 Wave pattern 26 & 27, R/W
-  case Registers::RegisterWAVE28: // Channel 3 Wave pattern 28 & 29, R/W
-  case Registers::RegisterWAVE30: // Channel 3 Wave pattern 30 & 31, R/W
-  case Registers::RegisterLCDC:   // LCD Control, R/W (see enum)
-  case Registers::RegisterSCY:    // Scroll Y, R/W
-  case Registers::RegisterSCX:    // Scroll X, R/W
-  case Registers::RegisterBGP:    // Background Palette Data, R/W, non CGB mode only
-  case Registers::RegisterOBP0:   // OBJ 0 Palette Data, R/W, non CGB mode only
-  case Registers::RegisterOBP1:   // OBJ 1 Palette Data, R/W, non CGB mode only
-  case Registers::RegisterWY:     // Window Y Position, R/W
-  case Registers::RegisterWX:     // Window X Position, R/W
-  case Registers::RegisterKEY1:   // CPU Speed Switch, R/W, CGB mode only
-  case Registers::RegisterVBK:    // Video RAM Bank, R/W, CGB mode only
-  case Registers::RegisterHDMA1:  // New DMA Transfers source high byte, W, CGB mode only
-  case Registers::RegisterHDMA2:  // New DMA Transfers source low byte, W, CGB mode only
-  case Registers::RegisterHDMA3:  // New DMA Transfers destination high byte, W, CGB mode only
-  case Registers::RegisterHDMA4:  // New DMA Transfers destination low byte, W, CGB mode only
-  case Registers::RegisterBCPI:   // Background Color Palette Index, R/W, CGB mode only
-  case Registers::RegisterOCPI:   // OBJ Color Palette Index, R/W, CGB mode only
-  case 0x72:                      // Undocumented, R/W
-  case 0x73:                      // Undocumented, R/W
+  case IO::TIMA:    // Timer Modulo, R/W
+  case IO::TMA:     // Timer Modulo, R/W
+  case IO::NR10:    // Channel 1 Sweep, R/W
+  case IO::NR11:    // Channel 1 Length/wave pattern, R/W
+  case IO::NR12:    // Channel 1 Envelope, R/W
+  case IO::NR13:    // Channel 1 Frequency lower 8 bits, W
+  case IO::NR21:    // Channel 2 Length/wave pattern, R/W
+  case IO::NR22:    // Channel 2 Envelope, R/W
+  case IO::NR23:    // Channel 2 Frequency lower 8 bits, W
+  case IO::NR30:    // Channel 3 Sound on/off, R/W
+  case IO::NR31:    // Channel 3 Length, R/W
+  case IO::NR32:    // Channel 3 Envelope, R/W
+  case IO::NR33:    // Channel 3 Frequency lower 8 bits, W
+  case IO::NR41:    // Channel 4 Length, W
+  case IO::NR42:    // Channel 4 Envelope, R/W
+  case IO::NR43:    // Channel 4 Polynomial counter, R/W
+  case IO::NR50:    // Sound stereo left/right volume, R/W
+  case IO::NR51:    // Sound stereo left/right enable, R/W
+  case IO::WAVE00:  // Channel 3 Wave pattern 00 & 01, R/W
+  case IO::WAVE02:  // Channel 3 Wave pattern 02 & 03, R/W
+  case IO::WAVE04:  // Channel 3 Wave pattern 04 & 05, R/W
+  case IO::WAVE06:  // Channel 3 Wave pattern 06 & 07, R/W
+  case IO::WAVE08:  // Channel 3 Wave pattern 08 & 09, R/W
+  case IO::WAVE10:  // Channel 3 Wave pattern 10 & 11, R/W
+  case IO::WAVE12:  // Channel 3 Wave pattern 12 & 13, R/W
+  case IO::WAVE14:  // Channel 3 Wave pattern 14 & 15, R/W
+  case IO::WAVE16:  // Channel 3 Wave pattern 16 & 17, R/W
+  case IO::WAVE18:  // Channel 3 Wave pattern 18 & 19, R/W
+  case IO::WAVE20:  // Channel 3 Wave pattern 20 & 21, R/W
+  case IO::WAVE22:  // Channel 3 Wave pattern 22 & 23, R/W
+  case IO::WAVE24:  // Channel 3 Wave pattern 24 & 25, R/W
+  case IO::WAVE26:  // Channel 3 Wave pattern 26 & 27, R/W
+  case IO::WAVE28:  // Channel 3 Wave pattern 28 & 29, R/W
+  case IO::WAVE30:  // Channel 3 Wave pattern 30 & 31, R/W
+  case IO::LCDC:    // LCD Control, R/W (see enum)
+  case IO::SCY:     // Scroll Y, R/W
+  case IO::SCX:     // Scroll X, R/W
+  case IO::BGP:     // Background Palette Data, R/W, non CGB mode only
+  case IO::OBP0:    // OBJ 0 Palette Data, R/W, non CGB mode only
+  case IO::OBP1:    // OBJ 1 Palette Data, R/W, non CGB mode only
+  case IO::WY:      // Window Y Position, R/W
+  case IO::WX:      // Window X Position, R/W
+  case IO::KEY1:    // CPU Speed Switch, R/W, CGB mode only
+  case IO::VBK:     // Video RAM Bank, R/W, CGB mode only
+  case IO::HDMA1:   // New DMA Transfers source high byte, W, CGB mode only
+  case IO::HDMA2:   // New DMA Transfers source low byte, W, CGB mode only
+  case IO::HDMA3:   // New DMA Transfers destination high byte, W, CGB mode only
+  case IO::HDMA4:   // New DMA Transfers destination low byte, W, CGB mode only
+  case IO::BCPI:    // Background Color Palette Index, R/W, CGB mode only
+  case IO::OCPI:    // OBJ Color Palette Index, R/W, CGB mode only
+  case 0x72:        // Undocumented, R/W
+  case 0x73:        // Undocumented, R/W
     _io[addr] = value;
     break;
 
-  case 0x75: // Undocumented, R/W (bit 4-6)
+  case 0x75:        // Undocumented, R/W (bit 4-6)
     _io[addr] = value & 0b01110000;
     break;
 
-    // TODO: sound register
-  case Registers::RegisterNR41:
-  case Registers::RegisterNR42:
-  case Registers::RegisterNR43:
-  case Registers::RegisterNR44:
- 
-    _io[addr] = value;
+  case IO::DIVLo:   // Low byte of DIV, not accessible
+  case IO::LY:      // LCD Y Coordinate, R
     break;
 
-  case Registers::RegisterDIVLo:  // Low byte of DIV, not accessible
-  case Registers::RegisterLY:     // LCD Y Coordinate, R
   default:
     break;
     //throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());

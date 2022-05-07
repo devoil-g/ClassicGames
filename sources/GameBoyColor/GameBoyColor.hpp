@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstdint>
+#include <list>
 #include <string>
 #include <vector>
 #include <functional>
@@ -15,7 +16,7 @@ namespace GBC
   class GameBoyColor
   {
   public:
-    static const std::size_t  SoundSampleRate = 22050;                                            // Sample rate of sound
+    static const std::size_t  SoundSampleRate = 44100;                                            // Sample rate of sound
     static const std::size_t  SoundFrameSize = SoundSampleRate * (456 * 154) / (4 * 1024 * 1024); // Number of sample in each frame of sound
     static const std::size_t  SoundChannelCount = 2;                                              // Number of sound channels
     static const std::size_t  SoundBufferSize = SoundFrameSize * SoundChannelCount;               // Size of a sound buffer
@@ -133,90 +134,90 @@ namespace GBC
       InterruptJoypad = 0b00010000
     };
 
-    enum Registers
+    enum IO
     {
-      RegisterJOYP = 0x00,  // Joypad, R/W, bits 7-6 always set
-      RegisterSB = 0x01,
-      RegisterSC = 0x02,
-      RegisterDIVLo = 0x03, // Low byte of DIV, not accessible
-      RegisterDIVHi = 0x04, // High byte of DIV, R/W (always set to zero when written)
-      RegisterTIMA = 0x05,  // Timer Counter, R/W
-      RegisterTMA = 0x06,   // Timer Modulo, R/W
-      RegisterTAC = 0x07,   // Time Control, R/W of bit 2-1-0
+      JOYP = 0x00,  // Joypad, R/W, bits 7-6 always set
+      SB = 0x01,
+      SC = 0x02,
+      DIVLo = 0x03, // Low byte of DIV, not accessible
+      DIVHi = 0x04, // High byte of DIV, R/W (always set to zero when written)
+      TIMA = 0x05,  // Timer Counter, R/W
+      TMA = 0x06,   // Timer Modulo, R/W
+      TAC = 0x07,   // Time Control, R/W of bit 2-1-0
 
-      RegisterIF = 0x0F,    // Interrupt Flags, bits set when an event occured, bits 7-6-5 always set
-      RegisterNR10 = 0x10,  // Channel 1 Sweep, R/W
-      RegisterNR11 = 0x11,  // Channel 1 Length/wave pattern, R/W
-      RegisterNR12 = 0x12,  // Channel 1 Envelope, R/W
-      RegisterNR13 = 0x13,  // Channel 1 Frequency lower 8 bits, W
-      RegisterNR14 = 0x14,  // Channel 1 Frequency higher 3 bits, limit flag, start sound, R/W
+      IF = 0x0F,    // Interrupt Flags, bits set when an event occured, bits 7-6-5 always set
+      NR10 = 0x10,  // Channel 1 Sweep, R/W
+      NR11 = 0x11,  // Channel 1 Length/wave pattern, R/W
+      NR12 = 0x12,  // Channel 1 Envelope, R/W
+      NR13 = 0x13,  // Channel 1 Frequency lower 8 bits, W
+      NR14 = 0x14,  // Channel 1 Frequency higher 3 bits, limit flag, start sound, R/W
 
-      RegisterNR21 = 0x16,  // Channel 2 Length/wave pattern, R/W
-      RegisterNR22 = 0x17,  // Channel 2 Envelope, R/W
-      RegisterNR23 = 0x18,  // Channel 2 Frequency lower 8 bits, W
-      RegisterNR24 = 0x19,  // Channel 2 Frequency higher 3 bits, limit flag, start sound, R/W
-      RegisterNR30 = 0x1A,  // Channel 3 Sound on/off, R/W
-      RegisterNR31 = 0x1B,  // Channel 3 Length, R/W
-      RegisterNR32 = 0x1C,  // Channel 3 Envelope, R/W
-      RegisterNR33 = 0x1D,  // Channel 3 Frequency lower 8 bits, W
-      RegisterNR34 = 0x1E,  // Channel 3 Frequency higher 3 bits, limit flag, start sound, R/W
+      NR21 = 0x16,  // Channel 2 Length/wave pattern, R/W
+      NR22 = 0x17,  // Channel 2 Envelope, R/W
+      NR23 = 0x18,  // Channel 2 Frequency lower 8 bits, W
+      NR24 = 0x19,  // Channel 2 Frequency higher 3 bits, limit flag, start sound, R/W
+      NR30 = 0x1A,  // Channel 3 Sound on/off, R/W
+      NR31 = 0x1B,  // Channel 3 Length, W
+      NR32 = 0x1C,  // Channel 3 Envelope, R/W
+      NR33 = 0x1D,  // Channel 3 Frequency lower 8 bits, W
+      NR34 = 0x1E,  // Channel 3 Frequency higher 3 bits, limit flag, start sound, R/W
 
-      RegisterNR41 = 0x20,
-      RegisterNR42 = 0x21,
-      RegisterNR43 = 0x22,
-      RegisterNR44 = 0x23,
-      RegisterNR50 = 0x24,  // Sound stereo left/right volume, R/W, 6-5-4 left volume, 2-1-0 right volume (bits 7&3 not implemented, Vin output)
-      RegisterNR51 = 0x25,  // Sound stereo left/right enable, R/W, bits 7-6-5-4 output sound 4-3-2-1 to left, bits 3-2-1-0 output sound 4-3-2-1 to right
-      RegisterNR52 = 0x26,  // Sound enable, R/W, bit 7 W/R all sound on/off (0: stop), bits 0-1-2-3 R Sound 1-2-3-4 ON flag
+      NR41 = 0x20,  // Channel 4 Length, W
+      NR42 = 0x21,  // Channel 4 Envelope, R/W
+      NR43 = 0x22,  // Channel 4 Polynomial counter, R/W
+      NR44 = 0x23,  // Channel 4 Limit flag, start sound, R/W
+      NR50 = 0x24,  // Sound stereo left/right volume, R/W, 6-5-4 left volume, 2-1-0 right volume (bits 7&3 not implemented, Vin output)
+      NR51 = 0x25,  // Sound stereo left/right enable, R/W, bits 7-6-5-4 output sound 4-3-2-1 to left, bits 3-2-1-0 output sound 4-3-2-1 to right
+      NR52 = 0x26,  // Sound enable, R/W, bit 7 W/R all sound on/off (0: stop), bits 0-1-2-3 R Sound 1-2-3-4 ON flag
 
-      RegisterWAVE00 = 0x30,  // Channel 3 Wave pattern 00 & 01, R/W
-      RegisterWAVE02 = 0x31,  // Channel 3 Wave pattern 02 & 03, R/W
-      RegisterWAVE04 = 0x32,  // Channel 3 Wave pattern 04 & 05, R/W
-      RegisterWAVE06 = 0x33,  // Channel 3 Wave pattern 06 & 07, R/W
-      RegisterWAVE08 = 0x34,  // Channel 3 Wave pattern 08 & 09, R/W
-      RegisterWAVE10 = 0x35,  // Channel 3 Wave pattern 10 & 11, R/W
-      RegisterWAVE12 = 0x36,  // Channel 3 Wave pattern 12 & 13, R/W
-      RegisterWAVE14 = 0x37,  // Channel 3 Wave pattern 14 & 15, R/W
-      RegisterWAVE16 = 0x38,  // Channel 3 Wave pattern 16 & 17, R/W
-      RegisterWAVE18 = 0x39,  // Channel 3 Wave pattern 18 & 19, R/W
-      RegisterWAVE20 = 0x3A,  // Channel 3 Wave pattern 20 & 21, R/W
-      RegisterWAVE22 = 0x3B,  // Channel 3 Wave pattern 22 & 23, R/W
-      RegisterWAVE24 = 0x3C,  // Channel 3 Wave pattern 24 & 25, R/W
-      RegisterWAVE26 = 0x3D,  // Channel 3 Wave pattern 26 & 27, R/W
-      RegisterWAVE28 = 0x3E,  // Channel 3 Wave pattern 28 & 29, R/W
-      RegisterWAVE30 = 0x3F,  // Channel 3 Wave pattern 30 & 31, R/W
+      WAVE00 = 0x30,  // Channel 3 Wave pattern 00 & 01, R/W
+      WAVE02 = 0x31,  // Channel 3 Wave pattern 02 & 03, R/W
+      WAVE04 = 0x32,  // Channel 3 Wave pattern 04 & 05, R/W
+      WAVE06 = 0x33,  // Channel 3 Wave pattern 06 & 07, R/W
+      WAVE08 = 0x34,  // Channel 3 Wave pattern 08 & 09, R/W
+      WAVE10 = 0x35,  // Channel 3 Wave pattern 10 & 11, R/W
+      WAVE12 = 0x36,  // Channel 3 Wave pattern 12 & 13, R/W
+      WAVE14 = 0x37,  // Channel 3 Wave pattern 14 & 15, R/W
+      WAVE16 = 0x38,  // Channel 3 Wave pattern 16 & 17, R/W
+      WAVE18 = 0x39,  // Channel 3 Wave pattern 18 & 19, R/W
+      WAVE20 = 0x3A,  // Channel 3 Wave pattern 20 & 21, R/W
+      WAVE22 = 0x3B,  // Channel 3 Wave pattern 22 & 23, R/W
+      WAVE24 = 0x3C,  // Channel 3 Wave pattern 24 & 25, R/W
+      WAVE26 = 0x3D,  // Channel 3 Wave pattern 26 & 27, R/W
+      WAVE28 = 0x3E,  // Channel 3 Wave pattern 28 & 29, R/W
+      WAVE30 = 0x3F,  // Channel 3 Wave pattern 30 & 31, R/W
 
-      RegisterLCDC = 0x40,  // LCD Control, R/W (see enum)
-      RegisterSTAT = 0x41,  // LCD Status, R/W (see enum)
-      RegisterSCY = 0x42,   // Scroll Y, R/W
-      RegisterSCX = 0x43,   // Scroll X, R/W
-      RegisterLY = 0x44,    // LCD Y Coordinate, R
-      RegisterLYC = 0x45,   // LCD Y Coordinate Compare, R/W
-      RegisterDMA = 0x46,   // DMA Transfer and Start Address, R/W
-      RegisterBGP = 0x47,   // Background and Window Palette Data, R/W, non CGB mode only
-      RegisterOBP0 = 0x48,  // OBJ 0 Palette Data, R/W, non CGB mode only
-      RegisterOBP1 = 0x49,  // OBJ 1 Palette Data, R/W, non CGB mode only  
-      RegisterWY = 0x4A,    // Window Y Position, R/W
-      RegisterWX = 0x4B,    // Window X Position, R/W
-      RegisterKEY0 = 0x4C,  // CPU Mode, R/W, see enum
-      RegisterKEY1 = 0x4D,  // CPU Speed Switch, R/W, CGB mode only, bit 7: current speed (0: normal, 1: double), bit 0: prepare switch (0: no, 1: prepare)
+      LCDC = 0x40,  // LCD Control, R/W (see enum)
+      STAT = 0x41,  // LCD Status, R/W (see enum)
+      SCY = 0x42,   // Scroll Y, R/W
+      SCX = 0x43,   // Scroll X, R/W
+      LY = 0x44,    // LCD Y Coordinate, R
+      LYC = 0x45,   // LCD Y Coordinate Compare, R/W
+      DMA = 0x46,   // DMA Transfer and Start Address, R/W
+      BGP = 0x47,   // Background and Window Palette Data, R/W, non CGB mode only
+      OBP0 = 0x48,  // OBJ 0 Palette Data, R/W, non CGB mode only
+      OBP1 = 0x49,  // OBJ 1 Palette Data, R/W, non CGB mode only  
+      WY = 0x4A,    // Window Y Position, R/W
+      WX = 0x4B,    // Window X Position, R/W
+      KEY0 = 0x4C,  // CPU Mode, R/W, see enum
+      KEY1 = 0x4D,  // CPU Speed Switch, R/W, CGB mode only, bit 7: current speed (0: normal, 1: double), bit 0: prepare switch (0: no, 1: prepare)
 
-      RegisterVBK = 0x4F,   // Video RAM Bank, R/W, CGB mode only
-      RegisterBANK = 0x50,  // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
-      RegisterHDMA1 = 0x51, // New DMA Transfers source high byte, W, CGB mode only
-      RegisterHDMA2 = 0x52, // New DMA Transfers source low byte, W, CGB mode only
-      RegisterHDMA3 = 0x53, // New DMA Transfers destination high byte, W, CGB mode only
-      RegisterHDMA4 = 0x54, // New DMA Transfers destination low byte, W, CGB mode only
-      RegisterHDMA5 = 0x55, // Start New DMA Transfer, R/W, CGB mode only
-      RegisterRP = 0x56,
+      VBK = 0x4F,   // Video RAM Bank, R/W, CGB mode only
+      BANK = 0x50,  // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
+      HDMA1 = 0x51, // New DMA Transfers source high byte, W, CGB mode only
+      HDMA2 = 0x52, // New DMA Transfers source low byte, W, CGB mode only
+      HDMA3 = 0x53, // New DMA Transfers destination high byte, W, CGB mode only
+      HDMA4 = 0x54, // New DMA Transfers destination low byte, W, CGB mode only
+      HDMA5 = 0x55, // Start New DMA Transfer, R/W, CGB mode only
+      RP = 0x56,
 
-      RegisterBCPI = 0x68,  // Background Color Palette Index, R/W, CGB mode only
-      RegisterBCPD = 0x69,  // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
-      RegisterOCPI = 0x6A,  // OBJ Color Palette Index, R/W, CGB mode only
-      RegisterOCPD = 0x6B,  // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
-      RegisterOPRI = 0x6C,  // OBJ Priority Mode, R/W, CGB mode only, bit 0: mode (0 :OAM, 1: Coordinate)
+      BCPI = 0x68,  // Background Color Palette Index, R/W, CGB mode only
+      BCPD = 0x69,  // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
+      OCPI = 0x6A,  // OBJ Color Palette Index, R/W, CGB mode only
+      OCPD = 0x6B,  // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
+      OPRI = 0x6C,  // OBJ Priority Mode, R/W, CGB mode only, bit 0: mode (0 :OAM, 1: Coordinate)
 
-      RegisterSVBK = 0x70   // Work Ram Bank, R/W, CGB mode only
+      SVBK = 0x70   // Work Ram Bank, R/W, CGB mode only
     };
 
     enum CpuMode
@@ -389,6 +390,20 @@ namespace GBC
       float                 frequency;  // NR33/34 - Frequency
       float                 clock;      // Wave clock
     } _sound3;  // Data of sound channel 3
+
+    struct {
+      float         length;             // NR41 - Sound length (seconds)
+      float         envelope;           // NR42 - Initial envelope volume
+      bool          envelopeDirection;  // NR42 - Direction of envelope (false: decrease, true: increase)
+      float         envelopeTime;       // NR42 - Length of 1 step envelope (seconds)
+      float         envelopeElapsed;    // Elapsed time since last envelope change
+      float         counter;            // Counter wave
+      std::uint16_t counterValue;       // LFSR counter
+      std::uint8_t  counterWidth;       // NR43 - LFSR counter width
+      float         counterTime;        // NR43 - LFSR counter length of step (seconds)
+      float         counterElapsed;     // Elapsed time since last LFSR change
+      
+    } _sound4;  // Data of sound channel 4
 
     std::array<std::int16_t, GBC::GameBoyColor::SoundBufferSize> _sound; // Sound buffer of current frame
 
