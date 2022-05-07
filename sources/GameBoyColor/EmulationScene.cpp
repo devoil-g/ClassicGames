@@ -41,6 +41,12 @@ bool  GBC::EmulationScene::update(sf::Time elapsed)
   if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Escape) == false)
     _exit = sf::Time::Zero;
 
+  // Sound volume control
+  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Subtract) == true)
+    _stream.setVolume(std::clamp(_stream.getVolume() - elapsed.asSeconds() * 64.f, 0.f, 100.f));
+  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Add) == true)
+    _stream.setVolume(std::clamp(_stream.getVolume() + elapsed.asSeconds() * 64.f, 0.f, 100.f));
+
   // Exit if limit reached
   if (_exit > GBC::EmulationScene::ForcedExit) {
     _machine.pop();
@@ -104,6 +110,7 @@ GBC::EmulationScene::SoundStream::SoundStream() :
   _status(GBC::EmulationScene::SoundStream::Buffering)
 {
   initialize(2, GBC::GameBoyColor::SoundSampleRate);
+  setVolume(50.f);
 }
 
 bool  GBC::EmulationScene::SoundStream::onGetData(sf::SoundStream::Chunk& chunk)
