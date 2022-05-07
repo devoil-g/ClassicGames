@@ -107,6 +107,8 @@ SET(GAME_GBC_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/EmulationScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/GameBoyColor.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/GameBoyColor.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/SelectionScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/SelectionScene.cpp
 )
 SET(GAME_MATH_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.cpp

@@ -4686,7 +4686,7 @@ GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
 
   // Load External RAM
   try { loadEram(); }
-  catch (...) {}
+  catch (const std::exception&) {}
 }
 
 GBC::GameBoyColor::~GameBoyColor()
@@ -4726,6 +4726,10 @@ void  GBC::GameBoyColor::loadFile(const std::string& filename, std::vector<std::
 
 void  GBC::GameBoyColor::loadHeader()
 {
+  // Too small game
+  if (_rom.size() < 0x0150)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
   // Original Nintendo Logo Bitmap
   std::uint8_t  nintendo[] = {
     0xCE, 0xED, 0x66, 0x66, 0xCC, 0x0D, 0x00, 0x0B, 0x03, 0x73, 0x00, 0x83, 0x00, 0x0C, 0x00, 0x0D,
@@ -4911,22 +4915,6 @@ void  GBC::GameBoyColor::loadHeader()
   // Display warning if invalid
   if (_header.global_checksum == false)
     std::cerr << "[EmulationScene::load]: Warning, invalid global checksum." << std::endl;
-
-  // TODO: remove this
-  std::cout << "[ROM HEADER]:" << std::endl;
-  std::cout << "  logo: " << (_header.logo ? "true" : "false") << std::endl;
-  std::cout << "  title: " << _header.title << std::endl;
-  std::cout << "  manufacturer: " << _header.manufacturer << std::endl;
-  std::cout << "  cgb: " << _header.cgb << std::endl;
-  std::cout << "  licensee: " << _header.licensee << std::endl;
-  std::cout << "  sgb: " << _header.sgb << std::endl;
-  std::cout << "  mbc: " << _header.mbc << std::endl;
-  std::cout << "  rom_size: " << _header.rom_size << std::endl;
-  std::cout << "  ram_size: " << _header.ram_size << std::endl;
-  std::cout << "  region: " << _header.region << std::endl;
-  std::cout << "  version: " << (int)_header.version << std::endl;
-  std::cout << "  header_checksum: " << (_header.header_checksum ? "true" : "false") << std::endl;
-  std::cout << "  global_checksum: " << (_header.global_checksum ? "true" : "false") << std::endl;
 }
 
 void  GBC::GameBoyColor::loadEram()
@@ -5014,14 +5002,14 @@ void  GBC::GameBoyColor::simulate()
 void  GBC::GameBoyColor::simulateKeys()
 {
   std::array<bool, Key::KeyCount> keys = {
-    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) < -0.5f,
-    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) > +0.5f,
-    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovX) < -0.5f,
-    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovX) > +0.5f,
-    Game::Window::Instance().joystick().buttonDown(0, 7),
-    Game::Window::Instance().joystick().buttonDown(0, 6),
-    Game::Window::Instance().joystick().buttonDown(0, 1),
-    Game::Window::Instance().joystick().buttonDown(0, 0)
+    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) < -0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Down),
+    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) > +0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Up),
+    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovX) < -0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Left),
+    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovX) > +0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Right),
+    Game::Window::Instance().joystick().buttonDown(0, 7) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Numpad0),
+    Game::Window::Instance().joystick().buttonDown(0, 6) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Period),
+    Game::Window::Instance().joystick().buttonDown(0, 1) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Numpad2),
+    Game::Window::Instance().joystick().buttonDown(0, 0) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Numpad6)
   };
 
   // Joypad interrupt when a selected key is pressed
@@ -5766,6 +5754,11 @@ const std::array<std::int16_t, GBC::GameBoyColor::SoundBufferSize>& GBC::GameBoy
   return _sound;
 }
 
+const GBC::GameBoyColor::Header& GBC::GameBoyColor::header() const
+{
+  return _header;
+}
+
 std::uint8_t  GBC::GameBoyColor::read(std::uint16_t addr)
 {
   // 16 KiB ROM bank 00 from cartridge, usually a fixed bank
@@ -6203,7 +6196,7 @@ void  GBC::GameBoyColor::writeRom(std::uint16_t addr, std::uint8_t value)
       // Save External RAM
       if ((_mbc.mbc1.enable & 0b00001111) != 0x0A) {
         try { saveEram(); }
-        catch (...) {}
+        catch (const std::exception&) {}
       }
     }
     // ROM bank number
@@ -6228,7 +6221,7 @@ void  GBC::GameBoyColor::writeRom(std::uint16_t addr, std::uint8_t value)
       // Save External RAM
       if ((_mbc.mbc2.enable & 0b00001111) != 0x0A) {
         try { saveEram(); }
-        catch (...) {}
+        catch (const std::exception&) {}
       }
     }
     break;
@@ -6241,7 +6234,7 @@ void  GBC::GameBoyColor::writeRom(std::uint16_t addr, std::uint8_t value)
       // Save External RAM
       if ((_mbc.mbc3.enable & 0b00001111) != 0x0A) {
         try { saveEram(); }
-        catch (...) {}
+        catch (const std::exception&) {}
       }
     }
     // ROM bank number
@@ -6266,7 +6259,7 @@ void  GBC::GameBoyColor::writeRom(std::uint16_t addr, std::uint8_t value)
       // Save External RAM
       if ((_mbc.mbc5.enable & 0b00001111) != 0x0A) {
         try { saveEram(); }
-        catch (...) {}
+        catch (const std::exception&) {}
       }
     }
     // ROM  bank number (lower 8 bits)

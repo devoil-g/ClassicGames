@@ -2,7 +2,7 @@
 
 #include "System/Library/FontLibrary.hpp"
 #include "Doom/Scenes/DoomScene.hpp"
-#include "GameBoyColor/EmulationScene.hpp"
+#include "GameBoyColor/SelectionScene.hpp"
 #include "Scenes/Menu/MainMenuScene.hpp"
 #include "Scenes/Menu/OptionsMenuScene.hpp"
 #include "Scenes/LoadingScene.hpp"
@@ -51,18 +51,23 @@ void  Game::MainMenuScene::selectDoom(Game::AbstractMenuScene::Item&, const std:
     try {
       machine.swap<DOOM::DoomScene>(wad, mode);
     }
-    catch (const std::exception& exception) {
-      machine.swap<Game::MessageScene>("Error: failed to run DOOM.\n");
-      machine.swap<Game::MessageScene>(exception.what());
+    catch (const std::exception&) {
+      machine.swap<Game::MessageScene>("Error: failed to run DOOM.");
     }
     }).detach();
 }
 
 void  Game::MainMenuScene::selectGameBoy(Game::AbstractMenuScene::Item&)
 {
-  // Go to Game Boy emulator
-  // TODO: menu to select ROM
-  _machine.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tetris.gb");
+  // Go to Game Boy emulator game selection
+  try {
+    _machine.push<GBC::SelectionScene>();
+  }
+
+  // Error message when no game found
+  catch (const std::exception&) {
+    _machine.push<Game::MessageScene>("Error: no games found in /assets/gbc/.");
+  }
 }
 
 void  Game::MainMenuScene::selectOptions(Game::AbstractMenuScene::Item&)

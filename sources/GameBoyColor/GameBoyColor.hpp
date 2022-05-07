@@ -421,7 +421,7 @@ namespace GBC
       KeyCount
     };
 
-    std::array<bool, Key::KeyCount> _keys;
+    std::array<bool, Key::KeyCount> _keys;  // Currently pressed keys
 
     void  load(const std::string& filename);                                              // Load a new ROM in memory
     void  loadFile(const std::string& filename, std::vector<std::uint8_t>& destination);  // Load file to vector
@@ -492,5 +492,6 @@ namespace GBC
     void                                                                simulate();     // Simulate a frame
     const sf::Image&                                                    screen() const; // Get current LCD frame
     const std::array<std::int16_t, GBC::GameBoyColor::SoundBufferSize>& sound() const;  // Get current sound frame
+    const GBC::GameBoyColor::Header&                                    header() const; // Get game header
   };
 }

@@ -12,7 +12,7 @@ GBC::EmulationScene::EmulationScene(Game::SceneMachine& machine, const std::stri
   _gbc(filename),
   _texture(),
   _sprite(),
-  _fps(sf::seconds(-1.f)),
+  _fps(sf::seconds(-0.42f)),
   _exit(sf::Time::Zero),
   _bar(sf::Vector2f(1.f, 1.f)),
   _stream()
@@ -20,10 +20,16 @@ GBC::EmulationScene::EmulationScene(Game::SceneMachine& machine, const std::stri
   // Initialize force exit bar
   _bar.setSize(sf::Vector2f(1.f, 1.f));
   _bar.setFillColor(sf::Color::White);
+
+  // Start sound stream
+  _stream.play();
 }
 
 GBC::EmulationScene::~EmulationScene()
-{}
+{
+  // Stop the stream before destroying the class
+  _stream.stop();
+}
 
 bool  GBC::EmulationScene::update(sf::Time elapsed)
 {
@@ -94,10 +100,10 @@ GBC::EmulationScene::SoundStream::SoundStream() :
   _sounds(),
   _lock(),
   _buffer(),
-  _index(0)
+  _index(0),
+  _status(GBC::EmulationScene::SoundStream::Buffering)
 {
   initialize(2, GBC::GameBoyColor::SoundSampleRate);
-  play();
 }
 
 bool  GBC::EmulationScene::SoundStream::onGetData(sf::SoundStream::Chunk& chunk)
