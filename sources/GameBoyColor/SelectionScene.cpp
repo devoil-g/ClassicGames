@@ -82,7 +82,7 @@ void  GBC::SelectionScene::selectBrowse(Game::AbstractMenuScene::Item& item)
   ::CHAR          path[MAX_PATH];
 
   std::memset(path, 0, sizeof(path));
-  fileinfo.lStructSize = sizeof(OPENFILENAME);
+  fileinfo.lStructSize = sizeof(::OPENFILENAME);
   fileinfo.hwndOwner = nullptr;
   fileinfo.lpstrFilter = "All supported format (.gb, .gbc)\0*.gb;*.gbc\0Game Boy\0*.gb\0Game Boy Color\0*.gbc\0All files\0*\0\0";
   fileinfo.lpstrCustomFilter = nullptr;
@@ -97,9 +97,10 @@ void  GBC::SelectionScene::selectBrowse(Game::AbstractMenuScene::Item& item)
   fileinfo.FlagsEx = 0;
 
   // Open file
-  if (GetOpenFileName(&fileinfo))
+  if (::GetOpenFileName(&fileinfo))
     selectGame(item, std::string(path));
 #else
+  // Not implemented
   throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 #endif
 }

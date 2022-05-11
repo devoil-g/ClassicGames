@@ -35,21 +35,6 @@ namespace Game
     // Push initial state
     game.push<Game::SplashScene>();
 
-    // FAILED
-    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/02-interrupts.gb");
-    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/04-op r,imm.gb");
-
-    // PASSED
-    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/01-special.gb");
-    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/03-op sp,hl.gb");
-    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/05-op rp.gb");
-    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/06-ld r,r.gb");
-    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/07-jr,jp,call,ret,rst.gb");
-    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/08-misc instrs.gb");
-    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/09-op r,r.gb");
-    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/10-bit ops.gb");
-    //game.push<GBC::EmulationScene>(Game::Config::ExecutablePath + "/assets/gbc/tests/cpu_instrs/11-op a,(hl).gb");
-
     // Run the game !
     while (Game::Window::Instance().window().isOpen()) {
       sf::Time  elapsed = clock.restart();

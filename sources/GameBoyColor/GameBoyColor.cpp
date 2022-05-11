@@ -338,7 +338,6 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "DAA",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      //puts("in");
       if (gbc._rAF.u8[Register::Lo] & Register::N) {
         if (gbc._rAF.u8[Register::Lo] & Register::H)
           gbc._rAF.u8[Register::Hi] += 0xFA;
@@ -363,28 +362,6 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
         gbc._rAF.u8[Register::Lo] |= Register::Z;
       else
         gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-
-      gbc._rPC.u16 += 1;
-      gbc._cpuCycle += 4;
-      //puts("out");
-      return;
-
-      std::uint16_t r = gbc._rAF.u8[Register::Hi];
-
-      if ((r & 0b00001111) > 0b00001001)
-        r += 0b00000110;
-      if ((r & 0b11110000) > 0b10010000)
-        r += 0b01100000;
-      gbc._rAF.u8[Register::Hi] = (r & 0b11111111);
-      if (gbc._rAF.u8[Register::Hi] == 0)
-        gbc._rAF.u8[Register::Lo] |= Register::Z;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::Z;
-      gbc._rAF.u8[Register::Lo] &= ~Register::H;
-      if (r & 0b1111111100000000)
-        gbc._rAF.u8[Register::Lo] |= Register::C;
-      else
-        gbc._rAF.u8[Register::Lo] &= ~Register::C;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 4;
     }
@@ -1773,7 +1750,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .description = "ADC A, n",
     .instruction = [](GBC::GameBoyColor& gbc) {
       gbc.instructionAdd(gbc._rAF.u8[Register::Hi], gbc.read<std::uint8_t>(gbc._rPC.u16 + 1), (gbc._rAF.u8[Register::Lo] & Register::C) ? 1 : 0, gbc._rAF.u8[Register::Hi]);
-      gbc._rPC.u16 += 1;
+      gbc._rPC.u16 += 2;
       gbc._cpuCycle += 8;
     }
   },  // 0xCE, 0b11001110: ADC A, n
@@ -3260,7 +3237,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 0, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] &= ~(0b00000001 << 0);
+      gbc._rBC.u8[Register::Hi] &= 0b11111110;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3268,7 +3245,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 0, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] &= ~(0b00000001 << 0);
+      gbc._rBC.u8[Register::Lo] &= 0b11111110;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3276,7 +3253,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 0, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] &= ~(0b00000001 << 0);
+      gbc._rDE.u8[Register::Hi] &= 0b11111110;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3284,7 +3261,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 0, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] &= ~(0b00000001 << 0);
+      gbc._rDE.u8[Register::Lo] &= 0b11111110;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3292,7 +3269,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 0, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] &= ~(0b00000001 << 0);
+      gbc._rHL.u8[Register::Hi] &= 0b11111110;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3300,7 +3277,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 0, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] &= ~(0b00000001 << 0);
+      gbc._rHL.u8[Register::Lo] &= 0b11111110;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3310,7 +3287,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r &= ~(0b00000001 << 0);
+      r &= 0b11111110;
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
@@ -3319,7 +3296,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 0, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= ~(0b00000001 << 0);
+      gbc._rAF.u8[Register::Hi] &= 0b11111110;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3327,7 +3304,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 1, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] &= ~(0b00000001 << 1);
+      gbc._rBC.u8[Register::Hi] &= 0b11111101;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3335,7 +3312,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 1, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] &= ~(0b00000001 << 1);
+      gbc._rBC.u8[Register::Lo] &= 0b11111101;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3343,7 +3320,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 1, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] &= ~(0b00000001 << 1);
+      gbc._rDE.u8[Register::Hi] &= 0b11111101;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3351,7 +3328,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 1, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] &= ~(0b00000001 << 1);
+      gbc._rDE.u8[Register::Lo] &= 0b11111101;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3359,7 +3336,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 1, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] &= ~(0b00000001 << 1);
+      gbc._rHL.u8[Register::Hi] &= 0b11111101;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3367,7 +3344,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 1, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] &= ~(0b00000001 << 1);
+      gbc._rHL.u8[Register::Lo] &= 0b11111101;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3377,7 +3354,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r &= ~(0b00000001 << 1);
+      r &= 0b11111101;
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
@@ -3386,7 +3363,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 1, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= ~(0b00000001 << 1);
+      gbc._rAF.u8[Register::Hi] &= 0b11111101;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3394,7 +3371,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 2, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] &= ~(0b00000001 << 2);
+      gbc._rBC.u8[Register::Hi] &= 0b11111011;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3402,7 +3379,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 2, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] &= ~(0b00000001 << 2);
+      gbc._rBC.u8[Register::Lo] &= 0b11111011;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3410,7 +3387,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 2, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] &= ~(0b00000001 << 2);
+      gbc._rDE.u8[Register::Hi] &= 0b11111011;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3418,7 +3395,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 2, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] &= ~(0b00000001 << 2);
+      gbc._rDE.u8[Register::Lo] &= 0b11111011;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3426,7 +3403,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 2, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] &= ~(0b00000001 << 2);
+      gbc._rHL.u8[Register::Hi] &= 0b11111011;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3434,7 +3411,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 2, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] &= ~(0b00000001 << 2);
+      gbc._rHL.u8[Register::Lo] &= 0b11111011;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3444,7 +3421,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r &= ~(0b00000001 << 2);
+      r &= 0b11111011;
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
@@ -3453,7 +3430,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 2, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= ~(0b00000001 << 2);
+      gbc._rAF.u8[Register::Hi] &= 0b11111011;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3461,7 +3438,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 3, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] &= ~(0b00000001 << 3);
+      gbc._rBC.u8[Register::Hi] &= 0b11110111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3469,7 +3446,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 3, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] &= ~(0b00000001 << 3);
+      gbc._rBC.u8[Register::Lo] &= 0b11110111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3477,7 +3454,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 3, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] &= ~(0b00000001 << 3);
+      gbc._rDE.u8[Register::Hi] &= 0b11110111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3485,7 +3462,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 3, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] &= ~(0b00000001 << 3);
+      gbc._rDE.u8[Register::Lo] &= 0b11110111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3493,7 +3470,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 3, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] &= ~(0b00000001 << 3);
+      gbc._rHL.u8[Register::Hi] &= 0b11110111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3501,7 +3478,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 3, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] &= ~(0b00000001 << 3);
+      gbc._rHL.u8[Register::Lo] &= 0b11110111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3511,7 +3488,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r &= ~(0b00000001 << 3);
+      r &= 0b11110111;
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
@@ -3520,7 +3497,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 3, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= ~(0b00000001 << 3);
+      gbc._rAF.u8[Register::Hi] &= 0b11110111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3528,7 +3505,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 4, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] &= ~(0b00000001 << 4);
+      gbc._rBC.u8[Register::Hi] &= 0b11101111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3536,7 +3513,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 4, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] &= ~(0b00000001 << 4);
+      gbc._rBC.u8[Register::Lo] &= 0b11101111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3544,7 +3521,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 4, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] &= ~(0b00000001 << 4);
+      gbc._rDE.u8[Register::Hi] &= 0b11101111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3552,7 +3529,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 4, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] &= ~(0b00000001 << 4);
+      gbc._rDE.u8[Register::Lo] &= 0b11101111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3560,7 +3537,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 4, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] &= ~(0b00000001 << 4);
+      gbc._rHL.u8[Register::Hi] &= 0b11101111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3568,7 +3545,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 4, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] &= ~(0b00000001 << 4);
+      gbc._rHL.u8[Register::Lo] &= 0b11101111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3578,7 +3555,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r &= ~(0b00000001 << 4);
+      r &= 0b11101111;
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
@@ -3587,7 +3564,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 4, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= ~(0b00000001 << 4);
+      gbc._rAF.u8[Register::Hi] &= 0b11101111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3595,7 +3572,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 5, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] &= ~(0b00000001 << 5);
+      gbc._rBC.u8[Register::Hi] &= 0b11011111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3603,7 +3580,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 5, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] &= ~(0b00000001 << 5);
+      gbc._rBC.u8[Register::Lo] &= 0b11011111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3611,7 +3588,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 5, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] &= ~(0b00000001 << 5);
+      gbc._rDE.u8[Register::Hi] &= 0b11011111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3619,7 +3596,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 5, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] &= ~(0b00000001 << 5);
+      gbc._rDE.u8[Register::Lo] &= 0b11011111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3627,7 +3604,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 5, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] &= ~(0b00000001 << 5);
+      gbc._rHL.u8[Register::Hi] &= 0b11011111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3635,7 +3612,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 5, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] &= ~(0b00000001 << 5);
+      gbc._rHL.u8[Register::Lo] &= 0b11011111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3645,7 +3622,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r &= ~(0b00000001 << 5);
+      r &= 0b11011111;
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
@@ -3654,7 +3631,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 5, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= ~(0b00000001 << 5);
+      gbc._rAF.u8[Register::Hi] &= 0b11011111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3662,7 +3639,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 6, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] &= ~(0b00000001 << 6);
+      gbc._rBC.u8[Register::Hi] &= 0b10111111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3670,7 +3647,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 6, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] &= ~(0b00000001 << 6);
+      gbc._rBC.u8[Register::Lo] &= 0b10111111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3678,7 +3655,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 6, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] &= ~(0b00000001 << 6);
+      gbc._rDE.u8[Register::Hi] &= 0b10111111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3686,7 +3663,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 6, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] &= ~(0b00000001 << 6);
+      gbc._rDE.u8[Register::Lo] &= 0b10111111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3694,7 +3671,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 6, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] &= ~(0b00000001 << 6);
+      gbc._rHL.u8[Register::Hi] &= 0b10111111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3702,7 +3679,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 6, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] &= ~(0b00000001 << 6);
+      gbc._rHL.u8[Register::Lo] &= 0b10111111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3712,7 +3689,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r &= ~(0b00000001 << 6);
+      r &= 0b10111111;
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
@@ -3721,7 +3698,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 6, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= ~(0b00000001 << 6);
+      gbc._rAF.u8[Register::Hi] &= 0b10111111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3729,7 +3706,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 7, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] &= ~(0b00000001 << 7);
+      gbc._rBC.u8[Register::Hi] &= 0b01111111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3737,7 +3714,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 7, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] &= ~(0b00000001 << 7);
+      gbc._rBC.u8[Register::Lo] &= 0b01111111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3745,7 +3722,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 7, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] &= ~(0b00000001 << 7);
+      gbc._rDE.u8[Register::Hi] &= 0b01111111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3753,7 +3730,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 7, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] &= ~(0b00000001 << 7);
+      gbc._rDE.u8[Register::Lo] &= 0b01111111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3761,7 +3738,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 7, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] &= ~(0b00000001 << 7);
+      gbc._rHL.u8[Register::Hi] &= 0b01111111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3769,7 +3746,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 7, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] &= ~(0b00000001 << 7);
+      gbc._rHL.u8[Register::Lo] &= 0b01111111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3779,7 +3756,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r &= ~(0b00000001 << 7);
+      r &= 0b01111111;
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
@@ -3788,7 +3765,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "RES 7, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] &= ~(0b00000001 << 7);
+      gbc._rAF.u8[Register::Hi] &= 0b01111111;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3796,7 +3773,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 0, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] |= 0b00000001 << 0;
+      gbc._rBC.u8[Register::Hi] |= 0b00000001;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3804,7 +3781,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 0, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] |= 0b00000001 << 0;
+      gbc._rBC.u8[Register::Lo] |= 0b00000001;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3812,7 +3789,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 0, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] |= 0b00000001 << 0;
+      gbc._rDE.u8[Register::Hi] |= 0b00000001;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3820,7 +3797,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 0, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] |= 0b00000001 << 0;
+      gbc._rDE.u8[Register::Lo] |= 0b00000001;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3828,7 +3805,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 0, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] |= 0b00000001 << 0;
+      gbc._rHL.u8[Register::Hi] |= 0b00000001;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3836,7 +3813,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 0, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] |= 0b00000001 << 0;
+      gbc._rHL.u8[Register::Lo] |= 0b00000001;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3846,7 +3823,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r |= 0b00000001 << 0;
+      r |= 0b00000001;
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
@@ -3855,7 +3832,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 0, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] |= 0b00000001 << 0;
+      gbc._rAF.u8[Register::Hi] |= 0b00000001;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3863,7 +3840,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 1, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] |= 0b00000001 << 1;
+      gbc._rBC.u8[Register::Hi] |= 0b00000010;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3871,7 +3848,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 1, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] |= 0b00000001 << 1;
+      gbc._rBC.u8[Register::Lo] |= 0b00000010;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3879,7 +3856,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 1, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] |= 0b00000001 << 1;
+      gbc._rDE.u8[Register::Hi] |= 0b00000010;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3887,7 +3864,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 1, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] |= 0b00000001 << 1;
+      gbc._rDE.u8[Register::Lo] |= 0b00000010;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3895,7 +3872,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 1, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] |= 0b00000001 << 1;
+      gbc._rHL.u8[Register::Hi] |= 0b00000010;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3903,7 +3880,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 1, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] |= 0b00000001 << 1;
+      gbc._rHL.u8[Register::Lo] |= 0b00000010;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3913,7 +3890,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r |= 0b00000001 << 1;
+      r |= 0b00000010;
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
@@ -3922,7 +3899,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 1, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] |= 0b00000001 << 1;
+      gbc._rAF.u8[Register::Hi] |= 0b00000010;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3930,7 +3907,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 2, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] |= 0b00000001 << 2;
+      gbc._rBC.u8[Register::Hi] |= 0b00000100;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3938,7 +3915,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 2, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] |= 0b00000001 << 2;
+      gbc._rBC.u8[Register::Lo] |= 0b00000100;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3946,7 +3923,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 2, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] |= 0b00000001 << 2;
+      gbc._rDE.u8[Register::Hi] |= 0b00000100;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3954,7 +3931,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 2, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] |= 0b00000001 << 2;
+      gbc._rDE.u8[Register::Lo] |= 0b00000100;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3962,7 +3939,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 2, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] |= 0b00000001 << 2;
+      gbc._rHL.u8[Register::Hi] |= 0b00000100;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3970,7 +3947,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 2, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] |= 0b00000001 << 2;
+      gbc._rHL.u8[Register::Lo] |= 0b00000100;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3980,7 +3957,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r |= 0b00000001 << 2;
+      r |= 0b00000100;
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
@@ -3989,7 +3966,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 2, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] |= 0b00000001 << 2;
+      gbc._rAF.u8[Register::Hi] |= 0b00000100;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -3997,7 +3974,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 3, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] |= 0b00000001 << 3;
+      gbc._rBC.u8[Register::Hi] |= 0b00001000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4005,7 +3982,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 3, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] |= 0b00000001 << 3;
+      gbc._rBC.u8[Register::Lo] |= 0b00001000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4013,7 +3990,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 3, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] |= 0b00000001 << 3;
+      gbc._rDE.u8[Register::Hi] |= 0b00001000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4021,7 +3998,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 3, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] |= 0b00000001 << 3;
+      gbc._rDE.u8[Register::Lo] |= 0b00001000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4029,7 +4006,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 3, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] |= 0b00000001 << 3;
+      gbc._rHL.u8[Register::Hi] |= 0b00001000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4037,7 +4014,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 3, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] |= 0b00000001 << 3;
+      gbc._rHL.u8[Register::Lo] |= 0b00001000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4047,7 +4024,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r |= 0b00000001 << 3;
+      r |= 0b00001000;
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
@@ -4056,7 +4033,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 3, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] |= 0b00000001 << 3;
+      gbc._rAF.u8[Register::Hi] |= 0b00001000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4064,7 +4041,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 4, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] |= 0b00000001 << 4;
+      gbc._rBC.u8[Register::Hi] |= 0b00010000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4072,7 +4049,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 4, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] |= 0b00000001 << 4;
+      gbc._rBC.u8[Register::Lo] |= 0b00010000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4080,7 +4057,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 4, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] |= 0b00000001 << 4;
+      gbc._rDE.u8[Register::Hi] |= 0b00010000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4088,7 +4065,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 4, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] |= 0b00000001 << 4;
+      gbc._rDE.u8[Register::Lo] |= 0b00010000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4096,7 +4073,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 4, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] |= 0b00000001 << 4;
+      gbc._rHL.u8[Register::Hi] |= 0b00010000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4104,7 +4081,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 4, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] |= 0b00000001 << 4;
+      gbc._rHL.u8[Register::Lo] |= 0b00010000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4114,7 +4091,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r |= 0b00000001 << 4;
+      r |= 0b00010000;
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
@@ -4123,7 +4100,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 4, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] |= 0b00000001 << 4;
+      gbc._rAF.u8[Register::Hi] |= 0b00010000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4131,7 +4108,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 5, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] |= 0b00000001 << 5;
+      gbc._rBC.u8[Register::Hi] |= 0b00100000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4139,7 +4116,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 5, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] |= 0b00000001 << 5;
+      gbc._rBC.u8[Register::Lo] |= 0b00100000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4147,7 +4124,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 5, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] |= 0b00000001 << 5;
+      gbc._rDE.u8[Register::Hi] |= 0b00100000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4155,7 +4132,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 5, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] |= 0b00000001 << 5;
+      gbc._rDE.u8[Register::Lo] |= 0b00100000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4163,7 +4140,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 5, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] |= 0b00000001 << 5;
+      gbc._rHL.u8[Register::Hi] |= 0b00100000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4171,7 +4148,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 5, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] |= 0b00000001 << 5;
+      gbc._rHL.u8[Register::Lo] |= 0b00100000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4181,7 +4158,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r |= 0b00000001 << 5;
+      r |= 0b00100000;
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
@@ -4198,7 +4175,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 6, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] |= 0b00000001 << 6;
+      gbc._rBC.u8[Register::Hi] |= 0b01000000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4206,7 +4183,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 6, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] |= 0b00000001 << 6;
+      gbc._rBC.u8[Register::Lo] |= 0b01000000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4214,7 +4191,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 6, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] |= 0b00000001 << 6;
+      gbc._rDE.u8[Register::Hi] |= 0b01000000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4222,7 +4199,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 6, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] |= 0b00000001 << 6;
+      gbc._rDE.u8[Register::Lo] |= 0b01000000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4230,7 +4207,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 6, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] |= 0b00000001 << 6;
+      gbc._rHL.u8[Register::Hi] |= 0b01000000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4238,7 +4215,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 6, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] |= 0b00000001 << 6;
+      gbc._rHL.u8[Register::Lo] |= 0b01000000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4248,7 +4225,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r |= 0b00000001 << 6;
+      r |= 0b01000000;
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
@@ -4257,7 +4234,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 6, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] |= 0b00000001 << 6;
+      gbc._rAF.u8[Register::Hi] |= 0b01000000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4265,7 +4242,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 7, B",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Hi] |= 0b00000001 << 7;
+      gbc._rBC.u8[Register::Hi] |= 0b10000000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4273,7 +4250,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 7, C",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rBC.u8[Register::Lo] |= 0b00000001 << 7;
+      gbc._rBC.u8[Register::Lo] |= 0b10000000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4281,7 +4258,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 7, D",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Hi] |= 0b00000001 << 7;
+      gbc._rDE.u8[Register::Hi] |= 0b10000000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4289,7 +4266,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 7, E",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rDE.u8[Register::Lo] |= 0b00000001 << 7;
+      gbc._rDE.u8[Register::Lo] |= 0b10000000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4297,7 +4274,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 7, H",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Hi] |= 0b00000001 << 7;
+      gbc._rHL.u8[Register::Hi] |= 0b10000000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4305,7 +4282,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 7, L",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rHL.u8[Register::Lo] |= 0b00000001 << 7;
+      gbc._rHL.u8[Register::Lo] |= 0b10000000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4315,7 +4292,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
     .instruction = [](GBC::GameBoyColor& gbc) {
       std::uint8_t  r = gbc.read<std::uint8_t>(gbc._rHL.u16);
 
-      r |= 0b00000001 << 7;
+      r |= 0b10000000;
       gbc.write<std::uint8_t>(gbc._rHL.u16, r);
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 16;
@@ -4324,7 +4301,7 @@ const std::array<GBC::GameBoyColor::Instruction, 256> GBC::GameBoyColor::_instru
   GBC::GameBoyColor::Instruction {
     .description = "SET 7, A",
     .instruction = [](GBC::GameBoyColor& gbc) {
-      gbc._rAF.u8[Register::Hi] |= 0b00000001 << 7;
+      gbc._rAF.u8[Register::Hi] |= 0b10000000;
       gbc._rPC.u16 += 1;
       gbc._cpuCycle += 8;
     }
@@ -4365,7 +4342,7 @@ void  GBC::GameBoyColor::instructionAdd(std::uint16_t left, std::uint16_t right,
 
 void  GBC::GameBoyColor::instructionSub(std::uint8_t left, std::uint8_t right, std::uint8_t carry, std::uint8_t& result)
 {
-  result = left - (right + carry);
+  result = left - right - carry;
   if (result == 0)
     _rAF.u8[Register::Lo] |= Register::Z;
   else
@@ -4443,7 +4420,7 @@ void  GBC::GameBoyColor::instructionOr(std::uint8_t left, std::uint8_t right, st
 void  GBC::GameBoyColor::instructionXor(std::uint8_t left, std::uint8_t right, std::uint8_t& result)
 {
   result = left ^ right;
-  if (_rAF.u8[Register::Hi] == 0)
+  if (result == 0)
     _rAF.u8[Register::Lo] |= Register::Z;
   else
     _rAF.u8[Register::Lo] &= ~Register::Z;
@@ -4548,7 +4525,6 @@ void  GBC::GameBoyColor::instructionSra(std::uint8_t& value)
 
 void  GBC::GameBoyColor::instructionSwap(std::uint8_t& value)
 {
-  value = (value >> 4) | (value << 4);
   if (value == 0)
     _rAF.u8[Register::Lo] |= Register::Z;
   else
@@ -4556,6 +4532,7 @@ void  GBC::GameBoyColor::instructionSwap(std::uint8_t& value)
   _rAF.u8[Register::Lo] &= ~Register::N;
   _rAF.u8[Register::Lo] &= ~Register::H;
   _rAF.u8[Register::Lo] &= ~Register::C;
+  value = (value >> 4) | (value << 4);
 }
 
 void  GBC::GameBoyColor::instructionSrl(std::uint8_t& value)
@@ -4982,9 +4959,8 @@ void  GBC::GameBoyColor::simulate()
     // Update graphics and timer for the number of cycle executed
     for (; cycle < _cpuCycle; cycle += 4) {
       simulateTimer();
-      if (cycle % ((_io[IO::KEY1] & 0b10000000) ? 8 : 4) == 0) {
+      if (cycle % ((_io[IO::KEY1] & 0b10000000) ? 8 : 4) == 0)
         simulateGraphics();
-      }
     }
   }
 
@@ -5058,18 +5034,16 @@ void  GBC::GameBoyColor::simulateInterrupt()
     if ((_ie & interrupt) == 0)
       continue;
 
-    std::uint8_t  rif = _io[IO::IF];
-
     // Check interrupt flag on IF
-    if ((rif & interrupt) == 0)
+    if ((_io[IO::IF] & interrupt) == 0)
       continue;
-
-    // Reset interrupt flag
-    _io[IO::IF] = rif & ~interrupt;
 
     // Call interrupt handler
     if (_ime == IME::IMEEnabled)
     {
+      // Reset interrupt flag
+      _io[IO::IF] &= ~interrupt;
+
       // Disable interrupt
       _ime = IME::IMEDisabled;
 
@@ -5099,7 +5073,7 @@ void  GBC::GameBoyColor::simulateInstruction()
   auto opcode = read<std::uint8_t>(_rPC.u16);
 
   // TODO: remove this
-  if (false) {
+  if (false && _io[IO::BANK]) {
     if (false) {
       std::printf("\n");
       std::printf("  A: %3d 0x%02X    Z: %d   N: %d   H: %d   C: %d\n", _rAF.u8[Register::Hi], _rAF.u8[Register::Hi], (_rAF.u8[Register::Lo] & Register::Z) ? 1 : 0, (_rAF.u8[Register::Lo] & Register::N) ? 1 : 0, (_rAF.u8[Register::Lo] & Register::H) ? 1 : 0, (_rAF.u8[Register::Lo] & Register::C) ? 1 : 0);
@@ -5786,7 +5760,7 @@ std::uint8_t  GBC::GameBoyColor::read(std::uint16_t addr)
   // Mirror of C000~DDFF (ECHO RAM)
   // Nintendo says use of this area is prohibited
   else if (addr < 0xFE00)
-    return read(addr - 0x2000);
+    return readWRam(addr - 0xE000);
 
   // Sprite attribute table (OAM)	
   else if (addr < 0xFEA0)
