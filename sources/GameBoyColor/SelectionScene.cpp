@@ -15,8 +15,8 @@ GBC::SelectionScene::SelectionScene(Game::SceneMachine& machine) :
   Game::AbstractMenuScene(machine),
   _selected()
 {
-  // Get menu font
-  const auto& font = Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf");
+  // Set menu title
+  title("GameBoy");
 
   // List games in game directory
   try {
@@ -26,7 +26,7 @@ GBC::SelectionScene::SelectionScene(Game::SceneMachine& machine) :
 
         // Add game to menu list
         if (gbc.header().header_checksum && gbc.header().global_checksum)
-          menu().push_back(Game::AbstractMenuScene::Item(gbc.header().title, font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&GBC::SelectionScene::selectGame, this, std::placeholders::_1, std::filesystem::absolute(entry).string()))));
+          add(gbc.header().title, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&GBC::SelectionScene::selectGame, this, std::placeholders::_1, std::filesystem::absolute(entry).string())));
       }
       catch (const std::exception&) {}
     }
@@ -35,11 +35,11 @@ GBC::SelectionScene::SelectionScene(Game::SceneMachine& machine) :
   
 #ifdef _WIN32
   // Add browse files option
-  menu().push_back(Game::AbstractMenuScene::Item("Browse...", font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&GBC::SelectionScene::selectBrowse, this, std::placeholders::_1))));
+  footer("Browse...", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&GBC::SelectionScene::selectBrowse, this, std::placeholders::_1)));
 #endif
 
   // Nothing to load
-  if (menu().empty() == true)
+  if (empty() == true)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 

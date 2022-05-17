@@ -6,6 +6,8 @@
 #include <SFML/Graphics/Text.hpp>
 
 #include "Scenes/AbstractScene.hpp"
+#include "System/Config.hpp"
+#include "System/Library/FontLibrary.hpp"
 
 namespace Game
 {
@@ -20,15 +22,27 @@ namespace Game
       Item() = delete;
 
     public:
-      Item(const sf::String& string, const sf::Font& font, const std::function<void(Item&)>& callback) : sf::Text(string, font), _callback(callback) {}
+      Item(const sf::String& string, const std::function<void(Item&)>& callback) :
+        sf::Text(string, Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
+        _callback(callback)
+      {}
+
       ~Item() = default;
 
       void  select() { _callback(*this); }  // Call item function
     };
 
   private:
-    std::vector<Item> _menu;      // Hold menu text and select handler
-    int               _selected;  // Index of selected menu (-1 for no selection)
+    sf::Text          _title;   // Top text
+    std::vector<Item> _items;   // Hold menu text and select handler
+    Item              _footer;  // Bottom menu item
+    int               _select;  // Index of selected item
+    int               _target;  // Scroll target position
+    float             _scroll;  // Scroll current position
+
+    void  drawTitle();
+    void  drawItems();
+    void  drawFooter();
 
   public:
     AbstractMenuScene(Game::SceneMachine& machine);
@@ -37,7 +51,10 @@ namespace Game
     virtual bool  update(sf::Time elapsed) override;  // Update menu state
     virtual void  draw() override;                    // Draw menu state
 
-    std::vector<Item>&        menu() { return _menu; }        // Get/set menu
-    const std::vector<Item>&  menu() const { return _menu; }  // Get menu
+    void  title(const std::string& string);                                               // Change title
+    void  add(const std::string& string, const std::function<void(Item&)>& callback);     // Add item to menu
+    void  footer(const std::string& string, const std::function<void(Item&)>& callback);  // Change footer
+    void  clear();                                                                        // Clear menu
+    bool  empty() const;                                                                  // Check for empty menu
   };
 }

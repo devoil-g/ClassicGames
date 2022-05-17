@@ -4875,10 +4875,6 @@ void  GBC::GameBoyColor::loadHeader()
   // Check header checksum
   _header.header_checksum = (header_checksum == _rom[0x014D]);
 
-  // Display warning if invalid
-  if (_header.header_checksum == false)
-    std::cerr << "[EmulationScene::load]: Warning, invalid header checksum." << std::endl;
-
   std::uint16_t global_checksum = 0;
 
   // Compute global checksum
@@ -4888,10 +4884,6 @@ void  GBC::GameBoyColor::loadHeader()
 
   // Check global checksum
   _header.global_checksum = (global_checksum == _rom[0x014E] * 256 + _rom[0x014F]);
-
-  // Display warning if invalid
-  if (_header.global_checksum == false)
-    std::cerr << "[EmulationScene::load]: Warning, invalid global checksum." << std::endl;
 }
 
 void  GBC::GameBoyColor::loadEram()
@@ -5112,7 +5104,7 @@ void  GBC::GameBoyColor::simulateGraphics()
     else if (_ppuCycle % 456 == 252)
     {
       // Set LCD status mode 0
-      _io[IO::STAT] = (_io[IO::STAT] & 0b11111100) | 0b00000000;
+      _io[IO::STAT] = (_io[IO::STAT] & ~LcdStatus::LcdStatusMode) | 0b00000000;
 
       // STAT mode 0 (HBlank) interrupt
       if (_io[IO::STAT] & LcdStatus::LcdStatusMode0)
@@ -5123,7 +5115,7 @@ void  GBC::GameBoyColor::simulateGraphics()
   // Trigger VBlank
   else if (_io[IO::LY] == 144 && _ppuCycle % 456 == 0) {
     // Set LCD status mode 1
-    _io[IO::STAT] = (_io[IO::STAT] & 0b11111100) | 0b00000001;
+    _io[IO::STAT] = (_io[IO::STAT] & ~LcdStatus::LcdStatusMode) | 0b00000001;
 
     // VBlank interrupt
     _io[IO::IF] |= Interrupt::InterruptVBlank;
@@ -5132,7 +5124,7 @@ void  GBC::GameBoyColor::simulateGraphics()
     if (_io[IO::STAT] & LcdStatus::LcdStatusMode1)
       _io[IO::IF] |= Interrupt::InterruptLcdStat;
   }
-
+  
   // Next line
   if (_ppuCycle % 456 == 452)
   {
@@ -5162,7 +5154,7 @@ void  GBC::GameBoyColor::simulateGraphics()
 void  GBC::GameBoyColor::simulateGraphicsMode2()
 {
   // Set LCD status mode 2
-  _io[IO::STAT] = (_io[IO::STAT] & 0b11111100) | 0b00000010;
+  _io[IO::STAT] = (_io[IO::STAT] & ~LcdStatus::LcdStatusMode) | 0b00000010;
 
   // Clear OBJ list
   _ppuObj.clear();
@@ -5184,7 +5176,7 @@ void  GBC::GameBoyColor::simulateGraphicsMode2()
 void  GBC::GameBoyColor::simulateGraphicsMode3()
 {
   // Set LCD status mode 3
-  _io[IO::STAT] = (_io[IO::STAT] & 0b11111100) | 0b00000011;
+  _io[IO::STAT] = (_io[IO::STAT] & ~LcdStatus::LcdStatusMode) | 0b00000011;
 
   // White screen if LCD disabled
   if (!(_io[IO::LCDC] & LcdControl::LcdControlEnable)) {
@@ -5789,6 +5781,7 @@ std::uint8_t  GBC::GameBoyColor::read(std::uint16_t addr)
 
 std::uint8_t  GBC::GameBoyColor::readRom(std::uint16_t addr)
 {
+  
   // Out of bound address, should not happen
   if (addr >= 0x8000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
@@ -5805,54 +5798,54 @@ std::uint8_t  GBC::GameBoyColor::readRom(std::uint16_t addr)
 
   case MemoryBankController::Type::MBC1:
   {
-    std::uint8_t  bank = 0;
+    std::size_t bank = 0;
 
     // First half of ROM
     if (addr < 0x4000 && _mbc.mbc1.bank & 0b10000000)
-        bank = (_mbc.mbc1.bank & 0b01100000) % (_rom.size() / 0x4000);
+        bank = (_mbc.mbc1.bank & 0b01100000);
 
     // Second half of ROM
     else if (addr >= 0x4000)
-      bank = ((_mbc.mbc1.bank & 0b01100000) + std::clamp((_mbc.mbc1.bank & 0b00011111), 0b00000001, 0b00011111)) % (std::uint8_t)(_rom.size() / 0x4000);
+      bank = (_mbc.mbc1.bank & 0b01100000) + std::clamp((_mbc.mbc1.bank & 0b00011111), 0b00000001, 0b00011111);
 
     // Get ROM value
-    return _rom[(((std::size_t)bank * 0x4000) + (addr % 0x4000)) % _rom.size()];
+    return _rom[((bank * 0x4000) + (addr % 0x4000)) % _rom.size()];
   }
 
   case MemoryBankController::Type::MBC2:
   {
-    std::uint8_t  bank = 0;
+    std::size_t bank = 0;
 
     // Get bank number for second half of ROM
     if (addr >= 0x4000)
-      bank = std::clamp((_mbc.mbc2.bank & 0b00001111) % (std::uint8_t)(_rom.size() / 0x4000), 0b00000001, 0b00001111);
+      bank = std::clamp(_mbc.mbc2.bank & 0b00001111, 0b00000001, 0b00001111);
 
     // Get ROM value
-    return _rom[(((std::size_t)bank * 0x4000) + (addr % 0x4000)) % _rom.size()];
+    return _rom[((bank * 0x4000) + (addr % 0x4000)) % _rom.size()];
   }
 
   case MemoryBankController::Type::MBC3:
   {
-    std::uint8_t  bank = 0;
+    std::size_t bank = 0;
 
     // Get bank number for second half of ROM
     if (addr >= 0x4000)
-      bank = std::clamp((_mbc.mbc3.rom & 0b01111111) % (std::uint8_t)(_rom.size() / 0x4000), 0b00000001, 0b01111111);
+      bank = std::clamp(_mbc.mbc3.rom & 0b01111111, 0b00000001, 0b01111111);
 
     // Get ROM value
-    return _rom[(((std::size_t)bank * 0x4000) + (addr % 0x4000)) % _rom.size()];
+    return _rom[((bank * 0x4000) + (addr % 0x4000)) % _rom.size()];
   }
 
   case MemoryBankController::Type::MBC5:
   {
-    std::uint8_t  bank = 0;
+    std::size_t bank = 0;
 
     // Get bank number for second half of ROM
     if (addr >= 0x4000)
-      bank = (_mbc.mbc5.rom & 0b0000000111111111) % (std::uint8_t)(_rom.size() / 0x4000);
+      bank = _mbc.mbc5.rom & 0b0000000111111111;
 
     // Get ROM value
-    return _rom[(((std::size_t)bank * 0x4000) + (addr % 0x4000)) % _rom.size()];
+    return _rom[((bank * 0x4000) + (addr % 0x4000)) % _rom.size()];
   }
 
   default:
@@ -5866,10 +5859,12 @@ std::uint8_t  GBC::GameBoyColor::readVRam(std::uint16_t addr)
   if (addr >= 0x2000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
+  // VRAM locked when drawing
+  // if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) >= 3)
+  //   return 0xFF;
+
   // Game Boy Color has 2 VRAM banks
   return _vRam[(std::uint16_t)(_io[IO::VBK] & 0b00000001) * 0x2000 + addr];
-
-  // TODO: lock when drawing ?
 }
 
 std::uint8_t  GBC::GameBoyColor::readERam(std::uint16_t addr)
@@ -5890,11 +5885,11 @@ std::uint8_t  GBC::GameBoyColor::readERam(std::uint16_t addr)
     if ((_mbc.mbc1.enable & 0x0A) != 0x0A)
       return 0xFF;
 
-    std::uint8_t  bank = 0;
+    std::size_t bank = 0;
 
     // Get RAM bank
     if (_mbc.mbc1.bank & 0b10000000)
-      bank = ((_mbc.mbc1.bank & 0b01100000) >> 5) % (_eRam.size() / 0x2000);
+      bank = (_mbc.mbc1.bank & 0b01100000) >> 5;
 
     // Get RAM value
     return _eRam[(bank * 0x2000 + addr) % _eRam.size()];
@@ -5904,9 +5899,9 @@ std::uint8_t  GBC::GameBoyColor::readERam(std::uint16_t addr)
     // RAM not enabled
     if ((_mbc.mbc2.enable & 0b00001111) != 0x0A)
       return 0xFF;
+
     // Get RAM value
-    else
-      return _eRam[addr % _eRam.size()];
+    return _eRam[addr % _eRam.size()];
 
   case MemoryBankController::Type::MBC3:
     // RAM / RTC registers not enabled
@@ -5940,9 +5935,9 @@ std::uint8_t  GBC::GameBoyColor::readERam(std::uint16_t addr)
     // RAM not enabled
     if (_mbc.mbc5.enable != 0x0A)
       return 0xFF;
+
     // Get RAM value
-    else
-      return _eRam[((std::size_t)(_mbc.mbc5.ram & 0b00001111) * 0x2000 + addr) % _eRam.size()];
+    return _eRam[((std::size_t)(_mbc.mbc5.ram & 0b00001111) * 0x2000 + addr) % _eRam.size()];
 
   default:
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
@@ -5971,6 +5966,10 @@ std::uint8_t  GBC::GameBoyColor::readOam(std::uint16_t addr)
   // Out of bound address, should not happen
   if (addr >= 0x00A0)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // OAM locked when drawing
+  // if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) >= 2)
+  //   return 0xFF;
 
   // Get data from OAM
   return _oam[addr];
@@ -6003,23 +6002,27 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
     return (_io[IO::NR52] & 0b10000000)
       | (_sound1.length > 0.f ? 0b00000001 : 0b00000000)
       | (_sound2.length > 0.f ? 0b00000010 : 0b00000000)
-      | (_sound3.length > 0.f ? 0b00000100 : 0b00000000)
+      | (_sound3.length > 0.f && (_io[IO::NR30] & 0b10000000) ? 0b00000100 : 0b00000000)
       | (_sound4.length > 0.f ? 0b00000100 : 0b00000000);
 
   case IO::VBK:     // Video RAM Bank, R/W, CGB mode only
     return _io[IO::VBK] | 0b11111110;
 
   case IO::BCPD:    // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
+    if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) >= 3)
+      return 0xFF;
     return _bgcRam[_io[IO::BCPI] & 0b00111111];
 
   case IO::OCPD:    // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
+    if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) >= 3)
+      return 0xFF;
     return _obcRam[_io[IO::OCPI] & 0b00111111];
 
   case IO::SVBK:    // Work Ram Bank, R/W, CGB mode only
     return _io[IO::SVBK] & 0b00000111;
 
   case IO::DIVHi:   // High byte of DIV
-  case IO::TIMA:    // Timer Modulo, R/W
+  case IO::TIMA:    // Timer Counter, R/W
   case IO::TMA:     // Timer Modulo, R/W
   case IO::TAC:     // Time Control, R/W of bits 2-1-0
   case IO::IF:      // Interrupt Flags, R/W
@@ -6236,12 +6239,13 @@ void  GBC::GameBoyColor::writeRom(std::uint16_t addr, std::uint8_t value)
         catch (const std::exception&) {}
       }
     }
-    // ROM  bank number (lower 8 bits)
+    // ROM bank number (lower 8 bits)
     else if (addr < 0x3000)
       _mbc.mbc5.rom = (_mbc.mbc5.rom & 0b1111111100000000) | value;
-    // ROM  bank number (9th bit)
+    // ROM bank number (9th bit)
     else if (addr < 0x4000)
       _mbc.mbc5.rom = (_mbc.mbc5.rom & 0b0000000011111111) | ((std::uint16_t)(value & 0b00000001) << 8);
+    // RAM bank number
     else if (addr < 0x6000)
       _mbc.mbc5.ram = value;
     break;
@@ -6256,11 +6260,13 @@ void  GBC::GameBoyColor::writeVRam(std::uint16_t addr, std::uint8_t value)
   // Out of bound address, should not happen
   if (addr >= 0x2000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  
+  // VRAM locked when drawing
+  // if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) >= 3)
+  //   return;
 
   // Game Boy Color has 2 VRAM banks
   _vRam[(_io[IO::VBK] & 0b00000001) * 0x2000 + addr] = value;
-
-  // TODO: lock when drawing ?
 }
 
 void  GBC::GameBoyColor::writeERam(std::uint16_t addr, std::uint8_t value)
@@ -6294,7 +6300,7 @@ void  GBC::GameBoyColor::writeERam(std::uint16_t addr, std::uint8_t value)
       break;
     // Write to RAM
     else if (_mbc.mbc3.ram < 0x04)
-      _eRam[(_mbc.mbc3.ram * 0x2000 + addr) % _eRam.size()] = value;
+      _eRam[((std::size_t)_mbc.mbc3.ram * 0x2000 + addr) % _eRam.size()] = value;
     // RTC seconds
     else if (_mbc.mbc3.ram == 0x08) {
       if (_mbc.mbc3.halt == 1) {
@@ -6337,7 +6343,7 @@ void  GBC::GameBoyColor::writeERam(std::uint16_t addr, std::uint8_t value)
   case MemoryBankController::Type::MBC5:
     // RAM enabled
     if ((_mbc.mbc5.enable & 0b00001111) == 0x0A)
-      _eRam[((std::size_t)_mbc.mbc5.ram % (_eRam.size() / 0x2000) * 0x2000 + addr) % _eRam.size()] = value;
+      _eRam[((std::size_t)_mbc.mbc5.ram * 0x2000 + addr) % _eRam.size()] = value;
     break;
 
   default:
@@ -6362,11 +6368,13 @@ void  GBC::GameBoyColor::writeWRam(std::uint16_t addr, std::uint8_t value)
 
 void  GBC::GameBoyColor::writeOam(std::uint16_t addr, std::uint8_t value)
 {
-  // TODO: handle OAM lock at rendering
-
-    // Out of bound address, should not happen
+  // Out of bound address, should not happen
   if (addr >= 0x00A0)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // OAM locked when drawing
+  // if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) >= 2)
+  //   return;
 
   // Write data to OAM
   _oam[addr] = value;
@@ -6570,6 +6578,10 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     // Write value to register
     _io[IO::DMA] = value;
 
+    // Only work durong HBlank and VBlank
+    // if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) >= 2)
+    //   break;
+
     // Transfer data to OAM
     for (std::uint16_t index = 0; index < _oam.size(); index++)
       writeOam(index, read<std::uint8_t>(((std::uint16_t)_io[IO::DMA] << 8) + index));
@@ -6628,19 +6640,17 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     _io[IO::HDMA2] = (source >> 0) & 0b11111111;
     _io[IO::HDMA3] = (destination >> 8) & 0b11111111;
     _io[IO::HDMA4] = (destination >> 0) & 0b11111111;
-    _io[IO::HDMA1] = 0xFF;
-    _io[IO::HDMA2] = 0xFF;
-    _io[IO::HDMA3] = 0xFF;
-    _io[IO::HDMA4] = 0xFF;
-
-    _cpuCycle += length * ((_io[IO::KEY1] & 0b10000000) ? 4 : 2);
 
     // TODO: respect HDMA transfer timing for mode 0 & 1
+    if (value & 0b10000000)
+      _cpuCycle += length * ((_io[IO::KEY1] & 0b10000000) ? 4 : 2);
+
     break;
   }
 
   case IO::BCPD:    // Background Color Palette Data, R/W, reference byte in BG Color RAM at index BCPI, CGB mode only
     // Store data in Background Color RAM
+    //if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) != 3)
     _bgcRam[_io[IO::BCPI] & 0b00111111] = value;
 
     // Increment pointer
@@ -6650,6 +6660,7 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
 
   case IO::OCPD:    // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
     // Store data in OBJ Color RAM
+    //if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) != 3)
     _obcRam[_io[IO::OCPI] & 0b00111111] = value;
 
     // Increment pointer

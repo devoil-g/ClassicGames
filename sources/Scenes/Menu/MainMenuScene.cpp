@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include "System/Library/FontLibrary.hpp"
 #include "Doom/Scenes/DoomScene.hpp"
 #include "GameBoyColor/SelectionScene.hpp"
 #include "Scenes/Menu/MainMenuScene.hpp"
@@ -14,17 +13,13 @@
 Game::MainMenuScene::MainMenuScene(Game::SceneMachine& machine) :
   Game::AbstractMenuScene(machine)
 {
-  // Get menu font
-  const auto& font = Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf");
-
   // Set menu items/handlers
-  menu() = {
-    Game::AbstractMenuScene::Item("DOOM", font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath + "assets/levels/doom.wad", DOOM::Enum::Mode::ModeRetail))),
-    Game::AbstractMenuScene::Item("DOOM II", font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath + "assets/levels/doom2.wad", DOOM::Enum::Mode::ModeCommercial))),
-    Game::AbstractMenuScene::Item("Game Boy", font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectGameBoy, this, std::placeholders::_1))),
-    Game::AbstractMenuScene::Item("Options", font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectOptions, this, std::placeholders::_1))),
-    Game::AbstractMenuScene::Item("Exit", font, std::function<void(Game::AbstractMenuScene::Item &)>(std::bind(&Game::MainMenuScene::selectExit, this, std::placeholders::_1)))
-  };
+  title("ClassicGames");
+  add("DOOM", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath + "assets/levels/doom.wad", DOOM::Enum::Mode::ModeRetail)));
+  add("DOOM II", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath + "assets/levels/doom2.wad", DOOM::Enum::Mode::ModeCommercial)));
+  add("Game Boy", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectGameBoy, this, std::placeholders::_1)));
+  add("Options", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectOptions, this, std::placeholders::_1)));
+  footer("Exit", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectExit, this, std::placeholders::_1)));
 }
 
 bool  Game::MainMenuScene::update(sf::Time elapsed)

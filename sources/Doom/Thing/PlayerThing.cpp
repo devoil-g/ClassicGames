@@ -1356,11 +1356,11 @@ bool  DOOM::PlayerThing::control(DOOM::PlayerThing::Control action, bool pressed
     else if (action == DOOM::PlayerThing::Control::ControlMode)
       return (pressed == true) ? Game::Window::Instance().joystick().buttonPressed(controller - 1, 3) : Game::Window::Instance().joystick().buttonDown(controller - 1, 3);
     else if (action == DOOM::PlayerThing::Control::ControlGrid)
-      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovX) > 0.f : Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovX) != 0.f;
+      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovX) > +0.1f : Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovX) != 0.f;
     else if (action == DOOM::PlayerThing::Control::ControlZoom)
-      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovY) > 0.f : Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovY) > 0.f;
+      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovY) > +0.1f : Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovY) > +0.1f;
     else if (action == DOOM::PlayerThing::Control::ControlUnzoom)
-      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovY) < 0.f : Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovY) < 0.f;
+      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovY) < -0.1f : Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovY) < -0.1f;
     else
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
   }
@@ -1461,7 +1461,7 @@ void  DOOM::PlayerThing::A_Punch(DOOM::Doom& doom)
   // Target shot
   if (success == true) {
     doom.sound(_weaponSound, DOOM::Doom::Resources::Sound::EnumSound::Sound_punch);
-    // NOTE: we are suppose to turn to face target
+    // NOTE: we are supposed to turn to face target
   }
 }
 

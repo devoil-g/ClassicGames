@@ -7,9 +7,6 @@
 Game::OptionsMenuScene::OptionsMenuScene(Game::SceneMachine& machine) :
   Game::AbstractMenuScene(machine)
 {
-  // Get menu font
-  const auto& font = Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf");
-
   // Options menu text
   std::string fullscreenText = std::string("Fullscreen [") + std::string(Game::Window::Instance().window().getSize().x == sf::VideoMode::getDesktopMode().width && Game::Window::Instance().window().getSize().y == sf::VideoMode::getDesktopMode().height ? "X" : "   ") + std::string("]");
   std::string antialiasingText = "Antialiasing [";
@@ -25,12 +22,11 @@ Game::OptionsMenuScene::OptionsMenuScene(Game::SceneMachine& machine) :
   antialiasingText += "]";
 
   // Set menu items/handlers
-  menu() = {
-    Game::AbstractMenuScene::Item(fullscreenText, font, std::function<void(Game::AbstractMenuScene::Item &)>(std::bind(&Game::OptionsMenuScene::selectFullscreen, this, std::placeholders::_1))),
-    Game::AbstractMenuScene::Item(antialiasingText, font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::OptionsMenuScene::selectAntialiasing, this, std::placeholders::_1))),
-    Game::AbstractMenuScene::Item(verticalText, font, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::OptionsMenuScene::selectVerticalSync, this, std::placeholders::_1))),
-    Game::AbstractMenuScene::Item(returnText, font, std::function<void(Game::AbstractMenuScene::Item &)>(std::bind(&Game::OptionsMenuScene::selectReturn, this, std::placeholders::_1)))
-  };
+  title("Options");
+  add(fullscreenText, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::OptionsMenuScene::selectFullscreen, this, std::placeholders::_1)));
+  add(antialiasingText, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::OptionsMenuScene::selectAntialiasing, this, std::placeholders::_1)));
+  add(verticalText, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::OptionsMenuScene::selectVerticalSync, this, std::placeholders::_1)));
+  footer(returnText, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::OptionsMenuScene::selectReturn, this, std::placeholders::_1)));
 }
 
 bool  Game::OptionsMenuScene::update(sf::Time elapsed)

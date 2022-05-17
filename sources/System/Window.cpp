@@ -152,7 +152,7 @@ void  Game::Window::create(const sf::VideoMode& video, sf::Uint32 style, const s
 
   // Disabled key repeate
   _window.setKeyRepeatEnabled(false);
-
+  
   // Load window icon
   sf::Image icon;
   if (icon.loadFromFile(Game::Config::ExecutablePath + "assets/icons/icon128.png") == false)

@@ -49,7 +49,7 @@ namespace GBC
 
       struct {
         std::uint8_t  enable; // RAM and RTC Register enable flag (0x0A to enable)
-        std::uint8_t  rom;    // ROM bank number, bits 6-5-4-3-2-1-0
+        std::uint8_t  rom;    // ROM bank number (7 bits)
         std::uint8_t  ram;    // RAM bank number / RTC Register select
         std::uint8_t  latch;  // Latch Clock Data
         std::uint8_t  halt;   // Stop flag of clock (0=Active, 1=Stop Timer)
