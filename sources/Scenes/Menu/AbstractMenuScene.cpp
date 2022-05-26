@@ -73,7 +73,7 @@ bool  Game::AbstractMenuScene::update(sf::Time elapsed)
     Game::Window::Instance().mouse().wheel() < 0 ||
     (Game::Window::Instance().joystick().relative(0, sf::Joystick::Axis::PovY) < -0.9f && Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) < -0.1f)) {
     if (_select == -1)
-      _target = _select = 0;
+      _target = _select = _target % _items.size();
     else
       _target = _select = Math::Modulo((int)_select + 1, (int)_items.size() + 1);
   }
@@ -84,7 +84,7 @@ bool  Game::AbstractMenuScene::update(sf::Time elapsed)
     Game::Window::Instance().mouse().wheel() > 0 ||
     (Game::Window::Instance().joystick().relative(0, sf::Joystick::Axis::PovY) > +0.9f && Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) > +0.1f)) {
     if (_select == -1)
-      _target = _select = 0;
+      _target = _select = _target % _items.size();
     else
       _target = _select = Math::Modulo((int)_select - 1, (int)_items.size() + 1);
   }

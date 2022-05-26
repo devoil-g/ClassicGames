@@ -1,4 +1,5 @@
 *.gb
 *.gbc
 *.gbs
+*.rtc
 build

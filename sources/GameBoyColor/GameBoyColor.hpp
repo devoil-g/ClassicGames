@@ -9,7 +9,7 @@
 
 #include <SFML/Graphics/Image.hpp>
 
-#include "Scenes/AbstractScene.hpp"
+#include "GameBoyColor/MemoryBankController.hpp"
 
 namespace GBC
 {
@@ -22,52 +22,19 @@ namespace GBC
     static const std::size_t  SoundBufferSize = SoundFrameSize * SoundChannelCount;               // Size of a sound buffer
 
   private:
-    union MemoryBankController
-    {
-      enum Type
-      {
-        None,   // None (32KByte ROM only)
-        MBC1,   // MBC1 (max 2MByte ROM and/or 32KByte RAM)
-        MBC2,   // MBC2 (max 256KByte ROM and 512x4 bits RAM)
-        MBC3,   // MBC3 (max 2MByte ROM and/or 64KByte RAM and Timer)
-        MBC5,   // MBC5 (max 8MByte ROM and/or 128KByte RAM)
-        Unknow  // Unknow MBC
-      };
-
-      struct {
-      } none; // No MBC
-
-      struct {
-        std::uint8_t  enable; // RAM enable flag (0x0A to enable)
-        std::uint8_t  bank;   // RAM & ROM bank number, ROM bits 4-3-2-1-0, RAM/ROM upper bits 5-6, Mode bits 7
-      } mbc1; // MBC1
-
-      struct {
-        std::uint8_t  enable; // RAM enable flag (0x0A to enable)
-        std::uint8_t  bank;   // ROM bank number, bits 3-2-1-0
-      } mbc2; // MBC2
-
-      struct {
-        std::uint8_t  enable; // RAM and RTC Register enable flag (0x0A to enable)
-        std::uint8_t  rom;    // ROM bank number (7 bits)
-        std::uint8_t  ram;    // RAM bank number / RTC Register select
-        std::uint8_t  latch;  // Latch Clock Data
-        std::uint8_t  halt;   // Stop flag of clock (0=Active, 1=Stop Timer)
-        std::uint64_t rtc;    // Latched Real Time Clock registers
-        std::uint64_t time;   // Current time
-      } mbc3; // MBC3
-
-      struct {
-        std::uint8_t  enable; // RAM enable flag (0x0A to enable)
-        std::uint16_t rom;    // ROM bank number (9 bits)
-        std::uint8_t  ram;    // RAM bank number, rumble on bit 3
-      } mbc5; // MBC5
-
-      // TODO: other MBC
-    };
+    
 
     struct Header
     {
+      enum MBC
+      {
+        MBCNone,  // None (32KByte ROM only)
+        MBC1,     // MBC1 (max 2MByte ROM and/or 32KByte RAM)
+        MBC2,     // MBC2 (max 256KByte ROM and 512x4 bits RAM)
+        MBC3,     // MBC3 (max 2MByte ROM and/or 64KByte RAM and Timer)
+        MBC5,     // MBC5 (max 8MByte ROM and/or 128KByte RAM)
+      };
+
       enum CGBFlag
       {
         CGBSupport, // Game supports CGB functions, but works on old gameboys also.
@@ -88,19 +55,19 @@ namespace GBC
         RegionUnknow  // Unknow region
       };
 
-      bool                        logo;             // False if unofficial logo
-      std::string                 title;            // Name of the game
-      std::string                 manufacturer;     // Manufacturer code (newer cartridges only)
-      Header::CGBFlag             cgb;              // CGB support flag
-      std::uint16_t               licensee;         // Licensee Code
-      Header::SGBFlag             sgb;              // Support of the SGB functions
-      MemoryBankController::Type  mbc;              // Memory Bank Controller format
-      std::size_t                 rom_size;         // Size of ROM
-      std::size_t                 ram_size;         // Size of RAM
-      Header::Region              region;           // Game region
-      std::uint8_t                version;          // Specifies the version number of the game
-      bool                        header_checksum;  // Checksum of the ROM header
-      bool                        global_checksum;  // Global checksum of the ROM
+      bool            logo;             // False if unofficial logo
+      std::string     title;            // Name of the game
+      std::string     manufacturer;     // Manufacturer code (newer cartridges only)
+      Header::CGBFlag cgb;              // CGB support flag
+      std::uint16_t   licensee;         // Licensee Code
+      Header::SGBFlag sgb;              // Support of the SGB functions
+      Header::MBC     mbc;              // Memory Bank Controller format
+      std::size_t     rom_size;         // Size of ROM
+      std::size_t     ram_size;         // Size of RAM
+      Header::Region  region;           // Game region
+      std::uint8_t    version;          // Specifies the version number of the game
+      bool            header_checksum;  // Checksum of the ROM header
+      bool            global_checksum;  // Global checksum of the ROM
     };
 
     union Register
@@ -284,7 +251,6 @@ namespace GBC
     static const std::array<GBC::GameBoyColor::Instruction, 256>  _instructions;    // Processor instructions by OP code (8 bits)
     static const std::array<GBC::GameBoyColor::Instruction, 256>  _instructionsCB;  // Processor 2 bytes instructions (CB) by OP code (8 bits)
 
-
     void  instructionAdd(std::uint8_t left, std::uint8_t right, std::uint8_t carry, std::uint8_t& result);
     void  instructionAdd(std::uint16_t left, std::uint16_t right, std::uint16_t& result);
     void  instructionSub(std::uint8_t left, std::uint8_t right, std::uint8_t carry, std::uint8_t& result);
@@ -325,18 +291,17 @@ namespace GBC
       CPUStop = CPUHalt   // Same as Halt, turn-off display (NOTE: handled as a simple HALT)
     };
 
-    std::string                         _path;      // Path of the ROM
-    std::vector<std::uint8_t>           _boot;      // Bootstrap sequence memory
-    std::vector<std::uint8_t>           _rom;       // Raw ROM memory
-    std::array<std::uint8_t, 16 * 1024> _vRam;      // Raw Video RAM memory
-    std::vector<std::uint8_t>           _eRam;      // Raw External RAM memory
-    std::array<std::uint8_t, 32 * 1024> _wRam;      // Raw Work RAM memory
-    std::array<std::uint8_t, 160>       _oam;       // Sprite (Obj) Attribute Table
-    std::array<std::uint8_t, 128>       _io;        // IO registers
-    std::array<std::uint8_t, 127>       _hRam;      // Raw High RAM memory
-    std::uint8_t                        _ie;        // Interrupt Enable register
-    std::array<std::uint8_t, 64>        _bgcRam;    // Background color RAM (CGB mode only)
-    std::array<std::uint8_t, 64>        _obcRam;    // OBJ color RAM (CGB mode only)
+    std::string                                 _path;    // Path of the ROM
+    std::vector<std::uint8_t>                   _boot;    // Bootstrap sequence memory
+    std::unique_ptr<GBC::MemoryBankController>  _mbc;     // Cartridge's Memory Bank Controller
+    std::array<std::uint8_t, 16 * 1024>         _vRam;    // Raw Video RAM memory
+    std::array<std::uint8_t, 32 * 1024>         _wRam;    // Raw Work RAM memory
+    std::array<std::uint8_t, 160>               _oam;     // Sprite (Obj) Attribute Table
+    std::array<std::uint8_t, 128>               _io;      // IO registers
+    std::array<std::uint8_t, 127>               _hRam;    // Raw High RAM memory
+    std::uint8_t                                _ie;      // Interrupt Enable register
+    std::array<std::uint8_t, 64>                _bgcRam;  // Background color RAM (CGB mode only)
+    std::array<std::uint8_t, 64>                _obcRam;  // OBJ color RAM (CGB mode only)
     
     GameBoyColor::CPU _cpu; // Current CPU state
     GameBoyColor::IME _ime; // Interrupt Master Enable
@@ -354,8 +319,6 @@ namespace GBC
     GameBoyColor::Register  _rHL; // HL register
     GameBoyColor::Register  _rSP; // SP register (stack pointer)
     GameBoyColor::Register  _rPC; // PC register (program counter / pointer)
-
-    GameBoyColor::MemoryBankController  _mbc;
 
     struct {
       float frequencyTime;      // NR10 - Time between frequency steps (seconds)
@@ -425,7 +388,7 @@ namespace GBC
 
     void  load(const std::string& filename);                                              // Load a new ROM in memory
     void  loadFile(const std::string& filename, std::vector<std::uint8_t>& destination);  // Load file to vector
-    void  loadHeader();                                                                   // Get header data
+    void  loadHeader(const std::vector<uint8_t>& rom);                                    // Get header data
     
     std::uint8_t  read(std::uint16_t addr);     // Read one byte from memory
     std::uint8_t  readRom(std::uint16_t addr);  // Read one byte from ROM
@@ -482,12 +445,9 @@ namespace GBC
     void  simulateAudio();          // Update audio for one frame (4 * 1024 * 1024 cycles)
     void  simulateTimer();          // Update 4 CPU cycle of TIMA/TMA/DIV timer registers
 
-    void  loadEram(); // Load External RAM from path+.gbs file
-    void  saveEram(); // Save External RAM to path+.gbs file
-
   public:
     GameBoyColor(const std::string& filename);
-    ~GameBoyColor();
+    ~GameBoyColor() = default;
 
     void                                                                simulate();     // Simulate a frame
     const sf::Image&                                                    screen() const; // Get current LCD frame
