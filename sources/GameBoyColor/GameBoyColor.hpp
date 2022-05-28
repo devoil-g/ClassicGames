@@ -9,12 +9,16 @@
 
 #include <SFML/Graphics/Image.hpp>
 
+#include "GameBoyColor/CentralProcessingUnit.hpp"
 #include "GameBoyColor/MemoryBankController.hpp"
 
 namespace GBC
 {
   class GameBoyColor
   {
+    friend GBC::CentralProcessingUnit;
+    friend GBC::MemoryBankController;
+
   public:
     static const std::size_t  SoundSampleRate = 44100;                                            // Sample rate of sound
     static const std::size_t  SoundFrameSize = SoundSampleRate * (456 * 154) / (4 * 1024 * 1024); // Number of sample in each frame of sound
@@ -22,8 +26,6 @@ namespace GBC
     static const std::size_t  SoundBufferSize = SoundFrameSize * SoundChannelCount;               // Size of a sound buffer
 
   private:
-    
-
     struct Header
     {
       enum MBC
@@ -68,28 +70,6 @@ namespace GBC
       std::uint8_t    version;          // Specifies the version number of the game
       bool            header_checksum;  // Checksum of the ROM header
       bool            global_checksum;  // Global checksum of the ROM
-    };
-
-    union Register
-    {
-      enum
-      {
-        Lo = 0, // Access lower 8 bits of register
-        Hi = 1  // Access higher 8 bits of register
-      };
-
-      enum
-      {
-        Z = 0b10000000, // Zero, set when the result of a math operation is zero or two values match when using CP
-        N = 0b01000000, // Subtract, set if a subtraction was performed in the last math instruction
-        H = 0b00100000, // Half carry, set if a carry occurred from the lower nibble in the last math operation
-        C = 0b00010000  // Carry, set if a carry occurred from the last math operation or if register A is the smaller value when executing the CP instruction
-      };
-
-      std::uint16_t               u16;  // Unsigned 16 bits value
-      std::int16_t                s16;  // Signed 16 bits value
-      std::array<std::uint8_t, 2> u8;   // Low/High unsigned 8 bits value
-      std::array<std::int8_t, 2>  s8;   // Low/High signed 8 bits value
     };
 
     enum Interrupt  // Used by 0xFFFF IE (Interrupt Enable) & 0xFF0F IF (Interrupt Flag)
@@ -242,57 +222,9 @@ namespace GBC
       SpriteAttributesPaletteCgb = 0b00000111     // Palette in CGB mode (OBP0-7)
     };
 
-    struct Instruction
-    {
-      std::string_view                            description;  // Description of the instruction
-      std::function<void(GBC::GameBoyColor& gbc)> instruction;  // Code to execute
-    };
-
-    static const std::array<GBC::GameBoyColor::Instruction, 256>  _instructions;    // Processor instructions by OP code (8 bits)
-    static const std::array<GBC::GameBoyColor::Instruction, 256>  _instructionsCB;  // Processor 2 bytes instructions (CB) by OP code (8 bits)
-
-    void  instructionAdd(std::uint8_t left, std::uint8_t right, std::uint8_t carry, std::uint8_t& result);
-    void  instructionAdd(std::uint16_t left, std::uint16_t right, std::uint16_t& result);
-    void  instructionSub(std::uint8_t left, std::uint8_t right, std::uint8_t carry, std::uint8_t& result);
-    void  instructionCp(std::uint8_t left, std::uint8_t right);
-    void  instructionInc(std::uint8_t& value);
-    void  instructionDec(std::uint8_t& value);
-    void  instructionAnd(std::uint8_t left, std::uint8_t right, std::uint8_t& result);
-    void  instructionOr(std::uint8_t left, std::uint8_t right, std::uint8_t& result);
-    void  instructionXor(std::uint8_t left, std::uint8_t right, std::uint8_t& result);
-    void  instructionRlc(std::uint8_t& value);
-    void  instructionRrc(std::uint8_t& value);
-    void  instructionRl(std::uint8_t& value);
-    void  instructionRr(std::uint8_t& value);
-    void  instructionSla(std::uint8_t& value);
-    void  instructionSra(std::uint8_t& value);
-    void  instructionSwap(std::uint8_t& value);
-    void  instructionSrl(std::uint8_t& value);
-    void  instructionPush(std::uint16_t value);
-    void  instructionPop(std::uint16_t& result);
-    void  instructionCall(std::uint16_t addr, std::uint16_t ret);
-    void  instructionRet();
-
-    template <unsigned int Bit>
-    void  instructionBit(std::uint8_t value)
-    {
-      if (value & (0b00000001 << Bit))
-        _rAF.u8[Register::Lo] &= ~Register::Z;
-      else
-        _rAF.u8[Register::Lo] |= Register::Z;
-      _rAF.u8[Register::Lo] &= ~Register::N;
-      _rAF.u8[Register::Lo] |= Register::H;
-    }
-
-    enum CPU
-    {
-      CPURun,             // Running CPU instructions
-      CPUHalt,            // Stop CPU waiting for events
-      CPUStop = CPUHalt   // Same as Halt, turn-off display (NOTE: handled as a simple HALT)
-    };
-
     std::string                                 _path;    // Path of the ROM
     std::vector<std::uint8_t>                   _boot;    // Bootstrap sequence memory
+    GBC::CentralProcessingUnit                  _cpu;
     std::unique_ptr<GBC::MemoryBankController>  _mbc;     // Cartridge's Memory Bank Controller
     std::array<std::uint8_t, 16 * 1024>         _vRam;    // Raw Video RAM memory
     std::array<std::uint8_t, 32 * 1024>         _wRam;    // Raw Work RAM memory
@@ -303,22 +235,12 @@ namespace GBC
     std::array<std::uint8_t, 64>                _bgcRam;  // Background color RAM (CGB mode only)
     std::array<std::uint8_t, 64>                _obcRam;  // OBJ color RAM (CGB mode only)
     
-    GameBoyColor::CPU _cpu; // Current CPU state
-    GameBoyColor::IME _ime; // Interrupt Master Enable
-
     std::uint64_t           _cpuCycle;  // Number of CPU cycle since boot
     std::uint64_t           _ppuCycle;  // Number of PPU cycle since last frame
     std::list<std::uint8_t> _ppuObj;    // OBJ index of sprite to be drawn on the current line
     sf::Image               _ppuLcd;    // Image representing the LCD Screen
 
-    GameBoyColor::Header  _header;  // Main info of the RAM
-
-    GameBoyColor::Register  _rAF; // AF register (accumulator + flags)
-    GameBoyColor::Register  _rBC; // BC register
-    GameBoyColor::Register  _rDE; // DE register
-    GameBoyColor::Register  _rHL; // HL register
-    GameBoyColor::Register  _rSP; // SP register (stack pointer)
-    GameBoyColor::Register  _rPC; // PC register (program counter / pointer)
+    GBC::GameBoyColor::Header _header;  // Main info of the RAM
 
     struct {
       float frequencyTime;      // NR10 - Time between frequency steps (seconds)
@@ -389,11 +311,10 @@ namespace GBC
     void  load(const std::string& filename);                                              // Load a new ROM in memory
     void  loadFile(const std::string& filename, std::vector<std::uint8_t>& destination);  // Load file to vector
     void  loadHeader(const std::vector<uint8_t>& rom);                                    // Get header data
-    
+
     std::uint8_t  read(std::uint16_t addr);     // Read one byte from memory
     std::uint8_t  readRom(std::uint16_t addr);  // Read one byte from ROM
     std::uint8_t  readVRam(std::uint16_t addr); // Read one byte from VRAM
-    std::uint8_t  readERam(std::uint16_t addr); // Read one byte from ERAM
     std::uint8_t  readWRam(std::uint16_t addr); // Read one byte from WRAM
     std::uint8_t  readOam(std::uint16_t addr);  // Read one byte from Obj Attribute Table
     std::uint8_t  readIo(std::uint16_t addr);   // Read one byte from IO register
@@ -415,9 +336,7 @@ namespace GBC
     }
 
     void  write(std::uint16_t addr, std::uint8_t value);      // Write one byte to memory
-    void  writeRom(std::uint16_t addr, std::uint8_t value);   // Write one byte to ROM
     void  writeVRam(std::uint16_t addr, std::uint8_t value);  // Write one byte to VRAM
-    void  writeERam(std::uint16_t addr, std::uint8_t value);  // Write one byte to ERAM
     void  writeWRam(std::uint16_t addr, std::uint8_t value);  // Write one byte to WRAM
     void  writeOam(std::uint16_t addr, std::uint8_t value);   // Write one byte to Obj Attribute Table
     void  writeIo(std::uint16_t addr, std::uint8_t value);    // Write one byte to IO register
@@ -436,9 +355,7 @@ namespace GBC
         write(addr + index, input.data[index]);
     }
 
-    void  simulateKeys();         // Handle keys
-    void  simulateInterrupt();      // Detect interrupt
-    void  simulateInstruction();    // Run an instruction
+    void  simulateKeys();           // Handle keys
     void  simulateGraphics();       // Update 4 CPU cycles of graphics
     void  simulateGraphicsMode2();  // Search OAM for OBJs that overlap current line
     void  simulateGraphicsMode3();  // Generate the picture

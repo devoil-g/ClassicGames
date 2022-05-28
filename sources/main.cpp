@@ -8,9 +8,6 @@
 #include "System/Window.hpp"
 #include "System/Audio/Sound.hpp"
 
-#include "Scenes/MidiScene.hpp"
-#include "GameBoyColor/EmulationScene.hpp"
-
 #ifdef _WIN32
 # include <windows.h>
 #else
