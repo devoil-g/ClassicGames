@@ -655,26 +655,28 @@ void  GBC::CentralProcessingUnit::simulateInterrupt()
         handler += 0x0008;
 
       // Call interrupt handler
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rSP.u16 -= 1;
-      });
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.high);
-        cpu._rSP.u16 -= 1;
-      });
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.low);
-      });
-      _instructions.push([=](GBC::CentralProcessingUnit& cpu) {
-        cpu._rPC.u16 = handler;
+      _instructions = GBC::CentralProcessingUnit::Instructions({
+        [](GBC::CentralProcessingUnit& cpu) {},
+        [](GBC::CentralProcessingUnit& cpu) {
+          cpu._rSP.u16 -= 1;
+        },
+        [](GBC::CentralProcessingUnit& cpu) {
+          cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.high);
+          cpu._rSP.u16 -= 1;
+        },
+        [](GBC::CentralProcessingUnit& cpu) {
+          cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.low);
+        },
+        [=](GBC::CentralProcessingUnit& cpu) {
+          cpu._rPC.u16 = handler;
+        }
       });
     }
 
     // Resume execution after an interrupt
     _status = Status::StatusRun;
 
-    return;
+    break;
   }
 }
 
@@ -2137,7 +2139,7 @@ GBC::CentralProcessingUnit::Instructions  GBC::CentralProcessingUnit::instructio
       cpu.setFlag<Register::C>((std::uint32_t)left + (std::uint32_t)right > 0b1111111111111111);
     },
     [](GBC::CentralProcessingUnit& cpu) {}
-    });
+  });
 }
 
 GBC::CentralProcessingUnit::Instructions  GBC::CentralProcessingUnit::instruction_ADD_SP_n()
@@ -2159,7 +2161,7 @@ GBC::CentralProcessingUnit::Instructions  GBC::CentralProcessingUnit::instructio
       cpu.setFlag<Register::C>((sp & 0b11111111) + (n & 0b11111111) > 0b11111111);
     },
     [](GBC::CentralProcessingUnit& cpu) {}
-    });
+  });
 }
 
 GBC::CentralProcessingUnit::Instructions  GBC::CentralProcessingUnit::instruction_LD_rr_nn(Register& reg16)

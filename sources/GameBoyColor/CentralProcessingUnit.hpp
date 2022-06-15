@@ -283,6 +283,6 @@ namespace GBC
     CentralProcessingUnit(GBC::GameBoyColor& gbc);
     ~CentralProcessingUnit() = default;
 
-    void  simulate(); // Simulate a tick of the CPU
+    void  simulate(); // Simulate 4 clock ticks / 1 CPU tick of the CPU
   };
 }

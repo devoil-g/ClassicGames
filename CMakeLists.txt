@@ -119,6 +119,8 @@ SET(GAME_GBC_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/MemoryBankController3.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/MemoryBankController5.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/MemoryBankController5.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/PixelProcessingUnit.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/PixelProcessingUnit.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/SelectionScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/SelectionScene.cpp
 )

@@ -11,6 +11,7 @@
 
 #include "GameBoyColor/CentralProcessingUnit.hpp"
 #include "GameBoyColor/MemoryBankController.hpp"
+#include "GameBoyColor/PixelProcessingUnit.hpp"
 
 namespace GBC
 {
@@ -18,6 +19,7 @@ namespace GBC
   {
     friend GBC::CentralProcessingUnit;
     friend GBC::MemoryBankController;
+    friend GBC::PixelProcessingUnit;
 
   public:
     static const std::size_t  SoundSampleRate = 44100;                                            // Sample rate of sound
@@ -180,68 +182,18 @@ namespace GBC
       IMEScheduled  // Enable interrupt after next instruction
     };
 
-    enum LcdControl
-    {
-      LcdControlEnable = 0b10000000,                  // LCD and PPU enable (0=Off, 1=On)
-      LcdControlWindowTilemap = 0b01000000,           // Window tilemap area (0=9800-9BFF, 1=9C00-9FFF)
-      LcdControlWindowEnable = 0b00100000,            // Window enable (0=Off, 1=On)
-      LcdControlData = 0b00010000,                    // Background and Window tile data area (0=8800-97FF, 1=8000-8FFF)
-      LcdControlBackgroundTilemap = 0b00001000,       // Background tilemap area (0=9800-9BFF, 1=9C00-9FFF)
-      LcdControlObjSize = 0b00000100,                 // OBJ size (0=8x8, 1=8x16)
-      LcdControlObjEnable = 0b00000010,               // OBJ enable (0=Off, 1=On)
-      LcdControlWindowBackgroundEnable = 0b00000001,  // Background and Window enable (0=Off, 1=On), non-CGB mode only
-      LcdControlPriority = 0b00000001,                // Background and Window Master Priority (0=Off, 1=On), CGB mode only
-    };
-
-    enum LcdStatus
-    {
-      LcdStatusCompare = 0b01000000,  // LYC=LY STAT Interrupt source (1: Enable) (Read/Write)
-      LcdStatusMode2 = 0b00100000,    // Mode 2 OAM STAT Interrupt source (1: Enable) (Read/Write)
-      LcdStatusMode1 = 0b00010000,    // Mode 1 VBlank STAT Interrupt source (1: Enable) (Read/Write)
-      LcdStatusMode0 = 0b00001000,    // Mode 0 HBlank STAT Interrupt source (1: Enable) (Read/Write)
-      LcdStatusEqual = 0b00000100,    // LYC=LY Flag (0: Different, 1: Equal) (Read Only)
-      LcdStatusMode = 0b00000011      // Mode Flag (0: HBlank, 1: VBlank, 2: Searching OAM, 3: Transferring Data to LCD Controller) (Read Only)
-    };
-
-    enum BackgroundAttributes
-    {
-      BackgroundAttributesPriority = 0b10000000,  // Background priority when set
-      BackgroundAttributesYFlip = 0b01000000,     // Vertical flip (0=Normal, 1=Vertically mirrored)
-      BackgroundAttributesXFlip = 0b00100000,     // Horitontal flip (0=Normal, 1=Horizontally mirrored)
-      BackgroundAttributesBank = 0b00001000,      // VRAM bank in CBG mode (0=Bank 0, 1=Bank 1)
-      BackgroundAttributesPalette = 0b00000111    // Palette in CGB mode (BGP0-7)
-    };
-
-    enum SpriteAttributes
-    {
-      SpriteAttributesOverObj = 0b10000000,       // BG and Window over OBJ (0=No, 1=BG and Window colors 1-3 over the OBJ)
-      SpriteAttributesYFlip = 0b01000000,         // Vertical flip (0=Normal, 1=Vertically mirrored)
-      SpriteAttributesXFlip = 0b00100000,         // Horitontal flip (0=Normal, 1=Horizontally mirrored)
-      SpriteAttributesPaletteNonCgb = 0b00010000, // Palette in non-CGB mode (0=OBP0, 1=OBP1)
-      SpriteAttributesBank = 0b00001000,          // VRAM bank in CBG mode (0=Bank 0, 1=Bank 1)
-      SpriteAttributesPaletteCgb = 0b00000111     // Palette in CGB mode (OBP0-7)
-    };
-
+    GBC::GameBoyColor::Header                   _header;  // Main info of the ROM
     std::string                                 _path;    // Path of the ROM
     std::vector<std::uint8_t>                   _boot;    // Bootstrap sequence memory
-    GBC::CentralProcessingUnit                  _cpu;
+    std::size_t                                 _cycles;  // Number of CPU cycle since boot
+    GBC::CentralProcessingUnit                  _cpu;     // Central Processing Unit
+    GBC::PixelProcessingUnit                    _ppu;     // Pixel Processing Unit
     std::unique_ptr<GBC::MemoryBankController>  _mbc;     // Cartridge's Memory Bank Controller
-    std::array<std::uint8_t, 16 * 1024>         _vRam;    // Raw Video RAM memory
     std::array<std::uint8_t, 32 * 1024>         _wRam;    // Raw Work RAM memory
-    std::array<std::uint8_t, 160>               _oam;     // Sprite (Obj) Attribute Table
     std::array<std::uint8_t, 128>               _io;      // IO registers
     std::array<std::uint8_t, 127>               _hRam;    // Raw High RAM memory
     std::uint8_t                                _ie;      // Interrupt Enable register
-    std::array<std::uint8_t, 64>                _bgcRam;  // Background color RAM (CGB mode only)
-    std::array<std::uint8_t, 64>                _obcRam;  // OBJ color RAM (CGB mode only)
     
-    std::uint64_t           _cpuCycle;  // Number of CPU cycle since boot
-    std::uint64_t           _ppuCycle;  // Number of PPU cycle since last frame
-    std::list<std::uint8_t> _ppuObj;    // OBJ index of sprite to be drawn on the current line
-    sf::Image               _ppuLcd;    // Image representing the LCD Screen
-
-    GBC::GameBoyColor::Header _header;  // Main info of the RAM
-
     struct {
       float frequencyTime;      // NR10 - Time between frequency steps (seconds)
       bool  frequencyDirection; // NR10 - Direction of frequency sweep (false: addition, true: subtraction)
@@ -313,52 +265,16 @@ namespace GBC
     void  loadHeader(const std::vector<uint8_t>& rom);                                    // Get header data
 
     std::uint8_t  read(std::uint16_t addr);     // Read one byte from memory
-    std::uint8_t  readRom(std::uint16_t addr);  // Read one byte from ROM
-    std::uint8_t  readVRam(std::uint16_t addr); // Read one byte from VRAM
     std::uint8_t  readWRam(std::uint16_t addr); // Read one byte from WRAM
-    std::uint8_t  readOam(std::uint16_t addr);  // Read one byte from Obj Attribute Table
     std::uint8_t  readIo(std::uint16_t addr);   // Read one byte from IO register
     std::uint8_t  readHRam(std::uint16_t addr); // Read one byte from HRAM
     
-    template<typename Type>
-    Type  read(std::uint16_t addr)
-    {
-      union {
-        Type                                    value;
-        std::array<std::uint8_t, sizeof(Type)>  data;
-      } output = { .value = 0 };
-      
-      // Extract each byte individually
-      for (unsigned int index = 0; index < output.data.size(); index++)
-        output.data[index] = read(addr + index);
-      
-      return output.value;
-    }
-
     void  write(std::uint16_t addr, std::uint8_t value);      // Write one byte to memory
-    void  writeVRam(std::uint16_t addr, std::uint8_t value);  // Write one byte to VRAM
     void  writeWRam(std::uint16_t addr, std::uint8_t value);  // Write one byte to WRAM
-    void  writeOam(std::uint16_t addr, std::uint8_t value);   // Write one byte to Obj Attribute Table
     void  writeIo(std::uint16_t addr, std::uint8_t value);    // Write one byte to IO register
     void  writeHRam(std::uint16_t addr, std::uint8_t value);  // Write one byte to HRAM
 
-    template<typename Type>
-    void  write(std::uint16_t addr, Type value)
-    {
-      union {
-        Type                                    value;
-        std::array<std::uint8_t, sizeof(Type)>  data;
-      } input = { .value = value };
-      
-      // Write each byte individually
-      for (unsigned int index = 0; index < input.data.size(); index++)
-        write(addr + index, input.data[index]);
-    }
-
     void  simulateKeys();           // Handle keys
-    void  simulateGraphics();       // Update 4 CPU cycles of graphics
-    void  simulateGraphicsMode2();  // Search OAM for OBJs that overlap current line
-    void  simulateGraphicsMode3();  // Generate the picture
     void  simulateAudio();          // Update audio for one frame (4 * 1024 * 1024 cycles)
     void  simulateTimer();          // Update 4 CPU cycle of TIMA/TMA/DIV timer registers
 
@@ -367,7 +283,7 @@ namespace GBC
     ~GameBoyColor() = default;
 
     void                                                                simulate();     // Simulate a frame
-    const sf::Image&                                                    screen() const; // Get current LCD frame
+    const sf::Texture&                                                  lcd() const;    // Get rendering target
     const std::array<std::int16_t, GBC::GameBoyColor::SoundBufferSize>& sound() const;  // Get current sound frame
     const GBC::GameBoyColor::Header&                                    header() const; // Get game header
   };

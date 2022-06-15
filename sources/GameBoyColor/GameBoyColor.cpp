@@ -16,38 +16,25 @@
 #include <chrono>
 
 GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
+  _header(),
   _path(filename),
   _boot(),
+  _cycles(0),
   _cpu(*this),
+  _ppu(*this),
   _mbc(),
-  _vRam(),
   _wRam(),
-  _oam(),
   _io(),
   _hRam(),
-  _ie(0),
-  _bgcRam(),
-  _obcRam(),
-  _cpuCycle(0),
-  _ppuCycle(0),
-  _ppuObj(),
-  _ppuLcd(),
-  _header()
+  _ie(0)
 {
-  // Set screen size and initial color
-  _ppuLcd.create(160, 144, sf::Color::White);
-
   // Load ROM
   load(filename);
 
   // Initialize memory banks
-  _vRam.fill(0);
   _wRam.fill(0);
-  _oam.fill(0);
   _io.fill(0);
   _hRam.fill(0);
-  _bgcRam.fill(0);
-  _obcRam.fill(0);
 
   // Initialize Joypad
   _io[IO::JOYP] = 0b11111111;
@@ -323,26 +310,25 @@ void  GBC::GameBoyColor::loadHeader(const std::vector<uint8_t>& rom)
 
 void  GBC::GameBoyColor::simulate()
 {
-  std::uint64_t frame = _ppuCycle / (456 * 154);
-  std::uint64_t cycle = _cpuCycle;
-  std::uint64_t second = _cpuCycle / (4 * 1024 * 1024);
+  std::uint64_t frame = _cycles / (GBC::PixelProcessingUnit::ScanlineDuration * (GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank));
+  std::uint64_t cycles = _cycles;
 
   // Simulate Joypad
   simulateKeys();
 
   // Execution loop
-  while (frame == _ppuCycle / (456 * 154))
+  while (frame == _cycles / (GBC::PixelProcessingUnit::ScanlineDuration * (GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank)))
   {
     // Simulate a tick of the CPU
     _cpu.simulate();
-    _cpuCycle += 4;
+    _cycles += (_io[IO::KEY1] & 0b10000000) ? 2 : 4;
 
-    // Update graphics and timer for the number of cycle executed
-    for (; cycle < _cpuCycle; cycle += 4) {
-      simulateTimer();
-      if (cycle % ((_io[IO::KEY1] & 0b10000000) ? 8 : 4) == 0)
-        simulateGraphics();
-    }
+    // Update timer
+    simulateTimer();
+
+    // Update Pixel Processing Unit
+    for (; cycles < _cycles; cycles += 1)
+      _ppu.simulate();
   }
 
   // Update audio for one frame
@@ -378,286 +364,6 @@ void  GBC::GameBoyColor::simulateKeys()
 
   // Save new key map
   _keys = keys;
-}
-
-void  GBC::GameBoyColor::simulateGraphics()
-{
-  // Only render lines 0 to 143
-  if (_io[IO::LY] < 144)
-  {
-    // Search OAM for OBJs that overlap current line
-    if (_ppuCycle % 456 == 0) {
-      simulateGraphicsMode2();
-
-      // STAT mode 2 (OAM) interrupt
-      if (_io[IO::STAT] & LcdStatus::LcdStatusMode2)
-        _io[IO::IF] |= Interrupt::InterruptLcdStat;
-    }
-
-    // Generate the picture
-    else if (_ppuCycle % 456 == 80)
-      simulateGraphicsMode3();
-
-    // Trigger HBlank
-    else if (_ppuCycle % 456 == 252)
-    {
-      // Set LCD status mode 0
-      _io[IO::STAT] = (_io[IO::STAT] & ~LcdStatus::LcdStatusMode) | 0b00000000;
-
-      // STAT mode 0 (HBlank) interrupt
-      if (_io[IO::STAT] & LcdStatus::LcdStatusMode0)
-        _io[IO::IF] |= Interrupt::InterruptLcdStat;
-    }
-  }
-
-  // Trigger VBlank
-  else if (_io[IO::LY] == 144 && _ppuCycle % 456 == 0) {
-    // Set LCD status mode 1
-    _io[IO::STAT] = (_io[IO::STAT] & ~LcdStatus::LcdStatusMode) | 0b00000001;
-
-    // VBlank interrupt
-    _io[IO::IF] |= Interrupt::InterruptVBlank;
-
-    // STAT mode 2 (VBlank) interrupt
-    if (_io[IO::STAT] & LcdStatus::LcdStatusMode1)
-      _io[IO::IF] |= Interrupt::InterruptLcdStat;
-  }
-  
-  // Next line
-  if (_ppuCycle % 456 == 452)
-  {
-    // Increment to next line
-    _io[IO::LY] += 1;
-    
-    // Limit to 144 + 10 lines
-    if (_io[IO::LY] >= 144 + 10)
-      _io[IO::LY] = 0;
-
-    // LY / LCY register comparison
-    if (_io[IO::LY] == _io[IO::LYC]) {
-      _io[IO::STAT] |= LcdStatus::LcdStatusEqual;
-
-      // STAT compare (LY/LYC) interrupt
-      if (_io[IO::STAT] & LcdStatus::LcdStatusCompare)
-        _io[IO::IF] |= Interrupt::InterruptLcdStat;
-    }
-    else
-      _io[IO::STAT] &= ~LcdStatus::LcdStatusEqual;
-  }
-
-  // Advance in PPU simulation
-  _ppuCycle += 4;
-}
-
-void  GBC::GameBoyColor::simulateGraphicsMode2()
-{
-  // Set LCD status mode 2
-  _io[IO::STAT] = (_io[IO::STAT] & ~LcdStatus::LcdStatusMode) | 0b00000010;
-
-  // Clear OBJ list
-  _ppuObj.clear();
-
-  // Push Y matching OBJ in order
-  for (std::uint8_t index = 0; index < _oam.size() / 4; index++)
-    if (_oam[index * 4 + 0] <= _io[IO::LY] + 16 && _oam[index * 4 + 0] + ((_io[IO::LCDC] & LcdControl::LcdControlObjSize) ? 16 : 8) > _io[IO::LY] + 16)
-      _ppuObj.push_back(index);
-
-  // Limit to 10 OBJ
-  if (_ppuObj.size() > 10)
-    _ppuObj.erase(std::next(_ppuObj.begin(), 10), _ppuObj.end());
-
-  // In non-CGB mode, OBJ draw priority depends on its X position
-  if ((_io[IO::OPRI] & 0b00000001) || (_io[IO::KEY0] & 0b00001100))
-    _ppuObj.sort([this](const auto& a, const auto& b) { return _oam[a * 4 + 1] < _oam[b * 4 + 1]; });
-}
-
-void  GBC::GameBoyColor::simulateGraphicsMode3()
-{
-  // Set LCD status mode 3
-  _io[IO::STAT] = (_io[IO::STAT] & ~LcdStatus::LcdStatusMode) | 0b00000011;
-
-  // White screen if LCD disabled
-  if (!(_io[IO::LCDC] & LcdControl::LcdControlEnable)) {
-    std::memset((std::uint8_t*)_ppuLcd.getPixelsPtr(), 0xFF, _ppuLcd.getSize().x * _ppuLcd.getSize().y * 4);
-    return;
-  }
-
-  std::uint8_t  sc_y = _io[IO::LY];
-  std::uint8_t  bg_y = sc_y + _io[IO::SCY];
-  std::uint8_t  wn_y = sc_y - _io[IO::WY];
-
-  for (std::uint8_t sc_x = 0; sc_x < _ppuLcd.getSize().x; sc_x++)
-  {
-    std::uint8_t  bg_color_id = 255, bg_attributes = 0, bg_color_r, bg_color_g, bg_color_b;
-    std::uint8_t  sp_color_id = 255, sp_attributes = 0, sp_color_r, sp_color_g, sp_color_b;
-
-    // Window
-    if ((!(_io[IO::KEY0] & 0b00001100) || (_io[IO::LCDC] & LcdControl::LcdControlWindowBackgroundEnable)) &&
-      (_io[IO::LCDC] & LcdControl::LcdControlWindowEnable) &&
-      (sc_x + 7 >= _io[IO::WX]) &&
-      (sc_y >= _io[IO::WY]))
-    {
-      std::uint8_t  wn_x = sc_x - _io[IO::WX] + 7;
-      std::uint16_t wn_tilemap = (_io[IO::LCDC] & LcdControl::LcdControlWindowTilemap) ? 0x1C00 : 0x1800;
-      std::uint16_t wn_tilemap_id = (((std::uint16_t)wn_y / 8) * 32) + ((std::uint16_t)wn_x / 8);
-      bg_attributes = _vRam[wn_tilemap + wn_tilemap_id + 0x2000];
-      std::uint8_t  wn_tile_id = _vRam[wn_tilemap + wn_tilemap_id];
-      std::uint16_t wn_tile_index = ((std::uint16_t)wn_tile_id * 16)
-        + ((_io[IO::LCDC] & LcdControl::LcdControlData) ?
-          0x0000 :
-          ((wn_tile_id < 128) ? 0x1000 : 0x0000))
-        + ((bg_attributes & BackgroundAttributes::BackgroundAttributesBank) ?
-          0x2000 :
-          0x0000);
-
-      // Flip tile coordinates
-      std::uint8_t  wn_tile_x = (bg_attributes & BackgroundAttributes::BackgroundAttributesXFlip) ? ((8 - 1) - wn_x % 8) : (wn_x % 8);
-      std::uint8_t  wn_tile_y = (bg_attributes & BackgroundAttributes::BackgroundAttributesYFlip) ? ((8 - 1) - wn_y % 8) : (wn_y % 8);
-
-      bg_color_id =
-        ((_vRam[wn_tile_index + (wn_tile_y % 8) * 2 + 0] & (0b10000000 >> (wn_tile_x % 8))) ? 1 : 0) +
-        ((_vRam[wn_tile_index + (wn_tile_y % 8) * 2 + 1] & (0b10000000 >> (wn_tile_x % 8))) ? 2 : 0);
-
-      // DMG color palette
-      if (_io[IO::KEY0] & 0b00001100)
-        bg_color_id = (_io[IO::BGP] >> (bg_color_id * 2)) & 0b00000011;
-
-      // Get color from palette
-      std::uint16_t wn_color =
-        ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 0] << 0) +
-        ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 1] << 8);
-
-      bg_color_r = ((wn_color >> 0) & 0b00011111) * 8;
-      bg_color_g = ((wn_color >> 5) & 0b00011111) * 8;
-      bg_color_b = ((wn_color >> 10) & 0b00011111) * 8;
-    }
-
-    // Background
-    else if (!(_io[IO::KEY0] & 0b00001100) || (_io[IO::LCDC] & LcdControl::LcdControlWindowBackgroundEnable))
-    {
-      std::uint8_t  bg_x = sc_x + _io[IO::SCX];
-      std::uint16_t bg_tilemap = (_io[IO::LCDC] & LcdControl::LcdControlBackgroundTilemap) ? 0x1C00 : 0x1800;
-      std::uint16_t bg_tilemap_id = (((std::uint16_t)bg_y / 8) * 32) + ((std::uint16_t)bg_x / 8);
-      bg_attributes = _vRam[bg_tilemap + bg_tilemap_id + 0x2000];
-      std::uint8_t  bg_tile_id = _vRam[bg_tilemap + bg_tilemap_id];
-      std::uint16_t bg_tile_index = ((std::uint16_t)bg_tile_id * 16)
-        + ((_io[IO::LCDC] & LcdControl::LcdControlData) ?
-          0x0000 :
-          ((bg_tile_id < 128) ? 0x1000 : 0x0000))
-        + ((bg_attributes & BackgroundAttributes::BackgroundAttributesBank) ?
-          0x2000 :
-          0x0000);
-
-      // Flip tile coordinates
-      std::uint8_t  bg_tile_x = (bg_attributes & BackgroundAttributes::BackgroundAttributesXFlip) ? ((8 - 1) - bg_x % 8) : (bg_x % 8);
-      std::uint8_t  bg_tile_y = (bg_attributes & BackgroundAttributes::BackgroundAttributesYFlip) ? ((8 - 1) - bg_y % 8) : (bg_y % 8);
-      
-      bg_color_id =
-        ((_vRam[bg_tile_index + (bg_tile_y % 8) * 2 + 0] & (0b10000000 >> (bg_tile_x % 8))) ? 1 : 0) +
-        ((_vRam[bg_tile_index + (bg_tile_y % 8) * 2 + 1] & (0b10000000 >> (bg_tile_x % 8))) ? 2 : 0);
-
-      // DMG color palette
-      if (_io[IO::KEY0] & 0b00001100)
-        bg_color_id = (_io[IO::BGP] >> (bg_color_id * 2)) & 0b00000011;
-
-      // Get color from palette
-      std::uint16_t bg_color =
-        ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 0] << 0) +
-        ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 1] << 8);
-
-      bg_color_r = ((bg_color >> 0) & 0b00011111) * 8;
-      bg_color_g = ((bg_color >> 5) & 0b00011111) * 8;
-      bg_color_b = ((bg_color >> 10) & 0b00011111) * 8;
-    }
-
-    // Sprite
-    if (_io[IO::LCDC] & LcdControl::LcdControlObjEnable)
-    {
-      // Find first matching sprite
-      for (const auto& sp_index : _ppuObj) {
-        std::uint8_t  sp_y = sc_y - _oam[sp_index * 4 + 0] + 16;
-        std::uint8_t  sp_x = sc_x - _oam[sp_index * 4 + 1] + 8;
-
-        // Sprite not on column
-        if (sp_x >= 8)
-          continue;
-
-        std::uint8_t  sp_height = (_io[IO::LCDC] & LcdControl::LcdControlObjSize) ? 16 : 8;
-        sp_attributes = _oam[sp_index * 4 + 3];
-
-        // Flip sprite coordinates
-        if (sp_attributes & SpriteAttributes::SpriteAttributesYFlip)
-          sp_y = (sp_height - 1) - sp_y % sp_height;
-        if (sp_attributes & SpriteAttributes::SpriteAttributesXFlip)
-          sp_x = (8 - 1) - sp_x % 8;
-
-        std::uint8_t  sp_tile_id = (_oam[sp_index * 4 + 2] & ((sp_height == 8) ? 0b11111111 : 0b11111110)) + ((sp_y < 8) ? 0 : 1);
-        std::uint16_t sp_tile_index = ((std::uint16_t)sp_tile_id * 16)
-          + (!(sp_attributes & SpriteAttributes::SpriteAttributesBank) ?
-            0x0000 :
-            0x2000);
-        sp_color_id =
-          ((_vRam[sp_tile_index + (sp_y % 8) * 2 + 0] & (0b10000000 >> (sp_x % 8))) ? 1 : 0) +
-          ((_vRam[sp_tile_index + (sp_y % 8) * 2 + 1] & (0b10000000 >> (sp_x % 8))) ? 2 : 0);
-
-        // ID 0 is transparency
-        if (sp_color_id == 0) {
-          sp_color_id = 255;
-          continue;
-        }
-
-        // DMG color palette
-        if (_io[IO::KEY0] & 0b00001100) {
-          if (sp_attributes & SpriteAttributes::SpriteAttributesPaletteNonCgb) {
-            sp_color_id = (_io[IO::OBP1] >> (sp_color_id * 2)) & 0b00000011;
-            sp_attributes = (sp_attributes & 0b11110000) | 0b00000001;
-          }
-          else {
-            sp_color_id = (_io[IO::OBP0] >> (sp_color_id * 2)) & 0b00000011;
-            sp_attributes = (sp_attributes & 0b11110000) | 0b00000000;
-          }
-        }
-
-        // Get color from palette
-        std::uint16_t sp_color =
-          ((std::uint16_t)_obcRam[((sp_attributes & SpriteAttributes::SpriteAttributesPaletteCgb) * 4 + sp_color_id) * 2 + 0] << 0) +
-          ((std::uint16_t)_obcRam[((sp_attributes & SpriteAttributes::SpriteAttributesPaletteCgb) * 4 + sp_color_id) * 2 + 1] << 8);
-
-        sp_color_r = ((sp_color >> 0) & 0b00011111) * 8;
-        sp_color_g = ((sp_color >> 5) & 0b00011111) * 8;
-        sp_color_b = ((sp_color >> 10) & 0b00011111) * 8;
-
-        break;
-      }
-    }
-
-    // Background and Window Master Priority, CGB mode only
-    if (bg_color_id != 255 &&
-      sp_color_id != 255 &&
-      !(_io[IO::KEY0] & 0b00001100) &&
-      !(_io[IO::LCDC] & LcdControl::LcdControlPriority))
-      bg_color_id = 255;
-
-    // Sprite priority over background and window
-    else if (bg_color_id != 255 &&
-      sp_color_id != 255 &&
-      ((bg_attributes & BackgroundAttributes::BackgroundAttributesPriority) || (sp_attributes & SpriteAttributes::SpriteAttributesOverObj)) &&
-      bg_color_id != 0)
-      sp_color_id = 255;
-
-    sf::Color color;
-
-    // Select color to use
-    if (sp_color_id != 255)
-      color = sf::Color(sp_color_r, sp_color_g, sp_color_b);
-    else if (bg_color_id != 255)
-      color = sf::Color(bg_color_r, bg_color_g, bg_color_b);
-    else
-      color = sf::Color(255, 255, 255);
-
-    // Draw pixel
-    _ppuLcd.setPixel(sc_x, sc_y, color);
-  }
 }
 
 void  GBC::GameBoyColor::simulateAudio()
@@ -865,161 +571,21 @@ void  GBC::GameBoyColor::simulateTimer()
   }
 }
 
-const sf::Image& GBC::GameBoyColor::screen() const
+const sf::Texture&  GBC::GameBoyColor::lcd() const
 {
-
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Num1)) {
-    static sf::Image  back;
-
-    back.create(256, 256);
-
-    std::uint16_t bg_tilemap = 0x1800;
-
-    for (unsigned int grid_y = 0; grid_y < 32; grid_y++)
-      for (unsigned int grid_x = 0; grid_x < 32; grid_x++) {
-        std::uint16_t bg_tilemap_id = grid_y * 32 + grid_x;
-
-        std::uint8_t  bg_attributes = _vRam[bg_tilemap + bg_tilemap_id + 0x2000];
-        std::uint8_t  bg_tile_id = _vRam[bg_tilemap + bg_tilemap_id];
-        std::uint16_t bg_control = ((Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Num3)) ?
-          0x0000 :
-          ((bg_tile_id < 128) ? 0x1000 : 0x0000));
-        std::uint16_t bg_tile_index = ((std::uint16_t)bg_tile_id * 16)
-          + bg_control
-          + ((bg_attributes & BackgroundAttributes::BackgroundAttributesBank) ?
-            0x2000 :
-            0x0000);
-
-        for (unsigned int tile_y = 0; tile_y < 8; tile_y++)
-          for (unsigned int tile_x = 0; tile_x < 8; tile_x++) {
-            unsigned int bg_x = tile_x;
-            unsigned int bg_y = tile_y;
-
-            if (bg_attributes & BackgroundAttributes::BackgroundAttributesYFlip)
-              bg_y = (8 - 1) - bg_y % 8;
-            if (bg_attributes & BackgroundAttributes::BackgroundAttributesXFlip)
-              bg_x = (8 - 1) - bg_x % 8;
-
-            std::uint8_t  bg_color_id =
-              ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 0] & (0b10000000 >> (bg_x % 8))) ? 1 : 0) +
-              ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 1] & (0b10000000 >> (bg_x % 8))) ? 2 : 0);
-
-            if (_io[IO::KEY0] & 0b00001100)
-              bg_color_id = (_io[IO::BGP] >> (bg_color_id * 2)) & 0b00000011;
-
-            std::uint16_t bg_color =
-              ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 0] << 0) +
-              ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 1] << 8);
-
-            back.setPixel(grid_x * 8 + tile_x, grid_y * 8 + tile_y,
-              sf::Color(
-                ((bg_color >> 0) & 0b00011111) * 8,
-                ((bg_color >> 5) & 0b00011111) * 8,
-                ((bg_color >> 10) & 0b00011111) * 8
-              ));
-          }
-
-      }
-
-    return back;
-  }
-
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Num2)) {
-    static sf::Image  back;
-
-    back.create(256, 256);
-
-    std::uint16_t bg_tilemap = 0x1C00;
-
-    for (unsigned int grid_y = 0; grid_y < 32; grid_y++)
-      for (unsigned int grid_x = 0; grid_x < 32; grid_x++) {
-        std::uint16_t bg_tilemap_id = grid_y * 32 + grid_x;
-        std::uint8_t  bg_attributes = _vRam[bg_tilemap + bg_tilemap_id + 0x2000];
-        std::uint8_t  bg_tile_id = _vRam[bg_tilemap + bg_tilemap_id];
-        std::uint16_t bg_control = ((Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Num3)) ?
-          0x0000 :
-          ((bg_tile_id < 128) ? 0x1000 : 0x0000));
-        std::uint16_t bg_tile_index = ((std::uint16_t)bg_tile_id * 16)
-          + bg_control
-          + ((bg_attributes & BackgroundAttributes::BackgroundAttributesBank) ?
-            0x2000 :
-            0x0000);
-
-        for (unsigned int tile_y = 0; tile_y < 8; tile_y++)
-          for (unsigned int tile_x = 0; tile_x < 8; tile_x++) {
-            unsigned int bg_x = tile_x;
-            unsigned int bg_y = tile_y;
-
-            if (bg_attributes & BackgroundAttributes::BackgroundAttributesYFlip)
-              bg_y = (8 - 1) - bg_y % 8;
-            if (bg_attributes & BackgroundAttributes::BackgroundAttributesXFlip)
-              bg_x = (8 - 1) - bg_x % 8;
-
-            std::uint8_t  bg_color_id =
-              ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 0] & (0b10000000 >> (bg_x % 8))) ? 1 : 0) +
-              ((_vRam[bg_tile_index + (bg_y % 8) * 2 + 1] & (0b10000000 >> (bg_x % 8))) ? 2 : 0);
-
-            if (_io[IO::KEY0] & 0b00001100)
-              bg_color_id = (_io[IO::BGP] >> (bg_color_id * 2)) & 0b00000011;
-
-            std::uint16_t bg_color =
-              ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 0] << 0) +
-              ((std::uint16_t)_bgcRam[((bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id) * 2 + 1] << 8);
-
-            back.setPixel(grid_x * 8 + tile_x, grid_y * 8 + tile_y,
-              sf::Color(
-                ((bg_color >> 0) & 0b00011111) * 8,
-                ((bg_color >> 5) & 0b00011111) * 8,
-                ((bg_color >> 10) & 0b00011111) * 8
-              ));
-          }
-
-      }
-
-    return back;
-  }
-
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Num4)) {
-    static sf::Image  back;
-
-    back.create(8, 9);
-
-    for (unsigned int index = 0; index < 32; index++) {
-      std::uint16_t bg =
-        ((std::uint16_t)_bgcRam[index * 2 + 0] << 0) +
-        ((std::uint16_t)_bgcRam[index * 2 + 1] << 8);
-
-      back.setPixel(index % 8, index / 8 + 0,
-        sf::Color(
-          ((bg >> 0) & 0b00011111) * 8,
-          ((bg >> 5) & 0b00011111) * 8,
-          ((bg >> 10) & 0b00011111) * 8
-        ));
-
-      std::uint16_t ob =
-        ((std::uint16_t)_obcRam[index * 2 + 0] << 0) +
-        ((std::uint16_t)_obcRam[index * 2 + 1] << 8);
-
-      back.setPixel(index % 8, index / 8 + 5,
-        sf::Color(
-          ((ob >> 0) & 0b00011111) * 8,
-          ((ob >> 5) & 0b00011111) * 8,
-          ((ob >> 10) & 0b00011111) * 8
-        ));
-    }
-    return back;
-  }
-
-  return _ppuLcd;
+  // Get rendering target from PPU
+  return _ppu.lcd();
 }
 
 const std::array<std::int16_t, GBC::GameBoyColor::SoundBufferSize>& GBC::GameBoyColor::sound() const
 {
+  // Get current sound buffer
   return _sound;
 }
 
 const GBC::GameBoyColor::Header& GBC::GameBoyColor::header() const
 {
+  // Get cartridge header
   return _header;
 }
 
@@ -1030,12 +596,19 @@ std::uint8_t  GBC::GameBoyColor::read(std::uint16_t addr)
   // OR
   // Bootstrap sequence
   if (addr < 0x8000)
-    return readRom(addr - 0x0000);
+  {
+    // Read from boot if not disabled
+    if (_io[IO::BANK] == 0 && addr - 0x0000 < _boot.size() && (addr - 0x0000 <= 0x00FF || addr - 0x0000 >= 0x0150))
+      return _boot[addr];
+
+    // Read from MBC ROM
+    return _mbc->readRom(addr - 0x0000);
+  }
 
   // 8 KiB Video RAM (VRAM)
   // In CGB mode, switchable bank 0/1
   else if (addr < 0xA000)
-    return readVRam(addr - 0x8000);
+    return _ppu.readRam(addr - 0x8000);
 
   // 8 KiB External RAM
   // From cartridge, switchable bank if any
@@ -1054,7 +627,7 @@ std::uint8_t  GBC::GameBoyColor::read(std::uint16_t addr)
 
   // Sprite attribute table (OAM)	
   else if (addr < 0xFEA0)
-    return readOam(addr - 0xFE00);
+    return _ppu.readOam(addr - 0xFE00);
 
   // Not Usable
   // Nintendo says use of this area is prohibited
@@ -1077,35 +650,6 @@ std::uint8_t  GBC::GameBoyColor::read(std::uint16_t addr)
   throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-std::uint8_t  GBC::GameBoyColor::readRom(std::uint16_t addr)
-{
-  
-  // Out of bound address, should not happen
-  if (addr >= 0x8000)
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-  // Read from boot if not disabled
-  if (_io[IO::BANK] == 0 && addr < _boot.size() && (addr <= 0x00FF || addr >= 0x0150))
-    return _boot[addr];
-
-  // Read from MBC ROM
-  return _mbc->readRom(addr);
-}
-
-std::uint8_t  GBC::GameBoyColor::readVRam(std::uint16_t addr)
-{
-  // Out of bound address, should not happen
-  if (addr >= 0x2000)
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-  // VRAM locked when drawing
-  // if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) >= 3)
-  //   return 0xFF;
-
-  // Game Boy Color has 2 VRAM banks
-  return _vRam[(std::uint16_t)(_io[IO::VBK] & 0b00000001) * 0x2000 + addr];
-}
-
 std::uint8_t  GBC::GameBoyColor::readWRam(std::uint16_t addr)
 {
   // Out of bound address, should not happen
@@ -1119,22 +663,6 @@ std::uint8_t  GBC::GameBoyColor::readWRam(std::uint16_t addr)
   // Second half is a WRAM bank
   else
     return _wRam[(std::clamp(_io[IO::SVBK] & 0b00000111, 1, 7) * 0x1000) + (addr - 0x1000)];
-}
-
-std::uint8_t  GBC::GameBoyColor::readOam(std::uint16_t addr)
-{
-  // TODO: handle OAM lock at rendering
-
-  // Out of bound address, should not happen
-  if (addr >= 0x00A0)
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-  // OAM locked when drawing
-  // if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) >= 2)
-  //   return 0xFF;
-
-  // Get data from OAM
-  return _oam[addr];
 }
 
 std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
@@ -1171,14 +699,10 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
     return _io[IO::VBK] | 0b11111110;
 
   case IO::BCPD:    // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
-    if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) >= 3)
-      return 0xFF;
-    return _bgcRam[_io[IO::BCPI] & 0b00111111];
+    return _ppu.readBgc(_io[IO::BCPI] & 0b00111111);
 
   case IO::OCPD:    // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
-    if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) >= 3)
-      return 0xFF;
-    return _obcRam[_io[IO::OCPI] & 0b00111111];
+    return _ppu.readObc(_io[IO::OCPI] & 0b00111111);
 
   case IO::SVBK:    // Work Ram Bank, R/W, CGB mode only
     return _io[IO::SVBK] & 0b00000111;
@@ -1276,7 +800,7 @@ void  GBC::GameBoyColor::write(std::uint16_t addr, std::uint8_t value)
   // 8 KiB Video RAM (VRAM)
   // In CGB mode, switchable bank 0/1
   else if (addr < 0xA000)
-    writeVRam(addr - 0x8000, value);
+    _ppu.writeRam(addr - 0x8000, value);
 
   // 8 KiB External RAM
   // From cartridge, switchable bank if any
@@ -1291,11 +815,11 @@ void  GBC::GameBoyColor::write(std::uint16_t addr, std::uint8_t value)
   // Mirror of C000~DDFF (ECHO RAM)
   // Nintendo says use of this area is prohibited
   else if (addr < 0xFE00)
-    write(addr - 0x2000, value);
+    writeWRam(addr - 0xE000, value);
 
   // Sprite attribute table (OAM)	
   else if (addr < 0xFEA0)
-    writeOam(addr - 0xFE00, value);
+    _ppu.writeOam(addr - 0xFE00, value);
 
   // Not Usable
   // Nintendo says use of this area is prohibited
@@ -1315,20 +839,6 @@ void  GBC::GameBoyColor::write(std::uint16_t addr, std::uint8_t value)
     _ie = value;
 }
 
-void  GBC::GameBoyColor::writeVRam(std::uint16_t addr, std::uint8_t value)
-{
-  // Out of bound address, should not happen
-  if (addr >= 0x2000)
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-  
-  // VRAM locked when drawing
-  // if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) >= 3)
-  //   return;
-
-  // Game Boy Color has 2 VRAM banks
-  _vRam[(_io[IO::VBK] & 0b00000001) * 0x2000 + addr] = value;
-}
-
 void  GBC::GameBoyColor::writeWRam(std::uint16_t addr, std::uint8_t value)
 {
   // Out of bound address, should not happen
@@ -1342,20 +852,6 @@ void  GBC::GameBoyColor::writeWRam(std::uint16_t addr, std::uint8_t value)
   // Second half is a WRAM bank
   else
     _wRam[(std::clamp(_io[IO::SVBK] & 0b00000111, 1, 7) * 0x1000) + (addr - 0x1000)] = value;
-}
-
-void  GBC::GameBoyColor::writeOam(std::uint16_t addr, std::uint8_t value)
-{
-  // Out of bound address, should not happen
-  if (addr >= 0x00A0)
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-  // OAM locked when drawing
-  // if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) >= 2)
-  //   return;
-
-  // Write data to OAM
-  _oam[addr] = value;
 }
 
 void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
@@ -1542,27 +1038,23 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
 
     // LY / LCY register comparison
     if (_io[IO::LY] == _io[IO::LYC]) {
-      _io[IO::STAT] |= LcdStatus::LcdStatusEqual;
+      _io[IO::STAT] |= GBC::PixelProcessingUnit::LcdStatus::LcdStatusEqual;
 
       // STAT compare (LY/LYC) interrupt
-      if (_io[IO::STAT] & LcdStatus::LcdStatusCompare)
+      if (_io[IO::STAT] & GBC::PixelProcessingUnit::LcdStatus::LcdStatusCompare)
         _io[IO::IF] |= Interrupt::InterruptLcdStat;
     }
     else
-      _io[IO::STAT] &= ~LcdStatus::LcdStatusEqual;
+      _io[IO::STAT] &= ~GBC::PixelProcessingUnit::LcdStatus::LcdStatusEqual;
     break;
 
   case IO::DMA:     // DMA Transfer and Start Address, R/W
     // Write value to register
     _io[IO::DMA] = value;
 
-    // Only work durong HBlank and VBlank
-    // if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) >= 2)
-    //   break;
-
     // Transfer data to OAM
-    for (std::uint16_t index = 0; index < _oam.size(); index++)
-      writeOam(index, read<std::uint8_t>(((std::uint16_t)_io[IO::DMA] << 8) + index));
+    for (std::uint16_t index = 0; index < 160; index++)
+      _ppu.writeDma(index, read(((std::uint16_t)_io[IO::DMA] << 8) + index));
 
     // TODO: DMA transfer is 160 cycles long, lock memory access
     break;
@@ -1599,7 +1091,7 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
 
       // Write data to destination
       if (destination >= 0x8000 && destination < 0xA000)
-        writeVRam(destination - 0x8000, data);
+        _ppu.writeRam(destination - 0x8000, data);
       else
         break;
 
@@ -1618,16 +1110,15 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     _io[IO::HDMA4] = (destination >> 0) & 0b11111111;
 
     // TODO: respect HDMA transfer timing for mode 0 & 1
-    if (value & 0b10000000)
-      _cpuCycle += length * ((_io[IO::KEY1] & 0b10000000) ? 4 : 2);
+    //if (value & 0b10000000)
+    //  _cpuCycle += length * ((_io[IO::KEY1] & 0b10000000) ? 4 : 2);
 
     break;
   }
 
   case IO::BCPD:    // Background Color Palette Data, R/W, reference byte in BG Color RAM at index BCPI, CGB mode only
     // Store data in Background Color RAM
-    //if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) != 3)
-    _bgcRam[_io[IO::BCPI] & 0b00111111] = value;
+    _ppu.writeBgc(_io[IO::BCPI] & 0b00111111, value);
 
     // Increment pointer
     if (_io[IO::BCPI] & 0b10000000)
@@ -1636,8 +1127,7 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
 
   case IO::OCPD:    // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
     // Store data in OBJ Color RAM
-    //if ((_io[IO::STAT] & LcdStatus::LcdStatusMode) != 3)
-    _obcRam[_io[IO::OCPI] & 0b00111111] = value;
+    _ppu.writeObc(_io[IO::OCPI] & 0b00111111, value);
 
     // Increment pointer
     if (_io[IO::OCPI] & 0b10000000)

@@ -10,8 +10,7 @@ const sf::Time  GBC::EmulationScene::ForcedExit = sf::seconds(1.f);
 GBC::EmulationScene::EmulationScene(Game::SceneMachine& machine, const std::string& filename) :
   Game::AbstractScene(machine),
   _gbc(filename),
-  _texture(),
-  _sprite(),
+  _sprite(_gbc.lcd()),
   _fps(sf::seconds(-0.42f)),
   _exit(sf::Time::Zero),
   _bar(sf::Vector2f(1.f, 1.f)),
@@ -55,9 +54,11 @@ bool  GBC::EmulationScene::update(sf::Time elapsed)
 
   // Simulate frames at 59.72 fps
   // NOTE: simulate at most one frame per call to avoid exponential delay
-  if (_fps.asSeconds() >= 70224.f / Math::Pow<22>(2)) {
+  if (_fps.asSeconds() >= 70224.f / Math::Pow<22>(2) ||
+    Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Enter) == true ||
+    Game::Window::Instance().joystick().position(0, 2) < -64.f) {
     _gbc.simulate();
-    _fps -= sf::seconds(70224.f / Math::Pow<22>(2));
+    _fps = sf::seconds(std::max(_fps.asSeconds() - 70224.f / Math::Pow<22>(2), 0.f));
 
     // Push sound buffer to sound stream queue
     _stream.push(_gbc.sound());
@@ -68,34 +69,19 @@ bool  GBC::EmulationScene::update(sf::Time elapsed)
 
 void  GBC::EmulationScene::draw()
 {
-  const sf::Image&  image = _gbc.screen();
+  auto size = _sprite.getTexture()->getSize();
 
-  // Only draw if rendering target is visible
-  if (image.getSize().x != 0 && image.getSize().y != 0)
-  {
-    // Update texture on VRam
-    if (_texture.getSize() != image.getSize() && _texture.create(image.getSize().x, image.getSize().y) == false)
-      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-    _texture.update(image);
+  // Compute sprite scale and position
+  float scale = std::min((float)Game::Window::Instance().window().getSize().x / (float)size.x, (float)Game::Window::Instance().window().getSize().y / (float)size.y);
+  float pos_x = (((float)Game::Window::Instance().window().getSize().x - ((float)size.x * scale)) / 2.f);
+  float pos_y = (((float)Game::Window::Instance().window().getSize().y - ((float)size.y * scale)) / 2.f);
 
-    // Making sure the texture is not filtered
-    _texture.setSmooth(false);
+  // Position sprite in window
+  _sprite.setScale(sf::Vector2f(scale, scale));
+  _sprite.setPosition(sf::Vector2f(pos_x, pos_y));
 
-    // Update sprite texture
-    _sprite.setTexture(_texture, true);
-
-    // Compute sprite scale and position
-    float scale = std::min((float)Game::Window::Instance().window().getSize().x / (float)image.getSize().x, (float)Game::Window::Instance().window().getSize().y / (float)image.getSize().y);
-    float pos_x = (((float)Game::Window::Instance().window().getSize().x - ((float)image.getSize().x * scale)) / 2.f);
-    float pos_y = (((float)Game::Window::Instance().window().getSize().y - ((float)image.getSize().y * scale)) / 2.f);
-
-    // Position sprite in window
-    _sprite.setScale(sf::Vector2f(scale, scale));
-    _sprite.setPosition(sf::Vector2f(pos_x, pos_y));
-
-    // Draw DOOM rendering target
-    Game::Window::Instance().window().draw(_sprite);
-  }
+  // Draw GBC rendering target
+  Game::Window::Instance().window().draw(_sprite);
 
   // Draw forced exit bar
   _bar.setScale(Game::Window::Instance().window().getSize().x * _exit.asSeconds() / GBC::EmulationScene::ForcedExit.asSeconds(), 4.f);
