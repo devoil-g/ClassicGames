@@ -150,9 +150,9 @@ namespace GBC
     {
       return GBC::CentralProcessingUnit::Instructions({
         [=](GBC::CentralProcessingUnit& cpu) {
-          setFlag<Register::Z>(!(reg8 & (0b00000001 << Bit)));
-          setFlag<Register::N>(false);
-          setFlag<Register::H>(true);
+          cpu.setFlag<Register::Z>(!(reg8 & (0b00000001 << Bit)));
+          cpu.setFlag<Register::N>(false);
+          cpu.setFlag<Register::H>(true);
         }
       });
     }
@@ -164,10 +164,10 @@ namespace GBC
         [](GBC::CentralProcessingUnit& cpu) {
           cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
         },
-        [=](GBC::CentralProcessingUnit& cpu) {
-          setFlag<Register::Z>(!(cpu._rW.u8.low & (0b00000001 << Bit)));
-          setFlag<Register::N>(false);
-          setFlag<Register::H>(true);
+        [](GBC::CentralProcessingUnit& cpu) {
+          cpu.setFlag<Register::Z>(!(cpu._rW.u8.low & (0b00000001 << Bit)));
+          cpu.setFlag<Register::N>(false);
+          cpu.setFlag<Register::H>(true);
         },
         [](GBC::CentralProcessingUnit& cpu) {}
       });

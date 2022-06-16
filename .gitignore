@@ -3,3 +3,5 @@
 *.gbs
 *.rtc
 build
+build_linux
+build_windows
