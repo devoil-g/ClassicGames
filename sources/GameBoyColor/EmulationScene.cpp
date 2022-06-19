@@ -95,7 +95,7 @@ GBC::EmulationScene::SoundStream::SoundStream() :
   _index(0),
   _status(GBC::EmulationScene::SoundStream::Buffering)
 {
-  initialize(2, GBC::GameBoyColor::SoundSampleRate);
+  initialize(2, GBC::AudioProcessingUnit::SampleRate);
   setVolume(50.f);
 }
 
@@ -143,7 +143,7 @@ bool  GBC::EmulationScene::SoundStream::onGetData(sf::SoundStream::Chunk& chunk)
 void  GBC::EmulationScene::SoundStream::onSeek(sf::Time)
 {}
 
-void  GBC::EmulationScene::SoundStream::push(const std::array<std::int16_t, GBC::GameBoyColor::SoundBufferSize>& sound)
+void  GBC::EmulationScene::SoundStream::push(const std::array<std::int16_t, GBC::AudioProcessingUnit::BufferSize>& sound)
 {
   std::unique_lock<std::mutex>  lock(_lock);
 

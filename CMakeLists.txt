@@ -103,6 +103,8 @@ SET(GAME_DOOM_STATES_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Doom/Scenes/TransitionDoomScene.hpp
 )
 SET(GAME_GBC_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/AudioProcessingUnit.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/AudioProcessingUnit.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/CentralProcessingUnit.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/CentralProcessingUnit.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/EmulationScene.hpp

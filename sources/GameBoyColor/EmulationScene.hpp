@@ -28,10 +28,10 @@ namespace GBC
 
     class SoundStream : public sf::SoundStream
     {
-      std::queue<std::array<std::int16_t, GBC::GameBoyColor::SoundBufferSize>>  _sounds;  // Sound buffer
-      std::array<std::int16_t, GBC::GameBoyColor::SoundBufferSize>              _buffer;  // Buffer sent to play
-      std::mutex                                                                _lock;    // Sounds buffer lock
-      std::size_t                                                               _index;   // Currently played index
+      std::queue<std::array<std::int16_t, GBC::AudioProcessingUnit::BufferSize>>  _sounds;  // Sound buffer
+      std::array<std::int16_t, GBC::AudioProcessingUnit::BufferSize>              _buffer;  // Buffer sent to play
+      std::mutex                                                                  _lock;    // Sounds buffer lock
+      std::size_t                                                                 _index;   // Currently played index
 
       enum {
         Playing,
@@ -45,7 +45,7 @@ namespace GBC
       SoundStream();
       ~SoundStream() = default;
 
-      void  push(const std::array<std::int16_t, GBC::GameBoyColor::SoundBufferSize>& sound);  // Feed a new sound buffer to stream
+      void  push(const std::array<std::int16_t, GBC::AudioProcessingUnit::BufferSize>& sound);  // Feed a new sound buffer to stream
     };
 
     GBC::EmulationScene::SoundStream  _stream;  // Sound stream of Game Boy Color
