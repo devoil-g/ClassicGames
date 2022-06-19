@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <functional>
 #include <queue>
@@ -44,6 +45,39 @@ namespace GBC
       StatusStop = StatusHalt // Same as Halt, turn-off display (NOTE: handled as a simple HALT)
     };
 
+    class Instructions
+    {
+    public:
+      using Instruction = void(*)(GBC::CentralProcessingUnit&);
+
+    private:
+      std::array<Instruction, 8>  _queue; // Pointer to instructions
+      std::size_t                 _size;  // Size of the stack
+      std::size_t                 _index; // Current position in stack
+
+    public:
+      Instructions();
+      ~Instructions() = default;
+
+      bool        empty() const;  // Return true if instruction stack is empty
+      std::size_t size() const;   // Get number of instructions remaining
+      Instruction front() const;    // Get next instruction
+
+      void  pop();                          // Pop next instruction and returns it
+      void  push(Instruction instruction);  // Push new instruction in the queue
+    };
+
+    union Parameter
+    {
+      std::uint8_t    u8;
+      std::uint8_t*   pu8;
+      std::uint16_t   u16;
+      std::uint16_t*  pu16;
+      Register        r;
+      Register*       pr;
+      
+    };
+
     enum InterruptMasterEnable
     {
       IMEDisabled,  // Interrupt disabled
@@ -55,10 +89,8 @@ namespace GBC
     Status                _status;  // CPU running status
     InterruptMasterEnable _ime;     // Interrupt Master Enable
     
-    using Instruction = std::function<void(CentralProcessingUnit&)>;
-    using Instructions = std::queue<Instruction>;
-
-    Instructions  _instructions;  // Steps of currently executed instruction
+    Instructions              _instructions;  // Steps of currently executed instruction
+    std::array<Parameter, 2>  _parameters;    // Parameters of instructions
 
     Register  _rAF; // AF register (accumulator + flags)
     Register  _rBC; // BC register
@@ -68,8 +100,8 @@ namespace GBC
     Register  _rPC; // PC register (program counter / pointer)
     Register  _rW;  // Internal Work register (not accessible)
 
-    static const std::array<std::function<Instructions(CentralProcessingUnit&)>, 256> _opcodes;   // CPU instruction set
-    static const std::array<std::function<Instructions(CentralProcessingUnit&)>, 256> _opcodesCb; // CPU CB sub-instruction set
+    static const std::array<std::function<void(CentralProcessingUnit&)>, 256> _opcodes;   // CPU instruction set
+    static const std::array<std::function<void(CentralProcessingUnit&)>, 256> _opcodesCb; // CPU CB sub-instruction set
 
     template<Register::Flag F>
     void  setFlag(bool value) // Set flag bit in register AF
@@ -90,191 +122,182 @@ namespace GBC
       return (_rAF.u8.low & F) ? true : false;
     }
 
-    Instructions  instruction_NOP();
-    Instructions  instruction_STOP();
-    Instructions  instruction_HALT();
-    Instructions  instruction_DI();
-    Instructions  instruction_EI();
+    void  instruction_NOP();
+    void  instruction_STOP();
+    void  instruction_HALT();
+    void  instruction_DI();
+    void  instruction_EI();
     
-    Instructions  instruction_JR_n();
-    Instructions  instruction_JR_c0_n(Register::Flag flag);
-    Instructions  instruction_JR_c1_n(Register::Flag flag);
-    Instructions  instruction_JP_nn();
-    Instructions  instruction_JP_c0_nn(Register::Flag flag);
-    Instructions  instruction_JP_c1_nn(Register::Flag flag);
-    Instructions  instruction_JP_HL();
-    Instructions  instruction_CALL_nn();
-    Instructions  instruction_CALL_c0_nn(Register::Flag flag);
-    Instructions  instruction_CALL_c1_nn(Register::Flag flag);
-    Instructions  instruction_RST(std::uint16_t address);
-    Instructions  instruction_RET();
-    Instructions  instruction_RET_c0(Register::Flag flag);
-    Instructions  instruction_RET_c1(Register::Flag flag);
-    Instructions  instruction_RETI();
+    void  instruction_JR_n();
+    void  instruction_JR_c0_n(Register::Flag flag);
+    void  instruction_JR_c1_n(Register::Flag flag);
+    void  instruction_JP_nn();
+    void  instruction_JP_c0_nn(Register::Flag flag);
+    void  instruction_JP_c1_nn(Register::Flag flag);
+    void  instruction_JP_HL();
+    void  instruction_CALL_nn();
+    void  instruction_CALL_c0_nn(Register::Flag flag);
+    void  instruction_CALL_c1_nn(Register::Flag flag);
+    void  instruction_RST(std::uint16_t address);
+    void  instruction_RET();
+    void  instruction_RET_c0(Register::Flag flag);
+    void  instruction_RET_c1(Register::Flag flag);
+    void  instruction_RETI();
 
-    Instructions  instruction_INC_r(std::uint8_t& reg8);
-    Instructions  instruction_DEC_r(std::uint8_t& reg8);
-    Instructions  instruction_INC_rr(Register& reg16);
-    Instructions  instruction_DEC_rr(Register& reg16);
-    Instructions  instruction_INC_pHL();
-    Instructions  instruction_DEC_pHL();
+    void  instruction_INC_r(std::uint8_t& reg8);
+    void  instruction_DEC_r(std::uint8_t& reg8);
+    void  instruction_INC_rr(Register& reg16);
+    void  instruction_DEC_rr(Register& reg16);
+    void  instruction_INC_pHL();
+    void  instruction_DEC_pHL();
 
-    Instructions  instruction_CB();
-    Instructions  instruction_RLC(std::uint8_t& reg8);
-    Instructions  instruction_RLC_pHL();
-    Instructions  instruction_RLCA();
-    Instructions  instruction_RRC(std::uint8_t& reg8);
-    Instructions  instruction_RRC_pHL();
-    Instructions  instruction_RRCA();
-    Instructions  instruction_RL(std::uint8_t& reg8);
-    Instructions  instruction_RL_pHL();
-    Instructions  instruction_RLA();
-    Instructions  instruction_RR(std::uint8_t& reg8);
-    Instructions  instruction_RR_pHL();
-    Instructions  instruction_RRA();
-    Instructions  instruction_SLA(std::uint8_t& reg8);
-    Instructions  instruction_SLA_pHL();
-    Instructions  instruction_SRA(std::uint8_t& reg8);
-    Instructions  instruction_SRA_pHL();
-    Instructions  instruction_SWAP(std::uint8_t& reg8);
-    Instructions  instruction_SWAP_pHL();
-    Instructions  instruction_SRL(std::uint8_t& reg8);
-    Instructions  instruction_SRL_pHL();
-    Instructions  instruction_DAA();
-    Instructions  instruction_CPL();
-    Instructions  instruction_SCF();
-    Instructions  instruction_CCF();
+    void  instruction_CB();
+    void  instruction_RLC(std::uint8_t& reg8);
+    void  instruction_RLC_pHL();
+    void  instruction_RLCA();
+    void  instruction_RRC(std::uint8_t& reg8);
+    void  instruction_RRC_pHL();
+    void  instruction_RRCA();
+    void  instruction_RL(std::uint8_t& reg8);
+    void  instruction_RL_pHL();
+    void  instruction_RLA();
+    void  instruction_RR(std::uint8_t& reg8);
+    void  instruction_RR_pHL();
+    void  instruction_RRA();
+    void  instruction_SLA(std::uint8_t& reg8);
+    void  instruction_SLA_pHL();
+    void  instruction_SRA(std::uint8_t& reg8);
+    void  instruction_SRA_pHL();
+    void  instruction_SWAP(std::uint8_t& reg8);
+    void  instruction_SWAP_pHL();
+    void  instruction_SRL(std::uint8_t& reg8);
+    void  instruction_SRL_pHL();
+    void  instruction_DAA();
+    void  instruction_CPL();
+    void  instruction_SCF();
+    void  instruction_CCF();
 
     template <unsigned int Bit>
-    Instructions  instruction_BIT(std::uint8_t reg8)
+    void  instruction_BIT(std::uint8_t reg8)
     {
-      return GBC::CentralProcessingUnit::Instructions({
-        [=](GBC::CentralProcessingUnit& cpu) {
-          cpu.setFlag<Register::Z>(!(reg8 & (0b00000001 << Bit)));
-          cpu.setFlag<Register::N>(false);
-          cpu.setFlag<Register::H>(true);
-        }
-      });
+      _parameters[0].u8 = reg8;
+      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+        cpu.setFlag<Register::Z>(!(cpu._parameters[0].u8 & (0b00000001 << Bit)));
+        cpu.setFlag<Register::N>(false);
+        cpu.setFlag<Register::H>(true);
+        });
     }
 
     template <unsigned int Bit>
-    Instructions  instruction_BIT_pHL()
+    void  instruction_BIT_pHL()
     {
-      return GBC::CentralProcessingUnit::Instructions({
-        [](GBC::CentralProcessingUnit& cpu) {
-          cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
-        },
-        [](GBC::CentralProcessingUnit& cpu) {
-          cpu.setFlag<Register::Z>(!(cpu._rW.u8.low & (0b00000001 << Bit)));
-          cpu.setFlag<Register::N>(false);
-          cpu.setFlag<Register::H>(true);
-        },
-        [](GBC::CentralProcessingUnit& cpu) {}
-      });
+      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+        cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+        });
+      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+        cpu.setFlag<Register::Z>(!(cpu._rW.u8.low & (0b00000001 << Bit)));
+        cpu.setFlag<Register::N>(false);
+        cpu.setFlag<Register::H>(true);
+        });
+      _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
     }
 
     template <unsigned int Bit>
-    Instructions  instruction_RES(std::uint8_t& reg8)
+    void  instruction_RES(std::uint8_t& reg8)
     {
-      return GBC::CentralProcessingUnit::Instructions({
-        [&](GBC::CentralProcessingUnit& cpu) {
-          reg8 &= ~(0b00000001 << Bit);
-        }
-      });
+      _parameters[0].pu8 = &reg8;
+      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+        (*cpu._parameters[0].pu8) &= ~(0b00000001 << Bit);
+        });
     }
 
     template <unsigned int Bit>
-    Instructions  instruction_RES_pHL()
+    void  instruction_RES_pHL()
     {
-      return GBC::CentralProcessingUnit::Instructions({
-        [](GBC::CentralProcessingUnit& cpu) {
-          cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
-        },
-        [](GBC::CentralProcessingUnit& cpu) {
-          cpu._rW.u8.low &= ~(0b00000001 << Bit);
-          cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
-        },
-        [](GBC::CentralProcessingUnit& cpu) {}
-      });
+      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+        cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+        });
+      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+        cpu._rW.u8.low &= ~(0b00000001 << Bit);
+        cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+        });
+      _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
     }
 
     template <unsigned int Bit>
-    Instructions  instruction_SET(std::uint8_t& reg8)
+    void  instruction_SET(std::uint8_t& reg8)
     {
-      return GBC::CentralProcessingUnit::Instructions({
-        [&](GBC::CentralProcessingUnit& cpu) {
-          reg8 |= 0b00000001 << Bit;
-        }
-      });
+      _parameters[0].pu8 = &reg8;
+      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+        (*cpu._parameters[0].pu8) |= 0b00000001 << Bit;
+        });
     }
 
     template <unsigned int Bit>
-    Instructions  instruction_SET_pHL()
+    void  instruction_SET_pHL()
     {
-      return GBC::CentralProcessingUnit::Instructions({
-        [](GBC::CentralProcessingUnit& cpu) {
-          cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
-        },
-        [](GBC::CentralProcessingUnit& cpu) {
-          cpu._rW.u8.low |= 0b00000001 << Bit;
-          cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
-        },
-        [](GBC::CentralProcessingUnit& cpu) {}
-      });
+      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+        cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+        });
+      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+        cpu._rW.u8.low |= 0b00000001 << Bit;
+        cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+        });
+      _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
     }
 
-    Instructions  instruction_ADD_r(std::uint8_t reg8);
-    Instructions  instruction_ADD_n();
-    Instructions  instruction_ADD_pHL();
-    Instructions  instruction_ADC_r(std::uint8_t reg8);
-    Instructions  instruction_ADC_n();
-    Instructions  instruction_ADC_pHL();
-    Instructions  instruction_SUB_r(std::uint8_t reg8);
-    Instructions  instruction_SUB_n();
-    Instructions  instruction_SUB_pHL();
-    Instructions  instruction_SBC_r(std::uint8_t reg8);
-    Instructions  instruction_SBC_n();
-    Instructions  instruction_SBC_pHL();
-    Instructions  instruction_AND_r(std::uint8_t reg8);
-    Instructions  instruction_AND_n();
-    Instructions  instruction_AND_pHL();
-    Instructions  instruction_XOR_r(std::uint8_t reg8);
-    Instructions  instruction_XOR_n();
-    Instructions  instruction_XOR_pHL();
-    Instructions  instruction_OR_r(std::uint8_t reg8);
-    Instructions  instruction_OR_n();
-    Instructions  instruction_OR_pHL();
-    Instructions  instruction_CP_r(std::uint8_t reg8);
-    Instructions  instruction_CP_n();
-    Instructions  instruction_CP_pHL();
+    void  instruction_ADD_r(std::uint8_t reg8);
+    void  instruction_ADD_n();
+    void  instruction_ADD_pHL();
+    void  instruction_ADC_r(std::uint8_t reg8);
+    void  instruction_ADC_n();
+    void  instruction_ADC_pHL();
+    void  instruction_SUB_r(std::uint8_t reg8);
+    void  instruction_SUB_n();
+    void  instruction_SUB_pHL();
+    void  instruction_SBC_r(std::uint8_t reg8);
+    void  instruction_SBC_n();
+    void  instruction_SBC_pHL();
+    void  instruction_AND_r(std::uint8_t reg8);
+    void  instruction_AND_n();
+    void  instruction_AND_pHL();
+    void  instruction_XOR_r(std::uint8_t reg8);
+    void  instruction_XOR_n();
+    void  instruction_XOR_pHL();
+    void  instruction_OR_r(std::uint8_t reg8);
+    void  instruction_OR_n();
+    void  instruction_OR_pHL();
+    void  instruction_CP_r(std::uint8_t reg8);
+    void  instruction_CP_n();
+    void  instruction_CP_pHL();
 
-    Instructions  instruction_LD_r_r(std::uint8_t& reg8_destination, std::uint8_t reg8_source);
-    Instructions  instruction_LD_r_n(std::uint8_t& reg8);
-    Instructions  instruction_LD_r_pHL(std::uint8_t& reg8);
-    Instructions  instruction_LD_pHL_r(std::uint8_t reg8);
-    Instructions  instruction_LD_pHL_n();
-    Instructions  instruction_LD_A_prr(Register reg16);
-    Instructions  instruction_LD_prr_A(Register reg16);
-    Instructions  instruction_LD_A_pnn();
-    Instructions  instruction_LD_pnn_A();
-    Instructions  instruction_LDH_A_pC();
-    Instructions  instruction_LDH_pC_A();
-    Instructions  instruction_LDH_A_pn();
-    Instructions  instruction_LDH_pn_A();
-    Instructions  instruction_LD_A_HLd();
-    Instructions  instruction_LD_HLd_A();
-    Instructions  instruction_LD_A_HLi();
-    Instructions  instruction_LD_HLi_A();
+    void  instruction_LD_r_r(std::uint8_t& reg8_destination, std::uint8_t reg8_source);
+    void  instruction_LD_r_n(std::uint8_t& reg8);
+    void  instruction_LD_r_pHL(std::uint8_t& reg8);
+    void  instruction_LD_pHL_r(std::uint8_t reg8);
+    void  instruction_LD_pHL_n();
+    void  instruction_LD_A_prr(Register reg16);
+    void  instruction_LD_prr_A(Register reg16);
+    void  instruction_LD_A_pnn();
+    void  instruction_LD_pnn_A();
+    void  instruction_LDH_A_pC();
+    void  instruction_LDH_pC_A();
+    void  instruction_LDH_A_pn();
+    void  instruction_LDH_pn_A();
+    void  instruction_LD_A_HLd();
+    void  instruction_LD_HLd_A();
+    void  instruction_LD_A_HLi();
+    void  instruction_LD_HLi_A();
 
-    Instructions  instruction_ADD_HL_rr(Register reg16);
-    Instructions  instruction_ADD_SP_n();
-    Instructions  instruction_LD_rr_nn(Register& reg16);
-    Instructions  instruction_LD_pnn_SP();
-    Instructions  instruction_LD_HL_SPn();
-    Instructions  instruction_LD_SP_HL();
-    Instructions  instruction_PUSH_rr(Register reg16);
-    Instructions  instruction_POP_rr(Register& reg16);
-    Instructions  instruction_POP_AF();
+    void  instruction_ADD_HL_rr(Register reg16);
+    void  instruction_ADD_SP_n();
+    void  instruction_LD_rr_nn(Register& reg16);
+    void  instruction_LD_pnn_SP();
+    void  instruction_LD_HL_SPn();
+    void  instruction_LD_SP_HL();
+    void  instruction_PUSH_rr(Register reg16);
+    void  instruction_POP_rr(Register& reg16);
+    void  instruction_POP_AF();
 
     void  simulateFetch();      // Fetch next instruction or interrupt to execute
     void  simulateInterrupt();  // CPU interrupt handling

@@ -24,6 +24,36 @@ namespace GBC
     static constexpr unsigned int FrameDuration = (ScreenHeight + ScreenBlank) * ScanlineDuration;  // Number of tick per frame
     
   public:
+    enum IO : std::uint8_t
+    {
+      LCDC = 0x40,  // LCD Control, R/W (see enum)
+      STAT = 0x41,  // LCD Status, R/W (see enum)
+      SCY = 0x42,   // Scroll Y, R/W
+      SCX = 0x43,   // Scroll X, R/W
+      LY = 0x44,    // LCD Y Coordinate, R
+      LYC = 0x45,   // LCD Y Coordinate Compare, R/W
+      DMA = 0x46,   // DMA Transfer and Start Address, R/W
+      BGP = 0x47,   // Background and Window Palette Data, R/W, non CGB mode only
+      OBP0 = 0x48,  // OBJ 0 Palette Data, R/W, non CGB mode only
+      OBP1 = 0x49,  // OBJ 1 Palette Data, R/W, non CGB mode only  
+      WY = 0x4A,    // Window Y Position, R/W
+      WX = 0x4B,    // Window X Position, R/W
+
+      VBK = 0x4F,   // Video RAM Bank, R/W, CGB mode only
+
+      HDMA1 = 0x51, // New DMA Transfers source high byte, W, CGB mode only
+      HDMA2 = 0x52, // New DMA Transfers source low byte, W, CGB mode only
+      HDMA3 = 0x53, // New DMA Transfers destination high byte, W, CGB mode only
+      HDMA4 = 0x54, // New DMA Transfers destination low byte, W, CGB mode only
+      HDMA5 = 0x55, // Start New DMA Transfer, R/W, CGB mode only
+
+      BCPI = 0x68,  // Background Color Palette Index, R/W, CGB mode only
+      BCPD = 0x69,  // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
+      OCPI = 0x6A,  // OBJ Color Palette Index, R/W, CGB mode only
+      OCPD = 0x6B,  // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
+      OPRI = 0x6C,  // OBJ Priority Mode, R/W, CGB mode only, bit 0: mode (0 :OAM, 1: Coordinate)
+    };
+
     enum LcdControl : std::uint8_t
     {
       LcdControlEnable = 0b10000000,                  // LCD and PPU enable (0=Off, 1=On)
@@ -134,14 +164,12 @@ namespace GBC
 
     std::uint8_t  readRam(std::uint16_t address); // Read a byte from Video RAM
     std::uint8_t  readOam(std::uint16_t address); // Read a byte from OBJ Attribute Table
-    std::uint8_t  readBgc(std::uint8_t address);  // Read a byte from Background Color palette
-    std::uint8_t  readObc(std::uint8_t address);  // Read a byte from Sprite Color palette
+    std::uint8_t  readIo(std::uint16_t address);  // Read a graphic IO
 
     void  writeRam(std::uint16_t address, std::uint8_t value);  // Write a byte to Video RAM
     void  writeOam(std::uint16_t address, std::uint8_t value);  // Write a byte to OBJ Attribute Table
     void  writeDma(std::uint16_t address, std::uint8_t value);  // Write a byte to OBJ Attribute Table for DMA transfer
-    void  writeBgc(std::uint8_t address, std::uint8_t value);   // Write a byte to Background Color palette
-    void  writeObc(std::uint8_t address, std::uint8_t value);   // Write a byte to Sprite Color palette
+    void  writeIo(std::uint16_t address, std::uint8_t value);   // Write a graphic IO
 
     void  simulate(); // Simulate 1 tick of the PPU
 

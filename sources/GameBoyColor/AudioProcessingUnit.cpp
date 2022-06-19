@@ -196,7 +196,7 @@ void  GBC::AudioProcessingUnit::simulate()
   }
 }
 
-std::uint8_t  GBC::AudioProcessingUnit::readIo(std::uint8_t address)
+std::uint8_t  GBC::AudioProcessingUnit::readIo(std::uint16_t address)
 {
   // APU disabled
   if (!(_gbc._io[IO::NR52] & 0b10000000) && address != IO::NR52)
@@ -264,7 +264,7 @@ std::uint8_t  GBC::AudioProcessingUnit::readIo(std::uint8_t address)
   }
 }
 
-void  GBC::AudioProcessingUnit::writeIo(std::uint8_t address, std::uint8_t value)
+void  GBC::AudioProcessingUnit::writeIo(std::uint16_t address, std::uint8_t value)
 {
   // APU disabled
   if (!(_gbc._io[IO::NR52] & 0b10000000) && address != IO::NR52)
@@ -278,20 +278,15 @@ void  GBC::AudioProcessingUnit::writeIo(std::uint8_t address, std::uint8_t value
 
     // Start sound 1
     if (value & 0b10000000) {
+      constexpr std::array<float, 4> wave = { 0.125f, 0.25f, 0.5f, 0.75f };
+
       _sound1.frequencyTime = (_gbc._io[IO::NR10] & 0b01110000) ?
         ((_gbc._io[IO::NR10] & 0b01110000) >> 4) / 128.f :
         999.f;
       _sound1.frequencyDirection = (_gbc._io[IO::NR10] & 0b00001000) ? true : false;
       _sound1.frequencyShift = 1.f / (float)std::pow(2.f, _gbc._io[IO::NR10] & 0b00000111);
-      _sound1.frequencyElapsed = 0.f;
-      switch ((_gbc._io[IO::NR11] & 0b11000000) >> 6) {
-      case 0b00: _sound1.wave = 0.125f; break;
-      case 0b01: _sound1.wave = 0.25f; break;
-      case 0b10: _sound1.wave = 0.5f; break;
-      case 0b11: _sound1.wave = 0.75f; break;
-      default:
-        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-      }
+      _sound1.frequencyElapsed = 0.f;      
+      _sound1.wave = wave[(_gbc._io[IO::NR11] & 0b11000000) >> 6];
       _sound1.length = (_gbc._io[IO::NR14] & 0b01000000) ?
         (64 - (_gbc._io[IO::NR11] & 0b00111111)) / 256.f :
         999.f;
@@ -312,14 +307,9 @@ void  GBC::AudioProcessingUnit::writeIo(std::uint8_t address, std::uint8_t value
 
     // Start sound 2
     if (value & 0b10000000) {
-      switch ((_gbc._io[IO::NR21] & 0b11000000) >> 6) {
-      case 0b00: _sound2.wave = 0.125f; break;
-      case 0b01: _sound2.wave = 0.25f; break;
-      case 0b10: _sound2.wave = 0.5f; break;
-      case 0b11: _sound2.wave = 0.75f; break;
-      default:
-        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-      }
+      constexpr std::array<float, 4> wave = { 0.125f, 0.25f, 0.5f, 0.75f };
+
+      _sound2.wave = wave[(_gbc._io[IO::NR21] & 0b11000000) >> 6];
       _sound2.length = (_gbc._io[IO::NR24] & 0b01000000) ?
         (64 - (_gbc._io[IO::NR21] & 0b00111111)) / 256.f :
         999.f;
@@ -340,6 +330,8 @@ void  GBC::AudioProcessingUnit::writeIo(std::uint8_t address, std::uint8_t value
 
     // Start sound 3
     if (value & 0b10000000) {
+      constexpr std::array<float, 4> envelope = { 0.f, 1.f, 0.5f, 0.25f };
+
       for (std::uint8_t index = IO::WAVE00; index <= IO::WAVE30; index++) {
         _sound3.wave[(index - IO::WAVE00) * 2 + 0] = ((_gbc._io[index] & 0b11110000) >> 4) / 8.f - 1.f;
         _sound3.wave[(index - IO::WAVE00) * 2 + 1] = ((_gbc._io[index] & 0b00001111) >> 0) / 8.f - 1.f;
@@ -347,14 +339,7 @@ void  GBC::AudioProcessingUnit::writeIo(std::uint8_t address, std::uint8_t value
       _sound3.length = (_gbc._io[IO::NR34] & 0b01000000) ?
         (256 - _gbc._io[IO::NR31]) / 256.f :
         999.f;
-      switch ((_gbc._io[IO::NR32] & 0b01100000) >> 5) {
-      case 0b00: _sound3.envelope = 0.f; break;
-      case 0b01: _sound3.envelope = 1.f; break;
-      case 0b10: _sound3.envelope = 0.5f; break;
-      case 0b11: _sound3.envelope = 0.25f; break;
-      default:
-        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-      }
+      _sound3.envelope = envelope[(_gbc._io[IO::NR32] & 0b01100000) >> 5];
       _sound3.frequency = 65536.f / (2048.f - (((std::uint16_t)_gbc._io[IO::NR33]) + (((std::uint16_t)_gbc._io[IO::NR34] & 0b00000111) << 8)));
       _sound3.clock = 0.f;
     }

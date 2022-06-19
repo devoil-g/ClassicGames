@@ -489,23 +489,77 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
   if (addr >= 0x0080)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-  // Audio register
-  if (addr >= 0x10 && addr <= 0x3F)
+  switch (addr)
+  {
+    // Audio registers
+  case GBC::AudioProcessingUnit::IO::NR10:
+  case GBC::AudioProcessingUnit::IO::NR11:
+  case GBC::AudioProcessingUnit::IO::NR12:
+  case GBC::AudioProcessingUnit::IO::NR13:
+  case GBC::AudioProcessingUnit::IO::NR14:
+  case GBC::AudioProcessingUnit::IO::NR21:
+  case GBC::AudioProcessingUnit::IO::NR22:
+  case GBC::AudioProcessingUnit::IO::NR23:
+  case GBC::AudioProcessingUnit::IO::NR24:
+  case GBC::AudioProcessingUnit::IO::NR30:
+  case GBC::AudioProcessingUnit::IO::NR31:
+  case GBC::AudioProcessingUnit::IO::NR32:
+  case GBC::AudioProcessingUnit::IO::NR33:
+  case GBC::AudioProcessingUnit::IO::NR34:
+  case GBC::AudioProcessingUnit::IO::NR41:
+  case GBC::AudioProcessingUnit::IO::NR42:
+  case GBC::AudioProcessingUnit::IO::NR43:
+  case GBC::AudioProcessingUnit::IO::NR44:
+  case GBC::AudioProcessingUnit::IO::NR50:
+  case GBC::AudioProcessingUnit::IO::NR51:
+  case GBC::AudioProcessingUnit::IO::NR52:
+  case GBC::AudioProcessingUnit::IO::WAVE00:
+  case GBC::AudioProcessingUnit::IO::WAVE02:
+  case GBC::AudioProcessingUnit::IO::WAVE04:
+  case GBC::AudioProcessingUnit::IO::WAVE06:
+  case GBC::AudioProcessingUnit::IO::WAVE08:
+  case GBC::AudioProcessingUnit::IO::WAVE10:
+  case GBC::AudioProcessingUnit::IO::WAVE12:
+  case GBC::AudioProcessingUnit::IO::WAVE14:
+  case GBC::AudioProcessingUnit::IO::WAVE16:
+  case GBC::AudioProcessingUnit::IO::WAVE18:
+  case GBC::AudioProcessingUnit::IO::WAVE20:
+  case GBC::AudioProcessingUnit::IO::WAVE22:
+  case GBC::AudioProcessingUnit::IO::WAVE24:
+  case GBC::AudioProcessingUnit::IO::WAVE26:
+  case GBC::AudioProcessingUnit::IO::WAVE28:
+  case GBC::AudioProcessingUnit::IO::WAVE30:
     return _apu.readIo(addr);
 
-  switch (addr) {
+    // Graphics registers
+  case GBC::PixelProcessingUnit::IO::LCDC:
+  case GBC::PixelProcessingUnit::IO::STAT:
+  case GBC::PixelProcessingUnit::IO::SCY:
+  case GBC::PixelProcessingUnit::IO::SCX:
+  case GBC::PixelProcessingUnit::IO::LY:
+  case GBC::PixelProcessingUnit::IO::LYC:
+  case GBC::PixelProcessingUnit::IO::DMA:
+  case GBC::PixelProcessingUnit::IO::BGP:
+  case GBC::PixelProcessingUnit::IO::OBP0:
+  case GBC::PixelProcessingUnit::IO::OBP1:
+  case GBC::PixelProcessingUnit::IO::WY:
+  case GBC::PixelProcessingUnit::IO::WX:
+  case GBC::PixelProcessingUnit::IO::VBK:
+  case GBC::PixelProcessingUnit::IO::HDMA1:
+  case GBC::PixelProcessingUnit::IO::HDMA2:
+  case GBC::PixelProcessingUnit::IO::HDMA3:
+  case GBC::PixelProcessingUnit::IO::HDMA4:
+  case GBC::PixelProcessingUnit::IO::HDMA5:
+  case GBC::PixelProcessingUnit::IO::BCPI:
+  case GBC::PixelProcessingUnit::IO::BCPD:
+  case GBC::PixelProcessingUnit::IO::OCPI:
+  case GBC::PixelProcessingUnit::IO::OCPD:
+  case GBC::PixelProcessingUnit::IO::OPRI:
+    return _ppu.readIo(addr);
+
   case IO::JOYP:    // Joypad, R/W
     // Bits 7-6 are always set
     return _io[IO::JOYP] | 0b11000000;
-
-  case IO::VBK:     // Video RAM Bank, R/W, CGB mode only
-    return _io[IO::VBK] | 0b11111110;
-
-  case IO::BCPD:    // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
-    return _ppu.readBgc(_io[IO::BCPI] & 0b00111111);
-
-  case IO::OCPD:    // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
-    return _ppu.readObc(_io[IO::OCPI] & 0b00111111);
 
   case IO::SVBK:    // Work Ram Bank, R/W, CGB mode only
     return _io[IO::SVBK] & 0b00000111;
@@ -515,28 +569,8 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
   case IO::TMA:     // Timer Modulo, R/W
   case IO::TAC:     // Time Control, R/W of bits 2-1-0
   case IO::IF:      // Interrupt Flags, R/W
-  case IO::LCDC:    // LCD Control, R/W (see enum)
-  case IO::STAT:    // LCD Status, R/W (see enum)
-  case IO::SCY:     // Scroll Y, R/W
-  case IO::SCX:     // Scroll X, R/W
-  case IO::LY:      // LCD Y Coordinate, R
-  case IO::LYC:     // LCD Y Coordinate Compare, R/W
-  case IO::DMA:     // DMA Transfer and Start Address, R/W
-  case IO::BGP:     // Background Palette Data, R/W, non CGB mode only
-  case IO::OBP0:    // OBJ 0 Palette Data, R/W, non CGB mode only
-  case IO::OBP1:    // OBJ 1 Palette Data, R/W, non CGB mode only
-  case IO::WY:      // Window Y Position, R/W
-  case IO::WX:      // Window X Position, R/W
   case IO::KEY0:    // CPU Mode, R/W, see enum
   case IO::KEY1:    // CPU Speed Switch, R/W, CGB mode only
-  case IO::HDMA1:   // New DMA Transfers source high byte, W, CGB mode only
-  case IO::HDMA2:   // New DMA Transfers source low byte, W, CGB mode only
-  case IO::HDMA3:   // New DMA Transfers destination high byte, W, CGB mode only
-  case IO::HDMA4:   // New DMA Transfers destination low byte, W, CGB mode only
-  case IO::HDMA5:   // Start New DMA Transfer
-  case IO::BCPI:    // Background Color Palette Index, R/W, CGB mode only
-  case IO::OCPI:    // OBJ Color Palette Index, R/W, CGB mode only
-  case IO::OPRI:    // OBJ Priority Mode, R/W, CGB mode only
   case 0x72:        // Undocumented, R/W
   case 0x73:        // Undocumented, R/W
   case 0x75:        // Undocumented, R/W (bit 4-6)
@@ -633,11 +667,76 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
   if (addr >= 0x0080)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-  // Audio register
-  if (addr >= 0x10 && addr <= 0x3F)
+  switch (addr)
+  {
+    // Audio registers
+  case GBC::AudioProcessingUnit::IO::NR10:
+  case GBC::AudioProcessingUnit::IO::NR11:
+  case GBC::AudioProcessingUnit::IO::NR12:
+  case GBC::AudioProcessingUnit::IO::NR13:
+  case GBC::AudioProcessingUnit::IO::NR14:
+  case GBC::AudioProcessingUnit::IO::NR21:
+  case GBC::AudioProcessingUnit::IO::NR22:
+  case GBC::AudioProcessingUnit::IO::NR23:
+  case GBC::AudioProcessingUnit::IO::NR24:
+  case GBC::AudioProcessingUnit::IO::NR30:
+  case GBC::AudioProcessingUnit::IO::NR31:
+  case GBC::AudioProcessingUnit::IO::NR32:
+  case GBC::AudioProcessingUnit::IO::NR33:
+  case GBC::AudioProcessingUnit::IO::NR34:
+  case GBC::AudioProcessingUnit::IO::NR41:
+  case GBC::AudioProcessingUnit::IO::NR42:
+  case GBC::AudioProcessingUnit::IO::NR43:
+  case GBC::AudioProcessingUnit::IO::NR44:
+  case GBC::AudioProcessingUnit::IO::NR50:
+  case GBC::AudioProcessingUnit::IO::NR51:
+  case GBC::AudioProcessingUnit::IO::NR52:
+  case GBC::AudioProcessingUnit::IO::WAVE00:
+  case GBC::AudioProcessingUnit::IO::WAVE02:
+  case GBC::AudioProcessingUnit::IO::WAVE04:
+  case GBC::AudioProcessingUnit::IO::WAVE06:
+  case GBC::AudioProcessingUnit::IO::WAVE08:
+  case GBC::AudioProcessingUnit::IO::WAVE10:
+  case GBC::AudioProcessingUnit::IO::WAVE12:
+  case GBC::AudioProcessingUnit::IO::WAVE14:
+  case GBC::AudioProcessingUnit::IO::WAVE16:
+  case GBC::AudioProcessingUnit::IO::WAVE18:
+  case GBC::AudioProcessingUnit::IO::WAVE20:
+  case GBC::AudioProcessingUnit::IO::WAVE22:
+  case GBC::AudioProcessingUnit::IO::WAVE24:
+  case GBC::AudioProcessingUnit::IO::WAVE26:
+  case GBC::AudioProcessingUnit::IO::WAVE28:
+  case GBC::AudioProcessingUnit::IO::WAVE30:
     _apu.writeIo(addr, value);
+    break;
 
-  switch (addr) {
+    // Graphics registers
+  case GBC::PixelProcessingUnit::IO::LCDC:
+  case GBC::PixelProcessingUnit::IO::STAT:
+  case GBC::PixelProcessingUnit::IO::SCY:
+  case GBC::PixelProcessingUnit::IO::SCX:
+  case GBC::PixelProcessingUnit::IO::LY:
+  case GBC::PixelProcessingUnit::IO::LYC:
+  case GBC::PixelProcessingUnit::IO::DMA:
+  case GBC::PixelProcessingUnit::IO::BGP:
+  case GBC::PixelProcessingUnit::IO::OBP0:
+  case GBC::PixelProcessingUnit::IO::OBP1:
+  case GBC::PixelProcessingUnit::IO::WY:
+  case GBC::PixelProcessingUnit::IO::WX:
+  case GBC::PixelProcessingUnit::IO::VBK:
+  case GBC::PixelProcessingUnit::IO::HDMA1:
+  case GBC::PixelProcessingUnit::IO::HDMA2:
+  case GBC::PixelProcessingUnit::IO::HDMA3:
+  case GBC::PixelProcessingUnit::IO::HDMA4:
+  case GBC::PixelProcessingUnit::IO::HDMA5:
+  case GBC::PixelProcessingUnit::IO::BCPI:
+  case GBC::PixelProcessingUnit::IO::BCPD:
+  case GBC::PixelProcessingUnit::IO::OCPI:
+  case GBC::PixelProcessingUnit::IO::OCPD:
+  case GBC::PixelProcessingUnit::IO::OPRI:
+    _ppu.writeIo(addr, value);
+    break;
+
   case IO::JOYP:    // Joypad, R/W
     // Reset pressed keys and force bits 7-6 to true
     _io[IO::JOYP] = value | 0b11001111;
@@ -674,42 +773,11 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
 
   case IO::TAC:     // Time Control, R/W of bit 2-1-0
     _io[IO::TAC] = value & 0b00000111;
+    break;
 
   case IO::IF:      // Interrupt Flags, R/W
     // Bits 7-6-5 are always set
     _io[IO::IF] = value | 0b11100000;
-    break;
-
-  case IO::STAT:    // LCD Status, R/W (see enum)
-    // Only bits 6-5-4-3 are writable 
-    _io[IO::STAT] = (_io[IO::STAT] & 0b00000111) | (value & 0b01111000);
-    break;
-
-  case IO::LYC:     // LCD Y Coordinate Compare, R/W
-    // Write value to register
-    _io[IO::LYC] = value;
-
-    // LY / LCY register comparison
-    if (_io[IO::LY] == _io[IO::LYC]) {
-      _io[IO::STAT] |= GBC::PixelProcessingUnit::LcdStatus::LcdStatusEqual;
-
-      // STAT compare (LY/LYC) interrupt
-      if (_io[IO::STAT] & GBC::PixelProcessingUnit::LcdStatus::LcdStatusCompare)
-        _io[IO::IF] |= Interrupt::InterruptLcdStat;
-    }
-    else
-      _io[IO::STAT] &= ~GBC::PixelProcessingUnit::LcdStatus::LcdStatusEqual;
-    break;
-
-  case IO::DMA:     // DMA Transfer and Start Address, R/W
-    // Write value to register
-    _io[IO::DMA] = value;
-
-    // Transfer data to OAM
-    for (std::uint16_t index = 0; index < 160; index++)
-      _ppu.writeDma(index, read(((std::uint16_t)_io[IO::DMA] << 8) + index));
-
-    // TODO: DMA transfer is 160 cycles long, lock memory access
     break;
 
   case IO::KEY0:    // CPU Mode, R/W, see enum
@@ -724,73 +792,6 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
       _io[IO::BANK] = value;
     break;
 
-  case IO::HDMA5:   // Start New DMA Transfer, R/W, CGB mode only
-  {
-    std::uint16_t source = (((std::uint16_t)_io[IO::HDMA1] << 8) + (std::uint16_t)_io[IO::HDMA2]) & 0b1111111111110000;
-    std::uint16_t destination = ((((std::uint16_t)_io[IO::HDMA3] << 8) + (std::uint16_t)_io[IO::HDMA4]) & 0b00011111111110000) | 0b1000000000000000;
-    std::uint16_t length = ((std::uint16_t)(value & 0b01111111) + 1) * 0x10;
-    
-    // Transfer data to VRAM
-    for (unsigned int count = 0; count < length; count++) {
-      std::uint8_t  data;
-
-      // Get data from source
-      if ((source >= 0x0000 && source < 0x8000) ||
-        (source >= 0xA000 && source < 0xC000) ||
-        (source >= 0xC000 && source < 0xE000))
-        data = read(source);
-      else
-        break;
-
-      // Write data to destination
-      if (destination >= 0x8000 && destination < 0xA000)
-        _ppu.writeRam(destination - 0x8000, data);
-      else
-        break;
-
-      // Increment addresses
-      source += 1;
-      destination += 1;
-    }
-
-    // Set register to completed transfer value
-    _io[IO::HDMA5] = 0xFF;
-
-    // Write end addresses to HDMA registers
-    _io[IO::HDMA1] = (source >> 8) & 0b11111111;
-    _io[IO::HDMA2] = (source >> 0) & 0b11111111;
-    _io[IO::HDMA3] = (destination >> 8) & 0b11111111;
-    _io[IO::HDMA4] = (destination >> 0) & 0b11111111;
-
-    // TODO: respect HDMA transfer timing for mode 0 & 1
-    //if (value & 0b10000000)
-    //  _cpuCycle += length * ((_io[IO::KEY1] & 0b10000000) ? 4 : 2);
-
-    break;
-  }
-
-  case IO::BCPD:    // Background Color Palette Data, R/W, reference byte in BG Color RAM at index BCPI, CGB mode only
-    // Store data in Background Color RAM
-    _ppu.writeBgc(_io[IO::BCPI] & 0b00111111, value);
-
-    // Increment pointer
-    if (_io[IO::BCPI] & 0b10000000)
-      _io[IO::BCPI] = 0b10000000 | ((_io[IO::BCPI] + 1) & 0b00111111);
-    break;
-
-  case IO::OCPD:    // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
-    // Store data in OBJ Color RAM
-    _ppu.writeObc(_io[IO::OCPI] & 0b00111111, value);
-
-    // Increment pointer
-    if (_io[IO::OCPI] & 0b10000000)
-      _io[IO::OCPI] = 0b10000000 | ((_io[IO::OCPI] + 1) & 0b00111111);
-    break;
-
-  case IO::OPRI:    // OBJ Priority Mode, R/W, CGB mode only
-    _io[IO::OPRI] = value & 0b00000001;
-    break;
-
   case IO::SVBK:    // Work Ram Bank, R/W, CGB mode only
     if ((_io[IO::KEY0] & 0b00001100) != CpuMode::CpuModeDmg)
       _io[IO::SVBK] = value & 0b00000111;
@@ -798,22 +799,6 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
 
   case IO::TIMA:    // Timer Modulo, R/W
   case IO::TMA:     // Timer Modulo, R/W
-  case IO::LCDC:    // LCD Control, R/W (see enum)
-  case IO::SCY:     // Scroll Y, R/W
-  case IO::SCX:     // Scroll X, R/W
-  case IO::BGP:     // Background Palette Data, R/W, non CGB mode only
-  case IO::OBP0:    // OBJ 0 Palette Data, R/W, non CGB mode only
-  case IO::OBP1:    // OBJ 1 Palette Data, R/W, non CGB mode only
-  case IO::WY:      // Window Y Position, R/W
-  case IO::WX:      // Window X Position, R/W
-  case IO::KEY1:    // CPU Speed Switch, R/W, CGB mode only
-  case IO::VBK:     // Video RAM Bank, R/W, CGB mode only
-  case IO::HDMA1:   // New DMA Transfers source high byte, W, CGB mode only
-  case IO::HDMA2:   // New DMA Transfers source low byte, W, CGB mode only
-  case IO::HDMA3:   // New DMA Transfers destination high byte, W, CGB mode only
-  case IO::HDMA4:   // New DMA Transfers destination low byte, W, CGB mode only
-  case IO::BCPI:    // Background Color Palette Index, R/W, CGB mode only
-  case IO::OCPI:    // OBJ Color Palette Index, R/W, CGB mode only
   case 0x72:        // Undocumented, R/W
   case 0x73:        // Undocumented, R/W
     _io[addr] = value;
@@ -824,12 +809,10 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     break;
 
   case IO::DIVLo:   // Low byte of DIV, not accessible
-  case IO::LY:      // LCD Y Coordinate, R
     break;
 
   default:
     break;
-    //throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
   }
 }
 

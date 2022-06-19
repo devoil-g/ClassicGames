@@ -80,7 +80,7 @@ namespace GBC
       InterruptJoypad = 0b00010000
     };
 
-    enum IO
+    enum IO : std::uint8_t
     {
       JOYP = 0x00,  // Joypad, R/W, bits 7-6 always set
       SB = 0x01,
@@ -93,35 +93,12 @@ namespace GBC
 
       IF = 0x0F,    // Interrupt Flags, bits set when an event occured, bits 7-6-5 always set
       
-      LCDC = 0x40,  // LCD Control, R/W (see enum)
-      STAT = 0x41,  // LCD Status, R/W (see enum)
-      SCY = 0x42,   // Scroll Y, R/W
-      SCX = 0x43,   // Scroll X, R/W
-      LY = 0x44,    // LCD Y Coordinate, R
-      LYC = 0x45,   // LCD Y Coordinate Compare, R/W
-      DMA = 0x46,   // DMA Transfer and Start Address, R/W
-      BGP = 0x47,   // Background and Window Palette Data, R/W, non CGB mode only
-      OBP0 = 0x48,  // OBJ 0 Palette Data, R/W, non CGB mode only
-      OBP1 = 0x49,  // OBJ 1 Palette Data, R/W, non CGB mode only  
-      WY = 0x4A,    // Window Y Position, R/W
-      WX = 0x4B,    // Window X Position, R/W
       KEY0 = 0x4C,  // CPU Mode, R/W, see enum
       KEY1 = 0x4D,  // CPU Speed Switch, R/W, CGB mode only, bit 7: current speed (0: normal, 1: double), bit 0: prepare switch (0: no, 1: prepare)
 
-      VBK = 0x4F,   // Video RAM Bank, R/W, CGB mode only
       BANK = 0x50,  // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
-      HDMA1 = 0x51, // New DMA Transfers source high byte, W, CGB mode only
-      HDMA2 = 0x52, // New DMA Transfers source low byte, W, CGB mode only
-      HDMA3 = 0x53, // New DMA Transfers destination high byte, W, CGB mode only
-      HDMA4 = 0x54, // New DMA Transfers destination low byte, W, CGB mode only
-      HDMA5 = 0x55, // Start New DMA Transfer, R/W, CGB mode only
+      
       RP = 0x56,
-
-      BCPI = 0x68,  // Background Color Palette Index, R/W, CGB mode only
-      BCPD = 0x69,  // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
-      OCPI = 0x6A,  // OBJ Color Palette Index, R/W, CGB mode only
-      OCPD = 0x6B,  // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
-      OPRI = 0x6C,  // OBJ Priority Mode, R/W, CGB mode only, bit 0: mode (0 :OAM, 1: Coordinate)
 
       SVBK = 0x70   // Work Ram Bank, R/W, CGB mode only
     };

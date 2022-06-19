@@ -120,8 +120,8 @@ namespace GBC
 
     void  simulate(); // Simulate 70224 clock ticks (1 PPU frame) of the APU
 
-    std::uint8_t  readIo(std::uint8_t address);                       // Read an audio IO
-    void          writeIo(std::uint8_t address, std::uint8_t value);  // Write an audio IO
+    std::uint8_t  readIo(std::uint16_t address);                      // Read an audio IO
+    void          writeIo(std::uint16_t address, std::uint8_t value); // Write an audio IO
 
     const std::array<std::int16_t, GBC::AudioProcessingUnit::BufferSize>& sound() const;  // Get sound buffer
   };
