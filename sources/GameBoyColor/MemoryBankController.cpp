@@ -12,7 +12,8 @@ GBC::MemoryBankController::MemoryBankController(const std::vector<std::uint8_t>&
   _ram(ramSize, 0),
   _ramEnable(false),
   _ramBank(0),
-  _ramSave(ramSave)
+  _ramSave(ramSave),
+  _ramSaved()
 {
   // ROM cannot be empty
   if (_rom.empty() == true)
@@ -20,6 +21,15 @@ GBC::MemoryBankController::MemoryBankController(const std::vector<std::uint8_t>&
 
   // Load RAM from memory
   loadRam();
+
+  // Set saved RAM
+  _ramSaved = _ram;
+}
+
+GBC::MemoryBankController::~MemoryBankController()
+{
+  // Save RAM to file
+  saveRam();
 }
 
 std::uint8_t  GBC::MemoryBankController::readRom(std::uint16_t address) const
@@ -106,9 +116,9 @@ bool  GBC::MemoryBankController::getRamEnable() const
 
 void  GBC::MemoryBankController::setRamEnable(bool enable)
 {
-  // Save RAM to save file
+  // Save RAM to buffer
   if (_ramEnable == true && enable == false)
-    saveRam();
+    _ramSaved = _ram;
 
   // Enable/disable RAM
   _ramEnable = enable;
@@ -164,7 +174,7 @@ void  GBC::MemoryBankController::saveRam() const
   }
 
   // Write External RAM to save file
-  file.write((const char*)_ram.data(), _ram.size());
+  file.write((const char*)_ramSaved.data(), _ramSaved.size());
 
   // Check for success
   if (file.good() == false) {

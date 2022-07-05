@@ -11,6 +11,8 @@
 GBC::MemoryBankController3::MemoryBankController3(const std::vector<std::uint8_t>& rom, std::size_t ramSize, const std::string& ramSave, const std::string& rtcSave) :
   GBC::MemoryBankController(rom, ramSize, ramSave),
   _rtcSave(rtcSave),
+  _rtcSaveTime(0),
+  _rtcSaveClock(0),
   _rtcTime(std::time(nullptr)),
   _rtcClock(0),
   _rtcRegister(0),
@@ -19,6 +21,10 @@ GBC::MemoryBankController3::MemoryBankController3(const std::vector<std::uint8_t
 {
   // Load initial RTC
   loadRtc();
+
+  // Set saved values
+  _rtcSaveTime = _rtcTime;
+  _rtcSaveClock = _rtcClock;
 }
 
 GBC::MemoryBankController3::~MemoryBankController3()
@@ -80,9 +86,9 @@ void  GBC::MemoryBankController3::writeRom(std::uint16_t address, std::uint8_t v
 
     // Save RTC
     if (getRamEnable() == true && enable == false)
-      saveRtc();
+      updateRtc();
 
-    setRamEnable(enable);
+    setRamEnable((value & 0b00001111) == 0b00001010);
   }
 
   // ROM bank number
@@ -160,11 +166,14 @@ std::uint64_t GBC::MemoryBankController3::updateRtc()
   std::uint64_t clock = std::time(nullptr);
 
   // At least a second passed
-  if (_rtcHalt == 0 && _rtcTime < clock)
+  if (_rtcHalt == 0 && _rtcTime < clock) {
     _rtcClock += clock - _rtcTime;
+    _rtcSaveClock = _rtcClock;
+  }
 
   // Save current time
   _rtcTime = clock;
+  _rtcSaveTime = _rtcTime;
 
   return _rtcClock;
 }
@@ -214,9 +223,6 @@ void  GBC::MemoryBankController3::saveRtc()
   if (_rtcSave.empty() == true)
     return;
 
-  // Update clock before save
-  updateRtc();
-
   std::ofstream file(_rtcSave, std::ofstream::binary | std::ofstream::trunc);
 
   // Check if file open properly
@@ -225,7 +231,7 @@ void  GBC::MemoryBankController3::saveRtc()
     return;
   }
 
-  std::array<std::uint64_t, 2>  data = { _rtcTime, _rtcClock };
+  std::array<std::uint64_t, 2>  data = { _rtcSaveTime, _rtcSaveClock };
 
   // Write External RAM to save file
   file.write((const char*)data.data(), sizeof(data));

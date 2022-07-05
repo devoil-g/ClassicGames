@@ -15,6 +15,7 @@ namespace GBC
     bool                            _ramEnable; // RAM enable flag
     std::size_t                     _ramBank;   // RAM bank
     const std::string               _ramSave;   // Path of RAM save files, empty if no battery
+    std::vector<std::uint8_t>       _ramSaved;  // Raw RAM to save
 
     void  loadRam();        // Load MBC RAM from save file
     void  saveRam() const;  // Save MBC RAM to save file
@@ -31,7 +32,7 @@ namespace GBC
 
   public:
     MemoryBankController(const std::vector<std::uint8_t>& rom, std::size_t ramSize = 0, const std::string& ramSave = "");
-    virtual ~MemoryBankController() = default;
+    virtual ~MemoryBankController();
 
     virtual std::uint8_t  readRom(std::uint16_t address) const; // Read ROM
     virtual std::uint8_t  readRam(std::uint16_t address) const; // Read RAM
