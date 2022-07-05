@@ -27,7 +27,9 @@ GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
   _wRam(),
   _io(),
   _hRam(),
-  _ie(0)
+  _ie(0),
+  _keys{0},
+  _transferMode(Transfer::TransferNone)
 {
   // Load ROM
   load(filename);
@@ -37,8 +39,9 @@ GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
   _io.fill(0);
   _hRam.fill(0);
 
-  // Initialize Joypad
+  // Initialize registers
   _io[IO::JOYP] = 0b11111111;
+  _io[IO::HDMA5] = 0b11111111;
 }
 
 void  GBC::GameBoyColor::load(const std::string& filename)
@@ -314,9 +317,141 @@ void  GBC::GameBoyColor::simulate()
   // Execution loop
   while (frame == _cycles / (GBC::PixelProcessingUnit::ScanlineDuration * (GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank)))
   {
-    // Simulate a tick of the CPU
-    _cpu.simulate();
-    _cycles += (_io[IO::KEY1] & 0b10000000) ? 2 : 4;
+    switch (_transferMode)
+    {
+      // Simulate a tick of the CPU
+    case Transfer::TransferNone:
+      _cpu.simulate();
+      _cycles += (_io[IO::KEY1] & 0b10000000) ? 2 : 4;
+      break;
+
+      // DMA transfer
+    case Transfer::TransferDma:
+      // Transfer 4 bytes to OAM
+      for (std::uint16_t index = 0; index < 4; index++)
+        _ppu.writeDma((std::uint16_t)_transferIndex + index, read(((std::uint16_t)_io[IO::DMA] << 8) + (std::uint16_t)_transferIndex + index));
+      _transferIndex += 4;
+
+      // Simulate a tick of the CPU
+      _cpu.simulate();
+      _cycles += (_io[IO::KEY1] & 0b10000000) ? 2 : 4;
+
+      // End of DMA transfer
+      if (_transferIndex == 160)
+        _transferMode = Transfer::TransferNone;
+
+      // TODO: restrict memory access to HRAM during DMA transfer
+      break;
+
+      // General purpose DMA
+    case Transfer::TransferHdma0:
+    {
+      std::uint16_t source = ((((std::uint16_t)_io[IO::HDMA1] << 8) + (std::uint16_t)_io[IO::HDMA2]) & 0b1111111111110000) + (std::uint16_t)_transferIndex;
+      std::uint16_t destination = (((((std::uint16_t)_io[IO::HDMA3] << 8) + (std::uint16_t)_io[IO::HDMA4]) & 0b00011111111110000) | 0b1000000000000000) + (std::uint16_t)_transferIndex;
+      bool          end = false;
+
+      // Transfer 8 bytes per tick
+      for (std::size_t index = 0; index < 8 && end == false; index++)
+      {
+        // Check transfer adress
+        if (((source >= 0x0000 && source < 0x8000) ||
+          (source >= 0xA000 && source < 0xC000) ||
+          (source >= 0xC000 && source < 0xE000)) &&
+          (destination >= 0x8000 && destination < 0xA000))
+          _ppu.writeRam(destination - 0x8000, read(source));
+        else
+          end = true;
+
+        source += 1;
+        destination += 1;
+      }
+
+      // Increment transfer index
+      _transferIndex += 8;
+
+      // End of HDMA transfer
+      if (_transferIndex == (_io[IO::HDMA5] + 1) * 0x10 || end == true) {
+        _transferMode = Transfer::TransferNone;
+        _io[IO::HDMA1] = 0xFF;
+        _io[IO::HDMA2] = 0xFF;
+        _io[IO::HDMA3] = 0xFF;
+        _io[IO::HDMA4] = 0xFF;
+        _io[IO::HDMA5] = 0xFF;
+      }
+
+      // CPU is not executed
+      _cycles += 4;
+      break;
+    }
+    
+    case Transfer::TransferHdma1:
+    {
+      bool trigger = (_io[GBC::PixelProcessingUnit::IO::STAT] & GBC::PixelProcessingUnit::LcdStatus::LcdStatusMode) == GBC::PixelProcessingUnit::Mode::Mode0;
+
+      // Trigger when entering mode 0
+      if (_transferTrigger == false && trigger == true)
+        _transferCounter = 16;
+
+      // Save current mode
+      _transferTrigger = trigger;
+
+      // HDMA Transfer at start of HBlank
+      if (_transferCounter >= 0)
+      {
+        std::uint16_t source = ((((std::uint16_t)_io[IO::HDMA1] << 8) + (std::uint16_t)_io[IO::HDMA2]) & 0b1111111111110000) + (std::uint16_t)_transferIndex;
+        std::uint16_t destination = (((((std::uint16_t)_io[IO::HDMA3] << 8) + (std::uint16_t)_io[IO::HDMA4]) & 0b00011111111110000) | 0b1000000000000000) + (std::uint16_t)_transferIndex;
+        bool          end = false;
+
+        // Transfer 8 bytes per tick
+        for (std::size_t index = 0; index < 8 && end == false; index++)
+        {
+          // Check transfer adress
+          if (((source >= 0x0000 && source < 0x8000) ||
+            (source >= 0xA000 && source < 0xC000) ||
+            (source >= 0xC000 && source < 0xE000)) &&
+            (destination >= 0x8000 && destination < 0xA000))
+            _ppu.writeRam(destination - 0x8000, read(source));
+          else
+            end = true;
+
+          source += 1;
+          destination += 1;
+        }
+
+        // Update transfer index
+        _transferIndex += 8;
+        _transferCounter -= 8;
+
+        // End of data chunk transfer
+        if (_transferCounter == 0)
+          _io[IO::HDMA5] -= 1;
+
+        // End of HDMA transfer
+        if (_io[IO::HDMA5] == 0xFF || end == true) {
+          _transferMode = Transfer::TransferNone;
+          _io[IO::HDMA1] = 0xFF;
+          _io[IO::HDMA2] = 0xFF;
+          _io[IO::HDMA3] = 0xFF;
+          _io[IO::HDMA4] = 0xFF;
+          _io[IO::HDMA5] = 0xFF;
+        }
+
+        // CPU is not executed
+        _cycles += 4;
+      }
+
+      // Simulate CPU when no transfer
+      else {
+        _cpu.simulate();
+        _cycles += (_io[IO::KEY1] & 0b10000000) ? 2 : 4;
+      }
+
+      break;
+    }
+
+    default:
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+    }
 
     // Update timer
     simulateTimer();
@@ -333,14 +468,14 @@ void  GBC::GameBoyColor::simulate()
 void  GBC::GameBoyColor::simulateKeys()
 {
   std::array<bool, Key::KeyCount> keys = {
-    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) < -0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Down),
-    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) > +0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Up),
-    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovX) < -0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Left),
-    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovX) > +0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Right),
-    Game::Window::Instance().joystick().buttonDown(0, 7) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Numpad0),
-    Game::Window::Instance().joystick().buttonDown(0, 6) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Enter),
-    Game::Window::Instance().joystick().buttonDown(0, 1) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Numpad2),
-    Game::Window::Instance().joystick().buttonDown(0, 0) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Numpad6)
+    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) < -0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::S),  // Down
+    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) > +0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Z),  // Up
+    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovX) < -0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Q),  // Left
+    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovX) > +0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::D),  // Right
+    Game::Window::Instance().joystick().buttonDown(0, 7) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::E),                               // Start
+    Game::Window::Instance().joystick().buttonDown(0, 6) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::A),                               // Select
+    Game::Window::Instance().joystick().buttonDown(0, 1) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::L),                               // B
+    Game::Window::Instance().joystick().buttonDown(0, 0) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::P)                                // A
   };
 
   // Joypad interrupt when a selected key is pressed
@@ -538,18 +673,12 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
   case GBC::PixelProcessingUnit::IO::SCX:
   case GBC::PixelProcessingUnit::IO::LY:
   case GBC::PixelProcessingUnit::IO::LYC:
-  case GBC::PixelProcessingUnit::IO::DMA:
   case GBC::PixelProcessingUnit::IO::BGP:
   case GBC::PixelProcessingUnit::IO::OBP0:
   case GBC::PixelProcessingUnit::IO::OBP1:
   case GBC::PixelProcessingUnit::IO::WY:
   case GBC::PixelProcessingUnit::IO::WX:
   case GBC::PixelProcessingUnit::IO::VBK:
-  case GBC::PixelProcessingUnit::IO::HDMA1:
-  case GBC::PixelProcessingUnit::IO::HDMA2:
-  case GBC::PixelProcessingUnit::IO::HDMA3:
-  case GBC::PixelProcessingUnit::IO::HDMA4:
-  case GBC::PixelProcessingUnit::IO::HDMA5:
   case GBC::PixelProcessingUnit::IO::BCPI:
   case GBC::PixelProcessingUnit::IO::BCPD:
   case GBC::PixelProcessingUnit::IO::OCPI:
@@ -557,29 +686,35 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
   case GBC::PixelProcessingUnit::IO::OPRI:
     return _ppu.readIo(addr);
 
-  case IO::JOYP:    // Joypad, R/W
+  case IO::JOYP:  // Joypad, R/W
     // Bits 7-6 are always set
     return _io[IO::JOYP] | 0b11000000;
 
-  case IO::SVBK:    // Work Ram Bank, R/W, CGB mode only
+  case IO::SVBK:  // Work Ram Bank, R/W, CGB mode only
     return _io[IO::SVBK] & 0b00000111;
 
-  case IO::DIVHi:   // High byte of DIV
-  case IO::TIMA:    // Timer Counter, R/W
-  case IO::TMA:     // Timer Modulo, R/W
-  case IO::TAC:     // Time Control, R/W of bits 2-1-0
-  case IO::IF:      // Interrupt Flags, R/W
-  case IO::KEY0:    // CPU Mode, R/W, see enum
-  case IO::KEY1:    // CPU Speed Switch, R/W, CGB mode only
-  case 0x72:        // Undocumented, R/W
-  case 0x73:        // Undocumented, R/W
-  case 0x75:        // Undocumented, R/W (bit 4-6)
+  case IO::DIVHi: // High byte of DIV
+  case IO::TIMA:  // Timer Counter, R/W
+  case IO::TMA:   // Timer Modulo, R/W
+  case IO::TAC:   // Time Control, R/W of bits 2-1-0
+  case IO::IF:    // Interrupt Flags, R/W
+  case IO::DMA:   // DMA Transfer and Start Address, R/W
+  case IO::KEY0:  // CPU Mode, R/W, see enum
+  case IO::KEY1:  // CPU Speed Switch, R/W, CGB mode only
+  case IO::HDMA5: // Start New DMA Transfer, R/W, CGB mode only
+  case 0x72:      // Undocumented, R/W
+  case 0x73:      // Undocumented, R/W
+  case 0x75:      // Undocumented, R/W (bit 4-6)
     // Basic read, just return stored value
     return _io[addr];
 
-  case IO::DIVLo:   // Low byte of DIV, not accessible
-  case IO::BANK:    // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
-  default:          // Invalid register
+  case IO::DIVLo: // Low byte of DIV, not accessible
+  case IO::BANK:  // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
+  case IO::HDMA1: // New DMA Transfers source high byte, W, CGB mode only
+  case IO::HDMA2: // New DMA Transfers source low byte, W, CGB mode only
+  case IO::HDMA3: // New DMA Transfers destination high byte, W, CGB mode only
+  case IO::HDMA4: // New DMA Transfers destination low byte, W, CGB mode only
+  default:        // Invalid register
     // Default value in case of error
     return 0xFF;
   }
@@ -717,18 +852,12 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
   case GBC::PixelProcessingUnit::IO::SCX:
   case GBC::PixelProcessingUnit::IO::LY:
   case GBC::PixelProcessingUnit::IO::LYC:
-  case GBC::PixelProcessingUnit::IO::DMA:
   case GBC::PixelProcessingUnit::IO::BGP:
   case GBC::PixelProcessingUnit::IO::OBP0:
   case GBC::PixelProcessingUnit::IO::OBP1:
   case GBC::PixelProcessingUnit::IO::WY:
   case GBC::PixelProcessingUnit::IO::WX:
   case GBC::PixelProcessingUnit::IO::VBK:
-  case GBC::PixelProcessingUnit::IO::HDMA1:
-  case GBC::PixelProcessingUnit::IO::HDMA2:
-  case GBC::PixelProcessingUnit::IO::HDMA3:
-  case GBC::PixelProcessingUnit::IO::HDMA4:
-  case GBC::PixelProcessingUnit::IO::HDMA5:
   case GBC::PixelProcessingUnit::IO::BCPI:
   case GBC::PixelProcessingUnit::IO::BCPD:
   case GBC::PixelProcessingUnit::IO::OCPI:
@@ -737,7 +866,7 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     _ppu.writeIo(addr, value);
     break;
 
-  case IO::JOYP:    // Joypad, R/W
+  case IO::JOYP:  // Joypad, R/W
     // Reset pressed keys and force bits 7-6 to true
     _io[IO::JOYP] = value | 0b11001111;
 
@@ -766,7 +895,7 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     }
     break;
 
-  case IO::DIVHi:   // High byte of DIV, R/W (always set to zero when written)
+  case IO::DIVHi: // High byte of DIV, R/W (always set to zero when written)
     // Always set to 0
     _io[IO::DIVHi] = 0;
     break;
@@ -775,40 +904,87 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     _io[IO::TAC] = value & 0b00000111;
     break;
 
-  case IO::IF:      // Interrupt Flags, R/W
+  case IO::IF:    // Interrupt Flags, R/W
     // Bits 7-6-5 are always set
     _io[IO::IF] = value | 0b11100000;
     break;
 
-  case IO::KEY0:    // CPU Mode, R/W, see enum
+  case IO::DMA:   // DMA Transfer and Start Address, R/W
+    // Write value to register
+    _io[IO::DMA] = value;
+
+    // Start transfer
+    _transferMode = Transfer::TransferDma;
+    _transferIndex = 0;
+    break;
+
+  case IO::KEY0:  // CPU Mode, R/W, see enum
     // Active only during boot mapping
     if (_io[IO::BANK] == 0)
       _io[IO::KEY0] = value;
     break;
 
-  case IO::BANK:    // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
+  case IO::KEY1:  // CPU Speed Switch, R/W, CGB mode only, bit 7: current speed (0: normal, 1: double), bit 0: prepare switch (0: no, 1: prepare)
+    // Set CPU speed switch bit
+    _io[IO::KEY1] = (_io[IO::KEY1] & 0b10000000) | (value & 0b00000001);
+    break;
+
+  case IO::BANK:  // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
     // Active only during boot mapping
     if (_io[IO::BANK] == 0)
       _io[IO::BANK] = value;
     break;
 
-  case IO::SVBK:    // Work Ram Bank, R/W, CGB mode only
+  case IO::HDMA5: // Start New DMA Transfer, R/W, CGB mode only
+  {
+    // HBlank DMA
+    if (value & 0b10000000)
+    {
+      _transferMode = Transfer::TransferHdma1;
+      _transferIndex = 0;
+      _transferCounter = 0;
+      _transferTrigger = true;
+      _io[IO::HDMA5] = value & 0b01111111;
+    }
+
+    // Interrupt HBlank DMA
+    else if (!(_io[IO::HDMA5] & 0b10000000)) {
+      _transferMode = Transfer::TransferNone;
+      _io[IO::HDMA5] |= 0b10000000;
+    }
+
+    // General Purpose DMA
+    else {
+      _transferMode = Transfer::TransferHdma0;
+      _transferIndex = 0;
+      _io[IO::HDMA5] = value & 0b01111111;
+    }
+
+    // TODO: respect HDMA transfer timing for mode 0 & 1
+    break;
+  }
+
+  case IO::SVBK:  // Work Ram Bank, R/W, CGB mode only
     if ((_io[IO::KEY0] & 0b00001100) != CpuMode::CpuModeDmg)
       _io[IO::SVBK] = value & 0b00000111;
     break;
 
-  case IO::TIMA:    // Timer Modulo, R/W
-  case IO::TMA:     // Timer Modulo, R/W
-  case 0x72:        // Undocumented, R/W
-  case 0x73:        // Undocumented, R/W
+  case IO::TIMA:  // Timer Modulo, R/W
+  case IO::TMA:   // Timer Modulo, R/W
+  case IO::HDMA1: // New DMA Transfers source high byte, W, CGB mode only
+  case IO::HDMA2: // New DMA Transfers source low byte, W, CGB mode only
+  case IO::HDMA3: // New DMA Transfers destination high byte, W, CGB mode only
+  case IO::HDMA4: // New DMA Transfers destination low byte, W, CGB mode only
+  case 0x72:      // Undocumented, R/W
+  case 0x73:      // Undocumented, R/W
     _io[addr] = value;
     break;
 
-  case 0x75:        // Undocumented, R/W (bit 4-6)
+  case 0x75:      // Undocumented, R/W (bit 4-6)
     _io[addr] = value & 0b01110000;
     break;
 
-  case IO::DIVLo:   // Low byte of DIV, not accessible
+  case IO::DIVLo: // Low byte of DIV, not accessible
     break;
 
   default:

@@ -11,10 +11,9 @@ GBC::PixelProcessingUnit::PixelProcessingUnit(GBC::GameBoyColor& gbc) :
   _bgc{ 0 },
   _obc{ 0 },
   _oam{ 0 },
-  _mode(Mode::Mode2),
+  _mode(Mode::Mode0),
   _sprites(),
   _cycles(0),
-  _enabled(false),
   _image(),
   _texture()
 {
@@ -32,7 +31,7 @@ GBC::PixelProcessingUnit::PixelProcessingUnit(GBC::GameBoyColor& gbc) :
 void  GBC::PixelProcessingUnit::simulate()
 {
   // Does nothing when PPU is disabled
-  if (_enabled == false)
+  if (!(_gbc._io[IO::LCDC] & LcdControl::LcdControlEnable))
     return;
 
   constexpr std::array<void(GBC::PixelProcessingUnit::*)(), Mode::ModeCount> modes = {
@@ -91,199 +90,314 @@ void  GBC::PixelProcessingUnit::simulateMode2()
   // Process all OBJ at once
   if (_cycles % GBC::PixelProcessingUnit::ScanlineDuration == 0)
   {
+    // First line, reset window flag
+    if (_gbc._io[IO::LY] == 0) {
+      _wFlagY = false;
+      _wY = 0;
+    }
+
+    // Check window Y coordinates
+    if (_gbc._io[IO::LY] == _gbc._io[IO::WY])
+      _wFlagY = true;
+
     // Reset OBJ list
     _sprites.clear();
     _sprites.reserve(GBC::PixelProcessingUnit::SpriteCount);
 
     // Push Y matching OBJ in order
-    for (const auto& sprite : _oam.sprites)
+    for (const auto& sprite : _oam.sprites) {
       if (sprite.y <= _gbc._io[IO::LY] + 16 &&
         sprite.y + ((_gbc._io[IO::LCDC] & LcdControl::LcdControlObjSize) ? 16 : 8) > _gbc._io[IO::LY] + 16)
         _sprites.push_back(sprite);
-
-    // Limit to 10 OBJ
-    if (_sprites.size() > GBC::PixelProcessingUnit::SpriteLimit)
-      _sprites.erase(std::next(_sprites.begin(), GBC::PixelProcessingUnit::SpriteLimit), _sprites.end());
+    }
 
     // In non-CGB mode, OBJ draw priority depends on its X position
     if ((_gbc._io[IO::OPRI] & 0b00000001) || (_gbc._io[GBC::GameBoyColor::IO::KEY0] & 0b00001100))
       std::sort(_sprites.begin(), _sprites.end(), [](const auto& a, const auto& b) { return a.x < b.x; });
+
+    // Limit to 10 OBJ
+    if (_sprites.size() > GBC::PixelProcessingUnit::SpriteLimit)
+      _sprites.erase(std::next(_sprites.begin(), GBC::PixelProcessingUnit::SpriteLimit), _sprites.end());
   }
 
   // Next cycle
   _cycles += 1;
 
   // Next mode
-  if (_cycles % GBC::PixelProcessingUnit::ScanlineDuration == GBC::PixelProcessingUnit::Mode2Duration) {
+  if (_cycles % GBC::PixelProcessingUnit::ScanlineDuration == GBC::PixelProcessingUnit::Mode2Duration)
     setMode(Mode::Mode3);
-  }
 }
 
 void  GBC::PixelProcessingUnit::simulateMode3()
 {
-  // Render current line
-  if (_cycles % GBC::PixelProcessingUnit::ScanlineDuration == GBC::PixelProcessingUnit::Mode2Duration)
-  {
-    std::uint8_t  sc_y = _gbc._io[IO::LY];
-    std::uint8_t  bg_y = sc_y + _gbc._io[IO::SCY];
-    std::uint8_t  wn_y = sc_y - _gbc._io[IO::WY];
-
-    for (std::uint8_t sc_x = 0; sc_x < GBC::PixelProcessingUnit::ScreenWidth; sc_x++)
-    {
-      std::uint8_t                    bg_color_id = 255;
-      std::uint8_t                    bg_attributes = 0;
-      GBC::PixelProcessingUnit::Color bg_color = { 0 };
-      std::uint8_t                    sp_color_id = 255;
-      std::uint8_t                    sp_attributes = 0;
-      GBC::PixelProcessingUnit::Color sp_color = { 0 };
-
-      // Window
-      if ((!(_gbc._io[GBC::GameBoyColor::IO::KEY0] & 0b00001100) || (_gbc._io[IO::LCDC] & LcdControl::LcdControlWindowBackgroundEnable)) &&
-        (_gbc._io[IO::LCDC] & LcdControl::LcdControlWindowEnable) &&
-        (sc_x + 7 >= _gbc._io[IO::WX]) &&
-        (sc_y >= _gbc._io[IO::WY]))
-      {
-        std::uint8_t  wn_x = sc_x - _gbc._io[IO::WX] + 7;
-        std::uint16_t wn_tilemap = (_gbc._io[IO::LCDC] & LcdControl::LcdControlWindowTilemap) ? 0x1C00 : 0x1800;
-        std::uint16_t wn_tilemap_id = (((std::uint16_t)wn_y / 8) * 32) + ((std::uint16_t)wn_x / 8);
-        bg_attributes = _ram[1][wn_tilemap + wn_tilemap_id];
-        std::uint8_t  wn_tile_id = _ram[0][wn_tilemap + wn_tilemap_id];
-        std::uint16_t wn_tile_index = ((std::uint16_t)wn_tile_id * 16)
-          + ((_gbc._io[IO::LCDC] & LcdControl::LcdControlData) ?
-            0x0000 :
-            ((wn_tile_id < 128) ? 0x1000 : 0x0000));
-
-        // Flip tile coordinates
-        std::uint8_t  wn_tile_x = (bg_attributes & BackgroundAttributes::BackgroundAttributesXFlip) ? ((8 - 1) - wn_x % 8) : (wn_x % 8);
-        std::uint8_t  wn_tile_y = (bg_attributes & BackgroundAttributes::BackgroundAttributesYFlip) ? ((8 - 1) - wn_y % 8) : (wn_y % 8);
-
-        bg_color_id =
-          ((_ram[(bg_attributes & BackgroundAttributes::BackgroundAttributesBank) ? 1 : 0][wn_tile_index + (wn_tile_y % 8) * 2 + 0] & (0b10000000 >> (wn_tile_x % 8))) ? 1 : 0) +
-          ((_ram[(bg_attributes & BackgroundAttributes::BackgroundAttributesBank) ? 1 : 0][wn_tile_index + (wn_tile_y % 8) * 2 + 1] & (0b10000000 >> (wn_tile_x % 8))) ? 2 : 0);
-
-        // DMG color palette
-        if (_gbc._io[GBC::GameBoyColor::IO::KEY0] & 0b00001100)
-          bg_color_id = (_gbc._io[IO::BGP] >> (bg_color_id * 2)) & 0b00000011;
-
-        // Get color from palette
-        bg_color = _bgc.colors[(bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id];
-      }
-
-      // Background
-      else if (!(_gbc._io[GBC::GameBoyColor::IO::KEY0] & 0b00001100) || (_gbc._io[IO::LCDC] & LcdControl::LcdControlWindowBackgroundEnable))
-      {
-        std::uint8_t  bg_x = sc_x + _gbc._io[IO::SCX];
-        std::uint16_t bg_tilemap = (_gbc._io[IO::LCDC] & LcdControl::LcdControlBackgroundTilemap) ? 0x1C00 : 0x1800;
-        std::uint16_t bg_tilemap_id = (((std::uint16_t)bg_y / 8) * 32) + ((std::uint16_t)bg_x / 8);
-        bg_attributes = _ram[1][bg_tilemap + bg_tilemap_id];
-        std::uint8_t  bg_tile_id = _ram[0][bg_tilemap + bg_tilemap_id];
-        std::uint16_t bg_tile_index = ((std::uint16_t)bg_tile_id * 16)
-          + ((_gbc._io[IO::LCDC] & LcdControl::LcdControlData) ?
-            0x0000 :
-            ((bg_tile_id < 128) ? 0x1000 : 0x0000));
-
-        // Flip tile coordinates
-        std::uint8_t  bg_tile_x = (bg_attributes & BackgroundAttributes::BackgroundAttributesXFlip) ? ((8 - 1) - bg_x % 8) : (bg_x % 8);
-        std::uint8_t  bg_tile_y = (bg_attributes & BackgroundAttributes::BackgroundAttributesYFlip) ? ((8 - 1) - bg_y % 8) : (bg_y % 8);
-
-        bg_color_id =
-          ((_ram[(bg_attributes & BackgroundAttributes::BackgroundAttributesBank) ? 1 : 0][bg_tile_index + (bg_tile_y % 8) * 2 + 0] & (0b10000000 >> (bg_tile_x % 8))) ? 1 : 0) +
-          ((_ram[(bg_attributes & BackgroundAttributes::BackgroundAttributesBank) ? 1 : 0][bg_tile_index + (bg_tile_y % 8) * 2 + 1] & (0b10000000 >> (bg_tile_x % 8))) ? 2 : 0);
-
-        // DMG color palette
-        if (_gbc._io[GBC::GameBoyColor::IO::KEY0] & 0b00001100)
-          bg_color_id = (_gbc._io[IO::BGP] >> (bg_color_id * 2)) & 0b00000011;
-
-        // Get color from palette
-        bg_color = _bgc.colors[(bg_attributes & BackgroundAttributes::BackgroundAttributesPalette) * 4 + bg_color_id];
-      }
-
-      // Sprite
-      if (_gbc._io[IO::LCDC] & LcdControl::LcdControlObjEnable)
-      {
-        // Find first matching sprite
-        for (const auto& sprite : _sprites) {
-          std::uint8_t  sp_y = sc_y - sprite.y + 16;
-          std::uint8_t  sp_x = sc_x - sprite.x + 8;
-
-          // Sprite not on column
-          if (sp_x >= 8)
-            continue;
-
-          std::uint8_t  sp_height = (_gbc._io[IO::LCDC] & LcdControl::LcdControlObjSize) ? 16 : 8;
-          sp_attributes = sprite.attributes;
-
-          // Flip sprite coordinates
-          if (sp_attributes & SpriteAttributes::SpriteAttributesYFlip)
-            sp_y = (sp_height - 1) - sp_y % sp_height;
-          if (sp_attributes & SpriteAttributes::SpriteAttributesXFlip)
-            sp_x = (8 - 1) - sp_x % 8;
-
-          std::uint8_t  sp_tile_id = (sprite.tile & ((sp_height == 8) ? 0b11111111 : 0b11111110)) + ((sp_y < 8) ? 0 : 1);
-          std::uint16_t sp_tile_index = ((std::uint16_t)sp_tile_id * 16);
-          sp_color_id =
-            ((_ram[(sp_attributes & SpriteAttributes::SpriteAttributesBank) ? 1 : 0][sp_tile_index + (sp_y % 8) * 2 + 0] & (0b10000000 >> (sp_x % 8))) ? 1 : 0) +
-            ((_ram[(sp_attributes & SpriteAttributes::SpriteAttributesBank) ? 1 : 0][sp_tile_index + (sp_y % 8) * 2 + 1] & (0b10000000 >> (sp_x % 8))) ? 2 : 0);
-
-          // ID 0 is transparency
-          if (sp_color_id == 0) {
-            sp_color_id = 255;
-            continue;
-          }
-
-          // DMG color palette
-          if (_gbc._io[GBC::GameBoyColor::IO::KEY0] & 0b00001100) {
-            if (sp_attributes & SpriteAttributes::SpriteAttributesPaletteNonCgb) {
-              sp_color_id = (_gbc._io[IO::OBP1] >> (sp_color_id * 2)) & 0b00000011;
-              sp_attributes = (sp_attributes & 0b11110000) | 0b00000001;
-            }
-            else {
-              sp_color_id = (_gbc._io[IO::OBP0] >> (sp_color_id * 2)) & 0b00000011;
-              sp_attributes = (sp_attributes & 0b11110000) | 0b00000000;
-            }
-          }
-
-          // Get color from palette
-          sp_color = _obc.colors[(sp_attributes & SpriteAttributes::SpriteAttributesPaletteCgb) * 4 + sp_color_id];
-          break;
-        }
-      }
-
-      // Background and Window Master Priority, CGB mode only
-      if (bg_color_id != 255 &&
-        sp_color_id != 255 &&
-        !(_gbc._io[GBC::GameBoyColor::IO::KEY0] & 0b00001100) &&
-        !(_gbc._io[IO::LCDC] & LcdControl::LcdControlPriority))
-        bg_color_id = 255;
-
-      // Sprite priority over background and window
-      else if (bg_color_id != 255 &&
-        sp_color_id != 255 &&
-        ((bg_attributes & BackgroundAttributes::BackgroundAttributesPriority) || (sp_attributes & SpriteAttributes::SpriteAttributesOverObj)) &&
-        bg_color_id != 0)
-        sp_color_id = 255;
-
-      sf::Color color;
-
-      // Select color to use
-      if (sp_color_id != 255)
-        color = sf::Color(sp_color.red(), sp_color.green(), sp_color.blue());
-      else if (bg_color_id != 255)
-        color = sf::Color(bg_color.red(), bg_color.green(), bg_color.blue());
-      else
-        color = sf::Color(255, 255, 255);
-
-      // Draw pixel
-      _image.setPixel(sc_x, sc_y, color);
-    }
+  // Reset Mode3 datas at start of line
+  if (_cycles % GBC::PixelProcessingUnit::ScanlineDuration == GBC::PixelProcessingUnit::Mode2Duration) {
+    _lx = 0;
+    _bwFifo.clear();
+    _bwOffset = _gbc._io[IO::SCX] % 8;
+    _bwTile = 0;
+    _bwWait = 0;
+    _wFlagX = false;
+    _sFifo.clear();
+    _sOffset = 0;
+    _sWait = 0;
   }
 
-  // End of drawing, go to HBlank
-  else if (_cycles % GBC::PixelProcessingUnit::ScanlineDuration == GBC::PixelProcessingUnit::Mode2Duration + 172)
+  // Start to draw window
+  if (((_lx == 0) ? (_lx + 7 >= _gbc._io[IO::WX]) : (_lx + 7 == _gbc._io[IO::WX])) &&
+    _wFlagX == false && _wFlagY == true &&
+    (_gbc._io[IO::LCDC] & LcdControl::LcdControlWindowEnable)) {
+    _wFlagX = true;
+    _bwFifo.clear();
+    _bwOffset = _lx + 7 - _gbc._io[IO::WX];
+    _bwTile = 0;
+    _bwWait = 0;
+  }
+
+  // Fetch background/window pixels
+  if (_bwFifo.size() <= 16 && _bwWait == 0)
+    simulateMode3BackgroundWindow();
+
+  // Fetch sprites pixels
+  if (_sWait == 0)
+    simulateMode3Sprites();
+
+  // Pop a pixel from the FIFOs
+  if (_bwFifo.size() > 16 && _sWait == 0)
+    simulateMode3Draw();
+
+  // Decrement fetchers timers
+  if (_bwWait > 0)
+    _bwWait -= 1;
+  if (_sWait > 0)
+    _sWait -= 1;
+
+  // End of line drawing
+  if (_lx == GBC::PixelProcessingUnit::ScreenWidth)
+  {
+    // Go to HBlank
     setMode(Mode::Mode0);
+
+    // Increase window line counter
+    if (_wFlagX == true)
+      _wY += 1;
+  }
 
   // Next cycle
   _cycles += 1;
+}
+
+void  GBC::PixelProcessingUnit::simulateMode3Draw()
+{
+  // Ignore offset pixels
+  if (_bwOffset > 0 || _sOffset > 0)
+  {
+    // Discard Background/Window pixel
+    if (_bwOffset > 0) {
+      _bwOffset -= 1;
+      _bwFifo.pop();
+    }
+
+    // Discard Sprites pixel
+    if (_sOffset > 0) {
+      _sOffset -= 1;
+      _sFifo.pop();
+    }
+  }
+
+  // Draw pixel
+  else
+  {
+    auto bwPixel = _bwFifo.front();
+    auto sPixel = _sFifo.empty() == false ?
+      _sFifo.front() :
+      GBC::PixelProcessingUnit::PixelFifo::Pixel{ .color = 0, .palette = 0, .attributes = 0, .priority = 0 };
+
+    // Remove pixel from Background/Window pixel FIFO
+    _bwFifo.pop();
+
+    // Remove pixel from Sprites pixel FIFO
+    if (_sFifo.empty() == false)
+      _sFifo.pop();
+
+    bool      bwEnable = !(_gbc._io[GBC::GameBoyColor::IO::KEY0] & 0b00001100) || (_gbc._io[IO::LCDC] & LcdControl::LcdControlWindowBackgroundEnable);
+    bool      sEnable = sPixel.color != 0;
+
+    // Background and Window Master Priority, CGB mode only
+    if (bwEnable == true &&
+      sEnable == true &&
+      !(_gbc._io[GBC::GameBoyColor::IO::KEY0] & 0b00001100) &&
+      !(_gbc._io[IO::LCDC] & LcdControl::LcdControlPriority))
+      bwEnable = false;
+
+    // Sprite priority over background and window
+    else if (bwEnable == true &&
+      sEnable == true &&
+      ((bwPixel.attributes & BackgroundAttributes::BackgroundAttributesPriority) || (sPixel.attributes & SpriteAttributes::SpriteAttributesOverObj)) &&
+      bwPixel.color != 0)
+      sEnable = false;
+
+    GBC::PixelProcessingUnit::Color color;
+    
+    // Select Sprite color
+    if (sEnable == true)
+    {
+      // DMG color palette conversion
+      if (_gbc._io[GBC::GameBoyColor::IO::KEY0] & 0b00001100) {
+        if (sPixel.attributes & SpriteAttributes::SpriteAttributesPaletteNonCgb) {
+          sPixel.color = (_gbc._io[IO::OBP1] >> (sPixel.color * 2)) & 0b00000011;
+          sPixel.palette = 1;
+        }
+        else {
+          sPixel.color = (_gbc._io[IO::OBP0] >> (sPixel.color * 2)) & 0b00000011;
+          sPixel.palette = 0;
+        }
+      }
+
+      // Get color from Sprite color palettes
+      color = _obc.colors[sPixel.palette * 4 + sPixel.color];
+    }
+
+    // Select Background/Window color
+    else if (bwEnable == true)
+    {
+      // DMG color palette conversion
+      if (_gbc._io[GBC::GameBoyColor::IO::KEY0] & 0b00001100)
+        bwPixel.color = (_gbc._io[IO::BGP] >> (bwPixel.color * 2)) & 0b00000011;
+
+      // Get color from Background/Window color palettes
+      color = _bgc.colors[bwPixel.palette * 4 + bwPixel.color];
+    }
+
+    // Default to white
+    else
+      color.raw = 0b0111111111111111;
+
+    // Set pixel color
+    _image.setPixel(_lx, _gbc._io[IO::LY], sf::Color(color.red(), color.green(), color.blue()));
+
+    // Next pixel
+    _lx += 1;
+  }
+}
+
+void  GBC::PixelProcessingUnit::simulateMode3BackgroundWindow()
+{
+  // Fetch a new pixel
+  std::uint8_t  tile_y = 0;
+  std::uint16_t tilemap = 0x0000;
+  std::uint16_t tilemap_id = 0;
+
+  // Window pixels data
+  if (_wFlagX == true) {
+    tile_y = _wY;
+    tilemap = (_gbc._io[IO::LCDC] & LcdControl::LcdControlWindowTilemap) ? 0x1C00 : 0x1800;
+    tilemap_id = ((std::uint16_t)tile_y / 8) * 32 + ((std::uint16_t)_bwTile) % 32;
+  }
+
+  // Background pixels data
+  else {
+    tile_y = _gbc._io[IO::LY] + _gbc._io[IO::SCY];
+    tilemap = (_gbc._io[IO::LCDC] & LcdControl::LcdControlBackgroundTilemap) ? 0x1C00 : 0x1800;
+    tilemap_id = ((std::uint16_t)tile_y / 8) * 32 + (((std::uint16_t)_gbc._io[IO::SCX] / 8) + _bwTile) % 32;
+  }
+  
+  std::uint8_t  tile_id = _ram[0][tilemap + tilemap_id];
+  std::uint8_t  tile_attributes = _ram[1][tilemap + tilemap_id];
+  std::uint16_t tile_index = ((std::uint16_t)tile_id * 16)
+    + (((_gbc._io[IO::LCDC] & LcdControl::LcdControlData)) ?
+      0x0000 :
+      ((tile_id < 128) ? 0x1000 : 0x0000));
+
+  // Flip Y tile coordinates
+  tile_y = (tile_attributes & BackgroundAttributes::BackgroundAttributesYFlip) ? (~tile_y & 0b00000111) : (tile_y & 0b00000111);
+
+  std::uint8_t  tile_low = _ram[(tile_attributes & BackgroundAttributes::BackgroundAttributesBank) ? 1 : 0][tile_index + (tile_y % 8) * 2 + 0];
+  std::uint8_t  tile_high = _ram[(tile_attributes & BackgroundAttributes::BackgroundAttributesBank) ? 1 : 0][tile_index + (tile_y % 8) * 2 + 1];
+
+  // Register pixels according to X flip attribute
+  for (std::uint8_t x = 0; x < 8; x += 1) {
+    std::uint8_t  index = (tile_attributes & BackgroundAttributes::BackgroundAttributesXFlip) ? (7 - x) : (x);
+
+    // Push pixel in FIFO
+    _bwFifo.push({
+      .color = (std::uint8_t)(((tile_low & (0b10000000 >> index)) ? 0b01 : 0b00) + ((tile_high & (0b10000000 >> index)) ? 0b10 : 0b00)),
+      .palette = (std::uint8_t)(tile_attributes & BackgroundAttributes::BackgroundAttributesPalette),
+      .attributes = tile_attributes,
+      .priority = 0
+      });
+  }
+
+  // Increment tile X index
+  _bwTile += 1;
+
+  // Wait 6 tick before next fetch
+  _bwWait = 6;
+}
+
+void  GBC::PixelProcessingUnit::simulateMode3Sprites()
+{
+  // Search in OAM
+  if (_gbc._io[IO::LCDC] & LcdControl::LcdControlObjEnable) {
+    for (auto iterator = 0; iterator < _sprites.size(); iterator++)
+    {
+      auto& sprite = _sprites[iterator];
+
+      // Draw sprite
+      if (sprite.x <= _lx + 8)
+      {
+        std::uint8_t  tile_y = _gbc._io[IO::LY] - sprite.y + 16;
+        std::uint8_t  tile_height = (_gbc._io[IO::LCDC] & LcdControl::LcdControlObjSize) ? 16 : 8;
+
+        // Flip sprite Y coordinates
+        if (sprite.attributes & SpriteAttributes::SpriteAttributesYFlip)
+          tile_y = (tile_height - 1) - tile_y % tile_height;
+
+        std::uint8_t  sp_tile_id = (sprite.tile & ((tile_height == 8) ? 0b11111111 : 0b11111110)) + ((tile_y < 8) ? 0 : 1);
+        std::uint16_t sp_tile_index = ((std::uint16_t)sp_tile_id * 16);
+
+        std::uint8_t  tile_low = _ram[(sprite.attributes & SpriteAttributes::SpriteAttributesBank) ? 1 : 0][sp_tile_index + (tile_y % 8) * 2 + 0];
+        std::uint8_t  tile_high = _ram[(sprite.attributes & SpriteAttributes::SpriteAttributesBank) ? 1 : 0][sp_tile_index + (tile_y % 8) * 2 + 1];
+
+        // Fill Sprites pixel FIFO
+        while (_sFifo.size() < 8)
+          _sFifo.push({ .color = 0, .palette = 0, .attributes = 0, .priority = 0 });
+
+        // Discard passed pixels
+        for (; _sOffset < _lx - sprite.x + 8; _sOffset += 1)
+          _sFifo.insert({ .color = 0, .palette = 0, .attributes = 0, .priority = 0 });
+
+        // Register pixels according to X flip attribute
+        for (std::uint8_t index = 0; index < 8; index += 1) {
+          std::uint8_t      x = (sprite.attributes & SpriteAttributes::SpriteAttributesXFlip) ? (7 - index) : (index);
+
+          PixelFifo::Pixel  pixel = {
+            .color = (std::uint8_t)(((tile_low & (0b10000000 >> x)) ? 0b01 : 0b00) + ((tile_high & (0b10000000 >> x)) ? 0b10 : 0b00)),
+            .palette = (std::uint8_t)(sprite.attributes & SpriteAttributes::SpriteAttributesPaletteCgb),
+            .attributes = sprite.attributes,
+            .priority = (std::uint8_t)iterator
+          };
+
+          // Merge pixel in FIFO
+          if (pixel.priority < _sFifo[index].priority || _sFifo[index].color == 0)
+            _sFifo[index] = pixel;
+        }
+
+        // Wait 6 tick before next fetch
+        _sWait = 6;
+
+        // Force sprite off screen
+        sprite.x = 255;
+        break;
+      }
+    }
+  }
+
+  // Ignore missed sprites
+  else
+    for (auto iterator = 0; iterator < _sprites.size(); iterator++)
+      if (_sprites[iterator].x <= _lx)
+        _sprites[iterator].x = 255;
 }
 
 const sf::Texture&  GBC::PixelProcessingUnit::lcd() const
@@ -337,11 +451,107 @@ void  GBC::PixelProcessingUnit::nextLine()
     _gbc._io[IO::STAT] &= ~LcdStatus::LcdStatusEqual;
 }
 
+GBC::PixelProcessingUnit::PixelFifo::PixelFifo() :
+  _fifo(),
+  _size(0),
+  _index(0)
+{}
+
+GBC::PixelProcessingUnit::PixelFifo::Pixel  GBC::PixelProcessingUnit::PixelFifo::front() const
+{
+#ifdef _DEBUG
+  if (empty() == true)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
+
+  // Get next pixel in FIFO
+  return _fifo[_index];
+}
+
+bool  GBC::PixelProcessingUnit::PixelFifo::empty() const
+{
+  // Check if FIFO is empty
+  return _size == 0;
+}
+
+std::size_t GBC::PixelProcessingUnit::PixelFifo::size() const
+{
+  // Get the number of pixels in FIFO
+  return _size;
+}
+
+void  GBC::PixelProcessingUnit::PixelFifo::clear()
+{
+  // Reset number of pixels in FIFO
+  _size = 0;
+}
+
+void  GBC::PixelProcessingUnit::PixelFifo::push(Pixel pixel)
+{
+#ifdef _DEBUG
+  if (size() == _fifo.size())
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
+
+  // Push pixel at back of FIFO
+  _fifo[(_index + _size) % _fifo.size()] = pixel;
+  _size += 1;
+}
+
+void  GBC::PixelProcessingUnit::PixelFifo::insert(Pixel pixel)
+{
+#ifdef _DEBUG
+  if (size() == _fifo.size())
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
+
+  // Push pixel at front of FIFO
+  _index = (_index + _fifo.size() - 1) % _fifo.size();
+  _fifo[_index % _fifo.size()] = pixel;
+  _size += 1;
+}
+
+void  GBC::PixelProcessingUnit::PixelFifo::pop()
+{
+#ifdef _DEBUG
+  if (empty() == true)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
+
+  // Push pixel in FIFO
+  _index = (_index + 1) % _fifo.size();
+  _size -= 1;
+}
+
+GBC::PixelProcessingUnit::PixelFifo::Pixel& GBC::PixelProcessingUnit::PixelFifo::operator[](std::size_t position)
+{
+#ifdef _DEBUG
+  if (position >= size())
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
+
+  // Get element in FIFO
+  return _fifo[(_index + position) % _fifo.size()];
+}
+
+const GBC::PixelProcessingUnit::PixelFifo::Pixel& GBC::PixelProcessingUnit::PixelFifo::operator[](std::size_t position) const
+{
+#ifdef _DEBUG
+  if (position >= size())
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
+
+  // Get element in FIFO
+  return _fifo[(_index + position) % _fifo.size()];
+}
+
 std::uint8_t  GBC::PixelProcessingUnit::readRam(std::uint16_t address)
 {
+#ifdef _DEBUG
   // Out of bound address, should not happen
   if (address >= 0x2000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // Can't read during rendering
   if (_mode == Mode::Mode3)
@@ -353,9 +563,11 @@ std::uint8_t  GBC::PixelProcessingUnit::readRam(std::uint16_t address)
 
 std::uint8_t  GBC::PixelProcessingUnit::readOam(std::uint16_t address)
 {
+#ifdef _DEBUG
   // Out of bound address, should not happen
   if (address >= sizeof(_oam))
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // Can't read during sprite rendering
   if (_mode == Mode::Mode2 ||
@@ -396,36 +608,32 @@ std::uint8_t  GBC::PixelProcessingUnit::readIo(std::uint16_t address)
   case IO::SCX:   // Scroll X, R/W
   case IO::LY:    // LCD Y Coordinate, R
   case IO::LYC:   // LCD Y Coordinate Compare, R/W
-  case IO::DMA:   // DMA Transfer and Start Address, R/W
   case IO::BGP:   // Background and Window Palette Data, R/W, non CGB mode only
   case IO::OBP0:  // OBJ 0 Palette Data, R/W, non CGB mode only
   case IO::OBP1:  // OBJ 1 Palette Data, R/W, non CGB mode only  
   case IO::WY:    // Window Y Position, R/W
   case IO::WX:    // Window X Position, R/W
-  case IO::HDMA5: // Start New DMA Transfer, R/W, CGB mode only
   case IO::BCPI:  // Background Color Palette Index, R/W, CGB mode only
   case IO::OCPI:  // OBJ Color Palette Index, R/W, CGB mode only
   case IO::OPRI:  // OBJ Priority Mode, R/W, CGB mode only, bit 0: mode (0 :OAM, 1: Coordinate)
     // Basic read, just return stored value
     return _gbc._io[address];
 
-  case IO::HDMA1: // New DMA Transfers source high byte, W, CGB mode only
-  case IO::HDMA2: // New DMA Transfers source low byte, W, CGB mode only
-  case IO::HDMA3: // New DMA Transfers destination high byte, W, CGB mode only
-  case IO::HDMA4: // New DMA Transfers destination low byte, W, CGB mode only
-    // Not accessible
-    return 0xFF;
-
   default:
+#ifdef _DEBUG
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
+    return 0xFF;
   }
 }
 
 void  GBC::PixelProcessingUnit::writeRam(std::uint16_t address, std::uint8_t value)
 {
+#ifdef _DEBUG
   // Out of bound address, should not happen
   if (address >= 0x2000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // Can't write during rendering
   if (_mode == Mode::Mode3)
@@ -437,9 +645,11 @@ void  GBC::PixelProcessingUnit::writeRam(std::uint16_t address, std::uint8_t val
 
 void  GBC::PixelProcessingUnit::writeOam(std::uint16_t address, std::uint8_t value)
 {
+#ifdef _DEBUG
   // Out of bound address, should not happen
   if (address >= sizeof(_oam))
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // Can't write during sprite rendering
   if (_mode == Mode::Mode2 ||
@@ -452,9 +662,11 @@ void  GBC::PixelProcessingUnit::writeOam(std::uint16_t address, std::uint8_t val
 
 void  GBC::PixelProcessingUnit::writeDma(std::uint16_t address, std::uint8_t value)
 {
+#ifdef _DEBUG
   // Out of bound address, should not happen
   if (address >= sizeof(_oam))
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // Write data to OAM
   _oam.raw[address] = value;
@@ -463,16 +675,22 @@ void  GBC::PixelProcessingUnit::writeDma(std::uint16_t address, std::uint8_t val
   _sprites.clear();
 }
 
-void          GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint8_t value)
+void  GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint8_t value)
 {
   switch (address)
   {
   case IO::LCDC:  // LCD Control, R/W (see enum)
-    if (_enabled == true && !(value & LcdControl::LcdControlEnable)) {
-      _enabled = false;
+    if ((_gbc._io[IO::LCDC] & LcdControl::LcdControlEnable) && !(value & LcdControl::LcdControlEnable)) {
       _gbc._io[IO::LY] = 0;
       _cycles = 0;
       _mode = Mode::Mode0;
+
+      // Update STAT register
+      if (_gbc._io[IO::LY] == _gbc._io[IO::LYC])
+        _gbc._io[IO::STAT] |= LcdStatus::LcdStatusEqual;
+      else
+        _gbc._io[IO::STAT] &= ~LcdStatus::LcdStatusEqual;
+      _gbc._io[IO::STAT] = (_gbc._io[IO::STAT] & ~LcdStatus::LcdStatusMode) | (Mode::Mode0);
 
       // White image
       std::memset((std::uint8_t*)_image.getPixelsPtr(), 0xFF, _image.getSize().x * _image.getSize().y * 4);
@@ -480,9 +698,9 @@ void          GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint
     }
 
     // PPU enabled, start
-    else if (_enabled == false && (value & LcdControl::LcdControlEnable)) {
-      _enabled = true;
+    else if (!(_gbc._io[IO::LCDC] & LcdControl::LcdControlEnable) && (value & LcdControl::LcdControlEnable)) {
       _mode = Mode::Mode2;
+      _gbc._io[IO::STAT] = (_gbc._io[IO::STAT] & ~LcdStatus::LcdStatusMode) | (Mode::Mode2);
     }
 
     // Write to register
@@ -508,17 +726,6 @@ void          GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint
     }
     else
       _gbc._io[IO::STAT] &= ~LcdStatus::LcdStatusEqual;
-    break;
-
-  case IO::DMA:   // DMA Transfer and Start Address, R/W
-    // Write value to register
-    _gbc._io[IO::DMA] = value;
-
-    // Transfer data to OAM
-    for (std::uint16_t index = 0; index < 160; index++)
-      writeDma(index, _gbc.read(((std::uint16_t)_gbc._io[IO::DMA] << 8) + index));
-
-    // TODO: DMA transfer is 160 cycles long, lock memory access
     break;
 
   case IO::BCPD:  // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
@@ -549,48 +756,6 @@ void          GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint
     // Not accessible
     break;
 
-  case IO::HDMA5: // Start New DMA Transfer, R/W, CGB mode only
-  {
-    std::uint16_t source = (((std::uint16_t)_gbc._io[IO::HDMA1] << 8) + (std::uint16_t)_gbc._io[IO::HDMA2]) & 0b1111111111110000;
-    std::uint16_t destination = ((((std::uint16_t)_gbc._io[IO::HDMA3] << 8) + (std::uint16_t)_gbc._io[IO::HDMA4]) & 0b00011111111110000) | 0b1000000000000000;
-    std::uint16_t length = ((std::uint16_t)(value & 0b01111111) + 1) * 0x10;
-
-    // Transfer data to VRAM
-    for (unsigned int count = 0; count < length; count++) {
-      std::uint8_t  data;
-
-      // Get data from source
-      if ((source >= 0x0000 && source < 0x8000) ||
-        (source >= 0xA000 && source < 0xC000) ||
-        (source >= 0xC000 && source < 0xE000))
-        data = _gbc.read(source);
-      else
-        break;
-
-      // Write data to destination
-      if (destination >= 0x8000 && destination < 0xA000)
-        writeRam(destination - 0x8000, data);
-      else
-        break;
-
-      // Increment addresses
-      source += 1;
-      destination += 1;
-    }
-
-    // Set register to completed transfer value
-    _gbc._io[IO::HDMA5] = 0xFF;
-
-    // Write end addresses to HDMA registers
-    _gbc._io[IO::HDMA1] = (source >> 8) & 0b11111111;
-    _gbc._io[IO::HDMA2] = (source >> 0) & 0b11111111;
-    _gbc._io[IO::HDMA3] = (destination >> 8) & 0b11111111;
-    _gbc._io[IO::HDMA4] = (destination >> 0) & 0b11111111;
-
-    // TODO: respect HDMA transfer timing for mode 0 & 1
-    break;
-  }
-
   case IO::SCY:   // Scroll Y, R/W
   case IO::SCX:   // Scroll X, R/W
   case IO::BGP:   // Background and Window Palette Data, R/W, non CGB mode only
@@ -599,17 +764,15 @@ void          GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint
   case IO::WY:    // Window Y Position, R/W
   case IO::WX:    // Window X Position, R/W
   case IO::VBK:   // Video RAM Bank, R/W, CGB mode only
-  case IO::HDMA1: // New DMA Transfers source high byte, W, CGB mode only
-  case IO::HDMA2: // New DMA Transfers source low byte, W, CGB mode only
-  case IO::HDMA3: // New DMA Transfers destination high byte, W, CGB mode only
-  case IO::HDMA4: // New DMA Transfers destination low byte, W, CGB mode only
   case IO::BCPI:  // Background Color Palette Index, R/W, CGB mode only
   case IO::OCPI:  // OBJ Color Palette Index, R/W, CGB mode only
     _gbc._io[address] = value;
     break;
 
   default:
-    printf("unknow register write %02X %02X\n", address, value);
+#ifdef _DEBUG
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
+    break;
   }
 }

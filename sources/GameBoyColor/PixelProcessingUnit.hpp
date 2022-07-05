@@ -32,7 +32,7 @@ namespace GBC
       SCX = 0x43,   // Scroll X, R/W
       LY = 0x44,    // LCD Y Coordinate, R
       LYC = 0x45,   // LCD Y Coordinate Compare, R/W
-      DMA = 0x46,   // DMA Transfer and Start Address, R/W
+
       BGP = 0x47,   // Background and Window Palette Data, R/W, non CGB mode only
       OBP0 = 0x48,  // OBJ 0 Palette Data, R/W, non CGB mode only
       OBP1 = 0x49,  // OBJ 1 Palette Data, R/W, non CGB mode only  
@@ -40,12 +40,6 @@ namespace GBC
       WX = 0x4B,    // Window X Position, R/W
 
       VBK = 0x4F,   // Video RAM Bank, R/W, CGB mode only
-
-      HDMA1 = 0x51, // New DMA Transfers source high byte, W, CGB mode only
-      HDMA2 = 0x52, // New DMA Transfers source low byte, W, CGB mode only
-      HDMA3 = 0x53, // New DMA Transfers destination high byte, W, CGB mode only
-      HDMA4 = 0x54, // New DMA Transfers destination low byte, W, CGB mode only
-      HDMA5 = 0x55, // Start New DMA Transfer, R/W, CGB mode only
 
       BCPI = 0x68,  // Background Color Palette Index, R/W, CGB mode only
       BCPD = 0x69,  // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
@@ -96,6 +90,16 @@ namespace GBC
       SpriteAttributesPaletteCgb = 0b00000111     // Palette in CGB mode (OBP0-7)
     };
 
+    enum Mode
+    {
+      Mode0,  // Horizontal blank
+      Mode1,  // Vertical blank
+      Mode2,  // Searching OAM
+      Mode3,  // Transferring data to LCD Controller
+
+      ModeCount // Number of PPU mode
+    };
+
   private:
     struct Sprite
     {
@@ -120,13 +124,37 @@ namespace GBC
       std::array<std::uint8_t, 64>                    raw;    // Raw memory
     };
 
-    enum Mode {
-      Mode0,  // Horizontal blank
-      Mode1,  // Vertical blank
-      Mode2,  // Searching OAM
-      Mode3,  // Transferring data to LCD Controller
+    class PixelFifo
+    {
+    public:
+      struct Pixel
+      {
+        std::uint8_t  color;      // A value between 0 and 3
+        std::uint8_t  palette;    // A value between 0 and 7
+        std::uint8_t  attributes; // Attributes of the Background/Window or Sprite tile
+        std::uint8_t  priority;   // The OAM index for the sprite
+      };
 
-      ModeCount // Number of PPU mode
+    private:
+      std::array<Pixel, 24> _fifo;  // Data in the FIFO ; NOTE: 8 additional pixels used as fetcher buffer
+      std::size_t           _size;  // Number of pixels in the FIFO
+      std::size_t           _index; // Current index in the FIFO
+
+    public:
+      PixelFifo();
+      ~PixelFifo() = default;
+
+      Pixel       front() const;  // Get next pixel in FIFO
+      bool        empty() const;  // Return true if FIFO is empty
+      std::size_t size() const;   // Get the number of pixels in FIFO
+
+      void  clear();              // Empties FIFO
+      void  push(Pixel pixel);    // Push a new pixel in FIFO
+      void  insert(Pixel pixel);  // Insert a pixel at front of FIFO
+      void  pop();                // Remove next pixel from FIFO
+
+      Pixel&        operator[](std::size_t position);       // Access to elements in FIFO
+      const Pixel&  operator[](std::size_t position) const; // Access to elements in FIFO
     };
 
     GBC::GameBoyColor& _gbc;  // Main GBC reference for memory bus
@@ -145,7 +173,33 @@ namespace GBC
 
     std::vector<GBC::PixelProcessingUnit::Sprite> _sprites; // Sprites to be drawn on the current line
     std::size_t                                   _cycles;  // Number of PPU cycle since first scanline
-    bool                                          _enabled; // PPU enabled flag
+
+    std::uint8_t  _lx;        // X coordinate of rendered pixel
+    PixelFifo     _bwFifo;    // Background/Window pixel FIFO
+    std::uint8_t  _bwOffset;  // Number of Background/Window pixel to discard
+    std::uint8_t  _bwTile;    // X index of rendered tile
+    std::uint8_t  _bwWait;    // Background/Window pixels fetcher wait time
+    bool          _wFlagX;    // Window enable flag
+    bool          _wFlagY;    // Window Y coordinate enable flag
+    std::uint8_t  _wY;        // Window rendered line number
+    PixelFifo     _sFifo;     // Sprites pixel FIFO
+    std::uint8_t  _sOffset;   // Number of Sprites pixel to discard
+    std::uint8_t  _sWait;     // Sprites pixels fetcher wait time
+
+    /*
+    PixelFifo                       _bgFifo;          // Pixels of background and window
+    std::uint8_t                    _bgX;             // Current X coordinate of rendered pixel
+    std::uint8_t                    _bgOffsetX;       // Number of pixel to be discarded at start of the line
+    std::uint8_t                    _bgTileX;         // X index of rendered tile
+    std::uint8_t                    _bgFetcherWait;   // Background fetcher wait time
+    std::array<PixelFifo::Pixel, 8> _bgFetcherPixels; // Background fetcher pixels
+    bool                            _wnFlagX;         // Window enable flag
+    bool                            _wnFlagY;         // Window Y coordinate enable flag
+    std::uint8_t                    _wnY;             // Window rendered line number
+    PixelFifo                       _spFifo;          // Pixels of sprites
+    std::uint8_t                    _spFetcherWait;   // Sprite fetcher wait time
+    std::uint8_t                    _spOffsetX;       // Number of pixel to be discarded at start of the sprite
+    */
 
     sf::Image   _image;   // Rendering target on RAM
     sf::Texture _texture; // Rendering target in GPU
@@ -154,6 +208,10 @@ namespace GBC
     void  simulateMode1(); // Simulate a vertical blank tick
     void  simulateMode2(); // Simulate a searching OAM tick
     void  simulateMode3(); // Simulate a LCD Controller data transfer tick
+
+    void  simulateMode3Draw();              // Pop pixels from Background/Window and Sprite FIFO and draw to screen
+    void  simulateMode3BackgroundWindow();  // Fetch pixels for Background/Window FIFO
+    void  simulateMode3Sprites();           // Fetch pixels for Sprites FIFO
 
     void  setMode(GBC::PixelProcessingUnit::Mode mode); // Set PPU to new mode
     void  nextLine();                                   // Set IO::LY to next line

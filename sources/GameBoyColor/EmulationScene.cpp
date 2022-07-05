@@ -21,6 +21,7 @@ GBC::EmulationScene::EmulationScene(Game::SceneMachine& machine, const std::stri
   _bar.setFillColor(sf::Color::White);
 
   // Start sound stream
+  _stream.setVolume(30.f);
   _stream.play();
 }
 
@@ -55,7 +56,7 @@ bool  GBC::EmulationScene::update(sf::Time elapsed)
   // Simulate frames at 59.72 fps
   // NOTE: simulate at most one frame per call to avoid exponential delay
   if (_fps.asSeconds() >= 70224.f / Math::Pow<22>(2) ||
-    Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Enter) == true ||
+    Game::Window::Instance().keyboard().keyDown(sf::Keyboard::LControl) == true ||
     Game::Window::Instance().joystick().position(0, 2) < -64.f) {
     _gbc.simulate();
     _fps = sf::seconds(std::max(_fps.asSeconds() - 70224.f / Math::Pow<22>(2), 0.f));

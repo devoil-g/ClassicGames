@@ -92,12 +92,20 @@ namespace GBC
       TAC = 0x07,   // Time Control, R/W of bit 2-1-0
 
       IF = 0x0F,    // Interrupt Flags, bits set when an event occured, bits 7-6-5 always set
-      
+
+      DMA = 0x46,   // DMA Transfer and Start Address, R/W
+
       KEY0 = 0x4C,  // CPU Mode, R/W, see enum
       KEY1 = 0x4D,  // CPU Speed Switch, R/W, CGB mode only, bit 7: current speed (0: normal, 1: double), bit 0: prepare switch (0: no, 1: prepare)
 
       BANK = 0x50,  // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
-      
+
+      HDMA1 = 0x51, // New DMA Transfers source high byte, W, CGB mode only
+      HDMA2 = 0x52, // New DMA Transfers source low byte, W, CGB mode only
+      HDMA3 = 0x53, // New DMA Transfers destination high byte, W, CGB mode only
+      HDMA4 = 0x54, // New DMA Transfers destination low byte, W, CGB mode only
+      HDMA5 = 0x55, // Start New DMA Transfer, R/W, CGB mode only
+
       RP = 0x56,
 
       SVBK = 0x70   // Work Ram Bank, R/W, CGB mode only
@@ -144,6 +152,19 @@ namespace GBC
     };
 
     std::array<bool, Key::KeyCount> _keys;  // Currently pressed keys
+
+    enum Transfer
+    {
+      TransferNone,   // No transfer
+      TransferDma,    // DMA transfer
+      TransferHdma0,  // HDMA 0 transfer
+      TransferHdma1,  // HDMA 1 transfer
+    };
+
+    Transfer    _transferMode;    // Current transfer mode
+    std::size_t _transferIndex;   // Index of running transfer
+    std::size_t _transferCounter; // Counter for HDMA1 transfer
+    bool        _transferTrigger; // Trigger for HDMA1 transfer
 
     void  load(const std::string& filename);                                              // Load a new ROM in memory
     void  loadFile(const std::string& filename, std::vector<std::uint8_t>& destination);  // Load file to vector
