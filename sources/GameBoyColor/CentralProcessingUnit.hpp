@@ -100,8 +100,10 @@ namespace GBC
     Register  _rPC; // PC register (program counter / pointer)
     Register  _rW;  // Internal Work register (not accessible)
 
-    static const std::array<std::function<void(CentralProcessingUnit&)>, 256> _opcodes;   // CPU instruction set
-    static const std::array<std::function<void(CentralProcessingUnit&)>, 256> _opcodesCb; // CPU CB sub-instruction set
+    using Opcode = void(*)(GBC::CentralProcessingUnit&);
+
+    static const std::array<Opcode, 256> _opcodes;    // CPU instruction set
+    static const std::array<Opcode, 256> _opcodesCb;  // CPU CB sub-instruction set
 
     template<Register::Flag F>
     void  setFlag(bool value) // Set flag bit in register AF

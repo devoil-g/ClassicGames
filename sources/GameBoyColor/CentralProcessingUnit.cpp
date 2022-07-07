@@ -3,7 +3,7 @@
 #include "GameBoyColor/CentralProcessingUnit.hpp"
 #include "GameBoyColor/GameBoyColor.hpp"
 
-const std::array<std::function<void(GBC::CentralProcessingUnit&)>, 256> GBC::CentralProcessingUnit::_opcodes = {
+const std::array<GBC::CentralProcessingUnit::Opcode, 256> GBC::CentralProcessingUnit::_opcodes = {
   [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_NOP(); },                     // 0x00, 0b00000000: NOP
   [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_LD_rr_nn(cpu._rBC); },        // 0x01, 0b00000001: LD BC, nn
   [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_LD_prr_A(cpu._rBC); },        // 0x02, 0b00000010: LD (BC), A
@@ -277,7 +277,7 @@ const std::array<std::function<void(GBC::CentralProcessingUnit&)>, 256> GBC::Cen
   [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_RST(0x0038); }        // 0xFF, 0b11111111: RST 38
 };
 
-const std::array<std::function<void(GBC::CentralProcessingUnit&)>, 256> GBC::CentralProcessingUnit::_opcodesCb = {
+const std::array<GBC::CentralProcessingUnit::Opcode, 256> GBC::CentralProcessingUnit::_opcodesCb = {
   [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_RLC(cpu._rBC.u8.high); }, // 0x00, 0b00000000: RLC B
   [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_RLC(cpu._rBC.u8.low); },  // 0x01, 0b00000001: RLC C
   [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_RLC(cpu._rDE.u8.high); }, // 0x02, 0b00000010: RLC D
