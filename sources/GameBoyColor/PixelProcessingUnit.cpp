@@ -379,7 +379,7 @@ void  GBC::PixelProcessingUnit::simulateMode3Sprites()
           };
 
           // Merge pixel in FIFO
-          if (pixel.priority < _sFifo[index].priority || _sFifo[index].color == 0)
+          if (pixel.color != 0 && (pixel.priority < _sFifo[index].priority || _sFifo[index].color == 0))
             _sFifo[index] = pixel;
         }
 
