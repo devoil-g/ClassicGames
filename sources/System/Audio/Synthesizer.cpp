@@ -106,11 +106,11 @@ std::vector<float>  Game::Audio::Synthesizer::generate(std::size_t sequenceId, s
 
 void  Game::Audio::Synthesizer::generateChannel(const Game::Audio::Midi::Sequence& sequence, const Game::Audio::Midi::Sequence::Track& track, const Game::Audio::Midi::Sequence::Track::Channel& channel, std::vector<float>& buffer, std::mutex& buffer_lock, std::size_t sampleRate) const
 {
-  std::array<int8_t, 128>   keys = {};         // Velocity of channel keys
-  std::array<uint8_t, 128>  polyphonics = {};  // Pressure on channel keys
-  std::array<uint8_t, 128>  controllers = {};  // Controllers of channel
-  uint8_t                   program = 0;      // Current program of channel
-  uint16_t                  pitch = 0;        // Current pitch of channel
+  std::array<int8_t, 128>   keys = { 0 };         // Velocity of channel keys
+  std::array<uint8_t, 128>  polyphonics = { 0 };  // Pressure on channel keys
+  std::array<uint8_t, 128>  controllers = { 0 };  // Controllers of channel
+  uint8_t                   program = 0;          // Current program of channel
+  uint16_t                  pitch = 0;            // Current pitch of channel
 
   struct Note {
     uint8_t key;
@@ -129,7 +129,8 @@ void  Game::Audio::Synthesizer::generateChannel(const Game::Audio::Midi::Sequenc
 
     // Handle event
     switch (event->type) {
-    case Game::Audio::Midi::Sequence::Track::Channel::Event::Type::EventController:    //
+    case Game::Audio::Midi::Sequence::Track::Channel::Event::Type::EventController:    // Controller change
+      controllers[event->data.controller.type] = event->data.controller.value;
       break;
 
     case Game::Audio::Midi::Sequence::Track::Channel::Event::Type::EventKey:           //
