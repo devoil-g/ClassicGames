@@ -3,7 +3,7 @@
 #include "GameBoyColor/CentralProcessingUnit.hpp"
 #include "GameBoyColor/GameBoyColor.hpp"
 
-const std::array<GBC::CentralProcessingUnit::Opcode, 256> GBC::CentralProcessingUnit::_opcodes = {
+constexpr const std::array<GBC::CentralProcessingUnit::Opcode, 256> GBC::CentralProcessingUnit::_opcodes = {
   [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_NOP(); },                     // 0x00, 0b00000000: NOP
   [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_LD_rr_nn(cpu._rBC); },        // 0x01, 0b00000001: LD BC, nn
   [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_LD_prr_A(cpu._rBC); },        // 0x02, 0b00000010: LD (BC), A
@@ -277,7 +277,7 @@ const std::array<GBC::CentralProcessingUnit::Opcode, 256> GBC::CentralProcessing
   [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_RST(0x0038); }        // 0xFF, 0b11111111: RST 38
 };
 
-const std::array<GBC::CentralProcessingUnit::Opcode, 256> GBC::CentralProcessingUnit::_opcodesCb = {
+constexpr const std::array<GBC::CentralProcessingUnit::Opcode, 256> GBC::CentralProcessingUnit::_opcodesCb = {
   [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_RLC(cpu._rBC.u8.high); }, // 0x00, 0b00000000: RLC B
   [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_RLC(cpu._rBC.u8.low); },  // 0x01, 0b00000001: RLC C
   [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_RLC(cpu._rDE.u8.high); }, // 0x02, 0b00000010: RLC D
@@ -551,7 +551,7 @@ const std::array<GBC::CentralProcessingUnit::Opcode, 256> GBC::CentralProcessing
   [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_SET<7>(cpu._rAF.u8.high); }   // 0xFF, 0b11111111: SET 7, A
 };
 
-static const std::array<std::string, 256> _opcodes_desc = {
+constexpr static const std::array<std::string_view, 256> _opcodes_desc = {
   "0x00, 0b00000000: NOP",
   "0x01, 0b00000001: LD BC, nn",
   "0x02, 0b00000010: LD (BC), A",
@@ -825,7 +825,7 @@ static const std::array<std::string, 256> _opcodes_desc = {
   "0xFF, 0b11111111: RST 38"
 };
 
-static const std::array<std::string, 256> _opcodesCB_desc = {
+constexpr static const std::array<std::string_view, 256> _opcodesCB_desc = {
   "0x00, 0b00000000: RLC B",
   "0x01, 0b00000001: RLC C",
   "0x02, 0b00000010: RLC D",
@@ -1156,11 +1156,11 @@ void  GBC::CentralProcessingUnit::simulateFetch()
   if (_gbc._io[GBC::GameBoyColor::IO::BANK] == 0)
     return;
 
-  printf("PC: %04X, OP: %02X %s\n", _rPC.u16 - 1, opcode, _opcodes_desc[opcode].c_str());
+  printf("PC: %04X, OP: %02X %s\n", _rPC.u16 - 1, opcode, _opcodes_desc[opcode].data());
   if (opcode == 0xCB) {
     std::uint8_t  opcodeCB = _gbc.read(_rPC.u16);
 
-    printf("-- OP: %02X %s\n", opcodeCB, _opcodesCB_desc[opcodeCB].c_str());
+    printf("-- OP: %02X %s\n", opcodeCB, _opcodesCB_desc[opcodeCB].data());
   }
 }
 
