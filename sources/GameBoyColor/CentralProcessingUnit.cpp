@@ -1299,14 +1299,11 @@ void  GBC::CentralProcessingUnit::instruction_NOP()
 void  GBC::CentralProcessingUnit::instruction_STOP()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.readIo(GBC::GameBoyColor::IO::KEY1);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    if (cpu._rW.u8.low & 0b00000001) {
-      cpu._rW.u8.low ^= 0b10000001;
-      cpu._gbc.writeIo(GBC::GameBoyColor::IO::KEY1, cpu._rW.u8.low);
-    }
+    if (cpu._gbc._io[GBC::GameBoyColor::IO::KEY1] & 0b00000001)
+      cpu._gbc._io[GBC::GameBoyColor::IO::KEY1] ^= 0b10000001;
     else
       cpu._status = Status::StatusStop;
     // TODO: 8200 cycle wait

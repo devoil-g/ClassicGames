@@ -201,7 +201,6 @@ namespace GBC
         cpu.setFlag<Register::N>(false);
         cpu.setFlag<Register::H>(true);
         });
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
     }
 
     template <unsigned int Bit>
