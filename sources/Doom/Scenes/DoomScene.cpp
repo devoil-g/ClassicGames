@@ -79,17 +79,8 @@ void  DOOM::DoomScene::draw()
     // Update sprite texture
     _sprite.setTexture(_texture, true);
 
-    // Compute sprite scale and position
-    float scale = std::min((float)Game::Window::Instance().window().getSize().x / (float)_doom.image.getSize().x, (float)Game::Window::Instance().window().getSize().y / ((float)_doom.image.getSize().y * DOOM::Doom::RenderStretching));
-    float pos_x = (((float)Game::Window::Instance().window().getSize().x - ((float)_doom.image.getSize().x * scale)) / 2.f);
-    float pos_y = (((float)Game::Window::Instance().window().getSize().y - ((float)_doom.image.getSize().y * scale * DOOM::Doom::RenderStretching)) / 2.f);
-
-    // Position sprite in window
-    _sprite.setScale(sf::Vector2f(scale, scale * DOOM::Doom::RenderStretching));
-    _sprite.setPosition(sf::Vector2f(pos_x, pos_y));
-
     // Draw DOOM rendering target
-    Game::Window::Instance().window().draw(_sprite);
+    Game::Window::Instance().draw(_sprite, DOOM::Doom::RenderStretching);
   }
 
   // Draw forced exit bar

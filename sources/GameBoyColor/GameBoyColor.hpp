@@ -163,7 +163,6 @@ namespace GBC
 
     Transfer    _transferMode;    // Current transfer mode
     std::size_t _transferIndex;   // Index of running transfer
-    std::size_t _transferCounter; // Counter for HDMA1 transfer
     bool        _transferTrigger; // Trigger for HDMA1 transfer
 
     void  load(const std::string& filename);                                              // Load a new ROM in memory
@@ -180,8 +179,8 @@ namespace GBC
     void  writeIo(std::uint16_t addr, std::uint8_t value);    // Write one byte to IO register
     void  writeHRam(std::uint16_t addr, std::uint8_t value);  // Write one byte to HRAM
 
-    void  simulateKeys();           // Handle keys
-    void  simulateTimer();          // Update 4 CPU cycle of TIMA/TMA/DIV timer registers
+    void  simulateKeys();   // Handle keys
+    void  simulateTimer();  // Update 4 CPU cycle of TIMA/TMA/DIV timer registers
 
   public:
     GameBoyColor(const std::string& filename);

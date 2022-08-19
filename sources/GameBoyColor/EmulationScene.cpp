@@ -70,19 +70,11 @@ bool  GBC::EmulationScene::update(sf::Time elapsed)
 
 void  GBC::EmulationScene::draw()
 {
-  auto size = _sprite.getTexture()->getSize();
-
-  // Compute sprite scale and position
-  float scale = std::min((float)Game::Window::Instance().window().getSize().x / (float)size.x, (float)Game::Window::Instance().window().getSize().y / (float)size.y);
-  float pos_x = (((float)Game::Window::Instance().window().getSize().x - ((float)size.x * scale)) / 2.f);
-  float pos_y = (((float)Game::Window::Instance().window().getSize().y - ((float)size.y * scale)) / 2.f);
-
-  // Position sprite in window
-  _sprite.setScale(sf::Vector2f(scale, scale));
-  _sprite.setPosition(sf::Vector2f(pos_x, pos_y));
+  // Get rendering target
+  _sprite.setTexture(_gbc.lcd(), true);
 
   // Draw GBC rendering target
-  Game::Window::Instance().window().draw(_sprite);
+  Game::Window::Instance().draw(_sprite);
 
   // Draw forced exit bar
   _bar.setScale(Game::Window::Instance().window().getSize().x * _exit.asSeconds() / GBC::EmulationScene::ForcedExit.asSeconds(), 4.f);

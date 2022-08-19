@@ -111,13 +111,13 @@ void  GBC::PixelProcessingUnit::simulateMode2()
         _sprites.push_back(sprite);
     }
 
+    // Limit to 10 OBJ at selection
+    if (_sprites.size() > GBC::PixelProcessingUnit::SpriteLimit)
+      _sprites.erase(std::next(_sprites.begin(), GBC::PixelProcessingUnit::SpriteLimit), _sprites.end());
+
     // In non-CGB mode, OBJ draw priority depends on its X position
     if ((_gbc._io[IO::OPRI] & 0b00000001) || (_gbc._io[GBC::GameBoyColor::IO::KEY0] & 0b00001100))
       std::sort(_sprites.begin(), _sprites.end(), [](const auto& a, const auto& b) { return a.x < b.x; });
-
-    // Limit to 10 OBJ
-    if (_sprites.size() > GBC::PixelProcessingUnit::SpriteLimit)
-      _sprites.erase(std::next(_sprites.begin(), GBC::PixelProcessingUnit::SpriteLimit), _sprites.end());
   }
 
   // Next cycle
@@ -353,19 +353,19 @@ void  GBC::PixelProcessingUnit::simulateMode3Sprites()
         if (sprite.attributes & SpriteAttributes::SpriteAttributesYFlip)
           tile_y = (tile_height - 1) - tile_y % tile_height;
 
-        std::uint8_t  sp_tile_id = (sprite.tile & ((tile_height == 8) ? 0b11111111 : 0b11111110)) + ((tile_y < 8) ? 0 : 1);
+        std::uint8_t  sp_tile_id = sprite.tile & ((tile_height == 8) ? 0b11111111 : 0b11111110);
         std::uint16_t sp_tile_index = ((std::uint16_t)sp_tile_id * 16);
 
-        std::uint8_t  tile_low = _ram[(sprite.attributes & SpriteAttributes::SpriteAttributesBank) ? 1 : 0][sp_tile_index + (tile_y % 8) * 2 + 0];
-        std::uint8_t  tile_high = _ram[(sprite.attributes & SpriteAttributes::SpriteAttributesBank) ? 1 : 0][sp_tile_index + (tile_y % 8) * 2 + 1];
+        std::uint8_t  tile_low = _ram[(sprite.attributes & SpriteAttributes::SpriteAttributesBank) ? 1 : 0][sp_tile_index + tile_y * 2 + 0];
+        std::uint8_t  tile_high = _ram[(sprite.attributes & SpriteAttributes::SpriteAttributesBank) ? 1 : 0][sp_tile_index + tile_y * 2 + 1];
 
         // Fill Sprites pixel FIFO
         while (_sFifo.size() < 8)
-          _sFifo.push({ .color = 0, .palette = 0, .attributes = 0, .priority = 0 });
+          _sFifo.push({ .color = 0, .palette = 0, .attributes = 0, .priority = 255 });
 
         // Discard passed pixels
         for (; _sOffset < _lx - sprite.x + 8; _sOffset += 1)
-          _sFifo.insert({ .color = 0, .palette = 0, .attributes = 0, .priority = 0 });
+          _sFifo.insert({ .color = 0, .palette = 0, .attributes = 0, .priority = 255 });
 
         // Register pixels according to X flip attribute
         for (std::uint8_t index = 0; index < 8; index += 1) {

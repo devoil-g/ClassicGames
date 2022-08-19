@@ -1,5 +1,6 @@
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 #include "System/Config.hpp"
 #include "System/Window.hpp"
@@ -203,4 +204,22 @@ void  Game::Window::transparency(sf::Uint8 transparency)
 bool  Game::Window::getVerticalSync() const
 {
   return _sync;
+}
+
+void  Game::Window::draw(sf::Sprite& sprite, float ratio)
+{
+  auto spriteSize = sprite.getTexture()->getSize();
+  auto windowSize = _window.getSize();
+
+  // Compute sprite scale and position
+  float scale = std::min((float)windowSize.x / (float)spriteSize.x, (float)windowSize.y / ((float)spriteSize.y * ratio));
+  float pos_x = (((float)windowSize.x - ((float)spriteSize.x * scale)) / 2.f);
+  float pos_y = (((float)windowSize.y - ((float)spriteSize.y * scale * ratio)) / 2.f);
+
+  // Position sprite in window
+  sprite.setScale(scale, scale * ratio);
+  sprite.setPosition(pos_x, pos_y);
+
+  // Draw DOOM rendering target
+  _window.draw(sprite);
 }

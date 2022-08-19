@@ -359,8 +359,10 @@ void  GBC::GameBoyColor::simulate()
           (source >= 0xC000 && source < 0xE000)) &&
           (destination >= 0x8000 && destination < 0xA000))
           _ppu.writeRam(destination - 0x8000, read(source));
-        else
+        else {
           end = true;
+          break;
+        }
 
         source += 1;
         destination += 1;
@@ -370,13 +372,15 @@ void  GBC::GameBoyColor::simulate()
       _transferIndex += 8;
 
       // End of HDMA transfer
-      if (_transferIndex == (_io[IO::HDMA5] + 1) * 0x10 || end == true) {
+      if (_transferIndex == ((std::size_t)_io[IO::HDMA5] + 1) * 0x10 || end == true) {
         _transferMode = Transfer::TransferNone;
-        _io[IO::HDMA1] = 0xFF;
-        _io[IO::HDMA2] = 0xFF;
-        _io[IO::HDMA3] = 0xFF;
-        _io[IO::HDMA4] = 0xFF;
         _io[IO::HDMA5] = 0xFF;
+
+        // Increment source and destination
+        _io[IO::HDMA1] = (source >> 8) & 0b11111111;
+        _io[IO::HDMA2] = (source >> 0) & 0b11111111;
+        _io[IO::HDMA3] = (destination >> 8) & 0b11111111;
+        _io[IO::HDMA4] = (destination >> 0) & 0b11111111;
       }
 
       // CPU is not executed
@@ -390,16 +394,16 @@ void  GBC::GameBoyColor::simulate()
 
       // Trigger when entering mode 0
       if (_transferTrigger == false && trigger == true)
-        _transferCounter = 16;
+        _transferIndex = 16;
 
       // Save current mode
       _transferTrigger = trigger;
 
       // HDMA Transfer at start of HBlank
-      if (_transferCounter >= 0)
+      if (_transferIndex > 0)
       {
-        std::uint16_t source = ((((std::uint16_t)_io[IO::HDMA1] << 8) + (std::uint16_t)_io[IO::HDMA2]) & 0b1111111111110000) + (std::uint16_t)_transferIndex;
-        std::uint16_t destination = (((((std::uint16_t)_io[IO::HDMA3] << 8) + (std::uint16_t)_io[IO::HDMA4]) & 0b00011111111110000) | 0b1000000000000000) + (std::uint16_t)_transferIndex;
+        std::uint16_t source = ((((std::uint16_t)_io[IO::HDMA1] << 8) + (std::uint16_t)_io[IO::HDMA2]) & 0b1111111111110000) + (std::uint16_t)(16 - _transferIndex);
+        std::uint16_t destination = (((((std::uint16_t)_io[IO::HDMA3] << 8) + (std::uint16_t)_io[IO::HDMA4]) & 0b00011111111110000) | 0b1000000000000000) + (std::uint16_t)(16 - _transferIndex);
         bool          end = false;
 
         // Transfer 8 bytes per tick
@@ -419,20 +423,22 @@ void  GBC::GameBoyColor::simulate()
         }
 
         // Update transfer index
-        _transferIndex += 8;
-        _transferCounter -= 8;
-
+        _transferIndex -= 8;
+        
         // End of data chunk transfer
-        if (_transferCounter == 0)
+        if (_transferIndex == 0) {
           _io[IO::HDMA5] -= 1;
+
+          // Increment source and destination
+          _io[IO::HDMA1] = (source >> 8) & 0b11111111;
+          _io[IO::HDMA2] = (source >> 0) & 0b11111111;
+          _io[IO::HDMA3] = (destination >> 8) & 0b11111111;
+          _io[IO::HDMA4] = (destination >> 0) & 0b11111111;
+        }
 
         // End of HDMA transfer
         if (_io[IO::HDMA5] == 0xFF || end == true) {
           _transferMode = Transfer::TransferNone;
-          _io[IO::HDMA1] = 0xFF;
-          _io[IO::HDMA2] = 0xFF;
-          _io[IO::HDMA3] = 0xFF;
-          _io[IO::HDMA4] = 0xFF;
           _io[IO::HDMA5] = 0xFF;
         }
 
@@ -524,7 +530,7 @@ void  GBC::GameBoyColor::simulateTimer()
   }
 }
 
-const sf::Texture&  GBC::GameBoyColor::lcd() const
+const sf::Texture& GBC::GameBoyColor::lcd() const
 {
   // Get rendering target from PPU
   return _ppu.lcd();
@@ -942,8 +948,7 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     {
       _transferMode = Transfer::TransferHdma1;
       _transferIndex = 0;
-      _transferCounter = 0;
-      _transferTrigger = true;
+      _transferTrigger = (_io[GBC::PixelProcessingUnit::IO::STAT] & GBC::PixelProcessingUnit::LcdStatus::LcdStatusMode) == GBC::PixelProcessingUnit::Mode::Mode0;
       _io[IO::HDMA5] = value & 0b01111111;
     }
 
@@ -960,7 +965,6 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
       _io[IO::HDMA5] = value & 0b01111111;
     }
 
-    // TODO: respect HDMA transfer timing for mode 0 & 1
     break;
   }
 

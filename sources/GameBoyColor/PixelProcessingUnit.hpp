@@ -186,21 +186,6 @@ namespace GBC
     std::uint8_t  _sOffset;   // Number of Sprites pixel to discard
     std::uint8_t  _sWait;     // Sprites pixels fetcher wait time
 
-    /*
-    PixelFifo                       _bgFifo;          // Pixels of background and window
-    std::uint8_t                    _bgX;             // Current X coordinate of rendered pixel
-    std::uint8_t                    _bgOffsetX;       // Number of pixel to be discarded at start of the line
-    std::uint8_t                    _bgTileX;         // X index of rendered tile
-    std::uint8_t                    _bgFetcherWait;   // Background fetcher wait time
-    std::array<PixelFifo::Pixel, 8> _bgFetcherPixels; // Background fetcher pixels
-    bool                            _wnFlagX;         // Window enable flag
-    bool                            _wnFlagY;         // Window Y coordinate enable flag
-    std::uint8_t                    _wnY;             // Window rendered line number
-    PixelFifo                       _spFifo;          // Pixels of sprites
-    std::uint8_t                    _spFetcherWait;   // Sprite fetcher wait time
-    std::uint8_t                    _spOffsetX;       // Number of pixel to be discarded at start of the sprite
-    */
-
     sf::Image   _image;   // Rendering target on RAM
     sf::Texture _texture; // Rendering target in GPU
     

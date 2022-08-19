@@ -4,6 +4,7 @@
 #include <string>
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
@@ -139,5 +140,7 @@ namespace Game
     inline const Game::Window::Mouse&     mouse() const { return _mouse; };       // Get mouse informations
     inline const Game::Window::Keyboard&  keyboard() const { return _keyboard; }; // Get keyboard informations
     inline const Game::Window::Joystick&  joystick() const { return _joystick; }; // Get joystick informations
+
+    void draw(sf::Sprite& sprite, float ratio = 1.f); // Draw a sprite, fill screen
   };
 }
