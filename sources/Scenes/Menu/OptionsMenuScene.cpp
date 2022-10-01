@@ -35,12 +35,6 @@ bool  Game::OptionsMenuScene::update(sf::Time elapsed)
   return Game::AbstractMenuScene::update(elapsed);
 }
 
-void  Game::OptionsMenuScene::draw()
-{
-  // Draw menu
-  Game::AbstractMenuScene::draw();
-}
-
 void  Game::OptionsMenuScene::selectFullscreen(Game::AbstractMenuScene::Item& item)
 {
   // Save context settings
@@ -50,12 +44,12 @@ void  Game::OptionsMenuScene::selectFullscreen(Game::AbstractMenuScene::Item& it
   if (Game::Window::Instance().window().getSize().x != sf::VideoMode::getDesktopMode().width ||
     Game::Window::Instance().window().getSize().y != sf::VideoMode::getDesktopMode().height)
   {
-    Game::Window::Instance().create(sf::VideoMode::getDesktopMode(), sf::Style::Fullscreen, settings, Game::Window::Instance().getVerticalSync());
+    Game::Window::Instance().create(sf::VideoMode::getDesktopMode(), sf::Style::Fullscreen, settings);
     item.setString("Fullscreen [X]");
   }
   else
   {
-    Game::Window::Instance().create(sf::VideoMode(Game::Window::DefaultWidth, Game::Window::DefaultHeight), sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close, settings, Game::Window::Instance().getVerticalSync());
+    Game::Window::Instance().create(sf::VideoMode(Game::Window::DefaultWidth, Game::Window::DefaultHeight), sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close, settings);
     item.setString("Fullscreen [   ]");
   }
 }
@@ -86,7 +80,7 @@ void  Game::OptionsMenuScene::selectAntialiasing(Game::AbstractMenuScene::Item& 
     settings.antialiasingLevel = ((settings.antialiasingLevel == 2) ? 0 : (settings.antialiasingLevel / 2));
 
   // Create window with new parameters
-  Game::Window::Instance().create(video, style, settings, Game::Window::Instance().getVerticalSync());
+  Game::Window::Instance().create(video, style, settings);
 
   // Generate new menu item text
   std::string text = "Antialiasing [";
@@ -105,25 +99,8 @@ void  Game::OptionsMenuScene::selectAntialiasing(Game::AbstractMenuScene::Item& 
 
 void  Game::OptionsMenuScene::selectVerticalSync(Game::AbstractMenuScene::Item& item)
 {
-  sf::VideoMode       video;
-  unsigned int        style;
-  sf::ContextSettings settings = Game::Window::Instance().window().getSettings();
-
-  // Get actual video mode and window style
-  if (Game::Window::Instance().window().getSize().x == sf::VideoMode::getDesktopMode().width &&
-    Game::Window::Instance().window().getSize().y == sf::VideoMode::getDesktopMode().height)
-  {
-    video = sf::VideoMode::getDesktopMode();
-    style = sf::Style::Fullscreen;
-  }
-  else
-  {
-    video = sf::VideoMode(Game::Window::Instance().window().getSize().x, Game::Window::Instance().window().getSize().y);
-    style = sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close;
-  }
-
-  // Create window with new parameters, toggle vertical sync
-  Game::Window::Instance().create(video, style, settings, !Game::Window::Instance().getVerticalSync());
+  // Change vertical sync
+  Game::Window::Instance().setVerticalSync(!Game::Window::Instance().getVerticalSync());
 
   // Apply new text to menu item
   item.setString(std::string("Vertical Sync. [") + std::string((Game::Window::Instance().getVerticalSync() == true) ? "X" : "   ") + std::string("]"));

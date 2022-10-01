@@ -62,12 +62,6 @@ bool  GBC::SelectionScene::update(sf::Time elapsed)
   return Game::AbstractMenuScene::update(elapsed);
 }
 
-void  GBC::SelectionScene::draw()
-{
-  // Draw menu
-  Game::AbstractMenuScene::draw();
-}
-
 void  GBC::SelectionScene::selectGame(Game::AbstractMenuScene::Item&, const std::string& file)
 {
   // Run this game next frame (avoid "Browse..." menu lag)

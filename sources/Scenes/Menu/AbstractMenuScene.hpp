@@ -49,7 +49,7 @@ namespace Game
     virtual ~AbstractMenuScene() = 0;
 
     virtual bool  update(sf::Time elapsed) override;  // Update menu state
-    virtual void  draw() override;                    // Draw menu state
+    virtual void  draw() override final;              // Draw menu state
 
     void  title(const std::string& string);                                               // Change title
     void  add(const std::string& string, const std::function<void(Item&)>& callback);     // Add item to menu

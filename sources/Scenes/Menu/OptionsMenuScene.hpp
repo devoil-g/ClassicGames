@@ -22,6 +22,5 @@ namespace Game
     ~OptionsMenuScene() override = default;
 
     bool  update(sf::Time elapsed) override;  // Update state
-    void  draw() override;                    // Draw state
   };
 }

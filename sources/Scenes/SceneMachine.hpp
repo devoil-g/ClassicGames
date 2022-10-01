@@ -4,6 +4,7 @@
 #include <memory>
 #include <mutex>
 #include <stack>
+#include <string>
 
 #include "Scenes/AbstractScene.hpp"
 

@@ -69,13 +69,12 @@ namespace GBC
 
     union Parameter
     {
-      std::uint8_t    u8;
-      std::uint8_t*   pu8;
-      std::uint16_t   u16;
-      std::uint16_t*  pu16;
-      Register        r;
-      Register*       pr;
-      
+      std::uint8_t    u8;   // Unsigned 8 bits value
+      std::uint8_t*   pu8;  // Pointer to unsigned 8 bits value
+      std::uint16_t   u16;  // Unsigned 16 bits value
+      std::uint16_t*  pu16; // Pointer to unsigned 16 bits value
+      Register        r;    // CPU register
+      Register*       pr;   // Pointer to CPU register
     };
 
     enum InterruptMasterEnable
@@ -179,73 +178,12 @@ namespace GBC
     void  instruction_SCF();
     void  instruction_CCF();
 
-    template <unsigned int Bit>
-    void  instruction_BIT(std::uint8_t reg8)
-    {
-      _parameters[0].u8 = reg8;
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu.setFlag<Register::Z>(!(cpu._parameters[0].u8 & (0b00000001 << Bit)));
-        cpu.setFlag<Register::N>(false);
-        cpu.setFlag<Register::H>(true);
-        });
-    }
-
-    template <unsigned int Bit>
-    void  instruction_BIT_pHL()
-    {
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
-        });
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu.setFlag<Register::Z>(!(cpu._rW.u8.low & (0b00000001 << Bit)));
-        cpu.setFlag<Register::N>(false);
-        cpu.setFlag<Register::H>(true);
-        });
-    }
-
-    template <unsigned int Bit>
-    void  instruction_RES(std::uint8_t& reg8)
-    {
-      _parameters[0].pu8 = &reg8;
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        (*cpu._parameters[0].pu8) &= ~(0b00000001 << Bit);
-        });
-    }
-
-    template <unsigned int Bit>
-    void  instruction_RES_pHL()
-    {
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
-        });
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rW.u8.low &= ~(0b00000001 << Bit);
-        cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
-        });
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
-    }
-
-    template <unsigned int Bit>
-    void  instruction_SET(std::uint8_t& reg8)
-    {
-      _parameters[0].pu8 = &reg8;
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        (*cpu._parameters[0].pu8) |= 0b00000001 << Bit;
-        });
-    }
-
-    template <unsigned int Bit>
-    void  instruction_SET_pHL()
-    {
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
-        });
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rW.u8.low |= 0b00000001 << Bit;
-        cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
-        });
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
-    }
+    template <unsigned int Bit> void  instruction_BIT(std::uint8_t reg8);
+    template <unsigned int Bit> void  instruction_BIT_pHL();
+    template <unsigned int Bit> void  instruction_RES(std::uint8_t& reg8);
+    template <unsigned int Bit> void  instruction_RES_pHL();
+    template <unsigned int Bit> void  instruction_SET(std::uint8_t& reg8);
+    template <unsigned int Bit> void  instruction_SET_pHL();
 
     void  instruction_ADD_r(std::uint8_t reg8);
     void  instruction_ADD_n();

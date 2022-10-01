@@ -14,7 +14,8 @@ GBC::EmulationScene::EmulationScene(Game::SceneMachine& machine, const std::stri
   _fps(sf::seconds(-0.42f)),
   _exit(sf::Time::Zero),
   _bar(sf::Vector2f(1.f, 1.f)),
-  _stream()
+  _stream(),
+  _sync(Game::Window::Instance().getVerticalSync())
 {
   // Initialize force exit bar
   _bar.setSize(sf::Vector2f(1.f, 1.f));
@@ -23,19 +24,25 @@ GBC::EmulationScene::EmulationScene(Game::SceneMachine& machine, const std::stri
   // Start sound stream
   _stream.setVolume(30.f);
   _stream.play();
+
+  // Force disable vertical sync
+  Game::Window::Instance().window().setVerticalSyncEnabled(false);
 }
 
 GBC::EmulationScene::~EmulationScene()
 {
   // Stop the stream before destroying the class
   _stream.stop();
+
+  // Restore vertical sync
+  Game::Window::Instance().window().setVerticalSyncEnabled(_sync);
 }
 
 bool  GBC::EmulationScene::update(sf::Time elapsed)
 {
   // Update timers
   _exit += elapsed;
-  _fps += elapsed;
+  _fps = std::min(_fps + elapsed, sf::seconds(2.f * (GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank) * GBC::PixelProcessingUnit::ScanlineDuration / Math::Pow<22>(2)));
 
   // Reset exit timer when ESC is not pressed
   if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Escape) == false)
@@ -134,7 +141,9 @@ bool  GBC::EmulationScene::SoundStream::onGetData(sf::SoundStream::Chunk& chunk)
 }
 
 void  GBC::EmulationScene::SoundStream::onSeek(sf::Time)
-{}
+{
+  // Does nothing
+}
 
 void  GBC::EmulationScene::SoundStream::push(const std::array<std::int16_t, GBC::AudioProcessingUnit::BufferSize>& sound)
 {
@@ -144,6 +153,8 @@ void  GBC::EmulationScene::SoundStream::push(const std::array<std::int16_t, GBC:
   _sounds.push(sound);
 
   // Limit number of sounds in queue
-  if (_sounds.size() > 3)
+  if (_sounds.size() > 3) {
     _sounds.pop();
+    _index = 0;
+  }
 }

@@ -28,12 +28,6 @@ bool  Game::MainMenuScene::update(sf::Time elapsed)
   return Game::AbstractMenuScene::update(elapsed);
 }
 
-void  Game::MainMenuScene::draw()
-{
-  // Draw menu
-  Game::AbstractMenuScene::draw();
-}
-
 void  Game::MainMenuScene::selectDoom(Game::AbstractMenuScene::Item&, const std::string& wad, DOOM::Enum::Mode mode)
 {
   Game::SceneMachine& machine = _machine;

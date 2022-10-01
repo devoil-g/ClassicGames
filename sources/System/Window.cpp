@@ -17,7 +17,7 @@ Game::Window::Window() :
   _window(), _mouse(), _keyboard(), _joystick(), _elapsed(), _tick(), _sync(Game::Window::DefaultVerticalSync)
 {
   // Create window with default parameters
-  create(sf::VideoMode(Game::Window::DefaultWidth, Game::Window::DefaultHeight), sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close, sf::ContextSettings(24, 8, Game::Window::DefaultAntialiasing, 4, 4), _sync);
+  create(sf::VideoMode(Game::Window::DefaultWidth, Game::Window::DefaultHeight), sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close, sf::ContextSettings(24, 8, Game::Window::DefaultAntialiasing, 4, 4));
 
 #ifdef _WIN32
   // Get system handle of window
@@ -30,6 +30,9 @@ Game::Window::Window() :
 
 bool  Game::Window::update(sf::Time elapsed)
 {
+  // Check window focus
+  bool  focus = _window.hasFocus() == true;
+
   // Clear inputs pressed/released maps
   _mouse._pressed.fill(false);
   _mouse._released.fill(false);
@@ -37,6 +40,13 @@ bool  Game::Window::update(sf::Time elapsed)
   _keyboard._released.fill(false);
   _joystick._pressed.fill(std::array<bool, sf::Joystick::ButtonCount>());
   _joystick._released.fill(std::array<bool, sf::Joystick::ButtonCount>());
+
+  // Cancel down keys when no focus
+  if (focus == false) {
+    _mouse._down.fill(false);
+    _keyboard._down.fill(false);
+    _joystick._down.fill(std::array<bool, sf::Joystick::ButtonCount>());
+  }
 
   // Reset keyboard input text
   _keyboard._text.clear();
@@ -57,15 +67,17 @@ bool  Game::Window::update(sf::Time elapsed)
       _window.setView(sf::View(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height)));
 
     // Get input only if window focused
-    if (_window.hasFocus() == true)
+    if (focus == true)
     {
       switch (event.type)
       {
         // Get mouse events
       case sf::Event::MouseButtonPressed:
+        _mouse._down[event.mouseButton.button] = true;
         _mouse._pressed[event.mouseButton.button] = true;
         break;
       case sf::Event::MouseButtonReleased:
+        _mouse._down[event.mouseButton.button] = false;
         _mouse._released[event.mouseButton.button] = true;
         break;
       case sf::Event::MouseWheelMoved:
@@ -74,12 +86,16 @@ bool  Game::Window::update(sf::Time elapsed)
 
         // Get keyboard events
       case sf::Event::KeyPressed:
-        if (event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount)
+        if (event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount) {
+          _keyboard._down[event.key.code] = true;
           _keyboard._pressed[event.key.code] = true;
+        }
         break;
       case sf::Event::KeyReleased:
-        if (event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount)
+        if (event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount) {
+          _keyboard._down[event.key.code] = false;
           _keyboard._released[event.key.code] = true;
+        }
         break;
       case sf::Event::TextEntered:
         _keyboard._text.push_back((wchar_t)event.text.unicode);
@@ -87,9 +103,11 @@ bool  Game::Window::update(sf::Time elapsed)
 
         // Get joystick events
       case sf::Event::JoystickButtonPressed:
+        _joystick._down[event.joystickButton.joystickId][event.joystickButton.button] = true;
         _joystick._pressed[event.joystickButton.joystickId][event.joystickButton.button] = true;
         break;
       case sf::Event::JoystickButtonReleased:
+        _joystick._down[event.joystickButton.joystickId][event.joystickButton.button] = false;
         _joystick._released[event.joystickButton.joystickId][event.joystickButton.button] = true;
         break;
 
@@ -133,7 +151,7 @@ bool  Game::Window::update(sf::Time elapsed)
   return false;
 }
 
-void  Game::Window::create(const sf::VideoMode& video, sf::Uint32 style, const sf::ContextSettings& context, bool sync)
+void  Game::Window::create(const sf::VideoMode& video, sf::Uint32 style, const sf::ContextSettings& context)
 {
 #ifdef _WIN32
   ::COLORREF  pcrKey = RGB(0, 0, 0);
@@ -147,10 +165,9 @@ void  Game::Window::create(const sf::VideoMode& video, sf::Uint32 style, const s
   // Create window with parameters
   _window.create(video, Game::Window::DefaultTitle, style, context);
 
-  // Activate V-sync (limit fps)
-  _window.setVerticalSyncEnabled(sync);
-  _sync = sync;
-
+  // Restore V-sync (limit fps)
+  setVerticalSync(getVerticalSync());
+  
   // Disabled key repeate
   _window.setKeyRepeatEnabled(false);
   
@@ -204,6 +221,15 @@ void  Game::Window::transparency(sf::Uint8 transparency)
 bool  Game::Window::getVerticalSync() const
 {
   return _sync;
+}
+
+void  Game::Window::setVerticalSync(bool sync)
+{
+  // Save new state
+  _sync = sync;
+
+  // Set vertical sync
+  window().setVerticalSyncEnabled(_sync);
 }
 
 void  Game::Window::draw(sf::Sprite& sprite, float ratio)

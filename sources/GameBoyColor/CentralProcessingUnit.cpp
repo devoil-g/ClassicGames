@@ -1147,6 +1147,9 @@ void  GBC::CentralProcessingUnit::simulateFetch()
   // Fetch opcode
   std::uint8_t  opcode = _gbc.read(_rPC.u16);
 
+  // TODO: remove this
+  std::uint16_t pc = _rPC.u16;
+
   // Add instructions
   _rPC.u16 += 1;
   _opcodes[opcode](*this);
@@ -1156,7 +1159,7 @@ void  GBC::CentralProcessingUnit::simulateFetch()
   if (_gbc._io[GBC::GameBoyColor::IO::BANK] == 0)
     return;
 
-  printf("PC: %04X, OP: %02X %s\n", _rPC.u16 - 1, opcode, _opcodes_desc[opcode].data());
+  printf("PC: %04X, OP: %02X %s\n", pc, opcode, _opcodes_desc[opcode].data());
   if (opcode == 0xCB) {
     std::uint8_t  opcodeCB = _gbc.read(_rPC.u16);
 
@@ -2026,6 +2029,74 @@ void  GBC::CentralProcessingUnit::instruction_CCF()
     cpu.setFlag<Register::H>(false);
     cpu.setFlag<Register::C>(!cpu.getFlag<Register::C>());
     });
+}
+
+template <unsigned int Bit>
+void  GBC::CentralProcessingUnit::instruction_BIT(std::uint8_t reg8)
+{
+  _parameters[0].u8 = reg8;
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu.setFlag<Register::Z>(!(cpu._parameters[0].u8 & (0b00000001 << Bit)));
+    cpu.setFlag<Register::N>(false);
+    cpu.setFlag<Register::H>(true);
+    });
+}
+
+template <unsigned int Bit>
+void  GBC::CentralProcessingUnit::instruction_BIT_pHL()
+{
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    });
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu.setFlag<Register::Z>(!(cpu._rW.u8.low & (0b00000001 << Bit)));
+    cpu.setFlag<Register::N>(false);
+    cpu.setFlag<Register::H>(true);
+    });
+}
+
+template <unsigned int Bit>
+void  GBC::CentralProcessingUnit::instruction_RES(std::uint8_t& reg8)
+{
+  _parameters[0].pu8 = &reg8;
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    (*cpu._parameters[0].pu8) &= ~(0b00000001 << Bit);
+    });
+}
+
+template <unsigned int Bit>
+void  GBC::CentralProcessingUnit::instruction_RES_pHL()
+{
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    });
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low &= ~(0b00000001 << Bit);
+    cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+    });
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+}
+
+template <unsigned int Bit>
+void  GBC::CentralProcessingUnit::instruction_SET(std::uint8_t& reg8)
+{
+  _parameters[0].pu8 = &reg8;
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    (*cpu._parameters[0].pu8) |= 0b00000001 << Bit;
+    });
+}
+
+template <unsigned int Bit>
+void  GBC::CentralProcessingUnit::instruction_SET_pHL()
+{
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    });
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low |= 0b00000001 << Bit;
+    cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+    });
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
 
 void  GBC::CentralProcessingUnit::instruction_ADD_r(std::uint8_t reg8)

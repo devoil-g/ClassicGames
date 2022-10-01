@@ -32,11 +32,11 @@ namespace Game
       friend class Game::Window;
 
     private:
-      sf::Vector2i                              _position, _relative; // Mouse position
-      int                                       _wheel;               // Mouse wheel ticks since last update
-      std::array<bool, sf::Mouse::ButtonCount>  _pressed, _released;  // Maps of pressed/released mouse button
+      sf::Vector2i                              _position, _relative;       // Mouse position
+      int                                       _wheel;                     // Mouse wheel ticks since last update
+      std::array<bool, sf::Mouse::ButtonCount>  _down, _pressed, _released; // Maps of down/pressed/released mouse button
 
-      inline Mouse() : _position(), _relative(), _wheel(), _pressed(), _released() {}
+      inline Mouse() : _position(), _relative(), _wheel(), _down(), _pressed(), _released() {}
       inline ~Mouse() = default;
 
     public:
@@ -44,9 +44,9 @@ namespace Game
       inline const sf::Vector2i&  relative() const { return _relative; }; // Return mouse movement since last update
       inline int                  wheel() const { return  _wheel; };      // Return wheel ticks since last update
 
-      inline bool buttonDown(sf::Mouse::Button button) const { return Game::Window::Instance().window().hasFocus() && sf::Mouse::isButtonPressed(button); };  // Check if a button is currently pressed
-      inline bool buttonPressed(sf::Mouse::Button button) const { return _pressed[button]; };                                                                 // Check if a button has been pressed since last update
-      inline bool buttonReleased(sf::Mouse::Button button) const { return _released[button]; };                                                               // Check if a button has been released since last update
+      inline bool buttonDown(sf::Mouse::Button button) const { return _down[button]; };         // Check if a button is currently pressed
+      inline bool buttonPressed(sf::Mouse::Button button) const { return _pressed[button]; };   // Check if a button has been pressed since last update
+      inline bool buttonReleased(sf::Mouse::Button button) const { return _released[button]; }; // Check if a button has been released since last update
     };
 
     class Keyboard
@@ -54,17 +54,17 @@ namespace Game
       friend class Game::Window;
 
     private:
-      std::wstring                              _text;                // Buffer of text typed
-      std::array<bool, sf::Keyboard::KeyCount>  _pressed, _released;  // Maps of pressed/released keyboard key
+      std::wstring                              _text;                      // Buffer of text typed
+      std::array<bool, sf::Keyboard::KeyCount>  _down, _pressed, _released; // Maps of down/pressed/released keyboard key
 
-      inline Keyboard() : _text(), _pressed(), _released() {}
+      inline Keyboard() : _text(), _down(), _pressed(), _released() {}
       inline ~Keyboard() = default;
 
     public:
-      inline bool                 keyDown(sf::Keyboard::Key key) const { return Game::Window::Instance().window().hasFocus() && sf::Keyboard::isKeyPressed(key); }; // Check if a key is currently pressed
-      inline bool                 keyPressed(sf::Keyboard::Key key) const { return _pressed[key]; };                                                                // Check if a key has been pressed since last update
-      inline bool                 keyReleased(sf::Keyboard::Key key) const { return _released[key]; };                                                              // Check if a key has been released since last update
-      inline const std::wstring&  text() const { return _text; };                                                                                                   // Return text entered since last frame
+      inline bool                 keyDown(sf::Keyboard::Key key) const { return _down[key]; };          // Check if a key is currently pressed
+      inline bool                 keyPressed(sf::Keyboard::Key key) const { return _pressed[key]; };    // Check if a key has been pressed since last update
+      inline bool                 keyReleased(sf::Keyboard::Key key) const { return _released[key]; };  // Check if a key has been released since last update
+      inline const std::wstring&  text() const { return _text; };                                       // Return text entered since last frame
     };
 
     class Joystick
@@ -74,19 +74,19 @@ namespace Game
     private:
       static float const  DeadZone; // Dead zone of joysticks
 
-      std::array<std::array<float, sf::Joystick::AxisCount>, sf::Joystick::Count>   _position, _relative; // Joystick position
-      std::array<std::array<bool, sf::Joystick::ButtonCount>, sf::Joystick::Count>  _pressed, _released;  // Maps of pressed/released joystick key
+      std::array<std::array<float, sf::Joystick::AxisCount>, sf::Joystick::Count>   _position, _relative;       // Joystick position
+      std::array<std::array<bool, sf::Joystick::ButtonCount>, sf::Joystick::Count>  _down, _pressed, _released; // Maps of down/pressed/released joystick key
 
-      inline Joystick() : _position(), _relative(), _pressed(), _released() {}
+      inline Joystick() : _position(), _relative(), _down(), _pressed(), _released() {}
       inline ~Joystick() = default;
 
     public:
       inline float  position(unsigned int joystick, unsigned int axis) const { return _position[joystick][axis]; }; // Return joystick axis current position
       inline float  relative(unsigned int joystick, unsigned int axis) const { return _relative[joystick][axis]; }; // Return joystick axis movement since last update
 
-      inline bool buttonDown(unsigned int joystick, unsigned int button) const { return Game::Window::Instance().window().hasFocus() && sf::Joystick::isButtonPressed(joystick, button); }; // Check if a button is currently pressed
-      inline bool buttonPressed(unsigned int joystick, unsigned int button) const { return _pressed[joystick][button]; };                                                                   // Check if a button has been pressed since last update
-      inline bool buttonReleased(unsigned int joystick, unsigned int button) const { return _released[joystick][button]; };                                                                 // Check if a button has been released since last update
+      inline bool buttonDown(unsigned int joystick, unsigned int button) const { return _down[joystick][button]; };         // Check if a button is currently pressed
+      inline bool buttonPressed(unsigned int joystick, unsigned int button) const { return _pressed[joystick][button]; };   // Check if a button has been pressed since last update
+      inline bool buttonReleased(unsigned int joystick, unsigned int button) const { return _released[joystick][button]; }; // Check if a button has been released since last update
     };
 
     sf::RenderWindow        _window;    // SFML window
@@ -129,12 +129,13 @@ namespace Game
 
     inline static Game::Window& Instance() { static Game::Window singleton; return singleton; };  // Get instance (singleton)
 
-    bool  update(sf::Time);                                                                                     // Update window (get events)
-    void  create(const sf::VideoMode& video, sf::Uint32 style, const sf::ContextSettings& context, bool sync);  // (Re)create window with parameters
-    void  taskbar(WindowFlag flag);                                                                             // Set taskbar status (Windows 7+ only)
-    void  taskbar(WindowFlag flag, float value);                                                                // Set taskbar progress (Windows 7+ only)
-    void  transparency(sf::Uint8 transparency);                                                                 // Set window global transparency
-    bool  getVerticalSync() const;                                                                              // Return true if vertical sync is enabled
+    bool  update(sf::Time);                                                                         // Update window (get events)
+    void  create(const sf::VideoMode& video, sf::Uint32 style, const sf::ContextSettings& context); // (Re)create window with parameters
+    void  taskbar(WindowFlag flag);                                                                 // Set taskbar status (Windows 7+ only)
+    void  taskbar(WindowFlag flag, float value);                                                    // Set taskbar progress (Windows 7+ only)
+    void  transparency(sf::Uint8 transparency);                                                     // Set window global transparency
+    bool  getVerticalSync() const;                                                                  // Return true if vertical sync is enabled
+    void  setVerticalSync(bool sync);                                                               // Enable vertical sync
 
     inline sf::RenderWindow&              window() { return _window; };           // Get SFML window
     inline const Game::Window::Mouse&     mouse() const { return _mouse; };       // Get mouse informations

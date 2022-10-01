@@ -25,6 +25,7 @@ namespace GBC
     sf::Time            _fps;     // Timer for FPS control
     sf::Time            _exit;    // Timer of forced exit
     sf::RectangleShape  _bar;     // Forced exit bar
+    bool                _sync;    // Vertical sync before the scene
 
     class SoundStream : public sf::SoundStream
     {
@@ -38,8 +39,8 @@ namespace GBC
         Buffering
       } _status;
 
-      virtual bool  onGetData(sf::SoundStream::Chunk& chunk) override;  // Base class
-      virtual void  onSeek(sf::Time) override;                          // Base class
+      virtual bool  onGetData(sf::SoundStream::Chunk& chunk) override;  // Feed audio buffer
+      virtual void  onSeek(sf::Time) override;                          // Does nothing
 
     public:
       SoundStream();
@@ -54,7 +55,7 @@ namespace GBC
     EmulationScene(Game::SceneMachine& machine, const std::string& filename);
     ~EmulationScene();
 
-    bool  update(sf::Time elapsed) override;  // TODO: comment
-    void  draw() override;                    // TODO: comment
+    bool  update(sf::Time elapsed) override;  // Simulate the GBC
+    void  draw() override;                    // Draw GBC rendering texture
   };
 }
