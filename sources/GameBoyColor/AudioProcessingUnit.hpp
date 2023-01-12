@@ -124,5 +124,8 @@ namespace GBC
     void          writeIo(std::uint16_t address, std::uint8_t value); // Write an audio IO
 
     const std::array<std::int16_t, GBC::AudioProcessingUnit::BufferSize>& sound() const;  // Get sound buffer
+
+    void  save(std::ofstream& file) const;  // Save state to file
+    void  load(std::ifstream& file);        // Load state from file
   };
 }

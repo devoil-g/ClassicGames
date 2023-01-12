@@ -3,8 +3,8 @@
 
 #include "GameBoyColor/MemoryBankController5.hpp"
 
-GBC::MemoryBankController5::MemoryBankController5(const std::vector<std::uint8_t>& rom, std::size_t ramSize, const std::string& ramSave) :
-  GBC::MemoryBankController(rom, ramSize, ramSave)
+GBC::MemoryBankController5::MemoryBankController5(GBC::GameBoyColor& gbc, const std::vector<std::uint8_t>& rom, std::size_t ramSize, const std::string& ramSave) :
+  GBC::MemoryBankController(gbc, rom, ramSize, ramSave)
 {}
 
 void  GBC::MemoryBankController5::writeRom(std::uint16_t address, std::uint8_t value)

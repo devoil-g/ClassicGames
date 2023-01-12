@@ -2,9 +2,10 @@
 #include <stdexcept>
 
 #include "GameBoyColor/MemoryBankController1.hpp"
+#include "GameBoyColor/GameBoyColor.hpp"
 
-GBC::MemoryBankController1::MemoryBankController1(const std::vector<std::uint8_t>& rom, std::size_t ramSize, const std::string& ramSave) :
-  GBC::MemoryBankController(rom, ramSize, ramSave),
+GBC::MemoryBankController1::MemoryBankController1(GBC::GameBoyColor& gbc, const std::vector<std::uint8_t>& rom, std::size_t ramSize, const std::string& ramSave) :
+  GBC::MemoryBankController(gbc, rom, ramSize, ramSave),
   _bank(0)
 {}
 
@@ -42,4 +43,22 @@ void  GBC::MemoryBankController1::writeRom(std::uint16_t address, std::uint8_t v
     // Set RAM bank
     setRamBank((_bank & 0b10000000) ? ((_bank & 0b01100000) >> 5) : (0));
   }
+}
+
+void    GBC::MemoryBankController1::save(std::ofstream& file) const
+{
+  // Save MBC variables
+  GBC::MemoryBankController::save(file);
+
+  // Save MBC1 variables
+  _gbc.save(file, "MBC1_BANK", _bank);
+}
+
+void    GBC::MemoryBankController1::load(std::ifstream& file)
+{
+  // Load MBC variables
+  GBC::MemoryBankController::load(file);
+
+  // Load MBC1 variables
+  _gbc.load(file, "MBC1_BANK", _bank);
 }

@@ -60,6 +60,23 @@ bool  GBC::EmulationScene::update(sf::Time elapsed)
     return false;
   }
 
+  const std::array<sf::Keyboard::Key, 12> save_slots = {
+    sf::Keyboard::F1, sf::Keyboard::F2, sf::Keyboard::F3, sf::Keyboard::F4,
+    sf::Keyboard::F5, sf::Keyboard::F6, sf::Keyboard::F7, sf::Keyboard::F8,
+    sf::Keyboard::F9, sf::Keyboard::F10, sf::Keyboard::F11, sf::Keyboard::F12
+  };
+  
+  // Save/load states
+  for (std::size_t index = 0; index < save_slots.size(); index++) {
+    if (Game::Window::Instance().keyboard().keyPressed(save_slots[index]) == true) {
+      if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::LShift) == true ||
+        Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::RShift) == true)
+        _gbc.save(index + 1);
+      else
+        _gbc.load(index + 1);
+    }
+  }
+
   // Simulate frames at 59.72 fps
   // NOTE: simulate at most one frame per call to avoid exponential delay
   if (_fps.asSeconds() >= 70224.f / Math::Pow<22>(2) ||

@@ -15,6 +15,8 @@
 #include <thread>
 #include <chrono>
 
+const std::string_view GBC::GameBoyColor::SaveStateBase = "0123456789ABCDEF";
+
 GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
   _header(),
   _path(filename),
@@ -195,74 +197,74 @@ void  GBC::GameBoyColor::loadHeader(const std::vector<uint8_t>& rom)
   // Cartridge Type
   switch (rom[0x0147]) {
   case 0x00:  // ROM only
-    _mbc = std::make_unique<GBC::MemoryBankController>(rom);
+    _mbc = std::make_unique<GBC::MemoryBankController>(*this, rom);
     _header.mbc = Header::MBC::MBCNone;
     break;
   case 0x08:  // ROM+RAM, never used
-    _mbc = std::make_unique<GBC::MemoryBankController>(rom, _header.ram_size);
+    _mbc = std::make_unique<GBC::MemoryBankController>(*this, rom, _header.ram_size);
     _header.mbc = Header::MBC::MBCNone;
     break;
   case 0x09:  // ROM+RAM+BATTERY, never used
-    _mbc = std::make_unique<GBC::MemoryBankController>(rom, _header.ram_size, _path + ".gbs");
+    _mbc = std::make_unique<GBC::MemoryBankController>(*this, rom, _header.ram_size, _path + ".gbs");
     _header.mbc = Header::MBC::MBCNone;
     break;
 
   case 0x01:  // MBC1
-    _mbc = std::make_unique<GBC::MemoryBankController1>(rom);
+    _mbc = std::make_unique<GBC::MemoryBankController1>(*this, rom);
     _header.mbc = Header::MBC::MBC1;
     break;
   case 0x02:  // MBC1+RAM
-    _mbc = std::make_unique<GBC::MemoryBankController1>(rom, _header.ram_size);
+    _mbc = std::make_unique<GBC::MemoryBankController1>(*this, rom, _header.ram_size);
     _header.mbc = Header::MBC::MBC1;
     break;
   case 0x03:  // MBC1+RAM+BATTERY
-    _mbc = std::make_unique<GBC::MemoryBankController1>(rom, _header.ram_size, _path + ".gbs");
+    _mbc = std::make_unique<GBC::MemoryBankController1>(*this, rom, _header.ram_size, _path + ".gbs");
     _header.mbc = Header::MBC::MBC1;
     break;
 
   case 0x05:  // MBC2
-    _mbc = std::make_unique<GBC::MemoryBankController2>(rom);
+    _mbc = std::make_unique<GBC::MemoryBankController2>(*this, rom);
     _header.mbc = Header::MBC::MBC2;
     break;
   case 0x06:  // MBC2+BATTERY
-    _mbc = std::make_unique<GBC::MemoryBankController2>(rom, _path + ".gbs");
+    _mbc = std::make_unique<GBC::MemoryBankController2>(*this, rom, _path + ".gbs");
     _header.mbc = Header::MBC::MBC2;
     break;
 
   case 0x0F:  // MBC3+TIMER+BATTERY
-    _mbc = std::make_unique<GBC::MemoryBankController3>(rom, 0, "", _path + ".rtc");
+    _mbc = std::make_unique<GBC::MemoryBankController3>(*this, rom, 0, "", _path + ".rtc");
     _header.mbc = Header::MBC::MBC3;
     break;
   case 0x10:  // MBC3+TIMER+RAM+BATTERY
-    _mbc = std::make_unique<GBC::MemoryBankController3>(rom, _header.ram_size, _path + ".gbs", _path + ".rtc");
+    _mbc = std::make_unique<GBC::MemoryBankController3>(*this, rom, _header.ram_size, _path + ".gbs", _path + ".rtc");
     _header.mbc = Header::MBC::MBC3;
     break;
   case 0x11:  // MBC3
-    _mbc = std::make_unique<GBC::MemoryBankController3>(rom);
+    _mbc = std::make_unique<GBC::MemoryBankController3>(*this, rom);
     _header.mbc = Header::MBC::MBC3;
     break;
   case 0x12:  // MBC3+RAM
-    _mbc = std::make_unique<GBC::MemoryBankController3>(rom, _header.ram_size);
+    _mbc = std::make_unique<GBC::MemoryBankController3>(*this, rom, _header.ram_size);
     _header.mbc = Header::MBC::MBC3;
     break;
   case 0x13:  // MBC3+RAM+BATTERY
-    _mbc = std::make_unique<GBC::MemoryBankController3>(rom, _header.ram_size, _path + ".gbs");
+    _mbc = std::make_unique<GBC::MemoryBankController3>(*this, rom, _header.ram_size, _path + ".gbs");
     _header.mbc = Header::MBC::MBC3;
     break;
 
   case 0x19:  // MBC5
   case 0x1C:  // MBC5+RUMBLE
-    _mbc = std::make_unique<GBC::MemoryBankController5>(rom);
+    _mbc = std::make_unique<GBC::MemoryBankController5>(*this, rom);
     _header.mbc = Header::MBC::MBC5;
     break;
   case 0x1A:  // MBC5+RAM
   case 0x1D:  // MBC5+RUMBLE+RAM
-    _mbc = std::make_unique<GBC::MemoryBankController5>(rom, _header.ram_size);
+    _mbc = std::make_unique<GBC::MemoryBankController5>(*this, rom, _header.ram_size);
     _header.mbc = Header::MBC::MBC5;
     break;
   case 0x1B:  // MBC5+RAM+BATTERY
   case 0x1E:  // MBC5+RUMBLE+RAM+BATTERY
-    _mbc = std::make_unique<GBC::MemoryBankController5>(rom, _header.ram_size, _path + ".gbs");
+    _mbc = std::make_unique<GBC::MemoryBankController5>(*this, rom, _header.ram_size, _path + ".gbs");
     _header.mbc = Header::MBC::MBC5;
     break;
 
@@ -546,6 +548,117 @@ const GBC::GameBoyColor::Header& GBC::GameBoyColor::header() const
 {
   // Get cartridge header
   return _header;
+}
+
+void  GBC::GameBoyColor::load(std::size_t id)
+{
+  std::string   path(_path + ".gbs." + std::to_string(id));
+  std::ifstream file(path);
+
+  // Check valid file
+  if (file.good() == false) {
+    std::cerr << "[GBC::GameBoyColor::load] Warning, failed to load '" << path << "' save state." << std::endl;
+    return;
+  }
+
+  // Load GBC variables
+  load(file, "GBC_CYCLES", _cycles);
+  load(file, "GBC_WRAM", _wRam);
+  load(file, "GBC_IO", _io);
+  load(file, "GBC_HRAM", _hRam);
+  load(file, "GBC_IE", _ie);
+
+  // Load hardware state
+  _cpu.load(file);
+  _apu.load(file);
+  _ppu.load(file);
+  _mbc->load(file);
+}
+
+void  GBC::GameBoyColor::save(std::size_t id) const
+{
+  std::string   path(_path + ".gbs." + std::to_string(id));
+  std::ofstream file(path);
+
+  // Check valid file
+  if (file.good() == false) {
+    std::cerr << "[GBC::GameBoyColor::save] Warning, failed to save state to '" << path << "'." << std::endl;
+    return;
+  }
+
+  // Save GBC variables
+  save(file, "GBC_CYCLES", _cycles);
+  save(file, "GBC_WRAM", _wRam);
+  save(file, "GBC_IO", _io);
+  save(file, "GBC_HRAM", _hRam);
+  save(file, "GBC_IE", _ie);
+
+  // Save hardware state
+  _cpu.save(file);
+  _apu.save(file);
+  _ppu.save(file);
+  _mbc->save(file);
+}
+
+void  GBC::GameBoyColor::save(std::ofstream& file, const std::string& name, const void* data, std::size_t size) const
+{
+  // Variable name
+  file << name << "=";
+
+  // Byte array
+  for (std::size_t index = 0; index < size; index++)
+    file << SaveStateBase[((const std::uint8_t*)data)[index] / SaveStateBase.length()] << SaveStateBase[((const std::uint8_t*)data)[index] % SaveStateBase.length()];
+
+  // End of line
+  file << std::endl;
+}
+
+std::string GBC::GameBoyColor::loadVariable(std::ifstream& file, const std::string& name)
+{
+  // Go back to start of file
+  file.seekg(0, std::ios_base::beg);
+
+  std::string line;
+
+  // Search for variable in file
+  while (std::getline(file, line))
+  {
+    auto varSeparator = line.find('=');
+
+    // Invalid format
+    if (varSeparator == std::string::npos)
+      continue;
+
+    std::string varName = line.substr(0, varSeparator);
+    std::string varValue = line.substr(varSeparator + 1);
+
+    // Wrong variable
+    if (varName == name)
+      return varValue;
+  }
+
+  // Variable not found
+  throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+}
+
+void  GBC::GameBoyColor::loadValue(const std::string& value, void* data, std::size_t size)
+{
+  // Invalid variable size
+  if (value.length() % 2 != 0 || value.length() / 2 != size)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // Load variable to data
+  for (std::size_t index = 0; index < value.size(); index += 2) {
+    auto value0 = SaveStateBase.find(value[index + 0]);
+    auto value1 = SaveStateBase.find(value[index + 1]);
+
+    // Invalid character
+    if (value0 == std::string_view::npos || value1 == std::string_view::npos)
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+    // Load value in data
+    ((std::uint8_t*)data)[index / 2] = (std::uint8_t)value0 * 16 + (std::uint8_t)value1;
+  }
 }
 
 std::uint8_t  GBC::GameBoyColor::read(std::uint16_t addr)

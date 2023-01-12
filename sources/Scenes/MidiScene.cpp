@@ -28,7 +28,7 @@ bool  Game::MidiScene::update(sf::Time elapsed)
 {
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Enter) == true) {
     Game::Audio::Synthesizer  midi(Game::Config::ExecutablePath + "/assets/levels/beethoven.mid", Game::Config::ExecutablePath + "/assets/levels/gzdoom.sf2");
-    midi.generate(0, 44100);
+    midi.generate(0);
   }
 
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Escape) == true)

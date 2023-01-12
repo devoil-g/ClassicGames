@@ -406,6 +406,52 @@ const sf::Texture&  GBC::PixelProcessingUnit::lcd() const
   return _texture;
 }
 
+void  GBC::PixelProcessingUnit::save(std::ofstream& file) const
+{
+  // Save PPU variables
+  _gbc.save(file, "PPU_RAM", _ram);
+  _gbc.save(file, "PPU_BGC", _bgc);
+  _gbc.save(file, "PPU_OBC", _obc);
+  _gbc.save(file, "PPU_OAM", _oam);
+  _gbc.save(file, "PPU_MODE", _mode);
+  _gbc.save(file, "PPU_SPRITES", _sprites);
+  _gbc.save(file, "PPU_CYCLES", _cycles);
+  _gbc.save(file, "PPU_LX", _lx);
+  _gbc.save(file, "PPU_BWFIFO", _bwFifo);
+  _gbc.save(file, "PPU_BWOFFSET", _bwOffset);
+  _gbc.save(file, "PPU_BWTILE", _bwTile);
+  _gbc.save(file, "PPU_BWWAIT", _bwWait);
+  _gbc.save(file, "PPU_WFLAGX", _wFlagX);
+  _gbc.save(file, "PPU_WFLAGY", _wFlagY);
+  _gbc.save(file, "PPU_WY", _wY);
+  _gbc.save(file, "PPU_SFIFO", _sFifo);
+  _gbc.save(file, "PPU_SOFFSET", _sOffset);
+  _gbc.save(file, "PPU_SWAIT", _sWait);
+}
+
+void  GBC::PixelProcessingUnit::load(std::ifstream& file)
+{
+  // Load PPU variables
+  _gbc.load(file, "PPU_RAM", _ram);
+  _gbc.load(file, "PPU_BGC", _bgc);
+  _gbc.load(file, "PPU_OBC", _obc);
+  _gbc.load(file, "PPU_OAM", _oam);
+  _gbc.load(file, "PPU_MODE", _mode);
+  _gbc.load(file, "PPU_SPRITES", _sprites);
+  _gbc.load(file, "PPU_CYCLES", _cycles);
+  _gbc.load(file, "PPU_LX", _lx);
+  _gbc.load(file, "PPU_BWFIFO", _bwFifo);
+  _gbc.load(file, "PPU_BWOFFSET", _bwOffset);
+  _gbc.load(file, "PPU_BWTILE", _bwTile);
+  _gbc.load(file, "PPU_BWWAIT", _bwWait);
+  _gbc.load(file, "PPU_WFLAGX", _wFlagX);
+  _gbc.load(file, "PPU_WFLAGY", _wFlagY);
+  _gbc.load(file, "PPU_WY", _wY);
+  _gbc.load(file, "PPU_SFIFO", _sFifo);
+  _gbc.load(file, "PPU_SOFFSET", _sOffset);
+  _gbc.load(file, "PPU_SWAIT", _sWait);
+}
+
 void  GBC::PixelProcessingUnit::setMode(GBC::PixelProcessingUnit::Mode mode)
 {
   // Change PPU mode

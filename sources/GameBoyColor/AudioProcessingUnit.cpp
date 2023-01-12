@@ -430,3 +430,21 @@ const std::array<std::int16_t, GBC::AudioProcessingUnit::BufferSize>& GBC::Audio
   // Return current sound buffer
   return _sound;
 }
+
+void  GBC::AudioProcessingUnit::save(std::ofstream& file) const
+{
+  // Save APU variables
+  _gbc.save(file, "APU_SOUND1", _sound1);
+  _gbc.save(file, "APU_SOUND2", _sound2);
+  _gbc.save(file, "APU_SOUND3", _sound3);
+  _gbc.save(file, "APU_SOUND4", _sound4);
+}
+
+void  GBC::AudioProcessingUnit::load(std::ifstream& file)
+{
+  // Load APU variables
+  _gbc.load(file, "APU_SOUND1", _sound1);
+  _gbc.load(file, "APU_SOUND2", _sound2);
+  _gbc.load(file, "APU_SOUND3", _sound3);
+  _gbc.load(file, "APU_SOUND4", _sound4);
+}

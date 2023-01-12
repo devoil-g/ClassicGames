@@ -7,9 +7,10 @@
 #include <stdexcept>
 
 #include "GameBoyColor/MemoryBankController3.hpp"
+#include "GameBoyColor/GameBoyColor.hpp"
 
-GBC::MemoryBankController3::MemoryBankController3(const std::vector<std::uint8_t>& rom, std::size_t ramSize, const std::string& ramSave, const std::string& rtcSave) :
-  GBC::MemoryBankController(rom, ramSize, ramSave),
+GBC::MemoryBankController3::MemoryBankController3(GBC::GameBoyColor& gbc, const std::vector<std::uint8_t>& rom, std::size_t ramSize, const std::string& ramSave, const std::string& rtcSave) :
+  GBC::MemoryBankController(gbc, rom, ramSize, ramSave),
   _rtcSave(rtcSave),
   _rtcSaveTime(0),
   _rtcSaveClock(0),
@@ -241,4 +242,34 @@ void  GBC::MemoryBankController3::saveRtc()
     std::cerr << "[GBC::MBC] Warning, failed to write '" << _rtcSave << "'." << std::endl;
     return;
   }
+}
+
+void    GBC::MemoryBankController3::save(std::ofstream& file) const
+{
+  // Save MBC variables
+  GBC::MemoryBankController::save(file);
+
+  // Save MBC3 variables
+  _gbc.save(file, "MBC3_RTCSAVETIME", _rtcSaveTime);
+  _gbc.save(file, "MBC3_RTCSAVECLOCK", _rtcSaveClock);
+  _gbc.save(file, "MBC3_RTCTIME", _rtcTime);
+  _gbc.save(file, "MBC3_RTCCLOCK", _rtcClock);
+  _gbc.save(file, "MBC3_RTCREGISTER", _rtcRegister);
+  _gbc.save(file, "MBC3_RTCLATCH", _rtcLatch);
+  _gbc.save(file, "MBC3_RTCHALT", _rtcHalt);
+}
+
+void    GBC::MemoryBankController3::load(std::ifstream& file)
+{
+  // Load MBC variables
+  GBC::MemoryBankController::load(file);
+
+  // Load MBC3 variables
+  _gbc.load(file, "MBC3_RTCSAVETIME", _rtcSaveTime);
+  _gbc.load(file, "MBC3_RTCSAVECLOCK", _rtcSaveClock);
+  _gbc.load(file, "MBC3_RTCTIME", _rtcTime);
+  _gbc.load(file, "MBC3_RTCCLOCK", _rtcClock);
+  _gbc.load(file, "MBC3_RTCREGISTER", _rtcRegister);
+  _gbc.load(file, "MBC3_RTCLATCH", _rtcLatch);
+  _gbc.load(file, "MBC3_RTCHALT", _rtcHalt);
 }

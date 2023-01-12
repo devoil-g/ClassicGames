@@ -4,8 +4,10 @@
 #include <stdexcept>
 
 #include "GameBoyColor/MemoryBankController.hpp"
+#include "GameBoyColor/GameBoyColor.hpp"
 
-GBC::MemoryBankController::MemoryBankController(const std::vector<std::uint8_t>& rom, std::size_t ramSize, const std::string& ramSave) :
+GBC::MemoryBankController::MemoryBankController(GBC::GameBoyColor& gbc, const std::vector<std::uint8_t>& rom, std::size_t ramSize, const std::string& ramSave) :
+  _gbc(gbc),
   _rom(rom),
   _romBank0(0),
   _romBank1(1),
@@ -181,4 +183,28 @@ void  GBC::MemoryBankController::saveRam() const
     std::cerr << "[GBC::MBC] Warning, failed to write '" << _ramSave << "'." << std::endl;
     return;
   }
+}
+
+void    GBC::MemoryBankController::save(std::ofstream& file) const
+{
+  // Save MBC variables
+  _gbc.save(file, "MBC_ROMBANK0", _romBank0);
+  _gbc.save(file, "MBC_ROMBANK1", _romBank1);
+  _gbc.save(file, "MBC_RAM", _ram);
+  _gbc.save(file, "MBC_RAMENABLE", _ramEnable);
+  _gbc.save(file, "MBC_RAMBANK", _ramBank);
+  _gbc.save(file, "MBC_RAMSAVE", _ramSave);
+  _gbc.save(file, "MBC_RAMSAVED", _ramSaved);
+}
+
+void    GBC::MemoryBankController::load(std::ifstream& file)
+{
+  // Load MBC variables
+  _gbc.load(file, "MBC_ROMBANK0", _romBank0);
+  _gbc.load(file, "MBC_ROMBANK1", _romBank1);
+  _gbc.load(file, "MBC_RAM", _ram);
+  _gbc.load(file, "MBC_RAMENABLE", _ramEnable);
+  _gbc.load(file, "MBC_RAMBANK", _ramBank);
+  _gbc.load(file, "MBC_RAMSAVE", _ramSave);
+  _gbc.load(file, "MBC_RAMSAVED", _ramSaved);
 }

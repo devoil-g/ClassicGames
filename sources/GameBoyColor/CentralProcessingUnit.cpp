@@ -551,6 +551,14 @@ constexpr const std::array<GBC::CentralProcessingUnit::Opcode, 256> GBC::Central
   [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_SET<7>(cpu._rAF.u8.high); }   // 0xFF, 0b11111111: SET 7, A
 };
 
+constexpr const std::array<GBC::CentralProcessingUnit::Opcode, 5> GBC::CentralProcessingUnit::_opcodesSpecial = {
+  [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_INTERRUPT(); },       // Call interrupt handler
+  [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_JR_c_execute(); },    // Execute relative jump
+  [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_JP_c_execute(); },    // Execute absolute jump
+  [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_CALL_c_execute(); },  // Execute function call
+  [](GBC::CentralProcessingUnit& cpu) { cpu.instruction_RET_c_execute(); }    // Execute function return
+};
+
 constexpr static const std::array<std::string_view, 256> _opcodes_desc = {
   "0x00, 0b00000000: NOP",
   "0x01, 0b00000001: LD BC, nn",
@@ -1104,6 +1112,8 @@ GBC::CentralProcessingUnit::CentralProcessingUnit(GBC::GameBoyColor& gbc) :
   _status(Status::StatusRun),
   _ime(InterruptMasterEnable::IMEDisabled),
   _instructions(),
+  _opcode(0),
+  _set(InstructionSet::InstructionSetDefault),
   _parameters(),
   _rAF{ .u16 = 0x0000 },
   _rBC{ .u16 = 0x0000 },
@@ -1145,26 +1155,12 @@ void  GBC::CentralProcessingUnit::simulateFetch()
     return;
 
   // Fetch opcode
-  std::uint8_t  opcode = _gbc.read(_rPC.u16);
-
-  // TODO: remove this
-  std::uint16_t pc = _rPC.u16;
+  _opcode = _gbc.read(_rPC.u16);
+  _set = InstructionSet::InstructionSetDefault;
 
   // Add instructions
   _rPC.u16 += 1;
-  _opcodes[opcode](*this);
-
-  // TODO: remove this
-  return;
-  if (_gbc._io[GBC::GameBoyColor::IO::BANK] == 0)
-    return;
-
-  printf("PC: %04X, OP: %02X %s\n", pc, opcode, _opcodes_desc[opcode].data());
-  if (opcode == 0xCB) {
-    std::uint8_t  opcodeCB = _gbc.read(_rPC.u16);
-
-    printf("-- OP: %02X %s\n", opcodeCB, _opcodesCB_desc[opcodeCB].data());
-  }
+  _opcodes[_opcode](*this);
 }
 
 void  GBC::CentralProcessingUnit::simulateInterrupt()
@@ -1221,21 +1217,8 @@ void  GBC::CentralProcessingUnit::simulateInterrupt()
         handler += 0x0008;
 
       // Call interrupt handler
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rSP.u16 -= 1;
-        });
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.high);
-        cpu._rSP.u16 -= 1;
-        });
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.low);
-        });
-      _parameters[0].u16 = handler;
-      _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rPC.u16 = cpu._parameters[0].u16;
-        });
+      _rW.u16 = handler;
+      instruction_INTERRUPT();
     }
 
     // Resume execution after an interrupt
@@ -1243,6 +1226,58 @@ void  GBC::CentralProcessingUnit::simulateInterrupt()
 
     break;
   }
+}
+
+void  GBC::CentralProcessingUnit::save(std::ofstream& file) const
+{
+  // Save CPU variables
+  _gbc.save(file, "CPU_STATUS", _status);
+  _gbc.save(file, "CPU_OPCODE", _opcode);
+  _gbc.save(file, "CPU_SET", _set);
+  _gbc.save(file, "CPU_STEP", _instructions.size());
+  _gbc.save(file, "CPU_IME", _status);
+  _gbc.save(file, "CPU_RAF", _rAF);
+  _gbc.save(file, "CPU_RBC", _rBC);
+  _gbc.save(file, "CPU_RDE", _rDE);
+  _gbc.save(file, "CPU_RHL", _rHL);
+  _gbc.save(file, "CPU_RSP", _rSP);
+  _gbc.save(file, "CPU_RPC", _rPC);
+  _gbc.save(file, "CPU_RW", _rW);
+}
+
+void  GBC::CentralProcessingUnit::load(std::ifstream& file)
+{
+  std::size_t step = 0;
+
+  // Load CPU variable
+  _gbc.load(file, "CPU_STATUS", _status);
+  _gbc.load(file, "CPU_OPCODE", _opcode);
+  _gbc.load(file, "CPU_SET", _set);
+  _gbc.load(file, "CPU_STEP", step);
+  _gbc.load(file, "CPU_IME", _status);
+  _gbc.load(file, "CPU_RAF", _rAF);
+  _gbc.load(file, "CPU_RBC", _rBC);
+  _gbc.load(file, "CPU_RDE", _rDE);
+  _gbc.load(file, "CPU_RHL", _rHL);
+  _gbc.load(file, "CPU_RSP", _rSP);
+  _gbc.load(file, "CPU_RPC", _rPC);
+  _gbc.load(file, "CPU_RW", _rW);
+
+  // Clear instruction queue
+  while (_instructions.empty() == false)
+    _instructions.pop();
+
+  // Restore instruction queue
+  switch (_set) {
+  case InstructionSet::InstructionSetDefault: _opcodes[_opcode](*this); break;
+  case InstructionSet::InstructionSetBitwise: _opcodesCb[_opcode](*this); break;
+  case InstructionSet::InstructionSetSpecial: _opcodesSpecial[_opcode](*this); break;
+  default: throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  }
+
+  // Pop already executed sub-instructions
+  while (_instructions.size() > step)
+    _instructions.pop();
 }
 
 GBC::CentralProcessingUnit::Instructions::Instructions() :
@@ -1334,6 +1369,26 @@ void  GBC::CentralProcessingUnit::instruction_EI()
     });
 }
 
+void  GBC::CentralProcessingUnit::instruction_INTERRUPT()
+{
+  _opcode = 0;
+  _set = InstructionSet::InstructionSetSpecial;
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rSP.u16 -= 1;
+    });
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.high);
+    cpu._rSP.u16 -= 1;
+    });
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.low);
+    });
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rPC.u16 = cpu._rW.u16;
+    });
+}
+
 void  GBC::CentralProcessingUnit::instruction_JR_n()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
@@ -1355,9 +1410,7 @@ void  GBC::CentralProcessingUnit::instruction_JR_c0_n(Register::Flag flag)
   _parameters[0].u8 = flag;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     if (!(cpu._rAF.u8.low & cpu._parameters[0].u8))
-      cpu._instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rPC.u16 += cpu._rW.s8.low;
-        });
+      cpu.instruction_JR_c_execute();
     });
 }
 
@@ -1370,9 +1423,16 @@ void  GBC::CentralProcessingUnit::instruction_JR_c1_n(Register::Flag flag)
   _parameters[0].u8 = flag;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     if (cpu._rAF.u8.low & cpu._parameters[0].u8)
-      cpu._instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rPC.u16 += cpu._rW.s8.low;
-        });
+      cpu.instruction_JR_c_execute();
+    });
+}
+
+void  GBC::CentralProcessingUnit::instruction_JR_c_execute()
+{
+  _opcode = 1;
+  _set = GBC::CentralProcessingUnit::InstructionSet::InstructionSetSpecial;
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rPC.u16 += cpu._rW.s8.low;
     });
 }
 
@@ -1405,9 +1465,7 @@ void  GBC::CentralProcessingUnit::instruction_JP_c0_nn(Register::Flag flag)
   _parameters[0].u8 = flag;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     if (!(cpu._rAF.u8.low & cpu._parameters[0].u8))
-      cpu._instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rPC = cpu._rW;
-      });
+      cpu.instruction_JP_c_execute();
     });
 }
 
@@ -1424,9 +1482,16 @@ void  GBC::CentralProcessingUnit::instruction_JP_c1_nn(Register::Flag flag)
   _parameters[0].u8 = flag;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     if (cpu._rAF.u8.low & cpu._parameters[0].u8)
-      cpu._instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rPC = cpu._rW;
-      });
+      cpu.instruction_JP_c_execute();
+    });
+}
+
+void  GBC::CentralProcessingUnit::instruction_JP_c_execute()
+{
+  _opcode = 2;
+  _set = GBC::CentralProcessingUnit::InstructionSet::InstructionSetSpecial;
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rPC = cpu._rW;
     });
 }
 
@@ -1475,16 +1540,7 @@ void  GBC::CentralProcessingUnit::instruction_CALL_c0_nn(Register::Flag flag)
   _parameters[0].u8 = flag;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     if (!(cpu._rAF.u8.low & cpu._parameters[0].u8)) {
-      cpu._instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.high);
-        cpu._rSP.u16 -= 1;
-        });
-      cpu._instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.low);
-        });
-      cpu._instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rPC = cpu._rW;
-        });
+      cpu.instruction_CALL_c_execute();
       cpu._rSP.u16 -= 1;
     }
     });
@@ -1503,18 +1559,25 @@ void  GBC::CentralProcessingUnit::instruction_CALL_c1_nn(Register::Flag flag)
   _parameters[0].u8 = flag;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     if (cpu._rAF.u8.low & cpu._parameters[0].u8) {
-      cpu._instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.high);
-        cpu._rSP.u16 -= 1;
-        });
-      cpu._instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.low);
-        });
-      cpu._instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rPC = cpu._rW;
-        });
+      cpu.instruction_CALL_c_execute();
       cpu._rSP.u16 -= 1;
     }
+    });
+}
+
+void  GBC::CentralProcessingUnit::instruction_CALL_c_execute()
+{
+  _opcode = 3;
+  _set = GBC::CentralProcessingUnit::InstructionSet::InstructionSetSpecial;
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.high);
+    cpu._rSP.u16 -= 1;
+    });
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.low);
+    });
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rPC = cpu._rW;
     });
 }
 
@@ -1557,19 +1620,8 @@ void  GBC::CentralProcessingUnit::instruction_RET_c0(Register::Flag flag)
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
   _parameters[0].u8 = flag;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    if (!(cpu._rAF.u8.low & cpu._parameters[0].u8)) {
-      cpu._instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rW.u8.low = cpu._gbc.read(cpu._rSP.u16);
-        cpu._rSP.u16 += 1;
-        });
-      cpu._instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rW.u8.high = cpu._gbc.read(cpu._rSP.u16);
-        cpu._rSP.u16 += 1;
-        });
-      cpu._instructions.push([](GBC::CentralProcessingUnit& cpu) {
-        cpu._rPC = cpu._rW;
-        });
-    }
+    if (!(cpu._rAF.u8.low & cpu._parameters[0].u8))
+      cpu.instruction_RET_c_execute();
     });
 }
 
@@ -1578,19 +1630,25 @@ void  GBC::CentralProcessingUnit::instruction_RET_c1(Register::Flag flag)
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
   _parameters[0].u8 = flag;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-      if (cpu._rAF.u8.low & cpu._parameters[0].u8) {
-        cpu._instructions.push([](GBC::CentralProcessingUnit& cpu) {
-          cpu._rW.u8.low = cpu._gbc.read(cpu._rSP.u16);
-          cpu._rSP.u16 += 1;
-          });
-        cpu._instructions.push([](GBC::CentralProcessingUnit& cpu) {
-          cpu._rW.u8.high = cpu._gbc.read(cpu._rSP.u16);
-          cpu._rSP.u16 += 1;
-          });
-        cpu._instructions.push([](GBC::CentralProcessingUnit& cpu) {
-          cpu._rPC = cpu._rW;
-          });
-      }
+      if (cpu._rAF.u8.low & cpu._parameters[0].u8)
+        cpu.instruction_RET_c_execute();
+    });
+}
+
+void  GBC::CentralProcessingUnit::instruction_RET_c_execute()
+{
+  _opcode = 4;
+  _set = GBC::CentralProcessingUnit::InstructionSet::InstructionSetSpecial;
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._gbc.read(cpu._rSP.u16);
+    cpu._rSP.u16 += 1;
+    });
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.high = cpu._gbc.read(cpu._rSP.u16);
+    cpu._rSP.u16 += 1;
+    });
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rPC = cpu._rW;
     });
 }
 
@@ -1690,10 +1748,10 @@ void  GBC::CentralProcessingUnit::instruction_DEC_pHL()
 void  GBC::CentralProcessingUnit::instruction_CB()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    std::uint8_t  opcode = cpu._gbc.read(cpu._rPC.u16);
-
+    cpu._opcode = cpu._gbc.read(cpu._rPC.u16);
+    cpu._set = InstructionSet::InstructionSetBitwise;
     cpu._rPC.u16 += 1;
-    _opcodesCb[opcode](cpu);
+    _opcodesCb[cpu._opcode](cpu);
     });
 }
 

@@ -5,8 +5,11 @@
 #include <list>
 #include <memory>
 #include <string>
+#include <stdexcept>
 #include <vector>
 #include <functional>
+#include <fstream>
+#include <iostream>
 
 #include <SFML/Graphics/Image.hpp>
 
@@ -17,14 +20,21 @@
 
 namespace GBC
 {
+  class MemoryBankController1;
+  class MemoryBankController3;
+
   class GameBoyColor
   {
     friend GBC::AudioProcessingUnit;
     friend GBC::CentralProcessingUnit;
     friend GBC::MemoryBankController;
+    friend GBC::MemoryBankController1;
+    friend GBC::MemoryBankController3;
     friend GBC::PixelProcessingUnit;
 
   private:
+    static const std::string_view SaveStateBase;
+
     struct Header
     {
       enum MBC
@@ -182,6 +192,46 @@ namespace GBC
     void  simulateKeys();   // Handle keys
     void  simulateTimer();  // Update 4 CPU cycle of TIMA/TMA/DIV timer registers
 
+    void        save(std::ofstream& file, const std::string& name, const void* data, std::size_t size) const; // Save raw variable data to file
+
+    template<typename Type>
+    void        save(std::ofstream& file, const std::string& name, const std::vector<Type>& data) const       // Save vector variable to file
+    {
+      save(file, name, data.data(), data.size() * sizeof(Type));
+    }
+
+    template<typename Type>
+    void        save(std::ofstream& file, const std::string& name, const Type& data) const                    // Save variable to file
+    {
+      save(file, name, &data, sizeof(Type));
+    }
+
+    std::string loadVariable(std::ifstream& file, const std::string& name);                                   // Load raw variable data from file
+    void        loadValue(const std::string& value, void* data, std::size_t size);                            // Load raw variable data from file
+
+    template<typename Type>
+    void        load(std::ifstream& file, const std::string& name, std::vector<Type>& data)                   // Load vector variable to file
+    {
+      // Get value from file
+      std::string value = loadVariable(file, name);
+
+      // Resize target vector
+      data.resize(value.length() / 2 / sizeof(Type));
+
+      // Load value to vector
+      loadValue(value, data.data(), data.size() * sizeof(Type));
+    }
+
+    template<typename Type>
+    void        load(std::ifstream& file, const std::string& name, Type& data)                                // Load variable from file
+    {
+      // Get value from file
+      std::string value = loadVariable(file, name);
+
+      // Load value to variable
+      loadValue(value, (void*)&data, sizeof(data));
+    }
+
   public:
     GameBoyColor(const std::string& filename);
     ~GameBoyColor() = default;
@@ -190,5 +240,8 @@ namespace GBC
     const sf::Texture&                                                    lcd() const;    // Get rendering target
     const std::array<std::int16_t, GBC::AudioProcessingUnit::BufferSize>& sound() const;  // Get current sound frame
     const GBC::GameBoyColor::Header&                                      header() const; // Get game header
+
+    void  load(std::size_t id);       // Load saved state
+    void  save(std::size_t id) const; // Save state
   };
 }

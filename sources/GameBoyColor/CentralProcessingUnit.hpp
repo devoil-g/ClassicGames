@@ -88,8 +88,17 @@ namespace GBC
     Status                _status;  // CPU running status
     InterruptMasterEnable _ime;     // Interrupt Master Enable
     
-    Instructions              _instructions;  // Steps of currently executed instruction
-    std::array<Parameter, 2>  _parameters;    // Parameters of instructions
+    enum InstructionSet
+    {
+      InstructionSetDefault,  // Default set of instructions
+      InstructionSetBitwise,  // Bitwise instructions
+      InstructionSetSpecial   // Special sub-instructions
+    };
+
+    Instructions              _instructions;    // Steps of currently executed instruction
+    std::uint8_t              _opcode;          // Current instruction code for save
+    std::uint8_t              _set;             // Current instruction set
+    std::array<Parameter, 2>  _parameters;      // Parameters of instructions
 
     Register  _rAF; // AF register (accumulator + flags)
     Register  _rBC; // BC register
@@ -101,8 +110,9 @@ namespace GBC
 
     using Opcode = void(*)(GBC::CentralProcessingUnit&);
 
-    static const std::array<Opcode, 256> _opcodes;    // CPU instruction set
-    static const std::array<Opcode, 256> _opcodesCb;  // CPU CB sub-instruction set
+    static const std::array<Opcode, 256>  _opcodes;         // CPU instruction set
+    static const std::array<Opcode, 256>  _opcodesCb;       // CPU CB sub-instruction set
+    static const std::array<Opcode, 5>    _opcodesSpecial;  // CPU special sub-instruction set
 
     template<Register::Flag F>
     void  setFlag(bool value) // Set flag bit in register AF
@@ -128,21 +138,26 @@ namespace GBC
     void  instruction_HALT();
     void  instruction_DI();
     void  instruction_EI();
-    
+    void  instruction_INTERRUPT();  // Special
+
     void  instruction_JR_n();
     void  instruction_JR_c0_n(Register::Flag flag);
     void  instruction_JR_c1_n(Register::Flag flag);
+    void  instruction_JR_c_execute();
     void  instruction_JP_nn();
     void  instruction_JP_c0_nn(Register::Flag flag);
     void  instruction_JP_c1_nn(Register::Flag flag);
+    void  instruction_JP_c_execute();
     void  instruction_JP_HL();
     void  instruction_CALL_nn();
     void  instruction_CALL_c0_nn(Register::Flag flag);
     void  instruction_CALL_c1_nn(Register::Flag flag);
+    void  instruction_CALL_c_execute();
     void  instruction_RST(std::uint16_t address);
     void  instruction_RET();
     void  instruction_RET_c0(Register::Flag flag);
     void  instruction_RET_c1(Register::Flag flag);
+    void  instruction_RET_c_execute();
     void  instruction_RETI();
 
     void  instruction_INC_r(std::uint8_t& reg8);
@@ -246,5 +261,8 @@ namespace GBC
     ~CentralProcessingUnit() = default;
 
     void  simulate(); // Simulate 4 clock ticks / 1 CPU tick of the CPU
+
+    void  save(std::ofstream& file) const;  // Save state to file
+    void  load(std::ifstream& file);        // Load state from file
   };
 }

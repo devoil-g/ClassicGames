@@ -23,12 +23,15 @@ namespace GBC
     void          saveRtc();    // Save RTC to save file
 
   public:
-    MemoryBankController3(const std::vector<std::uint8_t>& rom, std::size_t ramSize = 0, const std::string& ramSave = "", const std::string& rtcSave = "");
+    MemoryBankController3(GBC::GameBoyColor& gbc, const std::vector<std::uint8_t>& rom, std::size_t ramSize = 0, const std::string& ramSave = "", const std::string& rtcSave = "");
     virtual ~MemoryBankController3() override;
 
     virtual std::uint8_t  readRam(std::uint16_t address) const override;  // Read RAM
 
     virtual void  writeRom(std::uint16_t address, std::uint8_t value) override; // Write to MBC3 registers
     virtual void  writeRam(std::uint16_t address, std::uint8_t value) override; // Write to MBC3 RAM or RTC register
+
+    virtual void  save(std::ofstream& file) const override; // Save state to file
+    virtual void  load(std::ifstream& file) override;       // Load state from file
   };
 }

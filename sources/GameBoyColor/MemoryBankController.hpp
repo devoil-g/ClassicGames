@@ -5,8 +5,13 @@
 
 namespace GBC
 {
+  class GameBoyColor;
+
   class MemoryBankController
   {
+  protected:
+    GBC::GameBoyColor& _gbc;  // Main GBC reference for save states
+
   private:
     const std::vector<std::uint8_t> _rom;       // Raw ROM memory
     std::size_t                     _romBank0;  // ROM bank of first half of address range
@@ -31,7 +36,7 @@ namespace GBC
     void  setRamEnable(bool enable);  // Enable/disable RAM
 
   public:
-    MemoryBankController(const std::vector<std::uint8_t>& rom, std::size_t ramSize = 0, const std::string& ramSave = "");
+    MemoryBankController(GBC::GameBoyColor& gbc, const std::vector<std::uint8_t>& rom, std::size_t ramSize = 0, const std::string& ramSave = "");
     virtual ~MemoryBankController();
 
     virtual std::uint8_t  readRom(std::uint16_t address) const; // Read ROM
@@ -39,5 +44,8 @@ namespace GBC
 
     virtual void  writeRom(std::uint16_t address, std::uint8_t value);  // Write to MBC registers
     virtual void  writeRam(std::uint16_t address, std::uint8_t value);  // Write to RAM
+
+    virtual void  save(std::ofstream& file) const;  // Save state to file
+    virtual void  load(std::ifstream& file);        // Load state from file
   };
 }

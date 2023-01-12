@@ -217,5 +217,8 @@ namespace GBC
     void  simulate(); // Simulate 1 tick of the PPU
 
     const sf::Texture&  lcd() const;  // Get rendering target
+
+    void  save(std::ofstream& file) const;  // Save state to file
+    void  load(std::ifstream& file);        // Load state from file
   };
 }
