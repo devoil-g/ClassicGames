@@ -225,9 +225,14 @@ SOURCE_GROUP("\\System\\Audio\\" FILES ${GAME_SYSTEM_AUDIO_SRCS})
 SOURCE_GROUP("\\System\\Library\\" FILES ${GAME_SYSTEM_LIBRARY_SRCS})
 SOURCE_GROUP("\\Resources\\" FILES ${GAME_RSRC})
 
-# Import libraries
-FIND_PACKAGE(SFML 2.5 COMPONENTS system window network graphics audio REQUIRED)
+# Import Thread library
 FIND_PACKAGE(Threads REQUIRED)
+
+# Import SFML library
+INCLUDE(FetchContent)
+SET(BUILD_SHARED_LIBS OFF)
+FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TAG 2.5.1)
+FetchContent_MakeAvailable(SFML)
 
 # Set includes directories
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/sources/)
