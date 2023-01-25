@@ -5,6 +5,7 @@
 #include <queue>
 
 #include "GameBoyColor/PixelProcessingUnit.hpp"
+#include "GameBoyColor/CentralProcessingUnit.hpp"
 
 namespace GBC
 {
@@ -13,10 +14,10 @@ namespace GBC
   class AudioProcessingUnit
   {
   public:
-    static const std::size_t  SampleRate = 44100;                                                                                                                                                           // Sample rate of sound
-    static const std::size_t  ChannelCount = 2;                                                                                                                                                             // Number of sound channels
-    static const std::size_t  FrameSize = SampleRate * (GBC::PixelProcessingUnit::ScanlineDuration * (GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank)) / (4 * 1024 * 1024); // Number of sample in each frame of sound
-    static const std::size_t  BufferSize = FrameSize * ChannelCount;                                                                                                                                        // Size of a sound buffer
+    static const std::size_t  SampleRate = 44100;                                                                                                                                                                               // Sample rate of sound
+    static const std::size_t  ChannelCount = 2;                                                                                                                                                                                 // Number of sound channels
+    static const std::size_t  FrameSize = SampleRate * (GBC::PixelProcessingUnit::ScanlineDuration * (GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank)) / GBC::CentralProcessingUnit::Frequency; // Number of sample in each frame of sound
+    static const std::size_t  BufferSize = FrameSize * ChannelCount;                                                                                                                                                            // Size of a sound buffer
 
     enum IO : std::uint8_t
     {

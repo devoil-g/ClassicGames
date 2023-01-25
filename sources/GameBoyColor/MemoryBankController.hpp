@@ -47,5 +47,7 @@ namespace GBC
 
     virtual void  save(std::ofstream& file) const;  // Save state to file
     virtual void  load(std::ifstream& file);        // Load state from file
+
+    virtual void  update(std::size_t ticks);  // Update internal clock (MBC3)
   };
 }

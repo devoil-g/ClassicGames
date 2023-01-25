@@ -208,3 +208,8 @@ void    GBC::MemoryBankController::load(std::ifstream& file)
   _gbc.load(file, "MBC_RAMSAVE", _ramSave);
   _gbc.load(file, "MBC_RAMSAVED", _ramSaved);
 }
+
+void    GBC::MemoryBankController::update(std::size_t ticks)
+{
+  // Does nothing
+}

@@ -10,15 +10,12 @@ namespace GBC
   {
   private:
     const std::string _rtcSave;       // RTC register save file
-    std::uint64_t     _rtcSaveTime;   // Real time to save
-    std::uint64_t     _rtcSaveClock;  // RTC clock to save
-    std::uint64_t     _rtcTime;       // Last real time updated
+    std::uint64_t     _rtcTime;       // Last real time updated (in CPU ticks)
     std::uint64_t     _rtcClock;      // Internal RTC clock
     std::uint64_t     _rtcRegister;   // Latched Real Time Clock registers
     std::uint8_t      _rtcLatch;      // Latch Clock Data
     std::uint8_t      _rtcHalt;       // Stop flag of clock (0=Active, 1=Stop Timer)
     
-    std::uint64_t updateRtc();  // Update RTC
     void          loadRtc();    // Load RTC from save file
     void          saveRtc();    // Save RTC to save file
 
@@ -33,5 +30,7 @@ namespace GBC
 
     virtual void  save(std::ofstream& file) const override; // Save state to file
     virtual void  load(std::ifstream& file) override;       // Load state from file
+
+    virtual void  update(std::size_t ticks) override; // Update internal clock
   };
 }

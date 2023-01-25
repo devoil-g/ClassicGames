@@ -471,6 +471,9 @@ void  GBC::GameBoyColor::simulate()
 
   // Update audio for one frame
   _apu.simulate();
+
+  // Update MBC clock
+  _mbc->update(GBC::PixelProcessingUnit::ScanlineDuration * (GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank));
 }
 
 void  GBC::GameBoyColor::simulateKeys()

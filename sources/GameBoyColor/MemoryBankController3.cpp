@@ -7,14 +7,13 @@
 #include <stdexcept>
 
 #include "GameBoyColor/MemoryBankController3.hpp"
+#include "GameBoyColor/CentralProcessingUnit.hpp"
 #include "GameBoyColor/GameBoyColor.hpp"
 
 GBC::MemoryBankController3::MemoryBankController3(GBC::GameBoyColor& gbc, const std::vector<std::uint8_t>& rom, std::size_t ramSize, const std::string& ramSave, const std::string& rtcSave) :
   GBC::MemoryBankController(gbc, rom, ramSize, ramSave),
   _rtcSave(rtcSave),
-  _rtcSaveTime(0),
-  _rtcSaveClock(0),
-  _rtcTime(std::time(nullptr)),
+  _rtcTime(0),
   _rtcClock(0),
   _rtcRegister(0),
   _rtcLatch(0),
@@ -22,10 +21,6 @@ GBC::MemoryBankController3::MemoryBankController3(GBC::GameBoyColor& gbc, const 
 {
   // Load initial RTC
   loadRtc();
-
-  // Set saved values
-  _rtcSaveTime = _rtcTime;
-  _rtcSaveClock = _rtcClock;
 }
 
 GBC::MemoryBankController3::~MemoryBankController3()
@@ -82,15 +77,8 @@ void  GBC::MemoryBankController3::writeRom(std::uint16_t address, std::uint8_t v
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // RAM enable
-  if (address < 0x2000) {
-    bool enable = (value & 0b00001111) == 0b00001010;
-
-    // Save RTC
-    if (getRamEnable() == true && enable == false)
-      updateRtc();
-
+  if (address < 0x2000)
     setRamEnable((value & 0b00001111) == 0b00001010);
-  }
 
   // ROM bank number
   else if (address < 0x4000)
@@ -103,7 +91,7 @@ void  GBC::MemoryBankController3::writeRom(std::uint16_t address, std::uint8_t v
   // Latch Clock Data
   else {
     if (_rtcLatch == 0x00 && value == 0x01)
-      _rtcRegister = updateRtc();
+      _rtcRegister = _rtcClock;
     _rtcLatch = value;
   }
 }
@@ -157,26 +145,8 @@ void  GBC::MemoryBankController3::writeRam(std::uint16_t address, std::uint8_t v
       _rtcClock = _rtcClock % (60 * 60 * 24 * 512) + ((value & 0b10000000) ? 1 : 0) * (60 * 60 * 24 * 512);
       _rtcRegister = _rtcClock;
     }
-    updateRtc();
     _rtcHalt = (value & 0b01000000) ? 1 : 0;
   }
-}
-
-std::uint64_t GBC::MemoryBankController3::updateRtc()
-{
-  std::uint64_t clock = std::time(nullptr);
-
-  // At least a second passed
-  if (_rtcHalt == 0 && _rtcTime < clock) {
-    _rtcClock += clock - _rtcTime;
-    _rtcSaveClock = _rtcClock;
-  }
-
-  // Save current time
-  _rtcTime = clock;
-  _rtcSaveTime = _rtcTime;
-
-  return _rtcClock;
 }
 
 void  GBC::MemoryBankController3::loadRtc()
@@ -193,8 +163,8 @@ void  GBC::MemoryBankController3::loadRtc()
     return;
   }
 
-  std::array<std::uint64_t, 2>  data = { 0, 0 };
-
+  std::array<std::uint64_t, 3>  data = { 0, 0, 0  };
+  
   // Check compatible size
   if (std::filesystem::file_size(_rtcSave) != sizeof(data)) {
     std::cerr << "[GBC::MBC3] Warning, invalid save size '" << _rtcSave << "'." << std::endl;
@@ -214,8 +184,14 @@ void  GBC::MemoryBankController3::loadRtc()
   _rtcTime = data[0];
   _rtcClock = data[1];
 
-  // Update clock since last power-up
-  updateRtc();
+  std::size_t saved_clock = data[2];
+  std::size_t real_clock = std::time(nullptr);
+
+  // Update internal clock from real time
+  if (real_clock >= saved_clock)
+    update((real_clock - saved_clock) * GBC::CentralProcessingUnit::Frequency);
+  else
+    std::cerr << "[GBC::MBC3] Warning, clock skew detected." << std::endl;
 }
 
 void  GBC::MemoryBankController3::saveRtc()
@@ -232,7 +208,7 @@ void  GBC::MemoryBankController3::saveRtc()
     return;
   }
 
-  std::array<std::uint64_t, 2>  data = { _rtcSaveTime, _rtcSaveClock };
+  std::array<std::uint64_t, 3>  data = { _rtcTime, _rtcClock, (std::size_t)std::time(nullptr) };
 
   // Write External RAM to save file
   file.write((const char*)data.data(), sizeof(data));
@@ -250,8 +226,6 @@ void    GBC::MemoryBankController3::save(std::ofstream& file) const
   GBC::MemoryBankController::save(file);
 
   // Save MBC3 variables
-  _gbc.save(file, "MBC3_RTCSAVETIME", _rtcSaveTime);
-  _gbc.save(file, "MBC3_RTCSAVECLOCK", _rtcSaveClock);
   _gbc.save(file, "MBC3_RTCTIME", _rtcTime);
   _gbc.save(file, "MBC3_RTCCLOCK", _rtcClock);
   _gbc.save(file, "MBC3_RTCREGISTER", _rtcRegister);
@@ -265,11 +239,21 @@ void    GBC::MemoryBankController3::load(std::ifstream& file)
   GBC::MemoryBankController::load(file);
 
   // Load MBC3 variables
-  _gbc.load(file, "MBC3_RTCSAVETIME", _rtcSaveTime);
-  _gbc.load(file, "MBC3_RTCSAVECLOCK", _rtcSaveClock);
   _gbc.load(file, "MBC3_RTCTIME", _rtcTime);
   _gbc.load(file, "MBC3_RTCCLOCK", _rtcClock);
   _gbc.load(file, "MBC3_RTCREGISTER", _rtcRegister);
   _gbc.load(file, "MBC3_RTCLATCH", _rtcLatch);
   _gbc.load(file, "MBC3_RTCHALT", _rtcHalt);
+}
+
+void    GBC::MemoryBankController3::update(std::size_t ticks)
+{
+  std::uint64_t clock = _rtcTime + ticks;
+
+  // At least a second passed
+  if (_rtcHalt == 0 && clock / GBC::CentralProcessingUnit::Frequency > _rtcTime / GBC::CentralProcessingUnit::Frequency)
+    _rtcClock += clock / GBC::CentralProcessingUnit::Frequency - _rtcTime / GBC::CentralProcessingUnit::Frequency;
+
+  // Save current time
+  _rtcTime = clock;
 }
