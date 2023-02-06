@@ -14,6 +14,8 @@ namespace GBC
     
     std::string _selected;
 
+    std::string browse() const;
+
   public:
     SelectionScene(Game::SceneMachine& machine);
     ~SelectionScene() override = default;

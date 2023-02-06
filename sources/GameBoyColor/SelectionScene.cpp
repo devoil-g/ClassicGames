@@ -38,9 +38,9 @@ GBC::SelectionScene::SelectionScene(Game::SceneMachine& machine) :
   footer("Browse...", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&GBC::SelectionScene::selectBrowse, this, std::placeholders::_1)));
 #endif
 
-  // Nothing to load
+  // Nothing to load, browse to file
   if (empty() == true)
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+    _selected = browse();
 }
 
 bool  GBC::SelectionScene::update(sf::Time elapsed)
@@ -58,6 +58,12 @@ bool  GBC::SelectionScene::update(sf::Time elapsed)
     return false;
   }
 
+  // Nothing to load, browse failed
+  if (empty() == true) {
+    _machine.pop();
+    return false;
+  }
+
   // Update menu
   return Game::AbstractMenuScene::update(elapsed);
 }
@@ -69,6 +75,12 @@ void  GBC::SelectionScene::selectGame(Game::AbstractMenuScene::Item&, const std:
 }
 
 void  GBC::SelectionScene::selectBrowse(Game::AbstractMenuScene::Item& item)
+{
+  // Select game from browse menu
+  selectGame(item, browse());
+}
+
+std::string GBC::SelectionScene::browse() const
 {
 #ifdef _WIN32
   // See MSDN of GetOpenFileName
@@ -92,9 +104,12 @@ void  GBC::SelectionScene::selectBrowse(Game::AbstractMenuScene::Item& item)
 
   // Open file
   if (::GetOpenFileName(&fileinfo))
-    selectGame(item, std::string(path));
+    return std::string(path);
 #else
   // Not implemented
   throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 #endif
+
+  // Failure
+  return "";
 }
