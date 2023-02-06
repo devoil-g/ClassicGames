@@ -221,7 +221,7 @@ std::uint8_t  GBC::AudioProcessingUnit::readIo(std::uint16_t address)
       | (_sound1.length > 0.f ? 0b00000001 : 0b00000000)
       | (_sound2.length > 0.f ? 0b00000010 : 0b00000000)
       | (_sound3.length > 0.f && (_gbc._io[IO::NR30] & 0b10000000) ? 0b00000100 : 0b00000000)
-      | (_sound4.length > 0.f ? 0b00000100 : 0b00000000);
+      | (_sound4.length > 0.f ? 0b00001000 : 0b00000000);
 
   case IO::NR10:    // Channel 1 Sweep, R/W
   case IO::NR12:    // Channel 1 Envelope, R/W
