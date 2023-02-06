@@ -473,6 +473,8 @@ void  GBC::GameBoyColor::simulate()
   _apu.simulate();
 
   // Update MBC clock
+  // NOTE: we could do this every CPU cycles,
+  // but we don't need that much precision
   _mbc->update(GBC::PixelProcessingUnit::ScanlineDuration * (GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank));
 }
 
@@ -812,6 +814,13 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
     // Bits 7-6 are always set
     return _io[IO::JOYP] | 0b11000000;
 
+  case IO::SC:    // Serial transfer Control
+    return _io[IO::SC] | 0b10000011;
+
+  case IO::RP:    // Infared communication
+    return _io[IO::RP] & ((_io[IO::RP] & 0b11000000) == 0b11000000 ? 0b11000011 : 0b11000001);
+    break;
+
   case IO::SVBK:  // Work Ram Bank, R/W, CGB mode only
     return _io[IO::SVBK] & 0b00000111;
 
@@ -830,6 +839,9 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
     // Basic read, just return stored value
     return _io[addr];
 
+
+
+  case IO::SB:    // Serial transfer Data, R/W
   case IO::DIVLo: // Low byte of DIV, not accessible
   case IO::BANK:  // Boot Bank Controller, W, 0 to enable Boot mapping in ROM
   case IO::HDMA1: // New DMA Transfers source high byte, W, CGB mode only
@@ -1017,6 +1029,18 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     }
     break;
 
+  case IO::SC:    // Serial transfer Control
+    _io[IO::SC] = value & 0b10000011;
+
+    // Handle transfer
+    // NOTE: transfer not supported, received bit set to 0b11111111
+    if ((_io[IO::SC] & 0b10000001) == 0b10000001) {
+      _io[IO::IF] |= Interrupt::InterruptSerial;
+      _io[IO::SB] = 0b11111111;
+      _io[IO::SC] &= 0b00000011;
+    }
+    break;
+
   case IO::DIVHi: // High byte of DIV, R/W (always set to zero when written)
     // Always set to 0
     _io[IO::DIVHi] = 0;
@@ -1084,11 +1108,16 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     break;
   }
 
+  case IO::RP:    // Infared communication, bit 0: LED on/off (R/W), bit 1: signal off/on (R), bit 7-6: read enable (3) / disable (0)
+    _io[IO::RP] = (_io[IO::RP] & 0b00111110) | (value & 0b11000001);
+    break;
+
   case IO::SVBK:  // Work Ram Bank, R/W, CGB mode only
     if ((_io[IO::KEY0] & 0b00001100) != CpuMode::CpuModeDmg)
       _io[IO::SVBK] = value & 0b00000111;
     break;
 
+  case IO::SB:    // Serial transfer Data, R/W
   case IO::TIMA:  // Timer Modulo, R/W
   case IO::TMA:   // Timer Modulo, R/W
   case IO::HDMA1: // New DMA Transfers source high byte, W, CGB mode only

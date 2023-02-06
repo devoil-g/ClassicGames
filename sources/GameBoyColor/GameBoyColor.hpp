@@ -93,8 +93,8 @@ namespace GBC
     enum IO : std::uint8_t
     {
       JOYP = 0x00,  // Joypad, R/W, bits 7-6 always set
-      SB = 0x01,
-      SC = 0x02,
+      SB = 0x01,    // Serial transfer Data, R/W
+      SC = 0x02,    // Serial transfer Control, R/W, bit 0: shift clock (0: external, 1: internal), bit 1: clock speed (0: normal, 1: fast), bit 7: transfer start flag
       DIVLo = 0x03, // Low byte of DIV, not accessible
       DIVHi = 0x04, // High byte of DIV, R/W (always set to zero when written)
       TIMA = 0x05,  // Timer Counter, R/W
@@ -116,7 +116,7 @@ namespace GBC
       HDMA4 = 0x54, // New DMA Transfers destination low byte, W, CGB mode only
       HDMA5 = 0x55, // Start New DMA Transfer, R/W, CGB mode only
 
-      RP = 0x56,
+      RP = 0x56,    // Infared communication, bit 0: LED on/off (R/W), bit 1: signal off/on (R), bit 7-6: read enable (3) / disable (0) (signal will stay off)
 
       SVBK = 0x70   // Work Ram Bank, R/W, CGB mode only
     };
