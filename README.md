@@ -11,4 +11,4 @@ A collection of classical games re-coded in C++
    3. Configure
    4. Generate
 4. Project has been generated in \<build\>
-5. When project has been built, copy <build>/_deps/sfml-src/extlibs/bin/x64/openal32.dll next to game executable
+5. When project has been built, copy \<build\>/_deps/sfml-src/extlibs/bin/x64/openal32.dll next to game executable
