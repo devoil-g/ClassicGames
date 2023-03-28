@@ -129,6 +129,8 @@ SET(GAME_GBC_SRCS
 SET(GAME_MATH_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Matrix.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Matrix.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Vector.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Vector.hpp
 )
