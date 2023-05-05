@@ -57,12 +57,6 @@ namespace Math
       return !(*this == v);
     }
 
-    //template<unsigned int R, unsigned int C>
-    //inline float& get() { return _matrix[C][R]; } // Get nth component of vector
-
-    //template<unsigned int R, unsigned int C>
-    //inline float  get() const { return _matrix[C][R]; } // Get nth component of vector
-
     float&  operator()(unsigned int row, unsigned int col) // Get matrix value
     {
       return _matrix[col][row];
@@ -143,7 +137,7 @@ namespace Math
       for (unsigned int col = 0; col < OtherCol; col++)
         for (unsigned int row = 0; row < Row; row++)
           for (unsigned int i = 0; i < Col; i++)
-            matrix(row, col) += (*this)(i, row) * v(col, i);
+            matrix(row, col) += (*this)(row, i) * v(i, col);
       return matrix;
     }
 
