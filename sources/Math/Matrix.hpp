@@ -10,8 +10,6 @@ namespace Math
   template<unsigned int Row, unsigned int Col = Row>
   class Matrix
   {
-  public:
-
   private:
     std::array<std::array<float, Row>, Col>  _matrix; // Hold matrix values
 
@@ -26,7 +24,7 @@ namespace Math
     template<typename ... Floats>
     Matrix(Floats... args)
     {
-      float        values[]{ args... };
+      float values[]{ args... };
 
       // Compilation time error if invalid matrix
       static_assert(Col > 0 && Row > 0, "Invalid matrix size.");
@@ -56,6 +54,12 @@ namespace Math
     {
       return !(*this == v);
     }
+
+    template<unsigned int R, unsigned int C>
+    inline float& get() { return _matrix[C][R]; } // Get nth component of vector
+
+    template<unsigned int R, unsigned int C>
+    inline float  get() const { return _matrix[C][R]; } // Get nth component of vector
 
     float&  operator()(unsigned int row, unsigned int col) // Get matrix value
     {

@@ -1235,7 +1235,7 @@ void  GBC::CentralProcessingUnit::save(std::ofstream& file) const
   _gbc.save(file, "CPU_OPCODE", _opcode);
   _gbc.save(file, "CPU_SET", _set);
   _gbc.save(file, "CPU_STEP", _instructions.size());
-  _gbc.save(file, "CPU_IME", _status);
+  _gbc.save(file, "CPU_IME", _ime);
   _gbc.save(file, "CPU_RAF", _rAF);
   _gbc.save(file, "CPU_RBC", _rBC);
   _gbc.save(file, "CPU_RDE", _rDE);
@@ -1254,7 +1254,7 @@ void  GBC::CentralProcessingUnit::load(std::ifstream& file)
   _gbc.load(file, "CPU_OPCODE", _opcode);
   _gbc.load(file, "CPU_SET", _set);
   _gbc.load(file, "CPU_STEP", step);
-  _gbc.load(file, "CPU_IME", _status);
+  _gbc.load(file, "CPU_IME", _ime);
   _gbc.load(file, "CPU_RAF", _rAF);
   _gbc.load(file, "CPU_RBC", _rBC);
   _gbc.load(file, "CPU_RDE", _rDE);

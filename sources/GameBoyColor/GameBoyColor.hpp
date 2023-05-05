@@ -193,6 +193,7 @@ namespace GBC
     void  simulateTimer();  // Update 4 CPU cycle of TIMA/TMA/DIV timer registers
 
     void        save(std::ofstream& file, const std::string& name, const void* data, std::size_t size) const; // Save raw variable data to file
+    void        save(std::ofstream& file, const std::string& name, const std::string& data) const;            // Save string variable to file
 
     template<typename Type>
     void        save(std::ofstream& file, const std::string& name, const std::vector<Type>& data) const       // Save vector variable to file
@@ -208,6 +209,7 @@ namespace GBC
 
     std::string loadVariable(std::ifstream& file, const std::string& name);                                   // Load raw variable data from file
     void        loadValue(const std::string& value, void* data, std::size_t size);                            // Load raw variable data from file
+    void        load(std::ifstream& file, const std::string& name, std::string& data);                        // Load string variable to file
 
     template<typename Type>
     void        load(std::ifstream& file, const std::string& name, std::vector<Type>& data)                   // Load vector variable to file

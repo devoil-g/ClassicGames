@@ -53,7 +53,7 @@ namespace Math
   inline float Pow(const float value) { return value * Math::Pow<Power - 1>(value); } // Compute value^Power
 
   template<>
-  inline float Pow<0>(const float value) { return 1.f; }                              // Compute value^Power
+  inline float Pow<0>(const float) { return 1.f; }                                    // Compute value^Power
 
   inline float  RadToDeg(float r) { return (r * 180.f) / Math::Pi; }; // Convert radian (* accuracy) to degree
   inline float  DegToRad(float r) { return (r * Math::Pi) / 180.f; }; // Convert degree to radian (* accuracy)

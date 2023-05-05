@@ -52,15 +52,21 @@ namespace Math
     float&  operator()(unsigned int c) { return Math::Matrix<vSize, 1>::operator()(c, 0); }       // Get nth component of vector
     float   operator()(unsigned int c) const { return Math::Matrix<vSize, 1>::operator()(c, 0); } // Get nth component of vector
 
-    float&  x() { return (*this)(0); } // Get first component of vector
-    float&  y() { return (*this)(1); } // Get second component of vector
-    float&  z() { return (*this)(2); } // Get third component of vector
-    float&  w() { return (*this)(3); } // Get fourth component of vector
+    template<unsigned int N>
+    float&  get() { return this->Math::Matrix<vSize, 1>::get<N, 0>(); }       // Get nth component of vector
 
-    float x() const { return (*this)(0); } // Get first component of vector
-    float y() const { return (*this)(1); } // Get second component of vector
-    float z() const { return (*this)(2); } // Get third component of vector
-    float w() const { return (*this)(3); } // Get fourth component of vector
+    template<unsigned int N>
+    float   get() const { return this->Math::Matrix<vSize, 1>::get<N, 0>(); } // Get nth component of vector
+
+    float&  x() { return get<0>(); } // Get first component of vector
+    float&  y() { return get<1>(); } // Get second component of vector
+    float&  z() { return get<2>(); } // Get third component of vector
+    float&  w() { return get<3>(); } // Get fourth component of vector
+
+    float x() const { return get<0>(); } // Get first component of vector
+    float y() const { return get<1>(); } // Get second component of vector
+    float z() const { return get<2>(); } // Get third component of vector
+    float w() const { return get<3>(); } // Get fourth component of vector
 
     bool  operator==(const Math::Vector<vSize>& v) const // Vector comparison
     {
@@ -239,13 +245,9 @@ namespace Math
 template<unsigned int vSize>
 std::ostream& operator<<(std::ostream& stream, const Math::Vector<vSize>& vector)
 {
-  if (vSize == 0)
-    stream << "[]";
-  else {
-    stream << "[";
-    for (int i = 0; i < vSize; i++)
-      stream << vector(i) << (i == (vSize - 1) ? "" : ", ");
-    stream << "]";
-  }
+  stream << "[";
+  for (unsigned int i = 0; i < vSize; i++)
+    stream << vector(i) << (i == (vSize - 1) ? "" : ", ");
+  stream << "]";
   return stream;
 }

@@ -193,7 +193,6 @@ void    GBC::MemoryBankController::save(std::ofstream& file) const
   _gbc.save(file, "MBC_RAM", _ram);
   _gbc.save(file, "MBC_RAMENABLE", _ramEnable);
   _gbc.save(file, "MBC_RAMBANK", _ramBank);
-  _gbc.save(file, "MBC_RAMSAVE", _ramSave);
   _gbc.save(file, "MBC_RAMSAVED", _ramSaved);
 }
 
@@ -205,7 +204,6 @@ void    GBC::MemoryBankController::load(std::ifstream& file)
   _gbc.load(file, "MBC_RAM", _ram);
   _gbc.load(file, "MBC_RAMENABLE", _ramEnable);
   _gbc.load(file, "MBC_RAMBANK", _ramBank);
-  _gbc.load(file, "MBC_RAMSAVE", _ramSave);
   _gbc.load(file, "MBC_RAMSAVED", _ramSaved);
 }
 

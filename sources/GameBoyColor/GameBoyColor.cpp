@@ -470,6 +470,8 @@ void  GBC::GameBoyColor::simulate()
   }
 
   // Update audio for one frame
+  // NOTE: we could do this every CPU cycles,
+  // but we don't need that much precision
   _apu.simulate();
 
   // Update MBC clock
@@ -572,6 +574,10 @@ void  GBC::GameBoyColor::load(std::size_t id)
   load(file, "GBC_IO", _io);
   load(file, "GBC_HRAM", _hRam);
   load(file, "GBC_IE", _ie);
+  load(file, "GBC_KEYS", _keys);
+  load(file, "GBC_TRANSFERMODE", _transferMode);
+  load(file, "GBC_TRANSFERINDEX", _transferIndex);
+  load(file, "GBC_TRANSFERTRIGGER", _transferTrigger);
 
   // Load hardware state
   _cpu.load(file);
@@ -597,6 +603,11 @@ void  GBC::GameBoyColor::save(std::size_t id) const
   save(file, "GBC_IO", _io);
   save(file, "GBC_HRAM", _hRam);
   save(file, "GBC_IE", _ie);
+  save(file, "GBC_KEYS", _keys);
+  save(file, "GBC_TRANSFERMODE", _transferMode);
+  save(file, "GBC_TRANSFERINDEX", _transferIndex);
+  save(file, "GBC_TRANSFERTRIGGER", _transferTrigger);
+
 
   // Save hardware state
   _cpu.save(file);
@@ -617,6 +628,13 @@ void  GBC::GameBoyColor::save(std::ofstream& file, const std::string& name, cons
   // End of line
   file << std::endl;
 }
+
+void  GBC::GameBoyColor::save(std::ofstream& file, const std::string& name, const std::string& data) const
+{
+  // Convert string to char vector
+  save(file, name, std::vector<char>(data.begin(), data.end()));
+}
+
 
 std::string GBC::GameBoyColor::loadVariable(std::ifstream& file, const std::string& name)
 {
@@ -664,6 +682,17 @@ void  GBC::GameBoyColor::loadValue(const std::string& value, void* data, std::si
     // Load value in data
     ((std::uint8_t*)data)[index / 2] = (std::uint8_t)value0 * 16 + (std::uint8_t)value1;
   }
+}
+
+void  GBC::GameBoyColor::load(std::ifstream& file, const std::string& name, std::string& data)
+{
+  std::vector<char> raw;
+
+  // Load variable as a vector of char
+  load(file, name, raw);
+
+  // Convert vector to string
+  data = std::string(raw.begin(), raw.end());
 }
 
 std::uint8_t  GBC::GameBoyColor::read(std::uint16_t addr)
