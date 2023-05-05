@@ -141,13 +141,13 @@ namespace Math
       return matrix;
     }
 
-    Math::Matrix<Row, Col>  transpose() const // Generate transpose matrix
+    Math::Matrix<Col, Row>  transpose() const // Generate transpose matrix
     {
-      Math::Matrix<Row, Col>  matrix;
+      Math::Matrix<Col, Row>  matrix;
 
       for (unsigned int col = 0; col < Col; col++)
         for (unsigned int row = 0; row < Row; row++)
-          matrix(row, col) = (*this)(col, row);
+          matrix(col, row) = (*this)(row, col);
       return matrix;
     }
 
@@ -172,7 +172,7 @@ namespace Math
       static_assert(Col == Row && Row > 1, "Invalid translation matrix.");
       static_assert(sizeof(transformation) / sizeof(float) == Row - 1, "Invalid translation matrix parameters.");
 
-      for (unsigned int i = 0; i < Col - 1; i++)
+      for (unsigned int i = 0; i < Row - 1; i++)
         matrix(i, Col - 1) = transformation[i];
       return matrix;
     }
