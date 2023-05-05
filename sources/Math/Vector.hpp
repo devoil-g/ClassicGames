@@ -52,12 +52,6 @@ namespace Math
     float&  operator()(unsigned int c) { return Math::Matrix<vSize, 1>::operator()(c, 0); }       // Get nth component of vector
     float   operator()(unsigned int c) const { return Math::Matrix<vSize, 1>::operator()(c, 0); } // Get nth component of vector
 
-    //template<unsigned int N>
-    //float&  get() { return Math::Matrix<vSize, 1>::get<N, 0>(); }       // Get nth component of vector
-
-    //template<unsigned int N>
-    //float   get() const { return Math::Matrix<vSize, 1>::get<N, 0>(); } // Get nth component of vector
-
     float&  x() { return (*this)(0); } // Get first component of vector
     float&  y() { return (*this)(1); } // Get second component of vector
     float&  z() { return (*this)(2); } // Get third component of vector
