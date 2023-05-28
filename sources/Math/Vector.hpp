@@ -10,175 +10,177 @@
 
 namespace Math
 {
-  template<unsigned int vSize>
-  class Vector : public Math::Matrix<vSize, 1>
+  template<unsigned int Size, typename Type = float>
+  class Vector : public Math::Matrix<Size, 1, Type>
   {
   public:
     Vector() = default;
 
-    template<typename ... Floats>
-    Vector(Floats... args) :
-      Math::Matrix<vSize, 1>(std::forward<Floats>(args)...)
+    template<typename ... Types>
+    Vector(Types... args) :
+      Math::Matrix<Size, 1, Type>(std::forward<Types>(args)...)
     {}
 
-    Vector(const Math::Vector<vSize>& other) = default;
+    Vector(const Math::Vector<Size, Type>& other) = default;
 
-    Vector(const Math::Matrix<vSize, 1>& other) :
-      Math::Matrix<vSize, 1>(other)
+    Vector(const Math::Matrix<Size, 1, Type>& other) :
+      Math::Matrix<Size, 1, Type>(other)
     {}
 
     ~Vector() = default;
 
-    Vector<vSize>& operator=(const Math::Vector<vSize>& other) = default;
+    Vector<Size, Type>& operator=(const Math::Vector<Size, Type>& other) = default;
 
     template<unsigned int wSize>
-    Math::Vector<wSize>&  convert() // Cast current vector to a lower dimension
+    Math::Vector<wSize, Type>&  convert() // Cast current vector to a lower dimension
     {
       // Check that requested dimension is valid
-      static_assert(wSize <= vSize, "Invalid vector convertion parameters.");
+      static_assert(wSize <= Size, "Invalid vector convertion parameters.");
 
-      return *reinterpret_cast<Math::Vector<wSize>*>(this);
+      return *reinterpret_cast<Math::Vector<wSize, Type>*>(this);
     }
 
     template<unsigned int wSize>
-    const Math::Vector<wSize>&  convert() const // Cast current vector to a lower dimension
+    const Math::Vector<wSize, Type>&  convert() const // Cast current vector to a lower dimension
     {
       // Check that requested dimension is valid
-      static_assert(wSize <= vSize, "Invalid vector convertion parameters.");
+      static_assert(wSize <= Size, "Invalid vector convertion parameters.");
 
-      return *reinterpret_cast<const Math::Vector<wSize>*>(this);
+      return *reinterpret_cast<const Math::Vector<wSize, Type>*>(this);
     }
 
-    float&  operator()(unsigned int c) { return Math::Matrix<vSize, 1>::operator()(c, 0); }       // Get nth component of vector
-    float   operator()(unsigned int c) const { return Math::Matrix<vSize, 1>::operator()(c, 0); } // Get nth component of vector
+    Type& operator()(unsigned int c) { return Math::Matrix<Size, 1, Type>::operator()(c, 0); }       // Get nth component of vector
+    Type  operator()(unsigned int c) const { return Math::Matrix<Size, 1, Type>::operator()(c, 0); } // Get nth component of vector
 
     template<unsigned int N>
-    float&  get() { return this->Math::Matrix<vSize, 1>::get<N, 0>(); }       // Get nth component of vector
+    Type& get() { return this->Math::Matrix<Size, 1, Type>::get<N, 0>(); }       // Get nth component of vector
 
     template<unsigned int N>
-    float   get() const { return this->Math::Matrix<vSize, 1>::get<N, 0>(); } // Get nth component of vector
+    Type  get() const { return this->Math::Matrix<Size, 1, Type>::get<N, 0>(); } // Get nth component of vector
 
-    float&  x() { return get<0>(); } // Get first component of vector
-    float&  y() { return get<1>(); } // Get second component of vector
-    float&  z() { return get<2>(); } // Get third component of vector
-    float&  w() { return get<3>(); } // Get fourth component of vector
+    Type& x() { return get<0>(); } // Get first component of vector
+    Type& y() { return get<1>(); } // Get second component of vector
+    Type& z() { return get<2>(); } // Get third component of vector
+    Type& w() { return get<3>(); } // Get fourth component of vector
 
-    float x() const { return get<0>(); } // Get first component of vector
-    float y() const { return get<1>(); } // Get second component of vector
-    float z() const { return get<2>(); } // Get third component of vector
-    float w() const { return get<3>(); } // Get fourth component of vector
+    Type  x() const { return get<0>(); } // Get first component of vector
+    Type  y() const { return get<1>(); } // Get second component of vector
+    Type  z() const { return get<2>(); } // Get third component of vector
+    Type  w() const { return get<3>(); } // Get fourth component of vector
 
-    bool  operator==(const Math::Vector<vSize>& v) const // Vector comparison
+    bool  operator==(const Math::Vector<Size, Type>& v) const // Vector comparison
     {
-      return Math::Matrix<vSize, 1>::operator==(v);
+      return Math::Matrix<Size, 1, Type>::operator==(v);
     }
 
-    bool  operator!=(const Math::Vector<vSize>& v) const // Vector comparison
+    bool  operator!=(const Math::Vector<Size, Type>& v) const // Vector comparison
     {
-      return Math::Matrix<vSize, 1>::operator!=(v);
+      return Math::Matrix<Size, 1, Type>::operator!=(v);
     }
 
-    Math::Vector<vSize>&  operator*=(const Math::Vector<vSize>& v) // Vector multiplication
+    Math::Vector<Size, Type>& operator*=(const Math::Vector<Size, Type>& v) // Vector multiplication
     {
-      for (unsigned int i = 0; i < vSize; i++)
+      for (unsigned int i = 0; i < Size; i++)
         (*this)(i) *= v(i);
       return *this;
     }
 
-    Math::Vector<vSize> operator*(const Math::Vector<vSize>& v) const // Vector multiplication
+    Math::Vector<Size, Type>  operator*(const Math::Vector<Size, Type>& v) const // Vector multiplication
     {
-      return Math::Vector<vSize>(*this) *= v;
+      return Math::Vector<Size, Type>(*this) *= v;
     }
 
-    Math::Vector<vSize>&  operator*=(float c) // Vector multiplication
+    Math::Vector<Size, Type>& operator*=(Type c) // Vector multiplication
     {
-      Math::Matrix<vSize, 1>::operator*=(c);
+      Math::Matrix<Size, 1, Type>::operator*=(c);
       return *this;
     }
 
-    Math::Vector<vSize> operator*(float c) const // Vector multiplication
+    Math::Vector<Size, Type>  operator*(Type c) const // Vector multiplication
     {
-      return Math::Vector<vSize>(*this) *= c;
+      return Math::Vector<Size, Type>(*this) *= c;
     }
 
     template<unsigned int mSize>
-    Math::Vector<vSize>&  operator*=(const Math::Matrix<mSize, vSize>& v) // Vector multiplication
+    Math::Vector<Size, Type>& operator*=(const Math::Matrix<mSize, Size, Type>& v) // Vector multiplication
     {
-      Math::Matrix<vSize, 1>::operator*=(v);
+      Math::Matrix<Size, 1, Type>::operator*=(v);
       return *this;
     }
 
     template<unsigned int mSize>
-    Math::Vector<vSize> operator*(const Math::Matrix<mSize, vSize>& v) const // Vector multiplication
+    Math::Vector<Size, Type>  operator*(const Math::Matrix<mSize, Size, Type>& v) const // Vector multiplication
     {
-      return Math::Vector<vSize>(*this) *= v;
+      return Math::Vector<Size, Type>(*this) *= v;
     }
 
-    Math::Vector<vSize>&  operator/=(const Math::Vector<vSize>& v) // Vector division
+    Math::Vector<Size, Type>& operator/=(const Math::Vector<Size, Type>& v) // Vector division
     {
-      for (unsigned int i = 0; i < vSize; i++)
+      for (unsigned int i = 0; i < Size; i++)
         (*this)(i) /= v(i);
       return *this;
     }
 
-    Math::Vector<vSize> operator/(const Math::Vector<vSize>& v) const // Vector division
+    Math::Vector<Size, Type>  operator/(const Math::Vector<Size, Type>& v) const // Vector division
     {
-      return Math::Vector<vSize>(*this) /= v;
+      return Math::Vector<Size, Type>(*this) /= v;
     }
 
-    Math::Vector<vSize>&  operator/=(float c) // Vector division
+    Math::Vector<Size, Type>& operator/=(Type c) // Vector division
     {
-      Math::Matrix<vSize, 1>::operator/=(c);
+      Math::Matrix<Size, 1, Type>::operator/=(c);
       return *this;
     }
 
-    Math::Vector<vSize> operator/(float c) const // Vector division
+    Math::Vector<Size, Type>  operator/(Type c) const // Vector division
     {
-      return Math::Vector<vSize>(*this) /= c;
+      return Math::Vector<Size>(*this) /= c;
     }
 
-    Math::Vector<vSize>&  operator+=(const Math::Vector<vSize>& v) // Vector addition
+    Math::Vector<Size, Type>& operator+=(const Math::Vector<Size, Type>& v) // Vector addition
     {
-      for (unsigned int i = 0; i < vSize; i++)
+      for (unsigned int i = 0; i < Size; i++)
         (*this)(i) += v(i);
       return *this;
     }
 
-    Math::Vector<vSize> operator+(const Math::Vector<vSize>& v) const // Vector addition
+    Math::Vector<Size, Type>  operator+(const Math::Vector<Size, Type>& v) const // Vector addition
     {
-      return Math::Vector<vSize>(*this) += v;
+      return Math::Vector<Size, Type>(*this) += v;
     }
 
-    Math::Vector<vSize>&  operator-=(const Math::Vector<vSize>& v) // Vector subtraction
+    Math::Vector<Size, Type>& operator-=(const Math::Vector<Size, Type>& v) // Vector subtraction
     {
-      for (unsigned int i = 0; i < vSize; i++)
+      for (unsigned int i = 0; i < Size; i++)
         (*this)(i) -= v(i);
       return *this;
     }
 
-    Math::Vector<vSize> operator-(const Math::Vector<vSize>& v) const // Vector subtraction
+    Math::Vector<Size, Type>  operator-(const Math::Vector<Size, Type>& v) const // Vector subtraction
     {
-      return Math::Vector<vSize>(*this) -= v;
+      return Math::Vector<Size, Type>(*this) -= v;
     }
 
-    float length() const  // Return ray length
+    template<typename RetType = Type>
+    RetType length() const // Return ray length
     {
-      float r = 0.f;
+      RetType r = static_cast<RetType>(0.0);
 
-      for (unsigned int i = 0; i < vSize; i++)
-        r += Math::Pow<2>((*this)(i));
+      for (unsigned int i = 0; i < Size; i++)
+        r += static_cast<RetType>(Math::Pow<2>((*this)(i)));
 
-      return std::sqrt(r);
+      return static_cast<RetType>(std::sqrt(r));
     }
 
-    static float  cos(const Math::Vector<vSize>& A, const Math::Vector<vSize>& B) // Calculate cosinus between two vectors
+    template<typename RetType = Type>
+    static RetType  cos(const Math::Vector<Size, Type>& A, const Math::Vector<Size, Type>& B) // Calculate cosinus between two vectors
     {
-      float l = 0.f, m = 0.f;
+      RetType l = static_cast<RetType>(0.0), m = static_cast<RetType>(0.0);
 
-      for (unsigned int n = 0; n < vSize; n++)
+      for (unsigned int n = 0; n < Size; n++)
       {
-        l += Math::Pow<2>(A(n));
-        m += Math::Pow<2>(B(n));
+        l += static_cast<RetType>(Math::Pow<2>(A(n)));
+        m += static_cast<RetType>(Math::Pow<2>(B(n)));
       }
 
 #ifdef _DEBUG
@@ -187,67 +189,77 @@ namespace Math
         throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 #endif
 
-      return Math::Vector<vSize>::scalar(A, B) / std::sqrt(l * m);
+      return Math::Vector<Size, Type>::scalar<RetType>(A, B) / static_cast<RetType>(std::sqrt(l * m));
     }
 
-    static float  angle(const Math::Vector<vSize>& v) // Compute 2D vector angle with X axis [O, 2pi[.
+    template<typename RetType = Type>
+    static RetType  angle(const Math::Vector<Size, Type>& v) // Compute 2D vector angle with X axis [O, 2pi[.
     {
-      return std::atan2(v.y(), v.x());
+      return static_cast<RetType>(std::atan2(v.y(), v.x()));
     }
 
-    static float  angle(const Math::Vector<vSize>& A, const Math::Vector<vSize>& B) // Calculate angle (radian) between two rays
+    template<typename RetType = Type>
+    static RetType  angle(const Math::Vector<Size, Type>& A, const Math::Vector<Size, Type>& B) // Calculate angle (radian) between two rays
     {
-      return std::acos(Math::Vector<vSize>::cos(A, B));
+      return static_cast<RetType>(std::acos(Math::Vector<Size, Type>::cos<RetType>(A, B)));
     }
 
-    static float  scalar(const Math::Vector<vSize>& A, const Math::Vector<vSize>& B) // Apply scalar product to rays
+    template<typename RetType = Type>
+    static RetType  scalar(const Math::Vector<Size, Type>& A, const Math::Vector<Size, Type>& B) // Apply scalar product to rays
     {
-      float r = 0.f;
+      RetType r = static_cast<RetType>(0.0);
 
-      for (unsigned int i = 0; i < vSize; i++)
+      for (unsigned int i = 0; i < Size; i++)
         r += A(i) * B(i);
 
       return r;
     }
 
-    template<typename ... Vectors>
-    static float  determinant(Vectors... args) // Calcultate vector determinant
+    template<typename RetType = Type, typename ... Vectors>
+    static RetType  determinant(Vectors... args) // Calcultate vector determinant
     {
-      Math::Vector<vSize> vec[]{ args... };
+      Math::Vector<Size, Type>  vec[]{ args... };
 
-      static_assert(sizeof(vec) / sizeof(Math::Vector<vSize>) == vSize, "Invalid vector determinant parameters.");
+      static_assert(sizeof(vec) / sizeof(Math::Vector<Size, Type>) == Size, "Invalid vector determinant parameters.");
 
       // Only support two dimension determinant
-      static_assert(vSize == 2, "Vector determinant size not supported.");
+      static_assert(Size == 2, "Vector determinant size not supported.");
 
-      return vec[0].x() * vec[1].y() - vec[0].y() * vec[1].x();
+      return static_cast<RetType>(vec[0].x() * vec[1].y() - vec[0].y() * vec[1].x());
     }
 
-    static Math::Vector<vSize>  cross(const Math::Vector<vSize>& A, const Math::Vector<vSize>& B); // Apply vectoriel to rays
+    static Math::Vector<Size, Type> cross(const Math::Vector<Size, Type>& A, const Math::Vector<Size, Type>& B) // Apply vectoriel to rays
+    {
+      // Only support three dimension determinant
+      static_assert(Size == 3, "Vector cross size not supported.");
+
+      return Math::Vector<Size, Type>(A.y() * B.z() - A.z() * B.y(), A.z() * B.x() - A.x() * B.z(), A.x() * B.y() - A.y() * B.x());
+    }
   };
 
-  static std::pair<float, float>  intersection(const Math::Vector<2>& origin_A, const Math::Vector<2>& direction_A, const Math::Vector<2>& origin_B, const Math::Vector<2>& direction_B)  // Compute intersection points of segments
+  template<typename Type, typename RetType = Type>
+  static std::pair<RetType, RetType>  intersection(const Math::Vector<2, Type>& origin_A, const Math::Vector<2, Type>& direction_A, const Math::Vector<2, Type>& origin_B, const Math::Vector<2, Type>& direction_B)  // Compute intersection points of segments
   {
-    float rs = Math::Vector<2>::determinant(direction_A, direction_B);
+    RetType rs = Math::Vector<2>::determinant<RetType>(direction_A, direction_B);
 
     // Stop if segments are parallele
-    if (rs == 0.f)
-      return std::pair<float, float>(std::numeric_limits<float>::quiet_NaN(), std::numeric_limits<float>::quiet_NaN());
+    if (rs == static_cast<RetType>(0.0))
+      return { std::numeric_limits<RetType>::quiet_NaN(), std::numeric_limits<RetType>::quiet_NaN() };
 
     // Compute intersection point of segments
-    Math::Vector<2> qp(origin_B - origin_A);
+    Math::Vector<2, Type> qp(origin_B - origin_A);
 
-    return std::pair<float, float>(Math::Vector<2>::determinant(qp, direction_B) / rs, Math::Vector<2>::determinant(qp, direction_A) / rs);
+    return { Math::Vector<2>::determinant<RetType>(qp, direction_B) / rs, Math::Vector<2>::determinant<RetType>(qp, direction_A) / rs };
   }
 }
 
 // Vector to std::ostream
-template<unsigned int vSize>
-std::ostream& operator<<(std::ostream& stream, const Math::Vector<vSize>& vector)
+template<unsigned int Size, typename Type>
+std::ostream& operator<<(std::ostream& stream, const Math::Vector<Size, Type>& vector)
 {
   stream << "[";
-  for (unsigned int i = 0; i < vSize; i++)
-    stream << vector(i) << (i == (vSize - 1) ? "" : ", ");
+  for (unsigned int i = 0; i < Size; i++)
+    stream << vector(i) << (i == (Size - 1) ? "" : ", ");
   stream << "]";
   return stream;
 }

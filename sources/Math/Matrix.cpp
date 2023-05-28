@@ -1,23 +1,23 @@
 #include "Matrix.hpp"
 
-template<>
-Math::Matrix<4, 4>  Math::Matrix<4, 4>::inverse() const
+template<unsigned int Row, unsigned int Col, typename Type>
+Math::Matrix<Row, Col, Type>  Math::Matrix<Row, Col, Type>::inverse() const
 {
-  float  s0 = (*this)(0, 0) * (*this)(1, 1) - (*this)(0, 1) * (*this)(1, 0);
-  float  s1 = (*this)(0, 0) * (*this)(2, 1) - (*this)(0, 1) * (*this)(2, 0);
-  float  s2 = (*this)(0, 0) * (*this)(3, 1) - (*this)(0, 1) * (*this)(3, 0);
-  float  s3 = (*this)(1, 0) * (*this)(2, 1) - (*this)(1, 1) * (*this)(2, 0);
-  float  s4 = (*this)(1, 0) * (*this)(3, 1) - (*this)(1, 1) * (*this)(3, 0);
-  float  s5 = (*this)(2, 0) * (*this)(3, 1) - (*this)(2, 1) * (*this)(3, 0);
+  Type  s0 = (*this)(0, 0) * (*this)(1, 1) - (*this)(0, 1) * (*this)(1, 0);
+  Type  s1 = (*this)(0, 0) * (*this)(2, 1) - (*this)(0, 1) * (*this)(2, 0);
+  Type  s2 = (*this)(0, 0) * (*this)(3, 1) - (*this)(0, 1) * (*this)(3, 0);
+  Type  s3 = (*this)(1, 0) * (*this)(2, 1) - (*this)(1, 1) * (*this)(2, 0);
+  Type  s4 = (*this)(1, 0) * (*this)(3, 1) - (*this)(1, 1) * (*this)(3, 0);
+  Type  s5 = (*this)(2, 0) * (*this)(3, 1) - (*this)(2, 1) * (*this)(3, 0);
 
-  float  c0 = (*this)(0, 2) * (*this)(1, 3) - (*this)(0, 3) * (*this)(1, 2);
-  float  c1 = (*this)(0, 2) * (*this)(2, 3) - (*this)(0, 3) * (*this)(2, 2);
-  float  c2 = (*this)(0, 2) * (*this)(3, 3) - (*this)(0, 3) * (*this)(3, 2);
-  float  c3 = (*this)(1, 2) * (*this)(2, 3) - (*this)(1, 3) * (*this)(2, 2);
-  float  c4 = (*this)(1, 2) * (*this)(3, 3) - (*this)(1, 3) * (*this)(3, 2);
-  float  c5 = (*this)(2, 2) * (*this)(3, 3) - (*this)(2, 3) * (*this)(3, 2);
+  Type  c0 = (*this)(0, 2) * (*this)(1, 3) - (*this)(0, 3) * (*this)(1, 2);
+  Type  c1 = (*this)(0, 2) * (*this)(2, 3) - (*this)(0, 3) * (*this)(2, 2);
+  Type  c2 = (*this)(0, 2) * (*this)(3, 3) - (*this)(0, 3) * (*this)(3, 2);
+  Type  c3 = (*this)(1, 2) * (*this)(2, 3) - (*this)(1, 3) * (*this)(2, 2);
+  Type  c4 = (*this)(1, 2) * (*this)(3, 3) - (*this)(1, 3) * (*this)(3, 2);
+  Type  c5 = (*this)(2, 2) * (*this)(3, 3) - (*this)(2, 3) * (*this)(3, 2);
 
-  float  det = s0 * c5 - s1 * c4 + s2 * c3 + s3 * c2 - s4 * c1 + s5 * c0;
+  Type  det = s0 * c5 - s1 * c4 + s2 * c3 + s3 * c2 - s4 * c1 + s5 * c0;
 
 #ifdef _DEBUG
   // Not supposed to happen
@@ -25,7 +25,7 @@ Math::Matrix<4, 4>  Math::Matrix<4, 4>::inverse() const
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 #endif
 
-  return Math::Matrix<4, 4>(
+  return Math::Matrix<4, 4, Type>(
     (+(*this)(1, 1) * c5 - (*this)(2, 1) * c4 + (*this)(3, 1) * c3),
     (-(*this)(1, 0) * c5 + (*this)(2, 0) * c4 - (*this)(3, 0) * c3),
     (+(*this)(1, 3) * s5 - (*this)(2, 3) * s4 + (*this)(3, 3) * s3),
@@ -48,64 +48,78 @@ Math::Matrix<4, 4>  Math::Matrix<4, 4>::inverse() const
     ) / det;
 }
 
+template Math::Matrix<4, 4, float>  Math::Matrix<4, 4, float>::inverse() const;
+template Math::Matrix<4, 4, double> Math::Matrix<4, 4, double>::inverse() const;
 
-template<>
-Math::Matrix<3, 3>  Math::Matrix<3, 3>::reflection(float x, float y)
+template<unsigned int Row, unsigned int Col, typename Type>
+Math::Matrix<Row, Col, Type>  Math::Matrix<Row, Col, Type>::reflection(Type x, Type y)
 {
   // Generate a reflection matrix
-  return Math::Matrix<3, 3>(
-    1.f - 2.f * x * x, -2.f * x * y, 0.f,
-    -2.f * y * x, 1.f - 2.f * y * y, 0.f,
-    0.f, 0.f, 1.f);
+  return Math::Matrix<Row, Col, Type>(
+    static_cast<Type>(1.0) - static_cast<Type>(2.0) * x * x, static_cast<Type>(-2.0) * x * y, static_cast<Type>(0.0),
+    static_cast<Type>(-2.0) * y * x, static_cast<Type>(1.0) - static_cast<Type>(2.0) * y * y, static_cast<Type>(0.0),
+    static_cast<Type>(0.0), static_cast<Type>(0.0), static_cast<Type>(1.0));
 }
 
-template<>
-Math::Matrix<4, 4>  Math::Matrix<4, 4>::reflection(float x, float y, float z)
+template Math::Matrix<3, 3, float>  Math::Matrix<3, 3, float>::reflection(float, float);
+template Math::Matrix<3, 3, double> Math::Matrix<3, 3, double>::reflection(double, double);
+
+template<unsigned int Row, unsigned int Col, typename Type>
+Math::Matrix<Row, Col, Type>  Math::Matrix<Row, Col, Type>::reflection(Type x, Type y, Type z)
 {
   // Generate a reflection matrix
-  return Math::Matrix<4, 4>(
-    1.f - 2.f * x * x, -2.f * x * y, -2.f * x * z, 0.f,
-    -2.f * y * x, 1.f - 2.f * y * y, -2.f * y * z, 0.f,
-    -2.f * z * x, -2.f * z * y, 1.f - 2.f * z * z, 0.f,
-    0.f, 0.f, 0.f, 1.f);
+  return Math::Matrix<Row, Col, Type>(
+    static_cast<Type>(1.0) - static_cast<Type>(2.0) * x * x, static_cast<Type>(-2.0) * x * y, static_cast<Type>(-2.0) * x * z, static_cast<Type>(0.0),
+    static_cast<Type>(-2.0) * y * x, static_cast<Type>(1.0) - static_cast<Type>(2.0) * y * y, static_cast<Type>(-2.0) * y * z, static_cast<Type>(0.0),
+    static_cast<Type>(-2.0) * z * x, static_cast<Type>(-2.0) * z * y, static_cast<Type>(1.0) - static_cast<Type>(2.0) * z * z, static_cast<Type>(0.0),
+    static_cast<Type>(0.0), static_cast<Type>(0.0), static_cast<Type>(0.0), static_cast<Type>(1.0));
 }
 
-template<>
-Math::Matrix<3, 3>  Math::Matrix<3, 3>::rotation(float z)
+template Math::Matrix<4, 4, float>  Math::Matrix<4, 4, float>::reflection(float, float, float);
+template Math::Matrix<4, 4, double> Math::Matrix<4, 4, double>::reflection(double, double, double);
+
+template<unsigned int Row, unsigned int Col, typename Type>
+Math::Matrix<Row, Col, Type>  Math::Matrix<Row, Col, Type>::rotation(Type z)
 {
   // Generate a rotation matrix
-  return Math::Matrix<3, 3>(
-    +std::cos(z), +std::sin(z), 0.f,
-    -std::sin(z), +std::cos(z), 0.f,
-    0.f, 0.f, 1.f);
+  return Math::Matrix<Row, Col, Type>(
+    +std::cos(z), +std::sin(z), static_cast<Type>(0.0),
+    -std::sin(z), +std::cos(z), static_cast<Type>(0.0),
+    static_cast<Type>(0.0), static_cast<Type>(0.0), static_cast<Type>(1.0));
 }
 
-template<>
-Math::Matrix<4, 4>  Math::Matrix<4, 4>::rotation(float x, float y, float z)
+template Math::Matrix<3, 3, float>  Math::Matrix<3, 3, float>::rotation(float);
+template Math::Matrix<3, 3, double> Math::Matrix<3, 3, double>::rotation(double);
+
+template<unsigned int Row, unsigned int Col, typename Type>
+Math::Matrix<Row, Col, Type>  Math::Matrix<Row, Col, Type>::rotation(Type x, Type y, Type z)
 {
   // Generate rotation matrix
   return
-    Math::Matrix<4, 4>(
-      +std::cos(z), -std::sin(z), 0.f, 0.f,
-      +std::sin(z), +std::cos(z), 0.f, 0.f,
-      0.f, 0.f, 1.f, 0.f,
-      0.f, 0.f, 0.f, 1.f)
-    * Math::Matrix<4, 4>(
-      +std::cos(y), 0.f, +std::sin(y), 0.f,
-      0.f, 1.f, 0.f, 0.f,
-      -std::sin(y), 0.f, +std::cos(y), 0.f,
-      0.f, 0.f, 0.f, 1.f)
-    * Math::Matrix<4, 4>(
-      1.f, 0.f, 0.f, 0.f,
-      0.f, +std::cos(x), +std::sin(x), 0.f,
-      0.f, -std::sin(x), +std::cos(x), 0.f,
-      0.f, 0.f, 0.f, 1.f);
+    Math::Matrix<Row, Col, Type>(
+      +std::cos(z), -std::sin(z), static_cast<Type>(0.0), static_cast<Type>(0.0),
+      +std::sin(z), +std::cos(z), static_cast<Type>(0.0), static_cast<Type>(0.0),
+      static_cast<Type>(0.0), static_cast<Type>(0.0), static_cast<Type>(1.0), static_cast<Type>(0.0),
+      static_cast<Type>(0.0), static_cast<Type>(0.0), static_cast<Type>(0.0), static_cast<Type>(1.0))
+    * Math::Matrix<Row, Col, Type>(
+      +std::cos(y), static_cast<Type>(0.0), +std::sin(y), static_cast<Type>(0.0),
+      static_cast<Type>(0.0), static_cast<Type>(1.0), static_cast<Type>(0.0), static_cast<Type>(0.0),
+      -std::sin(y), static_cast<Type>(0.0), +std::cos(y), static_cast<Type>(0.0),
+      static_cast<Type>(0.0), static_cast<Type>(0.0), static_cast<Type>(0.0), static_cast<Type>(1.0))
+    * Math::Matrix<Row, Col, Type>(
+      static_cast<Type>(1.0), static_cast<Type>(0.0), static_cast<Type>(0.0), static_cast<Type>(0.0),
+      static_cast<Type>(0.0), +std::cos(x), +std::sin(x), static_cast<Type>(0.0),
+      static_cast<Type>(0.0), -std::sin(x), +std::cos(x), static_cast<Type>(0.0),
+      static_cast<Type>(0.0), static_cast<Type>(0.0), static_cast<Type>(0.0), static_cast<Type>(1.0));
 }
 
-template<>
-Math::Matrix<4, 4>  Math::Matrix<4, 4>::rotation(float a, float x, float y, float z)
+template Math::Matrix<4, 4, float>  Math::Matrix<4, 4, float>::rotation(float, float, float);
+template Math::Matrix<4, 4, double> Math::Matrix<4, 4, double>::rotation(double, double, double);
+
+template<unsigned int Row, unsigned int Col, typename Type>
+Math::Matrix<Row, Col, Type>  Math::Matrix<Row, Col, Type>::rotation(Type a, Type x, Type y, Type z)
 {
-  float              l = std::sqrt(x * x + y * y + z * z);
+  Type  l = std::sqrt(x * x + y * y + z * z);
 
 #ifdef _DEBUG
   // Should not happen
@@ -119,45 +133,54 @@ Math::Matrix<4, 4>  Math::Matrix<4, 4>::rotation(float a, float x, float y, floa
   z /= l;
 
   // Generate a rotation matrix
-  return Math::Matrix<4, 4>(
-    x * x * (1.f - std::cos(a)) + std::cos(a),
-    x * y * (1.f - std::cos(a)) + z * std::sin(a),
-    x * z * (1.f - std::cos(a)) - y * std::sin(a),
-    0.f,
+  return Math::Matrix<Row, Col, Type>(
+    x * x * (static_cast<Type>(1.0) - std::cos(a)) + std::cos(a),
+    x * y * (static_cast<Type>(1.0) - std::cos(a)) + z * std::sin(a),
+    x * z * (static_cast<Type>(1.0) - std::cos(a)) - y * std::sin(a),
+    static_cast<Type>(0.0),
 
-    y * x * (1.f - std::cos(a)) - z * std::sin(a),
-    y * y * (1.f - std::cos(a)) + std::cos(a),
-    y * z * (1.f - std::cos(a)) + x * std::sin(a),
-    0.f,
+    y * x * (static_cast<Type>(1.0) - std::cos(a)) - z * std::sin(a),
+    y * y * (static_cast<Type>(1.0) - std::cos(a)) + std::cos(a),
+    y * z * (static_cast<Type>(1.0) - std::cos(a)) + x * std::sin(a),
+    static_cast<Type>(0.0),
 
-    z * x * (1.f - std::cos(a)) + y * std::sin(a),
-    z * y * (1.f - std::cos(a)) - x * std::sin(a),
-    z * z * (1.f - std::cos(a)) + std::cos(a),
-    0.f,
+    z * x * (static_cast<Type>(1.0) - std::cos(a)) + y * std::sin(a),
+    z * y * (static_cast<Type>(1.0) - std::cos(a)) - x * std::sin(a),
+    z * z * (static_cast<Type>(1.0) - std::cos(a)) + std::cos(a),
+    static_cast<Type>(0.0),
 
-    0.f,
-    0.f,
-    0.f,
-    1.f);
+    static_cast<Type>(0.0),
+    static_cast<Type>(0.0),
+    static_cast<Type>(0.0),
+    static_cast<Type>(1.0));
 }
 
-template<>
-Math::Matrix<3, 3>  Math::Matrix<3, 3>::shear(float xy, float yx)
+template Math::Matrix<4, 4, float>  Math::Matrix<4, 4, float>::rotation(float, float, float, float);
+template Math::Matrix<4, 4, double> Math::Matrix<4, 4, double>::rotation(double, double, double, double);
+
+template<unsigned int Row, unsigned int Col, typename Type>
+Math::Matrix<Row, Col, Type>  Math::Matrix<Row, Col, Type>::shear(Type xy, Type yx)
 {
   // Generate shearing matrix
-  return Math::Matrix<3, 3>(
-    1.f, yx, 0.f,
-    xy, 1.f, 0.f,
-    0.f, 0.f, 1.f);
+  return Math::Matrix<Row, Col, Type>(
+    static_cast<Type>(1.0), yx, static_cast<Type>(0.0),
+    xy, static_cast<Type>(1.0), static_cast<Type>(0.0),
+    static_cast<Type>(0.0), static_cast<Type>(0.0), static_cast<Type>(1.0));
 }
 
-template<>
-Math::Matrix<4, 4>  Math::Matrix<4, 4>::shear(float xy, float xz, float yx, float yz, float zx, float zy)
+template Math::Matrix<3, 3, float>  Math::Matrix<3, 3, float>::shear(float, float);
+template Math::Matrix<3, 3, double> Math::Matrix<3, 3, double>::shear(double, double);
+
+template<unsigned int Row, unsigned int Col, typename Type>
+Math::Matrix<Row, Col, Type>  Math::Matrix<Row, Col, Type>::shear(Type xy, Type xz, Type yx, Type yz, Type zx, Type zy)
 {
   // Generate shearing matrix
-  return Math::Matrix<4, 4>(
-    1.f, yx, zx, 0.f,
-    xy, 1.f, zy, 0.f,
-    xz, yz, 1.f, 0.f,
-    0.f, 0.f, 0.f, 1.f);
+  return Math::Matrix<Row, Col, Type>(
+    static_cast<Type>(1.0), yx, zx, static_cast<Type>(0.0),
+    xy, static_cast<Type>(1.0), zy, static_cast<Type>(0.0),
+    xz, yz, static_cast<Type>(1.0), static_cast<Type>(0.0),
+    static_cast<Type>(0.0), static_cast<Type>(0.0), static_cast<Type>(0.0), static_cast<Type>(1.0));
 }
+
+template Math::Matrix<4, 4, float>  Math::Matrix<4, 4, float>::shear(float, float, float, float, float, float);
+template Math::Matrix<4, 4, double> Math::Matrix<4, 4, double>::shear(double, double, double, double, double, double);
