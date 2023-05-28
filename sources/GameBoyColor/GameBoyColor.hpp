@@ -11,8 +11,6 @@
 #include <fstream>
 #include <iostream>
 
-#include <SFML/Graphics/Image.hpp>
-
 #include "GameBoyColor/AudioProcessingUnit.hpp"
 #include "GameBoyColor/CentralProcessingUnit.hpp"
 #include "GameBoyColor/MemoryBankController.hpp"
