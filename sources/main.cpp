@@ -14,6 +14,9 @@
 # include <X11/Xlib.h>
 #endif
 
+// TODO: remove this
+#include "Quiz/QuizScene.hpp"
+
 namespace Game
 {
   void  initialize(int argc, char ** argv)
@@ -31,6 +34,9 @@ namespace Game
 
     // Push initial state
     game.push<Game::SplashScene>();
+
+    // TODO: remove this
+    game.push<QUIZ::QuizScene>(Game::Config::ExecutablePath + "/assets/quiz/config.json");
 
     // Run the game !
     while (Game::Window::Instance().window().isOpen()) {

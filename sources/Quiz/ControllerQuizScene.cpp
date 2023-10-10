@@ -42,7 +42,7 @@ QUIZ::ControllerQuizScene::ControllerQuizScene(Game::SceneMachine& machine, QUIZ
     << "Commands:" << std::endl
     << "  [R]eset:  reset timer" << std::endl
     << "  [S]kip:   skip timer to end" << std::endl
-    << "  [E]nd:    end player selection" << std::endl
+    << "  [E]nd:    end controller selection" << std::endl
     << std::endl;
 }
 
@@ -187,7 +187,7 @@ void  QUIZ::ControllerQuizScene::draw()
   drawTimer();
 }
 
-int QUIZ::ControllerQuizScene::drawPlayersGrid()
+int QUIZ::ControllerQuizScene::drawPlayersGrid() const
 {
   float screen_ratio = (float)Game::Window::Instance().window().getSize().x / (float)Game::Window::Instance().window().getSize().y;
   int   best_line = 1;

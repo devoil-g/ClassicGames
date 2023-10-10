@@ -25,9 +25,9 @@ namespace QUIZ
     void  updateAvatar();     // Change avatar of players
     void  updateHost();       // Handle host commands
 
-    int   drawPlayersGrid();  // Compute number of line of player grid
-    void  drawPlayers();      // Draw players
-    void  drawTimer();        // Draw timer bar
+    int   drawPlayersGrid() const;  // Compute number of line of player grid
+    void  drawPlayers();            // Draw players
+    void  drawTimer();              // Draw timer bar
 
   public:
     ControllerQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz);

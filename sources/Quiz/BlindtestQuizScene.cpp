@@ -157,7 +157,7 @@ bool  QUIZ::BlindtestQuizScene::update(sf::Time elapsed)
 void  QUIZ::BlindtestQuizScene::updatePlaying()
 {
   // Pause/resume music
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::P)) {
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::P) == true) {
     if (_music.getStatus() == sf::Sound::Playing)
       _music.pause();
     else
@@ -165,17 +165,17 @@ void  QUIZ::BlindtestQuizScene::updatePlaying()
   }
 
   // Reset music
-  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R)) {
+  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true) {
     _music.setPlayingOffset(sf::Time::Zero);
     _music.play();
   }
 
   // Skip to answer
-  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::A))
+  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::A) == true)
     setAnswer();
 
   // End blindtest
-  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::E))
+  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::E) == true)
     _machine.pop();
 
   // Check player buzzer
@@ -199,7 +199,7 @@ void  QUIZ::BlindtestQuizScene::updatePlaying()
 void  QUIZ::BlindtestQuizScene::updatePending()
 {
   // Correct answer
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::C)) {
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::C) == true) {
     auto  ref = Game::Audio::Sound::Instance().get();
 
     // Play correct answer sound
@@ -214,7 +214,7 @@ void  QUIZ::BlindtestQuizScene::updatePending()
   }
 
   // Wrong answer
-  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::W)) {
+  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::W) == true) {
     auto  ref = Game::Audio::Sound::Instance().get();
 
     // Play correct answer sound
@@ -225,14 +225,14 @@ void  QUIZ::BlindtestQuizScene::updatePending()
   }
 
   // End blindtest
-  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::E))
+  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::E) == true)
     _machine.pop();
 }
 
 void  QUIZ::BlindtestQuizScene::updateAnswer()
 {
   // Pause/resume music
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::P)) {
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::P) == true) {
     if (_music.getStatus() == sf::Sound::Playing)
       _music.pause();
     else
@@ -240,20 +240,20 @@ void  QUIZ::BlindtestQuizScene::updateAnswer()
   }
 
   // Reset music
-  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R)) {
+  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true) {
     _music.setPlayingOffset(sf::Time::Zero);
     _music.play();
   }
 
   // Next blindtest
-  else if (_quiz.blindtests.empty() == false && Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::N)) {
+  else if (_quiz.blindtests.empty() == false && Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::N) == true) {
     _machine.swap<QUIZ::BlindtestQuizScene>(_quiz);
     return;
   }
     
 
   // End blindtest
-  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::E)) {
+  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::E) == true) {
     _machine.pop();
     return;
   }

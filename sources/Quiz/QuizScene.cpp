@@ -2,7 +2,7 @@
 
 #include "Quiz/QuizScene.hpp"
 #include "Quiz/ControllerQuizScene.hpp"
-#include "Quiz/BlindtestQuizScene.hpp"
+#include "Quiz/ScoresQuizScene.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 #include "System/Audio/Sound.hpp"
@@ -16,7 +16,8 @@ QUIZ::QuizScene::QuizScene(Game::SceneMachine& machine, const std::string& confi
   _elapsed(sf::Time::Zero),
   _bar(sf::Vector2f(1.f, 1.f))
 {
-  // Push initial state
+  // Push initial states
+  _game.push<QUIZ::ScoresQuizScene>(_quiz);
   _game.push<QUIZ::ControllerQuizScene>(_quiz);
 
   // Initialize force exit bar
@@ -46,12 +47,8 @@ bool  QUIZ::QuizScene::update(sf::Time elapsed)
   }
 
   // Update game
-  if (_game.update(elapsed) == true)
-  {
-    // TODO: set selection scene
-    _game.push<QUIZ::BlindtestQuizScene>(_quiz);
-
-    //_machine.pop();
+  if (_game.update(elapsed) == true) {
+    _game.push<QUIZ::ScoresQuizScene>(_quiz);
     return false;
   }
 

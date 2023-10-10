@@ -147,6 +147,8 @@ SET(GAME_QUIZ_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/Quiz.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/QuizScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/QuizScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/ScoresQuizScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/ScoresQuizScene.cpp
 )
 SET(GAME_MATH_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.cpp
