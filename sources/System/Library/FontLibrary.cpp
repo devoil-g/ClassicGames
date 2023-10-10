@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 #include "System/Library/FontLibrary.hpp"
 #include "System/Config.hpp"
 

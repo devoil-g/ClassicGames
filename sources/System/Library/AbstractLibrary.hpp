@@ -14,7 +14,7 @@ namespace Game
     AbstractLibrary() = default;
     virtual ~AbstractLibrary() = 0;
 
-    const Data& get(const Key& key) // Return data linked to key
+    Data& get(const Key& key) // Return data linked to key
     {
       // Load data if not in library
       if (_library.find(key) == _library.end())

@@ -13,6 +13,34 @@ sf::Time const      Game::Window::FpsRefresh = sf::seconds(1.f);
 bool const          Game::Window::DefaultVerticalSync = true;
 float const         Game::Window::Joystick::DeadZone = 20.f;
 
+std::unordered_map<int, Game::Window> Game::Window::_windows;
+
+Game::Window& Game::Window::Instance(int id)
+{
+  static Game::Window wwin;
+
+  return wwin;
+
+  // Get or create window
+  return _windows[id];
+}
+
+void  Game::Window::Delete(int id)
+{
+  // Get or create window
+  if (id == 0 || _windows.find(id) == _windows.end())
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // Remove window instance
+  _windows.erase(id);
+}
+
+void  Game::Window::Clear()
+{
+  // Remove every window except ID 0
+  std::erase_if(_windows, [](const std::pair<const int, Game::Window>& window) { return window.first != 0; });
+}
+
 Game::Window::Window() :
   _window(), _mouse(), _keyboard(), _joystick(), _elapsed(), _tick(), _sync(Game::Window::DefaultVerticalSync)
 {
@@ -24,7 +52,7 @@ Game::Window::Window() :
   ::CoInitialize(nullptr);
   ::CoCreateInstance(::CLSID_TaskbarList, nullptr, ::tagCLSCTX::CLSCTX_INPROC_SERVER, ::IID_ITaskbarList3, (void **)&_taskbar);
   if (_taskbar == nullptr)
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());  
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 #endif
 }
 

@@ -2,6 +2,7 @@
 
 #include <array>
 #include <string>
+#include <unordered_map>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -103,10 +104,12 @@ namespace Game
     void*           _taskbar; // Not supported on Linux for now
 #endif
 
+    static std::unordered_map<int, Game::Window>  _windows; // Map of opened windows
+
+  public:
     Window();
     ~Window() = default;
 
-  public:
 #ifdef _WIN32
     enum WindowFlag
     {
@@ -127,7 +130,9 @@ namespace Game
     };
 #endif
 
-    inline static Game::Window& Instance() { static Game::Window singleton; return singleton; };  // Get instance (singleton)
+    static Game::Window&  Instance(int id = 0); // Get a window instance (create if non-existent)
+    static void           Delete(int id);       // Remove a window instance (ID 0 can't be deleted)
+    static void           Clear();              // Remove every window instance except ID 0
 
     bool  update(sf::Time);                                                                         // Update window (get events)
     void  create(const sf::VideoMode& video, sf::Uint32 style, const sf::ContextSettings& context); // (Re)create window with parameters

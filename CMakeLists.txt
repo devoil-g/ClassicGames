@@ -126,6 +126,28 @@ SET(GAME_GBC_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/SelectionScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/SelectionScene.cpp
 )
+SET(GAME_RPG_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/GameServer.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/GameServer.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/TcpServer.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/TcpServer.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/GameClient.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/GameClient.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/TcpClient.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/TcpClient.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Level.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Level.cpp
+)
+SET(GAME_QUIZ_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/BlindtestQuizScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/BlindtestQuizScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/ControllerQuizScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/ControllerQuizScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/Quiz.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/Quiz.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/QuizScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/QuizScene.cpp
+)
 SET(GAME_MATH_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.hpp
@@ -161,6 +183,8 @@ SET(GAME_STATES_MENU_SRCS
 SET(GAME_SYSTEM_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Config.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Config.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/JavaScriptObjectNotation.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/JavaScriptObjectNotation.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Utilities.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Utilities.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Window.cpp
@@ -183,6 +207,8 @@ SET(GAME_SYSTEM_LIBRARY_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Library/AbstractLibrary.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Library/FontLibrary.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Library/FontLibrary.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Library/SoundLibrary.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Library/SoundLibrary.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Library/TextureLibrary.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Library/TextureLibrary.hpp
 )
@@ -194,6 +220,8 @@ SET(GAME_SRCS
 	${GAME_DOOM_THING_SRCS}
 	${GAME_DOOM_STATES_SRCS}
 	${GAME_GBC_SRCS}
+	${GAME_RPG_SRCS}
+	${GAME_QUIZ_SRCS}
 	${GAME_MATH_SRCS}
 	${GAME_STATES_SRCS}
 	${GAME_STATES_MENU_SRCS}
@@ -219,6 +247,8 @@ SOURCE_GROUP("\\Doom\\Action\\" FILES ${GAME_DOOM_ACTION_SRCS})
 SOURCE_GROUP("\\Doom\\Thing\\" FILES ${GAME_DOOM_THING_SRCS})
 SOURCE_GROUP("\\Doom\\Scenes\\" FILES ${GAME_DOOM_STATES_SRCS})
 SOURCE_GROUP("\\GameBoyColor\\" FILES ${GAME_GBC_SRCS})
+SOURCE_GROUP("\\RolePlayingGame\\" FILES ${GAME_RPG_SRCS})
+SOURCE_GROUP("\\Quiz\\" FILES ${GAME_QUIZ_SRCS})
 SOURCE_GROUP("\\Math\\" FILES ${GAME_MATH_SRCS})
 SOURCE_GROUP("\\Scenes\\" FILES ${GAME_STATES_SRCS})
 SOURCE_GROUP("\\Scenes\\Menu\\" FILES ${GAME_STATES_MENU_SRCS})
