@@ -15,6 +15,7 @@ namespace Game
   private:
     void  selectDoom(Game::AbstractMenuScene::Item&, const std::string& wad, DOOM::Enum::Mode mode);  // Create a new game of DOOM
     void  selectGameBoy(Game::AbstractMenuScene::Item&);                                              // Create a GameBoy emulator
+    void  selectQuiz(Game::AbstractMenuScene::Item&);                                                 // Start a quiz
     void  selectOptions(Game::AbstractMenuScene::Item&);                                              // Go to option menu
     void  selectExit(Game::AbstractMenuScene::Item&);                                                 // Exit game
 

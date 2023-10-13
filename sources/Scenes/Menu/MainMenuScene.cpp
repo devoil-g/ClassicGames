@@ -2,6 +2,7 @@
 
 #include "Doom/Scenes/DoomScene.hpp"
 #include "GameBoyColor/SelectionScene.hpp"
+#include "Quiz/QuizScene.hpp"
 #include "Scenes/Menu/MainMenuScene.hpp"
 #include "Scenes/Menu/OptionsMenuScene.hpp"
 #include "Scenes/LoadingScene.hpp"
@@ -18,6 +19,7 @@ Game::MainMenuScene::MainMenuScene(Game::SceneMachine& machine) :
   add("DOOM", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath + "assets/levels/doom.wad", DOOM::Enum::Mode::ModeRetail)));
   add("DOOM II", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath + "assets/levels/doom2.wad", DOOM::Enum::Mode::ModeCommercial)));
   add("Game Boy", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectGameBoy, this, std::placeholders::_1)));
+  add("Quiz", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectQuiz, this, std::placeholders::_1)));
   add("Options", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectOptions, this, std::placeholders::_1)));
   footer("Exit", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectExit, this, std::placeholders::_1)));
 }
@@ -56,6 +58,19 @@ void  Game::MainMenuScene::selectGameBoy(Game::AbstractMenuScene::Item&)
   // Error message when no game found
   catch (const std::exception&) {
     _machine.push<Game::MessageScene>("Error: no games found in /assets/gbc/.");
+  }
+}
+
+void  Game::MainMenuScene::selectQuiz(Game::AbstractMenuScene::Item&)
+{
+  // Go to quiz scene
+  try {
+    _machine.push<QUIZ::QuizScene>(Game::Config::ExecutablePath + "/assets/quiz/config.json");
+  }
+
+  // Error message when quiz loading failed
+  catch (const std::exception&) {
+    _machine.push<Game::MessageScene>("Error: failed to load quiz.");
   }
 }
 
