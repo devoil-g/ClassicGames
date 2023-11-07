@@ -9,6 +9,14 @@
 Game::JSON::Number::Number() : value(0) {}
 Game::JSON::Boolean::Boolean() : value(false) {}
 
+// Value constructors
+Game::JSON::Object::Object(std::unordered_map<std::string, std::unique_ptr<Game::JSON::Element>>&& map) : map(std::move(map)) {}
+Game::JSON::Array::Array(std::vector<std::unique_ptr<Game::JSON::Element>>&& vector) : vector(std::move(vector)) {}
+Game::JSON::Number::Number(double value) : value(value) {}
+Game::JSON::String::String(const std::string& value) : value(value) {}
+Game::JSON::String::String(std::string&& value) : value(std::move(value)) {}
+Game::JSON::Boolean::Boolean(bool value) : value(value) {}
+
 // Exception constructors
 Game::JSON::TypeError::TypeError(const std::string& message) : std::runtime_error(message) {}
 Game::JSON::FileError::FileError(const std::string& message) : std::runtime_error(message) {}
@@ -166,7 +174,7 @@ std::unique_ptr<Game::JSON::Element>  Game::JSON::Object::loadElement(const std:
   }
 
   // No match
-  throw Game::JSON::ParsingError("Unexpected (pos: " + std::to_string(std::distance(text.begin(), iterator)) + ")");
+  throw Game::JSON::ParsingError("Unexpected character (pos: " + std::to_string(std::distance(text.begin(), iterator)) + ")");
 }
 
 void  Game::JSON::Object::loadObject(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Object& object)
@@ -292,11 +300,10 @@ void  Game::JSON::Object::loadNumber(const std::string& text, std::string::const
   loadWhitespaces(text, iterator);
 
   std::size_t pos = 0;
-  std::string string = std::string(iterator, text.end());
-
+  
   // Read double from string
   // TODO: support 0b binary, 0 octal & 0x hex prefix
-  number.value = std::stod(string, &pos);
+  number.value = std::stod(std::string(iterator, text.end()), &pos);
 
   // No character read from string
   if (pos == 0)
@@ -376,13 +383,13 @@ void  Game::JSON::Object::loadBoolean(const std::string& text, std::string::cons
   loadWhitespaces(text, iterator);
 
   // True value
-  if (text.substr(0, 4) == "true") {
+  if (std::string(iterator, text.end()).substr(0, 4) == "true") {
     boolean.value = true;
     std::advance(iterator, 4);
   }
 
   // False value
-  else if (text.substr(0, 4) == "false") {
+  else if (std::string(iterator, text.end()).substr(0, 5) == "false") {
     boolean.value = false;
     std::advance(iterator, 5);
   }
@@ -398,7 +405,7 @@ void  Game::JSON::Object::loadNull(const std::string& text, std::string::const_i
   loadWhitespaces(text, iterator);
 
   // Null value
-  if (text.substr(0, 4) == "null")
+  if (std::string(iterator, text.end()).substr(0, 4) == "null")
     std::advance(iterator, 4);
 
   // Invalid value

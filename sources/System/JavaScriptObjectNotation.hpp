@@ -86,6 +86,7 @@ namespace Game
 
       Object() = default;
       Object(const Object&) = delete;
+      Object(std::unordered_map<std::string, std::unique_ptr<Game::JSON::Element>>&& map);
       Object(Object&&) = default;
       Object(const std::filesystem::path& path);
       ~Object() override = default;
@@ -111,6 +112,7 @@ namespace Game
 
       Array() = default;
       Array(const Array&) = delete;
+      Array(std::vector<std::unique_ptr<Game::JSON::Element>>&& vector);
       Array(Array&&) = default;
       ~Array() override = default;
 
@@ -131,6 +133,7 @@ namespace Game
       double value;
 
       Number();
+      Number(double value);
       Number(const Number&) = default;
       Number(Number&&) = default;
       ~Number() override = default;
@@ -152,7 +155,9 @@ namespace Game
       std::string value;
 
       String() = default;
+      String(const std::string& value);
       String(const String&) = default;
+      String(std::string&& value);
       String(String&&) = default;
       ~String() override = default;
 
@@ -173,6 +178,7 @@ namespace Game
       bool value;
 
       Boolean();
+      Boolean(bool value);
       Boolean(const Boolean&) = default;
       Boolean(Boolean&&) = default;
       ~Boolean() override = default;
