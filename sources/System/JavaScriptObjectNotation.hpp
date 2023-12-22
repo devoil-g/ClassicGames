@@ -12,8 +12,9 @@
 namespace Game
 {
   
-  namespace JSON
+  class JSON
   {
+  public:
     // Forward declaration of JSON types
     class Object;
     class Array;
@@ -70,17 +71,6 @@ namespace Game
 
     class Object : public Element
     {
-    private:
-      void                                  loadWhitespaces(const std::string& text, std::string::const_iterator& iterator);  // Skip whitespaces
-      std::unique_ptr<Game::JSON::Element>  loadElement(const std::string& text, std::string::const_iterator& iterator);      // Load JSON element
-
-      void  loadObject(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Object& object);
-      void  loadArray(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Array& array);
-      void  loadNumber(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Number& number);
-      void  loadString(const std::string& text, std::string::const_iterator& iterator, Game::JSON::String& string);
-      void  loadBoolean(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Boolean& boolean);
-      void  loadNull(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Null& null);
-
     public:
       std::unordered_map<std::string, std::unique_ptr<Game::JSON::Element>> map;  // Name-value pairs collection
 
@@ -88,7 +78,6 @@ namespace Game
       Object(const Object&) = delete;
       Object(std::unordered_map<std::string, std::unique_ptr<Game::JSON::Element>>&& map);
       Object(Object&&) = default;
-      Object(const std::filesystem::path& path);
       ~Object() override = default;
 
       Object& operator=(const Object&) = delete;
@@ -99,9 +88,6 @@ namespace Game
       Game::JSON::Object&       object() override;
       const Game::JSON::Object& object() const override;
       
-      void  load(const std::filesystem::path& path);        // Clear JSON object and load given JSON file, throw errors
-      void  save(const std::filesystem::path& path) const;  // Save JSON object to file, throw error
-
       std::string stringify() const override;
     };
 
@@ -232,7 +218,25 @@ namespace Game
       ParsingError(const std::string& message);
       ~ParsingError() = default;
     };
-  }
+
+  private:
+    static void                                 loadWhitespaces(const std::string& text, std::string::const_iterator& iterator);  // Skip whitespaces
+    static std::unique_ptr<Game::JSON::Element> loadElement(const std::string& text, std::string::const_iterator& iterator);      // Load JSON element
+
+    static void loadObject(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Object& object);
+    static void loadArray(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Array& array);
+    static void loadNumber(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Number& number);
+    static void loadString(const std::string& text, std::string::const_iterator& iterator, Game::JSON::String& string);
+    static void loadBoolean(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Boolean& boolean);
+    static void loadNull(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Null& null);
+
+    JSON() = delete;
+
+  public:
+    static Game::JSON::Object load(const std::filesystem::path& path);                                  // Clear JSON object and load given JSON file, throw errors
+    static Game::JSON::Object load(const std::string& text);                                            // Clear JSON object and load given JSON file, throw errors
+    static void               save(const std::filesystem::path& path, const Game::JSON::Object& json);  // Save JSON object to file, throw error
+  };
 }
 
 // Write JSON to stream

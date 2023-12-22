@@ -8,7 +8,7 @@
 #include "System/Config.hpp"
 #include "System/Utilities.hpp"
 
-void  DOOM::Wad::load(const std::string& path)
+void  DOOM::Wad::load(const std::filesystem::path& path)
 {
   std::ifstream file(path, std::ifstream::binary);
 
@@ -32,7 +32,7 @@ void  DOOM::Wad::load(const std::string& path)
 
   // Load base level if file is an extension
   if (std::string((const char*)identification) != "IWAD")
-    load(Game::Config::ExecutablePath + "/assets/levels/doom.wad");
+    load(Game::Config::ExecutablePath / "assets" / "levels" / "doom.wad");
 
   // Load lumps
   loadLumps(file, numlumps, infotableofs);

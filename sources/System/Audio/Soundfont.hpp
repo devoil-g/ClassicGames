@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <fstream>
 #include <exception>
 #include <string>
@@ -218,7 +219,7 @@ namespace Game
       };
 #pragma pack(pop)
 
-      void  load(const std::string& filename);
+      void  load(const std::filesystem::path& filename);
       void  loadSections(std::ifstream& file, const Game::Audio::Soundfont::Sf2Header& header, std::vector<float>& samplesFloat);
       void  loadSectionList(std::ifstream& file, const Game::Audio::Soundfont::Sf2Header& header, const Game::Audio::Soundfont::Sf2SectionHeader& section, std::vector<float>& samplesFloat, std::streampos position);
       void  loadSectionListInfo(std::ifstream& file, const Game::Audio::Soundfont::Sf2Header& header, const Game::Audio::Soundfont::Sf2SectionHeader& section, std::streampos position);
@@ -318,7 +319,7 @@ namespace Game
         std::size_t         link;       // Index of other channel for stereo samples
       };
 
-      Soundfont(const std::string& filename);
+      Soundfont(const std::filesystem::path& filename);
       ~Soundfont() = default;
 
       Soundfont::Info                                                             info;     // General informations

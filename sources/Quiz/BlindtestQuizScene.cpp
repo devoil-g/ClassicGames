@@ -34,13 +34,13 @@ QUIZ::BlindtestQuizScene::BlindtestQuizScene(Game::SceneMachine& machine, QUIZ::
   _quiz.blindtests.erase(iterator);
 
   // Load music
-  if (_music.openFromFile(Game::Config::ExecutablePath + _blindtest.music) == false)
+  if (_music.openFromFile(Game::Config::ExecutablePath.string() + "/" + _blindtest.music) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Load texture
-  if (_cover.loadFromFile(Game::Config::ExecutablePath + _blindtest.cover) == false ||
-    _play.loadFromFile(Game::Config::ExecutablePath + "/assets/quiz/images/play.png") == false ||
-    _pause.loadFromFile(Game::Config::ExecutablePath + "/assets/quiz/images/pause.png") == false)
+  if (_cover.loadFromFile(Game::Config::ExecutablePath.string() + "/" + _blindtest.cover) == false ||
+    _play.loadFromFile((Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "play.png").string()) == false ||
+    _pause.loadFromFile((Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "pause.png").string()) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Smooth textures
@@ -61,7 +61,11 @@ QUIZ::BlindtestQuizScene::BlindtestQuizScene(Game::SceneMachine& machine, QUIZ::
   setPlaying();
 
   // Set default volume to 66%
-  _music.setVolume(66.f);
+  _music.setVolume(66.6f);
+
+  // Set initial cooldown to 0.1s
+  for (int index = 0; index < _quiz.players.size(); index++)
+    _cooldown[index] = 0.1f;
 }
 
 void  QUIZ::BlindtestQuizScene::setPlaying()
@@ -128,24 +132,24 @@ void  QUIZ::BlindtestQuizScene::setAnswer()
     << std::endl;
 }
 
-bool  QUIZ::BlindtestQuizScene::update(sf::Time elapsed)
+bool  QUIZ::BlindtestQuizScene::update(float elapsed)
 {
   // Change volume
   if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::PageUp))
-    _music.setVolume(std::clamp(_music.getVolume() + elapsed.asSeconds() * 84.f, 0.f, 200.f));
+    _music.setVolume(std::clamp(_music.getVolume() + elapsed * 84.f, 0.f, 200.f));
   if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::PageDown))
-    _music.setVolume(std::clamp(_music.getVolume() - elapsed.asSeconds() * 84.f, 0.f, 200.f));
+    _music.setVolume(std::clamp(_music.getVolume() - elapsed * 84.f, 0.f, 200.f));
 
   switch (_state)
   {
   case QUIZ::BlindtestQuizScene::StatePlaying:
-    updatePlaying();
+    updatePlaying(elapsed);
     break;
   case QUIZ::BlindtestQuizScene::StatePending:
-    updatePending();
+    updatePending(elapsed);
     break;
   case QUIZ::BlindtestQuizScene::StateAnswer:
-    updateAnswer();
+    updateAnswer(elapsed);
     break;
   default:
     break;
@@ -154,8 +158,14 @@ bool  QUIZ::BlindtestQuizScene::update(sf::Time elapsed)
   return false;
 }
 
-void  QUIZ::BlindtestQuizScene::updatePlaying()
+void  QUIZ::BlindtestQuizScene::updatePlaying(float elapsed)
 {
+  // Update player cooldown
+  if (_music.getStatus() == sf::Sound::Playing) {
+    for (int index = 0; index < _quiz.players.size(); index++)
+      _cooldown[index] -= elapsed;
+  }
+
   // Pause/resume music
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::P) == true) {
     if (_music.getStatus() == sf::Sound::Playing)
@@ -179,13 +189,13 @@ void  QUIZ::BlindtestQuizScene::updatePlaying()
     _machine.pop();
 
   // Check player buzzer
-  else {
+  else if (_music.getStatus() == sf::Sound::Playing) {
     for (int index = 0; index < _quiz.players.size(); index++) {
-      if (Game::Window::Instance().joystick().buttonPressed(_quiz.players[index].joystick, _quiz.players[index].button + QUIZ::Quiz::Button::ButtonBuzzer) == true) {
+      if (_cooldown[index] <= 0.f && Game::Window::Instance().joystick().buttonPressed(_quiz.players[index].joystick, _quiz.players[index].button + QUIZ::Quiz::Button::ButtonBuzzer) == true) {
         auto  ref = Game::Audio::Sound::Instance().get();
 
         // Play buzzer sound
-        ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath + "/assets/quiz/sounds/buzzer1.wav"));
+        ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / "buzzer1.wav"));
         ref.sound.play();
 
         setPending(index);
@@ -196,18 +206,18 @@ void  QUIZ::BlindtestQuizScene::updatePlaying()
 
 }
 
-void  QUIZ::BlindtestQuizScene::updatePending()
+void  QUIZ::BlindtestQuizScene::updatePending(float elapsed)
 {
   // Correct answer
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::C) == true) {
     auto  ref = Game::Audio::Sound::Instance().get();
 
     // Play correct answer sound
-    ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath + "/assets/quiz/sounds/correct1.wav"));
+    ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / "correct1.wav"));
     ref.sound.play();
 
     // Resume music at reduced volume
-    _music.setVolume(_music.getVolume() * 0.5f);
+    _music.setVolume(_music.getVolume() * 0.66f);
     _music.play();
 
     setAnswer();
@@ -217,9 +227,12 @@ void  QUIZ::BlindtestQuizScene::updatePending()
   else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::W) == true) {
     auto  ref = Game::Audio::Sound::Instance().get();
 
-    // Play correct answer sound
-    ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath + "/assets/quiz/sounds/wrong1.wav"));
+    // Play wrong answer sound
+    ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / "wrong1.wav"));
     ref.sound.play();
+
+    // Set player cooldown
+    _cooldown[_player] = 8.4f;
 
     setPlaying();
   }
@@ -229,7 +242,7 @@ void  QUIZ::BlindtestQuizScene::updatePending()
     _machine.pop();
 }
 
-void  QUIZ::BlindtestQuizScene::updateAnswer()
+void  QUIZ::BlindtestQuizScene::updateAnswer(float elapsed)
 {
   // Pause/resume music
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::P) == true) {

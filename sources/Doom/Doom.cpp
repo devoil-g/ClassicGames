@@ -6,7 +6,7 @@
 #include "Doom/Action/RandomLightingAction.hpp"
 #include "Doom/Thing/PlayerThing.hpp"
 
-const sf::Time      DOOM::Doom::Tic = sf::seconds(1.f / 35.f);
+const float         DOOM::Doom::Tic = 1.f / 35.f;
 const unsigned int  DOOM::Doom::RenderWidth = 320;
 const unsigned int  DOOM::Doom::RenderHeight = 200;
 unsigned int        DOOM::Doom::RenderScale = 1;
@@ -139,7 +139,7 @@ DOOM::Doom::Doom() :
   image()
 {}
 
-void  DOOM::Doom::load(const std::string& path, DOOM::Enum::Mode mode)
+void  DOOM::Doom::load(const std::filesystem::path& path, DOOM::Enum::Mode mode)
 {
   // Clear resources
   clear();
@@ -154,7 +154,7 @@ void  DOOM::Doom::load(const std::string& path, DOOM::Enum::Mode mode)
   buildResources();
 }
 
-void  DOOM::Doom::update(sf::Time elapsed)
+void  DOOM::Doom::update(float elapsed)
 {
   // Update components
   resources.update(*this, elapsed);
@@ -368,7 +368,7 @@ void  DOOM::Doom::buildResources()
   }
 
   // Update components (might be useful for initializations)
-  resources.update(*this, sf::Time::Zero);
+  resources.update(*this, 0.f);
 }
 
 void  DOOM::Doom::buildResourcesPalettes()
@@ -535,7 +535,7 @@ void  DOOM::Doom::buildLevel(const std::pair<uint8_t, uint8_t>& level)
   }
 
   // Update components (might be useful for initializations)
-  this->level.update(*this, sf::Time::Zero);
+  this->level.update(*this, 0.f);
 }
 
 void  DOOM::Doom::buildLevelVertexes()
@@ -656,14 +656,14 @@ void  DOOM::Doom::buildLevelStatistics()
     level.statistics.players[player.get().id] = DOOM::Doom::Level::Statistics::Stats();
 }
 
-void  DOOM::Doom::Resources::update(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::Doom::Resources::update(DOOM::Doom& doom, float elapsed)
 {
   // Update resources flats
   for (const auto& flat : flats)
     flat.second->update(doom, elapsed);
 }
 
-void  DOOM::Doom::Level::update(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::Doom::Level::update(DOOM::Doom& doom, float elapsed)
 {
   // Update level linedef
   for (const auto& linedef : linedefs)
@@ -1218,25 +1218,25 @@ std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>> DOOM::
   return result;
 }
 
-void  DOOM::Doom::Level::Sidedef::update(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::Doom::Level::Sidedef::update(DOOM::Doom& doom, float elapsed)
 {
   // Add elapsed time to total
   _elapsed += elapsed;
 
   // Re-toggle switch
-  if (_toggle > sf::Time::Zero) {
+  if (_toggle > 0.f) {
     _toggle -= elapsed;
 
     // Switch texture if toggle time elapsed
-    if (_toggle <= sf::Time::Zero)
-      switched(doom, sf::Time::Zero);
+    if (_toggle <= 0.f)
+      switched(doom, 0.f);
   }
 }
 
-bool  DOOM::Doom::Level::Sidedef::switched(DOOM::Doom& doom, sf::Time toggle, bool exit)
+bool  DOOM::Doom::Level::Sidedef::switched(DOOM::Doom& doom, float toggle, bool exit)
 {
   // Does nothing if a toggle is already running
-  if (_toggle > sf::Time::Zero)
+  if (_toggle > 0.f)
     return false;
 
   // Set toggle timer
@@ -1317,19 +1317,19 @@ bool  DOOM::Doom::Level::Sidedef::switched(DOOM::Doom& doom, std::vector<std::re
 const DOOM::Doom::Resources::Texture& DOOM::Doom::Level::Sidedef::upper() const
 {
   // Return upper frame
-  return _upper_textures[_elapsed.asMicroseconds() / (DOOM::Doom::Tic.asMicroseconds() * DOOM::Doom::Level::Sidedef::FrameDuration) % _upper_textures.size()];
+  return _upper_textures[(std::size_t)(_elapsed / (DOOM::Doom::Tic * DOOM::Doom::Level::Sidedef::FrameDuration)) % _upper_textures.size()];
 }
 
 const DOOM::Doom::Resources::Texture& DOOM::Doom::Level::Sidedef::lower() const
 {
   // Return lower frame
-  return _lower_textures[_elapsed.asMicroseconds() / (DOOM::Doom::Tic.asMicroseconds() * DOOM::Doom::Level::Sidedef::FrameDuration) % _lower_textures.size()];
+  return _lower_textures[(std::size_t)(_elapsed / (DOOM::Doom::Tic * DOOM::Doom::Level::Sidedef::FrameDuration)) % _lower_textures.size()];
 }
 
 const DOOM::Doom::Resources::Texture& DOOM::Doom::Level::Sidedef::middle() const
 {
   // Return middle frame
-  return _middle_textures[_elapsed.asMicroseconds() / (DOOM::Doom::Tic.asMicroseconds() * DOOM::Doom::Level::Sidedef::FrameDuration) % _middle_textures.size()];
+  return _middle_textures[(std::size_t)(_elapsed / (DOOM::Doom::Tic * DOOM::Doom::Level::Sidedef::FrameDuration)) % _middle_textures.size()];
 }
 
 DOOM::Doom::Level::Segment::Segment(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Segment& segment) :
@@ -1605,7 +1605,7 @@ std::unique_ptr<DOOM::AbstractAction> DOOM::Doom::Level::Sector::_factory(DOOM::
   return DOOM::AbstractAction::factory(doom, sector, type, model);
 }
 
-void  DOOM::Doom::Level::Sector::update(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::Doom::Level::Sector::update(DOOM::Doom& doom, float elapsed)
 {
   // Update sector actions
   for (unsigned int type = 0; type < DOOM::Doom::Level::Sector::Action::Number; type++)
@@ -1768,10 +1768,10 @@ int16_t DOOM::Doom::Level::Sector::getNeighborHighestLight(const DOOM::Doom& doo
 DOOM::Doom::Level::Statistics::Statistics() :
   players(),
   total(),
-  time(sf::Time::Zero)
+  time(0.f)
 {}
 
-void  DOOM::Doom::Level::Statistics::update(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::Doom::Level::Statistics::update(DOOM::Doom& doom, float elapsed)
 {
   // Add elapsed time to level time
   time += elapsed;

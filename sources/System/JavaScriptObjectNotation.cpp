@@ -65,14 +65,7 @@ const Game::JSON::Boolean& Game::JSON::Boolean::boolean() const { return *this; 
 bool Game::JSON::Element::null() const { return false; }
 bool Game::JSON::Null::null() const { return true; }
 
-Game::JSON::Object::Object(const std::filesystem::path& path) :
-  map()
-{
-  // Load given file
-  load(path);
-}
-
-void  Game::JSON::Object::load(const std::filesystem::path& path)
+Game::JSON::Object  Game::JSON::load(const std::filesystem::path& path)
 {
   std::ifstream file(path);
 
@@ -92,6 +85,11 @@ void  Game::JSON::Object::load(const std::filesystem::path& path)
     text = buffer.str();
   }
 
+  return load(text);
+}
+
+Game::JSON::Object  Game::JSON::load(const std::string& text)
+{
   auto                iterator = text.begin();
   Game::JSON::Object  object;
 
@@ -105,18 +103,17 @@ void  Game::JSON::Object::load(const std::filesystem::path& path)
   if (iterator != text.end())
     throw Game::JSON::ParsingError("Trailing characters (pos: " + std::to_string(std::distance(text.begin(), iterator)) + ")");
 
-  // Move loaded object to current instance
-  *this = std::move(object);
+  return object;
 }
 
-void  Game::JSON::Object::loadWhitespaces(const std::string& text, std::string::const_iterator& iterator)
+void  Game::JSON::loadWhitespaces(const std::string& text, std::string::const_iterator& iterator)
 {
   // Skip whitespaces
   while (iterator != text.end() && std::string_view(" \t\n\r").find_first_of(*iterator) != std::string_view::npos)
     iterator++;
 }
 
-std::unique_ptr<Game::JSON::Element>  Game::JSON::Object::loadElement(const std::string& text, std::string::const_iterator& iterator)
+std::unique_ptr<Game::JSON::Element>  Game::JSON::loadElement(const std::string& text, std::string::const_iterator& iterator)
 {
   // Skip whitespaces
   loadWhitespaces(text, iterator);
@@ -177,7 +174,7 @@ std::unique_ptr<Game::JSON::Element>  Game::JSON::Object::loadElement(const std:
   throw Game::JSON::ParsingError("Unexpected character (pos: " + std::to_string(std::distance(text.begin(), iterator)) + ")");
 }
 
-void  Game::JSON::Object::loadObject(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Object& object)
+void  Game::JSON::loadObject(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Object& object)
 {
   // Opening curly bracket
   loadWhitespaces(text, iterator);
@@ -244,7 +241,7 @@ void  Game::JSON::Object::loadObject(const std::string& text, std::string::const
   iterator++;
 }
 
-void  Game::JSON::Object::loadArray(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Array& array)
+void  Game::JSON::loadArray(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Array& array)
 {
   // Opening bracket
   loadWhitespaces(text, iterator);
@@ -294,7 +291,7 @@ void  Game::JSON::Object::loadArray(const std::string& text, std::string::const_
   iterator++;
 }
 
-void  Game::JSON::Object::loadNumber(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Number& number)
+void  Game::JSON::loadNumber(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Number& number)
 {
   // Skip whitespaces
   loadWhitespaces(text, iterator);
@@ -313,7 +310,7 @@ void  Game::JSON::Object::loadNumber(const std::string& text, std::string::const
   std::advance(iterator, pos);
 }
 
-void  Game::JSON::Object::loadString(const std::string& text, std::string::const_iterator& iterator, Game::JSON::String& string)
+void  Game::JSON::loadString(const std::string& text, std::string::const_iterator& iterator, Game::JSON::String& string)
 {
   // Double quotes
   loadWhitespaces(text, iterator);
@@ -377,7 +374,7 @@ void  Game::JSON::Object::loadString(const std::string& text, std::string::const
   iterator++;
 }
 
-void  Game::JSON::Object::loadBoolean(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Boolean& boolean)
+void  Game::JSON::loadBoolean(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Boolean& boolean)
 {
   // Skip whitespaces
   loadWhitespaces(text, iterator);
@@ -399,7 +396,7 @@ void  Game::JSON::Object::loadBoolean(const std::string& text, std::string::cons
     throw Game::JSON::ParsingError("Expected boolean value (pos: " + std::to_string(std::distance(text.begin(), iterator)) + ")");
 }
 
-void  Game::JSON::Object::loadNull(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Null& null)
+void  Game::JSON::loadNull(const std::string& text, std::string::const_iterator& iterator, Game::JSON::Null& null)
 {
   // Skip whitespaces
   loadWhitespaces(text, iterator);
@@ -413,7 +410,7 @@ void  Game::JSON::Object::loadNull(const std::string& text, std::string::const_i
     throw Game::JSON::ParsingError("Expected boolean value (pos: " + std::to_string(std::distance(text.begin(), iterator)) + ")");
 }
 
-void  Game::JSON::Object::save(const std::filesystem::path& path) const
+void  Game::JSON::save(const std::filesystem::path& path, const Game::JSON::Object& json)
 {
   std::ofstream file(path, std::ofstream::trunc);
 
@@ -422,7 +419,7 @@ void  Game::JSON::Object::save(const std::filesystem::path& path) const
     throw Game::JSON::FileError("Failed to open '" + path.string() + "'");
 
   // Write JSON to file
-  file << stringify();
+  file << json.stringify();
 
   // Failed to write JSON
   if (file.fail() == true)

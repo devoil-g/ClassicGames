@@ -42,9 +42,9 @@ namespace Game
     public:
       inline static Game::Audio::Sound& Instance() { static Game::Audio::Sound singleton; return singleton; };  // Get instance (singleton)
 
-      bool                          update(sf::Time); // Update sounds
-      void                          clear();          // Interrupt every sound currently playing
-      Game::Audio::Sound::Reference get();            // Get an available sound
+      bool                          update(float elapsed);  // Update sounds
+      void                          clear();                // Interrupt every sound currently playing
+      Game::Audio::Sound::Reference get();                  // Get an available sound
     };
   }
 }

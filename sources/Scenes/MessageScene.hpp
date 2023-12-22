@@ -19,7 +19,7 @@ namespace Game
     MessageScene(Game::SceneMachine& machine, const std::string& message);
     ~MessageScene() override = default;
 
-    bool  update(sf::Time) override;  // Update state
-    void  draw() override;            // Draw state
+    bool  update(float elapsed) override; // Update state
+    void  draw() override;                // Draw state
   };
 }

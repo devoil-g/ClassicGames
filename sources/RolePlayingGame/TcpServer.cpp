@@ -22,7 +22,6 @@ RPG::TcpServer::~TcpServer()
 {
   // Wait for server to stop
   stop();
-  wait();
 }
 
 std::uint16_t RPG::TcpServer::getPort() const
@@ -86,6 +85,9 @@ void  RPG::TcpServer::stop()
 {
   // Request stop of the server loop
   _running = false;
+
+  // Wait for server to stop
+  wait();
 }
 
 void  RPG::TcpServer::loop()

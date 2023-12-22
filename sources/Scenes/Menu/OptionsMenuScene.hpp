@@ -21,6 +21,6 @@ namespace Game
     OptionsMenuScene(Game::SceneMachine& machine);
     ~OptionsMenuScene() override = default;
 
-    bool  update(sf::Time elapsed) override;  // Update state
+    bool  update(float elapsed) override;  // Update state
   };
 }

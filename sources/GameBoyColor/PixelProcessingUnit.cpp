@@ -755,7 +755,7 @@ void  GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
 
   case IO::STAT:  // LCD Status, R/W (see enum)
     // Only bits 6-5-4-3 are writable 
-    _gbc._io[IO::STAT] = (_gbc._io[IO::STAT] & 0b00000111) | (value & 0b01111000);
+    _gbc._io[IO::STAT] = (_gbc._io[IO::STAT] & 0b10000111) | (value & 0b01111000);
     break;
 
   case IO::LYC:   // LCD Y Coordinate Compare, R/W

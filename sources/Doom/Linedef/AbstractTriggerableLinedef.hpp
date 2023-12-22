@@ -134,7 +134,7 @@ namespace DOOM
 
       // Switch sidedef if trigger pushed or switched, definitively if not repeatable
       if (_Trigger == DOOM::EnumLinedef::Trigger::TriggerPushed || _Trigger == DOOM::EnumLinedef::Trigger::TriggerSwitched && sidedef != -1)
-        doom.level.sidedefs[sidedef].switched(doom, (Repeat == false) ? (sf::Time::Zero) : (sf::seconds(DOOM::Doom::Tic.asSeconds() * 35)));
+        doom.level.sidedefs[sidedef].switched(doom, (Repeat == false) ? (0.f) : (DOOM::Doom::Tic * 35));
 
       // Remove lindef if non-repeatable
       triggerRepeat(doom);
@@ -161,7 +161,7 @@ namespace DOOM
 
     ~AbstractTriggerableLinedef() = default;
 
-    virtual void  update(DOOM::Doom& doom, sf::Time elapsed) override // Update linedef
+    virtual void  update(DOOM::Doom& doom, float elapsed) override  // Update linedef
     {}
 
     virtual bool  switched(DOOM::Doom& doom, DOOM::AbstractThing& thing) override // To call when linedef is switched (used) by thing

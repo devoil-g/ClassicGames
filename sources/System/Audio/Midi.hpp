@@ -237,9 +237,9 @@ namespace Game
       Game::Audio::Midi::MidiTimeFormat   _timeFormat;  // Track time format
       uint16_t                            _timeValue;   // Track time format value
 
-      void  load(const std::string& filename);  // Load a MIDI (.mid) file
-      void  loadHeader(std::ifstream& file);    // Load first chunk, should be MThd
-      void  loadTracks(std::ifstream& file);    // Load MIDI tracks
+      void  load(const std::filesystem::path& filename);  // Load a MIDI (.mid) file
+      void  loadHeader(std::ifstream& file);              // Load first chunk, should be MThd
+      void  loadTracks(std::ifstream& file);              // Load MIDI tracks
 
       void  loadTrack(std::ifstream& file, const Game::Audio::Midi::MidiHeader& header, Game::Audio::Midi::Sequence& sequence, std::size_t track);  // Load MIDI tracks
 
@@ -284,7 +284,7 @@ namespace Game
       float duration(const Game::Audio::Midi::Sequence& sequence, std::size_t start, std::size_t end) const;  // Translate MIDI clock time interval to SFML time
 
     public:
-      Midi(const std::string& filename);
+      Midi(const std::filesystem::path& filename);
       ~Midi() = default;
 
       std::list<Game::Audio::Midi::Sequence>  sequences;

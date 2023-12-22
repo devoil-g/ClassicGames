@@ -7,7 +7,7 @@
 
 Game::AbstractMenuScene::AbstractMenuScene(Game::SceneMachine& machine) :
   Game::AbstractScene(machine),
-  _title("", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
+  _title("", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
   _items(),
   _footer("", [](Item&) {}),
   _select(-1),
@@ -56,7 +56,7 @@ bool  Game::AbstractMenuScene::empty() const
   return _items.empty();
 }
 
-bool  Game::AbstractMenuScene::update(sf::Time elapsed)
+bool  Game::AbstractMenuScene::update(float elapsed)
 {
   // Return to previous menu
   if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Right) == true ||
@@ -118,9 +118,9 @@ bool  Game::AbstractMenuScene::update(sf::Time elapsed)
       bound.height /= 1.28f;
 
     if (bound.top < Game::Window::Instance().window().getSize().y / 3.f)
-      _scroll += elapsed.asSeconds() * 10.f * (Game::Window::Instance().window().getSize().y / 3.f - bound.top);
+      _scroll += elapsed * 10.f * (Game::Window::Instance().window().getSize().y / 3.f - bound.top);
     else if (bound.top + bound.height > Game::Window::Instance().window().getSize().y * 2.f / 3.f)
-      _scroll -= elapsed.asSeconds() * 10.f * (bound.top + bound.height - Game::Window::Instance().window().getSize().y * 2.f / 3.f);
+      _scroll -= elapsed * 10.f * (bound.top + bound.height - Game::Window::Instance().window().getSize().y * 2.f / 3.f);
   }
 
   // Select menu with mouse, keyboard or joystick

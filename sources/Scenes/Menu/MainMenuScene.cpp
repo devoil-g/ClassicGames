@@ -16,21 +16,21 @@ Game::MainMenuScene::MainMenuScene(Game::SceneMachine& machine) :
 {
   // Set menu items/handlers
   title("ClassicGames");
-  add("DOOM", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath + "assets/levels/doom.wad", DOOM::Enum::Mode::ModeRetail)));
-  add("DOOM II", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath + "assets/levels/doom2.wad", DOOM::Enum::Mode::ModeCommercial)));
+  add("DOOM", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath / "assets" / "levels" / "doom.wad", DOOM::Enum::Mode::ModeRetail)));
+  add("DOOM II", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath / "assets" / "levels" / "doom2.wad", DOOM::Enum::Mode::ModeCommercial)));
   add("Game Boy", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectGameBoy, this, std::placeholders::_1)));
   add("Quiz", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectQuiz, this, std::placeholders::_1)));
   add("Options", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectOptions, this, std::placeholders::_1)));
   footer("Exit", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectExit, this, std::placeholders::_1)));
 }
 
-bool  Game::MainMenuScene::update(sf::Time elapsed)
+bool  Game::MainMenuScene::update(float elapsed)
 {
   // Update menu
   return Game::AbstractMenuScene::update(elapsed);
 }
 
-void  Game::MainMenuScene::selectDoom(Game::AbstractMenuScene::Item&, const std::string& wad, DOOM::Enum::Mode mode)
+void  Game::MainMenuScene::selectDoom(Game::AbstractMenuScene::Item&, const std::filesystem::path& wad, DOOM::Enum::Mode mode)
 {
   Game::SceneMachine& machine = _machine;
 
@@ -65,7 +65,7 @@ void  Game::MainMenuScene::selectQuiz(Game::AbstractMenuScene::Item&)
 {
   // Go to quiz scene
   try {
-    _machine.push<QUIZ::QuizScene>(Game::Config::ExecutablePath + "/assets/quiz/config.json");
+    _machine.push<QUIZ::QuizScene>(Game::Config::ExecutablePath / "assets" / "quiz" / "config.json");
   }
 
   // Error message when quiz loading failed

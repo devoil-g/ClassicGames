@@ -10,7 +10,7 @@
 #include "GameBoyColor/CentralProcessingUnit.hpp"
 #include "GameBoyColor/GameBoyColor.hpp"
 
-GBC::MemoryBankController3::MemoryBankController3(GBC::GameBoyColor& gbc, const std::vector<std::uint8_t>& rom, std::size_t ramSize, const std::string& ramSave, const std::string& rtcSave) :
+GBC::MemoryBankController3::MemoryBankController3(GBC::GameBoyColor& gbc, const std::vector<std::uint8_t>& rom, std::size_t ramSize, const std::filesystem::path& ramSave, const std::filesystem::path& rtcSave) :
   GBC::MemoryBankController(gbc, rom, ramSize, ramSave),
   _rtcSave(rtcSave),
   _rtcTime(0),

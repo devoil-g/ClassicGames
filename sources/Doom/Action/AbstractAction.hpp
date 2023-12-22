@@ -36,7 +36,7 @@ namespace DOOM
     AbstractAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector);
     virtual ~AbstractAction() = default;
 
-    virtual void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) = 0;  // Update sector's action
+    virtual void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed) = 0; // Update sector's action
 
     virtual bool  stop(DOOM::Doom& doom, DOOM::AbstractThing& thing);   // Request action to stop (for lift & crusher), return true if an action has been stopped
     virtual bool  start(DOOM::Doom& doom, DOOM::AbstractThing& thing);  // Request action to start or re-trigger (for door, lift & crusher), return true if an action has been started

@@ -135,8 +135,8 @@ SET(GAME_RPG_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/GameClient.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/TcpClient.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/TcpClient.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Level.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Level.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/World.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/World.cpp
 )
 SET(GAME_QUIZ_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/BlindtestQuizScene.hpp
@@ -147,6 +147,8 @@ SET(GAME_QUIZ_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/Quiz.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/QuizScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/QuizScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/QuestionQuizScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/QuestionQuizScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/ScoresQuizScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/ScoresQuizScene.cpp
 )
@@ -207,6 +209,8 @@ SET(GAME_SYSTEM_AUDIO_SRCS
 SET(GAME_SYSTEM_LIBRARY_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Library/AbstractLibrary.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Library/AbstractLibrary.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Library/FileHashLibrary.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Library/FileHashLibrary.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Library/FontLibrary.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Library/FontLibrary.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/System/Library/SoundLibrary.cpp

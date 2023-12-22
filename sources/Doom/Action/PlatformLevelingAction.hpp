@@ -33,10 +33,10 @@ namespace DOOM
 
     ~PlatformLevelingAction() override = default;
 
-    void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) override  // Update door action
+    void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed) override  // Update door action
     {
       // Update action states
-      while (elapsed != sf::Time::Zero) {
+      while (elapsed != 0.f) {
         switch (_state)
         {
         case State::Raise:
@@ -52,7 +52,7 @@ namespace DOOM
           }
 
           // Obstacle
-          else if (elapsed > sf::Time::Zero) {
+          else if (elapsed > 0.f) {
             _target = sector.floor_base;
             _state = State::Lower;
             DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>::sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstart);

@@ -20,15 +20,17 @@ GBC::SelectionScene::SelectionScene(Game::SceneMachine& machine) :
 
   // List games in game directory
   try {
-    for (const auto& entry : std::filesystem::directory_iterator(Game::Config::ExecutablePath + "/assets/gbc/")) {
+    for (const auto& entry : std::filesystem::directory_iterator(Game::Config::ExecutablePath / "assets" / "gbc")) {
       try {
-        GBC::GameBoyColor gbc(std::filesystem::absolute(entry).string());
+        GBC::GameBoyColor gbc(entry);
 
         // Add game to menu list
         if (gbc.header().header_checksum && gbc.header().global_checksum)
           add(gbc.header().title, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&GBC::SelectionScene::selectGame, this, std::placeholders::_1, std::filesystem::absolute(entry).string())));
       }
-      catch (const std::exception&) {}
+      catch (const std::exception&e) {
+        std::cout << e.what() << std::endl;
+      }
     }
   }
   catch (const std::exception&) {}
@@ -43,7 +45,7 @@ GBC::SelectionScene::SelectionScene(Game::SceneMachine& machine) :
     _selected = browse();
 }
 
-bool  GBC::SelectionScene::update(sf::Time elapsed)
+bool  GBC::SelectionScene::update(float elapsed)
 {
   // Swap to game if selected
   if (_selected.empty() == false) {
@@ -53,7 +55,7 @@ bool  GBC::SelectionScene::update(sf::Time elapsed)
       machine.swap<GBC::EmulationScene>(_selected);
     }
     catch (const std::exception&) {
-      machine.swap<Game::MessageScene>("Error: failed to run game\n" + _selected);
+      machine.swap<Game::MessageScene>("Error: failed to run game\n" + _selected.string());
     }
     return false;
   }
@@ -68,7 +70,7 @@ bool  GBC::SelectionScene::update(sf::Time elapsed)
   return Game::AbstractMenuScene::update(elapsed);
 }
 
-void  GBC::SelectionScene::selectGame(Game::AbstractMenuScene::Item&, const std::string& file)
+void  GBC::SelectionScene::selectGame(Game::AbstractMenuScene::Item&, const std::filesystem::path& file)
 {
   // Run this game next frame (avoid "Browse..." menu lag)
   _selected = file;
@@ -80,12 +82,13 @@ void  GBC::SelectionScene::selectBrowse(Game::AbstractMenuScene::Item& item)
   selectGame(item, browse());
 }
 
-std::string GBC::SelectionScene::browse() const
+std::filesystem::path GBC::SelectionScene::browse() const
 {
 #ifdef _WIN32
   // See MSDN of GetOpenFileName
   ::OPENFILENAME  fileinfo;
   ::CHAR          path[MAX_PATH];
+  std::string     dir = Game::Config::ExecutablePath.string();
 
   std::memset(path, 0, sizeof(path));
   fileinfo.lStructSize = sizeof(::OPENFILENAME);
@@ -96,7 +99,7 @@ std::string GBC::SelectionScene::browse() const
   fileinfo.lpstrFile = path;
   fileinfo.nMaxFile = MAX_PATH;
   fileinfo.lpstrFileTitle = nullptr;
-  fileinfo.lpstrInitialDir = Game::Config::ExecutablePath.c_str();
+  fileinfo.lpstrInitialDir = dir.c_str();
   fileinfo.lpstrTitle = nullptr;
   fileinfo.Flags = OFN_FILEMUSTEXIST;
   fileinfo.lpstrDefExt = nullptr;
@@ -104,7 +107,7 @@ std::string GBC::SelectionScene::browse() const
 
   // Open file
   if (::GetOpenFileName(&fileinfo))
-    return std::string(path);
+    return path;
 #else
   // Not implemented
   throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());

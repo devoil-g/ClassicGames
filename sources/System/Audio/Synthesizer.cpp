@@ -9,7 +9,7 @@
 #include "System/Config.hpp"
 
 // TODO: remove this
-void  toWave(const std::string& filename, const std::vector<float>& buffer, std::size_t samplerate)
+void  toWave(const std::filesystem::path& filename, const std::vector<float>& buffer, std::size_t samplerate)
 {
   std::vector<int16_t>  buffer16;
   for (const auto& sample : buffer)
@@ -45,7 +45,7 @@ void  toWave(const std::string& filename, const std::vector<float>& buffer, std:
   out.write((char*)buffer16.data(), buffer16.size() * 2);
 }
 
-Game::Audio::Synthesizer::Synthesizer(const std::string& midi, const std::string& soundfont, std::size_t sampleRate) :
+Game::Audio::Synthesizer::Synthesizer(const std::filesystem::path& midi, const std::filesystem::path& soundfont, std::size_t sampleRate) :
   _sampleRate(sampleRate),
   _buffer(),
   _bufferLock(),
@@ -103,7 +103,7 @@ std::vector<float>  Game::Audio::Synthesizer::generate(std::size_t sequenceId)
   std::cout << "Generation time: " << clock.getElapsedTime().asSeconds() << "s." << std::endl;
 
   puts("Creating WAVE file...");
-  ::toWave(Game::Config::ExecutablePath + "/generated.wav", _buffer, _sampleRate);
+  ::toWave(Game::Config::ExecutablePath / "/generated.wav", _buffer, _sampleRate);
   puts("Done.");
 
   return _buffer;

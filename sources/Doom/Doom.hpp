@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <filesystem>
 #include <list>
 #include <memory>
 #include <string>
@@ -292,7 +293,7 @@ namespace DOOM
   class Doom
   {
   public:
-    static sf::Time const     Tic;              // Duration of a game tic (1/35s)
+    static float  const       Tic;              // Duration of a game tic (1/35s)
     static const unsigned int RenderWidth;      // Default rendering width size
     static const unsigned int RenderHeight;     // Default rendering height size
     static unsigned int       RenderScale;      // Scaling factor of resolution
@@ -516,7 +517,7 @@ namespace DOOM
       const DOOM::Doom::Resources::Texture& getMenu(uint64_t key) const { return getResource<DOOM::Doom::Resources::Texture>(key, menus); };        // Get menu texture, throw an error if not found
       const DOOM::Doom::Resources::Sound&   getSound(uint64_t key) const { return getResource<DOOM::Doom::Resources::Sound>(key, sounds); };        // Get sound, throw an error if not found
 
-      void  update(DOOM::Doom& doom, sf::Time elapsed); // Update resources components
+      void  update(DOOM::Doom& doom, float elapsed);  // Update resources components
     };
 
     class Level
@@ -538,8 +539,8 @@ namespace DOOM
         int16_t sector; // Index of the sector it references
 
       private:
-        sf::Time  _elapsed; // Total elapsed time
-        sf::Time  _toggle;  // Time before switch re-toggle
+        float _elapsed; // Total elapsed time
+        float _toggle;  // Time before switch re-toggle
 
         uint64_t  _upper_name;  // Upper texture name
         uint64_t  _lower_name;  // Lower texture name
@@ -556,8 +557,8 @@ namespace DOOM
         Sidedef(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Sidedef& sidedef);
         ~Sidedef() = default;
 
-        void  update(DOOM::Doom& doom, sf::Time elapsed);                     // Update sidedef
-        bool  switched(DOOM::Doom& doom, sf::Time toggle, bool exit = false); // Toggle texture switch, reversing it after time given as parameter (0 for no reverse), special sound if exit switch
+        void  update(DOOM::Doom& doom, float elapsed);                      // Update sidedef
+        bool  switched(DOOM::Doom& doom, float toggle, bool exit = false);  // Toggle texture switch, reversing it after time given as parameter (0 for no reverse), special sound if exit switch
 
         const DOOM::Doom::Resources::Texture& upper() const;  // Return upper texture to be displayed
         const DOOM::Doom::Resources::Texture& lower() const;  // Return lower texture to be displayed
@@ -661,7 +662,7 @@ namespace DOOM
         Sector(DOOM::Doom::Level::Sector&& sector);
         ~Sector() = default;
 
-        void  update(DOOM::Doom& doom, sf::Time elapsed); // Update sector
+        void  update(DOOM::Doom& doom, float elapsed);  // Update sector
 
         template<DOOM::Doom::Level::Sector::Action Type>
         inline void action(DOOM::Doom& doom, int16_t type, int16_t model = -1)  // Add action to sector if possible
@@ -762,12 +763,12 @@ namespace DOOM
 
         std::map<int, DOOM::Doom::Level::Statistics::Stats> players;  // Individual counter for each player
         DOOM::Doom::Level::Statistics::Stats                total;    // Total number in map
-        sf::Time                                            time;     // Time played in level
+        float                                               time;     // Time played in level
 
         Statistics();
         ~Statistics() = default;
 
-        void  update(DOOM::Doom& doom, sf::Time elapsed); // Update statistics
+        void  update(DOOM::Doom& doom, float elapsed); // Update statistics
       };
 
     private:
@@ -804,7 +805,7 @@ namespace DOOM
       Level();
       ~Level() = default;
 
-      void  update(DOOM::Doom& doom, sf::Time elapsed); // Update level components
+      void  update(DOOM::Doom& doom, float elapsed); // Update level components
     };
 
   private:
@@ -848,8 +849,8 @@ namespace DOOM
     bool                  message;    // Message enabled
     sf::Image             image;      // DOOM rendering target
 
-    void  load(const std::string& file, DOOM::Enum::Mode mode); // Load WAD file and build resources
-    void  update(sf::Time elapsed);                             // Update current level and resources
+    void  load(const std::filesystem::path& file, DOOM::Enum::Mode mode); // Load WAD file and build resources
+    void  update(float elapsed);                                          // Update current level and resources
 
     std::list<std::pair<uint8_t, uint8_t>>  getLevels() const;                                                // Return list of available level in WAD
     void                                    setLevel(std::pair<uint8_t, uint8_t> level, bool reset = false);  // Build specified level from WAD, use reset to hard reset players

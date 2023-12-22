@@ -39,7 +39,7 @@ namespace DOOM
     };
 
     std::list<State>  _states;  // Door states to perform
-    sf::Time          _elapsed; // Time elapsed since begining of state
+    float             _elapsed; // Time elapsed since begining of state
 
     void      updateSound(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector)  // Play state sound
     {
@@ -65,7 +65,7 @@ namespace DOOM
     DoorLevelingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector) :
       DOOM::AbstractLevelingAction<>(doom, sector),
       _states(),
-      _elapsed(sf::Time::Zero)
+      _elapsed(0.f)
     {
       // Map of states according to door type (initial Noop to force sound)
       static const std::unordered_map<DOOM::EnumAction::Door, std::list<State>> states = {
@@ -86,7 +86,7 @@ namespace DOOM
 
     ~DoorLevelingAction() override = default;
 
-    void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) override  // Update door action
+    void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed) override  // Update door action
     {
       // Update action states
       while (_states.empty() == false) {
@@ -102,7 +102,7 @@ namespace DOOM
           elapsed = updateCeilingLower(doom, sector, elapsed, sector.floor_base, (float)Speed / 8.f);
 
           // Obstacles
-          if (elapsed > sf::Time::Zero && sector.ceiling_current != sector.floor_base) {
+          if (elapsed > 0.f && sector.ceiling_current != sector.floor_base) {
             switch (Door) {
             case DOOM::EnumAction::Door::DoorOpenWaitClose:
               _states = { State::Noop, State::Open, State::ForceWait, State::Close };
@@ -122,21 +122,21 @@ namespace DOOM
 
           // Stop on obstacles
           if (sector.ceiling_current != sector.floor_base)
-            elapsed = sf::Time::Zero;
+            elapsed = 0.f;
           break;
 
         case State::Wait:
           _elapsed += elapsed;
 
           // Get remaining time if any
-          elapsed = std::max(sf::Time::Zero, _elapsed - (DOOM::Doom::Tic * (float)TickWait));
+          elapsed = std::max(0.f, _elapsed - (DOOM::Doom::Tic * (float)TickWait));
           break;
 
         case State::ForceWait:
           _elapsed += elapsed;
 
           // Get remaining time if any
-          elapsed = std::max(sf::Time::Zero, _elapsed - (DOOM::Doom::Tic * (float)TickForceWait));
+          elapsed = std::max(0.f, _elapsed - (DOOM::Doom::Tic * (float)TickForceWait));
           break;
 
         case State::Noop:
@@ -148,12 +148,12 @@ namespace DOOM
         }
 
         // Stop if no more elapsed time
-        if (elapsed == sf::Time::Zero)
+        if (elapsed == 0.f)
           break;
 
         // Pop ended state
         _states.pop_front();
-        _elapsed = sf::Time::Zero;
+        _elapsed = 0.f;
 
         // Play new state sound
         updateSound(doom, sector);

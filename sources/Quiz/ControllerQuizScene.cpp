@@ -18,7 +18,7 @@ QUIZ::ControllerQuizScene::ControllerQuizScene(Game::SceneMachine& machine, QUIZ
   _ping(0)
 {
   // Load music
-  if (_music.openFromFile(Game::Config::ExecutablePath + "/assets/quiz/musics/contestants.ogg") == false)
+  if (_music.openFromFile((Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "contestants.ogg").string()) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Check minimum duration
@@ -46,7 +46,7 @@ QUIZ::ControllerQuizScene::ControllerQuizScene(Game::SceneMachine& machine, QUIZ
     << std::endl;
 }
 
-bool  QUIZ::ControllerQuizScene::update(sf::Time elapsed)
+bool  QUIZ::ControllerQuizScene::update(float elapsed)
 {
   // Manage player inputs
   if (_music.getStatus() == sf::Music::Status::Playing && _music.getPlayingOffset().asSeconds() < TimerLimit) {
@@ -99,13 +99,16 @@ void  QUIZ::ControllerQuizScene::updateRegister()
           _quiz.players.push_back({
             .joystick = joystick,
             .button = button,
-            .avatar = avatar
+            .avatar = avatar,
             });
+
+          // Set player texture
+          _quiz.players.back().sprite.setTexture(_quiz.avatars[_quiz.players.back().avatar], true);
 
           auto  ref = Game::Audio::Sound::Instance().get();
 
           // Play ping sound
-          ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath + "/assets/quiz/sounds/ping" + std::to_string(_ping++ % 4 + 1) + ".wav"));
+          ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / ("ping" + std::to_string(_ping++ % 4 + 1) + ".wav")));
           ref.sound.play();
         }
       }
@@ -138,6 +141,7 @@ void  QUIZ::ControllerQuizScene::updateAvatar()
         {
           // Register new avatar
           player.avatar = avatar;
+          player.sprite.setTexture(_quiz.avatars[player.avatar], true);
           break;
         }
       }
@@ -150,6 +154,7 @@ void  QUIZ::ControllerQuizScene::updateAvatar()
         {
           // Register new avatar
           player.avatar = avatar;
+          player.sprite.setTexture(_quiz.avatars[player.avatar], true);
           break;
         }
       }
@@ -187,60 +192,29 @@ void  QUIZ::ControllerQuizScene::draw()
   drawTimer();
 }
 
-int QUIZ::ControllerQuizScene::drawPlayersGrid() const
-{
-  float screen_ratio = (float)Game::Window::Instance().window().getSize().x / (float)Game::Window::Instance().window().getSize().y;
-  int   best_line = 1;
-  float best_ratio = ((float)_quiz.players.size() + 1.f) / 2.f;
-
-  // Check each possible grid size
-  for (int line = 2; line <= _quiz.players.size(); line++) {
-    float ratio = std::ceil((float)_quiz.players.size() / (float)line + 1.f) / (float)(line + 1.f);
-
-    // Check new ratio
-    if (std::abs(ratio - screen_ratio) < std::abs(best_ratio - screen_ratio)) {
-      best_line = line;
-      best_ratio = ratio;
-    }
-  }
-
-  return best_line;
-}
-
 void  QUIZ::ControllerQuizScene::drawPlayers()
 {
   auto  screen = Game::Window::Instance().window().getSize();
-  float x_ratio = 1.f / (1.5f * _quiz.players.size() + 0.5f);
   float alpha = std::clamp(1.f - (_music.getPlayingOffset().asSeconds() - TimerLimit) / TimerOver, 0.f, 1.f);
 
-  int   y_grid = drawPlayersGrid();
-  int   x_grid = (int)std::ceil((float)_quiz.players.size() / (float)y_grid);
-  float s_grid = std::min((float)screen.x / (x_grid + 1.f), (float)screen.y / (y_grid + 1.f));
-
-  sf::Vector2f  offset_grid = {
-    (screen.x - (x_grid + 1) * s_grid) / 2.f + s_grid / 2.f,
-    (screen.y - (y_grid + 1) * s_grid) / 2.f + s_grid / 2.f
-  };
-
   for (unsigned int player_index = 0; player_index < _quiz.players.size(); player_index++) {
-    sf::Sprite    sprite;
-    
-    sprite.setTexture(_quiz.avatars[_quiz.players[player_index].avatar], true);
+    sf::Sprite& sprite = _quiz.players[player_index].sprite;
 
-    // Set sprite size
-    float scale = std::min(
-      s_grid / (float)sprite.getLocalBounds().width,
-      s_grid / (float)sprite.getLocalBounds().height
-    ) * 0.85f;
-    sprite.setScale(scale, scale);
+    float x_position = screen.x / (_quiz.players.size() + 1.f) * (player_index + 1.f);
+    float y_position = screen.y / 2.f;
 
     // Set sprite position
-    sprite.setPosition(
-      offset_grid.x + (player_index % x_grid) * s_grid + (s_grid - sprite.getGlobalBounds().width) / 2.f,
-      offset_grid.y + (player_index / x_grid) * s_grid + (s_grid - sprite.getGlobalBounds().height) / 2.f
-    );
+    sprite.setPosition(x_position, y_position);
+    sprite.setOrigin(sprite.getLocalBounds().width / 2.f, sprite.getLocalBounds().height / 2.f);
 
-    // Transparency
+    float x_scale = (screen.x * 0.9f / (_quiz.players.size() + 1.f)) / sprite.getLocalBounds().width;
+    float y_scale = (screen.y * 0.75f) / sprite.getLocalBounds().height;
+    float scale = std::min(x_scale, y_scale);
+
+    // Set sprite size
+    sprite.setScale(scale, scale);
+
+    // Set transparency
     sprite.setColor(sf::Color(255, 255, 255, (std::uint8_t)(255 * alpha)));
 
     // Draw sprite

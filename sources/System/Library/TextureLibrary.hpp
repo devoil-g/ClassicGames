@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <filesystem>
 
 #include <SFML/Graphics/Texture.hpp>
 
@@ -8,7 +8,7 @@
 
 namespace Game
 {
-  class TextureLibrary : public Game::AbstractLibrary<std::string, sf::Texture>
+  class TextureLibrary : public Game::AbstractLibrary<std::filesystem::path, sf::Texture>
   {
   private:
     TextureLibrary();
@@ -17,6 +17,6 @@ namespace Game
   public:
     inline static Game::TextureLibrary& Instance() { static Game::TextureLibrary singleton; return singleton; };  // Return unique instance (singleton)
 
-    void  load(const std::string&) override;  // Load a texture in the library
+    void  load(const std::filesystem::path&) override;  // Load a texture in the library
   };
 }

@@ -4789,7 +4789,7 @@ DOOM::AbstractThing::AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type,
   _thrust(0.f, 0.f, 0.f),
   _gravity((this->flags & DOOM::Enum::ThingProperty::ThingProperty_NoGravity) ? 0.f : -1.f),
   _state(attributs.state_spawn),
-  _elapsed(sf::Time::Zero),
+  _elapsed(0.f),
   _target(nullptr),
   _tracer(nullptr),
   _target_threshold(0)
@@ -4836,7 +4836,7 @@ int16_t               DOOM::AbstractThing::type_to_id(DOOM::Enum::ThingType type
   return _attributs[type].id;
 }
 
-bool  DOOM::AbstractThing::update(DOOM::Doom& doom, sf::Time elapsed)
+bool  DOOM::AbstractThing::update(DOOM::Doom& doom, float elapsed)
 {
   // Update state of thing
   updateState(doom, elapsed);
@@ -4848,7 +4848,7 @@ bool  DOOM::AbstractThing::update(DOOM::Doom& doom, sf::Time elapsed)
   return _remove;
 }
 
-void  DOOM::AbstractThing::updateState(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::AbstractThing::updateState(DOOM::Doom& doom, float elapsed)
 {
   // Update internal timer
   _elapsed += elapsed;
@@ -4857,7 +4857,7 @@ void  DOOM::AbstractThing::updateState(DOOM::Doom& doom, sf::Time elapsed)
   {
     // Stop when no duration
     if (_states[_state].duration == -1) {
-      _elapsed = sf::Time::Zero;
+      _elapsed = 0.f;
       break;
     }
 
@@ -5086,7 +5086,7 @@ void  DOOM::AbstractThing::setState(DOOM::Doom & doom, DOOM::AbstractThing::Thin
     std::invoke(_states[_state].action, this, doom);
 }
 
-void  DOOM::AbstractThing::updatePhysics(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::AbstractThing::updatePhysics(DOOM::Doom& doom, float elapsed)
 {
   // Compute physics if minimal thrust
   if (_thrust.convert<2>().length() > 0.001f)
@@ -5096,7 +5096,7 @@ void  DOOM::AbstractThing::updatePhysics(DOOM::Doom& doom, sf::Time elapsed)
 
     // Apply friction slowdown to thing (except missiles and attacking flying skulls) for next tic (hard coded drag factor of 0.90625)
     if (_thrust.z() == 0 && !(flags & (DOOM::Enum::ThingProperty::ThingProperty_Missile | DOOM::Enum::ThingProperty::ThingProperty_SkullFly)))
-      _thrust.convert<2>() *= std::pow(0.90625f, elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
+      _thrust.convert<2>() *= std::pow(0.90625f, elapsed / DOOM::Doom::Tic);
   }
 
   // Special case for lost souls
@@ -5109,13 +5109,13 @@ void  DOOM::AbstractThing::updatePhysics(DOOM::Doom& doom, sf::Time elapsed)
   updatePhysicsGravity(doom, elapsed);
 }
 
-void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, sf::Time elapsed, int depth, int16_t linedef_ignored, const DOOM::AbstractThing* thing_ignored)
+void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, float elapsed, int depth, int16_t linedef_ignored, const DOOM::AbstractThing* thing_ignored)
 {
   // NOTE: glitch might happen if radius > 128
   // NOTE: we are using bounding circle instead of square
 
   // Limit movement to 30 units per tics
-  Math::Vector<2>	movement = ((_thrust.convert<2>().length() > 30.f) ? (_thrust.convert<2>() * 30.f / _thrust.convert<2>().length()) : _thrust.convert<2>())* elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds();
+  Math::Vector<2>	movement = ((_thrust.convert<2>().length() > 30.f) ? (_thrust.convert<2>() * 30.f / _thrust.convert<2>().length()) : _thrust.convert<2>())* elapsed / DOOM::Doom::Tic;
 
   // Stop if maximum recursion depth reach
   if (depth > 4 || (movement.x() == 0.f && movement.y() == 0.f)) {
@@ -5465,7 +5465,7 @@ std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing
   return linedefs_things;
 }
 
-void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, float elapsed)
 {
   std::set<int16_t>	sectors = doom.level.getSectors(*this);
   float			floor = std::numeric_limits<int16_t>().min();
@@ -5493,11 +5493,11 @@ void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elaps
   }
 
   // Compute gravity
-  _thrust.z() += _gravity / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds();
+  _thrust.z() += _gravity / DOOM::Doom::Tic * elapsed;
 
   // Apply friction to vertical thrust for non attacking fly skulls
   if (type == DOOM::Enum::ThingType::ThingType_SKULL && !(flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly))
-    _thrust.z() *= std::pow(0.90625f, elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
+    _thrust.z() *= std::pow(0.90625f, elapsed / DOOM::Doom::Tic);
 
   // Remember thing speed
   float speed = _thrust.z();
@@ -5512,7 +5512,7 @@ void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elaps
 
   // Raise thing if below the floor
   if (position.z() < floor) {
-    position.z() = std::min(floor, position.z() + std::max(_thrust.z(), (floor - position.z()) / 2.f + 3.2f) / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
+    position.z() = std::min(floor, position.z() + std::max(_thrust.z(), (floor - position.z()) / 2.f + 3.2f) / DOOM::Doom::Tic * elapsed);
     _thrust.z() = std::max(_thrust.z(), (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly) ? +std::abs(_thrust.z()) : 0.f);
 
     // Explode missile if colliding with floor
@@ -5521,7 +5521,7 @@ void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elaps
   }
   // Lower thing is upper than the ceiling (limit to floor)
   else if (position.z() > ceiling - height && position.z() > floor) {
-    position.z() = std::max(std::max(ceiling - height, floor), position.z() + std::min(_thrust.z(), ((ceiling - attributs.height) - position.z()) / 2.f + 2.f) / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
+    position.z() = std::max(std::max(ceiling - height, floor), position.z() + std::min(_thrust.z(), ((ceiling - attributs.height) - position.z()) / 2.f + 2.f) / DOOM::Doom::Tic * elapsed);
     _thrust.z() = std::min(_thrust.z(), (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly) ? -std::abs(_thrust.z()) : 0.f);
 
     // Explode missile if colliding with ceiling
@@ -5531,7 +5531,7 @@ void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elaps
 
   // Normal gravity
   else if (_thrust.z() < 0.f) {
-    position.z() = std::max(floor, position.z() + _thrust.z() / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
+    position.z() = std::max(floor, position.z() + _thrust.z() / DOOM::Doom::Tic * elapsed);
     if (position.z() == floor) {
       _thrust.z() = (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly) ? +std::abs(_thrust.z()) : 0.f;
 
@@ -5542,7 +5542,7 @@ void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, sf::Time elaps
   }
   // Reverse gravity
   else if (_thrust.z() > 0.f) {
-    position.z() = std::min(std::max(ceiling - height, floor), position.z() + _thrust.z() / DOOM::Doom::Tic.asSeconds() * elapsed.asSeconds());
+    position.z() = std::min(std::max(ceiling - height, floor), position.z() + _thrust.z() / DOOM::Doom::Tic * elapsed);
     if (position.z() == ceiling - height) {
       _thrust.z() = (flags & DOOM::Enum::ThingProperty::ThingProperty_SkullFly) ? -std::abs(_thrust.z()) : 0.f;
 
@@ -7341,7 +7341,7 @@ void  DOOM::AbstractThing::A_BrainScream(DOOM::Doom& doom)
     doom.level.things.back()->position.z() = 128.f + (std::rand() % 256) * 2;
     doom.level.things.back()->_thrust.z() = (std::rand() % 256) / 128.f;
     doom.level.things.back()->setState(doom, DOOM::AbstractThing::ThingState::State_BRAINEXPLODE1);
-    doom.level.things.back()->_elapsed += sf::seconds(DOOM::Doom::Tic.asSeconds() * std::min(_states[DOOM::AbstractThing::ThingState::State_BRAINEXPLODE1].duration - 1, (std::rand() % 8)));
+    doom.level.things.back()->_elapsed += DOOM::Doom::Tic * std::min(_states[DOOM::AbstractThing::ThingState::State_BRAINEXPLODE1].duration - 1, (std::rand() % 8));
   }
 
   // Scream
@@ -7360,7 +7360,7 @@ void  DOOM::AbstractThing::A_BrainExplode(DOOM::Doom& doom)
   doom.level.things.back()->position.z() = 128.f + (std::rand() % 256) * 2;
   doom.level.things.back()->_thrust.z() = (std::rand() % 256) / 128.f;
   doom.level.things.back()->setState(doom, DOOM::AbstractThing::ThingState::State_BRAINEXPLODE1);
-  doom.level.things.back()->_elapsed += sf::seconds(DOOM::Doom::Tic.asSeconds() * std::min(_states[DOOM::AbstractThing::ThingState::State_BRAINEXPLODE1].duration - 1, (std::rand() % 8)));
+  doom.level.things.back()->_elapsed += DOOM::Doom::Tic * std::min(_states[DOOM::AbstractThing::ThingState::State_BRAINEXPLODE1].duration - 1, (std::rand() % 8));
 }
 
 void  DOOM::AbstractThing::A_BrainAwake(DOOM::Doom& doom)

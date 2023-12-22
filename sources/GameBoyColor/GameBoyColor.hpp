@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstdint>
+#include <filesystem>
 #include <list>
 #include <memory>
 #include <string>
@@ -133,7 +134,7 @@ namespace GBC
     };
 
     GBC::GameBoyColor::Header                   _header;  // Main info of the ROM
-    std::string                                 _path;    // Path of the ROM
+    std::filesystem::path                       _path;    // Path of the ROM
     std::vector<std::uint8_t>                   _boot;    // Bootstrap sequence memory
     std::size_t                                 _cycles;  // Number of CPU cycle since boot
     GBC::CentralProcessingUnit                  _cpu;     // Central Processing Unit
@@ -173,9 +174,9 @@ namespace GBC
     std::size_t _transferIndex;   // Index of running transfer
     bool        _transferTrigger; // Trigger for HDMA1 transfer
 
-    void  load(const std::string& filename);                                              // Load a new ROM in memory
-    void  loadFile(const std::string& filename, std::vector<std::uint8_t>& destination);  // Load file to vector
-    void  loadHeader(const std::vector<uint8_t>& rom);                                    // Get header data
+    void  load(const std::filesystem::path& filename);                                              // Load a new ROM in memory
+    void  loadFile(const std::filesystem::path& filename, std::vector<std::uint8_t>& destination);  // Load file to vector
+    void  loadHeader(const std::vector<uint8_t>& rom);                                              // Get header data
 
     std::uint8_t  read(std::uint16_t addr);     // Read one byte from memory
     std::uint8_t  readWRam(std::uint16_t addr); // Read one byte from WRAM
@@ -233,7 +234,7 @@ namespace GBC
     }
 
   public:
-    GameBoyColor(const std::string& filename);
+    GameBoyColor(const std::filesystem::path& filename);
     ~GameBoyColor() = default;
 
     void                                                                  simulate();     // Simulate a frame

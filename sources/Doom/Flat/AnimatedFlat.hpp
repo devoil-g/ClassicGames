@@ -13,7 +13,7 @@ namespace DOOM
   class AnimatedFlat : public virtual DOOM::AbstractFlat
   {
   private:
-    sf::Time                                _elapsed; // Total elapsed time
+    float                                   _elapsed; // Total elapsed time
     std::vector<std::array<uint8_t, 4096>>  _flats;   // Vector of flats composing animation
 
   public:
@@ -39,7 +39,7 @@ namespace DOOM
 
     ~AnimatedFlat() override = default;
 
-    void  update(DOOM::Doom& doom, sf::Time elapsed) override        // Update animation sequence
+    void  update(DOOM::Doom& doom, float elapsed) override        // Update animation sequence
     {
       // Add elapsed time to counter
       _elapsed += elapsed;
@@ -48,7 +48,7 @@ namespace DOOM
     const std::array<uint8_t, 4096>& flat() const override        // Return flat to be displayed
     {
       // Return flat of current frame
-      return _flats[_elapsed.asMicroseconds() / (DOOM::Doom::Tic.asMicroseconds() * FrameDuration) % _flats.size()];
+      return _flats[(std::size_t)(_elapsed / (DOOM::Doom::Tic * FrameDuration)) % _flats.size()];
     }
   };
 }

@@ -10,7 +10,7 @@ const unsigned int  DOOM::TextDoomScene::TextSpeed = 3;
 DOOM::TextDoomScene::TextDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom, const std::string& text, uint64_t background) :
   Game::AbstractScene(machine),
   _doom(doom),
-  _elapsed(sf::Time::Zero),
+  _elapsed(0.f),
   _text(),
   _image(),
   _x(10), _y(10)
@@ -32,7 +32,7 @@ DOOM::TextDoomScene::TextDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom
   // TODO: start badass menu music
 }
 
-bool  DOOM::TextDoomScene::update(sf::Time elapsed)
+bool  DOOM::TextDoomScene::update(float elapsed)
 {
   // Add elapsed time to timer
   _elapsed += elapsed;

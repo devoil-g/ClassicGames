@@ -5,44 +5,49 @@
 #include "System/Config.hpp"
 #include "Quiz/Quiz.hpp"
 
-QUIZ::Quiz::Quiz(const std::string& config) :
+QUIZ::Quiz::Quiz(const std::filesystem::path& config) :
   avatars(),
   players()
 {
-  const Game::JSON::Object  json(config);
-
   // Load avatars from directory
-  for (const auto& entry : std::filesystem::directory_iterator(Game::Config::ExecutablePath + "/assets/quiz/avatars/")) {
+  for (const auto& entry : std::filesystem::directory_iterator(Game::Config::ExecutablePath / "assets" / "quiz" / "avatars")) {
     sf::Texture texture;
 
     if (texture.loadFromFile(entry.path().string()) == false)
       continue;
 
-    texture.setSmooth(true);
+    texture.setSmooth(false);
     avatars.push_back(texture);
   }
 
   // Load blindtest
   try {
-    int index = 0;
-    for (const auto& entry : json.map.at("blindtest")->array().vector) {
-      index++;
-      try {
-        blindtests.push_back({
-          .music = entry->object().map.at("music")->string().value,
-          .cover = entry->object().map.at("cover")->string().value,
-          .answer = entry->object().map.at("answer")->string().value,
-          .info = entry->object().map.at("info")->string().value,
-          .score = (int)entry->object().map.at("score")->number().value,
-        });
+    const Game::JSON::Object  json = Game::JSON::load(config);
+
+    try {
+      int index = 0;
+      for (const auto& entry : json.map.at("blindtest")->array().vector) {
+        index++;
+        try {
+          blindtests.push_back({
+            .music = entry->object().map.at("music")->string().value,
+            .cover = entry->object().map.at("cover")->string().value,
+            .answer = entry->object().map.at("answer")->string().value,
+            .info = entry->object().map.at("info")->string().value,
+            .score = (int)entry->object().map.at("score")->number().value,
+            });
+        }
+        catch (const std::exception&) {
+          std::cout << "Warning, invalid entry " << index << "# in blindtest." << std::endl;
+        }
       }
-      catch (const std::exception&) {
-        std::cout << "Warning, invalid entry " << index << "# in blindtest." << std::endl;
-      }
+    }
+    catch (const std::exception&) {
+      std::cout << "Warning, no blindtest section." << std::endl;
     }
   }
   catch (const std::exception&) {
-    std::cout << "Warning, no blindtest section." << std::endl;
+    std::cout << "Warning, failed to open config file '" << config << "'." << std::endl;
   }
 
   std::cout

@@ -23,7 +23,7 @@ namespace DOOM
 
     const float _low, _high;  // Low and high height of lift
     State       _state;       // Lift current state
-    sf::Time    _elapsed;     // Elapsed time since beginning of state
+    float       _elapsed;     // Elapsed time since beginning of state
 
   public:
     LiftLevelingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float low, float high) :
@@ -31,20 +31,20 @@ namespace DOOM
       _low(low),
       _high(high),
       _state(State::Lower),
-      _elapsed(sf::Time::Zero)
+      _elapsed(0.f)
     {
       sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstart);
     }
 
     ~LiftLevelingAction() override = default;
 
-    void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) override  // Update door action
+    void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed) override  // Update door action
     {
       if (Repeat == true && _run == false)
         return;
 
       // Update action states
-      while (elapsed != sf::Time::Zero) {
+      while (elapsed != 0.f) {
         switch (_state)
         {
         case State::Raise:
@@ -64,7 +64,7 @@ namespace DOOM
           }
 
           // Obstacle
-          else if (elapsed != sf::Time::Zero) {
+          else if (elapsed != 0.f) {
             _state = State::Lower;
             sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstart);
           }
@@ -86,10 +86,10 @@ namespace DOOM
           _elapsed += elapsed;
 
           // Compute remaining time if any
-          elapsed = std::max(sf::Time::Zero, _elapsed - (DOOM::Doom::Tic * (float)TickWait));
+          elapsed = std::max(0.f, _elapsed - (DOOM::Doom::Tic * (float)TickWait));
 
           // Switch to next state if wait finished
-          if (elapsed != sf::Time::Zero) {
+          if (elapsed != 0.f) {
             _state = (sector.floor_current == _low ? State::Raise : State::Lower);
             sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstart);
           }
@@ -100,8 +100,8 @@ namespace DOOM
         }
 
         // Reset internal elapsed time between states
-        if (elapsed != sf::Time::Zero)
-          _elapsed = sf::Time::Zero;
+        if (elapsed != 0.f)
+          _elapsed = 0.f;
       }
     }
   };

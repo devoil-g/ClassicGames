@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -19,7 +20,7 @@ namespace GBC
     std::vector<std::uint8_t>       _ram;       // Raw RAM memory
     bool                            _ramEnable; // RAM enable flag
     std::size_t                     _ramBank;   // RAM bank
-    const std::string               _ramSave;   // Path of RAM save files, empty if no battery
+    const std::filesystem::path     _ramSave;   // Path of RAM save files, empty if no battery
     std::vector<std::uint8_t>       _ramSaved;  // Raw RAM to save
 
     void  loadRam();        // Load MBC RAM from save file
@@ -36,7 +37,7 @@ namespace GBC
     void  setRamEnable(bool enable);  // Enable/disable RAM
 
   public:
-    MemoryBankController(GBC::GameBoyColor& gbc, const std::vector<std::uint8_t>& rom, std::size_t ramSize = 0, const std::string& ramSave = "");
+    MemoryBankController(GBC::GameBoyColor& gbc, const std::vector<std::uint8_t>& rom, std::size_t ramSize = 0, const std::filesystem::path& ramSave = "");
     virtual ~MemoryBankController();
 
     virtual std::uint8_t  readRom(std::uint16_t address) const; // Read ROM

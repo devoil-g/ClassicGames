@@ -7,11 +7,11 @@
 
 Game::StartScene::StartScene(Game::SceneMachine& machine) :
   Game::AbstractScene(machine),
-  _elapsed(sf::Time::Zero),
-  _text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf"), 128)
+  _elapsed(0.f),
+  _text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf"), 128)
 {}
 
-bool  Game::StartScene::update(sf::Time elapsed)
+bool  Game::StartScene::update(float elapsed)
 {
   // Add elapsed time to counter
   _elapsed += elapsed;
@@ -21,7 +21,7 @@ bool  Game::StartScene::update(sf::Time elapsed)
     Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Return) == true || Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space) == true ||
     Game::Window::Instance().joystick().buttonPressed(0, 0) == true || Game::Window::Instance().joystick().buttonPressed(0, 7) == true)
   {
-    _elapsed = sf::Time::Zero;
+    _elapsed = 0.f;
     _machine.push<Game::MainMenuScene>();
     return false;
   }
@@ -38,7 +38,7 @@ void  Game::StartScene::draw()
   _text.setPosition(sf::Vector2f((Game::Window::Instance().window().getSize().x - _text.getGlobalBounds().width) / 2.f, (Game::Window::Instance().window().getSize().y - _text.getGlobalBounds().height) / 2.f));
   
   // Set text color for flickering
-  float intensity = std::sqrt(1.f - (std::cos(_elapsed.asSeconds() * 4.f) + 1.f) / 2.f);
+  float intensity = std::sqrt(1.f - (std::cos(_elapsed * 4.f) + 1.f) / 2.f);
 
   _text.setFillColor(sf::Color((sf::Uint8)(255 * intensity), (sf::Uint8)(255 * intensity), (sf::Uint8)(255 * intensity)));
 

@@ -31,21 +31,21 @@ namespace DOOM
 
     ~CrusherLevelingAction() override = default;
 
-    void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) override  // Update door action
+    void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed) override  // Update door action
     {
       // Don't perform action if not running
       if (_run == false)
         return;
 
       // Update action states
-      while (elapsed != sf::Time::Zero) {
+      while (elapsed != 0.f) {
         switch (_state) {
         case State::Raise:
           // Raise ceiling
           elapsed = updateCeilingRaise(doom, sector, elapsed, sector.ceiling_base, (float)Speed / 8.f);
 
           // End of state
-          if (elapsed > sf::Time::Zero) {
+          if (elapsed > 0.f) {
             _state = State::Lower;
             if (Silent == true)
               sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstop);
@@ -57,11 +57,11 @@ namespace DOOM
           elapsed = updateCeilingLower(doom, sector, elapsed, sector.floor_base + 8.f, (float)Speed / 8.f);
 
           // Crush things
-          if (elapsed > sf::Time::Zero)
+          if (elapsed > 0.f)
             elapsed = updateCeilingCrush(doom, sector, elapsed, sector.floor_base + 8.f, (float)Speed / 8.f / (Speed <= DOOM::EnumAction::Speed::SpeedNormal ? 8.f : 1.f));
 
           // End of state
-          if (elapsed > sf::Time::Zero) {
+          if (elapsed > 0.f) {
             _state = State::Raise;
             if (Silent == true)
               sound(doom, sector, DOOM::Doom::Resources::Sound::EnumSound::Sound_pstop);

@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstdint>
+#include <filesystem>
 #include <string>
 #include <vector>
 #include <queue>
@@ -18,12 +19,12 @@ namespace GBC
   class EmulationScene : public Game::AbstractScene
   {
   private:
-    static const sf::Time ForcedExit; // Forced exit time limit
+    static const float  ForcedExit; // Forced exit time limit
 
     GBC::GameBoyColor   _gbc;     // Game Boy emulator
     sf::Sprite          _sprite;  // Display rendered texture
-    sf::Time            _fps;     // Timer for FPS control
-    sf::Time            _exit;    // Timer of forced exit
+    float               _fps;     // Timer for FPS control
+    float               _exit;    // Timer of forced exit
     sf::RectangleShape  _bar;     // Forced exit bar
     bool                _sync;    // Vertical sync before the scene
 
@@ -52,10 +53,10 @@ namespace GBC
     GBC::EmulationScene::SoundStream  _stream;  // Sound stream of Game Boy Color
 
   public:
-    EmulationScene(Game::SceneMachine& machine, const std::string& filename);
+    EmulationScene(Game::SceneMachine& machine, const std::filesystem::path& filename);
     ~EmulationScene();
 
-    bool  update(sf::Time elapsed) override;  // Simulate the GBC
-    void  draw() override;                    // Draw GBC rendering texture
+    bool  update(float elapsed) override; // Simulate the GBC
+    void  draw() override;                // Draw GBC rendering texture
   };
 }

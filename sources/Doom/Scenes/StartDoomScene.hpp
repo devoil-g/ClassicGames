@@ -21,7 +21,7 @@ namespace DOOM
     sf::Text                _subtitle;      // Subtitle "Player selection"
     std::array<sf::Text, 4> _controllers;   // Name of the controller of the player or "PRESS START"
     sf::Text                _ready;         // Start button, active if at least one controller is assigned
-    sf::Time                _elapsed;       // Total elapsed time
+    float                   _elapsed;       // Total elapsed time
 
     sf::Texture _textureKeyboard, _textureController;
     sf::Sprite  _spriteKeyboard, _spriteController;
@@ -33,7 +33,7 @@ namespace DOOM
     StartDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom);
     ~StartDoomScene() override = default;
 
-    bool  update(sf::Time elapsed) override;  // Update state
-    void  draw() override;                    // Draw state
+    bool  update(float elapsed) override; // Update state
+    void  draw() override;                // Draw state
   };
 }

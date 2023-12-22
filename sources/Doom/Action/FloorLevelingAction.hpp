@@ -27,20 +27,20 @@ namespace DOOM
 
     ~FloorLevelingAction() override = default;
 
-    void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) override  // Update door action
+    void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed) override  // Update door action
     {
       // Lower ceiling
       if (Direction == DOOM::EnumAction::Direction::DirectionUp) {
-        sf::Time  original = elapsed;
+        float original = elapsed;
 
         elapsed = DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::updateFloorRaise(doom, sector, elapsed, _target, (float)Speed / 8.f);
 
         // Crush things
-        if (Crush == true && elapsed > sf::Time::Zero)
+        if (Crush == true && elapsed > 0.f)
           elapsed = DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::updateFloorCrush(doom, sector, elapsed, _target, (float)Speed / 8.f);
 
         // Collision, stop sound
-        if (elapsed > sf::Time::Zero && sector.floor_current != _target)
+        if (elapsed > 0.f && sector.floor_current != _target)
           DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>::_sound.sound.pause();
 
         // Moving, play sound

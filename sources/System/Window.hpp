@@ -25,7 +25,7 @@ namespace Game
     static const unsigned int DefaultHeight;        // Default window height
     static const unsigned int DefaultAntialiasing;  // Default antialiasing level
     static const bool         DefaultVerticalSync;  // Vertical synchronisation activation
-    static const sf::Time     FpsRefresh;           // Time between FPS refresh
+    static const float        FpsRefresh;           // Time between FPS refresh
 
   private:
     class Mouse
@@ -94,7 +94,7 @@ namespace Game
     Game::Window::Mouse     _mouse;     // Mouse informations
     Game::Window::Keyboard  _keyboard;  // Keyboard informations
     Game::Window::Joystick  _joystick;  // Joysticks informations
-    sf::Time                _elapsed;   // Time elapsed since last FPS update
+    float                   _elapsed;   // Time elapsed since last FPS update
     unsigned int            _tick;      // Number of frame rendered since last FPS update
     bool                    _sync;      // Vertical synchronisation toogle
 
@@ -134,7 +134,7 @@ namespace Game
     static void           Delete(int id);       // Remove a window instance (ID 0 can't be deleted)
     static void           Clear();              // Remove every window instance except ID 0
 
-    bool  update(sf::Time);                                                                         // Update window (get events)
+    bool  update(float elapsed);                                                                    // Update window (get events)
     void  create(const sf::VideoMode& video, sf::Uint32 style, const sf::ContextSettings& context); // (Re)create window with parameters
     void  taskbar(WindowFlag flag);                                                                 // Set taskbar status (Windows 7+ only)
     void  taskbar(WindowFlag flag, float value);                                                    // Set taskbar progress (Windows 7+ only)

@@ -21,9 +21,9 @@ void  RPG::GameServer::onDisconnect(std::size_t id)
 
 void  RPG::GameServer::onReceive(std::size_t id, sf::Packet& packet)
 {
-  std::uint32_t data;
-
-  // Extract resuest type
+  std::string data;
+  
+  // Extract request type
   packet >> data;
   
   // Remove client in case of invalid request
@@ -32,21 +32,9 @@ void  RPG::GameServer::onReceive(std::size_t id, sf::Packet& packet)
     kick(id);
   }
 
-  RPG::RFC::ClientToServer  request = static_cast<RPG::RFC::ClientToServer>(data);
+  Game::JSON::Object json = Game::JSON::load(data);
 
-  switch (request) {
-  case RPG::RFC::ClientToServer::CSFileRequest:
-    handleFileRequest(id, packet);
-    break;
-  case RPG::RFC::ClientToServer::CSFileInfo:
-    handleFileInfo(id, packet);
-    break;
-  default:
-    std::cerr << "[RPG::GameServer::onReceive] Warning, invalid request from client #" << id << "." << std::endl;
-    kick(id);
-    break;
-  }
-
+  // TODO: here
 }
 
 void  RPG::GameServer::onTick()
@@ -68,7 +56,7 @@ void  RPG::GameServer::handleFileRequest(std::size_t id, sf::Packet& packet)
     return;
   }
 
-  std::ifstream file(Game::Config::ExecutablePath + "/assets/rpg/" + filename, std::iostream::binary);
+  std::ifstream file(Game::Config::ExecutablePath / "assets" / "rpg" / filename, std::iostream::binary);
   sf::Packet    toSend;
 
   // Valid file
@@ -82,14 +70,14 @@ void  RPG::GameServer::handleFileRequest(std::size_t id, sf::Packet& packet)
       data.push_back(byte);
 
     // Create packet to send
-    toSend << std::uint32_t(RPG::RFC::ServerToClient::SCFileSend) << std::size_t(data.size());
+    toSend << std::uint32_t(RPG::RFC::ServerToClient::StC_FileSend) << std::size_t(data.size());
     for (auto byte : data)
       toSend << byte;
   }
 
   // Unknown file
   else
-    toSend << RPG::RFC::ServerToClient::SCFileUnknown << filename;
+    toSend << RPG::RFC::ServerToClient::StC_FileUnknown << filename;
 
   // Send answer to client
   send(id, toSend);
@@ -109,7 +97,7 @@ void  RPG::GameServer::handleFileInfo(std::size_t id, sf::Packet& packet)
     return;
   }
 
-  std::ifstream file(Game::Config::ExecutablePath + "/assets/rpg/" + filename, std::iostream::binary);
+  std::ifstream file(Game::Config::ExecutablePath / "assets" / "rpg" / filename, std::iostream::binary);
   sf::Packet    toSend;
 
   // Valid file
@@ -123,12 +111,12 @@ void  RPG::GameServer::handleFileInfo(std::size_t id, sf::Packet& packet)
       data.push_back(byte);
 
     // Create packet to send
-    toSend << std::uint32_t(RPG::RFC::ServerToClient::SCFileInfo) << std::size_t(data.size()) << std::size_t(std::hash<std::string>{}(data));
+    toSend << std::uint32_t(RPG::RFC::ServerToClient::StC_FileInfo) << std::size_t(data.size()) << std::size_t(std::hash<std::string>{}(data));
   }
 
   // Unknown file
   else
-    toSend << RPG::RFC::ServerToClient::SCFileUnknown << filename;
+    toSend << RPG::RFC::ServerToClient::StC_FileUnknown << filename;
 
   // Send answer to client
   send(id, toSend);

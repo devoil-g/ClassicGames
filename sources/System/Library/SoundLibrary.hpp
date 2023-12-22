@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <filesystem>
 
 #include <SFML/Audio/SoundBuffer.hpp>
 
@@ -8,7 +8,7 @@
 
 namespace Game
 {
-  class SoundLibrary : public Game::AbstractLibrary<std::string, sf::SoundBuffer>
+  class SoundLibrary : public Game::AbstractLibrary<std::filesystem::path, sf::SoundBuffer>
   {
   private:
     SoundLibrary();
@@ -17,6 +17,6 @@ namespace Game
   public:
     inline static Game::SoundLibrary&  Instance() { static Game::SoundLibrary singleton; return singleton; }; // Return unique instance (singleton)
 
-    void  load(const std::string&) override;  // Load a font in the library
+    void  load(const std::filesystem::path&) override;  // Load a sound in the library
   };
 }

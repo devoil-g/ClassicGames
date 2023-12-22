@@ -13,23 +13,23 @@ namespace DOOM
     class FlickerLightingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>
   {
   private:
-    int       _cycle;   // Cycle duration
-    int       _flicker; // Flicker duration
-    sf::Time  _elapsed; // Elapsed time
+    int   _cycle;   // Cycle duration
+    int   _flicker; // Flicker duration
+    float _elapsed; // Elapsed time
 
   public:
     FlickerLightingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector) :
       DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>(doom, sector),
       _cycle(0),
       _flicker(0),
-      _elapsed(sf::Time::Zero)
+      _elapsed(0.f)
     {
       static_assert(CycleDuration != 0 && FlickerDuration != 0 && CycleDuration >= FlickerDuration, "Invalid FlickerLightingAction parameters.");
     }
 
     ~FlickerLightingAction() override = default;
 
-    virtual void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) override  // Update light sector
+    virtual void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed) override  // Update light sector
     {
       // Update elapsed time
       _elapsed += elapsed;

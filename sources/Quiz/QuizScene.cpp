@@ -7,13 +7,13 @@
 #include "System/Window.hpp"
 #include "System/Audio/Sound.hpp"
 
-const sf::Time  QUIZ::QuizScene::ForcedExit = sf::seconds(1.f);
+const float QUIZ::QuizScene::ForcedExit = 1.f;
 
-QUIZ::QuizScene::QuizScene(Game::SceneMachine& machine, const std::string& config) :
+QUIZ::QuizScene::QuizScene(Game::SceneMachine& machine, const std::filesystem::path& config) :
   Game::AbstractScene(machine),
   _quiz(config),
   _game(),
-  _elapsed(sf::Time::Zero),
+  _elapsed(0.f),
   _bar(sf::Vector2f(1.f, 1.f))
 {
   // Push initial states
@@ -31,14 +31,14 @@ QUIZ::QuizScene::~QuizScene()
   Game::Audio::Sound::Instance().clear();
 }
 
-bool  QUIZ::QuizScene::update(sf::Time elapsed)
+bool  QUIZ::QuizScene::update(float elapsed)
 {
   // Update exit timer
   _elapsed += elapsed;
 
   // Reset timer when ESC is not pressed
   if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Escape) == false)
-    _elapsed = sf::Time::Zero;
+    _elapsed = 0.f;
 
   // Exit if limit reached
   if (_elapsed > QUIZ::QuizScene::ForcedExit) {
@@ -63,6 +63,6 @@ void  QUIZ::QuizScene::draw()
   _game.draw();
   
   // Draw forced exit bar
-  _bar.setScale(Game::Window::Instance().window().getSize().x * _elapsed.asSeconds() / QUIZ::QuizScene::ForcedExit.asSeconds(), 4.f);
+  _bar.setScale(Game::Window::Instance().window().getSize().x * _elapsed / QUIZ::QuizScene::ForcedExit, 4.f);
   Game::Window::Instance().window().draw(_bar);
 }

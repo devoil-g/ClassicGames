@@ -22,7 +22,7 @@ namespace DOOM
 
     ~OpenLevelingAction() override = default;
 
-    void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) override  // Update door action
+    void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed) override  // Update door action
     {
       // Update floor and ceiling height
       updateFloorLower(doom, sector, elapsed, _target_floor, (float)Speed / 8.f);

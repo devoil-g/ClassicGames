@@ -2,7 +2,7 @@
 
 #include "GameBoyColor/MemoryBankController2.hpp"
 
-GBC::MemoryBankController2::MemoryBankController2(GBC::GameBoyColor& gbc, const std::vector<std::uint8_t>& rom, const std::string& ramSave) :
+GBC::MemoryBankController2::MemoryBankController2(GBC::GameBoyColor& gbc, const std::vector<std::uint8_t>& rom, const std::filesystem::path& ramSave) :
   GBC::MemoryBankController(gbc, rom, GBC::MemoryBankController2::RamSize, ramSave)
 {}
 

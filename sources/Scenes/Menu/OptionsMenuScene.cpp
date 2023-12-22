@@ -29,7 +29,7 @@ Game::OptionsMenuScene::OptionsMenuScene(Game::SceneMachine& machine) :
   footer(returnText, std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::OptionsMenuScene::selectReturn, this, std::placeholders::_1)));
 }
 
-bool  Game::OptionsMenuScene::update(sf::Time elapsed)
+bool  Game::OptionsMenuScene::update(float elapsed)
 {
   // Update menu
   return Game::AbstractMenuScene::update(elapsed);

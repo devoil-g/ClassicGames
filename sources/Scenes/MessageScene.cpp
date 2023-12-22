@@ -6,12 +6,12 @@
 
 Game::MessageScene::MessageScene(Game::SceneMachine& machine, const std::string& message) :
   Game::AbstractScene(machine),
-  _message(message, Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
-  _return("Return", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
+  _message(message, Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
+  _return("Return", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
   _selected(-1)
 {}
 
-bool  Game::MessageScene::update(sf::Time elapsed)
+bool  Game::MessageScene::update(float elapsed)
 {
   // Return to previous menu
   if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Right) ||

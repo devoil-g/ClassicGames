@@ -13,7 +13,7 @@
 #include "System/Config.hpp"
 #include "System/Utilities.hpp"
 
-Game::Audio::Midi::Midi(const std::string& filename)
+Game::Audio::Midi::Midi(const std::filesystem::path& filename)
 {
   // TODO: remove this
 #ifdef _DEBUG
@@ -24,7 +24,7 @@ Game::Audio::Midi::Midi(const std::string& filename)
   load(filename);
 }
 
-void  Game::Audio::Midi::load(const std::string& filename)
+void  Game::Audio::Midi::load(const std::filesystem::path& filename)
 {
   std::ifstream file(filename, std::ifstream::binary);
 

@@ -5,14 +5,14 @@
 #include "Math/Math.hpp"
 #include "System/Window.hpp"
 
-const sf::Time  GBC::EmulationScene::ForcedExit = sf::seconds(1.f);
+const float GBC::EmulationScene::ForcedExit = 1.f;
 
-GBC::EmulationScene::EmulationScene(Game::SceneMachine& machine, const std::string& filename) :
+GBC::EmulationScene::EmulationScene(Game::SceneMachine& machine, const std::filesystem::path& filename) :
   Game::AbstractScene(machine),
   _gbc(filename),
   _sprite(_gbc.lcd()),
-  _fps(sf::seconds(-0.42f)),
-  _exit(sf::Time::Zero),
+  _fps(-0.42f),
+  _exit(0.f),
   _bar(sf::Vector2f(1.f, 1.f)),
   _stream(),
   _sync(Game::Window::Instance().getVerticalSync())
@@ -38,21 +38,21 @@ GBC::EmulationScene::~EmulationScene()
   Game::Window::Instance().window().setVerticalSyncEnabled(_sync);
 }
 
-bool  GBC::EmulationScene::update(sf::Time elapsed)
+bool  GBC::EmulationScene::update(float elapsed)
 {
   // Update timers
   _exit += elapsed;
-  _fps = std::min(_fps + elapsed, sf::seconds(2.f * (GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank) * GBC::PixelProcessingUnit::ScanlineDuration / Math::Pow<22>(2)));
+  _fps = std::min(_fps + elapsed, 2.f * (GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank) * GBC::PixelProcessingUnit::ScanlineDuration / Math::Pow<22>(2));
 
   // Reset exit timer when ESC is not pressed
   if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Escape) == false)
-    _exit = sf::Time::Zero;
+    _exit = 0.f;
 
   // Sound volume control
   if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Subtract) == true)
-    _stream.setVolume(std::clamp(_stream.getVolume() - elapsed.asSeconds() * 64.f, 0.f, 100.f));
+    _stream.setVolume(std::clamp(_stream.getVolume() - elapsed * 64.f, 0.f, 100.f));
   if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Add) == true)
-    _stream.setVolume(std::clamp(_stream.getVolume() + elapsed.asSeconds() * 64.f, 0.f, 100.f));
+    _stream.setVolume(std::clamp(_stream.getVolume() + elapsed * 64.f, 0.f, 100.f));
 
   // Exit if limit reached
   if (_exit > GBC::EmulationScene::ForcedExit) {
@@ -79,11 +79,11 @@ bool  GBC::EmulationScene::update(sf::Time elapsed)
 
   // Simulate frames at 59.72 fps
   // NOTE: simulate at most one frame per call to avoid exponential delay
-  if (_fps.asSeconds() >= 70224.f / Math::Pow<22>(2) ||
+  if (_fps >= 70224.f / Math::Pow<22>(2) ||
     Game::Window::Instance().keyboard().keyDown(sf::Keyboard::LControl) == true ||
     Game::Window::Instance().joystick().position(0, 2) < -64.f) {
     _gbc.simulate();
-    _fps = sf::seconds(std::max(_fps.asSeconds() - 70224.f / Math::Pow<22>(2), 0.f));
+    _fps = std::max(_fps - 70224.f / Math::Pow<22>(2), 0.f);
 
     // Push sound buffer to sound stream queue
     _stream.push(_gbc.sound());
@@ -101,7 +101,7 @@ void  GBC::EmulationScene::draw()
   Game::Window::Instance().draw(_sprite);
 
   // Draw forced exit bar
-  _bar.setScale(Game::Window::Instance().window().getSize().x * _exit.asSeconds() / GBC::EmulationScene::ForcedExit.asSeconds(), 4.f);
+  _bar.setScale(Game::Window::Instance().window().getSize().x * _exit / GBC::EmulationScene::ForcedExit, 4.f);
   Game::Window::Instance().window().draw(_bar);
 }
 

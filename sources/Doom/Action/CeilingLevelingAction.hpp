@@ -25,20 +25,20 @@ namespace DOOM
 
     ~CeilingLevelingAction() override = default;
 
-    void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) override  // Update door action
+    void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed) override  // Update door action
     {
       // Lower ceiling
       if (Direction == DOOM::EnumAction::Direction::DirectionDown) {
-        sf::Time  original = elapsed;
+        float original = elapsed;
 
         elapsed = updateCeilingLower(doom, sector, elapsed, _target, (float)Speed / 8.f);
 
         // Crush things
-        if (Crush == true && elapsed > sf::Time::Zero)
+        if (Crush == true && elapsed > 0.f)
           elapsed = updateCeilingCrush(doom, sector, elapsed, _target, (float)Speed / 8.f);
 
         // Collision, stop sound
-        if (elapsed > sf::Time::Zero && sector.ceiling_current != _target)
+        if (elapsed > 0.f && sector.ceiling_current != _target)
           _sound.sound.pause();
 
         // Moving, play sound

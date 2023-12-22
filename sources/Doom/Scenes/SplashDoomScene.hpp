@@ -19,7 +19,7 @@ namespace DOOM
     SplashDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom);
     ~SplashDoomScene() override = default;
 
-    bool  update(sf::Time elapsed) override;  // Update state
-    void  draw() override;                    // Draw state
+    bool  update(float elapsed) override; // Update state
+    void  draw() override;                // Draw state
   };
 }

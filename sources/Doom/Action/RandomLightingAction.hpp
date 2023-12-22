@@ -13,23 +13,23 @@ namespace DOOM
     class RandomLightingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>
   {
   private:
-    int16_t   _cycle;   // Cycle duration
-    int16_t   _flash;   // Flicker duration
-    sf::Time  _elapsed; // Elapsed time
+    int16_t _cycle;   // Cycle duration
+    int16_t _flash;   // Flicker duration
+    float   _elapsed; // Elapsed time
 
   public:
     RandomLightingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector) :
       DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>(doom, sector),
       _cycle(0),
       _flash(0),
-      _elapsed(sf::Time::Zero)
+      _elapsed(0.f)
     {
       static_assert(CycleDuration != 0 && FlashDuration != 0 && CycleDuration >= FlashDuration, "Invalid RandomLightingAction parameters.");
     }
 
     ~RandomLightingAction() override = default;
 
-    virtual void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) override  // Update light sector
+    virtual void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed) override  // Update light sector
     {
       // Update elapsed time
       _elapsed += elapsed;

@@ -23,7 +23,7 @@ namespace Game
 
     public:
       Item(const sf::String& string, const std::function<void(Item&)>& callback) :
-        sf::Text(string, Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
+        sf::Text(string, Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
         _callback(callback)
       {}
 
@@ -48,8 +48,8 @@ namespace Game
     AbstractMenuScene(Game::SceneMachine& machine);
     virtual ~AbstractMenuScene() = 0;
 
-    virtual bool  update(sf::Time elapsed) override;  // Update menu state
-    virtual void  draw() override final;              // Draw menu state
+    virtual bool  update(float elapsed) override; // Update menu state
+    virtual void  draw() override final;          // Draw menu state
 
     void  title(const std::string& string);                                               // Change title
     void  add(const std::string& string, const std::function<void(Item&)>& callback);     // Add item to menu

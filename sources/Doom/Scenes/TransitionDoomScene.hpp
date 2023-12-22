@@ -19,13 +19,13 @@ namespace DOOM
     sf::Texture _transitionTexture; // Transition (animation) texture
     sf::Sprite  _transitionSprite;  // Transition (animation) sprite
     
-    std::vector<sf::Time> _offsets; // Temporal offset of pixel columns
+    std::vector<float>  _offsets; // Temporal offset of pixel columns
 
   public:
     TransitionDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom, const sf::Image& start, const sf::Image& end);
     ~TransitionDoomScene() override = default;
 
-    bool  update(sf::Time elapsed) override;  // Update state
-    void  draw() override;                    // Draw state
+    bool  update(float elapsed) override; // Update state
+    void  draw() override;                // Draw state
   };
 }

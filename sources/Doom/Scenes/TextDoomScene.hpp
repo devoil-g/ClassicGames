@@ -13,7 +13,7 @@ namespace DOOM
     static const unsigned int TextSpeed;  // Number of tics for each character
 
     DOOM::Doom&       _doom;    // DOOM instance
-    sf::Time          _elapsed; // Time elapsed since beginning of state
+    float             _elapsed; // Time elapsed since beginning of state
     sf::Image         _image;   // Rendering target
     std::queue<char>  _text;    // Character to be displayed
     int               _x, _y;   // Text coordinates
@@ -24,7 +24,7 @@ namespace DOOM
     TextDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom, const std::string& text, uint64_t background);
     ~TextDoomScene() override = default;
 
-    bool  update(sf::Time elapsed) override;  // Update state
-    void  draw() override;                    // Draw state
+    bool  update(float elapsed) override; // Update state
+    void  draw() override;                // Draw state
   };
 }

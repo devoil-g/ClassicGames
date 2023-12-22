@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <filesystem>
 
 namespace Game
 {
@@ -8,7 +8,7 @@ namespace Game
   {
     void  initialize(int, char **);
 
-    extern std::string  ExecutablePath; // Path to the executable (without executable name, '/' or '\' terminated)
-    extern unsigned int ThreadNumber;   // Number of maximum parallele threads
+    extern std::filesystem::path  ExecutablePath; // Path to the executable (without executable name, '/' or '\' terminated)
+    extern unsigned int           ThreadNumber;   // Number of maximum parallele threads
   };
 }

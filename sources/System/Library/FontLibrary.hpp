@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <filesystem>
 
 #include <SFML/Graphics/Font.hpp>
 
@@ -8,7 +8,7 @@
 
 namespace Game
 {
-  class FontLibrary : public Game::AbstractLibrary<std::string, sf::Font>
+  class FontLibrary : public Game::AbstractLibrary<std::filesystem::path, sf::Font>
   {
   private:
     FontLibrary();
@@ -17,6 +17,6 @@ namespace Game
   public:
     inline static Game::FontLibrary&  Instance() { static Game::FontLibrary singleton; return singleton; }; // Return unique instance (singleton)
 
-    void  load(const std::string&) override;  // Load a font in the library
+    void  load(const std::filesystem::path&) override;  // Load a font in the library
   };
 }

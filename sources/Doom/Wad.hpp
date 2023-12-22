@@ -379,6 +379,6 @@ namespace DOOM
     Wad() = default;
     ~Wad() = default;
 
-    void  load(const std::string& file);  // Load levels from file
+    void  load(const std::filesystem::path& file);  // Load levels from file
   };
 }

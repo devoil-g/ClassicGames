@@ -4,7 +4,9 @@
 #include <unordered_map>
 
 #include "RolePlayingGame/TcpServer.hpp"
-#include "RolePlayingGame/Level.hpp"
+#include "RolePlayingGame/World.hpp"
+
+#include "System/JavaScriptObjectNotation.hpp"
 
 namespace RPG
 {
@@ -20,20 +22,21 @@ namespace RPG
 
     enum ServerToClient : std::uint32_t
     {
+      StC_Mask = 0xFF000000,
 
+      StC_FileMask = 0x01000000,
 
-      SCFileSend,     // Send file to client, std::string filename, std::size_t size, void* data
-      SCFileInfo,     // Send file info to client, std::string filename, std::size_t size, std::size_t hash
-      SCFileUnknown,  // Requested file does not exist, std::string filename
-
+      StC_FileSend,     // Send file to client, std::string filename, std::size_t size, void* data
+      StC_FileInfo,     // Send file info to client, std::string filename, std::size_t size, std::size_t hash
+      StC_FileUnknown,  // Requested file does not exist, std::string filename
 
       // Load a new level to client
-      SCLoadMask = 0x01000000,
+      StC_LoadMask = 0x01000000,
 
-      SCLoadStart,  // Start level loading
-      SCLoadCell,   // Load a cell, std::int32_t x, std::int32_t y, ... 
-      SCLoadEntity, // Load an entity
-      SCLoadEnd,    // End level loading
+      StC_LoadStart,  // Start level loading
+      StC_LoadCell,   // Load a cell, std::int32_t x, std::int32_t y, ... 
+      StC_LoadEntity, // Load an entity
+      StC_LoadEnd,    // End level loading
 
       SCCount
     };
@@ -52,10 +55,12 @@ namespace RPG
     };
 
     std::list<RPG::GameServer::Client>          _clients;
-    std::unordered_map<std::string, RPG::Level> _levels;  // Levels accessible by name
 
     void  handleFileRequest(std::size_t id, sf::Packet& packet);  // Request server to send a file
     void  handleFileInfo(std::size_t id, sf::Packet& packet);     // Request server to send file info
+
+    void  handleFileRequest(RPG::GameServer::Client& client, Game::JSON::Object& json); // Request server to send a file
+    void  handleFileInfo(RPG::GameServer::Client& client, Game::JSON::Object& json);    // Request server to send file info
 
     virtual void  onConnect(std::size_t id) override;                     // Called when a new TCP client connect
     virtual void  onDisconnect(std::size_t id) override;                  // Called when a TCP client disconnect

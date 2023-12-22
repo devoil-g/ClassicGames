@@ -14,7 +14,7 @@ DOOM::TransitionDoomScene::TransitionDoomScene(Game::SceneMachine& machine, DOOM
   // Randomly set timers
   _offsets.front() = DOOM::Doom::Tic * (float)(-std::rand() % 16);
   for (unsigned int i = 1; i < _offsets.size(); i++)
-    _offsets[i] = std::clamp(_offsets[i - 1] + (DOOM::Doom::Tic * (float)(std::rand() % 3 - 1)), DOOM::Doom::Tic * -15.f, sf::Time::Zero);
+    _offsets[i] = std::clamp(_offsets[i - 1] + (DOOM::Doom::Tic * (float)(std::rand() % 3 - 1)), DOOM::Doom::Tic * -15.f, 0.f);
   
   float scale_x = (float)_startImage.getSize().x / (float)Game::Window::Instance().window().getSize().x;
   float scale_y = (float)_startImage.getSize().y / (float)Game::Window::Instance().window().getSize().y * DOOM::Doom::RenderStretching;
@@ -45,7 +45,7 @@ DOOM::TransitionDoomScene::TransitionDoomScene(Game::SceneMachine& machine, DOOM
   _doom.image.create(0, 0);
 }
 
-bool  DOOM::TransitionDoomScene::update(sf::Time elapsed)
+bool  DOOM::TransitionDoomScene::update(float elapsed)
 {
   bool  done = true;
 
@@ -74,12 +74,12 @@ void  DOOM::TransitionDoomScene::draw()
     unsigned int  offset_y;
 
     // Slow start for 16 ticks
-    if (offset <= sf::Time::Zero)
+    if (offset <= 0.f)
       offset_y = 0;
-    else if (offset.asSeconds() / DOOM::Doom::Tic.asSeconds() <= 16.f)
-      offset_y = (unsigned int)((Math::Pow<2>((offset.asSeconds() / DOOM::Doom::Tic.asSeconds() / 32.f)) * 32.f * 8) * ((float)_transitionImage.getSize().y / (float)DOOM::Doom::RenderHeight) + 0.5f);
+    else if (offset / DOOM::Doom::Tic <= 16.f)
+      offset_y = (unsigned int)((Math::Pow<2>((offset / DOOM::Doom::Tic / 32.f)) * 32.f * 8) * ((float)_transitionImage.getSize().y / (float)DOOM::Doom::RenderHeight) + 0.5f);
     else
-      offset_y = (unsigned int)(((offset.asSeconds() / DOOM::Doom::Tic.asSeconds()) * 8.f - 64.f) * ((float)_transitionImage.getSize().y / (float)DOOM::Doom::RenderHeight) + 0.5f);
+      offset_y = (unsigned int)(((offset / DOOM::Doom::Tic) * 8.f - 64.f) * ((float)_transitionImage.getSize().y / (float)DOOM::Doom::RenderHeight) + 0.5f);
 
     // Draw transparent column
     for (unsigned int y = 0; y < std::min(offset_y, _transitionImage.getSize().y); y++)

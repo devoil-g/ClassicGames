@@ -100,7 +100,7 @@ DOOM::MenuDoomScene::MenuDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom
       .escape = [this]() { _menuIndex = MenuMain; _menuCursor = 5; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
     }
   }),
-  _menuElapsed(sf::Time::Zero),
+  _menuElapsed(0.f),
   _menuImage()
 {
   // Select a random level
@@ -257,13 +257,13 @@ void  DOOM::MenuDoomScene::updateEscape()
   _menuDesc[_menuIndex].escape();
 }
 
-bool  DOOM::MenuDoomScene::update(sf::Time elapsed)
+bool  DOOM::MenuDoomScene::update(float elapsed)
 {
   // Update background camera
-  _camera.angle -= elapsed.asSeconds() * Math::Pi / 36.f;
+  _camera.angle -= elapsed * Math::Pi / 36.f;
 
   // Update skull animation
-  _menuElapsed = sf::microseconds((_menuElapsed.asMicroseconds() + elapsed.asMicroseconds()) % (DOOM::Doom::Tic.asMicroseconds() * SkullDuration * 2));
+  _menuElapsed = Math::Modulo(_menuElapsed + elapsed, DOOM::Doom::Tic * SkullDuration * 2);
 
   int controller = _doom.level.players.front().get().controller;
 
@@ -349,7 +349,7 @@ void  DOOM::MenuDoomScene::draw()
   }
 
   // Draw menu skull
-  _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>((unsigned int)(_menuElapsed.asSeconds() / DOOM::Doom::Tic.asSeconds()) < SkullDuration ? "M_SKULL1" : "M_SKULL2")).draw(_doom, _menuImage,
+  _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>((unsigned int)(_menuElapsed / DOOM::Doom::Tic) < SkullDuration ? "M_SKULL1" : "M_SKULL2")).draw(_doom, _menuImage,
     {
       std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor)->x - 32,
       std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor)->y - 5 + offset_y

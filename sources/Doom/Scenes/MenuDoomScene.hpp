@@ -64,7 +64,7 @@ namespace DOOM
     MenuEnum                    _menuIndex;   // Current menu
     int                         _menuCursor;  // Menu cursor index
     std::array<Menu, MenuCount> _menuDesc;    // Menus descriptions
-    sf::Time                    _menuElapsed; // Used for skull animation
+    float                       _menuElapsed; // Used for skull animation
     sf::Image                   _menuImage;   // Pre-render target of menu
 
     void  start();  // Start game
@@ -80,7 +80,7 @@ namespace DOOM
     MenuDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom, bool random = false);
     ~MenuDoomScene() override = default;
 
-    bool  update(sf::Time elapsed) override;  // Update state
-    void  draw() override;                    // Draw state
+    bool  update(float elapsed) override; // Update state
+    void  draw() override;                // Draw state
   };
 }

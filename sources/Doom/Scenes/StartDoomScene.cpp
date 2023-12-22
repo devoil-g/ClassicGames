@@ -15,23 +15,23 @@ DOOM::StartDoomScene::StartDoomScene(Game::SceneMachine& machine, DOOM::Doom& do
   _players({ -1, -1, -1, -1 }),
   _textureTitle(),
   _spriteTitle(),
-  _subtitle("select your controller", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
+  _subtitle("select your controller", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
   _controllers(
     {
-      sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
-      sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
-      sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
-      sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf"))
+      sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
+      sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
+      sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
+      sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf"))
     }
   ),
-  _ready("READY", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath + "assets/fonts/pixelated.ttf")),
-  _elapsed(sf::Time::Zero),
+  _ready("READY", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
+  _elapsed(0.f),
   _textureKeyboard(), _textureController(),
   _spriteKeyboard(), _spriteController()
 {
   // Load keyboard & controller icons
-  if (_textureKeyboard.loadFromFile(Game::Config::ExecutablePath + "assets/textures/keyboard.png") == false ||
-    _textureController.loadFromFile(Game::Config::ExecutablePath + "assets/textures/controller.png") == false)
+  if (_textureKeyboard.loadFromFile((Game::Config::ExecutablePath / "assets" / "textures" / "keyboard.png").string()) == false ||
+    _textureController.loadFromFile((Game::Config::ExecutablePath / "assets" / "textures" / "controller.png").string()) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   sf::Image image = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("M_DOOM")).image(_doom);
@@ -50,7 +50,7 @@ DOOM::StartDoomScene::StartDoomScene(Game::SceneMachine& machine, DOOM::Doom& do
   _doom.image.create(1, 1, sf::Color(0, 0, 0, 0));
 }
 
-bool  DOOM::StartDoomScene::update(sf::Time elapsed)
+bool  DOOM::StartDoomScene::update(float elapsed)
 {
   // Add elapsed time to counter
   _elapsed += elapsed;
@@ -123,7 +123,7 @@ void  DOOM::StartDoomScene::draw()
     switch (_players[index]) {
     case -1:	// No controller
     {
-      float intensity = std::sqrt(1.f - (std::cos(_elapsed.asSeconds() * 4.f) + 1.f) / 2.f);
+      float intensity = std::sqrt(1.f - (std::cos(_elapsed * 4.f) + 1.f) / 2.f);
 
       _controllers[index].setString("PRESS START");
       _controllers[index].setFillColor(sf::Color((sf::Uint8)(255 * intensity), (sf::Uint8)(255 * intensity), (sf::Uint8)(255 * intensity)));
@@ -150,8 +150,8 @@ void  DOOM::StartDoomScene::draw()
     _controllers[index].setCharacterSize(Game::Window::Instance().window().getSize().y / 24);
   _ready.setCharacterSize(Game::Window::Instance().window().getSize().y / 12);
   _ready.setScale(
-    0.75f + 0.25f * (std::cos(_elapsed.asSeconds() * 4.f) + 1.f) / 2.f,
-    0.75f + 0.25f * (std::cos(_elapsed.asSeconds() * 4.f) + 1.f) / 2.f
+    0.75f + 0.25f * (std::cos(_elapsed * 4.f) + 1.f) / 2.f,
+    0.75f + 0.25f * (std::cos(_elapsed * 4.f) + 1.f) / 2.f
   );
   _spriteTitle.setScale(
     std::min((Game::Window::Instance().window().getSize().y * 0.3f) / _textureTitle.getSize().y, (Game::Window::Instance().window().getSize().x * 0.75f) / _textureTitle.getSize().x),

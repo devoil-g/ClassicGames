@@ -74,7 +74,7 @@ const std::array<std::array<uint64_t, DOOM::Statusbar::FaceSprite::SpriteCount>,
 
 DOOM::Statusbar::Statusbar(const DOOM::Doom& doom, int id) :
   _face{ 0, 1, DOOM::Statusbar::FaceSprite::SpriteLookForward },
-  _elapsed(sf::Time::Zero),
+  _elapsed(0.f),
   id(id),
   ammo(0),
   health(0),
@@ -89,11 +89,11 @@ DOOM::Statusbar::Statusbar(const DOOM::Doom& doom, int id) :
   weapons[DOOM::Enum::Weapon::WeaponPistol] = true;
 }
 
-void  DOOM::Statusbar::update(sf::Time elapsed)
+void  DOOM::Statusbar::update(float elapsed)
 {
   // Does nothing if state is infinite
   if (_face.duration == 0) {
-    _elapsed = sf::Time::Zero;
+    _elapsed = 0.f;
     return;
   }
 
@@ -124,7 +124,7 @@ void  DOOM::Statusbar::setFace(unsigned int priority, const DOOM::Statusbar::Fac
   // Check priority order
   if (priority > _face.priority) {
     _face = state;
-    _elapsed = sf::Time::Zero;
+    _elapsed = 0.f;
   }
 }
 

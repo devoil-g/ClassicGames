@@ -97,8 +97,8 @@ DOOM::IntermissionDoomScene::IntermissionDoomScene(Game::SceneMachine& machine, 
   _next(next),
   _statistics(statistics),
   _state(DOOM::IntermissionDoomScene::State::StateStats),
-  _elapsed(sf::Time::Zero),
-  _nextElapsed(sf::Time::Zero),
+  _elapsed(0.f),
+  _nextElapsed(0.f),
   _kills(),
   _items(),
   _secrets(),
@@ -144,26 +144,26 @@ DOOM::IntermissionDoomScene::IntermissionDoomScene(Game::SceneMachine& machine, 
 {
   // Initialize counter for each player
   for (const auto& player : _doom.level.players) {
-    _kills[player.get().id].value = -1.f / DOOM::Doom::Tic.asSeconds() * DOOM::IntermissionDoomScene::SpeedPercent;
-    _items[player.get().id].value = -1.f / DOOM::Doom::Tic.asSeconds() * DOOM::IntermissionDoomScene::SpeedPercent;
-    _secrets[player.get().id].value = -1.f / DOOM::Doom::Tic.asSeconds() * DOOM::IntermissionDoomScene::SpeedPercent;
+    _kills[player.get().id].value = -1.f / DOOM::Doom::Tic * DOOM::IntermissionDoomScene::SpeedPercent;
+    _items[player.get().id].value = -1.f / DOOM::Doom::Tic * DOOM::IntermissionDoomScene::SpeedPercent;
+    _secrets[player.get().id].value = -1.f / DOOM::Doom::Tic * DOOM::IntermissionDoomScene::SpeedPercent;
     _kills[player.get().id].max = (_statistics.total.kills == 0) ? 0.f : std::round(_statistics.players[player.get().id].kills * 100.f / _statistics.total.kills);
     _items[player.get().id].max = (_statistics.total.items == 0) ? 0.f : std::round(_statistics.players[player.get().id].items * 100.f / _statistics.total.items);
     _secrets[player.get().id].max = (_statistics.total.secrets == 0) ? 0.f : std::round(_statistics.players[player.get().id].secrets * 100.f / _statistics.total.secrets);
   }
 
   // Time counter
-  _times[0].value = -1.f / DOOM::Doom::Tic.asSeconds() * DOOM::IntermissionDoomScene::SpeedTime;
-  _times[0].max = std::round(_statistics.time.asSeconds());
+  _times[0].value = -1.f / DOOM::Doom::Tic * DOOM::IntermissionDoomScene::SpeedTime;
+  _times[0].max = std::round(_statistics.time);
 
   // Par counter
-  _times[1].value = -1.f / DOOM::Doom::Tic.asSeconds() * DOOM::IntermissionDoomScene::SpeedTime;
+  _times[1].value = -1.f / DOOM::Doom::Tic * DOOM::IntermissionDoomScene::SpeedTime;
   _times[1].max = getPar(_previous);
   if (std::isnan(_times[1].max) == true)
     _times[1].max = _times[1].value;
 }
 
-bool  DOOM::IntermissionDoomScene::update(sf::Time elapsed)
+bool  DOOM::IntermissionDoomScene::update(float elapsed)
 {
   // Add time to counter
   _elapsed += elapsed;
@@ -204,15 +204,15 @@ bool  DOOM::IntermissionDoomScene::updateStatisticsCountersCheck(const std::map<
   return true;
 }
 
-void  DOOM::IntermissionDoomScene::updateStatisticsCounters(sf::Time& elapsed, std::map<int, DOOM::IntermissionDoomScene::Counter>& counters, int speed)
+void  DOOM::IntermissionDoomScene::updateStatisticsCounters(float& elapsed, std::map<int, DOOM::IntermissionDoomScene::Counter>& counters, int speed)
 {
   // Does nothing if no time or already completed
-  if (elapsed == sf::Time::Zero || updateStatisticsCountersCheck(counters) == true)
+  if (elapsed == 0.f || updateStatisticsCountersCheck(counters) == true)
     return;
 
-  sf::Time  copy = elapsed;
-  int       start = std::numeric_limits<int>::max();
-  int       end = std::numeric_limits<int>::min();
+  float copy = elapsed;
+  int   start = std::numeric_limits<int>::max();
+  int   end = std::numeric_limits<int>::min();
 
   for (auto& counter : counters) {
     // Already completed
@@ -223,17 +223,17 @@ void  DOOM::IntermissionDoomScene::updateStatisticsCounters(sf::Time& elapsed, s
     start = std::min(start, (int)std::round(counter.second.value / speed / DOOM::IntermissionDoomScene::SpeedPistol));
 
     // Increase counter
-    counter.second.value += copy.asSeconds() / DOOM::Doom::Tic.asSeconds() * speed;
+    counter.second.value += copy / DOOM::Doom::Tic * speed;
 
     // Finished
     if (counter.second.value >= counter.second.max) {
-      elapsed = std::min(elapsed, sf::seconds((counter.second.value - counter.second.max) / speed * DOOM::Doom::Tic.asSeconds()));
+      elapsed = std::min(elapsed, (counter.second.value - counter.second.max) / speed * DOOM::Doom::Tic);
       counter.second.value = counter.second.max;
     }
 
     // Not completed, consume time
     else
-      elapsed = sf::Time::Zero;
+      elapsed = 0.f;
 
     // Counter for sound effet
     if (counter.second.value >= 0.f)
@@ -249,7 +249,7 @@ void  DOOM::IntermissionDoomScene::updateStatisticsCounters(sf::Time& elapsed, s
     _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol);
 }
 
-void  DOOM::IntermissionDoomScene::updateStatistics(sf::Time elapsed)
+void  DOOM::IntermissionDoomScene::updateStatistics(float elapsed)
 {
   // Skip statistics
   if (updateSkip() == true) {
@@ -280,7 +280,7 @@ void  DOOM::IntermissionDoomScene::updateStatistics(sf::Time elapsed)
 
     // A stat has been skipped
     _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_barexp);
-    elapsed = sf::Time::Zero;
+    elapsed = 0.f;
     return;
   }
 
@@ -293,7 +293,7 @@ void  DOOM::IntermissionDoomScene::updateStatistics(sf::Time elapsed)
   updateStatisticsCounters(elapsed, _times, DOOM::IntermissionDoomScene::SpeedTime);
 }
 
-void  DOOM::IntermissionDoomScene::updateNext(sf::Time elapsed)
+void  DOOM::IntermissionDoomScene::updateNext(float elapsed)
 {
   // Update Next state timer
   _nextElapsed += elapsed;
@@ -386,9 +386,9 @@ void  DOOM::IntermissionDoomScene::drawBackground()
     // Draw every animations
     for (const auto& animation : _animations[_previous.first - 1]) {
       if (animation.level == 0)
-        _doom.resources.getMenu(animation.frames[(_elapsed.asMicroseconds() / (animation.duration * DOOM::Doom::Tic.asMicroseconds()) + animation.offset) % animation.frames.size()]).draw(_doom, _doom.image, animation.position, sf::Vector2i(1, 1));
+        _doom.resources.getMenu(animation.frames[((std::size_t)(_elapsed / (animation.duration * DOOM::Doom::Tic)) + animation.offset) % animation.frames.size()]).draw(_doom, _doom.image, animation.position, sf::Vector2i(1, 1));
       else if (_next.second == animation.level)
-        _doom.resources.getMenu(animation.frames[std::min((_nextElapsed.asMicroseconds() / (animation.duration * DOOM::Doom::Tic.asMicroseconds()) + animation.offset), (long long)animation.frames.size() - 1)]).draw(_doom, _doom.image, animation.position, sf::Vector2i(1, 1));
+        _doom.resources.getMenu(animation.frames[std::min(((std::size_t)(_nextElapsed / (animation.duration * DOOM::Doom::Tic)) + animation.offset), animation.frames.size() - 1)]).draw(_doom, _doom.image, animation.position, sf::Vector2i(1, 1));
     }
   }
 }
@@ -505,7 +505,7 @@ void  DOOM::IntermissionDoomScene::drawNext()
     }
 
     // Draw '<- You are here'
-    if ((int)(_nextElapsed.asSeconds() / DOOM::Doom::Tic.asSeconds()) % 32 < 20 &&
+    if ((int)(_nextElapsed / DOOM::Doom::Tic) % 32 < 20 &&
       _next.second >= 1 && _next.second <= _positions[_next.first - 1].size()) {
       const auto& here0 = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WIURH0"));
       const auto& here1 = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WIURH1"));

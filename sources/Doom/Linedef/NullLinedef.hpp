@@ -11,6 +11,6 @@ namespace DOOM
     NullLinedef(DOOM::Doom& doom, const DOOM::AbstractLinedef& linedef);
     ~NullLinedef() override = default;
 
-    void  update(DOOM::Doom& doom, sf::Time elapsed) override;  // Update linedef
+    void  update(DOOM::Doom& doom, float elapsed) override;  // Update linedef
   };
 }

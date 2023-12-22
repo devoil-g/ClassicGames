@@ -17,8 +17,8 @@ namespace Game
 {
   namespace Config
   {
-    std::string	  ExecutablePath(".");
-    unsigned int  ThreadNumber(0);
+    std::filesystem::path ExecutablePath(".");
+    unsigned int          ThreadNumber(0);
   };
 };
 
@@ -33,8 +33,17 @@ void  Game::Config::initialize(int argc, char** argv)
   if (handle == nullptr)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
+  // Get executable path
   ::GetModuleFileNameW(handle, path, MAX_PATH);
-  Game::Config::ExecutablePath = std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t>().to_bytes(std::wstring(path).substr(0, std::wstring(path).find_last_of('\\') + 1));
+
+  std::wstring string(path);
+
+  // Cut executable name
+  string = string.substr(0, string.find_last_of(L"\\"));
+
+  Game::Config::ExecutablePath = string;
+
+  //Game::Config::ExecutablePath = std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t>().to_bytes(std::wstring(path).substr(0, std::wstring(path).find_last_of('\\') + 1));
 #else
   char  path[PATH_MAX + 1] = { 0 };
 

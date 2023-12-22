@@ -50,7 +50,7 @@ namespace DOOM
   static const std::array<std::array<uint64_t, DOOM::Statusbar::FaceSprite::SpriteCount>, DOOM::Statusbar::FacePain::PainCount> _sprites; // Face sprites
 
   DOOM::Statusbar::Face _face;    // Face of player
-  sf::Time              _elapsed; // Time since begining of face state
+  float                 _elapsed; // Time since begining of face state
 
   public:
     const int                                                             id;               // Player ID in game
@@ -82,7 +82,7 @@ namespace DOOM
 
     void  setFace(unsigned int priority, const DOOM::Statusbar::Face& state); // Change current face
 
-    void  update(sf::Time elapsed);                                                                         // Update statusbar
+    void  update(float elapsed);                                                                         // Update statusbar
     void  render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int16_t palette) const; // Render statusbar to target image
   };
 }

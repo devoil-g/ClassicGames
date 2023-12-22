@@ -9,7 +9,7 @@ std::string const   Game::Window::DefaultTitle = "Classical Games";
 unsigned int const  Game::Window::DefaultWidth = 640;
 unsigned int const  Game::Window::DefaultHeight = 480;
 unsigned int const  Game::Window::DefaultAntialiasing = 4;
-sf::Time const      Game::Window::FpsRefresh = sf::seconds(1.f);
+float const         Game::Window::FpsRefresh = 1.f;
 bool const          Game::Window::DefaultVerticalSync = true;
 float const         Game::Window::Joystick::DeadZone = 20.f;
 
@@ -56,7 +56,7 @@ Game::Window::Window() :
 #endif
 }
 
-bool  Game::Window::update(sf::Time elapsed)
+bool  Game::Window::update(float elapsed)
 {
   // Check window focus
   bool  focus = _window.hasFocus() == true;
@@ -169,10 +169,10 @@ bool  Game::Window::update(sf::Time elapsed)
   {
     // Display new FPS in window title
     // NOTE: in unknown cases, we can get stuck in setTitle
-    _window.setTitle(Game::Window::DefaultTitle + " (" + std::to_string((int)(_tick / _elapsed.asSeconds())) + "." + std::to_string((int)(10 * _tick / _elapsed.asSeconds()) % 10) + " FPS)");
+    _window.setTitle(Game::Window::DefaultTitle + " (" + std::to_string((int)(_tick / _elapsed)) + "." + std::to_string((int)(10 * _tick / _elapsed) % 10) + " FPS)");
 
     // Reset FPS counters
-    _elapsed = sf::Time::Zero;
+    _elapsed = 0.f;
     _tick = 0;
   }
 
@@ -201,7 +201,7 @@ void  Game::Window::create(const sf::VideoMode& video, sf::Uint32 style, const s
   
   // Load window icon
   sf::Image icon;
-  if (icon.loadFromFile(Game::Config::ExecutablePath + "assets/icons/icon128.png") == false)
+  if (icon.loadFromFile((Game::Config::ExecutablePath / "assets" / "icons" / "icon128.png").string()) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Set window icon

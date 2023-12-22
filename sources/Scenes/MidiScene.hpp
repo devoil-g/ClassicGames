@@ -54,7 +54,7 @@ namespace Game
     }
 
     std::array<int16_t, ChannelCount * FramePerChunk> _buffer;  // Audio buffer used for output
-    size_t                                            _offset;  // Number of sample already played
+    std::size_t                                       _offset;  // Number of sample already played
     int                                               _octave;  // Current octave [+/-]
     std::array<float, 128>                            _wave;    // Pre-computed wave for fast cosinus
 
@@ -65,7 +65,7 @@ namespace Game
     MidiScene(Game::SceneMachine& machine);
     ~MidiScene() override = default;
 
-    bool  update(sf::Time) override;  // Update state
-    void  draw() override;            // Draw state
+    bool  update(float elapsed) override; // Update state
+    void  draw() override;                // Draw state
   };
 }

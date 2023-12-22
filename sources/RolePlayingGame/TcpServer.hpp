@@ -36,7 +36,7 @@ namespace RPG
 
     void  run();  // Start the server (non-blocking)
     void  wait(); // Wait for server to stop (blocking)
-    void  stop(); // Request server to stop (non-blocking)
+    void  stop(); // Stop server (blocking)
 
     std::uint16_t getPort() const;    // Get local port of TCP listerner
     sf::IpAddress getAddress() const; // Get local address of TCP listener

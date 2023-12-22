@@ -34,7 +34,7 @@ namespace Game
 
     // Run the game !
     while (Game::Window::Instance().window().isOpen()) {
-      sf::Time  elapsed = clock.restart();
+      float elapsed = clock.restart().asSeconds();
 
       // Stop if update return true
       if (Game::Window::Instance().update(elapsed) == true ||

@@ -49,7 +49,7 @@ namespace Game
     void  pop();    // Pop top state of the stack
     void  clear();  // Remove all states of the stack
 
-    virtual bool  update(sf::Time elapsed) override;  // Update the top state of the machine
-    virtual void  draw() override;                    // Draw the top state of the machine
+    virtual bool  update(float elapsed) override; // Update the top state of the machine
+    virtual void  draw() override;                // Draw the top state of the machine
   };
 }

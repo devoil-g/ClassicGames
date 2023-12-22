@@ -17,7 +17,7 @@
 
 const std::string_view GBC::GameBoyColor::SaveStateBase = "0123456789ABCDEF";
 
-GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
+GBC::GameBoyColor::GameBoyColor(const std::filesystem::path& filename) :
   _header(),
   _path(filename),
   _boot(),
@@ -46,7 +46,7 @@ GBC::GameBoyColor::GameBoyColor(const std::string& filename) :
   _io[IO::HDMA5] = 0b11111111;
 }
 
-void  GBC::GameBoyColor::load(const std::string& filename)
+void  GBC::GameBoyColor::load(const std::filesystem::path& filename)
 {
   std::vector<uint8_t>  rom;
 
@@ -57,10 +57,10 @@ void  GBC::GameBoyColor::load(const std::string& filename)
   loadHeader(rom);
 
   // Load bootstrap bios to memory
-  loadFile(Game::Config::ExecutablePath + "/assets/gbc/cgb_boot.bin", _boot);
+  loadFile(Game::Config::ExecutablePath / "assets" / "gbc" / "cgb_boot.bin", _boot);
 }
 
-void  GBC::GameBoyColor::loadFile(const std::string& filename, std::vector<std::uint8_t>& destination)
+void  GBC::GameBoyColor::loadFile(const std::filesystem::path& filename, std::vector<std::uint8_t>& destination)
 {
   std::ifstream file(filename, std::ifstream::binary);
 
@@ -205,7 +205,7 @@ void  GBC::GameBoyColor::loadHeader(const std::vector<uint8_t>& rom)
     _header.mbc = Header::MBC::MBCNone;
     break;
   case 0x09:  // ROM+RAM+BATTERY, never used
-    _mbc = std::make_unique<GBC::MemoryBankController>(*this, rom, _header.ram_size, _path + ".gbs");
+    _mbc = std::make_unique<GBC::MemoryBankController>(*this, rom, _header.ram_size, std::filesystem::path(_path).replace_extension(".gbs"));
     _header.mbc = Header::MBC::MBCNone;
     break;
 
@@ -218,7 +218,7 @@ void  GBC::GameBoyColor::loadHeader(const std::vector<uint8_t>& rom)
     _header.mbc = Header::MBC::MBC1;
     break;
   case 0x03:  // MBC1+RAM+BATTERY
-    _mbc = std::make_unique<GBC::MemoryBankController1>(*this, rom, _header.ram_size, _path + ".gbs");
+    _mbc = std::make_unique<GBC::MemoryBankController1>(*this, rom, _header.ram_size, std::filesystem::path(_path).replace_extension(".gbs"));
     _header.mbc = Header::MBC::MBC1;
     break;
 
@@ -227,16 +227,16 @@ void  GBC::GameBoyColor::loadHeader(const std::vector<uint8_t>& rom)
     _header.mbc = Header::MBC::MBC2;
     break;
   case 0x06:  // MBC2+BATTERY
-    _mbc = std::make_unique<GBC::MemoryBankController2>(*this, rom, _path + ".gbs");
+    _mbc = std::make_unique<GBC::MemoryBankController2>(*this, rom, std::filesystem::path(_path).replace_extension(".gbs"));
     _header.mbc = Header::MBC::MBC2;
     break;
 
   case 0x0F:  // MBC3+TIMER+BATTERY
-    _mbc = std::make_unique<GBC::MemoryBankController3>(*this, rom, 0, "", _path + ".rtc");
+    _mbc = std::make_unique<GBC::MemoryBankController3>(*this, rom, 0, "", std::filesystem::path(_path).replace_extension(".rtc"));
     _header.mbc = Header::MBC::MBC3;
     break;
   case 0x10:  // MBC3+TIMER+RAM+BATTERY
-    _mbc = std::make_unique<GBC::MemoryBankController3>(*this, rom, _header.ram_size, _path + ".gbs", _path + ".rtc");
+    _mbc = std::make_unique<GBC::MemoryBankController3>(*this, rom, _header.ram_size, std::filesystem::path(_path).replace_extension(".gbs"), std::filesystem::path(_path).replace_extension(".rtc"));
     _header.mbc = Header::MBC::MBC3;
     break;
   case 0x11:  // MBC3
@@ -248,7 +248,7 @@ void  GBC::GameBoyColor::loadHeader(const std::vector<uint8_t>& rom)
     _header.mbc = Header::MBC::MBC3;
     break;
   case 0x13:  // MBC3+RAM+BATTERY
-    _mbc = std::make_unique<GBC::MemoryBankController3>(*this, rom, _header.ram_size, _path + ".gbs");
+    _mbc = std::make_unique<GBC::MemoryBankController3>(*this, rom, _header.ram_size, std::filesystem::path(_path).replace_extension(".gbs"));
     _header.mbc = Header::MBC::MBC3;
     break;
 
@@ -264,7 +264,7 @@ void  GBC::GameBoyColor::loadHeader(const std::vector<uint8_t>& rom)
     break;
   case 0x1B:  // MBC5+RAM+BATTERY
   case 0x1E:  // MBC5+RUMBLE+RAM+BATTERY
-    _mbc = std::make_unique<GBC::MemoryBankController5>(*this, rom, _header.ram_size, _path + ".gbs");
+    _mbc = std::make_unique<GBC::MemoryBankController5>(*this, rom, _header.ram_size, std::filesystem::path(_path).replace_extension(".gbs"));
     _header.mbc = Header::MBC::MBC5;
     break;
 
@@ -559,8 +559,8 @@ const GBC::GameBoyColor::Header& GBC::GameBoyColor::header() const
 
 void  GBC::GameBoyColor::load(std::size_t id)
 {
-  std::string   path(_path + ".gbs." + std::to_string(id));
-  std::ifstream file(path);
+  std::filesystem::path path(std::filesystem::path(_path).replace_extension(".gbs").concat("." + std::to_string(id)));
+  std::ifstream         file(path);
 
   // Check valid file
   if (file.good() == false) {
@@ -588,8 +588,8 @@ void  GBC::GameBoyColor::load(std::size_t id)
 
 void  GBC::GameBoyColor::save(std::size_t id) const
 {
-  std::string   path(_path + ".gbs." + std::to_string(id));
-  std::ofstream file(path);
+  std::filesystem::path path(std::filesystem::path(_path).replace_extension(".gbs").concat("." + std::to_string(id)));
+  std::ofstream         file(path);
 
   // Check valid file
   if (file.good() == false) {

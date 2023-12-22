@@ -45,8 +45,8 @@ namespace DOOM
     DOOM::Doom::Level::Statistics     _statistics;  // Previous level statistics
 
     DOOM::IntermissionDoomScene::State  _state;         // Current state
-    sf::Time                            _elapsed;       // Elapsed time
-    sf::Time                            _nextElapsed;   // Elapsed time in next level screen
+    float                               _elapsed;       // Elapsed time
+    float                               _nextElapsed;   // Elapsed time in next level screen
 
     struct Counter
     {
@@ -78,11 +78,11 @@ namespace DOOM
     
     float getPar(std::pair<uint8_t, uint8_t> level) const;  // Return par time of current level, NaN if none registered
 
-    void  updateStatistics(sf::Time elapsed);
-    void  updateStatisticsCounters(sf::Time& elapsed, std::map<int, DOOM::IntermissionDoomScene::Counter>& counters, int speed);
+    void  updateStatistics(float elapsed);
+    void  updateStatisticsCounters(float& elapsed, std::map<int, DOOM::IntermissionDoomScene::Counter>& counters, int speed);
     bool  updateStatisticsCountersCheck(const std::map<int, DOOM::IntermissionDoomScene::Counter>& counters);    // Return true if all counters are completed
     void  updateStatisticsCountersComplete(std::map<int, DOOM::IntermissionDoomScene::Counter>& counters);    // Force complete counters
-    void  updateNext(sf::Time elapsed);
+    void  updateNext(float elapsed);
     bool  updateSkip(); // Return true if skip button has been pressed
     void  updateEnd();  // Go to next screen/level
 
@@ -99,7 +99,7 @@ namespace DOOM
     IntermissionDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom, std::pair<uint8_t, uint8_t> previous, std::pair<uint8_t, uint8_t> next, const DOOM::Doom::Level::Statistics& statistics);
     ~IntermissionDoomScene() override = default;
 
-    bool  update(sf::Time elapsed) override;  // Update state
-    void  draw() override;                    // Draw state
+    bool  update(float elapsed) override; // Update state
+    void  draw() override;                // Draw state
   };
 }

@@ -25,15 +25,14 @@ namespace QUIZ
     void  updateAvatar();     // Change avatar of players
     void  updateHost();       // Handle host commands
 
-    int   drawPlayersGrid() const;  // Compute number of line of player grid
-    void  drawPlayers();            // Draw players
-    void  drawTimer();              // Draw timer bar
+    void  drawPlayers();  // Draw players
+    void  drawTimer();    // Draw timer bar
 
   public:
     ControllerQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz);
     ~ControllerQuizScene() = default;
 
-    bool  update(sf::Time elapsed) override;  // Update state
-    void  draw() override;                    // Draw state
+    bool  update(float elapsed) override; // Update state
+    void  draw() override;                // Draw state
   };
 }

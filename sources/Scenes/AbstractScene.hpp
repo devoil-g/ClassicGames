@@ -16,8 +16,8 @@ namespace Game
     AbstractScene(Game::SceneMachine& machine);
     virtual ~AbstractScene() = 0;
 
-    virtual bool  update(sf::Time) = 0; // You should override this method
-    virtual void  draw() = 0;           // You should override this method
+    virtual bool  update(float elapsed) = 0;  // You should override this method
+    virtual void  draw() = 0;                 // You should override this method
   };
 }
 

@@ -195,15 +195,15 @@ DOOM::PlayerThing::PlayerThing(DOOM::Doom& doom, int id, int controller) :
   _running(false),
   _automap(false),
   _armor(DOOM::Enum::Armor::ArmorNone),
-  _invulnerability(sf::Time::Zero),
-  _invisibility(sf::Time::Zero),
-  _light(sf::Time::Zero),
-  _radiation(sf::Time::Zero),
-  _sector(sf::Time::Zero),
+  _invulnerability(0.f),
+  _invisibility(0.f),
+  _light(0.f),
+  _radiation(0.f),
+  _sector(0.f),
   _berserk(false),
-  _weapon(DOOM::Enum::Weapon::WeaponPistol), _weaponNext(DOOM::Enum::Weapon::WeaponPistol), _weaponState(_attributs[_weapon].up), _weaponElapsed(sf::Time::Zero), _weaponRampage(sf::Time::Zero), _weaponSound(Game::Audio::Sound::Instance().get()), _weaponPosition(), _weaponRefire(false), _weaponFire(false),
-  _flash(0), _flashState(DOOM::PlayerThing::WeaponState::State_None), _flashElapsed(sf::Time::Zero),
-  _palettePickup(sf::Time::Zero), _paletteDamage(sf::Time::Zero), _paletteBerserk(sf::Time::Zero),
+  _weapon(DOOM::Enum::Weapon::WeaponPistol), _weaponNext(DOOM::Enum::Weapon::WeaponPistol), _weaponState(_attributs[_weapon].up), _weaponElapsed(0.f), _weaponRampage(0.f), _weaponSound(Game::Audio::Sound::Instance().get()), _weaponPosition(), _weaponRefire(false), _weaponFire(false),
+  _flash(0), _flashState(DOOM::PlayerThing::WeaponState::State_None), _flashElapsed(0.f),
+  _palettePickup(0.f), _paletteDamage(0.f), _paletteBerserk(0.f),
   id(id),
   controller(controller),
   camera(),
@@ -226,18 +226,18 @@ void  DOOM::PlayerThing::reset(DOOM::Doom& doom, bool hard)
   _running = false;
   _automap = false;
   _armor; // Keep armor
-  _invulnerability = sf::Time::Zero;
-  _invisibility = sf::Time::Zero;
-  _light = sf::Time::Zero;
-  _radiation = sf::Time::Zero;
-  _sector = sf::Time::Zero;
+  _invulnerability = 0.f;
+  _invisibility = 0.f;
+  _light = 0.f;
+  _radiation = 0.f;
+  _sector = 0.f;
   _berserk = false;
 
   _weapon; // Keep current weapon
   _weaponNext; // Keep current weapon
   _weaponState; // Keep current weapon
-  _weaponElapsed = sf::Time::Zero;
-  _weaponRampage = sf::Time::Zero;
+  _weaponElapsed = 0.f;
+  _weaponRampage = 0.f;
   _weaponSound; // Keep sound
   _weaponPosition; // Reset later
   _weaponRefire = false;
@@ -245,11 +245,11 @@ void  DOOM::PlayerThing::reset(DOOM::Doom& doom, bool hard)
 
   _flash = 0;
   _flashState = DOOM::PlayerThing::WeaponState::State_None;
-  _flashElapsed = sf::Time::Zero;
+  _flashElapsed = 0.f;
 
-  _palettePickup = sf::Time::Zero;
-  _paletteDamage = sf::Time::Zero;
-  _paletteBerserk = sf::Time::Zero;
+  _palettePickup = 0.f;
+  _paletteDamage = 0.f;
+  _paletteBerserk = 0.f;
 
   statusbar.keys = { DOOM::Enum::KeyType::KeyTypeNone };
   statusbar.setFace(10, { 0, 1, DOOM::Statusbar::FaceSprite::SpriteLookForward });
@@ -304,48 +304,48 @@ void  DOOM::PlayerThing::reset(DOOM::Doom& doom, bool hard)
   setState(doom, attributs.state_spawn);
 }
 
-void  DOOM::PlayerThing::updateRadiationSuit(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateRadiationSuit(DOOM::Doom& doom, float elapsed)
 {
   // Decrement timer
-  _radiation = std::max(sf::seconds(0.f), _radiation - elapsed);
+  _radiation = std::max(0.f, _radiation - elapsed);
 }
 
-void  DOOM::PlayerThing::updatePalette(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updatePalette(DOOM::Doom& doom, float elapsed)
 {
   // Decrement palette timers
-  _palettePickup = std::max(sf::seconds(0.f), _palettePickup - elapsed);
-  _paletteDamage = std::max(sf::seconds(0.f), _paletteDamage - elapsed);
-  _paletteBerserk = std::max(sf::seconds(0.f), _paletteBerserk - elapsed);
+  _palettePickup = std::max(0.f, _palettePickup - elapsed);
+  _paletteDamage = std::max(0.f, _paletteDamage - elapsed);
+  _paletteBerserk = std::max(0.f, _paletteBerserk - elapsed);
 }
 
-void  DOOM::PlayerThing::updateInvulnerability(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateInvulnerability(DOOM::Doom& doom, float elapsed)
 {
   // Decrement timer
-  _invulnerability = std::max(sf::seconds(0.f), _invulnerability - elapsed);
+  _invulnerability = std::max(0.f, _invulnerability - elapsed);
 
-  if (_invulnerability > sf::Time::Zero)
+  if (_invulnerability > 0.f)
     statusbar.setFace(4, { 4, 1, DOOM::Statusbar::FaceSprite::SpriteGod });
 }
 
-void  DOOM::PlayerThing::updateInvisibility(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateInvisibility(DOOM::Doom& doom, float elapsed)
 {
   // Decrement timer
-  _invisibility = std::max(sf::seconds(0.f), _invisibility - elapsed);
+  _invisibility = std::max(0.f, _invisibility - elapsed);
 
   // Set shadow flag
-  if (_invisibility > sf::seconds(0.f))
+  if (_invisibility > 0.f)
     flags = (DOOM::Enum::ThingProperty)(flags | DOOM::Enum::ThingProperty::ThingProperty_Shadow);
   else
     flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_Shadow);
 }
 
-void  DOOM::PlayerThing::updateLightAmplificationVisor(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateLightAmplificationVisor(DOOM::Doom& doom, float elapsed)
 {
   // Decrement timer
-  _light = std::max(sf::seconds(0.f), _light - elapsed);
+  _light = std::max(0.f, _light - elapsed);
 }
 
-bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
+bool  DOOM::PlayerThing::update(DOOM::Doom& doom, float elapsed)
 {
   // Update player using controller
   if (controller == 0)
@@ -421,14 +421,14 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
       break;
 
     case DOOM::Doom::Level::Sector::Special::End:             // Cancel God mode if active, 20 % damage every 32 tics, when player dies, level ends
-      _invulnerability = sf::Time::Zero;
+      _invulnerability = 0.f;
     case DOOM::Doom::Level::Sector::Special::Damage20:        // 20 % damage per second
     case DOOM::Doom::Level::Sector::Special::Damage20Blink05: // 20 % damage every 32 tics plus light blink 0.5 second
       damageSector(doom, elapsed, 20.f, sector.special == DOOM::Doom::Level::Sector::Special::End);
       break;
 
     default:  // Reset sector timer
-      _sector = sf::Time::Zero;
+      _sector = 0.f;
       break;
     }
   }
@@ -441,7 +441,7 @@ bool  DOOM::PlayerThing::update(DOOM::Doom& doom, sf::Time elapsed)
   return false;
 }
 
-void  DOOM::PlayerThing::updateAutomap(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateAutomap(DOOM::Doom& doom, float elapsed)
 {
   // Toogle automap
   if (control(DOOM::PlayerThing::Control::ControlAutomap, true) == true)
@@ -454,9 +454,9 @@ void  DOOM::PlayerThing::updateAutomap(DOOM::Doom& doom, sf::Time elapsed)
     if (control(DOOM::PlayerThing::Control::ControlGrid, true) == true) // Toggle grid
       automap.grid = !automap.grid;
     if (control(DOOM::PlayerThing::Control::ControlZoom) == true)       // Zoom
-      automap.zoom = std::clamp(automap.zoom * std::pow(2.f, elapsed.asSeconds()), 0.015625f, 1.f);
+      automap.zoom = std::clamp(automap.zoom * std::pow(2.f, elapsed), 0.015625f, 1.f);
     if (control(DOOM::PlayerThing::Control::ControlUnzoom) == true)     // Unzoom
-      automap.zoom = std::clamp(automap.zoom / std::pow(2.f, elapsed.asSeconds()), 0.015625f, 1.f);
+      automap.zoom = std::clamp(automap.zoom / std::pow(2.f, elapsed), 0.015625f, 1.f);
   }
 
   if (automap.mode == DOOM::Automap::Mode::ModeFollow) {
@@ -469,14 +469,14 @@ void  DOOM::PlayerThing::updateAutomap(DOOM::Doom& doom, sf::Time elapsed)
   }
 }
 
-void  DOOM::PlayerThing::updateKeyboard(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateKeyboard(DOOM::Doom& doom, float elapsed)
 {
   updateKeyboardTurn(doom, elapsed);
   updateKeyboardMove(doom, elapsed);
   updateKeyboardWeapon(doom, elapsed);
 }
 
-void  DOOM::PlayerThing::updateKeyboardTurn(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateKeyboardTurn(DOOM::Doom& doom, float elapsed)
 {
   // Turn player
   float	horizontal = 0.f;
@@ -496,7 +496,7 @@ void  DOOM::PlayerThing::updateKeyboardTurn(DOOM::Doom& doom, sf::Time elapsed)
   updateTurn(doom, elapsed, horizontal, vertical);
 }
 
-void  DOOM::PlayerThing::updateKeyboardMove(DOOM::Doom & doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateKeyboardMove(DOOM::Doom & doom, float elapsed)
 {
   // Move player
   Math::Vector<2> movement(0.f, 0.f);
@@ -517,7 +517,7 @@ void  DOOM::PlayerThing::updateKeyboardMove(DOOM::Doom & doom, sf::Time elapsed)
   updateMove(doom, elapsed, movement);
 }
 
-void  DOOM::PlayerThing::updateKeyboardWeapon(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateKeyboardWeapon(DOOM::Doom& doom, float elapsed)
 {
   // Weapon binding
   static const std::list<std::pair<sf::Keyboard::Key, std::list<DOOM::Enum::Weapon>>> bindings = {
@@ -541,13 +541,13 @@ void  DOOM::PlayerThing::updateKeyboardWeapon(DOOM::Doom& doom, sf::Time elapsed
   }
 }
 
-void  DOOM::PlayerThing::updateController(DOOM::Doom & doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateController(DOOM::Doom & doom, float elapsed)
 {
   updateControllerTurn(doom, elapsed);
   updateControllerMove(doom, elapsed);
 }
 
-void  DOOM::PlayerThing::updateControllerTurn(DOOM::Doom & doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateControllerTurn(DOOM::Doom & doom, float elapsed)
 {
   // Apply rotation to player
   updateTurn(doom, elapsed,
@@ -556,7 +556,7 @@ void  DOOM::PlayerThing::updateControllerTurn(DOOM::Doom & doom, sf::Time elapse
   );
 }
 
-void  DOOM::PlayerThing::updateControllerMove(DOOM::Doom & doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateControllerMove(DOOM::Doom & doom, float elapsed)
 {
   // Move player
   Math::Vector<2> movement(
@@ -574,11 +574,11 @@ void  DOOM::PlayerThing::updateControllerMove(DOOM::Doom & doom, sf::Time elapse
   updateMove(doom, elapsed, movement);
 }
 
-void  DOOM::PlayerThing::updateTurn(DOOM::Doom & doom, sf::Time elapsed, float horizontal, float vertical)
+void  DOOM::PlayerThing::updateTurn(DOOM::Doom & doom, float elapsed, float horizontal, float vertical)
 {
   // Automap control
   if (_automap == true && automap.mode == DOOM::Automap::Mode::ModeScroll) {
-    automap.angle += horizontal * DOOM::PlayerThing::TurningSpeed * elapsed.asSeconds();
+    automap.angle += horizontal * DOOM::PlayerThing::TurningSpeed * elapsed;
     return;
   }
 
@@ -590,16 +590,16 @@ void  DOOM::PlayerThing::updateTurn(DOOM::Doom & doom, sf::Time elapsed, float h
   horizontal *= (_running == true ? DOOM::PlayerThing::RunningSpeed / DOOM::PlayerThing::WalkingSpeed : 1.f);
 
   // Apply turning angle and time to player
-  angle += horizontal * DOOM::PlayerThing::TurningSpeed * elapsed.asSeconds();
+  angle += horizontal * DOOM::PlayerThing::TurningSpeed * elapsed;
 
   // Handle vertical angle
-  camera.orientation += (DOOM::PlayerThing::VerticalLimit * vertical - camera.orientation) * (1.f - std::pow(0.1f, elapsed.asSeconds()));
+  camera.orientation += (DOOM::PlayerThing::VerticalLimit * vertical - camera.orientation) * (1.f - std::pow(0.1f, elapsed));
   
   // Update camera
   camera.angle = angle;
 }
 
-void  DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::Vector<2> movement)
+void  DOOM::PlayerThing::updateMove(DOOM::Doom & doom, float elapsed, Math::Vector<2> movement)
 {
   // Automap control
   if (_automap == true && automap.mode == DOOM::Automap::Mode::ModeScroll)
@@ -614,7 +614,7 @@ void  DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::V
       movement.x() * std::sin(automap.angle) - movement.y() * std::cos(automap.angle));
 
     // Apply movement
-    automap.position += movement * elapsed.asSeconds() / automap.zoom * DOOM::PlayerThing::RunningSpeed * 2.f;
+    automap.position += movement * elapsed / automap.zoom * DOOM::PlayerThing::RunningSpeed * 2.f;
     return;
   }
 
@@ -640,15 +640,15 @@ void  DOOM::PlayerThing::updateMove(DOOM::Doom & doom, sf::Time elapsed, Math::V
     movement.x() * std::sin(angle) - movement.y() * std::cos(angle));
 
   // Apply movement to current position
-  thrust(Math::Vector<3>(movement.x(), movement.y(), 0.f) * elapsed.asSeconds() / DOOM::Doom::Tic.asSeconds());
+  thrust(Math::Vector<3>(movement.x(), movement.y(), 0.f) * elapsed / DOOM::Doom::Tic);
 }
 
-void  DOOM::PlayerThing::updateUse(DOOM::Doom & doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateUse(DOOM::Doom & doom, float elapsed)
 {
   P_LineSwitch(doom, 64.f, position + Math::Vector<3>(0.f, 0.f, height / 2.f), Math::Vector<3>(std::cos(angle), std::sin(angle), std::tan(camera.orientation)));
 }
 
-void  DOOM::PlayerThing::updateWeapon(DOOM::Doom& doom, sf::Time elapsed, int inc)
+void  DOOM::PlayerThing::updateWeapon(DOOM::Doom& doom, float elapsed, int inc)
 {
   // Check arguments
   inc = std::clamp(inc, -1, +1);
@@ -702,7 +702,7 @@ void  DOOM::PlayerThing::drawCamera(DOOM::Doom& doom, sf::Image& target, sf::Rec
 {
   // Compute head bobing
   float bob = std::min(8.f, (Math::Pow<2>(_thrust.x()) + Math::Pow<2>(_thrust.y())) / 8.f)
-    * std::sin(Math::Pi * 2.f * Math::Modulo(doom.level.statistics.time.asSeconds() / DOOM::Doom::Tic.asSeconds() / 20.f, 1.f));
+    * std::sin(Math::Pi * 2.f * Math::Modulo(doom.level.statistics.time / DOOM::Doom::Tic / 20.f, 1.f));
 
   // Apply position to camera
   camera.position.x() = position.x();
@@ -716,7 +716,7 @@ void  DOOM::PlayerThing::drawCamera(DOOM::Doom& doom, sf::Image& target, sf::Rec
 void  DOOM::PlayerThing::drawWeapon(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette)
 {
   // Simulate bobing of weapon
-  int angle_x = (int)(doom.level.statistics.time.asSeconds() / DOOM::Doom::Tic.asSeconds() * 128) % 8192;
+  int angle_x = (int)(doom.level.statistics.time / DOOM::Doom::Tic * 128) % 8192;
   int angle_y = angle_x % 4096;
   float bob = (_states[_weaponState].action == &DOOM::PlayerThing::A_WeaponReady) ?
     (std::min(16.f, (Math::Pow<2>(_thrust.x()) + Math::Pow<2>(_thrust.y())) / 4.f)) :
@@ -872,11 +872,11 @@ bool  DOOM::PlayerThing::pickupBerserk()
 bool  DOOM::PlayerThing::pickupRadiationSuit()
 {
   // Do not pickup if already full
-  if (_radiation >= sf::seconds(60.f))
+  if (_radiation >= 60.f)
     return false;
 
   // Set radiation suit for 60 seconds
-  _radiation = sf::seconds(60.f);
+  _radiation = 60.f;
 
   return true;
 }
@@ -884,11 +884,11 @@ bool  DOOM::PlayerThing::pickupRadiationSuit()
 bool  DOOM::PlayerThing::pickupInvulnerability()
 {
   // Do not pickup if already full
-  if (_invulnerability >= sf::seconds(30.f))
+  if (_invulnerability >= 30.f)
     return false;
 
   // Set invulnerability for 30 seconds
-  _invulnerability = sf::seconds(30.f);
+  _invulnerability = 30.f;
 
   return true;
 }
@@ -896,11 +896,11 @@ bool  DOOM::PlayerThing::pickupInvulnerability()
 bool  DOOM::PlayerThing::pickupInvisibility()
 {
   // Do not pickup if already full
-  if (_invisibility >= sf::seconds(60.f))
+  if (_invisibility >= 60.f)
     return false;
 
   // Set invisibility for one minute
-  _invisibility = sf::seconds(60.f);
+  _invisibility = 60.f;
   flags = (DOOM::Enum::ThingProperty)(flags | DOOM::Enum::ThingProperty::ThingProperty_Shadow);
 
   return true;
@@ -909,11 +909,11 @@ bool  DOOM::PlayerThing::pickupInvisibility()
 bool  DOOM::PlayerThing::pickupLightAmplificationVisor()
 {
   // Do not pickup if already full
-  if (_light >= sf::seconds(120.f))
+  if (_light >= 120.f)
     return false;
 
   // Set light amplification for two minutes
-  _light = sf::seconds(120.f);
+  _light = 120.f;
 
   return true;
 }
@@ -1070,7 +1070,7 @@ bool  DOOM::PlayerThing::pickupArmor(DOOM::Enum::Armor type)
 void  DOOM::PlayerThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, float damage)
 {
   // Invulnerability doesn't works with telefrag
-  if (_invulnerability > sf::Time::Zero && damage < 10000.f)
+  if (_invulnerability > 0.f && damage < 10000.f)
     return;
 
   // Take half damage in baby mode
@@ -1141,7 +1141,7 @@ void  DOOM::PlayerThing::damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker,
     doom.level.end = DOOM::Enum::End::EndNormal;
 }
 
-void  DOOM::PlayerThing::damageSector(DOOM::Doom& doom, sf::Time elapsed, float damage, bool end)
+void  DOOM::PlayerThing::damageSector(DOOM::Doom& doom, float elapsed, float damage, bool end)
 {
   // Does nothing when dead
   if (health <= 0.f)
@@ -1155,7 +1155,7 @@ void  DOOM::PlayerThing::damageSector(DOOM::Doom& doom, sf::Time elapsed, float 
     float protection = 0;
 
     // Radiation suit
-    if (end == false && _radiation.asSeconds() > 0.f && (dmg < 20.f || std::rand() % 256 < 250))
+    if (end == false && _radiation > 0.f && (dmg < 20.f || std::rand() % 256 < 250))
       continue;
 
     // 1/2 armor when mega armor, 1/3 otherwise
@@ -1201,11 +1201,11 @@ bool  DOOM::PlayerThing::key(DOOM::Enum::KeyColor color) const
 DOOM::Camera::Special DOOM::PlayerThing::cameraMode() const
 {
   // Invulnerability
-  if (_invulnerability > sf::seconds(0.f))
+  if (_invulnerability > 0.f)
     return DOOM::Camera::Special::Invulnerability;
 
   // Light amplification visor
-  else if (_light > sf::seconds(0.f))
+  else if (_light > 0.f)
     return DOOM::Camera::Special::LightAmplificationVisor;
 
   // Default mode
@@ -1218,13 +1218,13 @@ int16_t DOOM::PlayerThing::cameraPalette() const
   int16_t palette = 0;
 
   // Damage palette
-  if (_paletteDamage > sf::Time::Zero || _paletteBerserk > sf::Time::Zero)
-    palette = std::clamp((int)(std::max(_paletteDamage.asSeconds() / DOOM::Doom::Tic.asSeconds() / 8.f, _paletteBerserk.asSeconds() / DOOM::Doom::Tic.asSeconds() / 64.f)), 0, 7) + 1;
+  if (_paletteDamage > 0.f || _paletteBerserk > 0.f)
+    palette = std::clamp((int)(std::max(_paletteDamage / DOOM::Doom::Tic / 8.f, _paletteBerserk / DOOM::Doom::Tic / 64.f)), 0, 7) + 1;
   // Pick-up palette
-  else if (_palettePickup > sf::Time::Zero)
-    palette = std::clamp((int)(_palettePickup.asSeconds() / DOOM::Doom::Tic.asSeconds() / 8.f), 0, 3) + 9;
+  else if (_palettePickup > 0.f)
+    palette = std::clamp((int)(_palettePickup / DOOM::Doom::Tic / 8.f), 0, 3) + 9;
   // Radiation suit
-  else if (_radiation > sf::seconds(0.f))
+  else if (_radiation > 0.f)
     palette = 13;
 
   return palette;
@@ -1240,7 +1240,7 @@ void  DOOM::PlayerThing::setWeaponState(DOOM::Doom& doom, DOOM::PlayerThing::Wea
     std::invoke(_states[_weaponState].action, this, doom);
 }
 
-void  DOOM::PlayerThing::updateWeapon(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateWeapon(DOOM::Doom& doom, float elapsed)
 {
   // Update internal timer
   _weaponElapsed += elapsed;
@@ -1249,7 +1249,7 @@ void  DOOM::PlayerThing::updateWeapon(DOOM::Doom& doom, sf::Time elapsed)
   {
     // Stop when no duration
     if (_states[_weaponState].duration == -1) {
-      _weaponElapsed = sf::Time::Zero;
+      _weaponElapsed = 0.f;
       break;
     }
 
@@ -1265,7 +1265,7 @@ void  DOOM::PlayerThing::updateWeapon(DOOM::Doom& doom, sf::Time elapsed)
       statusbar.setFace(6, { 5, 8, DOOM::Statusbar::FaceSprite::SpriteRampage });
   }
   else
-    _weaponRampage = sf::Time::Zero;
+    _weaponRampage = 0.f;
 }
 
 bool  DOOM::PlayerThing::setWeapon(DOOM::Enum::Weapon weapon)
@@ -1292,7 +1292,7 @@ void  DOOM::PlayerThing::setFlashState(DOOM::Doom& doom, DOOM::PlayerThing::Weap
     std::invoke(_states[_flashState].action, this, doom);
 }
 
-void  DOOM::PlayerThing::updateFlash(DOOM::Doom& doom, sf::Time elapsed)
+void  DOOM::PlayerThing::updateFlash(DOOM::Doom& doom, float elapsed)
 {
   // Update internal timer
   _flashElapsed += elapsed;
@@ -1301,7 +1301,7 @@ void  DOOM::PlayerThing::updateFlash(DOOM::Doom& doom, sf::Time elapsed)
   {
     // Stop when no duration
     if (_states[_flashState].duration == -1) {
-      _flashElapsed = sf::Time::Zero;
+      _flashElapsed = 0.f;
       break;
     }
 

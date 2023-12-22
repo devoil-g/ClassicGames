@@ -24,10 +24,10 @@ Game::MidiScene::MidiScene(Game::SceneMachine& machine) :
   sf::SoundStream::play();
 }
 
-bool  Game::MidiScene::update(sf::Time elapsed)
+bool  Game::MidiScene::update(float elapsed)
 {
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Enter) == true) {
-    Game::Audio::Synthesizer  midi(Game::Config::ExecutablePath + "/assets/levels/beethoven.mid", Game::Config::ExecutablePath + "/assets/levels/gzdoom.sf2");
+    Game::Audio::Synthesizer  midi(Game::Config::ExecutablePath / "assets" / "levels" / "beethoven.mid", Game::Config::ExecutablePath / "assets" / "levels" / "gzdoom.sf2");
     midi.generate(0);
   }
 

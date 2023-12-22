@@ -42,7 +42,7 @@ namespace DOOM
 
       // Switch sidedef if trigger pushed or switched, definitively if not repeatable
       if (_Trigger == DOOM::EnumLinedef::Trigger::TriggerPushed || _Trigger == DOOM::EnumLinedef::Trigger::TriggerSwitched && sidedef != -1)
-        doom.level.sidedefs[sidedef].switched(doom, sf::Time::Zero, true);
+        doom.level.sidedefs[sidedef].switched(doom, 0.f, true);
 
       // Set end flag in DOOM
       doom.level.end = (SecretExit == true ? DOOM::Enum::End::EndSecret : DOOM::Enum::End::EndNormal);
@@ -57,7 +57,7 @@ namespace DOOM
 
     ~ExitLinedef() = default;
 
-    virtual void  update(DOOM::Doom& doom, sf::Time elapsed) override // Update linedef
+    virtual void  update(DOOM::Doom& doom, float elapsed) override  // Update linedef
     {}
 
     virtual bool  switched(DOOM::Doom& doom, DOOM::AbstractThing& thing) override // To call when linedef is switched (used) by thing

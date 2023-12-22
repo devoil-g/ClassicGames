@@ -11,7 +11,7 @@ DOOM::SplashDoomScene::SplashDoomScene(Game::SceneMachine& machine, DOOM::Doom& 
   // TODO: start badass menu music
 }
 
-bool  DOOM::SplashDoomScene::update(sf::Time elapsed)
+bool  DOOM::SplashDoomScene::update(float elapsed)
 {
   // Push to main menu
   if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Left) == true ||

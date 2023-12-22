@@ -15,13 +15,11 @@ namespace QUIZ
     sf::Music           _music;   // Background music, also used as timer
     bool                _display; // Display score
 
-    int drawGrid() const;
-
   public:
     ScoresQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz);
     ~ScoresQuizScene() = default;
 
-    bool  update(sf::Time elapsed) override;  // Update state
-    void  draw() override;                    // Draw state
+    bool  update(float elapsed) override; // Update state
+    void  draw() override;                // Draw state
   };
 }

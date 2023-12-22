@@ -15,7 +15,7 @@
 #include "System/Config.hpp"
 #include "System/Utilities.hpp"
 
-Game::Audio::Soundfont::Soundfont(const std::string& filename) :
+Game::Audio::Soundfont::Soundfont(const std::filesystem::path& filename) :
   info(),
   presets(),
   samples()
@@ -24,7 +24,7 @@ Game::Audio::Soundfont::Soundfont(const std::string& filename) :
   load(filename);
 }
 
-void  Game::Audio::Soundfont::load(const std::string& filename)
+void  Game::Audio::Soundfont::load(const std::filesystem::path& filename)
 {
   std::ifstream file(filename, std::ifstream::binary);
 

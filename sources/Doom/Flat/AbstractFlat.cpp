@@ -9,7 +9,7 @@ const DOOM::AbstractFlat& DOOM::AbstractFlat::Null = _Null;
 DOOM::AbstractFlat::AbstractFlat(DOOM::Doom& doom)
 {}
 
-void                                DOOM::AbstractFlat::update(DOOM::Doom& doom, sf::Time)
+void                                DOOM::AbstractFlat::update(DOOM::Doom& doom, float elapsed)
 {}
 
 std::unique_ptr<DOOM::AbstractFlat> DOOM::AbstractFlat::factory(DOOM::Doom& doom, uint64_t name, const DOOM::Wad::RawResources::Flat& flat)

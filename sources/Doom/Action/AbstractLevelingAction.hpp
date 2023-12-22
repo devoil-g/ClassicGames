@@ -19,7 +19,7 @@ namespace DOOM
   >::type
   {
   protected:
-    sf::Time  updateFloorLower(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed, float target, float speed)
+    float   updateFloorLower(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed, float target, float speed)
     {
       // Limit target to ceiling
       target = std::min(target, sector.ceiling_current);
@@ -28,7 +28,7 @@ namespace DOOM
       float start = sector.floor_current;
 
       // Lower floor
-      sector.floor_current = std::max(target, sector.floor_current - elapsed.asSeconds() * (speed / DOOM::Doom::Tic.asSeconds()));
+      sector.floor_current = std::max(target, sector.floor_current - elapsed * (speed / DOOM::Doom::Tic));
 
       // Lower things standing in the sector
       for (const auto& thing : doom.level.getThings(sector))
@@ -49,12 +49,12 @@ namespace DOOM
 
       // Compute remaining time
       if (sector.floor_current == target)
-        return sf::seconds(elapsed.asSeconds() - std::max(0.f, (start - sector.floor_current) / (speed / DOOM::Doom::Tic.asSeconds())));
+        return elapsed - std::max(0.f, (start - sector.floor_current) / (speed / DOOM::Doom::Tic));
       else
-        return sf::Time::Zero;
+        return 0.f;
     }
 
-    sf::Time  updateFloorRaise(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed, float target, float speed)
+    float   updateFloorRaise(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed, float target, float speed)
     {
       // Limit target to ceiling
       target = std::min(target, sector.ceiling_current);
@@ -74,7 +74,7 @@ namespace DOOM
         return elapsed;
 
       // Raise floor
-      sector.floor_current = std::min(target, sector.floor_current + elapsed.asSeconds() * (speed / DOOM::Doom::Tic.asSeconds()));
+      sector.floor_current = std::min(target, sector.floor_current + elapsed * (speed / DOOM::Doom::Tic));
 
       // Raise things
       for (const auto& thing : things)
@@ -82,12 +82,12 @@ namespace DOOM
 
       // Compute remaining time
       if (sector.floor_current == target)
-        return sf::seconds(elapsed.asSeconds() - std::max(0.f, (sector.floor_current - start) / (speed / DOOM::Doom::Tic.asSeconds())));
+        return elapsed - std::max(0.f, (sector.floor_current - start) / (speed / DOOM::Doom::Tic));
       else
-        return sf::Time::Zero;
+        return 0.f;
     }
 
-    sf::Time  updateFloorCrush(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed, float target, float speed)
+    float   updateFloorCrush(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed, float target, float speed)
     {
       // Limit target to ceiling
       target = std::min(target, sector.ceiling_current);
@@ -112,7 +112,7 @@ namespace DOOM
       }
 
       // Raise floor
-      sector.floor_current = std::min(target, sector.floor_current + elapsed.asSeconds() * (speed / DOOM::Doom::Tic.asSeconds()));
+      sector.floor_current = std::min(target, sector.floor_current + elapsed * (speed / DOOM::Doom::Tic));
 
       // Raise & crush things
       for (const auto& thing : things)
@@ -130,7 +130,7 @@ namespace DOOM
         for (auto thing_index : doom.level.getSectors(thing.get()))
           thing_ceiling = std::min(thing_ceiling, doom.level.sectors[thing_index].ceiling_current);
 
-        float damage = std::min(sector.floor_current + thing.get().height - thing_ceiling, sector.floor_current - start) / (speed / DOOM::Doom::Tic.asSeconds()) * 87.5f;
+        float damage = std::min(sector.floor_current + thing.get().height - thing_ceiling, sector.floor_current - start) / (speed / DOOM::Doom::Tic) * 87.5f;
 
         // Deal crush damage (87.5/s)
         if (damage > 0.f)
@@ -139,12 +139,12 @@ namespace DOOM
 
       // Compute remaining time
       if (sector.floor_current == target)
-        return sf::seconds(elapsed.asSeconds() - std::max(0.f, (sector.floor_current - start) / (speed / DOOM::Doom::Tic.asSeconds())));
+        return elapsed - std::max(0.f, (sector.floor_current - start) / (speed / DOOM::Doom::Tic));
       else
-        return sf::Time::Zero;
+        return 0.f;
     }
 
-    sf::Time  updateCeilingLower(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed, float target, float speed)
+    float   updateCeilingLower(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed, float target, float speed)
     {
       // Limit target to floor
       target = std::max(target, sector.floor_current);
@@ -164,7 +164,7 @@ namespace DOOM
         return elapsed;
 
       // Lower ceiling
-      sector.ceiling_current = std::max(target, sector.ceiling_current - elapsed.asSeconds() * (speed / DOOM::Doom::Tic.asSeconds()));
+      sector.ceiling_current = std::max(target, sector.ceiling_current - elapsed * (speed / DOOM::Doom::Tic));
 
       // Lower things
       for (const auto& thing : things)
@@ -172,12 +172,12 @@ namespace DOOM
 
       // Compute remaining time
       if (sector.ceiling_current == target)
-        return sf::seconds(elapsed.asSeconds() - std::max(0.f, (start - sector.ceiling_current) / (speed / DOOM::Doom::Tic.asSeconds())));
+        return elapsed - std::max(0.f, (start - sector.ceiling_current) / (speed / DOOM::Doom::Tic));
       else
-        return sf::Time::Zero;
+        return 0.f;
     }
 
-    sf::Time  updateCeilingRaise(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed, float target, float speed)
+    float   updateCeilingRaise(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed, float target, float speed)
     {
       // Limit target to floor
       target = std::max(target, sector.floor_current);
@@ -186,7 +186,7 @@ namespace DOOM
       float start = sector.ceiling_current;
 
       // Raise ceiling
-      sector.ceiling_current = std::min(target, sector.ceiling_current + elapsed.asSeconds() * (speed / DOOM::Doom::Tic.asSeconds()));
+      sector.ceiling_current = std::min(target, sector.ceiling_current + elapsed * (speed / DOOM::Doom::Tic));
 
       // Raise things standing in the sector
       for (const auto& thing : doom.level.getThings(sector))
@@ -207,12 +207,12 @@ namespace DOOM
 
       // Compute remaining time
       if (sector.ceiling_current == target)
-        return sf::seconds(elapsed.asSeconds() - std::max(0.f, (sector.ceiling_current - start) / (speed / DOOM::Doom::Tic.asSeconds())));
+        return elapsed - std::max(0.f, (sector.ceiling_current - start) / (speed / DOOM::Doom::Tic));
       else
-        return sf::Time::Zero;
+        return 0.f;
     }
 
-    sf::Time  updateCeilingCrush(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed, float target, float speed)
+    float   updateCeilingCrush(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed, float target, float speed)
     {
       // Limit target to floor
       target = std::max(target, sector.floor_current);
@@ -233,7 +233,7 @@ namespace DOOM
         return elapsed;
 
       // Lower ceiling
-      sector.ceiling_current = std::max(target, sector.ceiling_current - elapsed.asSeconds() * (speed / DOOM::Doom::Tic.asSeconds()));
+      sector.ceiling_current = std::max(target, sector.ceiling_current - elapsed * (speed / DOOM::Doom::Tic));
 
       // Lower & crush things
       for (const auto& thing : things) {
@@ -250,7 +250,7 @@ namespace DOOM
         if (!(thing.get().flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable))
           continue;
 
-        float damage = std::min(thing_floor + thing.get().height - sector.ceiling_current, start - sector.ceiling_current) / (speed / DOOM::Doom::Tic.asSeconds()) * 87.5f;
+        float damage = std::min(thing_floor + thing.get().height - sector.ceiling_current, start - sector.ceiling_current) / (speed / DOOM::Doom::Tic) * 87.5f;
 
         // Deal crush damage (87.5/s)
         if (damage > 0.f)
@@ -259,9 +259,9 @@ namespace DOOM
 
       // Compute remaining time
       if (sector.floor_current == target)
-        return sf::seconds(elapsed.asSeconds() - std::max(0.f, (start - sector.ceiling_current) / (speed / DOOM::Doom::Tic.asSeconds())));
+        return elapsed - std::max(0.f, (start - sector.ceiling_current) / (speed / DOOM::Doom::Tic));
       else
-        return sf::Time::Zero;
+        return 0.f;
     }
 
   public:

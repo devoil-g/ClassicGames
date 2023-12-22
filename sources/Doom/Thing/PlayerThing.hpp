@@ -61,57 +61,57 @@ namespace DOOM
     bool              _running;         // True if player is currently running
     bool              _automap;         // True if automap is enabled
     DOOM::Enum::Armor _armor;           // Player armor type
-    sf::Time          _invulnerability; // Remaining time of invulnerability
-    sf::Time          _invisibility;    // Remaining time of invisibility
-    sf::Time          _light;           // Remaining time of light amplification visor
-    sf::Time          _radiation;       // Remaining time of radiation suit
-    sf::Time          _sector;          // Time spent in damaging sector
+    float             _invulnerability; // Remaining time of invulnerability
+    float             _invisibility;    // Remaining time of invisibility
+    float             _light;           // Remaining time of light amplification visor
+    float             _radiation;       // Remaining time of radiation suit
+    float             _sector;          // Time spent in damaging sector
     bool              _berserk;         // Berserker enabled flag
 
     DOOM::Enum::Weapon              _weapon;          // Current type of weapon
     DOOM::Enum::Weapon              _weaponNext;      // Next weapon to use
     DOOM::PlayerThing::WeaponState  _weaponState;     // Current state of weapon
-    sf::Time                        _weaponElapsed;   // Elapsed time since beginning of weapon state
-    sf::Time                        _weaponRampage;   // Elapsed time attack key is down
+    float                           _weaponElapsed;   // Elapsed time since beginning of weapon state
+    float                           _weaponRampage;   // Elapsed time attack key is down
     Game::Audio::Sound::Reference   _weaponSound;     // Sound of weapon
     Math::Vector<2>                 _weaponPosition;  // Position of weapon on screen
     bool                            _weaponRefire;    // True if shot is a refire (less accurate)
     bool                            _weaponFire;      // Fire trigger for BFG and rocket launcher
 
     void  setWeaponState(DOOM::Doom& doom, DOOM::PlayerThing::WeaponState state); //
-    void  updateWeapon(DOOM::Doom& doom, sf::Time elapsed);                       //
+    void  updateWeapon(DOOM::Doom& doom, float elapsed);                          //
     bool  setWeapon(DOOM::Enum::Weapon weapon);                                   // Attempt to equip weapon
 
     int                             _flash;         // Extra light level
     DOOM::PlayerThing::WeaponState  _flashState;    // Current state of light
-    sf::Time                        _flashElapsed;  // Elapsed time since beginning of light state
+    float                           _flashElapsed;  // Elapsed time since beginning of light state
 
     void  setFlashState(DOOM::Doom& doom, DOOM::PlayerThing::WeaponState state);
-    void  updateFlash(DOOM::Doom& doom, sf::Time elapsed);
+    void  updateFlash(DOOM::Doom& doom, float elapsed);
 
-    sf::Time  _palettePickup;
-    sf::Time  _paletteDamage;
-    sf::Time  _paletteBerserk;
+    float _palettePickup;
+    float _paletteDamage;
+    float _paletteBerserk;
 
-    void  updateKeyboard(DOOM::Doom& doom, sf::Time elapsed);         // Update using keyboard
-    void  updateKeyboardTurn(DOOM::Doom& doom, sf::Time elapsed);     // Update using keyboard
-    void  updateKeyboardMove(DOOM::Doom& doom, sf::Time elapsed);     // Update using keyboard
-    void  updateKeyboardWeapon(DOOM::Doom& doom, sf::Time elapsed);   // Update using keyboard
-    void  updateController(DOOM::Doom& doom, sf::Time elapsed);       // Update using game pad
-    void  updateControllerTurn(DOOM::Doom& doom, sf::Time elapsed);   // Update using game pad
-    void  updateControllerMove(DOOM::Doom& doom, sf::Time elapsed);   // Update using game pad
+    void  updateKeyboard(DOOM::Doom& doom, float elapsed);         // Update using keyboard
+    void  updateKeyboardTurn(DOOM::Doom& doom, float elapsed);     // Update using keyboard
+    void  updateKeyboardMove(DOOM::Doom& doom, float elapsed);     // Update using keyboard
+    void  updateKeyboardWeapon(DOOM::Doom& doom, float elapsed);   // Update using keyboard
+    void  updateController(DOOM::Doom& doom, float elapsed);       // Update using game pad
+    void  updateControllerTurn(DOOM::Doom& doom, float elapsed);   // Update using game pad
+    void  updateControllerMove(DOOM::Doom& doom, float elapsed);   // Update using game pad
 
-    void  updateTurn(DOOM::Doom& doom, sf::Time elapsed, float horizontal, float vertical); // Update player angle
-    void  updateMove(DOOM::Doom& doom, sf::Time elapsed, Math::Vector<2> movement);         // Update player position
-    void  updateUse(DOOM::Doom& doom, sf::Time elapsed);                                    // Perform use action
-    void  updateAutomap(DOOM::Doom& doom, sf::Time elapsed);                                // Update player automap
-    void  updateWeapon(DOOM::Doom& doom, sf::Time elapsed, int inc);                        // Switch to previous/next weapon
+    void  updateTurn(DOOM::Doom& doom, float elapsed, float horizontal, float vertical); // Update player angle
+    void  updateMove(DOOM::Doom& doom, float elapsed, Math::Vector<2> movement);         // Update player position
+    void  updateUse(DOOM::Doom& doom, float elapsed);                                    // Perform use action
+    void  updateAutomap(DOOM::Doom& doom, float elapsed);                                // Update player automap
+    void  updateWeapon(DOOM::Doom& doom, float elapsed, int inc);                        // Switch to previous/next weapon
     
-    void  updateInvulnerability(DOOM::Doom& doom, sf::Time elapsed);          // Update invulnerability timer
-    void  updateInvisibility(DOOM::Doom& doom, sf::Time elapsed);             // Update invisibility timer
-    void  updateLightAmplificationVisor(DOOM::Doom& doom, sf::Time elapsed);  // Update light amplification visor timer
-    void  updateRadiationSuit(DOOM::Doom& doom, sf::Time elapsed);            // Update radation suit timer
-    void  updatePalette(DOOM::Doom& doom, sf::Time elapsed);                  // Update palette timers
+    void  updateInvulnerability(DOOM::Doom& doom, float elapsed);          // Update invulnerability timer
+    void  updateInvisibility(DOOM::Doom& doom, float elapsed);             // Update invisibility timer
+    void  updateLightAmplificationVisor(DOOM::Doom& doom, float elapsed);  // Update light amplification visor timer
+    void  updateRadiationSuit(DOOM::Doom& doom, float elapsed);            // Update radation suit timer
+    void  updatePalette(DOOM::Doom& doom, float elapsed);                  // Update palette timers
 
     bool  pickup(DOOM::Doom& doom, DOOM::AbstractThing& item) override;
     bool  pickupArmor(DOOM::Enum::Armor type);
@@ -129,7 +129,7 @@ namespace DOOM
     bool  pickupComputerMap();
 
     void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, float damage) override;  // Damage player, taking shield into account
-    void  damageSector(DOOM::Doom& doom, sf::Time elapsed, float damage, bool end = false);                             // Receive damage from damaging sector
+    void  damageSector(DOOM::Doom& doom, float elapsed, float damage, bool end = false);                             // Receive damage from damaging sector
 
     DOOM::Camera::Special cameraMode() const;     // Return current camera mode
     int16_t               cameraPalette() const;  // Return current color palette
@@ -197,10 +197,10 @@ namespace DOOM
     PlayerThing(DOOM::Doom& doom, int id, int controller);
     ~PlayerThing() = default;
 
-    void  reset(DOOM::Doom& doom, bool hard = false);           // Reset player to begin level
+    void  reset(DOOM::Doom& doom, bool hard = false); // Reset player to begin level
 
-    bool  update(DOOM::Doom& doom, sf::Time elapsed) override;  // Update player using controller, alway return false as a player thing is never deleted
-    bool  key(DOOM::Enum::KeyColor color) const override;       // Return true if player has the key
+    bool  update(DOOM::Doom& doom, float elapsed) override; // Update player using controller, alway return false as a player thing is never deleted
+    bool  key(DOOM::Enum::KeyColor color) const override;   // Return true if player has the key
 
     void  draw(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale);  // Render player on target
   };

@@ -6,13 +6,13 @@
 #include "System/Window.hpp"
 #include "System/Audio/Sound.hpp"
 
-const sf::Time  DOOM::DoomScene::ForcedExit = sf::seconds(1.f);
+const float DOOM::DoomScene::ForcedExit = 1.f;
 
-DOOM::DoomScene::DoomScene(Game::SceneMachine& machine, const std::string& wad, DOOM::Enum::Mode mode) :
+DOOM::DoomScene::DoomScene(Game::SceneMachine& machine, const std::filesystem::path& wad, DOOM::Enum::Mode mode) :
   Game::AbstractScene(machine),
   _doom(),
   _game(),
-  _elapsed(sf::Time::Zero),
+  _elapsed(0.f),
   _bar(sf::Vector2f(1.f, 1.f))
 {
   // Load WAD
@@ -36,14 +36,14 @@ DOOM::DoomScene::~DoomScene()
   Game::Audio::Sound::Instance().clear();
 }
 
-bool  DOOM::DoomScene::update(sf::Time elapsed)
+bool  DOOM::DoomScene::update(float elapsed)
 {
   // Update exit timer
   _elapsed += elapsed;
 
   // Reset timer when ESC is not pressed
   if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Escape) == false)
-    _elapsed = sf::Time::Zero;
+    _elapsed = 0.f;
 
   // Exit if limit reached
   if (_elapsed > DOOM::DoomScene::ForcedExit) {
@@ -84,6 +84,6 @@ void  DOOM::DoomScene::draw()
   }
 
   // Draw forced exit bar
-  _bar.setScale(Game::Window::Instance().window().getSize().x * _elapsed.asSeconds() / DOOM::DoomScene::ForcedExit.asSeconds(), 4.f);
+  _bar.setScale(Game::Window::Instance().window().getSize().x * _elapsed / DOOM::DoomScene::ForcedExit, 4.f);
   Game::Window::Instance().window().draw(_bar);
 }

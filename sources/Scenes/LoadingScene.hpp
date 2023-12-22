@@ -15,13 +15,13 @@ namespace Game
   {
   private:
     sf::Text  _text;    // Loading text
-    sf::Time  _elapsed; // Time elapsed
+    float     _elapsed; // Time elapsed
 
   public:
     LoadingScene(Game::SceneMachine& machine);
     ~LoadingScene();
 
-    bool  update(sf::Time) override;  // Update menu state
-    void  draw() override;            // Draw menu state
+    bool  update(float elapsed) override; // Update menu state
+    void  draw() override;                // Draw menu state
   };
 }

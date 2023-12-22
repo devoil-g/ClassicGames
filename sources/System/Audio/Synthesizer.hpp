@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <string>
 
 #include "System/Audio/Midi.hpp"
@@ -32,7 +33,7 @@ namespace Game
       void  generateInstrument(const Game::Audio::Midi::Sequence& sequence, const Game::Audio::Midi::Sequence::Track& track, const Game::Audio::Midi::Sequence::Track::Channel& channel, std::list<Game::Audio::Midi::Sequence::Track::Channel::Event>::const_iterator event, Game::Audio::Synthesizer::Note note, const Game::Audio::Soundfont::Preset& preset, const Game::Audio::Soundfont::Preset::Instrument& instrument, const Game::Audio::Soundfont::Preset::Instrument::Bag& bag);
 
     public:
-      Synthesizer(const std::string& midi, const std::string& soundfont, std::size_t sampleRate = 22050);
+      Synthesizer(const std::filesystem::path& midi, const std::filesystem::path& soundfont, std::size_t sampleRate = 22050);
       ~Synthesizer() = default;
 
       Game::Audio::Midi       midi;

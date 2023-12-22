@@ -9,14 +9,14 @@ namespace Game
   class StartScene : public Game::AbstractScene
   {
   private:
-    sf::Time  _elapsed; // Elapsed time
+    float     _elapsed; // Elapsed time
     sf::Text  _text;    // Text to be displayed
 
   public:
     StartScene(Game::SceneMachine& machine);
     ~StartScene() override = default;
 
-    bool  update(sf::Time) override;  // Update state
-    void  draw() override;            // Draw state
+    bool  update(float elapsed) override; // Update state
+    void  draw() override;                // Draw state
   };
 }

@@ -31,7 +31,7 @@ void  Game::SceneMachine::clear()
     _states.pop();
 }
 
-bool  Game::SceneMachine::update(sf::Time elapsed)
+bool  Game::SceneMachine::update(float elapsed)
 {
   // Thread-lock the machine
   std::unique_lock  lock(_lock);

@@ -24,7 +24,7 @@ DOOM::GameDoomScene::GameDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-bool  DOOM::GameDoomScene::update(sf::Time elapsed)
+bool  DOOM::GameDoomScene::update(float elapsed)
 {
   int alive = 0;
 

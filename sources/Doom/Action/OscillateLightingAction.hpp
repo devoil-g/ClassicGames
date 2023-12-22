@@ -10,17 +10,17 @@ namespace DOOM
   class OscillateLightingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>
   {
   private:
-    sf::Time  _elapsed;
+    float _elapsed;
 
   public:
     OscillateLightingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector) :
       DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>(doom, sector),
-      _elapsed(sf::Time::Zero)
+      _elapsed(0.f)
     {}
 
     ~OscillateLightingAction() override = default;
 
-    void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, sf::Time elapsed) override  // Update light action
+    void  update(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float elapsed) override  // Update light action
     {
       // Update elapsed time
       _elapsed += elapsed;
@@ -33,7 +33,7 @@ namespace DOOM
 
       // Return glowing light level
       else
-        sector.light_current = (int16_t)((std::cos(_elapsed.asSeconds() / (DOOM::Doom::Tic.asSeconds() * Period / 2) * Math::Pi) + 1.f) / 2.f * (sector.light_base - darkest) + darkest);
+        sector.light_current = (int16_t)((std::cos(_elapsed / (DOOM::Doom::Tic * Period / 2) * Math::Pi) + 1.f) / 2.f * (sector.light_base - darkest) + darkest);
     }
   };
 }
