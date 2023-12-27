@@ -4,9 +4,11 @@
 #include "System/Window.hpp"
 #include "System/Audio/Sound.hpp"
 #include "System/Library/SoundLibrary.hpp"
+#include "System/Library/FontLibrary.hpp"
 
 #include <iostream>
 
+#include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 
 QUIZ::BlindtestQuizScene::BlindtestQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz) :
@@ -18,7 +20,43 @@ QUIZ::BlindtestQuizScene::BlindtestQuizScene(Game::SceneMachine& machine, QUIZ::
   _pause(),
   _bar(sf::Vector2f(1.f, 1.f)),
   _state(StatePlaying),
-  _player(-1)
+  _buzz(-1),
+  _display(true),
+  _cooldowns(_quiz.players.size(), 0.01f),
+  _cooldown(5.f)
+{
+  // Initialize timer bar
+  _bar.setSize(sf::Vector2f(1.f, 1.f));
+  _bar.setFillColor(sf::Color::White);
+
+  // Load blindtest
+  next();
+}
+
+void  QUIZ::BlindtestQuizScene::usage() const
+{
+  std::cout << std::endl
+    << "--- BLINDTEST ---" << std::endl
+    << "Instruction for players: use the red buzzer to answer" << std::endl
+    << std::endl
+    << "Commands:" << std::endl
+    << "  [P]lay/pause: pause/resume music" << std::endl
+    << "  [R]eset:      replay music from the begining" << std::endl
+    << "  Page[+/-]:    change cooldown" << std::endl
+    << "  [S]cores:     toggle score display" << std::endl
+    << "  [C]orrect:    correct answer, give points, display answer" << std::endl
+    << "  [W]rong:      wrong answer, return to game" << std::endl
+    << "  [A]nswer:     display answer, no winner" << std::endl;
+  if (_quiz.blindtests.empty() == false)
+    std::cout << "  [N]ext:       next blindtest (" << _quiz.blindtests.size() << " remaining)" << std::endl;
+  std::cout
+    << "  [E]nd:        end blindtest" << std::endl
+    << std::endl
+    << "Answer: " << _blindtest.answer << std::endl
+    << std::endl;
+}
+
+void  QUIZ::BlindtestQuizScene::next()
 {
   // No more blindtests!
   if (_quiz.blindtests.empty() == true)
@@ -26,7 +64,7 @@ QUIZ::BlindtestQuizScene::BlindtestQuizScene(Game::SceneMachine& machine, QUIZ::
 
   // Select random blindtest
   auto  iterator = std::next(_quiz.blindtests.begin(), std::rand() % _quiz.blindtests.size());
-  
+
   // Saved question infos
   _blindtest = *iterator;
 
@@ -48,91 +86,44 @@ QUIZ::BlindtestQuizScene::BlindtestQuizScene(Game::SceneMachine& machine, QUIZ::
   _play.setSmooth(true);
   _pause.setSmooth(true);
 
-  // Initialize timer bar
-  _bar.setSize(sf::Vector2f(1.f, 1.f));
-  _bar.setFillColor(sf::Color::White);
+  // Reset status
+  _state = State::StatePlaying;
+  _buzz = -1;
+  std::fill(_cooldowns.begin(), _cooldowns.end(), 0.01f);
 
-  // Host text
-  std::cout << "--- BLINDTEST ---" << std::endl
-    << "Instruction for players: use the red buzzer to answer" << std::endl
-    << std::endl;
-
-  // Start game
-  setPlaying();
-
-  // Set default volume to 66%
-  _music.setVolume(66.6f);
-
-  // Set initial cooldown to 0.1s
-  for (int index = 0; index < _quiz.players.size(); index++)
-    _cooldown[index] = 0.1f;
-}
-
-void  QUIZ::BlindtestQuizScene::setPlaying()
-{
-  _state = StatePlaying;
-  _player = -1;
-  std::cout
-    << "Ready to play music" << std::endl
-    << std::endl
-    << "Commands:" << std::endl
-    << "  [P]lay/pause: pause/resume music" << std::endl
-    << "  [R]eset:      replay music from the begining" << std::endl
-    << "  [+/-]:        control volume" << std::endl
-    << "  [A]nswer:     display answer, no winner" << std::endl
-    << "  [E]nd:        end blindtest" << std::endl
-    << std::endl
-    << "Answer: " << _blindtest.answer << std::endl
-    << std::endl;
-}
-
-void  QUIZ::BlindtestQuizScene::setPending(int player)
-{
-  _music.pause();
-  _state = StatePending;
-  _player = player;
-  std::cout
-    << "Player " << _player << " has buzzed!" << std::endl
-    << std::endl
-    << "Commands:" << std::endl
-    << "  [C]orrect:  correct answer, give points, display answer" << std::endl
-    << "  [W]rong:    wrong answer, return to game" << std::endl
-    << "  [+/-]:      control volume" << std::endl
-    << "  [E]nd:      end blindtest" << std::endl
-    << std::endl
-    << "Answer: " << _blindtest.answer << std::endl
-    << std::endl;
-}
-
-void  QUIZ::BlindtestQuizScene::setAnswer()
-{
-  if (_player != -1)
-    _quiz.players[_player].score += 1;
-
-  _state = StateAnswer;
-  std::cout
-    << "Displaying answer." << std::endl
-    << std::endl
-    << "Commands:" << std::endl
-    << "  [P]ause/play: pause/resume music" << std::endl
-    << "  [R]eset:      replay music from the begining" << std::endl
-    << "  [+/-]:        control volume" << std::endl;
-  if (_quiz.blindtests.empty() == false)
-    std::cout << "  [N]ext:       next blindtest (" << _quiz.blindtests.size() << " remaining)" << std::endl;
-  std::cout
-    << "  [E]nd:        end blindtest" << std::endl
-    << std::endl
-    << "Answer: " << _blindtest.answer << std::endl
-    << std::endl;
+  // Display usage
+  usage();
 }
 
 bool  QUIZ::BlindtestQuizScene::update(float elapsed)
 {
-  // Change volume
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::PageUp))
-    _music.setVolume(std::clamp(_music.getVolume() + elapsed * 84.f, 0.f, 200.f));
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::PageDown))
-    _music.setVolume(std::clamp(_music.getVolume() - elapsed * 84.f, 0.f, 200.f));
+  // Return to main menu
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::E) == true) {
+    _machine.pop();
+    return false;
+  }
+
+  // Next blindtest
+  if (_quiz.blindtests.empty() == false && Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::N) == true) {
+    next();
+    return false;
+  }
+  
+  // Toggle score display
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::S) == true)
+    _display = !_display;
+
+  // Increase cooldown
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::PageUp) == true) {
+    _cooldown = std::max(0.f, _cooldown + 0.25f);
+    std::cout << "\rCooldown set to " << _cooldown << " seconds.        " << std::flush;
+  }
+
+  // Decrease cooldown
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::PageDown) == true) {
+    _cooldown = std::max(0.f, _cooldown - 0.25f);
+    std::cout << "\rCooldown set to " << _cooldown << " seconds.        " << std::flush;
+  }
 
   switch (_state)
   {
@@ -155,44 +146,70 @@ bool  QUIZ::BlindtestQuizScene::update(float elapsed)
 void  QUIZ::BlindtestQuizScene::updatePlaying(float elapsed)
 {
   // Update player cooldown
-  if (_music.getStatus() == sf::Sound::Playing) {
-    for (int index = 0; index < _quiz.players.size(); index++)
-      _cooldown[index] -= elapsed;
-  }
+  if (_music.getStatus() == sf::Sound::Playing)
+    for (auto& cooldown : _cooldowns)
+      cooldown = std::max(0.f, cooldown - elapsed);
 
   // Pause/resume music
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::P) == true) {
     if (_music.getStatus() == sf::Sound::Playing)
       _music.pause();
+    else if (_music.getStatus() == sf::Sound::Stopped) {
+      _music.setPlayingOffset(sf::Time::Zero);
+      _music.play();
+    }
     else
       _music.play();
   }
 
   // Reset music
-  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true) {
     _music.setPlayingOffset(sf::Time::Zero);
     _music.play();
   }
 
-  // Skip to answer
-  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::A) == true)
-    setAnswer();
+  // Change scores
+  if (_display == true && (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Left) == true || Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Right) == true)) {
+    for (auto player_index = 0; player_index < _quiz.players.size(); player_index++) {
+      auto& player = _quiz.players.at(player_index);
+      if (player.sprite.getGlobalBounds().contains((float)Game::Window::Instance().mouse().position().x, (float)Game::Window::Instance().mouse().position().y) == true) {
+        auto old = player.score;
+        player.score = player.score
+          + (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Left) == true ? +1 : 0)
+          + (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Right) == true ? -1 : 0);
+        std::cout << "\rScore of player #" << (player_index + 1) << ": " << player.score << ".        " << std::flush;
+      }
+    }
+  }
 
-  // End blindtest
-  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::E) == true)
-    _machine.pop();
+  // Skip to answer
+  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::A) == true) {
+    auto  ref = Game::Audio::Sound::Instance().get();
+
+    // Play correct answer sound
+    ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / "question_timesup.wav"));
+    ref.sound.play();
+
+    _state = StateAnswer;
+  }
 
   // Check player buzzer
-  else if (_music.getStatus() == sf::Sound::Playing) {
+  else {
     for (int index = 0; index < _quiz.players.size(); index++) {
-      if (_cooldown[index] <= 0.f && Game::Window::Instance().joystick().buttonPressed(_quiz.players[index].joystick, _quiz.players[index].button + QUIZ::Quiz::Button::ButtonBuzzer) == true) {
+      if (_cooldowns[index] <= 0.f && Game::Window::Instance().joystick().buttonPressed(_quiz.players[index].joystick, _quiz.players[index].button + QUIZ::Quiz::Button::ButtonBuzzer) == true) {
         auto  ref = Game::Audio::Sound::Instance().get();
 
         // Play buzzer sound
-        ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / "buzzer1.wav"));
+        ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / "question_buzzer.wav"));
         ref.sound.play();
+        
+        // Stop music
+        _music.pause();
 
-        setPending(index);
+        // Go to pending mode
+        _state = StatePending;
+        _buzz = index;
+
         break;
       }
     }
@@ -207,14 +224,14 @@ void  QUIZ::BlindtestQuizScene::updatePending(float elapsed)
     auto  ref = Game::Audio::Sound::Instance().get();
 
     // Play correct answer sound
-    ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / "correct1.wav"));
+    ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / "question_correct.wav"));
     ref.sound.play();
 
-    // Resume music at reduced volume
-    _music.setVolume(_music.getVolume() * 0.66f);
-    _music.play();
+    // Increase score
+    _quiz.players[_buzz].score += 1;
 
-    setAnswer();
+    // Go to answer mode
+    _state = StateAnswer;
   }
 
   // Wrong answer
@@ -222,18 +239,16 @@ void  QUIZ::BlindtestQuizScene::updatePending(float elapsed)
     auto  ref = Game::Audio::Sound::Instance().get();
 
     // Play wrong answer sound
-    ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / "wrong1.wav"));
+    ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / "question_wrong.wav"));
     ref.sound.play();
 
     // Set player cooldown
-    _cooldown[_player] = 8.4f;
+    _cooldowns[_buzz] = _cooldown;
+    _buzz = -1;
 
-    setPlaying();
+    // Return to playing mode
+    _state = StatePlaying;
   }
-
-  // End blindtest
-  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::E) == true)
-    _machine.pop();
 }
 
 void  QUIZ::BlindtestQuizScene::updateAnswer(float elapsed)
@@ -242,6 +257,10 @@ void  QUIZ::BlindtestQuizScene::updateAnswer(float elapsed)
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::P) == true) {
     if (_music.getStatus() == sf::Sound::Playing)
       _music.pause();
+    else if (_music.getStatus() == sf::Sound::Stopped) {
+      _music.setPlayingOffset(sf::Time::Zero);
+      _music.play();
+    }
     else
       _music.play();
   }
@@ -251,20 +270,6 @@ void  QUIZ::BlindtestQuizScene::updateAnswer(float elapsed)
     _music.setPlayingOffset(sf::Time::Zero);
     _music.play();
   }
-
-  // Next blindtest
-  else if (_quiz.blindtests.empty() == false && Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::N) == true) {
-    _machine.swap<QUIZ::BlindtestQuizScene>(_quiz);
-    return;
-  }
-    
-
-  // End blindtest
-  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::E) == true) {
-    _machine.pop();
-    return;
-  }
-
 }
 
 void  QUIZ::BlindtestQuizScene::draw()
@@ -272,13 +277,13 @@ void  QUIZ::BlindtestQuizScene::draw()
   switch (_state)
   {
   case QUIZ::BlindtestQuizScene::StatePlaying:
-    drawTexture(_music.getStatus() == sf::Sound::Playing ? _play : _pause, 0.5f);
+    drawPlaying();
     break;
   case QUIZ::BlindtestQuizScene::StatePending:
-    drawTexture(_quiz.avatars[_quiz.players[_player].avatar], 0.75f);
+    drawPending();
     break;
   case QUIZ::BlindtestQuizScene::StateAnswer:
-    drawTexture(_cover, 0.9f);
+    drawAnswer();
     break;
   default:
     break;
@@ -286,6 +291,86 @@ void  QUIZ::BlindtestQuizScene::draw()
 
   // Draw timer
   drawTimer();
+}
+
+void  QUIZ::BlindtestQuizScene::drawPlaying()
+{
+  auto  screen = Game::Window::Instance().window().getSize();
+
+  for (unsigned int player_index = 0; player_index < _quiz.players.size(); player_index++) {
+    auto& player = _quiz.players[player_index];
+    sf::Sprite& sprite = player.sprite;
+
+    float x_position = screen.x / (_quiz.players.size() + 1.f) * (player_index + 1.f);
+    float y_position = screen.y / 2.f;
+
+    // Set sprite position
+    sprite.setPosition(x_position, y_position);
+    sprite.setOrigin(sprite.getLocalBounds().width / 2.f, sprite.getLocalBounds().height / 2.f);
+
+    float x_scale = (screen.x * 0.9f / (_quiz.players.size() + 1.f)) / sprite.getLocalBounds().width;
+    float y_scale = (screen.y * 0.75f) / sprite.getLocalBounds().height;
+    float scale = std::min(x_scale, y_scale);
+
+    // Set sprite size
+    sprite.setScale(scale, scale);
+
+    std::uint8_t  alpha = _cooldowns[player_index] > 0.f ? 127 : 255;
+
+    // Set transparency
+    sprite.setColor(sf::Color(255, 255, 255, alpha));
+
+    // Draw sprite
+    Game::Window::Instance().window().draw(sprite);
+
+    // Skip score display
+    if (_display == false)
+      continue;
+
+    sf::Text  score(std::to_string(player.score), Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf"), 128);
+
+    // Set score outline thickness
+    score.setOutlineThickness(5.f);
+
+    // Set size of the score
+    scale = (screen.y * 0.1f) / score.getLocalBounds().height;
+    score.setScale(scale, scale);
+
+    // Set score position
+    score.setOrigin(score.getLocalBounds().width / 2.f, score.getLocalBounds().height / 2.f);
+    score.setPosition(x_position, sprite.getGlobalBounds().top + sprite.getGlobalBounds().height);
+
+    // Set transparency
+    score.setFillColor(sf::Color(255, 255, 255, alpha));
+
+    // Draw score
+    Game::Window::Instance().window().draw(score);
+  }
+
+  sf::Sprite  sprite;
+
+  // Select symbol to draw
+  sprite.setTexture(_music.getStatus() == sf::Sound::Playing ? _play : _pause, true);
+
+  auto size = std::min(screen.x / 8.f, screen.y / 8.f);
+  auto scale = size / std::max(sprite.getTextureRect().width, sprite.getTextureRect().height);
+
+  sprite.setPosition(size / 4.f, size / 4.f);
+  sprite.setScale(scale, scale);
+
+  Game::Window::Instance().window().draw(sprite);
+}
+
+void  QUIZ::BlindtestQuizScene::drawPending()
+{
+  // Draw buzzing player
+  drawTexture(_quiz.avatars[_quiz.players[_buzz].avatar], 0.75f);
+}
+
+void  QUIZ::BlindtestQuizScene::drawAnswer()
+{
+  // Draw cover
+  drawTexture(_cover, 0.9f);
 }
 
 void  QUIZ::BlindtestQuizScene::drawTimer()

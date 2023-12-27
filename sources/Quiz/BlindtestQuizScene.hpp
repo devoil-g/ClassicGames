@@ -30,17 +30,22 @@ namespace QUIZ
     sf::Texture           _pause;     // Pause texture
     sf::RectangleShape    _bar;       // Timer bar
     State                 _state;     // Current state of blindtest
-    int                   _player;    // Index of player answering
+    int                   _buzz;    // Index of player answering
+    bool                  _display;   // Display score
 
-    std::unordered_map<int, float>  _cooldown;  // Player cooldown before answer
+    std::vector<float>  _cooldowns; // Player cooldown before answer
+    float               _cooldown;  // Cooldown given to players
 
-    void  setPlaying();           // Start playing state
-    void  setPending(int player); // Start player answer state
-    void  setAnswer();            // Start end state
+    void  usage() const;
+    void  next();
 
     void  updatePlaying(float elapsed);
     void  updatePending(float elapsed);
     void  updateAnswer(float elapsed);
+
+    void  drawPlaying();
+    void  drawPending();
+    void  drawAnswer();
 
     void  drawTimer();
     void  drawTexture(const sf::Texture& texture, float size);
