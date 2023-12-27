@@ -34,19 +34,17 @@ namespace QUIZ
 
     struct Blindtest
     {
-      std::string music;  // Path to music
-      std::string cover;  // Path to album cover/movie poster
-      std::string answer; // Answer
-      std::string info;   // Info displayed to host
-      int         score;  // Number of points for good answer
-      bool        done;   // True if question has already been asked
+      std::filesystem::path music;  // Path to music
+      std::filesystem::path cover;  // Path to album cover/movie poster
+      std::string           answer; // Answer
+      bool                  done;   // True if question has already been asked
     };
 
     std::vector<Player>     players;    // Players
     std::vector<Blindtest>  blindtests; // Audio blindtests questions
 
   public:
-    Quiz(const std::filesystem::path& config);
+    Quiz();
     ~Quiz() = default;
   };
 }

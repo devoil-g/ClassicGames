@@ -1,11 +1,13 @@
 #include <filesystem>
+#include <iostream>
 
-#include "System/JavaScriptObjectNotation.hpp"
+#include <SFML/Audio.hpp>
+
 #include "System/Library/TextureLibrary.hpp"
 #include "System/Config.hpp"
 #include "Quiz/Quiz.hpp"
 
-QUIZ::Quiz::Quiz(const std::filesystem::path& config) :
+QUIZ::Quiz::Quiz() :
   avatars(),
   players()
 {
@@ -13,44 +15,58 @@ QUIZ::Quiz::Quiz(const std::filesystem::path& config) :
   for (const auto& entry : std::filesystem::directory_iterator(Game::Config::ExecutablePath / "assets" / "quiz" / "avatars")) {
     sf::Texture texture;
 
+    // Load texture
     if (texture.loadFromFile(entry.path().string()) == false)
       continue;
 
     texture.setSmooth(false);
+
+    // Add avatar to collection
     avatars.push_back(texture);
   }
 
-  // Load blindtest
-  try {
-    const Game::JSON::Object  json = Game::JSON::load(config);
+  // Load blindtests from directory
+  for (const auto& entry : std::filesystem::directory_iterator(Game::Config::ExecutablePath / "assets" / "quiz" / "blindtest")) {
+    sf::Music music;
+    auto music_path = entry.path();
+    auto cover_path = Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "default.png";
 
-    try {
-      int index = 0;
-      for (const auto& entry : json.map.at("blindtest")->array().vector) {
-        index++;
-        try {
-          blindtests.push_back({
-            .music = entry->object().map.at("music")->string().value,
-            .cover = entry->object().map.at("cover")->string().value,
-            .answer = entry->object().map.at("answer")->string().value,
-            .info = entry->object().map.at("info")->string().value,
-            .score = (int)entry->object().map.at("score")->number().value,
-            });
-        }
-        catch (const std::exception&) {
-          std::cout << "Warning, invalid entry " << index << "# in blindtest." << std::endl;
-        }
+    // Try to load file as a music
+    if ((music_path.extension() != ".ogg" && music_path.extension() != ".wav" && music_path.extension() != ".flac") ||
+      music.openFromFile(music_path.string()) == false)
+      continue;
+
+    // Find image with same name in the directory
+    for (const auto& ext : { "jpg", "png", "bmp", "tga", "jpeg", "gif", "psd", "hdr", "pic" }) {
+      std::filesystem::path extension{ ext };
+      std::filesystem::path tmp_path = music_path;
+
+      // Replace extension of music
+      tmp_path.replace_extension(extension);
+
+      // Check if file exists
+      if (std::filesystem::exists(tmp_path) == false)
+        continue;
+
+      sf::Image cover;
+
+      // Try to load image
+      if (cover.loadFromFile(tmp_path.string()) == true) {
+        cover_path = tmp_path;
+        break;
       }
     }
-    catch (const std::exception&) {
-      std::cout << "Warning, no blindtest section." << std::endl;
-    }
-  }
-  catch (const std::exception&) {
-    std::cout << "Warning, failed to open config file '" << config << "'." << std::endl;
+
+    // Add blindtest to collection
+    blindtests.push_back({
+      .music = music_path,
+      .cover = cover_path,
+      .answer = music_path.stem().string(),
+      .done = false
+      });
   }
 
-  std::cout
+  std::cout << std::endl
     << "Quiz loaded:" << std::endl
     << "  Avatars:    " << avatars.size() << std::endl
     << "  Blindtests: " << blindtests.size() << std::endl

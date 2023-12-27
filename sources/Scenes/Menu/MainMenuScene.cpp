@@ -63,15 +63,22 @@ void  Game::MainMenuScene::selectGameBoy(Game::AbstractMenuScene::Item&)
 
 void  Game::MainMenuScene::selectQuiz(Game::AbstractMenuScene::Item&)
 {
-  // Go to quiz scene
-  try {
-    _machine.push<QUIZ::QuizScene>(Game::Config::ExecutablePath / "assets" / "quiz" / "config.json");
+  Game::SceneMachine& machine = _machine;
+
+  // Push loading screen
+  _machine.push<Game::LoadingScene>();
+
+  std::thread([&machine]() {
+    // Go to quiz scene
+    try {
+    machine.swap<QUIZ::QuizScene>();
   }
 
   // Error message when quiz loading failed
   catch (const std::exception&) {
-    _machine.push<Game::MessageScene>("Error: failed to load quiz.");
+    machine.swap<Game::MessageScene>("Error: failed to load quiz.");
   }
+    }).detach();
 }
 
 void  Game::MainMenuScene::selectOptions(Game::AbstractMenuScene::Item&)

@@ -9,9 +9,9 @@
 
 const float QUIZ::QuizScene::ForcedExit = 1.f;
 
-QUIZ::QuizScene::QuizScene(Game::SceneMachine& machine, const std::filesystem::path& config) :
+QUIZ::QuizScene::QuizScene(Game::SceneMachine& machine) :
   Game::AbstractScene(machine),
-  _quiz(config),
+  _quiz(),
   _game(),
   _elapsed(0.f),
   _bar(sf::Vector2f(1.f, 1.f))

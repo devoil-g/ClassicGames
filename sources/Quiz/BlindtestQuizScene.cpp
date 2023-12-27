@@ -34,11 +34,11 @@ QUIZ::BlindtestQuizScene::BlindtestQuizScene(Game::SceneMachine& machine, QUIZ::
   _quiz.blindtests.erase(iterator);
 
   // Load music
-  if (_music.openFromFile(Game::Config::ExecutablePath.string() + "/" + _blindtest.music) == false)
+  if (_music.openFromFile(_blindtest.music.string()) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Load texture
-  if (_cover.loadFromFile(Game::Config::ExecutablePath.string() + "/" + _blindtest.cover) == false ||
+  if (_cover.loadFromFile(_blindtest.cover.string()) == false ||
     _play.loadFromFile((Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "play.png").string()) == false ||
     _pause.loadFromFile((Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "pause.png").string()) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
@@ -83,8 +83,6 @@ void  QUIZ::BlindtestQuizScene::setPlaying()
     << "  [E]nd:        end blindtest" << std::endl
     << std::endl
     << "Answer: " << _blindtest.answer << std::endl
-    << "Info:   " << _blindtest.info << std::endl
-    << "Score:  " << _blindtest.score << std::endl
     << std::endl;
 }
 
@@ -103,15 +101,13 @@ void  QUIZ::BlindtestQuizScene::setPending(int player)
     << "  [E]nd:      end blindtest" << std::endl
     << std::endl
     << "Answer: " << _blindtest.answer << std::endl
-    << "Info:   " << _blindtest.info << std::endl
-    << "Score:  " << _blindtest.score << std::endl
     << std::endl;
 }
 
 void  QUIZ::BlindtestQuizScene::setAnswer()
 {
   if (_player != -1)
-    _quiz.players[_player].score += _blindtest.score;
+    _quiz.players[_player].score += 1;
 
   _state = StateAnswer;
   std::cout
@@ -127,8 +123,6 @@ void  QUIZ::BlindtestQuizScene::setAnswer()
     << "  [E]nd:        end blindtest" << std::endl
     << std::endl
     << "Answer: " << _blindtest.answer << std::endl
-    << "Info:   " << _blindtest.info << std::endl
-    << "Score:  " << _blindtest.score << std::endl
     << std::endl;
 }
 

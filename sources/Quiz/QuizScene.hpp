@@ -23,7 +23,7 @@ namespace QUIZ
     sf::RectangleShape  _bar;     // Forced exit bar
     
   public:
-    QuizScene(Game::SceneMachine& machine, const std::filesystem::path& config);
+    QuizScene(Game::SceneMachine& machine);
     ~QuizScene() override;
 
     bool  update(float elapsed) override;  // Update state
