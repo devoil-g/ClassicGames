@@ -22,8 +22,8 @@ QUIZ::BlindtestQuizScene::BlindtestQuizScene(Game::SceneMachine& machine, QUIZ::
   _state(StatePlaying),
   _buzz(-1),
   _display(true),
-  _cooldowns(_quiz.players.size(), 0.01f),
-  _cooldown(5.f)
+  _cooldowns(_quiz.players.size(), 0.f),
+  _cooldown(10.f)
 {
   // Initialize timer bar
   _bar.setSize(sf::Vector2f(1.f, 1.f));
@@ -42,7 +42,8 @@ void  QUIZ::BlindtestQuizScene::usage() const
     << "Commands:" << std::endl
     << "  [P]lay/pause: pause/resume music" << std::endl
     << "  [R]eset:      replay music from the begining" << std::endl
-    << "  Page[+/-]:    change cooldown" << std::endl
+    << "  Arrow[L-R]:   change cooldown" << std::endl
+    << "  Arrow[U-D]:   change volume" << std::endl
     << "  [S]cores:     toggle score display" << std::endl
     << "  [C]orrect:    correct answer, give points, display answer" << std::endl
     << "  [W]rong:      wrong answer, return to game" << std::endl
@@ -75,6 +76,9 @@ void  QUIZ::BlindtestQuizScene::next()
   if (_music.openFromFile(_blindtest.music.string()) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
+  // Reset volume
+  _music.setVolume(50.f);
+
   // Load texture
   if (_cover.loadFromFile(_blindtest.cover.string()) == false ||
     _play.loadFromFile((Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "play.png").string()) == false ||
@@ -89,7 +93,7 @@ void  QUIZ::BlindtestQuizScene::next()
   // Reset status
   _state = State::StatePlaying;
   _buzz = -1;
-  std::fill(_cooldowns.begin(), _cooldowns.end(), 0.01f);
+  std::fill(_cooldowns.begin(), _cooldowns.end(), 0.f);
 
   // Display usage
   usage();
@@ -114,16 +118,24 @@ bool  QUIZ::BlindtestQuizScene::update(float elapsed)
     _display = !_display;
 
   // Increase cooldown
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::PageUp) == true) {
-    _cooldown = std::max(0.f, _cooldown + 0.25f);
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Right) == true) {
+    _cooldown = std::max(0.f, _cooldown + 0.25f * (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::LShift) == true ? 10.f : 1.f));
     std::cout << "\rCooldown set to " << _cooldown << " seconds.        " << std::flush;
   }
 
   // Decrease cooldown
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::PageDown) == true) {
-    _cooldown = std::max(0.f, _cooldown - 0.25f);
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Left) == true) {
+    _cooldown = std::max(0.f, _cooldown - 0.25f * (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::LShift) == true ? 10.f : 1.f));
     std::cout << "\rCooldown set to " << _cooldown << " seconds.        " << std::flush;
   }
+
+  // Increase volume
+  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Up) == true)
+    _music.setVolume(std::min(100.f, _music.getVolume() + elapsed * 100.f * (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::LShift) == true ? 2.f : 1.f)));
+
+  // Decrease volume
+  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Down) == true)
+    _music.setVolume(std::max(0.f, _music.getVolume() - elapsed * 100.f * (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::LShift) == true ? 2.f : 1.f)));
 
   switch (_state)
   {
@@ -146,9 +158,8 @@ bool  QUIZ::BlindtestQuizScene::update(float elapsed)
 void  QUIZ::BlindtestQuizScene::updatePlaying(float elapsed)
 {
   // Update player cooldown
-  if (_music.getStatus() == sf::Sound::Playing)
-    for (auto& cooldown : _cooldowns)
-      cooldown = std::max(0.f, cooldown - elapsed);
+  for (auto& cooldown : _cooldowns)
+    cooldown = std::max(0.f, cooldown - elapsed);
 
   // Pause/resume music
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::P) == true) {
@@ -206,6 +217,11 @@ void  QUIZ::BlindtestQuizScene::updatePlaying(float elapsed)
         // Stop music
         _music.pause();
 
+        // Grey out every other players
+        for (auto& cooldown : _cooldowns)
+          cooldown = std::max(0.01f, cooldown);
+        _cooldowns[index] = 0.f;
+
         // Go to pending mode
         _state = StatePending;
         _buzz = index;
@@ -230,6 +246,9 @@ void  QUIZ::BlindtestQuizScene::updatePending(float elapsed)
     // Increase score
     _quiz.players[_buzz].score += 1;
 
+    // Resume music
+    _music.play();
+
     // Go to answer mode
     _state = StateAnswer;
   }
@@ -245,6 +264,9 @@ void  QUIZ::BlindtestQuizScene::updatePending(float elapsed)
     // Set player cooldown
     _cooldowns[_buzz] = _cooldown;
     _buzz = -1;
+
+    // Resume music
+    _music.play();
 
     // Return to playing mode
     _state = StatePlaying;
@@ -364,7 +386,7 @@ void  QUIZ::BlindtestQuizScene::drawPlaying()
 void  QUIZ::BlindtestQuizScene::drawPending()
 {
   // Draw buzzing player
-  drawTexture(_quiz.avatars[_quiz.players[_buzz].avatar], 0.75f);
+  drawPlaying();
 }
 
 void  QUIZ::BlindtestQuizScene::drawAnswer()

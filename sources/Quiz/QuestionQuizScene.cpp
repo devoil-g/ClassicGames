@@ -16,7 +16,7 @@ QUIZ::QuestionQuizScene::QuestionQuizScene(Game::SceneMachine& machine, QUIZ::Qu
   _display(true),
   _buzz(-1),
   _cooldowns(_quiz.players.size(), 0.f),
-  _cooldown(3.f)
+  _cooldown(10.f)
 {
   // Display usage at start-up
   usage();
@@ -99,13 +99,13 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
 
   // Increase cooldown
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::PageUp) == true) {
-    _cooldown = std::max(0.f, _cooldown + 0.25f);
+    _cooldown = std::max(0.f, _cooldown + 0.25f * (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::LShift) == true ? 10.f : 1.f));
     std::cout << "\rCooldown set to " << _cooldown << " seconds.        " << std::flush;
   }
 
   // Decrease cooldown
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::PageDown) == true) {
-    _cooldown = std::max(0.f, _cooldown - 0.25f);
+    _cooldown = std::max(0.f, _cooldown - 0.25f * (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::LShift) == true ? 10.f : 1.f));
     std::cout << "\rCooldown set to " << _cooldown << " seconds.        " << std::flush;
   }
 
@@ -139,7 +139,7 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
       // Buzz!
       if (_cooldowns.at(index) <= 0.f && Game::Window::Instance().joystick().buttonPressed(_quiz.players[index].joystick, _quiz.players[index].button + QUIZ::Quiz::Button::ButtonBuzzer) == true) {
         auto  ref = Game::Audio::Sound::Instance().get();
-
+        
         // Play buzzer sound
         ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / "question_buzzer.wav"));
         ref.sound.play();

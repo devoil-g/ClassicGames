@@ -30,7 +30,7 @@ namespace QUIZ
     sf::Texture           _pause;     // Pause texture
     sf::RectangleShape    _bar;       // Timer bar
     State                 _state;     // Current state of blindtest
-    int                   _buzz;    // Index of player answering
+    int                   _buzz;      // Index of player answering
     bool                  _display;   // Display score
 
     std::vector<float>  _cooldowns; // Player cooldown before answer
@@ -54,7 +54,7 @@ namespace QUIZ
     BlindtestQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz);
     ~BlindtestQuizScene() = default;
 
-    bool  update(float elapsed) override;  // Update state
-    void  draw() override;                    // Draw state
+    bool  update(float elapsed) override; // Update state
+    void  draw() override;                // Draw state
   };
 }

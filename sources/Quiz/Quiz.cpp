@@ -19,7 +19,7 @@ QUIZ::Quiz::Quiz() :
     if (texture.loadFromFile(entry.path().string()) == false)
       continue;
 
-    texture.setSmooth(false);
+    texture.setSmooth(true);
 
     // Add avatar to collection
     avatars.push_back(texture);
