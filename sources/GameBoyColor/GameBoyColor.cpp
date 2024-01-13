@@ -310,14 +310,14 @@ void  GBC::GameBoyColor::loadHeader(const std::vector<uint8_t>& rom)
 
 void  GBC::GameBoyColor::simulate()
 {
-  std::uint64_t frame = _cycles / (GBC::PixelProcessingUnit::ScanlineDuration * (GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank));
+  std::uint64_t frame = _cycles / GBC::PixelProcessingUnit::FrameDuration;
   std::uint64_t cycles = _cycles;
 
   // Simulate Joypad
   simulateKeys();
 
   // Execution loop
-  while (frame == _cycles / (GBC::PixelProcessingUnit::ScanlineDuration * (GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank)))
+  while (frame == _cycles / GBC::PixelProcessingUnit::FrameDuration)
   {
     switch (_transferMode)
     {
@@ -477,7 +477,7 @@ void  GBC::GameBoyColor::simulate()
   // Update MBC clock
   // NOTE: we could do this every CPU cycles,
   // but we don't need that much precision
-  _mbc->update(GBC::PixelProcessingUnit::ScanlineDuration * (GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank));
+  _mbc->update(GBC::PixelProcessingUnit::FrameDuration);
 }
 
 void  GBC::GameBoyColor::simulateKeys()
@@ -1147,7 +1147,7 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     break;
 
   case IO::SB:    // Serial transfer Data, R/W
-  case IO::TIMA:  // Timer Modulo, R/W
+  case IO::TIMA:  // Timer Counter, R/W
   case IO::TMA:   // Timer Modulo, R/W
   case IO::HDMA1: // New DMA Transfers source high byte, W, CGB mode only
   case IO::HDMA2: // New DMA Transfers source low byte, W, CGB mode only

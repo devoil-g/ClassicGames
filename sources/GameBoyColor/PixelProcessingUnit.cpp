@@ -151,20 +151,26 @@ void  GBC::PixelProcessingUnit::simulateMode3()
     _bwFifo.clear();
     _bwOffset = _lx + 7 - _gbc._io[IO::WX];
     _bwTile = 0;
-    _bwWait = 0;
+
+    // 6-dot penalty while the BG fetcher is being set up for the window
+    _bwWait = 6;
   }
 
-  // Fetch background/window pixels
-  if (_bwFifo.size() <= 16 && _bwWait == 0)
-    simulateMode3BackgroundWindow();
+  // Only work when in screen
+  if (_lx < GBC::PixelProcessingUnit::ScreenWidth)
+  {
+    // Fetch background/window pixels
+    if (_bwFifo.size() <= 16 && _bwWait == 0)
+      simulateMode3BackgroundWindow();
 
-  // Fetch sprites pixels
-  if (_sWait == 0)
-    simulateMode3Sprites();
+    // Fetch sprites pixels
+    if (_sWait == 0)
+      simulateMode3Sprites();
 
-  // Pop a pixel from the FIFOs
-  if (_bwFifo.size() > 16 && _sWait == 0)
-    simulateMode3Draw();
+    // Pop a pixel from the FIFOs
+    if (_bwFifo.size() > 16 && _sWait == 0)
+      simulateMode3Draw();
+  }
 
   // Decrement fetchers timers
   if (_bwWait > 0)
@@ -173,7 +179,7 @@ void  GBC::PixelProcessingUnit::simulateMode3()
     _sWait -= 1;
 
   // End of line drawing
-  if (_lx == GBC::PixelProcessingUnit::ScreenWidth)
+  if (_lx >= GBC::PixelProcessingUnit::ScreenWidth && _bwWait == 0)
   {
     // Go to HBlank
     setMode(Mode::Mode0);
@@ -275,7 +281,7 @@ void  GBC::PixelProcessingUnit::simulateMode3Draw()
 
     // Set pixel color
     _image.setPixel(_lx, _gbc._io[IO::LY], sf::Color(color.red(), color.green(), color.blue()));
-
+    
     // Next pixel
     _lx += 1;
   }
@@ -383,8 +389,8 @@ void  GBC::PixelProcessingUnit::simulateMode3Sprites()
             _sFifo[index] = pixel;
         }
 
-        // Wait 6 tick before next fetch
-        _sWait = 6;
+        // Wait between 6 and 11 ticks before next fetch
+        _sWait = (sprite.x == 0) ? (0) : (11 - std::min(5, (sprite.x + _gbc._io[IO::SCX]) % 8));
 
         // Force sprite off screen
         sprite.x = 255;
@@ -730,12 +736,9 @@ void  GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
       _gbc._io[IO::LY] = 0;
       _cycles = 0;
       _mode = Mode::Mode0;
+      _gbc._io[IO::LCDC] &= ~(LcdControl::LcdControlWindowBackgroundEnable | LcdControl::LcdControlObjEnable);
 
       // Update STAT register
-      if (_gbc._io[IO::LY] == _gbc._io[IO::LYC])
-        _gbc._io[IO::STAT] |= LcdStatus::LcdStatusEqual;
-      else
-        _gbc._io[IO::STAT] &= ~LcdStatus::LcdStatusEqual;
       _gbc._io[IO::STAT] = (_gbc._io[IO::STAT] & ~LcdStatus::LcdStatusMode) | (Mode::Mode0);
 
       // White image
