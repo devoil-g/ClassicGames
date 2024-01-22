@@ -53,10 +53,10 @@ namespace Math
     Type  operator()(unsigned int c) const { return Math::Matrix<Size, 1, Type>::operator()(c, 0); } // Get nth component of vector
 
     template<unsigned int N>
-    Type& get() { return this->Math::Matrix<Size, 1, Type>::get<N, 0>(); }       // Get nth component of vector
+    Type& get() { return Math::Matrix<Size, 1, Type>::template get<N, 0>(); }       // Get nth component of vector
 
     template<unsigned int N>
-    Type  get() const { return this->Math::Matrix<Size, 1, Type>::get<N, 0>(); } // Get nth component of vector
+    Type  get() const { return Math::Matrix<Size, 1, Type>::template get<N, 0>(); } // Get nth component of vector
 
     Type& x() { return get<0>(); } // Get first component of vector
     Type& y() { return get<1>(); } // Get second component of vector
