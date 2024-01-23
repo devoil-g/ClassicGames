@@ -349,7 +349,7 @@ void  GBC::GameBoyColor::simulate()
     case Transfer::TransferHdma0:
     {
       std::uint16_t source = ((((std::uint16_t)_io[IO::HDMA1] << 8) + (std::uint16_t)_io[IO::HDMA2]) & 0b1111111111110000) + (std::uint16_t)_transferIndex;
-      std::uint16_t destination = (((((std::uint16_t)_io[IO::HDMA3] << 8) + (std::uint16_t)_io[IO::HDMA4]) & 0b00011111111110000) | 0b1000000000000000) + (std::uint16_t)_transferIndex;
+      std::uint16_t destination = (((((std::uint16_t)_io[IO::HDMA3] << 8) + (std::uint16_t)_io[IO::HDMA4]) & 0b0001111111110000) | 0b1000000000000000) + (std::uint16_t)_transferIndex;
       bool          end = false;
 
       // Transfer 8 bytes per tick
