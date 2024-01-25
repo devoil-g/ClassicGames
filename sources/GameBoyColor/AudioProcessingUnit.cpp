@@ -199,7 +199,7 @@ void  GBC::AudioProcessingUnit::simulate()
 std::uint8_t  GBC::AudioProcessingUnit::readIo(std::uint16_t address)
 {
   // APU disabled
-  if (!(_gbc._io[IO::NR52] & 0b10000000) && address != IO::NR52)
+  if (!(_gbc._io[IO::NR52] & 0b10000000) && address != IO::NR52 && (address < IO::WAVE00 || address > IO::WAVE30))
     return 0xFF;
 
   switch (address)
@@ -267,13 +267,13 @@ std::uint8_t  GBC::AudioProcessingUnit::readIo(std::uint16_t address)
 void  GBC::AudioProcessingUnit::writeIo(std::uint16_t address, std::uint8_t value)
 {
   // APU disabled
-  if (!(_gbc._io[IO::NR52] & 0b10000000) && address != IO::NR52)
+  if (!(_gbc._io[IO::NR52] & 0b10000000) && address != IO::NR52 && (address < IO::WAVE00 || address > IO::WAVE30))
     return;
 
   switch (address)
   {
   case IO::NR14:    // Channel 1 Frequency higher 3 bits, limit flag, start sound, R/W
-    // Bits 7-6-5 are always set
+    // Bits 7 is always off
     _gbc._io[IO::NR14] = value & 0b01111111;
 
     // Start sound 1
@@ -302,7 +302,7 @@ void  GBC::AudioProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
     break;
 
   case IO::NR24:    // Channel 2 Frequency higher 3 bits, limit flag, start sound, R/W
-    // Bits 7-6-5 are always set
+    // Bits 7 is always off
     _gbc._io[IO::NR24] = value & 0b01111111;
 
     // Start sound 2
@@ -325,7 +325,7 @@ void  GBC::AudioProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
     break;
 
   case IO::NR34:    // Channel 3 Frequency higher 3 bits, limit flag, start sound, R/W
-    // Bits 7-6-5 are always set
+    // Bits 7 is always off
     _gbc._io[IO::NR34] = value & 0b01111111;
 
     // Start sound 3
@@ -346,7 +346,7 @@ void  GBC::AudioProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
     break;
 
   case IO::NR44:    // Channel 4 Limit flag, start sound, R/W
-    // Bits 7-6-5 are always set
+    // Only bit 6 is writable
     _gbc._io[IO::NR44] = value & 0b01000000;
 
     // Start sound 4
@@ -379,7 +379,15 @@ void  GBC::AudioProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
       _sound3.length = 0.f;
       _sound4.length = 0.f;
 
-      // TODO: reset registers
+      // Reset registers
+      for (auto reg : {
+        IO::NR10, IO::NR11, IO::NR12, IO::NR13, IO::NR14,
+        IO::NR21, IO::NR22, IO::NR23, IO::NR24,
+        IO::NR30, IO::NR31, IO::NR32, IO::NR33, IO::NR34,
+        IO::NR41, IO::NR42, IO::NR43, IO::NR44,
+        IO::NR50, IO::NR51
+        })
+        _gbc._io[reg] = 0;
     }
     break;
 
