@@ -11,7 +11,7 @@ GBC::PixelProcessingUnit::PixelProcessingUnit(GBC::GameBoyColor& gbc) :
   _bgc{ 0 },
   _obc{ 0 },
   _oam{ 0 },
-  _mode(Mode::Mode0),
+  _interrupt(false),
   _sprites(),
   _cycles(0),
   _image(),
@@ -34,7 +34,7 @@ void  GBC::PixelProcessingUnit::simulate()
   if (!(_gbc._io[IO::LCDC] & LcdControl::LcdControlEnable))
     return;
 
-  constexpr std::array<void(GBC::PixelProcessingUnit::*)(), Mode::ModeCount> modes = {
+  constexpr std::array<void(GBC::PixelProcessingUnit::*)(), LcdMode::LcdModeCount> modes = {
     &GBC::PixelProcessingUnit::simulateMode0,
     &GBC::PixelProcessingUnit::simulateMode1,
     &GBC::PixelProcessingUnit::simulateMode2,
@@ -42,7 +42,10 @@ void  GBC::PixelProcessingUnit::simulate()
   };
 
   // Call PPU mode handler
-  (*this.*(modes[_mode % Mode::ModeCount]))();
+  (*this.*(modes[getMode() % LcdMode::LcdModeCount]))();
+
+  // Check STAT interrupt
+  simulateInterrupt();
 }
 
 void  GBC::PixelProcessingUnit::simulateMode0()
@@ -54,15 +57,20 @@ void  GBC::PixelProcessingUnit::simulateMode0()
   if (_cycles % GBC::PixelProcessingUnit::ScanlineDuration == 0)
   {
     // Increment current line
-    nextLine();
+    setLine(getLine() + 1);
 
     // Draw next line
-    if (_gbc._io[IO::LY] < GBC::PixelProcessingUnit::ScreenHeight)
-      setMode(Mode::Mode2);
+    if (getLine() < GBC::PixelProcessingUnit::ScreenHeight)
+      setMode(LcdMode::LcdMode2);
 
     // Start VBlank
     else {
-      setMode(Mode::Mode1);
+      setMode(LcdMode::LcdMode1);
+
+      // VBlank interrupt
+      _gbc._io[GBC::GameBoyColor::IO::IF] |= GBC::GameBoyColor::Interrupt::InterruptVBlank;
+
+      // Send texture to VRAM for display
       _texture.update(_image);
     }
   }
@@ -77,11 +85,11 @@ void  GBC::PixelProcessingUnit::simulateMode1()
   if (_cycles % GBC::PixelProcessingUnit::ScanlineDuration == 0)
   {
     // Increment current line
-    nextLine();
+    setLine(getLine() + 1);
 
     // Start drawing frame
-    if (_gbc._io[IO::LY] == 0)
-      setMode(Mode::Mode2);
+    if (getLine() == 0)
+      setMode(LcdMode::LcdMode2);
   }
 }
 
@@ -91,13 +99,13 @@ void  GBC::PixelProcessingUnit::simulateMode2()
   if (_cycles % GBC::PixelProcessingUnit::ScanlineDuration == 0)
   {
     // First line, reset window flag
-    if (_gbc._io[IO::LY] == 0) {
+    if (getLine() == 0) {
       _wFlagY = false;
       _wY = 0;
     }
 
     // Check window Y coordinates
-    if (_gbc._io[IO::LY] == _gbc._io[IO::WY])
+    if (getLine() == _gbc._io[IO::WY])
       _wFlagY = true;
 
     // Reset OBJ list
@@ -106,8 +114,8 @@ void  GBC::PixelProcessingUnit::simulateMode2()
 
     // Push Y matching OBJ in order
     for (const auto& sprite : _oam.sprites) {
-      if (sprite.y <= _gbc._io[IO::LY] + 16 &&
-        sprite.y + ((_gbc._io[IO::LCDC] & LcdControl::LcdControlObjSize) ? 16 : 8) > _gbc._io[IO::LY] + 16)
+      if (sprite.y <= getLine() + 16 &&
+        sprite.y + ((_gbc._io[IO::LCDC] & LcdControl::LcdControlObjSize) ? 16 : 8) > getLine() + 16)
         _sprites.push_back(sprite);
     }
 
@@ -125,7 +133,7 @@ void  GBC::PixelProcessingUnit::simulateMode2()
 
   // Next mode
   if (_cycles % GBC::PixelProcessingUnit::ScanlineDuration == GBC::PixelProcessingUnit::Mode2Duration)
-    setMode(Mode::Mode3);
+    setMode(LcdMode::LcdMode3);
 }
 
 void  GBC::PixelProcessingUnit::simulateMode3()
@@ -182,7 +190,7 @@ void  GBC::PixelProcessingUnit::simulateMode3()
   if (_lx >= GBC::PixelProcessingUnit::ScreenWidth && _bwWait == 0)
   {
     // Go to HBlank
-    setMode(Mode::Mode0);
+    setMode(LcdMode::LcdMode0);
 
     // Increase window line counter
     if (_wFlagX == true)
@@ -232,7 +240,7 @@ void  GBC::PixelProcessingUnit::simulateMode3Draw()
     // Background and Window Master Priority, CGB mode only
     if (bwEnable == true &&
       sEnable == true &&
-      !(_gbc._io[GBC::GameBoyColor::IO::KEY0] & 0b00001100) &&
+      (_gbc._io[GBC::GameBoyColor::IO::KEY0] & 0b00001100) &&
       !(_gbc._io[IO::LCDC] & LcdControl::LcdControlPriority))
       bwEnable = false;
 
@@ -280,7 +288,7 @@ void  GBC::PixelProcessingUnit::simulateMode3Draw()
       color.raw = 0b0111111111111111;
 
     // Set pixel color
-    _image.setPixel(_lx, _gbc._io[IO::LY], sf::Color(color.red(), color.green(), color.blue()));
+    _image.setPixel(_lx, getLine(), sf::Color(color.red(), color.green(), color.blue()));
     
     // Next pixel
     _lx += 1;
@@ -303,7 +311,7 @@ void  GBC::PixelProcessingUnit::simulateMode3BackgroundWindow()
 
   // Background pixels data
   else {
-    tile_y = _gbc._io[IO::LY] + _gbc._io[IO::SCY];
+    tile_y = getLine() + _gbc._io[IO::SCY];
     tilemap = (_gbc._io[IO::LCDC] & LcdControl::LcdControlBackgroundTilemap) ? 0x1C00 : 0x1800;
     tilemap_id = ((std::uint16_t)tile_y / 8) * 32 + (((std::uint16_t)_gbc._io[IO::SCX] / 8) + _bwTile) % 32;
   }
@@ -352,7 +360,7 @@ void  GBC::PixelProcessingUnit::simulateMode3Sprites()
       // Draw sprite
       if (sprite.x <= _lx + 8)
       {
-        std::uint8_t  tile_y = _gbc._io[IO::LY] - sprite.y + 16;
+        std::uint8_t  tile_y = getLine() - sprite.y + 16;
         std::uint8_t  tile_height = (_gbc._io[IO::LCDC] & LcdControl::LcdControlObjSize) ? 16 : 8;
 
         // Flip sprite Y coordinates
@@ -401,9 +409,27 @@ void  GBC::PixelProcessingUnit::simulateMode3Sprites()
 
   // Ignore missed sprites
   else
-    for (auto iterator = 0; iterator < _sprites.size(); iterator++)
-      if (_sprites[iterator].x <= _lx)
-        _sprites[iterator].x = 255;
+    for (auto &sprite : _sprites)
+      if (sprite.x <= _lx)
+        sprite.x = 255;
+}
+
+void  GBC::PixelProcessingUnit::simulateInterrupt()
+{
+  bool  old = _interrupt;
+
+  // Generate STAT mode interrupt
+  if (((_gbc._io[IO::STAT] & LcdStatus::LcdStatusCompare) && (_gbc._io[IO::STAT] & LcdStatus::LcdStatusEqual)) ||
+    ((_gbc._io[IO::STAT] & LcdStatus::LcdStatusMode0) && (getMode() == LcdMode::LcdMode0)) ||
+    ((_gbc._io[IO::STAT] & LcdStatus::LcdStatusMode1) && (getMode() == LcdMode::LcdMode1)) ||
+    ((_gbc._io[IO::STAT] & LcdStatus::LcdStatusMode2) && (getMode() == LcdMode::LcdMode2)))
+    _interrupt = true;
+  else
+    _interrupt = false;
+
+  // Trigger an interrupt on low-to-high only
+  if (old == false && _interrupt == true)
+    _gbc._io[GBC::GameBoyColor::IO::IF] |= GBC::GameBoyColor::Interrupt::InterruptLcdStat;
 }
 
 const sf::Texture&  GBC::PixelProcessingUnit::lcd() const
@@ -419,7 +445,7 @@ void  GBC::PixelProcessingUnit::save(std::ofstream& file) const
   _gbc.save(file, "PPU_BGC", _bgc);
   _gbc.save(file, "PPU_OBC", _obc);
   _gbc.save(file, "PPU_OAM", _oam);
-  _gbc.save(file, "PPU_MODE", _mode);
+  _gbc.save(file, "PPU_INTERRUPT", _interrupt);
   _gbc.save(file, "PPU_SPRITES", _sprites);
   _gbc.save(file, "PPU_CYCLES", _cycles);
   _gbc.save(file, "PPU_LX", _lx);
@@ -442,7 +468,7 @@ void  GBC::PixelProcessingUnit::load(std::ifstream& file)
   _gbc.load(file, "PPU_BGC", _bgc);
   _gbc.load(file, "PPU_OBC", _obc);
   _gbc.load(file, "PPU_OAM", _oam);
-  _gbc.load(file, "PPU_MODE", _mode);
+  _gbc.load(file, "PPU_INTERRUPT", _interrupt);
   _gbc.load(file, "PPU_SPRITES", _sprites);
   _gbc.load(file, "PPU_CYCLES", _cycles);
   _gbc.load(file, "PPU_LX", _lx);
@@ -458,49 +484,38 @@ void  GBC::PixelProcessingUnit::load(std::ifstream& file)
   _gbc.load(file, "PPU_SWAIT", _sWait);
 }
 
-void  GBC::PixelProcessingUnit::setMode(GBC::PixelProcessingUnit::Mode mode)
+void  GBC::PixelProcessingUnit::setMode(GBC::PixelProcessingUnit::LcdMode mode)
 {
-  // Change PPU mode
-  _mode = mode;
-
   // Set LCD status mode
-  _gbc._io[IO::STAT] = (_gbc._io[IO::STAT] & ~LcdStatus::LcdStatusMode) | (mode << 0);
-
-  constexpr std::array<GBC::PixelProcessingUnit::LcdStatus, Mode::ModeCount> mask = {
-    LcdStatus::LcdStatusMode0,
-    LcdStatus::LcdStatusMode1,
-    LcdStatus::LcdStatusMode2,
-    (GBC::PixelProcessingUnit::LcdStatus)0
-  };
-
-  // Generate STAT interrupt
-  if (_gbc._io[IO::STAT] & mask[mode])
-    _gbc._io[GBC::GameBoyColor::IO::IF] |= GBC::GameBoyColor::Interrupt::InterruptLcdStat;
-
-  // Generate VBlank interrupt
-  if (mode == Mode::Mode1)
-    _gbc._io[GBC::GameBoyColor::IO::IF] |= GBC::GameBoyColor::Interrupt::InterruptVBlank;
+  _gbc._io[IO::STAT] = (_gbc._io[IO::STAT] & ~LcdStatus::LcdStatusModeMask) | (mode << 0);
 }
 
-void  GBC::PixelProcessingUnit::nextLine()
+GBC::PixelProcessingUnit::LcdMode GBC::PixelProcessingUnit::getMode() const
 {
-  // Increment to next line
-  _gbc._io[IO::LY] += 1;
+  // Get LCD status mode
+  return (LcdMode)(_gbc._io[IO::STAT] & LcdStatus::LcdStatusModeMask);
+}
 
+void  GBC::PixelProcessingUnit::setLine(std::uint8_t line)
+{
   // Limit to 144 + 10 lines
-  if (_gbc._io[IO::LY] >= GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank)
-    _gbc._io[IO::LY] = 0;
+  if (line >= GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank)
+    line = 0;
+
+  // Increment to next line
+  _gbc._io[IO::LY] = line;
 
   // LY / LCY register comparison
-  if (_gbc._io[IO::LY] == _gbc._io[IO::LYC]) {
+  if (getLine() == _gbc._io[IO::LYC])
     _gbc._io[IO::STAT] |= LcdStatus::LcdStatusEqual;
-
-    // STAT compare (LY/LYC) interrupt
-    if (_gbc._io[IO::STAT] & LcdStatus::LcdStatusCompare)
-      _gbc._io[GBC::GameBoyColor::IO::IF] |= GBC::GameBoyColor::Interrupt::InterruptLcdStat;
-  }
   else
     _gbc._io[IO::STAT] &= ~LcdStatus::LcdStatusEqual;
+}
+
+std::uint8_t  GBC::PixelProcessingUnit::getLine() const
+{
+  // Get current line
+  return _gbc._io[IO::LY];
 }
 
 GBC::PixelProcessingUnit::PixelFifo::PixelFifo() :
@@ -606,7 +621,7 @@ std::uint8_t  GBC::PixelProcessingUnit::readRam(std::uint16_t address)
 #endif
 
   // Can't read during rendering
-  if (_mode == Mode::Mode3)
+  if (getMode() == LcdMode::LcdMode3)
     return 0xFF;
 
   // Read data from Video RAM
@@ -622,8 +637,8 @@ std::uint8_t  GBC::PixelProcessingUnit::readOam(std::uint16_t address)
 #endif
 
   // Can't read during sprite rendering
-  if (_mode == Mode::Mode2 ||
-    _mode == Mode::Mode3)
+  if (getMode() == LcdMode::LcdMode2 ||
+    getMode() == LcdMode::LcdMode3)
     return 0xFF;
 
   // Read data from OAM
@@ -638,7 +653,7 @@ std::uint8_t  GBC::PixelProcessingUnit::readIo(std::uint16_t address)
 
   case IO::BCPD:  // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
     // Can't read during rendering
-    if (_mode == Mode::Mode3)
+    if (getMode() == LcdMode::LcdMode3)
       return 0xFF;
 
     // Read data from Background Color palette
@@ -647,7 +662,7 @@ std::uint8_t  GBC::PixelProcessingUnit::readIo(std::uint16_t address)
 
   case IO::OCPD:  // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
     // Can't read during rendering
-    if (_mode == Mode::Mode3)
+    if (getMode() == LcdMode::LcdMode3)
       return 0xFF;
 
     // Read data from Sprite Color palette
@@ -688,7 +703,7 @@ void  GBC::PixelProcessingUnit::writeRam(std::uint16_t address, std::uint8_t val
 #endif
 
   // Can't write during rendering
-  if (_mode == Mode::Mode3)
+  if (getMode() == LcdMode::LcdMode3)
     return;
 
   // Write data to Video RAM
@@ -704,8 +719,8 @@ void  GBC::PixelProcessingUnit::writeOam(std::uint16_t address, std::uint8_t val
 #endif
 
   // Can't write during sprite rendering
-  if (_mode == Mode::Mode2 ||
-    _mode == Mode::Mode3)
+  if (getMode() == LcdMode::LcdMode2 ||
+    getMode() == LcdMode::LcdMode3)
     return;
 
   // Write data to OAM
@@ -732,14 +747,19 @@ void  GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
   switch (address)
   {
   case IO::LCDC:  // LCD Control, R/W (see enum)
+    // PPU disabled, stop
     if ((_gbc._io[IO::LCDC] & LcdControl::LcdControlEnable) && !(value & LcdControl::LcdControlEnable)) {
-      _gbc._io[IO::LY] = 0;
+      // Reset PPU
+      // NOTE: no STAT interrupt generated when disabling PPU
+      setLine(0);
       _cycles = 0;
-      _mode = Mode::Mode0;
-      _gbc._io[IO::LCDC] &= ~(LcdControl::LcdControlWindowBackgroundEnable | LcdControl::LcdControlObjEnable);
+      _interrupt = false;
+
+      // Clear LCDC flags
+      _gbc._io[IO::LCDC] = value & ~(LcdControl::LcdControlWindowBackgroundEnable | LcdControl::LcdControlObjEnable);
 
       // Update STAT register
-      _gbc._io[IO::STAT] = (_gbc._io[IO::STAT] & ~LcdStatus::LcdStatusMode) | (Mode::Mode0);
+      setMode(LcdMode::LcdMode0);
 
       // White image
       std::memset((std::uint8_t*)_image.getPixelsPtr(), 0xFF, _image.getSize().x * _image.getSize().y * 4);
@@ -748,38 +768,46 @@ void  GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
 
     // PPU enabled, start
     else if (!(_gbc._io[IO::LCDC] & LcdControl::LcdControlEnable) && (value & LcdControl::LcdControlEnable)) {
-      _mode = Mode::Mode2;
-      _gbc._io[IO::STAT] = (_gbc._io[IO::STAT] & ~LcdStatus::LcdStatusMode) | (Mode::Mode2);
+      // Start to draw
+      setMode(LcdMode::LcdMode2);
+
+      // Write to register
+      _gbc._io[IO::LCDC] = value;
+
+      // Force immediate STAT interrupt check
+      simulateInterrupt();
     }
 
-    // Write to register
-    _gbc._io[IO::LCDC] = value;
+    // Change LCD control only when enabled
+    else if (_gbc._io[IO::LCDC] & LcdControl::LcdControlEnable) {
+      // Write to register
+      _gbc._io[IO::LCDC] = value;
+    }
+
     break;
 
   case IO::STAT:  // LCD Status, R/W (see enum)
     // Only bits 6-5-4-3 are writable 
     _gbc._io[IO::STAT] = (_gbc._io[IO::STAT] & 0b10000111) | (value & 0b01111000);
+
+    // Force immediate STAT interrupt check
+    simulateInterrupt();
     break;
 
   case IO::LYC:   // LCD Y Coordinate Compare, R/W
     // Write value to register
     _gbc._io[IO::LYC] = value;
 
-    // LY / LCY register comparison
-    if (_gbc._io[IO::LY] == _gbc._io[IO::LYC]) {
-      _gbc._io[IO::STAT] |= LcdStatus::LcdStatusEqual;
+    // Force STAT Compare update
+    setLine(getLine());
 
-      // STAT compare (LY/LYC) interrupt
-      if (_gbc._io[IO::STAT] & LcdStatus::LcdStatusCompare)
-        _gbc._io[GBC::GameBoyColor::IO::IF] |= GBC::GameBoyColor::Interrupt::InterruptLcdStat;
-    }
-    else
-      _gbc._io[IO::STAT] &= ~LcdStatus::LcdStatusEqual;
+    // Force immediate STAT interrupt check
+    simulateInterrupt();
     break;
 
   case IO::BCPD:  // Background Color Palette Data, R/W, reference byte in Background Color RAM at index BCPI, CGB mode only
     // Can't write during rendering
-    if (_mode != Mode::Mode3)
+    if (getMode() != LcdMode::LcdMode3)
       _bgc.raw[_gbc._io[IO::BCPI] & 0b00111111] = value;
 
     // Increment pointer
@@ -789,7 +817,7 @@ void  GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
 
   case IO::OCPD:  // OBJ Color Palette Data, R/W, reference byte in OBJ Color RAM at index OCPI, CGB mode only
     // Can't write during rendering
-    if (_mode != Mode::Mode3)
+    if (getMode() != LcdMode::LcdMode3)
       _obc.raw[_gbc._io[IO::OCPI] & 0b00111111] = value;
 
     // Increment pointer

@@ -68,7 +68,17 @@ namespace GBC
       LcdStatusMode1 = 0b00010000,    // Mode 1 VBlank STAT Interrupt source (1: Enable) (Read/Write)
       LcdStatusMode0 = 0b00001000,    // Mode 0 HBlank STAT Interrupt source (1: Enable) (Read/Write)
       LcdStatusEqual = 0b00000100,    // LYC=LY Flag (0: Different, 1: Equal) (Read Only)
-      LcdStatusMode = 0b00000011      // Mode Flag (0: HBlank, 1: VBlank, 2: Searching OAM, 3: Transferring Data to LCD Controller) (Read Only)
+      LcdStatusModeMask = 0b00000011  // Mode Mask (seen enum) (Read Only)
+    };
+
+    enum LcdMode
+    {
+      LcdMode0 = 0b00, // Horizontal blank
+      LcdMode1 = 0b01, // Vertical blank
+      LcdMode2 = 0b10, // Searching OAM
+      LcdMode3 = 0b11, // Transferring data to LCD Controller
+
+      LcdModeCount // Number of PPU mode
     };
 
     enum BackgroundAttributes : std::uint8_t
@@ -88,16 +98,6 @@ namespace GBC
       SpriteAttributesPaletteNonCgb = 0b00010000, // Palette in non-CGB mode (0=OBP0, 1=OBP1)
       SpriteAttributesBank = 0b00001000,          // VRAM bank in CBG mode (0=Bank 0, 1=Bank 1)
       SpriteAttributesPaletteCgb = 0b00000111     // Palette in CGB mode (OBP0-7)
-    };
-
-    enum Mode
-    {
-      Mode0,  // Horizontal blank
-      Mode1,  // Vertical blank
-      Mode2,  // Searching OAM
-      Mode3,  // Transferring data to LCD Controller
-
-      ModeCount // Number of PPU mode
     };
 
   private:
@@ -169,7 +169,7 @@ namespace GBC
       std::array<std::uint8_t, sizeof(GBC::PixelProcessingUnit::Sprite) * GBC::PixelProcessingUnit::SpriteCount>  raw;     // Raw OAM
     } _oam; // Sprite (Obj) Attribute Table
 
-    Mode  _mode;  // Current PPU mode
+    bool  _interrupt;  // STAT interrupt line, interrupt triggered only from low-to-high
 
     std::vector<GBC::PixelProcessingUnit::Sprite> _sprites; // Sprites to be drawn on the current line
     std::size_t                                   _cycles;  // Number of PPU cycle since first scanline
@@ -198,8 +198,13 @@ namespace GBC
     void  simulateMode3BackgroundWindow();  // Fetch pixels for Background/Window FIFO
     void  simulateMode3Sprites();           // Fetch pixels for Sprites FIFO
 
-    void  setMode(GBC::PixelProcessingUnit::Mode mode); // Set PPU to new mode
-    void  nextLine();                                   // Set IO::LY to next line
+    void  simulateInterrupt();  // Update and trigger STAT interrupts
+
+    void                              setMode(GBC::PixelProcessingUnit::LcdMode mode);  // Set PPU to new mode
+    GBC::PixelProcessingUnit::LcdMode getMode() const;                                  // Get PPU mode
+
+    void          setLine(std::uint8_t line); // Set IO::LY to given line, update IO::LYC
+    std::uint8_t  getLine() const;            // Get current line
 
   public:
     PixelProcessingUnit(GBC::GameBoyColor& gbc);

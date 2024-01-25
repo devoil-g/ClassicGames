@@ -392,7 +392,7 @@ void  GBC::GameBoyColor::simulate()
     
     case Transfer::TransferHdma1:
     {
-      bool trigger = (_io[GBC::PixelProcessingUnit::IO::STAT] & GBC::PixelProcessingUnit::LcdStatus::LcdStatusMode) == GBC::PixelProcessingUnit::Mode::Mode0;
+      bool trigger = (_io[GBC::PixelProcessingUnit::IO::STAT] & GBC::PixelProcessingUnit::LcdStatus::LcdStatusModeMask) == GBC::PixelProcessingUnit::LcdMode::LcdMode0;
 
       // Trigger when entering mode 0
       if (_transferTrigger == false && trigger == true)
@@ -1117,7 +1117,7 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
     {
       _transferMode = Transfer::TransferHdma1;
       _transferIndex = 0;
-      _transferTrigger = (_io[GBC::PixelProcessingUnit::IO::STAT] & GBC::PixelProcessingUnit::LcdStatus::LcdStatusMode) == GBC::PixelProcessingUnit::Mode::Mode0;
+      _transferTrigger = (_io[GBC::PixelProcessingUnit::IO::STAT] & GBC::PixelProcessingUnit::LcdStatus::LcdStatusModeMask) == GBC::PixelProcessingUnit::LcdMode::LcdMode0;
       _io[IO::HDMA5] = value & 0b01111111;
     }
 
