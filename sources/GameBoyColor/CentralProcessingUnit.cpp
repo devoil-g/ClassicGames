@@ -1385,7 +1385,7 @@ void  GBC::CentralProcessingUnit::instruction_INTERRUPT()
     cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rPC.u16 = cpu._rW.u16;
+    cpu._rPC = cpu._rW;
     });
 }
 
