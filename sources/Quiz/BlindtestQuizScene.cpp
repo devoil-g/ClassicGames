@@ -337,7 +337,7 @@ void  QUIZ::BlindtestQuizScene::drawPlaying()
     // Set sprite size
     sprite.setScale(scale, scale);
 
-    std::uint8_t  alpha = _cooldowns[player_index] > 0.f ? 127 : 255;
+    std::uint8_t  alpha = _cooldowns[player_index] > 0.f ? 63 : 255;
 
     // Set transparency
     sprite.setColor(sf::Color(255, 255, 255, alpha));
