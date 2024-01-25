@@ -21,6 +21,10 @@ GBC::SelectionScene::SelectionScene(Game::SceneMachine& machine) :
   // List games in game directory
   try {
     for (const auto& entry : std::filesystem::directory_iterator(Game::Config::ExecutablePath / "assets" / "gbc")) {
+      // Only .gb or .gbc files
+      if (entry.path().extension() != ".gb" && entry.path().extension() != ".gbc" && entry.path().extension() != ".bin")
+        continue;
+
       try {
         GBC::GameBoyColor gbc(entry);
 
