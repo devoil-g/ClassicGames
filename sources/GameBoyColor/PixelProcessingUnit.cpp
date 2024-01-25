@@ -747,7 +747,7 @@ void  GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
   switch (address)
   {
   case IO::LCDC:  // LCD Control, R/W (see enum)
-    // PPU disabled, stop
+    // Disabling PPU, stop
     if ((_gbc._io[IO::LCDC] & LcdControl::LcdControlEnable) && !(value & LcdControl::LcdControlEnable)) {
       // Reset PPU
       // NOTE: no STAT interrupt generated when disabling PPU
@@ -766,7 +766,7 @@ void  GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
       _texture.update(_image);
     }
 
-    // PPU enabled, start
+    // Enabling PPU, start
     else if (!(_gbc._io[IO::LCDC] & LcdControl::LcdControlEnable) && (value & LcdControl::LcdControlEnable)) {
       // Start to draw
       setMode(LcdMode::LcdMode2);
@@ -778,11 +778,9 @@ void  GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
       simulateInterrupt();
     }
 
-    // Change LCD control only when enabled
-    else if (_gbc._io[IO::LCDC] & LcdControl::LcdControlEnable) {
-      // Write to register
+    // Simple write
+    else
       _gbc._io[IO::LCDC] = value;
-    }
 
     break;
 
