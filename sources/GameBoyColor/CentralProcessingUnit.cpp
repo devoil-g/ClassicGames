@@ -1175,56 +1175,30 @@ void  GBC::CentralProcessingUnit::simulateInterrupt()
   if (_ime != InterruptMasterEnable::IMEEnabled && _status != Status::StatusHalt)
     return;
 
-  // Define interrupt priority
-  auto interrupts = {
-    GBC::GameBoyColor::Interrupt::InterruptVBlank,
-    GBC::GameBoyColor::Interrupt::InterruptLcdStat,
-    GBC::GameBoyColor::Interrupt::InterruptTimer,
-    GBC::GameBoyColor::Interrupt::InterruptSerial,
-    GBC::GameBoyColor::Interrupt::InterruptJoypad
-  };
-
   // Interrupt Enable register
   auto interruptEnable = _gbc.read(0xFFFF);
 
   // Get Interrupt Flag register
   auto interruptFlag = _gbc.readIo(GBC::GameBoyColor::IO::IF);
 
-  // Check each interrupt type
-  for (auto interrupt : interrupts)
+  // Check that at least one interrupt is triggered
+  if (interruptEnable & interruptFlag &
+    (GBC::GameBoyColor::Interrupt::InterruptVBlank |
+      GBC::GameBoyColor::Interrupt::InterruptLcdStat |
+      GBC::GameBoyColor::Interrupt::InterruptTimer |
+      GBC::GameBoyColor::Interrupt::InterruptSerial |
+      GBC::GameBoyColor::Interrupt::InterruptJoypad))
   {
-    // Check interrupt flag on IE
-    if ((interruptEnable & interrupt) == 0)
-      continue;
-
-    // Check interrupt flag on IF
-    if ((interruptFlag & interrupt) == 0)
-      continue;
-
-    // Call interrupt handler
-    if (_ime == InterruptMasterEnable::IMEEnabled)
-    {
-      // Reset Interrupt Flag register
-      _gbc.writeIo(GBC::GameBoyColor::IO::IF, (std::uint8_t)(interruptFlag & ~interrupt));
+    // Interruption enabled, start interrupt procedure
+    if (_ime == InterruptMasterEnable::IMEEnabled) {
+      instruction_INTERRUPT();
 
       // Disable interrupt
       _ime = InterruptMasterEnable::IMEDisabled;
-
-      std::uint16_t handler = 0x0040;
-
-      // Compute interrupt destination
-      while ((interrupt = (GBC::GameBoyColor::Interrupt)(interrupt >> 1)) != 0)
-        handler += 0x0008;
-
-      // Call interrupt handler
-      _rW.u16 = handler;
-      instruction_INTERRUPT();
     }
-
+    
     // Resume execution after an interrupt
     _status = Status::StatusRun;
-
-    break;
   }
 }
 
@@ -1373,7 +1347,40 @@ void  GBC::CentralProcessingUnit::instruction_INTERRUPT()
 {
   _opcode = 0;
   _set = InstructionSet::InstructionSetSpecial;
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    // Interrupt Enable register
+    auto interruptEnable = cpu._gbc.read(0xFFFF);
+
+    // Get Interrupt Flag register
+    auto interruptFlag = cpu._gbc.readIo(GBC::GameBoyColor::IO::IF);
+
+    // Check each interrupt type
+    for (auto interrupt : {
+      GBC::GameBoyColor::Interrupt::InterruptVBlank,
+      GBC::GameBoyColor::Interrupt::InterruptLcdStat,
+      GBC::GameBoyColor::Interrupt::InterruptTimer,
+      GBC::GameBoyColor::Interrupt::InterruptSerial,
+      GBC::GameBoyColor::Interrupt::InterruptJoypad
+      })
+    {
+      // Check interrupt flag on IE and IF
+      if (!(interruptEnable & interruptFlag & interrupt))
+        continue;
+
+      // Reset Interrupt Flag register
+      cpu._gbc.writeIo(GBC::GameBoyColor::IO::IF, (std::uint8_t)(interruptFlag & ~interrupt));
+
+      // Compute interrupt destination
+      cpu._rW.u16 = 0x0040;
+      while ((interrupt = (GBC::GameBoyColor::Interrupt)(interrupt >> 1)) != 0)
+        cpu._rW.u16 += 0x0008;
+
+      return;
+    }
+
+    // Not supposed to happen
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+    });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     cpu._rSP.u16 -= 1;
     });

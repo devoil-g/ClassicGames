@@ -80,7 +80,7 @@ namespace GBC
       bool            global_checksum;  // Global checksum of the ROM
     };
 
-    enum Interrupt  // Used by 0xFFFF IE (Interrupt Enable) & 0xFF0F IF (Interrupt Flag)
+    enum Interrupt : std::uint8_t // Used by 0xFFFF IE (Interrupt Enable) & 0xFF0F IF (Interrupt Flag)
     {
       InterruptVBlank = 0b00000001,
       InterruptLcdStat = 0b00000010,
