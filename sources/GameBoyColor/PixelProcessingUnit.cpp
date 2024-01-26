@@ -755,9 +755,6 @@ void  GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
       _cycles = 0;
       _interrupt = false;
 
-      // Clear LCDC flags
-      _gbc._io[IO::LCDC] = value & ~(LcdControl::LcdControlWindowBackgroundEnable | LcdControl::LcdControlObjEnable);
-
       // Update STAT register
       setMode(LcdMode::LcdMode0);
 
@@ -771,16 +768,12 @@ void  GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
       // Start to draw
       setMode(LcdMode::LcdMode2);
 
-      // Write to register
-      _gbc._io[IO::LCDC] = value;
-
       // Force immediate STAT interrupt check
       simulateInterrupt();
     }
 
     // Simple write
-    else
-      _gbc._io[IO::LCDC] = value;
+    _gbc._io[IO::LCDC] = value;
 
     break;
 
