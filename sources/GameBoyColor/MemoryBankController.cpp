@@ -36,9 +36,11 @@ GBC::MemoryBankController::~MemoryBankController()
 
 std::uint8_t  GBC::MemoryBankController::readRom(std::uint16_t address) const
 {
+#ifdef _DEBUG
   // Out of bound address
   if (address >= 0x8000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // Get bank from address range
   std::size_t bank = address < 0x4000 ? _romBank0 : _romBank1;
@@ -49,9 +51,11 @@ std::uint8_t  GBC::MemoryBankController::readRom(std::uint16_t address) const
 
 std::uint8_t  GBC::MemoryBankController::readRam(std::uint16_t address) const
 {
+#ifdef _DEBUG
   // Out of bound address
   if (address >= 0x2000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // Cancel if no RAM or disabled
   if (_ram.empty() == true || _ramEnable == false)
@@ -63,9 +67,11 @@ std::uint8_t  GBC::MemoryBankController::readRam(std::uint16_t address) const
 
 void  GBC::MemoryBankController::writeRom(std::uint16_t address, std::uint8_t value)
 {
+#ifdef _DEBUG
   // Out of bound address
   if (address >= 0x8000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // Default MBC has no registers
   std::cerr << "[GBC::MBC] Warning, invalid write to MBC register." << std::endl;
@@ -73,9 +79,11 @@ void  GBC::MemoryBankController::writeRom(std::uint16_t address, std::uint8_t va
 
 void  GBC::MemoryBankController::writeRam(std::uint16_t address, std::uint8_t value)
 {
+#ifdef _DEBUG
   // Out of bound address
   if (address >= 0x2000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // Cancel if no RAM or disabled
   if (_ram.empty() == true || _ramEnable == false)

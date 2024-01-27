@@ -260,7 +260,10 @@ std::uint8_t  GBC::AudioProcessingUnit::readIo(std::uint16_t address)
     return 0xFF;
   
   default:
+#ifdef _DEBUG
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
+    return 0xFF;
   }
 }
 
@@ -428,7 +431,10 @@ void  GBC::AudioProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
     break;
 
   default:
+#ifdef _DEBUG
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
+    break;
   }
 }
 

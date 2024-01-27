@@ -31,9 +31,11 @@ GBC::MemoryBankController3::~MemoryBankController3()
 
 std::uint8_t  GBC::MemoryBankController3::readRam(std::uint16_t address) const
 {
+#ifdef _DEBUG
   // Out of bound address
   if (address >= 0x2000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // RAM / RTC registers not enabled
   if (getRamEnable() == false)
@@ -72,9 +74,11 @@ std::uint8_t  GBC::MemoryBankController3::readRam(std::uint16_t address) const
 
 void  GBC::MemoryBankController3::writeRom(std::uint16_t address, std::uint8_t value)
 {
+#ifdef _DEBUG
   // Out of bound address
   if (address >= 0x8000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // RAM enable
   if (address < 0x2000)
@@ -98,9 +102,11 @@ void  GBC::MemoryBankController3::writeRom(std::uint16_t address, std::uint8_t v
 
 void  GBC::MemoryBankController3::writeRam(std::uint16_t address, std::uint8_t value)
 {
+#ifdef _DEBUG
   // Out of bound address
   if (address >= 0x2000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // Cancel if disabled
   if (getRamEnable() == false)

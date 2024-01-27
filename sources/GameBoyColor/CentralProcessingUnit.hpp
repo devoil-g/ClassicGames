@@ -70,6 +70,35 @@ namespace GBC
       void  push(Instruction instruction);  // Push new instruction in the queue
     };
 
+    class Bus
+    {
+      enum Operation : std::uint8_t
+      {
+        Read,   // Read byte at given address to data byte
+        Write,  // Write data byte at given address
+        None    // Nothing
+      };
+
+      GBC::GameBoyColor&  _gbc;       // Main GBC reference
+      Operation           _operation; // Current operation
+      std::uint16_t       _address;   // Bus address
+
+    public:
+      Bus(GBC::GameBoyColor& gbc);
+      ~Bus() = default;
+
+      std::uint8_t  data; // Read or written byte
+
+      void  updateRead();   // Resolve read
+      void  updateWrite();  // Resolve write
+
+      void  read(std::uint16_t address);                      // Read one byte at given address, available next cycle in data
+      void  write(std::uint16_t address, std::uint8_t data);  // Read one byte at given address, available next cycle in data
+
+      void  save(std::ofstream& file) const;
+      void  load(std::ifstream& file);
+    };
+
     union Parameter
     {
       std::uint8_t    u8;   // Unsigned 8 bits value
@@ -87,10 +116,11 @@ namespace GBC
       IMEScheduled  // Enable interrupt after next instruction
     };
 
-    GBC::GameBoyColor&    _gbc;     // Main GBC reference for memory bus
+    GBC::GameBoyColor&    _gbc;     // Main GBC reference
     Status                _status;  // CPU running status
     InterruptMasterEnable _ime;     // Interrupt Master Enable
-    
+    Bus                   _bus;     // Memory bus
+
     enum InstructionSet
     {
       InstructionSetDefault,  // Default set of instructions

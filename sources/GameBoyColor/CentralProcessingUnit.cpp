@@ -1111,6 +1111,7 @@ GBC::CentralProcessingUnit::CentralProcessingUnit(GBC::GameBoyColor& gbc) :
   _gbc(gbc),
   _status(Status::StatusRun),
   _ime(InterruptMasterEnable::IMEDisabled),
+  _bus(gbc),
   _instructions(),
   _opcode(0),
   _set(InstructionSet::InstructionSetDefault),
@@ -1122,22 +1123,39 @@ GBC::CentralProcessingUnit::CentralProcessingUnit(GBC::GameBoyColor& gbc) :
   _rSP{ .u16 = 0x0000 },
   _rPC{ .u16 = 0x0000 },
   _rW{ .u16 = 0x0000 }
-{}
+{
+  // Read first opcode
+  _bus.read(_rPC.u16);
+  _rPC.u16 += 1;
+}
 
 void  GBC::CentralProcessingUnit::simulate()
 {
   // CPU is running, execute instruction
   if (_status == Status::StatusRun)
   {
+    // Resolve memory BUS read
+    _bus.updateRead();
+
+    // Fetch next instruction
+    if (_instructions.empty() == true)
+      simulateFetch();
+
     // Execute current instruction
     if (_instructions.empty() == false) {
       _instructions.front()(*this);
       _instructions.pop();
     }
 
-    // Fetch next instruction
-    if (_instructions.empty() == true && _status == Status::StatusRun)
-      simulateFetch();
+    // Fetch next opcode
+    if (_instructions.empty() == true) {
+      _bus.read(_rPC.u16);
+      _rPC.u16 += 1;
+    }
+
+    // Resolve memory BUS write
+    else
+      _bus.updateWrite();
   }
 
   // CPU is stopped, wait for interrupt
@@ -1154,12 +1172,11 @@ void  GBC::CentralProcessingUnit::simulateFetch()
   if (_instructions.empty() == false)
     return;
 
-  // Fetch opcode
-  _opcode = _gbc.read(_rPC.u16);
+  // Get opcode from memory bus
+  _opcode = _bus.data;
   _set = InstructionSet::InstructionSetDefault;
 
   // Add instructions
-  _rPC.u16 += 1;
   _opcodes[_opcode](*this);
 }
 
@@ -1176,6 +1193,7 @@ void  GBC::CentralProcessingUnit::simulateInterrupt()
     return;
 
   // Interrupt Enable register
+  _gbc._ie;
   auto interruptEnable = _gbc.read(0xFFFF);
 
   // Get Interrupt Flag register
@@ -1217,12 +1235,15 @@ void  GBC::CentralProcessingUnit::save(std::ofstream& file) const
   _gbc.save(file, "CPU_RSP", _rSP);
   _gbc.save(file, "CPU_RPC", _rPC);
   _gbc.save(file, "CPU_RW", _rW);
+
+  // Save memory BUS
+  _bus.save(file);
 }
 
 void  GBC::CentralProcessingUnit::load(std::ifstream& file)
 {
   std::size_t step = 0;
-
+  
   // Load CPU variable
   _gbc.load(file, "CPU_STATUS", _status);
   _gbc.load(file, "CPU_OPCODE", _opcode);
@@ -1236,6 +1257,9 @@ void  GBC::CentralProcessingUnit::load(std::ifstream& file)
   _gbc.load(file, "CPU_RSP", _rSP);
   _gbc.load(file, "CPU_RPC", _rPC);
   _gbc.load(file, "CPU_RW", _rW);
+
+  // Load memory BUS
+  _bus.load(file);
 
   // Clear instruction queue
   while (_instructions.empty() == false)
@@ -1301,6 +1325,74 @@ void  GBC::CentralProcessingUnit::Instructions::push(GBC::CentralProcessingUnit:
   // Push element to queue
   _queue[(_index + _size) % _queue.size()] = instruction;
   _size += 1;
+}
+
+GBC::CentralProcessingUnit::Bus::Bus(GBC::GameBoyColor& gbc) :
+  _gbc(gbc),
+  _operation(Operation::None),
+  _address(0x0000),
+  data(0x00)
+{}
+
+void  GBC::CentralProcessingUnit::Bus::updateRead()
+{
+  // Execute pending read
+  if (_operation == GBC::CentralProcessingUnit::Bus::Read) {
+    data = _gbc.read(_address);
+    _operation = Operation::None;
+  }
+}
+
+void  GBC::CentralProcessingUnit::Bus::updateWrite()
+{
+  // Execute pending write
+  if (_operation == GBC::CentralProcessingUnit::Bus::Write) {
+    _gbc.write(_address, data);
+    _operation = Operation::None;
+  }
+}
+
+void  GBC::CentralProcessingUnit::Bus::read(std::uint16_t address)
+{
+#ifdef _DEBUG
+  // Multiple BUS operation requested
+  if (_operation != Operation::None)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
+
+  // Set new read operation
+  _operation = Operation::Read;
+  _address = address;
+}
+
+void  GBC::CentralProcessingUnit::Bus::write(std::uint16_t address, std::uint8_t data)
+{
+#ifdef _DEBUG
+  // Multiple BUS operation requested
+  if (_operation != Operation::None)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
+
+  // Set new write operation
+  _operation = Operation::Write;
+  _address = address;
+  this->data = data;
+}
+
+void  GBC::CentralProcessingUnit::Bus::save(std::ofstream& file) const
+{
+  // Save BUS variables
+  _gbc.save(file, "BUS_OPERATION", _operation);
+  _gbc.save(file, "BUS_ADDRESS", _address);
+  _gbc.save(file, "BUS_DATA", data);
+}
+
+void  GBC::CentralProcessingUnit::Bus::load(std::ifstream& file)
+{
+  // Load BUS variables
+  _gbc.load(file, "BUS_OPERATION", _operation);
+  _gbc.load(file, "BUS_ADDRESS", _address);
+  _gbc.load(file, "BUS_DATA", data);
 }
 
 void  GBC::CentralProcessingUnit::instruction_NOP()
@@ -1375,21 +1467,26 @@ void  GBC::CentralProcessingUnit::instruction_INTERRUPT()
       while ((interrupt = (GBC::GameBoyColor::Interrupt)(interrupt >> 1)) != 0)
         cpu._rW.u16 += 0x0008;
 
+      // Decrement PC back to current instruction opcode
+      cpu._rPC.u16 -= 1;
+
       return;
     }
 
+#ifdef _DEBUG
     // Not supposed to happen
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     cpu._rSP.u16 -= 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.high);
+    cpu._bus.write(cpu._rSP.u16, cpu._rPC.u8.high);
     cpu._rSP.u16 -= 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.low);
+    cpu._bus.write(cpu._rSP.u16, cpu._rPC.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     cpu._rPC = cpu._rW;
@@ -1399,10 +1496,12 @@ void  GBC::CentralProcessingUnit::instruction_INTERRUPT()
 void  GBC::CentralProcessingUnit::instruction_JR_n()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
+    });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     cpu._rPC.u16 += cpu._rW.s8.low;
     });
@@ -1411,11 +1510,12 @@ void  GBC::CentralProcessingUnit::instruction_JR_n()
 void  GBC::CentralProcessingUnit::instruction_JR_c0_n(Register::Flag flag)
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _parameters[0].u8 = flag;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     if (!(cpu._rAF.u8.low & cpu._parameters[0].u8))
       cpu.instruction_JR_c_execute();
     });
@@ -1424,11 +1524,12 @@ void  GBC::CentralProcessingUnit::instruction_JR_c0_n(Register::Flag flag)
 void  GBC::CentralProcessingUnit::instruction_JR_c1_n(Register::Flag flag)
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _parameters[0].u8 = flag;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     if (cpu._rAF.u8.low & cpu._parameters[0].u8)
       cpu.instruction_JR_c_execute();
     });
@@ -1446,14 +1547,17 @@ void  GBC::CentralProcessingUnit::instruction_JR_c_execute()
 void  GBC::CentralProcessingUnit::instruction_JP_nn()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.high = cpu._gbc.read(cpu._rPC.u16);
+    cpu._rW.u8.low = cpu._bus.data;
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.high = cpu._bus.data;
+    });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     cpu._rPC = cpu._rW;
     });
@@ -1462,15 +1566,17 @@ void  GBC::CentralProcessingUnit::instruction_JP_nn()
 void  GBC::CentralProcessingUnit::instruction_JP_c0_nn(Register::Flag flag)
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.high = cpu._gbc.read(cpu._rPC.u16);
+    cpu._rW.u8.low = cpu._bus.data;
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _parameters[0].u8 = flag;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.high = cpu._bus.data;
     if (!(cpu._rAF.u8.low & cpu._parameters[0].u8))
       cpu.instruction_JP_c_execute();
     });
@@ -1479,15 +1585,17 @@ void  GBC::CentralProcessingUnit::instruction_JP_c0_nn(Register::Flag flag)
 void  GBC::CentralProcessingUnit::instruction_JP_c1_nn(Register::Flag flag)
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.high = cpu._gbc.read(cpu._rPC.u16);
+    cpu._rW.u8.low = cpu._bus.data;
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _parameters[0].u8 = flag;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.high = cpu._bus.data;
     if (cpu._rAF.u8.low & cpu._parameters[0].u8)
       cpu.instruction_JP_c_execute();
     });
@@ -1512,22 +1620,24 @@ void  GBC::CentralProcessingUnit::instruction_JP_HL()
 void  GBC::CentralProcessingUnit::instruction_CALL_nn()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.high = cpu._gbc.read(cpu._rPC.u16);
+    cpu._rW.u8.low = cpu._bus.data;
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.high = cpu._bus.data;
     cpu._rSP.u16 -= 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.high);
+    cpu._bus.write(cpu._rSP.u16, cpu._rPC.u8.high);
     cpu._rSP.u16 -= 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.low);
+    cpu._bus.write(cpu._rSP.u16, cpu._rPC.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     cpu._rPC = cpu._rW;
@@ -1537,15 +1647,17 @@ void  GBC::CentralProcessingUnit::instruction_CALL_nn()
 void  GBC::CentralProcessingUnit::instruction_CALL_c0_nn(Register::Flag flag)
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.high = cpu._gbc.read(cpu._rPC.u16);
+    cpu._rW.u8.low = cpu._bus.data;
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _parameters[0].u8 = flag;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.high = cpu._bus.data;
     if (!(cpu._rAF.u8.low & cpu._parameters[0].u8)) {
       cpu.instruction_CALL_c_execute();
       cpu._rSP.u16 -= 1;
@@ -1556,15 +1668,17 @@ void  GBC::CentralProcessingUnit::instruction_CALL_c0_nn(Register::Flag flag)
 void  GBC::CentralProcessingUnit::instruction_CALL_c1_nn(Register::Flag flag)
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.high = cpu._gbc.read(cpu._rPC.u16);
+    cpu._rW.u8.low = cpu._bus.data;
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _parameters[0].u8 = flag;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.high = cpu._bus.data;
     if (cpu._rAF.u8.low & cpu._parameters[0].u8) {
       cpu.instruction_CALL_c_execute();
       cpu._rSP.u16 -= 1;
@@ -1577,11 +1691,11 @@ void  GBC::CentralProcessingUnit::instruction_CALL_c_execute()
   _opcode = 3;
   _set = GBC::CentralProcessingUnit::InstructionSet::InstructionSetSpecial;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.high);
+    cpu._bus.write(cpu._rSP.u16, cpu._rPC.u8.high);
     cpu._rSP.u16 -= 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.low);
+    cpu._bus.write(cpu._rSP.u16, cpu._rPC.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     cpu._rPC = cpu._rW;
@@ -1594,11 +1708,11 @@ void  GBC::CentralProcessingUnit::instruction_RST(std::uint16_t address)
     cpu._rSP.u16 -= 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.high);
+    cpu._bus.write(cpu._rSP.u16, cpu._rPC.u8.high);
     cpu._rSP.u16 -= 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rSP.u16, cpu._rPC.u8.low);
+    cpu._bus.write(cpu._rSP.u16, cpu._rPC.u8.low);
     });
   _parameters[0].u16 = address;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
@@ -1609,14 +1723,17 @@ void  GBC::CentralProcessingUnit::instruction_RST(std::uint16_t address)
 void  GBC::CentralProcessingUnit::instruction_RET()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rSP.u16);
+    cpu._bus.read(cpu._rSP.u16);
     cpu._rSP.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.high = cpu._gbc.read(cpu._rSP.u16);
+    cpu._rW.u8.low = cpu._bus.data;
+    cpu._bus.read(cpu._rSP.u16);
     cpu._rSP.u16 += 1;
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.high = cpu._bus.data;
+    });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     cpu._rPC = cpu._rW;
     });
@@ -1647,14 +1764,16 @@ void  GBC::CentralProcessingUnit::instruction_RET_c_execute()
   _opcode = 4;
   _set = GBC::CentralProcessingUnit::InstructionSet::InstructionSetSpecial;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rSP.u16);
+    cpu._bus.read(cpu._rSP.u16);
     cpu._rSP.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.high = cpu._gbc.read(cpu._rSP.u16);
+    cpu._rW.u8.low = cpu._bus.data;
+    cpu._bus.read(cpu._rSP.u16);
     cpu._rSP.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.high = cpu._bus.data;
     cpu._rPC = cpu._rW;
     });
 }
@@ -1662,14 +1781,17 @@ void  GBC::CentralProcessingUnit::instruction_RET_c_execute()
 void  GBC::CentralProcessingUnit::instruction_RETI()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rSP.u16);
+    cpu._bus.read(cpu._rSP.u16);
     cpu._rSP.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.high = cpu._gbc.read(cpu._rSP.u16);
+    cpu._rW.u8.low = cpu._bus.data;
+    cpu._bus.read(cpu._rSP.u16);
     cpu._rSP.u16 += 1;
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.high = cpu._bus.data;
+    });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     cpu._rPC = cpu._rW;
     cpu._ime = InterruptMasterEnable::IMEEnabled;
@@ -1725,14 +1847,15 @@ void  GBC::CentralProcessingUnit::instruction_DEC_rr(Register& reg16)
 void  GBC::CentralProcessingUnit::instruction_INC_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu._rW.u8.low += 1;
     cpu.setFlag<Register::Z>(cpu._rW.u8.low == 0);
     cpu.setFlag<Register::N>(false);
     cpu.setFlag<Register::H>((cpu._rW.u8.low & 0b00001111) == 0b00000000);
-    cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+    cpu._bus.write(cpu._rHL.u16, cpu._rW.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -1740,14 +1863,15 @@ void  GBC::CentralProcessingUnit::instruction_INC_pHL()
 void  GBC::CentralProcessingUnit::instruction_DEC_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu._rW.u8.low -= 1;
     cpu.setFlag<Register::Z>(cpu._rW.u8.low == 0);
     cpu.setFlag<Register::N>(true);
     cpu.setFlag<Register::H>((cpu._rW.u8.low & 0b00001111) == 0b00001111);
-    cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+    cpu._bus.write(cpu._rHL.u16, cpu._rW.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -1755,10 +1879,19 @@ void  GBC::CentralProcessingUnit::instruction_DEC_pHL()
 void  GBC::CentralProcessingUnit::instruction_CB()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._opcode = cpu._gbc.read(cpu._rPC.u16);
-    cpu._set = InstructionSet::InstructionSetBitwise;
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
+    });
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._opcode = cpu._bus.data;
+    cpu._set = GBC::CentralProcessingUnit::InstructionSet::InstructionSetSpecial;
+
+    // Fetch bitwise instruction
     _opcodesCb[cpu._opcode](cpu);
+    
+    // Execute first step immediatly
+    cpu._instructions.pop();
+    cpu._instructions.front()(cpu);
     });
 }
 
@@ -1777,15 +1910,16 @@ void  GBC::CentralProcessingUnit::instruction_RLC(std::uint8_t& reg8)
 void  GBC::CentralProcessingUnit::instruction_RLC_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu.setFlag<Register::Z>(cpu._rW.u8.low == 0);
     cpu.setFlag<Register::N>(false);
     cpu.setFlag<Register::H>(false);
     cpu.setFlag<Register::C>(cpu._rW.u8.low & 0b10000000);
     cpu._rW.u8.low = (cpu._rW.u8.low << 1) | (cpu._rW.u8.low >> 7);
-    cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+    cpu._bus.write(cpu._rHL.u16, cpu._rW.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -1816,15 +1950,16 @@ void  GBC::CentralProcessingUnit::instruction_RRC(std::uint8_t& reg8)
 void  GBC::CentralProcessingUnit::instruction_RRC_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu.setFlag<Register::Z>(cpu._rW.u8.low == 0);
     cpu.setFlag<Register::N>(false);
     cpu.setFlag<Register::H>(false);
     cpu.setFlag<Register::C>(cpu._rW.u8.low & 0b00000001);
     cpu._rW.u8.low = (cpu._rW.u8.low >> 1) | ((cpu._rW.u8.low & 0b00000001) ? 0b10000000 : 0b00000000);
-    cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+    cpu._bus.write(cpu._rHL.u16, cpu._rW.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -1857,9 +1992,11 @@ void  GBC::CentralProcessingUnit::instruction_RL(std::uint8_t& reg8)
 void  GBC::CentralProcessingUnit::instruction_RL_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
+
     std::uint8_t  carry = cpu.getFlag<Register::C>() ? 0b00000001 : 0b00000000;
 
     cpu.setFlag<Register::Z>((cpu._rW.u8.low & 0b01111111) == 0 && carry == 0);
@@ -1867,7 +2004,7 @@ void  GBC::CentralProcessingUnit::instruction_RL_pHL()
     cpu.setFlag<Register::H>(false);
     cpu.setFlag<Register::C>(cpu._rW.u8.low & 0b10000000);
     cpu._rW.u8.low = (cpu._rW.u8.low << 1) | carry;
-    cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+    cpu._bus.write(cpu._rHL.u16, cpu._rW.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -1902,9 +2039,11 @@ void  GBC::CentralProcessingUnit::instruction_RR(std::uint8_t& reg8)
 void  GBC::CentralProcessingUnit::instruction_RR_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
+
     std::uint8_t  carry = cpu.getFlag<Register::C>() ? 0b10000000 : 0b00000000;
 
     cpu.setFlag<Register::Z>((cpu._rW.u8.low & 0b11111110) == 0 && carry == 0);
@@ -1912,7 +2051,7 @@ void  GBC::CentralProcessingUnit::instruction_RR_pHL()
     cpu.setFlag<Register::H>(false);
     cpu.setFlag<Register::C>(cpu._rW.u8.low & 0b00000001);
     cpu._rW.u8.low = (cpu._rW.u8.low >> 1) | carry;
-    cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+    cpu._bus.write(cpu._rHL.u16, cpu._rW.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -1945,15 +2084,16 @@ void  GBC::CentralProcessingUnit::instruction_SLA(std::uint8_t& reg8)
 void  GBC::CentralProcessingUnit::instruction_SLA_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu.setFlag<Register::Z>((cpu._rW.u8.low & 0b01111111) == 0);
     cpu.setFlag<Register::N>(false);
     cpu.setFlag<Register::H>(false);
     cpu.setFlag<Register::C>(cpu._rW.u8.low & 0b10000000);
     cpu._rW.u8.low <<= 1;
-    cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+    cpu._bus.write(cpu._rHL.u16, cpu._rW.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -1973,15 +2113,16 @@ void  GBC::CentralProcessingUnit::instruction_SRA(std::uint8_t& reg8)
 void  GBC::CentralProcessingUnit::instruction_SRA_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu.setFlag<Register::Z>((cpu._rW.u8.low & 0b11111110) == 0);
     cpu.setFlag<Register::N>(false);
     cpu.setFlag<Register::H>(false);
     cpu.setFlag<Register::C>(cpu._rW.u8.low & 0b00000001);
     cpu._rW.u8.low = (cpu._rW.u8.low >> 1) | (cpu._rW.u8.low & 0b10000000);
-    cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+    cpu._bus.write(cpu._rHL.u16, cpu._rW.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -2001,15 +2142,16 @@ void  GBC::CentralProcessingUnit::instruction_SWAP(std::uint8_t& reg8)
 void  GBC::CentralProcessingUnit::instruction_SWAP_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu.setFlag<Register::Z>(cpu._rW.u8.low == 0);
     cpu.setFlag<Register::N>(false);
     cpu.setFlag<Register::H>(false);
     cpu.setFlag<Register::C>(false);
     cpu._rW.u8.low = (cpu._rW.u8.low >> 4) | (cpu._rW.u8.low << 4);
-    cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+    cpu._bus.write(cpu._rHL.u16, cpu._rW.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -2029,15 +2171,16 @@ void  GBC::CentralProcessingUnit::instruction_SRL(std::uint8_t& reg8)
 void  GBC::CentralProcessingUnit::instruction_SRL_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu.setFlag<Register::Z>((cpu._rW.u8.low & 0b11111110) == 0);
     cpu.setFlag<Register::N>(false);
     cpu.setFlag<Register::H>(false);
     cpu.setFlag<Register::C>(cpu._rW.u8.low & 0b00000001);
     cpu._rW.u8.low >>= 1;
-    cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+    cpu._bus.write(cpu._rHL.u16, cpu._rW.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -2111,9 +2254,10 @@ template <unsigned int Bit>
 void  GBC::CentralProcessingUnit::instruction_BIT_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu.setFlag<Register::Z>(!(cpu._rW.u8.low & (0b00000001 << Bit)));
     cpu.setFlag<Register::N>(false);
     cpu.setFlag<Register::H>(true);
@@ -2133,11 +2277,12 @@ template <unsigned int Bit>
 void  GBC::CentralProcessingUnit::instruction_RES_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu._rW.u8.low &= ~(0b00000001 << Bit);
-    cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+    cpu._bus.write(cpu._rHL.u16, cpu._rW.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -2155,11 +2300,12 @@ template <unsigned int Bit>
 void  GBC::CentralProcessingUnit::instruction_SET_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu._rW.u8.low |= 0b00000001 << Bit;
-    cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+    cpu._bus.write(cpu._rHL.u16, cpu._rW.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -2182,10 +2328,12 @@ void  GBC::CentralProcessingUnit::instruction_ADD_r(std::uint8_t reg8)
 void  GBC::CentralProcessingUnit::instruction_ADD_n()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
+
     std::uint8_t  left = cpu._rAF.u8.high;
     std::uint8_t  right = cpu._rW.u8.low;
 
@@ -2200,9 +2348,11 @@ void  GBC::CentralProcessingUnit::instruction_ADD_n()
 void  GBC::CentralProcessingUnit::instruction_ADD_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
+
     std::uint8_t  left = cpu._rAF.u8.high;
     std::uint8_t  right = cpu._rW.u8.low;
 
@@ -2233,10 +2383,12 @@ void  GBC::CentralProcessingUnit::instruction_ADC_r(std::uint8_t reg8)
 void  GBC::CentralProcessingUnit::instruction_ADC_n()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
+
     std::uint8_t  left = cpu._rAF.u8.high;
     std::uint8_t  right = cpu._rW.u8.low;
     std::uint8_t  carry = cpu.getFlag<Register::C>() ? 1 : 0;
@@ -2252,9 +2404,11 @@ void  GBC::CentralProcessingUnit::instruction_ADC_n()
 void  GBC::CentralProcessingUnit::instruction_ADC_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
+
     std::uint8_t  left = cpu._rAF.u8.high;
     std::uint8_t  right = cpu._rW.u8.low;
     std::uint8_t  carry = cpu.getFlag<Register::C>() ? 1 : 0;
@@ -2285,10 +2439,12 @@ void  GBC::CentralProcessingUnit::instruction_SUB_r(std::uint8_t reg8)
 void  GBC::CentralProcessingUnit::instruction_SUB_n()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
+
     std::uint8_t  left = cpu._rAF.u8.high;
     std::uint8_t  right = cpu._rW.u8.low;
 
@@ -2303,9 +2459,11 @@ void  GBC::CentralProcessingUnit::instruction_SUB_n()
 void  GBC::CentralProcessingUnit::instruction_SUB_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
+
     std::uint8_t  left = cpu._rAF.u8.high;
     std::uint8_t  right = cpu._rW.u8.low;
 
@@ -2336,10 +2494,12 @@ void  GBC::CentralProcessingUnit::instruction_SBC_r(std::uint8_t reg8)
 void  GBC::CentralProcessingUnit::instruction_SBC_n()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
+
     std::uint8_t  left = cpu._rAF.u8.high;
     std::uint8_t  right = cpu._rW.u8.low;
     std::uint8_t  carry = cpu.getFlag<Register::C>() ? 1 : 0;
@@ -2355,9 +2515,11 @@ void  GBC::CentralProcessingUnit::instruction_SBC_n()
 void  GBC::CentralProcessingUnit::instruction_SBC_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
+
     std::uint8_t  left = cpu._rAF.u8.high;
     std::uint8_t  right = cpu._rW.u8.low;
     std::uint8_t  carry = cpu.getFlag<Register::C>() ? 1 : 0;
@@ -2385,10 +2547,11 @@ void  GBC::CentralProcessingUnit::instruction_AND_r(std::uint8_t reg8)
 void  GBC::CentralProcessingUnit::instruction_AND_n()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu._rAF.u8.high &= cpu._rW.u8.low;
     cpu.setFlag<Register::Z>(cpu._rAF.u8.high == 0);
     cpu.setFlag<Register::N>(false);
@@ -2400,9 +2563,10 @@ void  GBC::CentralProcessingUnit::instruction_AND_n()
 void  GBC::CentralProcessingUnit::instruction_AND_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu._rAF.u8.high &= cpu._rW.u8.low;
     cpu.setFlag<Register::Z>(cpu._rAF.u8.high == 0);
     cpu.setFlag<Register::N>(false);
@@ -2426,10 +2590,11 @@ void  GBC::CentralProcessingUnit::instruction_XOR_r(std::uint8_t reg8)
 void  GBC::CentralProcessingUnit::instruction_XOR_n()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu._rAF.u8.high ^= cpu._rW.u8.low;
     cpu.setFlag<Register::Z>(cpu._rAF.u8.high == 0);
     cpu.setFlag<Register::N>(false);
@@ -2441,9 +2606,10 @@ void  GBC::CentralProcessingUnit::instruction_XOR_n()
 void  GBC::CentralProcessingUnit::instruction_XOR_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu._rAF.u8.high ^= cpu._rW.u8.low;
     cpu.setFlag<Register::Z>(cpu._rAF.u8.high == 0);
     cpu.setFlag<Register::N>(false);
@@ -2467,10 +2633,11 @@ void  GBC::CentralProcessingUnit::instruction_OR_r(std::uint8_t reg8)
 void  GBC::CentralProcessingUnit::instruction_OR_n()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu._rAF.u8.high |= cpu._rW.u8.low;
     cpu.setFlag<Register::Z>(cpu._rAF.u8.high == 0);
     cpu.setFlag<Register::N>(false);
@@ -2482,9 +2649,10 @@ void  GBC::CentralProcessingUnit::instruction_OR_n()
 void  GBC::CentralProcessingUnit::instruction_OR_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
     cpu._rAF.u8.high |= cpu._rW.u8.low;
     cpu.setFlag<Register::Z>(cpu._rAF.u8.high == 0);
     cpu.setFlag<Register::N>(false);
@@ -2511,10 +2679,12 @@ void  GBC::CentralProcessingUnit::instruction_CP_r(std::uint8_t reg8)
 void  GBC::CentralProcessingUnit::instruction_CP_n()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
+
     std::uint8_t  left = cpu._rAF.u8.high;
     std::uint8_t  right = cpu._rW.u8.low;
     std::uint8_t  result = left - right;
@@ -2529,9 +2699,11 @@ void  GBC::CentralProcessingUnit::instruction_CP_n()
 void  GBC::CentralProcessingUnit::instruction_CP_pHL()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
+
     std::uint8_t  left = cpu._rAF.u8.high;
     std::uint8_t  right = cpu._rW.u8.low;
     std::uint8_t  result = left - right;
@@ -2556,26 +2728,30 @@ void  GBC::CentralProcessingUnit::instruction_LD_r_n(std::uint8_t& reg8)
 {
   _parameters[0].pu8 = &reg8;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    (*cpu._parameters[0].pu8) = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    (*cpu._parameters[0].pu8) = cpu._bus.data;
+    });
 }
 
 void  GBC::CentralProcessingUnit::instruction_LD_r_pHL(std::uint8_t& reg8)
 {
   _parameters[0].pu8 = &reg8;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    (*cpu._parameters[0].pu8) = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    (*cpu._parameters[0].pu8) = cpu._bus.data;
+    });
 }
 
 void  GBC::CentralProcessingUnit::instruction_LD_pHL_r(std::uint8_t reg8)
 {
   _parameters[0].u8 = reg8;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rHL.u16, cpu._parameters[0].u8);
+    cpu._bus.write(cpu._rHL.u16, cpu._parameters[0].u8);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -2583,11 +2759,12 @@ void  GBC::CentralProcessingUnit::instruction_LD_pHL_r(std::uint8_t reg8)
 void  GBC::CentralProcessingUnit::instruction_LD_pHL_n()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rHL.u16, cpu._rW.u8.low);
+    cpu._rW.u8.low = cpu._bus.data;
+    cpu._bus.write(cpu._rHL.u16, cpu._rW.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -2596,16 +2773,18 @@ void  GBC::CentralProcessingUnit::instruction_LD_A_prr(Register reg16)
 {
   _parameters[0].u16 = reg16.u16;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rAF.u8.high = cpu._gbc.read(cpu._parameters[0].u16);
+    cpu._bus.read(cpu._parameters[0].u16);
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rAF.u8.high = cpu._bus.data;
+    });
 }
 
 void  GBC::CentralProcessingUnit::instruction_LD_prr_A(Register reg16)
 {
   _parameters[0].u16 = reg16.u16;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._parameters[0].u16, cpu._rAF.u8.high);
+    cpu._bus.write(cpu._parameters[0].u16, cpu._rAF.u8.high);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -2613,31 +2792,37 @@ void  GBC::CentralProcessingUnit::instruction_LD_prr_A(Register reg16)
 void  GBC::CentralProcessingUnit::instruction_LD_A_pnn()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.high = cpu._gbc.read(cpu._rPC.u16);
+    cpu._rW.u8.low = cpu._bus.data;
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rAF.u8.high = cpu._gbc.read(cpu._rW.u16);
+    cpu._rW.u8.high = cpu._bus.data;
+    cpu._bus.read(cpu._rW.u16);
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rAF.u8.high = cpu._bus.data;
+    });
 }
 
 void  GBC::CentralProcessingUnit::instruction_LD_pnn_A()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.high = cpu._gbc.read(cpu._rPC.u16);
+    cpu._rW.u8.low = cpu._bus.data;
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rW.u16, cpu._rAF.u8.high);
+    cpu._rW.u8.high = cpu._bus.data;
+    cpu._bus.write(cpu._rW.u16, cpu._rAF.u8.high);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -2645,15 +2830,17 @@ void  GBC::CentralProcessingUnit::instruction_LD_pnn_A()
 void  GBC::CentralProcessingUnit::instruction_LDH_A_pC()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rAF.u8.high = cpu._gbc.read(0xFF00 + cpu._rBC.u8.low);
+    cpu._bus.read(0xFF00 + cpu._rBC.u8.low);
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rAF.u8.high = cpu._bus.data;
+    });
 }
 
 void  GBC::CentralProcessingUnit::instruction_LDH_pC_A()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(0xFF00 + cpu._rBC.u8.low, cpu._rAF.u8.high);
+    cpu._bus.write(0xFF00 + cpu._rBC.u8.low, cpu._rAF.u8.high);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -2661,23 +2848,27 @@ void  GBC::CentralProcessingUnit::instruction_LDH_pC_A()
 void  GBC::CentralProcessingUnit::instruction_LDH_A_pn()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rAF.u8.high = cpu._gbc.read(0xFF00 + cpu._rW.u8.low);
+    cpu._rW.u8.low = cpu._bus.data;
+    cpu._bus.read(0xFF00 + cpu._rW.u8.low);
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rAF.u8.high = cpu._bus.data;
+    });
 }
 
 void  GBC::CentralProcessingUnit::instruction_LDH_pn_A()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(0xFF00 + cpu._rW.u8.low, cpu._rAF.u8.high);
+    cpu._rW.u8.low = cpu._bus.data;
+    cpu._bus.write(0xFF00 + cpu._rW.u8.low, cpu._rAF.u8.high);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -2685,16 +2876,18 @@ void  GBC::CentralProcessingUnit::instruction_LDH_pn_A()
 void  GBC::CentralProcessingUnit::instruction_LD_A_HLd()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rAF.u8.high = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     cpu._rHL.u16 -= 1;
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rAF.u8.high = cpu._bus.data;
+    });
 }
 
 void  GBC::CentralProcessingUnit::instruction_LD_HLd_A()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rHL.u16, cpu._rAF.u8.high);
+    cpu._bus.write(cpu._rHL.u16, cpu._rAF.u8.high);
     cpu._rHL.u16 -= 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
@@ -2703,16 +2896,18 @@ void  GBC::CentralProcessingUnit::instruction_LD_HLd_A()
 void  GBC::CentralProcessingUnit::instruction_LD_A_HLi()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rAF.u8.high = cpu._gbc.read(cpu._rHL.u16);
+    cpu._bus.read(cpu._rHL.u16);
     cpu._rHL.u16 += 1;
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rAF.u8.high = cpu._bus.data;
+    });
 }
 
 void  GBC::CentralProcessingUnit::instruction_LD_HLi_A()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rHL.u16, cpu._rAF.u8.high);
+    cpu._bus.write(cpu._rHL.u16, cpu._rAF.u8.high);
     cpu._rHL.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
@@ -2736,10 +2931,12 @@ void  GBC::CentralProcessingUnit::instruction_ADD_HL_rr(Register reg16)
 void  GBC::CentralProcessingUnit::instruction_ADD_SP_n()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
+    });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     std::int32_t  n = cpu._rW.s8.low;
     std::int32_t  sp = cpu._rSP.u16;
@@ -2757,32 +2954,37 @@ void  GBC::CentralProcessingUnit::instruction_LD_rr_nn(Register& reg16)
 {
   _parameters[0].pr = &reg16;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    (*cpu._parameters[0].pr).u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    (*cpu._parameters[0].pr).u8.high = cpu._gbc.read(cpu._rPC.u16);
+    (*cpu._parameters[0].pr).u8.low = cpu._bus.data;
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    (*cpu._parameters[0].pr).u8.high = cpu._bus.data;
+    });
 }
 
 void  GBC::CentralProcessingUnit::instruction_LD_pnn_SP()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.high = cpu._gbc.read(cpu._rPC.u16);
+    cpu._rW.u8.low = cpu._bus.data;
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rW.u16, cpu._rSP.u8.low);
+    cpu._rW.u8.high = cpu._bus.data;
+    cpu._bus.write(cpu._rW.u16, cpu._rSP.u8.low);
     cpu._rW.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rW.u16, cpu._rSP.u8.high);
+    cpu._bus.write(cpu._rW.u16, cpu._rSP.u8.high);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -2790,10 +2992,12 @@ void  GBC::CentralProcessingUnit::instruction_LD_pnn_SP()
 void  GBC::CentralProcessingUnit::instruction_LD_HL_SPn()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rW.u8.low = cpu._gbc.read(cpu._rPC.u16);
+    cpu._bus.read(cpu._rPC.u16);
     cpu._rPC.u16 += 1;
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rW.u8.low = cpu._bus.data;
+    });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     cpu._rHL.u16 = cpu._rSP.u16 + cpu._rW.s8.low;
     cpu.setFlag<Register::Z>(false);
@@ -2820,11 +3024,11 @@ void  GBC::CentralProcessingUnit::instruction_PUSH_rr(Register reg16)
     cpu._rSP.u16 -= 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rSP.u16, cpu._parameters[0].r.u8.high);
+    cpu._bus.write(cpu._rSP.u16, cpu._parameters[0].r.u8.high);
     cpu._rSP.u16 -= 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._gbc.write(cpu._rSP.u16, cpu._parameters[0].r.u8.low);
+    cpu._bus.write(cpu._rSP.u16, cpu._parameters[0].r.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
 }
@@ -2833,25 +3037,31 @@ void  GBC::CentralProcessingUnit::instruction_POP_rr(Register& reg16)
 {
   _parameters[0].pr = &reg16;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    (*cpu._parameters[0].pr).u8.low = cpu._gbc.read(cpu._rSP.u16);
+    cpu._bus.read(cpu._rSP.u16);
     cpu._rSP.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    (*cpu._parameters[0].pr).u8.high = cpu._gbc.read(cpu._rSP.u16);
+    (*cpu._parameters[0].pr).u8.low = cpu._bus.data;
+    cpu._bus.read(cpu._rSP.u16);
     cpu._rSP.u16 += 1;
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    (*cpu._parameters[0].pr).u8.high = cpu._bus.data;
+    });
 }
 
 void  GBC::CentralProcessingUnit::instruction_POP_AF()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rAF.u8.low = cpu._gbc.read(cpu._rSP.u16) & 0b11110000;
+    cpu._bus.read(cpu._rSP.u16);
     cpu._rSP.u16 += 1;
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rAF.u8.high = cpu._gbc.read(cpu._rSP.u16);
+    cpu._rAF.u8.low = cpu._bus.data & 0b11110000;
+    cpu._bus.read(cpu._rSP.u16);
     cpu._rSP.u16 += 1;
     });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {});
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rAF.u8.high = cpu._bus.data;
+    });
 }

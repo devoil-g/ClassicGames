@@ -8,9 +8,11 @@ GBC::MemoryBankController2::MemoryBankController2(GBC::GameBoyColor& gbc, const 
 
 void  GBC::MemoryBankController2::writeRom(std::uint16_t address, std::uint8_t value)
 {
+#ifdef _DEBUG
   // Out of bound address
   if (address >= 0x8000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // ROM bank number
   if (address & 0b0000000100000000)

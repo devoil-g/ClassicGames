@@ -752,15 +752,19 @@ std::uint8_t  GBC::GameBoyColor::read(std::uint16_t addr)
   else
     return _ie;
 
+#ifdef _DEBUG
   // Invalid address
   throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 }
 
 std::uint8_t  GBC::GameBoyColor::readWRam(std::uint16_t addr)
 {
+#ifdef _DEBUG
   // Out of bound address, should not happen
   if (addr >= 0x2000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // First half is alway bank 0
   if (addr < 0x1000)
@@ -773,9 +777,11 @@ std::uint8_t  GBC::GameBoyColor::readWRam(std::uint16_t addr)
 
 std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
 {
+#ifdef _DEBUG
   // Out of bound address, should not happen
   if (addr >= 0x0080)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   switch (addr)
   {
@@ -885,9 +891,11 @@ std::uint8_t  GBC::GameBoyColor::readIo(std::uint16_t addr)
 
 std::uint8_t  GBC::GameBoyColor::readHRam(std::uint16_t addr)
 {
+#ifdef _DEBUG
   // Out of bound address, should not happen
   if (addr >= _hRam.size())
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // Get data from HRAM
   return _hRam[addr];
@@ -946,9 +954,11 @@ void  GBC::GameBoyColor::write(std::uint16_t addr, std::uint8_t value)
 
 void  GBC::GameBoyColor::writeWRam(std::uint16_t addr, std::uint8_t value)
 {
+#ifdef _DEBUG
   // Out of bound address, should not happen
   if (addr >= 0x2000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // First half is alway bank 0
   if (addr < 0x1000)
@@ -961,9 +971,11 @@ void  GBC::GameBoyColor::writeWRam(std::uint16_t addr, std::uint8_t value)
 
 void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
 {
+#ifdef _DEBUG
   // Out of bound address, should not happen
   if (addr >= 0x0080)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   switch (addr)
   {
@@ -1172,9 +1184,11 @@ void  GBC::GameBoyColor::writeIo(std::uint16_t addr, std::uint8_t value)
 
 void  GBC::GameBoyColor::writeHRam(std::uint16_t addr, std::uint8_t value)
 {
+#ifdef _DEBUG
   // Out of bound address, should not happen
   if (addr >= _hRam.size())
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // Write data to HRAM
   _hRam[addr] = value;

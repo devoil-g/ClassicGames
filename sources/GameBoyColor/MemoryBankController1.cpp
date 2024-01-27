@@ -11,9 +11,11 @@ GBC::MemoryBankController1::MemoryBankController1(GBC::GameBoyColor& gbc, const 
 
 void  GBC::MemoryBankController1::writeRom(std::uint16_t address, std::uint8_t value)
 {
+#ifdef _DEBUG
   // Out of bound address
   if (address >= 0x8000)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+#endif
 
   // RAM enable
   if (address < 0x2000)
