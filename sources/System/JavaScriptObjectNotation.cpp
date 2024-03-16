@@ -10,8 +10,6 @@ Game::JSON::Number::Number() : value(0) {}
 Game::JSON::Boolean::Boolean() : value(false) {}
 
 // Value constructors
-Game::JSON::Object::Object(std::unordered_map<std::string, std::unique_ptr<Game::JSON::Element>>&& map) : map(std::move(map)) {}
-Game::JSON::Array::Array(std::vector<std::unique_ptr<Game::JSON::Element>>&& vector) : vector(std::move(vector)) {}
 Game::JSON::Number::Number(double value) : value(value) {}
 Game::JSON::String::String(const std::string& value) : value(value) {}
 Game::JSON::String::String(std::string&& value) : value(std::move(value)) {}
@@ -19,6 +17,7 @@ Game::JSON::Boolean::Boolean(bool value) : value(value) {}
 
 // Exception constructors
 Game::JSON::TypeError::TypeError(const std::string& message) : std::runtime_error(message) {}
+Game::JSON::BoundError::BoundError(const std::string& message) : std::runtime_error(message) {}
 Game::JSON::FileError::FileError(const std::string& message) : std::runtime_error(message) {}
 Game::JSON::ParsingError::ParsingError(const std::string& message) : std::runtime_error(message) {}
 
@@ -36,34 +35,214 @@ Game::JSON::Type Game::JSON::Null::type() const { return Game::JSON::Type::TypeN
 // Default accessors to error
 Game::JSON::Object& Game::JSON::Element::object() { throw Game::JSON::TypeError("JSON Element is not a JSON Object"); }
 Game::JSON::Array& Game::JSON::Element::array() { throw Game::JSON::TypeError("JSON Element is not a JSON Array"); }
-Game::JSON::Number& Game::JSON::Element::number() { throw Game::JSON::TypeError("JSON Element is not a JSON Number"); }
-Game::JSON::String& Game::JSON::Element::string() { throw Game::JSON::TypeError("JSON Element is not a JSON String"); }
-Game::JSON::Boolean& Game::JSON::Element::boolean() { throw Game::JSON::TypeError("JSON Element is not a JSON Boolean"); }
+double& Game::JSON::Element::number() { throw Game::JSON::TypeError("JSON Element is not a JSON Number"); }
+std::string& Game::JSON::Element::string() { throw Game::JSON::TypeError("JSON Element is not a JSON String"); }
+bool& Game::JSON::Element::boolean() { throw Game::JSON::TypeError("JSON Element is not a JSON Boolean"); }
 
 // Default const accessors to error
 const Game::JSON::Object& Game::JSON::Element::object() const { throw Game::JSON::TypeError("JSON Element is not a JSON Object"); }
 const Game::JSON::Array& Game::JSON::Element::array() const { throw Game::JSON::TypeError("JSON Element is not a JSON Array"); }
-const Game::JSON::Number& Game::JSON::Element::number() const { throw Game::JSON::TypeError("JSON Element is not a JSON Number"); }
-const Game::JSON::String& Game::JSON::Element::string() const { throw Game::JSON::TypeError("JSON Element is not a JSON String"); }
-const Game::JSON::Boolean& Game::JSON::Element::boolean() const { throw Game::JSON::TypeError("JSON Element is not a JSON Boolean"); }
+double Game::JSON::Element::number() const { throw Game::JSON::TypeError("JSON Element is not a JSON Number"); }
+const std::string& Game::JSON::Element::string() const { throw Game::JSON::TypeError("JSON Element is not a JSON String"); }
+bool Game::JSON::Element::boolean() const { throw Game::JSON::TypeError("JSON Element is not a JSON Boolean"); }
 
 // Define accessors
 Game::JSON::Object& Game::JSON::Object::object() { return *this; }
 Game::JSON::Array& Game::JSON::Array::array() { return *this; }
-Game::JSON::Number& Game::JSON::Number::number() { return *this; }
-Game::JSON::String& Game::JSON::String::string() { return *this; }
-Game::JSON::Boolean& Game::JSON::Boolean::boolean() { return *this; }
+double& Game::JSON::Number::number() { return this->value; }
+std::string& Game::JSON::String::string() { return this->value; }
+bool& Game::JSON::Boolean::boolean() { return this->value; }
 
 // Define const accessors
 const Game::JSON::Object& Game::JSON::Object::object() const { return *this; }
 const Game::JSON::Array& Game::JSON::Array::array() const { return *this; }
-const Game::JSON::Number& Game::JSON::Number::number() const { return *this; }
-const Game::JSON::String& Game::JSON::String::string() const { return *this; }
-const Game::JSON::Boolean& Game::JSON::Boolean::boolean() const { return *this; }
+double Game::JSON::Number::number() const { return this->value; }
+const std::string& Game::JSON::String::string() const { return this->value; }
+bool Game::JSON::Boolean::boolean() const { return this->value; }
+
+// Object element setters
+void  Game::JSON::Object::set(const std::string& key, Game::JSON::Object&& object) { set(key, std::make_unique<Game::JSON::Object>(std::move(object))); }
+void  Game::JSON::Object::set(const std::string& key, Game::JSON::Array&& array) { set(key, std::make_unique<Game::JSON::Array>(std::move(array))); }
+void  Game::JSON::Object::set(const std::string& key, const Game::JSON::Number& number) { set(key, std::make_unique<Game::JSON::Number>(number)); }
+void  Game::JSON::Object::set(const std::string& key, double number) { set(key, std::make_unique<Game::JSON::Number>(number)); }
+void  Game::JSON::Object::set(const std::string& key, const Game::JSON::String& string) { set(key, std::make_unique<Game::JSON::String>(string)); }
+void  Game::JSON::Object::set(const std::string& key, Game::JSON::String&& string) { set(key, std::make_unique<Game::JSON::String>(std::move(string))); }
+void  Game::JSON::Object::set(const std::string& key, const std::string& string) { set(key, std::make_unique<Game::JSON::String>(string)); }
+void  Game::JSON::Object::set(const std::string& key, std::string&& string) { set(key, std::make_unique<Game::JSON::String>(std::move(string))); }
+void  Game::JSON::Object::set(const std::string& key, const Game::JSON::Boolean& value) { set(key, std::make_unique<Game::JSON::Boolean>(value)); }
+void  Game::JSON::Object::set(const std::string& key, bool value) { set(key, std::make_unique<Game::JSON::Boolean>(value)); }
+void  Game::JSON::Object::set(const std::string& key) { set(key, std::make_unique<Game::JSON::Null>()); }
+
+// Array element pusher
+void  Game::JSON::Array::push(Game::JSON::Object&& object) { _vector.push_back(std::make_unique<Game::JSON::Object>(std::move(object))); }
+void  Game::JSON::Array::push(Game::JSON::Array&& array) { _vector.push_back(std::make_unique<Game::JSON::Array>(std::move(array))); }
+void  Game::JSON::Array::push(const Game::JSON::Number& number) { _vector.push_back(std::make_unique<Game::JSON::Number>(number)); }
+void  Game::JSON::Array::push(double number) { _vector.push_back(std::make_unique<Game::JSON::Number>(number)); }
+void  Game::JSON::Array::push(const Game::JSON::String& string) { _vector.push_back(std::make_unique<Game::JSON::String>(string)); }
+void  Game::JSON::Array::push(Game::JSON::String&& string) { _vector.push_back(std::make_unique<Game::JSON::String>(std::move(string))); }
+void  Game::JSON::Array::push(const std::string& string) { _vector.push_back(std::make_unique<Game::JSON::String>(string)); }
+void  Game::JSON::Array::push(std::string&& string) { _vector.push_back(std::make_unique<Game::JSON::String>(std::move(string))); }
+void  Game::JSON::Array::push(const Game::JSON::Boolean& value) { _vector.push_back(std::make_unique<Game::JSON::Boolean>(value)); }
+void  Game::JSON::Array::push(bool value) { _vector.push_back(std::make_unique<Game::JSON::Boolean>(value)); }
+void  Game::JSON::Array::push() { _vector.push_back(std::make_unique<Game::JSON::Null>()); }
+
+// Array element setter
+void  Game::JSON::Array::set(std::size_t position, Game::JSON::Object&& object) { set(position, std::make_unique<Game::JSON::Object>(std::move(object))); }
+void  Game::JSON::Array::set(std::size_t position, Game::JSON::Array&& array) { set(position, std::make_unique<Game::JSON::Array>(std::move(array))); }
+void  Game::JSON::Array::set(std::size_t position, const Game::JSON::Number& number) { set(position, std::make_unique<Game::JSON::Number>(number)); }
+void  Game::JSON::Array::set(std::size_t position, double number) { set(position, std::make_unique<Game::JSON::Number>(number)); }
+void  Game::JSON::Array::set(std::size_t position, const Game::JSON::String& string) { set(position, std::make_unique<Game::JSON::String>(string)); }
+void  Game::JSON::Array::set(std::size_t position, Game::JSON::String&& string) { set(position, std::make_unique<Game::JSON::String>(std::move(string))); }
+void  Game::JSON::Array::set(std::size_t position, const std::string& string) { set(position, std::make_unique<Game::JSON::String>(string)); }
+void  Game::JSON::Array::set(std::size_t position, std::string&& string) { set(position, std::make_unique<Game::JSON::String>(std::move(string))); }
+void  Game::JSON::Array::set(std::size_t position, const Game::JSON::Boolean& value) { set(position, std::make_unique<Game::JSON::Boolean>(value)); }
+void  Game::JSON::Array::set(std::size_t position, bool value) { set(position, std::make_unique<Game::JSON::Boolean>(value)); }
+void  Game::JSON::Array::set(std::size_t position) { set(position, std::make_unique<Game::JSON::Null>()); }
 
 // Null element
 bool Game::JSON::Element::null() const { return false; }
 bool Game::JSON::Null::null() const { return true; }
+
+void  Game::JSON::Object::set(const std::string& key, std::unique_ptr<Game::JSON::Element>&& element)
+{
+  // Add element in container at key
+  _map[key] = std::move(element);
+}
+
+Game::JSON::Element& Game::JSON::Object::get(const std::string& key)
+{
+  auto it = _map.find(key);
+
+  // Check that key exists
+  if (it == _map.end())
+    throw Game::JSON::BoundError("Key is not in JSON Object");
+
+  return *it->second;
+}
+
+const Game::JSON::Element& Game::JSON::Object::get(const std::string& key) const
+{
+  auto it = _map.find(key);
+
+  // Check that key exists
+  if (it == _map.end())
+    throw Game::JSON::BoundError("Key is not in JSON Object");
+
+  return *it->second;
+}
+
+Game::JSON::Element& Game::JSON::Object::operator[](const std::string& key)
+{
+  // Get element at key
+  return get(key);
+}
+
+const Game::JSON::Element& Game::JSON::Object::operator[](const std::string& key) const
+{
+  // Get element at key
+  return get(key);
+}
+
+void  Game::JSON::Object::unset(const std::string& key)
+{
+  // Remove element from map
+  if (_map.erase(key) == 0)
+    throw Game::JSON::BoundError("Key is not in JSON Object");
+}
+
+void  Game::JSON::Object::clear()
+{
+  // Reset container
+  _map.clear();
+}
+
+bool  Game::JSON::Object::contains(const std::string& key) const
+{
+  // Find key in container
+  return _map.contains(key);
+}
+
+void  Game::JSON::Array::push(std::unique_ptr<Game::JSON::Element>&& element)
+{
+  // Push element
+  _vector.emplace_back(std::move(element));
+}
+
+void  Game::JSON::Array::set(std::size_t position, std::unique_ptr<Game::JSON::Element>&& element)
+{
+  // Check position
+  if (position >= size())
+    throw Game::JSON::BoundError("Position is not in JSON Array");
+
+  // Set element
+  _vector[position] = std::move(element);
+}
+
+Game::JSON::Element& Game::JSON::Array::get(std::size_t position)
+{
+  // Check position
+  if (position >= _vector.size())
+    throw Game::JSON::BoundError("Position is not in JSON Array");
+
+  return *_vector[position];
+}
+
+const Game::JSON::Element& Game::JSON::Array::get(std::size_t position) const
+{
+  // Check position
+  if (position >= _vector.size())
+    throw Game::JSON::BoundError("Position is not in JSON Array");
+
+  return *_vector[position];
+}
+
+Game::JSON::Element& Game::JSON::Array::operator[](std::size_t position)
+{
+  // Get element at position
+  return get(position);
+}
+
+const Game::JSON::Element& Game::JSON::Array::operator[](std::size_t position) const
+{
+  // Get element at position
+  return get(position);
+}
+
+void  Game::JSON::Array::unset(std::size_t position)
+{
+  // Invalid position
+  if (position >= size())
+    throw Game::JSON::BoundError("Position is not in JSON Array");
+
+  // Remove element from container
+  _vector.erase(_vector.begin() + position);
+}
+
+std::size_t Game::JSON::Array::size() const
+{
+  // Get size of the array
+  return _vector.size();
+}
+
+void  Game::JSON::Array::resize(std::size_t size)
+{
+  // Grow container with JSON Null
+  if (this->size() < size) {
+    _vector.reserve(size);
+    while (this->size() < size)
+      _vector.emplace_back(std::make_unique<Game::JSON::Null>());
+  }
+
+  // Remove elements from container
+  else if (this->size() > size)
+    _vector.erase(_vector.begin() + size, _vector.end());
+}
+
+void  Game::JSON::Array::clear()
+{
+  // Reset container
+  _vector.clear();
+}
 
 Game::JSON::Object  Game::JSON::load(const std::filesystem::path& path)
 {
@@ -203,7 +382,7 @@ void  Game::JSON::loadObject(const std::string& text, std::string::const_iterato
     loadString(text, iterator, name);
 
     // Item name already registered
-    if (object.map.find(name.value) != object.map.end())
+    if (object.contains(name.value) == true)
       throw Game::JSON::ParsingError("Name already registerd in object: \"" + name.value + "\" (pos: " + std::to_string(std::distance(text.begin(), iterator)) + ")");
 
     // Check name-value separator
@@ -215,7 +394,7 @@ void  Game::JSON::loadObject(const std::string& text, std::string::const_iterato
     iterator++;
 
     // Insert name-value in map
-    object.map[name.value] = std::move(loadElement(text, iterator));
+    object.set(name.value, loadElement(text, iterator));
 
     // Skip whitespaces
     loadWhitespaces(text, iterator);
@@ -265,7 +444,7 @@ void  Game::JSON::loadArray(const std::string& text, std::string::const_iterator
       break;
 
     // Insert value in vector
-    array.vector.emplace_back(std::move(loadElement(text, iterator)));
+    array.push(loadElement(text, iterator));
 
     // Skip whitespaces
     loadWhitespaces(text, iterator);
@@ -434,8 +613,8 @@ std::string Game::JSON::Object::stringify() const
   stream << "{";
 
   // Dump each element
-  for (auto it = map.begin(); it != map.end(); it++)
-    stream << (it == map.begin() ? "" : ",") << "\"" << it->first << "\":" << *it->second;
+  for (auto it = _map.begin(); it != _map.end(); it++)
+    stream << (it == _map.begin() ? "" : ",") << "\"" << it->first << "\":" << *it->second;
 
   // Closing curly bracket
   stream << "}";
@@ -451,8 +630,8 @@ std::string Game::JSON::Array::stringify() const
   stream << "[";
 
   // Dump each element
-  for (auto it = vector.begin(); it != vector.end(); it++)
-    stream << (it == vector.begin() ? "" : ",") << **it;
+  for (auto it = _vector.begin(); it != _vector.end(); it++)
+    stream << (it == _vector.begin() ? "" : ",") << **it;
 
   // Closing bracket
   stream << "]";
@@ -484,13 +663,13 @@ std::string Game::JSON::Null::stringify() const
   return "null";
 }
 
-std::ostream& operator<<(std::ostream& stream, Game::JSON::Element& json)
+std::ostream& operator<<(std::ostream& stream, const Game::JSON::Element& json)
 {
   // Just dump JSON to stream
   return stream << json.stringify();
 }
 
-std::wostream& operator<<(std::wostream& stream, Game::JSON::Element& json)
+std::wostream& operator<<(std::wostream& stream, const Game::JSON::Element& json)
 {
   std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 

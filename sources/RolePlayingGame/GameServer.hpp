@@ -1,10 +1,11 @@
 #pragma once
 
+#include <filesystem>
 #include <list>
 #include <unordered_map>
 
 #include "RolePlayingGame/TcpServer.hpp"
-#include "RolePlayingGame/World.hpp"
+#include "RolePlayingGame/Level.hpp"
 
 #include "System/JavaScriptObjectNotation.hpp"
 
@@ -54,7 +55,9 @@ namespace RPG
       Client(std::size_t id);
     };
 
-    std::list<RPG::GameServer::Client>          _clients;
+    std::list<RPG::GameServer::Client>  _clients;
+    std::size_t                         _tick;
+    RPG::Level                          _level;
 
     void  handleFileRequest(std::size_t id, sf::Packet& packet);  // Request server to send a file
     void  handleFileInfo(std::size_t id, sf::Packet& packet);     // Request server to send file info
@@ -62,13 +65,18 @@ namespace RPG
     void  handleFileRequest(RPG::GameServer::Client& client, Game::JSON::Object& json); // Request server to send a file
     void  handleFileInfo(RPG::GameServer::Client& client, Game::JSON::Object& json);    // Request server to send file info
 
-    virtual void  onConnect(std::size_t id) override;                     // Called when a new TCP client connect
-    virtual void  onDisconnect(std::size_t id) override;                  // Called when a TCP client disconnect
-    virtual void  onReceive(std::size_t id, sf::Packet& packet) override; // Called when a packet is received from TCP client
-    virtual void  onTick() override;                                      // Called once per tick
+    virtual void  onConnect(std::size_t id) override;                                 // Called when a new TCP client connect
+    virtual void  onDisconnect(std::size_t id) override;                              // Called when a TCP client disconnect
+    virtual void  onReceive(std::size_t id, const Game::JSON::Object& json) override; // Called when a packet is received from TCP client
+    virtual void  onTick() override;                                                  // Called once per tick
 
   public:
-    GameServer();
+    GameServer(const std::filesystem::path& config, std::uint16_t port = 0, std::uint32_t address = 0);
     ~GameServer();
+
+    void  send(std::size_t id, const std::string& type, Game::JSON::Object& json);  // Send JSON to client, add type and tick
+    void  broadcast(const std::string& type, Game::JSON::Object& json);             // Broadcast JSON to every TCP client, add type and tick
+    void  kick(std::size_t id);                                                     // Kick client
+
   };
 }

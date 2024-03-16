@@ -13,32 +13,12 @@ float const         Game::Window::FpsRefresh = 1.f;
 bool const          Game::Window::DefaultVerticalSync = true;
 float const         Game::Window::Joystick::DeadZone = 20.f;
 
-std::unordered_map<int, Game::Window> Game::Window::_windows;
-
-Game::Window& Game::Window::Instance(int id)
+Game::Window& Game::Window::Instance()
 {
   static Game::Window wwin;
 
+  // Return window instance
   return wwin;
-
-  // Get or create window
-  return _windows[id];
-}
-
-void  Game::Window::Delete(int id)
-{
-  // Get or create window
-  if (id == 0 || _windows.find(id) == _windows.end())
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-  // Remove window instance
-  _windows.erase(id);
-}
-
-void  Game::Window::Clear()
-{
-  // Remove every window except ID 0
-  std::erase_if(_windows, [](const std::pair<const int, Game::Window>& window) { return window.first != 0; });
 }
 
 Game::Window::Window() :
@@ -169,7 +149,7 @@ bool  Game::Window::update(float elapsed)
   {
     // Display new FPS in window title
     // NOTE: in unknown cases, we can get stuck in setTitle
-    _window.setTitle(Game::Window::DefaultTitle + " (" + std::to_string((int)(_tick / _elapsed)) + "." + std::to_string((int)(10 * _tick / _elapsed) % 10) + " FPS)");
+    _window.setTitle(Game::Window::DefaultTitle + " (" + std::to_string((int)(_tick / _elapsed)) + "." + std::to_string((int)(10 * _tick / _elapsed) % 10) + " FPS, " + std::to_string(_window.getSize().x) + "x" + std::to_string(_window.getSize().y) + ")");
 
     // Reset FPS counters
     _elapsed = 0.f;

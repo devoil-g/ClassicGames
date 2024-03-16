@@ -4,6 +4,8 @@
 #include "GameBoyColor/GameBoyColor.hpp"
 #include "Math/Math.hpp"
 
+#include "System/Window.hpp"
+
 GBC::AudioProcessingUnit::AudioProcessingUnit(GBC::GameBoyColor& gbc) :
   _gbc(gbc),
   _sound1{ 0 },
@@ -152,12 +154,7 @@ void  GBC::AudioProcessingUnit::simulate()
       }
     }
   }
-
-  // TODO: DAC 1
-  // TODO: DAC 2
-  // TODO: DAC 3
-  // TODO: DAC 4
-
+  
   // Mixer and amplifier
   float leftVolume = (((_gbc._io[IO::NR50] & 0b01110000) >> 4) + 1) / 8.f;
   float rightVolume = (((_gbc._io[IO::NR50] & 0b00000111) >> 0) + 1) / 8.f;

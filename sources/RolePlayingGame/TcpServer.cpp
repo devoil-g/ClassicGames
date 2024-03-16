@@ -6,7 +6,7 @@
 
 #include "RolePlayingGame/TcpServer.hpp"
 
-RPG::TcpServer::TcpServer(std::uint16_t port, sf::IpAddress address) :
+RPG::TcpServer::TcpServer(std::uint16_t port, std::uint32_t address) :
   _thread(),
   _listener(),
   _address(address),
@@ -14,7 +14,7 @@ RPG::TcpServer::TcpServer(std::uint16_t port, sf::IpAddress address) :
   _clients()
 {
   // Start TCP listener
-  if (_listener.listen(port, address) != sf::Socket::Status::Done)
+  if (_listener.listen(port, sf::IpAddress(address)) != sf::Socket::Status::Done)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
@@ -22,6 +22,7 @@ RPG::TcpServer::~TcpServer()
 {
   // Wait for server to stop
   stop();
+  wait();
 }
 
 std::uint16_t RPG::TcpServer::getPort() const
@@ -30,10 +31,10 @@ std::uint16_t RPG::TcpServer::getPort() const
   return _listener.getLocalPort();
 }
 
-sf::IpAddress RPG::TcpServer::getAddress() const
+std::uint32_t RPG::TcpServer::getAddress() const
 {
   // Get local address of server
-  return _address;
+  return _address.toInteger();
 }
 
 std::uint16_t RPG::TcpServer::getPort(std::size_t id) const
@@ -48,7 +49,7 @@ std::uint16_t RPG::TcpServer::getPort(std::size_t id) const
   return it->socket.getRemotePort();
 }
 
-sf::IpAddress RPG::TcpServer::getAddress(std::size_t id) const
+std::uint32_t RPG::TcpServer::getAddress(std::size_t id) const
 {
   auto  it = std::find_if(_clients.begin(), _clients.end(), [id](const auto& client) { return client.id == id; });
 
@@ -57,7 +58,7 @@ sf::IpAddress RPG::TcpServer::getAddress(std::size_t id) const
     return 0;
 
   // Get remote address
-  return it->socket.getRemoteAddress();
+  return it->socket.getRemoteAddress().toInteger();
 }
 
 void  RPG::TcpServer::run()
@@ -85,9 +86,6 @@ void  RPG::TcpServer::stop()
 {
   // Request stop of the server loop
   _running = false;
-
-  // Wait for server to stop
-  wait();
 }
 
 void  RPG::TcpServer::loop()
@@ -118,7 +116,7 @@ void  RPG::TcpServer::loop()
         selector.add(_clients.back().socket);
         onConnect(_clients.back().id);
       }
-
+      
       // Cancel in case of error
       else
         _clients.pop_back();
@@ -130,8 +128,17 @@ void  RPG::TcpServer::loop()
         sf::Packet          packet;
         sf::Socket::Status  status = client.socket.receive(packet);
 
-        if (status == sf::Socket::Done)
-          onReceive(client.id, packet);
+        if (status == sf::Socket::Done) {
+          try {
+            std::string raw;
+
+            packet >> raw;
+            onReceive(client.id, Game::JSON::load(raw));
+          }
+          catch (const std::exception&) {
+            client.kick = true;
+          }
+        }
         else
           client.kick = true;
       }
@@ -150,8 +157,11 @@ void  RPG::TcpServer::loop()
   }
 }
 
-void  RPG::TcpServer::send(std::size_t id, sf::Packet& packet)
+void  RPG::TcpServer::send(std::size_t id, const Game::JSON::Object& json)
 {
+  // NOTE: blocking send, SFML does not provide a socket selector for write
+  // TODO: find another network library
+
   auto  it = std::find_if(_clients.begin(), _clients.end(), [id](const auto& client) { return client.id == id; });
 
   // Client does not exist
@@ -162,13 +172,23 @@ void  RPG::TcpServer::send(std::size_t id, sf::Packet& packet)
   if (it->kick == true)
     return;
 
+  sf::Packet  packet;
+
+  // Serialize JSON
+  packet << json.stringify();
+
   // Kick client in case of error
   if (it->socket.send(packet) != sf::Socket::Status::Done)
     it->kick = true;
 }
 
-void  RPG::TcpServer::broadcast(sf::Packet& packet)
+void  RPG::TcpServer::broadcast(const Game::JSON::Object& json)
 {
+  sf::Packet  packet;
+
+  // Serialize JSON
+  packet << json.stringify();
+
   // Send message to every connected clients
   for (auto& client : _clients)
   {

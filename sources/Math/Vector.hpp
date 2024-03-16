@@ -1,12 +1,14 @@
 #pragma once
 
 #include <array>
+#include <stdexcept>
 #include <iostream>
 #include <cstring>
 #include <string>
 
 #include "Math/Math.hpp"
 #include "Math/Matrix.hpp"
+#include "System/JavaScriptObjectNotation.hpp"
 
 namespace Math
 {
@@ -20,6 +22,17 @@ namespace Math
     Vector(Types... args) :
       Math::Matrix<Size, 1, Type>(std::forward<Types>(args)...)
     {}
+
+    Vector(const Game::JSON::Array& json)
+    {
+      // Check JSON array size
+      if (json.size() != Size)
+        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+      // Extract values from JSON
+      for (unsigned int i = 0; i < Size; i++)
+        (*this)(i) = (Type)json.get(i).number();
+    }
 
     Vector(const Math::Vector<Size, Type>& other) = default;
 
@@ -159,6 +172,20 @@ namespace Math
     Math::Vector<Size, Type>  operator-(const Math::Vector<Size, Type>& v) const // Vector subtraction
     {
       return Math::Vector<Size, Type>(*this) -= v;
+    }
+
+    Game::JSON::Array json() const
+    {
+      Game::JSON::Array json;
+
+      // Pre-allocate array
+      json._vector.reserve(Size);
+
+      // Dump vector to JSON
+      for (unsigned int n = 0; n < Size; n++)
+        json.push((double)(*this)(n));
+
+      return json;
     }
 
     template<typename RetType = Type>

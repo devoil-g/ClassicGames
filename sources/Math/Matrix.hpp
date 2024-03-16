@@ -5,6 +5,8 @@
 #include <string>
 #include <array>
 
+#include "System/JavaScriptObjectNotation.hpp"
+
 namespace Math
 {
   template<unsigned int Row, unsigned int Col = Row, typename Type = float>
@@ -33,6 +35,24 @@ namespace Math
       for (unsigned int col = 0; col < Col; col++)
         for (unsigned int row = 0; row < Row; row++)
           (*this)(row, col) = values[col * Row + row];
+    }
+
+    Matrix(const Game::JSON::Array& json)
+    {
+      // Check JSON array size (number of columns)
+      if (json.size() != Col)
+        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+      // Extract values from JSON
+      for (unsigned int col = 0; col < Col; col++)
+      {
+        // Check JSON array size (number of rows)
+        if (json.get(col).array().size() != Row)
+          throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+        for (unsigned int row = 0; row < Row; row++)
+          (*this)(row, col) = (Type)json.get(col).array().get(row).number();
+      }
     }
 
     Matrix(const Matrix<Row, Col, Type>&) = default;
@@ -143,6 +163,30 @@ namespace Math
           for (unsigned int i = 0; i < Col; i++)
             matrix(row, col) += (*this)(row, i) * v(i, col);
       return matrix;
+    }
+    
+    Game::JSON::Array json() const
+    {
+      Game::JSON::Array json;
+
+      // Pre-allocate columns
+      json._vector.reserve(Col);
+
+      // Dump matrix to JSON
+      for (unsigned int col = 0; col < Col; col++)
+      {
+        Game::JSON::Array column;
+
+        // Pre-allocate rows
+        json._vector.reserve(Row);
+
+        for (unsigned int row = 0; row < Row; row++)
+          column.push((double)(*this)(row, col));;
+
+        json.push(std::move(column));
+      }
+
+      return json;
     }
 
     Math::Matrix<Col, Row, Type>  transpose() const // Generate transpose matrix

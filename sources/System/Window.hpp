@@ -104,8 +104,6 @@ namespace Game
     void*           _taskbar; // Not supported on Linux for now
 #endif
 
-    static std::unordered_map<int, Game::Window>  _windows; // Map of opened windows
-
   public:
     Window();
     ~Window() = default;
@@ -130,10 +128,8 @@ namespace Game
     };
 #endif
 
-    static Game::Window&  Instance(int id = 0); // Get a window instance (create if non-existent)
-    static void           Delete(int id);       // Remove a window instance (ID 0 can't be deleted)
-    static void           Clear();              // Remove every window instance except ID 0
-
+    static Game::Window&  Instance(); // Get window instance
+    
     bool  update(float elapsed);                                                                    // Update window (get events)
     void  create(const sf::VideoMode& video, sf::Uint32 style, const sf::ContextSettings& context); // (Re)create window with parameters
     void  taskbar(WindowFlag flag);                                                                 // Set taskbar status (Windows 7+ only)

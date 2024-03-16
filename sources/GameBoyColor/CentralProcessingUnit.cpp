@@ -1193,7 +1193,6 @@ void  GBC::CentralProcessingUnit::simulateInterrupt()
     return;
 
   // Interrupt Enable register
-  _gbc._ie;
   auto interruptEnable = _gbc.read(0xFFFF);
 
   // Get Interrupt Flag register
@@ -1418,6 +1417,7 @@ void  GBC::CentralProcessingUnit::instruction_HALT()
 {
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     cpu._status = Status::StatusHalt;
+    // TODO: HALT bug
     });
 }
 

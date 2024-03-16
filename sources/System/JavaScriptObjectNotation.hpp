@@ -52,18 +52,18 @@ namespace Game
       virtual bool null() const;
 
       // Non-const accessor, throw WrongType exception when wrong type accessed
-      virtual Game::JSON::Object&   object();
-      virtual Game::JSON::Array&    array();
-      virtual Game::JSON::Number&   number();
-      virtual Game::JSON::String&   string();
-      virtual Game::JSON::Boolean&  boolean();
+      virtual Game::JSON::Object& object();
+      virtual Game::JSON::Array&  array();
+      virtual double&             number();
+      virtual std::string&        string();
+      virtual bool&               boolean();
 
       // Const accessor, throw WrongType exception when wrong type accessed
-      virtual const Game::JSON::Object&   object() const;
-      virtual const Game::JSON::Array&    array() const;
-      virtual const Game::JSON::Number&   number() const;
-      virtual const Game::JSON::String&   string() const;
-      virtual const Game::JSON::Boolean&  boolean() const;
+      virtual const Game::JSON::Object& object() const;
+      virtual const Game::JSON::Array&  array() const;
+      virtual double                    number() const;
+      virtual const std::string&        string() const;
+      virtual bool                      boolean() const;
 
       // Write JSON to a string
       virtual std::string stringify() const = 0;
@@ -72,11 +72,13 @@ namespace Game
     class Object : public Element
     {
     public:
-      std::unordered_map<std::string, std::unique_ptr<Game::JSON::Element>> map;  // Name-value pairs collection
+      std::unordered_map<std::string, std::unique_ptr<Game::JSON::Element>> _map; // Name-value pairs collection (NOTE: private this)
 
+      void set(const std::string& key, std::unique_ptr<Game::JSON::Element>&& element); // Set value at key to JSON element (NOTE: private this)
+
+    public:
       Object() = default;
       Object(const Object&) = delete;
-      Object(std::unordered_map<std::string, std::unique_ptr<Game::JSON::Element>>&& map);
       Object(Object&&) = default;
       ~Object() override = default;
 
@@ -88,17 +90,41 @@ namespace Game
       Game::JSON::Object&       object() override;
       const Game::JSON::Object& object() const override;
       
+      void set(const std::string& key, Game::JSON::Object&& object);      // Set value at key to JSON object
+      void set(const std::string& key, Game::JSON::Array&& array);        // Set value at key to JSON array
+      void set(const std::string& key, const Game::JSON::Number& number); // Set value at key to JSON number
+      void set(const std::string& key, double number);                    // Set value at key to number
+      void set(const std::string& key, const Game::JSON::String& string); // Set value at key to JSON string
+      void set(const std::string& key, Game::JSON::String&& string);      // Set value at key to JSON string
+      void set(const std::string& key, const std::string& string);        // Set value at key to string
+      void set(const std::string& key, std::string&& string);             // Set value at key to string
+      void set(const std::string& key, const Game::JSON::Boolean& value); // Set value at key to JSON boolean
+      void set(const std::string& key, bool value);                       // Set value at key to boolean
+      void set(const std::string& key);                                   // Set value at key to JSON null
+
+      Game::JSON::Element&       get(const std::string& key);              // Get JSON element at key
+      const Game::JSON::Element& get(const std::string& key) const;        // Get JSON element at key
+      Game::JSON::Element&       operator[](const std::string& key);       // Get JSON element at key
+      const Game::JSON::Element& operator[](const std::string& key) const; // Get JSON element at key
+
+      void unset(const std::string& key);          // Remove element from JSON object
+      void clear();                                // Reset JSON object
+      bool contains(const std::string& key) const; // Check if key is in JSON object
+
       std::string stringify() const override;
     };
 
     class Array : public Element
     {
     public:
-      std::vector<std::unique_ptr<Game::JSON::Element>> vector; // Array of JSON elements
+      std::vector<std::unique_ptr<Game::JSON::Element>> _vector; // Array of JSON elements (NOTE: private this)
 
+      void push(std::unique_ptr<Game::JSON::Element>&& element);                      // Push back a JSON element
+      void set(std::size_t position, std::unique_ptr<Game::JSON::Element>&& element); // Set a JSON element at position
+
+    public:
       Array() = default;
       Array(const Array&) = delete;
-      Array(std::vector<std::unique_ptr<Game::JSON::Element>>&& vector);
       Array(Array&&) = default;
       ~Array() override = default;
 
@@ -107,9 +133,43 @@ namespace Game
 
       Game::JSON::Type type() const override;
 
-      Game::JSON::Array&        array() override;
-      const Game::JSON::Array&  array() const override;
-      
+      Game::JSON::Array&       array() override;
+      const Game::JSON::Array& array() const override;
+
+      void push(Game::JSON::Object&& object);      // Push back a JSON object
+      void push(Game::JSON::Array&& array);        // Push back a JSON array
+      void push(const Game::JSON::Number& number); // Push back a JSON number
+      void push(double number);                    // Push back a number
+      void push(const Game::JSON::String& string); // Push back a JSON string
+      void push(Game::JSON::String&& string);      // Push back a JSON string
+      void push(const std::string& string);        // Push back a string
+      void push(std::string&& string);             // Push back a string
+      void push(const Game::JSON::Boolean& value); // Push back a JSON boolean
+      void push(bool value);                       // Push back a boolean
+      void push();                                 // Push back a JSON null
+
+      void set(std::size_t position, Game::JSON::Object&& object);      // Set value at position to a JSON object
+      void set(std::size_t position, Game::JSON::Array&& array);        // Set value at position to a JSON array
+      void set(std::size_t position, const Game::JSON::Number& number); // Set value at position to a JSON number
+      void set(std::size_t position, double number);                    // Set value at position to a number
+      void set(std::size_t position, const Game::JSON::String& string); // Set value at position to a JSON string
+      void set(std::size_t position, Game::JSON::String&& string);      // Set value at position to a JSON string
+      void set(std::size_t position, const std::string& string);        // Set value at position to a string
+      void set(std::size_t position, std::string&& string);             // Set value at position to a string
+      void set(std::size_t position, const Game::JSON::Boolean& value); // Set value at position to a JSON boolean
+      void set(std::size_t position, bool value);                       // Set value at position to a boolean
+      void set(std::size_t position);                                   // Set value at position to a JSON null
+
+      Game::JSON::Element&       get(std::size_t position);              // Get JSON element at position
+      const Game::JSON::Element& get(std::size_t position) const;        // Get JSON element at position
+      Game::JSON::Element&       operator[](std::size_t position);       // Get JSON element at position
+      const Game::JSON::Element& operator[](std::size_t position) const; // Get JSON element at position
+
+      void        unset(std::size_t position); // Remove element from JSON array
+      std::size_t size() const;                // Get the size of the JSON array
+      void        resize(std::size_t size);    // Resize the JSON array
+      void        clear();                     // Reset JSON array
+
       std::string stringify() const override;
     };
 
@@ -129,8 +189,8 @@ namespace Game
 
       Game::JSON::Type type() const override;
 
-      Game::JSON::Number&       number() override;
-      const Game::JSON::Number& number() const override;
+      double& number() override;
+      double  number() const override;
       
       std::string stringify() const override;
     };
@@ -152,8 +212,8 @@ namespace Game
 
       Game::JSON::Type type() const override;
 
-      Game::JSON::String&       string() override;
-      const Game::JSON::String& string() const override;
+      std::string&   string() override;
+      const std::string& string() const override;
       
       std::string stringify() const override;
     };
@@ -174,8 +234,8 @@ namespace Game
 
       Game::JSON::Type type() const override;
 
-      Game::JSON::Boolean&        boolean() override;
-      const Game::JSON::Boolean&  boolean() const override;
+      bool& boolean() override;
+      bool  boolean() const override;
       
       std::string stringify() const override;
     };
@@ -203,6 +263,13 @@ namespace Game
     public:
       TypeError(const std::string& message);
       ~TypeError() = default;
+    };
+
+    class BoundError : public std::runtime_error
+    {
+    public:
+      BoundError(const std::string& message);
+      ~BoundError() = default;
     };
 
     class FileError : public std::runtime_error
@@ -240,5 +307,5 @@ namespace Game
 }
 
 // Write JSON to stream
-std::ostream& operator<<(std::ostream& stream, Game::JSON::Element& json);
-std::wostream& operator<<(std::wostream& stream, Game::JSON::Element& json);
+std::ostream& operator<<(std::ostream& stream, const Game::JSON::Element& json);
+std::wostream& operator<<(std::wostream& stream, const Game::JSON::Element& json);

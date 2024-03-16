@@ -3,6 +3,7 @@
 #include "Doom/Scenes/DoomScene.hpp"
 #include "GameBoyColor/SelectionScene.hpp"
 #include "Quiz/QuizScene.hpp"
+#include "RolePlayingGame/GameScene.hpp"
 #include "Scenes/Menu/MainMenuScene.hpp"
 #include "Scenes/Menu/OptionsMenuScene.hpp"
 #include "Scenes/LoadingScene.hpp"
@@ -20,6 +21,8 @@ Game::MainMenuScene::MainMenuScene(Game::SceneMachine& machine) :
   add("DOOM II", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath / "assets" / "levels" / "doom2.wad", DOOM::Enum::Mode::ModeCommercial)));
   add("Game Boy", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectGameBoy, this, std::placeholders::_1)));
   add("Quiz", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectQuiz, this, std::placeholders::_1)));
+  add("RPG Host", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectGameHost, this, std::placeholders::_1)));
+  add("RPG Join", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectGameJoin, this, std::placeholders::_1)));
   add("Options", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectOptions, this, std::placeholders::_1)));
   footer("Exit", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectExit, this, std::placeholders::_1)));
 }
@@ -79,6 +82,33 @@ void  Game::MainMenuScene::selectQuiz(Game::AbstractMenuScene::Item&)
     machine.swap<Game::MessageScene>("Error: failed to load quiz.");
   }
     }).detach();
+}
+
+void  Game::MainMenuScene::selectGameHost(Game::AbstractMenuScene::Item&)
+{
+  Game::SceneMachine& machine = _machine;
+
+  // Push loading screen
+  _machine.push<Game::LoadingScene>();
+
+  // Start a RPG server then a client
+  std::thread([&machine]() {
+    try {
+      auto server = std::make_unique<RPG::GameServer>(Game::Config::ExecutablePath / "assets" / "rpg" / "level_01.json");
+      
+      server->run();
+      machine.push<RPG::GameScene>(std::move(server));
+    }
+    catch (const std::exception& e) {
+      //machine.swap<Game::MessageScene>("Error: failed to start RPG.");
+      machine.swap<Game::MessageScene>(e.what());
+    }
+    }).detach();
+}
+
+void  Game::MainMenuScene::selectGameJoin(Game::AbstractMenuScene::Item&)
+{
+  _machine.push<Game::MessageScene>("Not implemented.");
 }
 
 void  Game::MainMenuScene::selectOptions(Game::AbstractMenuScene::Item&)

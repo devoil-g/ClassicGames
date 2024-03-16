@@ -6,6 +6,8 @@
 #include <SFML/Network/TcpListener.hpp>
 #include <SFML/Network/TcpSocket.hpp>
 
+#include "System/JavaScriptObjectNotation.hpp"
+
 namespace RPG
 {
   class TcpServer
@@ -31,27 +33,27 @@ namespace RPG
     void  loop(); // Server main loop
 
   public:
-    TcpServer(std::uint16_t port = 0, sf::IpAddress address = sf::IpAddress::Any);
+    TcpServer(std::uint16_t port = 0, std::uint32_t address = 0);
     ~TcpServer();
 
     void  run();  // Start the server (non-blocking)
     void  wait(); // Wait for server to stop (blocking)
-    void  stop(); // Stop server (blocking)
+    void  stop(); // Request server stop (non-blocking)
 
     std::uint16_t getPort() const;    // Get local port of TCP listerner
-    sf::IpAddress getAddress() const; // Get local address of TCP listener
+    std::uint32_t getAddress() const; // Get local address of TCP listener
 
   protected:
-    void  send(std::size_t id, sf::Packet& packet); // Send packet to TCP client
-    void  broadcast(sf::Packet& packet);            // Broadcast packet to every TCP client
-    void  kick(std::size_t id);                     // Kick TCP client
+    void  send(std::size_t id, const Game::JSON::Object& json); // Send packet to TCP client
+    void  broadcast(const Game::JSON::Object& json);            // Broadcast packet to every TCP client
+    void  kick(std::size_t id);                                 // Kick TCP client
 
     std::uint16_t getPort(std::size_t id) const;    // Get remote port of TCP client
-    sf::IpAddress getAddress(std::size_t id) const; // Get remote address of TCP client
+    std::uint32_t getAddress(std::size_t id) const; // Get remote address of TCP client
 
-    virtual void  onConnect(std::size_t id) = 0;                      // Called when a new TCP client connect
-    virtual void  onDisconnect(std::size_t id) = 0;                   // Called when a TCP client disconnect
-    virtual void  onReceive(std::size_t id, sf::Packet& packet) = 0;  // Called when a packet is received from TCP client 
-    virtual void  onTick() = 0;                                       // Called once per tick
+    virtual void  onConnect(std::size_t id) = 0;                                  // Called when a new TCP client connect
+    virtual void  onDisconnect(std::size_t id) = 0;                               // Called when a TCP client disconnect
+    virtual void  onReceive(std::size_t id, const Game::JSON::Object& json) = 0;  // Called when a packet is received from TCP client 
+    virtual void  onTick() = 0;                                                   // Called once per tick
   };
 }

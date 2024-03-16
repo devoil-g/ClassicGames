@@ -1,0 +1,495 @@
+{
+  "name": "Demo Scene",
+
+  "color": {
+    "red": 0,
+    "green": 0,
+    "blue": 0,
+    "alpha": 255
+  },
+  "background": {
+    "file": "level_01.png",
+    "left": 0,
+    "top": 0,
+    "width": 256,
+    "height": 288,
+    "offsetX": 0,
+    "offsetY": -106
+  },
+  "foreground": {},
+
+  "cellsX": 14,
+  "cellsY": 13,
+  "cells": [
+    {
+      "selectable": true,
+      "height": -24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": -24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": -24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": -16,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": -8,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+
+    {},
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+
+    {},
+    {},
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+
+    {},
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {},
+    {},
+    {},
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {},
+    {},
+    {},
+    {},
+    {},
+
+    {},
+    {},
+    {},
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {},
+    {},
+    {},
+    {},
+    {},
+
+    {},
+    {},
+    {},
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {},
+    {},
+    {},
+    {},
+
+    {},
+    {},
+    {},
+    {},
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+
+    {},
+    {},
+    {},
+    {},
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 8,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 16,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {},
+    {},
+    {},
+
+    {},
+    {},
+    {},
+    {},
+    {},
+    {
+      "selectable": true,
+      "height": 0,
+      "background": { "file": "debug.png" }
+    },
+    {},
+    {},
+    {},
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {},
+    {},
+
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {},
+    {},
+
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {
+      "selectable": true,
+      "height": 24,
+      "background": { "file": "debug.png" }
+    },
+    {}
+  ]
+}

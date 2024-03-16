@@ -6,7 +6,7 @@
 
 Game::LoadingScene::LoadingScene(Game::SceneMachine& machine) :
   Game::AbstractScene(machine),
-  _text("Loading", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf"), 1),
+  _text("", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf"), 1),
   _elapsed(0.f)
 {
   // Set taskbar status to flickering
@@ -24,10 +24,10 @@ bool  Game::LoadingScene::update(float elapsed)
   // Get elasped time
   _elapsed += elapsed;
 
-  std::string text("Loading");
+  std::string text = ".";
 
   // Generate loading dots
-  for (int n = 0; n < (int)(_elapsed * 2) % 4; n++)
+  for (int n = 0; n < (int)(_elapsed * 2) % 3; n++)
     text += ".";
 
   // Set loading screen text
@@ -44,7 +44,7 @@ void  Game::LoadingScene::draw()
   // Position text into screen space
   _text.setPosition(
     Game::Window::Instance().window().getSize().x * 1 / 16 - _text.getLocalBounds().left,
-    Game::Window::Instance().window().getSize().y * 15 / 16 + _text.getLocalBounds().top - _text.getLocalBounds().height
+    Game::Window::Instance().window().getSize().y * 15 / 16 - _text.getLocalBounds().top - _text.getLocalBounds().height
   );
 
   // Draw loading text to window

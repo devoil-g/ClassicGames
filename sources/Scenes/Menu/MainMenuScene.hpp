@@ -17,6 +17,8 @@ namespace Game
     void  selectDoom(Game::AbstractMenuScene::Item&, const std::filesystem::path& wad, DOOM::Enum::Mode mode);  // Create a new game of DOOM
     void  selectGameBoy(Game::AbstractMenuScene::Item&);                                                        // Create a GameBoy emulator
     void  selectQuiz(Game::AbstractMenuScene::Item&);                                                           // Start a quiz
+    void  selectGameHost(Game::AbstractMenuScene::Item&);                                                       // Start a self-hosted RPG game
+    void  selectGameJoin(Game::AbstractMenuScene::Item&);                                                       // Join a RPG server
     void  selectOptions(Game::AbstractMenuScene::Item&);                                                        // Go to option menu
     void  selectExit(Game::AbstractMenuScene::Item&);                                                           // Exit game
 

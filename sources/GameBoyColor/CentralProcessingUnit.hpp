@@ -95,8 +95,8 @@ namespace GBC
       void  read(std::uint16_t address);                      // Read one byte at given address, available next cycle in data
       void  write(std::uint16_t address, std::uint8_t data);  // Read one byte at given address, available next cycle in data
 
-      void  save(std::ofstream& file) const;
-      void  load(std::ifstream& file);
+      void  save(std::ofstream& file) const;  // Save memory BUS to file
+      void  load(std::ifstream& file);        // Load memory BUS from file
     };
 
     union Parameter

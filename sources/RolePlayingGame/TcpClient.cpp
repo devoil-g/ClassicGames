@@ -1,21 +1,37 @@
+#include <iostream>
 #include <stdexcept>
-
-#include <SFML/Network/SocketSelector.hpp>
 
 #include "RolePlayingGame/TcpClient.hpp"
 
-RPG::TcpClient::TcpClient(sf::IpAddress address, std::uint16_t port) :
+RPG::TcpClient::TcpClient(std::uint16_t port, std::uint32_t address) :
   _socket()
 {
   // Connect TCP socket
-  if (_socket.connect(address, port) != sf::Socket::Status::Done)
+  if (_socket.connect(sf::IpAddress(address), port) != sf::Socket::Status::Done)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  
+  // Never block on a receive
+  _socket.setBlocking(false);
 }
 
-sf::IpAddress RPG::TcpClient::getRemoteAddress() const
+RPG::TcpClient::~TcpClient()
+{
+  // Blocking socket to force packet sending
+  _socket.setBlocking(true);
+
+  // Send pending packets
+  try {
+    send();
+  }
+  catch (const std::exception& e) {
+    std::cerr << "[RPG::TcpClient] Warning, failed to send pending packets (" << e.what() << ")." << std::endl;
+  }
+}
+
+std::uint32_t RPG::TcpClient::getRemoteAddress() const
 {
   // Get remote address
-  return _socket.getRemoteAddress();
+  return _socket.getRemoteAddress().toInteger();
 }
 
 std::uint16_t RPG::TcpClient::getRemotePort() const
@@ -30,44 +46,73 @@ std::uint16_t RPG::TcpClient::getLocalPort() const
   return _socket.getLocalPort();
 }
 
-sf::Packet  RPG::TcpClient::receive()
+Game::JSON::Object  RPG::TcpClient::receive()
 {
-  sf::SocketSelector  selector;
+  Game::JSON::Object  json;
   sf::Packet          packet;
-
-  // Check if there is something to read
-  selector.add(_socket);
-  if (selector.wait(sf::microseconds(1)) == false)
-    return packet;
+  std::string         raw;
 
   // Receive a packet
   sf::Socket::Status  status = _socket.receive(packet);
 
-  // Success
-  if (status == sf::Socket::Status::Done)
-    return packet;
+  // Handle status
+  switch (status) {
+  case sf::Socket::Status::Done:  // Complete packet
+    try {
+      packet >> raw;
+      return Game::JSON::load(raw);
+    }
+    catch (const std::exception&) {
+      return Game::JSON::Object();
+    }
 
-  // Remote disconnected
-  if (status == sf::Socket::Status::Disconnected)
-    ; // TODO: handle disconnect
+  case sf::Socket::Status::NotReady:  // Not complete packet, returned packet is empty
+    return Game::JSON::Object();
 
-  // Critical error
-  throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  case sf::Socket::Status::Partial:       // Not supposed to happen
+  case sf::Socket::Status::Disconnected:  // Server disconnected, should not happen as server is supposed to explicitly close connexion
+  case sf::Socket::Status::Error:         // Unexpected error
+  default:
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  }
 }
 
-void  RPG::TcpClient::send(sf::Packet& packet)
+void  RPG::TcpClient::send(const Game::JSON::Object& json)
 {
-  // Send a packet
-  sf::Socket::Status  status = _socket.send(packet);
+  sf::Packet  packet;
 
-  // Success
-  if (status == sf::Socket::Status::Done)
-    return;
+  // Serialize JSON
+  packet << json.stringify();
 
-  // Remote disconnected
-  if (status == sf::Socket::Status::Disconnected)
-    ; // TODO: handle disconnect
+  // Add packet to pending packets queue
+  _packets.push(std::move(packet));
 
-  // Critical error
-  throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  // Send pending packets
+  send();
+}
+
+void  RPG::TcpClient::send()
+{
+  // Send pending packets
+  while (_packets.empty() == false) {
+    sf::Socket::Status  status = _socket.send(_packets.front());
+
+    switch (status) {
+    case sf::Socket::Status::Done:  // Packet sent, next
+      _packets.pop();
+      continue;
+
+    case sf::Socket::Status::Partial: // Not fully sent, stop
+      break;
+
+    case sf::Socket::Status::Disconnected:  // Server disconnected, empty queue (deconnexion detected on receive only)
+      _packets = {};
+      break;
+
+    case sf::Socket::Status::NotReady:  // Not supposed to happen
+    case sf::Socket::Status::Error:     // Unexpected error
+    default:
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+    }
+  }
 }
