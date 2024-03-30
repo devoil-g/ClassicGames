@@ -127,16 +127,18 @@ SET(GAME_GBC_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/SelectionScene.cpp
 )
 SET(GAME_RPG_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/GameScene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/GameScene.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/GameServer.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/GameServer.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/ClientScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/ClientScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Server.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Server.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/TcpServer.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/TcpServer.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/TcpClient.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/TcpClient.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Camera.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Camera.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Cell.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Cell.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Color.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Color.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Entity.hpp
@@ -145,6 +147,8 @@ SET(GAME_RPG_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Level.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Model.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Model.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Texture.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Texture.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Types.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Types.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/World.hpp

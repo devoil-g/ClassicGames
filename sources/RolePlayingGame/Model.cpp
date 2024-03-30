@@ -3,6 +3,11 @@
 #include "System/Library/TextureLibrary.hpp"
 #include "System/Window.hpp"
 
+const std::string RPG::Model::DefaultAnimation = "idle";
+const std::string RPG::Model::IdleAnimation = RPG::Model::DefaultAnimation;
+const std::string RPG::Model::WalkAnimation = "walk";
+const std::string RPG::Model::RunAnimation = "run";
+
 RPG::Model::Model(const Game::JSON::Object& json) :
   spritesheet(json.contains("spritesheet") ? json.get("spritesheet").string() : ""),
   animations()
@@ -38,6 +43,10 @@ RPG::Model::Animation::Animation(const Game::JSON::Object& json) :
   // Get animation frames from JSON
   for (const auto& frame : json.get("frames").array()._vector)
     frames.emplace_back(frame->object());
+
+  // No frames
+  if (frames.empty() == true)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
 Game::JSON::Object  RPG::Model::Animation::json() const
@@ -58,7 +67,7 @@ const Math::Vector<2, int>          RPG::Model::Animation::Frame::DefaultOffset 
 const bool                          RPG::Model::Animation::Frame::DefaultFlipX = false;
 const bool                          RPG::Model::Animation::Frame::DefaultFlipY = false;
 const RPG::Color                    RPG::Model::Animation::Frame::DefaultColor = RPG::Color::Default;
-const double                        RPG::Model::Animation::Frame::DefaultDuration = 0.0;
+const float                         RPG::Model::Animation::Frame::DefaultDuration = 0.0;
 
 RPG::Model::Animation::Frame::Frame(const Game::JSON::Object& json) :
   origin(json.contains("origin") ? json.get("origin").array() : DefaultOrigin),
@@ -67,7 +76,7 @@ RPG::Model::Animation::Frame::Frame(const Game::JSON::Object& json) :
   flipX(json.contains("flipX") ? json.get("flipX").boolean() : DefaultFlipX),
   flipY(json.contains("flipY") ? json.get("flipY").boolean() : DefaultFlipY),
   color(json.contains("color") ? json.get("color").object() : DefaultColor),
-  duration(json.contains("duration") ? json.get("duration").number() : DefaultDuration)
+  duration(json.contains("duration") ? (float)json.get("duration").number() : DefaultDuration)
 {}
 
 Game::JSON::Object  RPG::Model::Animation::Frame::json() const
@@ -88,22 +97,18 @@ Game::JSON::Object  RPG::Model::Animation::Frame::json() const
   if (color != DefaultColor)
     json.set("color", color.json());
   if (duration != DefaultDuration)
-    json.set("duration", duration);
+    json.set("duration", (double)duration);
 
   return json;
 }
 
-void  RPG::Model::Animation::Frame::draw(const std::string& spritesheet, const RPG::Coordinates& position) const
+void  RPG::Model::Animation::Frame::draw(const RPG::Texture& texture, const Math::Vector<2, float>& position) const
 {
-  // Nothing to draw
-  if (spritesheet.empty() == true)
-    return;
-
   sf::Sprite  sprite;
 
   // Set properties
-  sprite.setPosition((float)position.x(), (float)position.y());
-  sprite.setTexture(Game::TextureLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "rpg" / spritesheet));
+  sprite.setPosition(std::round(position.x()), std::round(position.y()));
+  sprite.setTexture(texture.get());
   sprite.setTextureRect(sf::IntRect(origin.x(), origin.y(), size.x(), size.y()));
   sprite.setScale(flipX == true ? -1.f : +1.f, flipY == true ? -1.f : +1.f);
   sprite.setOrigin((float)offset.x(), (float)offset.y());

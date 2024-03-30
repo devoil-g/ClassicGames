@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "RolePlayingGame/Cell.hpp"
 #include "RolePlayingGame/Color.hpp"
 #include "RolePlayingGame/Entity.hpp"
 #include "RolePlayingGame/Types.hpp"
@@ -13,63 +14,119 @@
 
 namespace RPG
 {
-  class Level
+  class ClientWorld;
+  
+  namespace Level
   {
-  public:
-    class Cell
+    const RPG::Color  DefaultColor = RPG::Color::Default;
+  }
+
+  class ClientLevel
+  {
+  private:
+    class Layer
     {
+    private:
+      class Element
+      {
+      public:
+        std::size_t frame; // Current frame
+        float elapsed;     // Time elapsed on current frame
+        
+        Element();
+        Element(const Element&) = delete;
+        Element(Element&&) = delete;
+        ~Element() = default;
+
+        Element& operator=(const Element&) = delete;
+        Element& operator=(Element&&) = delete;
+
+        void update(const RPG::Model::Animation& animation, float elapsed);
+        void draw(const std::string& spritesheet, const RPG::Model::Animation& animation) const;
+      };
+
     public:
-      static const std::size_t  Width = 14;   // With of a cell in pixel
-      static const std::size_t  Height = 12;  // Height of a cell in pixel
+      std::string model;                                 // Model of layer
+      std::unordered_map<std::string, Element> elements; // Elements used to play each animation of the model
 
-      static const bool DefaultSelectable;
-      static const int  DefaultHeight;
+      Layer() = delete;
+      Layer(const std::string& model);
+      Layer(const Layer&) = delete;
+      Layer(Layer&&) = delete;
+      ~Layer() = default;
 
-      bool                            selectable; // True if cell can be selected (default to false)
-      int                             height;     // Height of the cell (default to 0)
-      std::unordered_set<std::string> tags;       // Tags of the cell
+      Layer& operator=(const Layer&) = delete;
+      Layer& operator=(Layer&&) = delete;
 
-      Cell() = delete;
-      Cell(const Game::JSON::Object& json);
-      Cell(const Cell&) = default;
-      Cell(Cell&&) = default;
-      ~Cell() = default;
-
-      Cell& operator=(const Cell&) = default;
-      Cell& operator=(Cell&&) = default;
-
-      Game::JSON::Object json() const;   // Serialize to JSON
-      RPG::Bounds        bounds() const; // Get cells bounds
+      void update(const RPG::ClientWorld& world, float elapsed);
+      void draw(const RPG::ClientWorld& world) const;
     };
 
-  private:
-    static const Cell InvalidCell; // Empty cell used when adressing invalid coordinates
+    void updateEntity(const RPG::ClientWorld& world, const Game::JSON::Object& json); // Update level entity from JSON
 
   public:
-    static const RPG::Color  DefaultColor;
-    static const std::string DefaultBackground;
-    static const std::string DefaultForeground;
+    std::string name;       // Name of the level
+    RPG::Color  color;      // Background color
+    Layer       background; // Background layer of the level
+    Layer       foreground; // Foreground layer of the level
 
-    std::unordered_map<RPG::Coordinates, Cell> cells;      // Cells of the level
-    std::list<RPG::Entity>                     entities;   // Entities of the level
-    RPG::Color                                 color;      // Background color
-    std::string                                background; // Model name of background, displayed behind everything (every animations displayed at position [0,0])
-    std::string                                foreground; // Model name of foreground, displayed in front of everything (every animations displayed at position [0,0])
+    std::list<RPG::ClientCell>   cells;    // Cells of the level
+    std::list<RPG::ClientEntity> entities; // Entities of the level
 
-    Level();
-    Level(const Game::JSON::Object& json);
-    Level(const Level&) = default;
-    Level(Level&&) = default;
-    ~Level() = default;
+    ClientLevel() = delete;
+    ClientLevel(const RPG::ClientWorld& world, const Game::JSON::Object& json);
+    ClientLevel(const ClientLevel&) = delete;
+    ClientLevel(ClientLevel&&) = delete;
+    ~ClientLevel() = default;
 
-    Level&  operator=(const Level&) = default;
-    Level&  operator=(Level&&) = default;
+    ClientLevel& operator=(const ClientLevel&) = delete;
+    ClientLevel& operator=(ClientLevel&&) = delete;
+
+    RPG::ClientCell&       cell(const RPG::Coordinates& coordinates);
+    RPG::ClientCell&       cell(int x, int y);
+    const RPG::ClientCell& cell(const RPG::Coordinates& coordinates) const;
+    const RPG::ClientCell& cell(int x, int y) const;
+
+    RPG::ClientEntity&       entity(std::size_t id);
+    const RPG::ClientEntity& entity(std::size_t id) const;
+
+    Math::Vector<2, float> computePosition(const RPG::Coordinates& coordinates, const RPG::Position& position = { 0.f, 0.f, 0.f }) const; // Compute world position from coordinates and postion
+
+    void update(const RPG::ClientWorld& world, const Game::JSON::Object& json); // Update level from JSON
+
+    void update(const RPG::ClientWorld& world, float elapsed); // Update level
+    void draw(const RPG::ClientWorld& world) const;            // Draw level
+  };
+  
+  class ServerWorld;
+
+  class ServerLevel
+  {
+  private:
+    static const RPG::ServerCell InvalidCell; // Empty cell used when adressing invalid coordinates
+
+  public:
+    RPG::Color  color;      // Background color
+    std::string background; // Model name of background, displayed behind everything (every animations displayed at position [0,0])
+    std::string foreground; // Model name of foreground, displayed in front of everything (every animations displayed at position [0,0])
+
+    std::unordered_map<RPG::Coordinates, RPG::ServerCell> cells;    // Cells of the level
+    std::list<RPG::ServerEntity>                          entities; // Entities of the level
+
+    ServerLevel() = delete;
+    ServerLevel(const Game::JSON::Object& json);
+    ServerLevel(const ServerLevel&) = delete;
+    ServerLevel(ServerLevel&&) = delete;
+    ~ServerLevel() = default;
+
+    ServerLevel& operator=(const ServerLevel&) = delete;
+    ServerLevel& operator=(ServerLevel&&) = delete;
+
+    RPG::ServerCell&       cell(const RPG::Coordinates& coordinates);
+    RPG::ServerCell&       cell(int x, int y);
+    const RPG::ServerCell& cell(const RPG::Coordinates& coordinates) const;
+    const RPG::ServerCell& cell(int x, int y) const;
 
     Game::JSON::Object json() const; // Serialize to JSON
-
-    Cell& getCell(const RPG::Coordinates& coordinates);
-    Cell& getCell(int x, int y);
-    const Cell& getCell(const RPG::Coordinates& coordinates) const;
-    const Cell& getCell(int x, int y) const;
   };
 }

@@ -10,6 +10,7 @@ RPG::TcpServer::TcpServer(std::uint16_t port, std::uint32_t address) :
   _thread(),
   _listener(),
   _address(address),
+  _tickrate(DefaultTickrate),
   _running(false),
   _clients()
 {
@@ -23,6 +24,18 @@ RPG::TcpServer::~TcpServer()
   // Wait for server to stop
   stop();
   wait();
+}
+
+void  RPG::TcpServer::setTickrate(unsigned int tickrate)
+{
+  // Set tickrate of server
+  _tickrate = tickrate;
+}
+
+unsigned int  RPG::TcpServer::getTickrate() const
+{
+  // Get current tickrate of server
+  return _tickrate;
 }
 
 std::uint16_t RPG::TcpServer::getPort() const
@@ -100,11 +113,14 @@ void  RPG::TcpServer::loop()
   while (_running == true)
   {
     // Handle game tick
-    for (elapsed += clock.restart().asSeconds(); elapsed >= 1.f / RPG::TcpServer::DefaultTickrate; elapsed -= 1.f / RPG::TcpServer::DefaultTickrate)
-      onTick();
+    if (_tickrate != 0)
+      for (elapsed += clock.restart().asSeconds(); elapsed >= 1.f / RPG::TcpServer::DefaultTickrate; elapsed -= 1.f / RPG::TcpServer::DefaultTickrate)
+        onTick();
+    else
+      elapsed = 0.f;
 
     // Monitor sockets before next tick
-    if (selector.wait(sf::seconds((1.f / RPG::TcpServer::DefaultTickrate) - elapsed)) == false)
+    if (selector.wait((_tickrate == 0) ? (sf::Time::Zero) : (sf::seconds((1.f / _tickrate) - elapsed))) == false)
       continue;
 
     // Handle new TCP client

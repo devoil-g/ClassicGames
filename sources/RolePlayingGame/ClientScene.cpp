@@ -1,31 +1,34 @@
-#include <SFML/Graphics.hpp>
+#include <SFML/Network/IpAddress.hpp>
 
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 #include "System/Library/TextureLibrary.hpp"
-#include "RolePlayingGame/GameScene.hpp"
+#include "RolePlayingGame/ClientScene.hpp"
 
-RPG::GameScene::GameScene(Game::SceneMachine& machine, std::unique_ptr<RPG::GameServer>&& server) :
+RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::unique_ptr<RPG::Server>&& server) :
   Game::AbstractScene(machine),
   _server(std::move(server)),
-  _client(_server->getPort(), sf::IpAddress::LocalHost.toInteger()),
-  _camera()
-{
-  _camera.setPositionDrag(0.015625f);
-  _camera.setZoomDrag(0.03125f);
-}
+  _client(server->getPort(), sf::IpAddress::LocalHost.toInteger()),
+  _world()
+{}
 
-RPG::GameScene::GameScene(Game::SceneMachine& machine, std::uint16_t port, std::uint32_t address) :
+RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::uint16_t port, std::uint32_t address) :
   Game::AbstractScene(machine),
   _server(),
   _client(port, address),
-  _camera()
+  _world()
 {}
 
-RPG::GameScene::~GameScene()
-{}
+void  RPG::ClientScene::send(const std::string& type, Game::JSON::Object& json)
+{
+  // Add type field
+  json.set("type", type);
 
-bool  RPG::GameScene::update(float elapsed)
+  // Send packet to server
+  _client.send(json);
+}
+
+bool  RPG::ClientScene::update(float elapsed)
 {
   // Receive available packets
   updatePacketReceive(elapsed);
@@ -42,35 +45,54 @@ bool  RPG::GameScene::update(float elapsed)
   return false;
 }
 
-void  RPG::GameScene::updatePacketReceive(float elapsed)
+void  RPG::ClientScene::updatePacketReceive(float elapsed)
 {
   // Poll pending packets
   while (true)
   {
-    // Extract packet from client
-    auto json = _client.receive();
+    Game::JSON::Object  json;
+
+    try {
+      json = _client.receive();
+    }
+    catch (...) {
+      std::cout << "[RPG::Client] Invalid socket operation (received)." << std::endl;
+      break;
+    }
 
     // No more pending packets
     if (json._map.empty() == true)
       break;
 
-    // TODO: handle packet
-    std::cout << "Client received (tick: " << (std::size_t)json.get("tick").number() << ", type: " << json.get("type").string() << "): " << json << std::endl;
+    // Extract packet from client
+    try {
+      // TODO: remove this
+      std::cout << "Client received (tick: " << (std::size_t)json.get("tick").number() << ", type: " << json.get("type").string() << "): " << json << std::endl;
 
-    if (json.contains("type") == true) {
-      if (json.get("type").string() == "LevelLoad")
-        _level = json;
+      const auto& type = json.get("type").array().get(0).string();
+
+      // Handle request
+      if (type == "load")
+        _world.load(json);
+      else if (type == "update")
+        _world.update(json);
+      else
+        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+    }
+    catch (...) {
+      std::cout << "[RPG::Client] Invalid request from server." << std::endl;
+
     }
   }
 }
 
-void  RPG::GameScene::updatePacketSend(float elapsed)
+void  RPG::ClientScene::updatePacketSend(float elapsed)
 {
   // Send pending packets
   _client.send();
 }
 
-void  RPG::GameScene::updateInputs(float elapsed)
+void  RPG::ClientScene::updateInputs(float elapsed)
 {
   auto& window = Game::Window::Instance();
 
@@ -142,7 +164,7 @@ void  RPG::GameScene::updateInputs(float elapsed)
     _select = { -1, -1 };
 }
 
-void  RPG::GameScene::draw()
+void  RPG::ClientScene::draw()
 {
   // TODO
   drawWorld();
@@ -228,13 +250,4 @@ void  RPG::GameScene::drawWorld()
 
   // Reset window view
   _camera.reset();
-}
-
-void  RPG::GameScene::send(const std::string& type, Game::JSON::Object& json)
-{
-  // Add type field
-  json.map["type"] = std::make_unique<Game::JSON::String>(type);
-
-  // Send packet to server
-  _client.send(json);
 }

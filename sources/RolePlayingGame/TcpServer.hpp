@@ -27,6 +27,7 @@ namespace RPG
     std::thread                     _thread;    // Thread of the server
     sf::TcpListener                 _listener;  // Main TCP socket
     sf::IpAddress                   _address;   // Local address
+    unsigned int                    _tickrate;  // Tick per seconds
     bool                            _running;   // True when server is running
     std::list<TcpServer::TcpClient> _clients;   // Clients of the server
 
@@ -47,6 +48,9 @@ namespace RPG
     void  send(std::size_t id, const Game::JSON::Object& json); // Send packet to TCP client
     void  broadcast(const Game::JSON::Object& json);            // Broadcast packet to every TCP client
     void  kick(std::size_t id);                                 // Kick TCP client
+
+    void          setTickrate(unsigned int tickrate); // Set tickrate of server
+    unsigned int  getTickrate() const;                // Get tickrate of server
 
     std::uint16_t getPort(std::size_t id) const;    // Get remote port of TCP client
     std::uint32_t getAddress(std::size_t id) const; // Get remote address of TCP client

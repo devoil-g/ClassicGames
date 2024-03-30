@@ -15,8 +15,8 @@
 #endif
 
 // TODO: remove this
-#include "RolePlayingGame/GameServer.hpp"
-#include "RolePlayingGame/GameScene.hpp"
+#include "RolePlayingGame/Server.hpp"
+#include "RolePlayingGame/ClientScene.hpp"
 
 namespace Game
 {
@@ -37,9 +37,9 @@ namespace Game
     game.push<Game::SplashScene>();
 
     // TODO: remove this
-    auto server = std::make_unique<RPG::GameServer>(Game::Config::ExecutablePath / "assets" / "rpg" / "level_01.json");
+    auto server = std::make_unique<RPG::Server>(Game::Config::ExecutablePath / "assets" / "rpg" / "level_01.json");
     server->run();
-    game.push<RPG::GameScene>(std::move(server));
+    game.push<RPG::ClientScene>(std::move(server));
 
     // Run the game !
     while (Game::Window::Instance().window().isOpen()) {

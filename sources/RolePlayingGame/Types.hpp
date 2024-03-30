@@ -18,6 +18,10 @@ namespace RPG
     DirectionCount  // Number of directions
   };
 
+  const std::array<std::string, RPG::Direction::DirectionCount> DirectionNames = {
+    "N", "NE", "SE", "S", "SW", "NW"
+  };
+
   using Coordinates = Math::Vector<2, int>;
   using Position = Math::Vector<3, float>;
 

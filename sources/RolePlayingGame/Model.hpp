@@ -7,6 +7,7 @@
 
 #include "Math/Vector.hpp"
 #include "RolePlayingGame/Color.hpp"
+#include "RolePlayingGame/Texture.hpp"
 #include "RolePlayingGame/Types.hpp"
 #include "System/JavaScriptObjectNotation.hpp"
 
@@ -27,14 +28,14 @@ namespace RPG
         static const bool                          DefaultFlipX;
         static const bool                          DefaultFlipY;
         static const RPG::Color                    DefaultColor;
-        static const double                        DefaultDuration;
+        static const float                         DefaultDuration;
 
         Math::Vector<2, unsigned int> origin;       // Origin of texture rectangle
         Math::Vector<2, unsigned int> size;         // Size of texture rectangle (full texture if 0,0)
         Math::Vector<2, int>          offset;       // Offset of the sprite from drawing position
         bool                          flipX, flipY; // Texture horizontal and vertical flip
         RPG::Color                    color;        // Sprite color
-        double                        duration;     // Duration of the frame in seconds (0 for infinite, default to 0)
+        float                         duration;     // Duration of the frame in seconds (0 for infinite, default to 0)
 
         Frame() = delete;
         Frame(const Game::JSON::Object& json);
@@ -45,9 +46,9 @@ namespace RPG
         Frame& operator=(const Frame&) = default;
         Frame& operator=(Frame&&) = default;
 
-        Game::JSON::Object json() const;                                                                 // Serialize to JSON
-        void               draw(const std::string& spritesheet, const RPG::Coordinates& position) const; // Draw frame at position
-        RPG::Bounds        bounds() const;                                                               // Get bounds of frame
+        Game::JSON::Object json() const;                                                                    // Serialize to JSON
+        void               draw(const RPG::Texture& texture, const Math::Vector<2, float>& position) const; // Draw frame at position
+        RPG::Bounds        bounds() const;                                                                  // Get bounds of frame
       };
 
       std::vector<Frame> frames; // Frames of the animation
@@ -64,6 +65,11 @@ namespace RPG
       Game::JSON::Object json() const; // Serialize to JSON
     };
 
+    static const std::string DefaultAnimation;
+    static const std::string IdleAnimation;
+    static const std::string WalkAnimation;
+    static const std::string RunAnimation;
+
     std::string                                spritesheet; // Path to spritesheet used for animation
     std::unordered_map<std::string, Animation> animations;  // Animations of the entity, by name
 
@@ -75,6 +81,9 @@ namespace RPG
 
     Model& operator=(const Model&) = default;
     Model& operator=(Model&&) = default;
+
+    RPG::Model::Animation&       animation(const std::string& name);
+    const RPG::Model::Animation& animation(const std::string& name) const;
 
     Game::JSON::Object json() const; // Serialize to JSON
   };

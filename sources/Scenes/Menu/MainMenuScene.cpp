@@ -3,7 +3,8 @@
 #include "Doom/Scenes/DoomScene.hpp"
 #include "GameBoyColor/SelectionScene.hpp"
 #include "Quiz/QuizScene.hpp"
-#include "RolePlayingGame/GameScene.hpp"
+#include "RolePlayingGame/ClientScene.hpp"
+#include "RolePlayingGame/Server.hpp"
 #include "Scenes/Menu/MainMenuScene.hpp"
 #include "Scenes/Menu/OptionsMenuScene.hpp"
 #include "Scenes/LoadingScene.hpp"
@@ -94,10 +95,10 @@ void  Game::MainMenuScene::selectGameHost(Game::AbstractMenuScene::Item&)
   // Start a RPG server then a client
   std::thread([&machine]() {
     try {
-      auto server = std::make_unique<RPG::GameServer>(Game::Config::ExecutablePath / "assets" / "rpg" / "level_01.json");
+      auto server = std::make_unique<RPG::Server>(Game::Config::ExecutablePath / "assets" / "rpg" / "level_01.json");
       
       server->run();
-      machine.push<RPG::GameScene>(std::move(server));
+      machine.push<RPG::ClientScene>(std::move(server));
     }
     catch (const std::exception& e) {
       //machine.swap<Game::MessageScene>("Error: failed to start RPG.");

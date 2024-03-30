@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SFML/Graphics/View.hpp>
+
 #include "Math/Vector.hpp"
 
 namespace RPG
@@ -10,13 +12,13 @@ namespace RPG
     static const unsigned int ScreenWidth = 128;  // World X resolution at zoom level 1.0
     static const unsigned int ScreenHeight = 72; // World Y resolution at zoom level 1.0
 
-    Math::Vector<2> _targetPosition;    // Target camera position
-    Math::Vector<2> _currentPosition;   // Current camera position
-    float           _dragPosition;      // Move drag factor, used for smooth movement (time to move half the way)
+    Math::Vector<2> _targetPosition;  // Target camera position
+    Math::Vector<2> _currentPosition; // Current camera position
+    float           _dragPosition;    // Move drag factor, used for smooth movement (time to move half the way)
 
-    float _targetZoom;    // Target camera zoom
-    float _currentZoom;   // Current camera zoom
-    float _dragZoom;      // Zoom drag factor, used for smooth zoom
+    float _targetZoom;  // Target camera zoom
+    float _currentZoom; // Current camera zoom
+    float _dragZoom;    // Zoom drag factor, used for smooth zoom
 
   public:
     Camera();
@@ -32,7 +34,7 @@ namespace RPG
     
     void  setPosition(const Math::Vector<2>& position);       // Set current and target camera center
     void  setPositionTarget(const Math::Vector<2>& position); // Set target camera center
-    void  setPositionDrag(float drag);                      // Set move drag factor
+    void  setPositionDrag(float drag);                        // Set move drag factor
 
     Math::Vector<2> getPosition() const;        // Get current position of the center of the screen
     Math::Vector<2> getPositionTarget() const;  // Get target position of the center of the screen
