@@ -42,15 +42,13 @@ void  QUIZ::BlindtestQuizScene::usage() const
     << "Commands:" << std::endl
     << "  [P]lay/pause: pause/resume music" << std::endl
     << "  [R]eset:      replay music from the begining" << std::endl
-    << "  Arrow[L-R]:   change cooldown" << std::endl
-    << "  Arrow[U-D]:   change volume" << std::endl
+    << "  Arrow[L/R]:   change cooldown" << std::endl
+    << "  Arrow[U/D]:   change volume" << std::endl
     << "  [S]cores:     toggle score display" << std::endl
     << "  [C]orrect:    correct answer, give points, display answer" << std::endl
     << "  [W]rong:      wrong answer, return to game" << std::endl
-    << "  [A]nswer:     display answer, no winner" << std::endl;
-  if (_quiz.blindtests.empty() == false)
-    std::cout << "  [N]ext:       next blindtest (" << _quiz.blindtests.size() << " remaining)" << std::endl;
-  std::cout
+    << "  [A]nswer:     display answer, no winner" << std::endl
+    << "  [N]ext:       next/skip blindtest (" << _quiz.blindtests.size() << " remaining)" << std::endl
     << "  [E]nd:        end blindtest" << std::endl
     << std::endl
     << "Answer: " << _blindtest.answer << std::endl
@@ -90,6 +88,11 @@ void  QUIZ::BlindtestQuizScene::next()
   _play.setSmooth(true);
   _pause.setSmooth(true);
 
+  // Generate mipmaps
+  _cover.generateMipmap();
+  _play.generateMipmap();
+  _pause.generateMipmap();
+
   // Reset status
   _state = State::StatePlaying;
   _buzz = -1;
@@ -107,12 +110,6 @@ bool  QUIZ::BlindtestQuizScene::update(float elapsed)
     return false;
   }
 
-  // Next blindtest
-  if (_quiz.blindtests.empty() == false && Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::N) == true) {
-    next();
-    return false;
-  }
-  
   // Toggle score display
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::S) == true)
     _display = !_display;
@@ -176,7 +173,6 @@ void  QUIZ::BlindtestQuizScene::updatePlaying(float elapsed)
   // Reset music
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true) {
     _music.setPlayingOffset(sf::Time::Zero);
-    _music.play();
   }
 
   // Change scores
@@ -202,6 +198,12 @@ void  QUIZ::BlindtestQuizScene::updatePlaying(float elapsed)
     ref.sound.play();
 
     _state = StateAnswer;
+  }
+  
+  // Skip to next blindtest, restore question
+  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::N) == true) {
+    _quiz.blindtests.emplace_back(_blindtest);
+    next();
   }
 
   // Check player buzzer
@@ -290,7 +292,11 @@ void  QUIZ::BlindtestQuizScene::updateAnswer(float elapsed)
   // Reset music
   else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true) {
     _music.setPlayingOffset(sf::Time::Zero);
-    _music.play();
+  }
+
+  // Skip to next blindtest, restore question
+  else if (_quiz.blindtests.empty() == false && Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::N) == true) {
+    next();
   }
 }
 

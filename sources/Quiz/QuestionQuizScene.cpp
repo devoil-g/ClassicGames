@@ -14,6 +14,8 @@ QUIZ::QuestionQuizScene::QuestionQuizScene(Game::SceneMachine& machine, QUIZ::Qu
   Game::AbstractScene(machine),
   _quiz(quiz),
   _display(true),
+  _score(1),
+  _current(1),
   _buzz(-1),
   _cooldowns(_quiz.players.size(), 0.f),
   _cooldown(10.f)
@@ -35,9 +37,10 @@ void  QUIZ::QuestionQuizScene::usage() const
     << "  [W]rong:      wrong answer, release buzzers" << std::endl
     << "  [C]orrect:    correct answer, reset for new question" << std::endl
     << "  [N]ext:       no answers, skip to next question" << std::endl
-    << "  Page[+/-]:    set cooldown timer" << std::endl
-    << "  Left click:   increase score" << std::endl
-    << "  Right click:  decrease score" << std::endl
+    << "  Arrow[L/R]:   set cooldown" << std::endl
+    << "  Arrow[U/D]:   change question score" << std::endl
+    << "  Left click:   increase player score" << std::endl
+    << "  Right click:  decrease player score" << std::endl
     << "  [E]nd:        return to main menu" << std::endl
     << std::endl;
 }
@@ -65,6 +68,10 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
       cooldown = std::max(cooldown, 0.6f);
     _cooldowns.at(_buzz) = _cooldown + 0.6f;
     _buzz = -1;
+
+    // Decrease question score
+    _current = std::max(1, _current - 1);
+    std::cout << "\rQuestion score decreased to " << _current << " points.        " << std::flush;
   }
 
   // Correct answer
@@ -82,6 +89,9 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
     std::fill(_cooldowns.begin(), _cooldowns.end(), 0.6f);
     _cooldowns.at(_buzz) = 0.f;
     _buzz = -1;
+
+    // Reset question score
+    _current = _score;
   }
 
   // Skip to next question
@@ -95,18 +105,35 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
     // Reset players cooldown
     _buzz = -1;
     std::fill(_cooldowns.begin(), _cooldowns.end(), 1.2f);
+
+    // Reset question score
+    _current = _score;
+
+    std::cout << "\rNew question for " << _current << " points.        " << std::flush;
   }
 
   // Increase cooldown
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::PageUp) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Right) == true) {
     _cooldown = std::max(0.f, _cooldown + 0.25f * (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::LShift) == true ? 10.f : 1.f));
     std::cout << "\rCooldown set to " << _cooldown << " seconds.        " << std::flush;
   }
 
   // Decrease cooldown
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::PageDown) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Left) == true) {
     _cooldown = std::max(0.f, _cooldown - 0.25f * (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::LShift) == true ? 10.f : 1.f));
     std::cout << "\rCooldown set to " << _cooldown << " seconds.        " << std::flush;
+  }
+
+  // Increase question score
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Up) == true) {
+    _score = std::max(1, _score + 1);
+    std::cout << "\rQuestion score set to " << _score << " points.        " << std::flush;
+  }
+
+  // Decrease question score
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Down) == true) {
+    _score = std::max(1, _score - 1);
+    std::cout << "\rQuestion score set to " << _score << " points.        " << std::flush;
   }
 
   // Return to main menu
@@ -146,6 +173,8 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
 
         // Set buzz index
         _buzz = index;
+
+        std::cout << "\rPlayer #" << _buzz << " buzzed for " << _current << " points!            " << std::flush;
 
         break;
       }
