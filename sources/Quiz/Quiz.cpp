@@ -1,5 +1,8 @@
 #include <filesystem>
 #include <iostream>
+#include <random>
+#include <chrono>     
+#include <algorithm>
 
 #include <SFML/Audio.hpp>
 
@@ -25,6 +28,9 @@ QUIZ::Quiz::Quiz() :
     // Verbose
     std::cout << "Avatar '" << entry.path().stem().string() << "' loaded." << std::endl;
   }
+
+  // Shuffle avatars
+  std::shuffle(avatars.begin(), avatars.end(), std::default_random_engine((unsigned int)std::chrono::system_clock::now().time_since_epoch().count()));
 
   // Smooth avatar
   for (auto& avatar : avatars) {
@@ -75,6 +81,9 @@ QUIZ::Quiz::Quiz() :
     // Verbose
     std::cout << "Blindtest '" << music_path.stem().string() << "' loaded." << std::endl;
   }
+
+  // Shuffle blindtest
+  std::shuffle(blindtests.begin(), blindtests.end(), std::default_random_engine((unsigned int)std::chrono::system_clock::now().time_since_epoch().count()));
 
   std::cout << std::endl
     << "Quiz loaded:" << std::endl

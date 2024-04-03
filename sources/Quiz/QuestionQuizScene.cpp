@@ -14,8 +14,8 @@ QUIZ::QuestionQuizScene::QuestionQuizScene(Game::SceneMachine& machine, QUIZ::Qu
   Game::AbstractScene(machine),
   _quiz(quiz),
   _display(true),
-  _score(1),
-  _current(1),
+  _score(_quiz.players.size()),
+  _current(_quiz.players.size()),
   _buzz(-1),
   _cooldowns(_quiz.players.size(), 0.f),
   _cooldown(10.f)
@@ -70,7 +70,7 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
     _buzz = -1;
 
     // Decrease question score
-    _current = std::max(1, _current - 1);
+    _current = std::max(0, _current - 1);
     std::cout << "\rQuestion score decreased to " << _current << " points.        " << std::flush;
   }
 
@@ -83,7 +83,9 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
     ref.sound.play();
 
     // Increment score
-    _quiz.players.at(_buzz).score += 1;
+    _quiz.players.at(_buzz).score += _current;
+
+    std::cout << "\rPlayer #" << _buzz << " won " << _current << " points!            " << std::flush;
 
     // Reset players cooldown
     std::fill(_cooldowns.begin(), _cooldowns.end(), 0.6f);
@@ -126,13 +128,15 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
 
   // Increase question score
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Up) == true) {
-    _score = std::max(1, _score + 1);
+    _score = std::max(0, _score + 1);
+    _current = _score;
     std::cout << "\rQuestion score set to " << _score << " points.        " << std::flush;
   }
 
   // Decrease question score
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Down) == true) {
-    _score = std::max(1, _score - 1);
+    _score = std::max(0, _score - 1);
+    _current = _score;
     std::cout << "\rQuestion score set to " << _score << " points.        " << std::flush;
   }
 
@@ -143,12 +147,12 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
   }
 
   // Change scores
-  if (_display == true && (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Left) == true || Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Right) == true)) {
+  if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Left) == true || Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Right) == true) {
     for (auto player_index = 0; player_index < _quiz.players.size(); player_index++) {
       auto& player = _quiz.players.at(player_index);
       if (player.sprite.getGlobalBounds().contains((float)Game::Window::Instance().mouse().position().x, (float)Game::Window::Instance().mouse().position().y) == true) {
-        auto old = player.score;
-        player.score = player.score
+        if (_display == true)
+          player.score = player.score
           + (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Left) == true ? +1 : 0)
           + (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Right) == true ? -1 : 0);
         std::cout << "\rScore of player #" << (player_index + 1) << ": " << player.score << ".        " << std::flush;

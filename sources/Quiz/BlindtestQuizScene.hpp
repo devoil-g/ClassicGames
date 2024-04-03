@@ -23,7 +23,8 @@ namespace QUIZ
 
     QUIZ::Quiz& _quiz;    // Quiz instance
 
-    QUIZ::Quiz::Blindtest _blindtest; // Question to be played
+    std::vector<QUIZ::Quiz::Blindtest>::iterator _blindtest; // Question to be played
+
     sf::Music             _music;     // Music to be played
     sf::Texture           _cover;     // Cover texture
     sf::Texture           _play;      // Play texture
@@ -36,8 +37,9 @@ namespace QUIZ
     std::vector<float>  _cooldowns; // Player cooldown before answer
     float               _cooldown;  // Cooldown given to players
 
-    void  usage() const;
+    void  start();
     void  next();
+    void  previous();
 
     void  updatePlaying(float elapsed);
     void  updatePending(float elapsed);

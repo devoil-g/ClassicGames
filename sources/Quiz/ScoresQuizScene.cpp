@@ -43,7 +43,7 @@ bool  QUIZ::ScoresQuizScene::update(float elapsed)
       << "  [Q]uestion:   free questions system" << std::endl;
     if (_quiz.blindtests.empty() == false)
       std::cout
-      << "  [B]lintest:   play blindtest (" << _quiz.blindtests.size() << " remaining)" << std::endl;
+      << "  [B]lintest:   play blindtest (" << std::count_if(_quiz.blindtests.begin(), _quiz.blindtests.end(), [](const auto& entry) { return entry.done == false; }) << " remaining)" << std::endl;
   }
 
   // Controller selection
@@ -53,7 +53,7 @@ bool  QUIZ::ScoresQuizScene::update(float elapsed)
     return false;
   }
 
-  // Free questionq
+  // Free question
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Q) == true) {
     _machine.push<QUIZ::QuestionQuizScene>(_quiz);
     _music.stop();
