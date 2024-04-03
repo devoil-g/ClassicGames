@@ -14,10 +14,6 @@
 # include <X11/Xlib.h>
 #endif
 
-// TODO: remove this
-#include "RolePlayingGame/Server.hpp"
-#include "RolePlayingGame/ClientScene.hpp"
-
 namespace Game
 {
   void  initialize(int argc, char ** argv)
@@ -35,11 +31,6 @@ namespace Game
 
     // Push initial state
     game.push<Game::SplashScene>();
-
-    // TODO: remove this
-    auto server = std::make_unique<RPG::Server>(Game::Config::ExecutablePath / "assets" / "rpg" / "level_01.json");
-    server->run();
-    game.push<RPG::ClientScene>(std::move(server));
 
     // Run the game !
     while (Game::Window::Instance().window().isOpen()) {

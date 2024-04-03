@@ -165,10 +165,8 @@ void  QUIZ::ControllerQuizScene::updateAvatar()
 void  QUIZ::ControllerQuizScene::updateHost()
 {
   // Restart timer
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true)
     _music.setPlayingOffset(sf::seconds(TimerStart));
-    //_music.play();
-  }
 
   // Skip music to end
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::S) == true)

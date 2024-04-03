@@ -19,10 +19,17 @@ QUIZ::Quiz::Quiz() :
     if (texture.loadFromFile(entry.path().string()) == false)
       continue;
 
-    texture.setSmooth(true);
-
     // Add avatar to collection
     avatars.push_back(texture);
+
+    // Verbose
+    std::cout << "Avatar '" << entry.path().stem().string() << "' loaded." << std::endl;
+  }
+
+  // Smooth avatar
+  for (auto& avatar : avatars) {
+    avatar.setSmooth(true);
+    avatar.generateMipmap();
   }
 
   // Load blindtests from directory
@@ -64,6 +71,9 @@ QUIZ::Quiz::Quiz() :
       .answer = music_path.stem().string(),
       .done = false
       });
+
+    // Verbose
+    std::cout << "Blindtest '" << music_path.stem().string() << "' loaded." << std::endl;
   }
 
   std::cout << std::endl

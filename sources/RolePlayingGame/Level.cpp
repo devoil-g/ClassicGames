@@ -276,7 +276,8 @@ void  RPG::ClientLevel::Layer::Element::draw(const std::string& spritesheet, con
 
 const RPG::ServerCell RPG::ServerLevel::InvalidCell = Game::JSON::Object();
 
-RPG::ServerLevel::ServerLevel(const Game::JSON::Object& json) :
+RPG::ServerLevel::ServerLevel(const RPG::ServerWorld& world, const Game::JSON::Object& json) :
+  name(json.get("level").string()),
   color(json.contains("color") ? json.get("color").object() : RPG::Level::DefaultColor),
   background(json.contains("background") ? json.get("background").string() : ""),
   foreground(json.contains("foreground") ? json.get("foreground").string() : ""),
@@ -289,7 +290,7 @@ RPG::ServerLevel::ServerLevel(const Game::JSON::Object& json) :
 
   // Get each entities
   for (const auto& element : json.get("entities").array()._vector)
-    entities.emplace_back(element->object());
+    entities.emplace_back(world, *this, element->object());
 }
 
 RPG::ServerCell& RPG::ServerLevel::cell(const RPG::Coordinates& coordinates)
@@ -331,6 +332,7 @@ Game::JSON::Object  RPG::ServerLevel::json() const
   Game::JSON::Object  json;
 
   // Serialize to JSON
+  json.set("name", name);
   if (color != RPG::Level::DefaultColor)
     json.set("color", color.json());
   if (background.empty() == false)

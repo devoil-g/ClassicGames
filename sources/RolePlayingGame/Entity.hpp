@@ -130,7 +130,7 @@ namespace RPG
 
   public:
     ServerEntity() = delete;
-    ServerEntity(const Game::JSON::Object& json);
+    ServerEntity(const RPG::ServerWorld& world, const RPG::ServerLevel& level, const Game::JSON::Object& json);
     ServerEntity(const ServerEntity&) = delete;
     ServerEntity(ServerEntity&&) = delete;
     ~ServerEntity() = default;

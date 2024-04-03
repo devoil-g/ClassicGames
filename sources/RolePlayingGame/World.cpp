@@ -71,7 +71,9 @@ void  RPG::ClientWorld::load(const Game::JSON::Object& json)
 
   // Load levels
   for (const auto& element : json.get("levels").array()._vector)
-    levels.emplace(element->object().get("name").string(), *this, element->object());
+    levels.emplace(std::piecewise_construct,
+      std::forward_as_tuple(element->object().get("name").string()),
+      std::forward_as_tuple(*this, element->object()));
 }
 
 void  RPG::ClientWorld::update(const Game::JSON::Object& json)
@@ -109,17 +111,52 @@ void  RPG::ClientWorld::draw()
   camera.reset();
 }
 
+RPG::ServerWorld::ServerWorld(const Game::JSON::Object& json) :
+  levels(),
+  models()
+{
+  // Load models
+  for (const auto& element : json.get("models").array()._vector)
+    models.emplace(element->object().get("name").string(), element->object());
+
+  // Load levels
+  for (const auto& element : json.get("levels").array()._vector)
+    levels.emplace(std::piecewise_construct,
+      std::forward_as_tuple(element->object().get("name").string()),
+      std::forward_as_tuple(*this, element->object()));
+}
+
+void  RPG::ServerWorld::connect(RPG::Server& server, std::size_t id)
+{
+  // TODO
+}
+
+void  RPG::ServerWorld::disconnect(RPG::Server& server, std::size_t id)
+{
+  // TODO
+}
+
+void  RPG::ServerWorld::receive(RPG::Server& server, std::size_t id, const Game::JSON::Object& json)
+{
+  // TODO
+}
+
+void  RPG::ServerWorld::update(RPG::Server& server, float elapsed)
+{
+  // TODO
+}
+
 Game::JSON::Object  RPG::ServerWorld::json() const
 {
   Game::JSON::Object  json;
 
   // Serialize models
   json.set("models", Game::JSON::Array());
-  for (const auto& model : models) {
-    auto object = model.second.json();
+  for (const auto& [name, model] : models) {
+    auto object = model.json();
 
     // Add name to model
-    object.set("name", model.first);
+    object.set("name", name);
 
     // Add model to JSON
     json.get("models").array().push(std::move(object));
@@ -127,11 +164,12 @@ Game::JSON::Object  RPG::ServerWorld::json() const
 
   // Serialize models
   json.set("levels", Game::JSON::Array());
-  for (const auto& level : levels) {
-    auto object = level.second.json();
+  for (const auto& [name, level] : levels) {
+    auto object = level.json();
 
-    // Add name to model
-    object.set("name", level.first);
+    // Check level name
+    if (object.get("name").string() != name)
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
     // Add model to JSON
     json.get("levels").array().push(std::move(object));

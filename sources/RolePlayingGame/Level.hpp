@@ -106,6 +106,7 @@ namespace RPG
     static const RPG::ServerCell InvalidCell; // Empty cell used when adressing invalid coordinates
 
   public:
+    std::string name;       // Name of the level
     RPG::Color  color;      // Background color
     std::string background; // Model name of background, displayed behind everything (every animations displayed at position [0,0])
     std::string foreground; // Model name of foreground, displayed in front of everything (every animations displayed at position [0,0])
@@ -114,7 +115,7 @@ namespace RPG
     std::list<RPG::ServerEntity>                          entities; // Entities of the level
 
     ServerLevel() = delete;
-    ServerLevel(const Game::JSON::Object& json);
+    ServerLevel(const RPG::ServerWorld& world, const Game::JSON::Object& json);
     ServerLevel(const ServerLevel&) = delete;
     ServerLevel(ServerLevel&&) = delete;
     ~ServerLevel() = default;

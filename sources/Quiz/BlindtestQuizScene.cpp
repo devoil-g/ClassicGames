@@ -114,6 +114,14 @@ bool  QUIZ::BlindtestQuizScene::update(float elapsed)
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::S) == true)
     _display = !_display;
 
+  // Play forward
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::PageUp) == true)
+    _music.setPlayingOffset(_music.getPlayingOffset() + sf::seconds(3.f));
+
+  // Play forward
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::PageDown) == true)
+    _music.setPlayingOffset(_music.getPlayingOffset() - sf::seconds(3.f));
+
   // Increase cooldown
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Right) == true) {
     _cooldown = std::max(0.f, _cooldown + 0.25f * (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::LShift) == true ? 10.f : 1.f));
@@ -399,6 +407,22 @@ void  QUIZ::BlindtestQuizScene::drawAnswer()
 {
   // Draw cover
   drawTexture(_cover, 0.9f);
+
+  // Display avatar of winning player
+  if (_buzz != -1) {
+    auto  screen = Game::Window::Instance().window().getSize();
+    auto& player = _quiz.players[_buzz];
+    sf::Sprite& sprite = player.sprite;
+
+    auto size = std::min(screen.x / 8.f, screen.y / 8.f);
+    auto scale = size / std::max(sprite.getTextureRect().width, sprite.getTextureRect().height);
+
+    sprite.setPosition(size / 4.f, size / 4.f);
+    sprite.setScale(scale, scale);
+    sprite.setOrigin(0.f, 0.f);
+
+    Game::Window::Instance().window().draw(sprite);
+  }
 }
 
 void  QUIZ::BlindtestQuizScene::drawTimer()

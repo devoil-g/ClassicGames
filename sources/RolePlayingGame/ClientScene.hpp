@@ -18,11 +18,7 @@ namespace RPG
     
     void  updatePacketReceive(float elapsed); // Read available packets
     void  updatePacketSend(float elapsed);    // Send pending packets
-
-    void  updateInputs(float elapsed);  // Handle cursor events
-
-
-    void  drawWorld();  // Draw world
+    void  updateInputs(float elapsed);        // Handle cursor events
 
   public:
     ClientScene(Game::SceneMachine& machine, std::unique_ptr<RPG::Server>&& server);

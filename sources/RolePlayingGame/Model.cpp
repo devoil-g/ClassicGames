@@ -17,6 +17,18 @@ RPG::Model::Model(const Game::JSON::Object& json) :
     animations.emplace(animation->object().get("name").string(), std::move(animation->object()));
 }
 
+RPG::Model::Animation& RPG::Model::animation(const std::string& name)
+{
+  // Get animation
+  return animations.at(name);
+}
+
+const RPG::Model::Animation&  RPG::Model::animation(const std::string& name) const
+{
+  // Get animation
+  return animations.at(name);
+}
+
 Game::JSON::Object  RPG::Model::json() const
 {
   Game::JSON::Object  json;

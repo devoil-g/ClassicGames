@@ -302,7 +302,7 @@ std::uint64_t RPG::ServerEntity::generateId()
   return ++_maxId;
 }
 
-RPG::ServerEntity::ServerEntity(const Game::JSON::Object& json) :
+RPG::ServerEntity::ServerEntity(const RPG::ServerWorld& world, const RPG::ServerLevel& level, const Game::JSON::Object& json) :
   id(json.contains("id") ? (std::uint64_t)json.get("id").number() : generateId()),
   coordinates(json.get("coordinates").array()),
   position(json.contains("position") ? json.get("position").array() : RPG::Entity::DefaultPosition),
