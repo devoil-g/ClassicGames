@@ -22,12 +22,12 @@ namespace QUIZ
       ButtonBlue
     };
 
-    std::vector<sf::Texture>  avatars;
+    std::vector<std::vector<sf::Texture>>  avatars; // Avatars/costumes
 
     struct Player
     {
       unsigned int  joystick, button; // Controller ID and buttons offset
-      unsigned int  avatar;           // Avatar index
+      unsigned int  avatar, costume;  // Avatar and costume index
       int           score;            // Score of the player
       sf::Sprite    sprite;           // Sprite of the player's avatar
     };

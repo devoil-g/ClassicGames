@@ -1,3 +1,4 @@
+#include <array>
 #include <filesystem>
 #include <iostream>
 #include <random>
@@ -14,28 +15,68 @@ QUIZ::Quiz::Quiz() :
   avatars(),
   players()
 {
-  // Load avatars from directory
-  for (const auto& entry : std::filesystem::directory_iterator(Game::Config::ExecutablePath / "assets" / "quiz" / "avatars")) {
-    sf::Texture texture;
+  const std::array<std::string, 9> textureExtensions = { "jpg", "png", "bmp", "tga", "jpeg", "gif", "psd", "hdr", "pic" };
+  const std::array<std::string, 3> musicExtensions = { "ogg", "wav", "flac" };
 
-    // Load texture
-    if (texture.loadFromFile(entry.path().string()) == false)
+  // Load avatars from directory
+  for (const auto& avatar : std::filesystem::directory_iterator(Game::Config::ExecutablePath / "assets" / "quiz" / "avatars")) {
+    std::vector<sf::Texture>  costumes;
+
+    // Costume directory
+    if (avatar.is_directory() == true) {
+      for (const auto& costume : std::filesystem::directory_iterator(avatar))
+      {
+        // Unsupported extension
+        if (costume.path().has_extension() == false ||
+          std::find(textureExtensions.begin(), textureExtensions.end(), costume.path().extension().string().substr(1)) == textureExtensions.end())
+          continue;
+
+        sf::Texture texture;
+
+        // Load texture
+        if (texture.loadFromFile(costume.path().string()) == false)
+          continue;
+
+        // Add avatar to collection
+        costumes.push_back(texture);
+      }
+    }
+
+    // Single avatar
+    else
+    {
+      // Unsupported extension
+      if (avatar.path().has_extension() == false ||
+        std::find(textureExtensions.begin(), textureExtensions.end(), avatar.path().extension().string().substr(1)) == textureExtensions.end())
+        continue;
+
+      sf::Texture texture;
+
+      // Load texture
+      if (texture.loadFromFile(avatar.path().string()) == false)
+        continue;
+
+      // Add avatar to collection
+      costumes.push_back(texture);
+    }
+    
+    // No costume to load
+    if (costumes.empty() == true)
       continue;
 
-    // Add avatar to collection
-    avatars.push_back(texture);
+    // Add costumes to avatars
+    avatars.push_back(std::move(costumes));
 
     // Verbose
-    std::cout << "Avatar '" << entry.path().stem().string() << "' loaded." << std::endl;
+    std::cout << "Avatar '" << avatar.path().stem().string() << "' loaded." << std::endl;
   }
-
-  // Shuffle avatars
-  std::shuffle(avatars.begin(), avatars.end(), std::default_random_engine((unsigned int)std::chrono::system_clock::now().time_since_epoch().count()));
 
   // Smooth avatar
   for (auto& avatar : avatars) {
-    avatar.setSmooth(true);
-    avatar.generateMipmap();
+    for (auto& costume : avatar) {
+      costume.setSmooth(true);
+      costume.generateMipmap();
+    }
   }
 
   // Load blindtests from directory
@@ -45,12 +86,13 @@ QUIZ::Quiz::Quiz() :
     auto cover_path = Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "default.png";
 
     // Try to load file as a music
-    if ((music_path.extension() != ".ogg" && music_path.extension() != ".wav" && music_path.extension() != ".flac") ||
+    if (music_path.has_extension() == false ||
+      std::find(musicExtensions.begin(), musicExtensions.end(), music_path.extension().string().substr(1)) == musicExtensions.end() ||
       music.openFromFile(music_path.string()) == false)
       continue;
 
     // Find image with same name in the directory
-    for (const auto& ext : { "jpg", "png", "bmp", "tga", "jpeg", "gif", "psd", "hdr", "pic" }) {
+    for (const auto& ext : textureExtensions) {
       std::filesystem::path extension{ ext };
       std::filesystem::path tmp_path = music_path;
 

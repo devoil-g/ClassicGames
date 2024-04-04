@@ -14,8 +14,8 @@ QUIZ::QuestionQuizScene::QuestionQuizScene(Game::SceneMachine& machine, QUIZ::Qu
   Game::AbstractScene(machine),
   _quiz(quiz),
   _display(true),
-  _score(_quiz.players.size()),
-  _current(_quiz.players.size()),
+  _score((int)_quiz.players.size()),
+  _current((int)_quiz.players.size()),
   _buzz(-1),
   _cooldowns(_quiz.players.size(), 0.f),
   _cooldown(10.f)

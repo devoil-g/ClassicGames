@@ -1,3 +1,4 @@
+#include "Math/Math.hpp"
 #include "Quiz/ControllerQuizScene.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
@@ -100,10 +101,12 @@ void  QUIZ::ControllerQuizScene::updateRegister()
             .joystick = joystick,
             .button = button,
             .avatar = avatar,
+            .costume = 0,
+            .score = 0
             });
 
           // Set player texture
-          _quiz.players.back().sprite.setTexture(_quiz.avatars[_quiz.players.back().avatar], true);
+          _quiz.players.back().sprite.setTexture(_quiz.avatars[_quiz.players.back().avatar][_quiz.players.back().costume], true);
 
           auto  ref = Game::Audio::Sound::Instance().get();
 
@@ -119,13 +122,15 @@ void  QUIZ::ControllerQuizScene::updateRegister()
 void  QUIZ::ControllerQuizScene::updateUnregister()
 {
   // Inspect each player
-  for (auto iterator = _quiz.players.begin(); iterator != _quiz.players.end();)
-  {
-    // Remove player when yellow is pressed
-    if (Game::Window::Instance().joystick().buttonPressed(iterator->joystick, iterator->button + QUIZ::Quiz::Button::ButtonYellow) == true)
-      iterator = _quiz.players.erase(iterator);
-    else
-      iterator++;
+  if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Right) == true) {
+    for (auto iterator = _quiz.players.begin(); iterator != _quiz.players.end();)
+    {
+      // Remove player when sprite is clicked
+      if (iterator->sprite.getGlobalBounds().contains({ (float)Game::Window::Instance().mouse().position().x,(float)Game::Window::Instance().mouse().position().y }) == true)
+        iterator = _quiz.players.erase(iterator);
+      else
+        iterator++;
+    }
   }
 }
 
@@ -141,7 +146,8 @@ void  QUIZ::ControllerQuizScene::updateAvatar()
         {
           // Register new avatar
           player.avatar = avatar;
-          player.sprite.setTexture(_quiz.avatars[player.avatar], true);
+          player.costume = 0;
+          player.sprite.setTexture(_quiz.avatars[player.avatar][player.costume], true);
           break;
         }
       }
@@ -154,10 +160,23 @@ void  QUIZ::ControllerQuizScene::updateAvatar()
         {
           // Register new avatar
           player.avatar = avatar;
-          player.sprite.setTexture(_quiz.avatars[player.avatar], true);
+          player.costume = 0;
+          player.sprite.setTexture(_quiz.avatars[player.avatar][player.costume], true);
           break;
         }
       }
+    }
+
+    // Next costume
+    if (Game::Window::Instance().joystick().buttonPressed(player.joystick, player.button + QUIZ::Quiz::Button::ButtonGreen) == true) {
+      player.costume = Math::Modulo((int)player.costume + 1, (int)_quiz.avatars[player.avatar].size());
+      player.sprite.setTexture(_quiz.avatars[player.avatar][player.costume], true);
+    }
+
+    // Previous costume
+    if (Game::Window::Instance().joystick().buttonPressed(player.joystick, player.button + QUIZ::Quiz::Button::ButtonYellow) == true) {
+      player.costume = Math::Modulo((int)player.costume - 1, (int)_quiz.avatars[player.avatar].size());
+      player.sprite.setTexture(_quiz.avatars[player.avatar][player.costume], true);
     }
   }
 }
