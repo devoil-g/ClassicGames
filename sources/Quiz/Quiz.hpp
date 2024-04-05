@@ -27,7 +27,7 @@ namespace QUIZ
     struct Player
     {
       unsigned int  joystick, button; // Controller ID and buttons offset
-      unsigned int  avatar, costume;  // Avatar and costume index
+      unsigned int  avatar, skin;     // Avatar and skin index
       int           score;            // Score of the player
       sf::Sprite    sprite;           // Sprite of the player's avatar
     };

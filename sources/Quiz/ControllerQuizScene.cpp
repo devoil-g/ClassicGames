@@ -38,7 +38,7 @@ QUIZ::ControllerQuizScene::ControllerQuizScene(Game::SceneMachine& machine, QUIZ
     << "--- PLAYER SELECTION ---" << std::endl
     << "Instruction for players: use the red buzzer to join the game," << std::endl
     << "  blue and orange to select your avatar," << std::endl
-    << "  yellow to quit" << std::endl
+    << "  green and yellow to change the skin" << std::endl
     << std::endl
     << "Commands:" << std::endl
     << "  [R]eset:  reset timer" << std::endl
@@ -101,12 +101,12 @@ void  QUIZ::ControllerQuizScene::updateRegister()
             .joystick = joystick,
             .button = button,
             .avatar = avatar,
-            .costume = 0,
+            .skin = 0,
             .score = 0
             });
 
           // Set player texture
-          _quiz.players.back().sprite.setTexture(_quiz.avatars[_quiz.players.back().avatar][_quiz.players.back().costume], true);
+          _quiz.players.back().sprite.setTexture(_quiz.avatars[_quiz.players.back().avatar][_quiz.players.back().skin], true);
 
           auto  ref = Game::Audio::Sound::Instance().get();
 
@@ -146,8 +146,8 @@ void  QUIZ::ControllerQuizScene::updateAvatar()
         {
           // Register new avatar
           player.avatar = avatar;
-          player.costume = 0;
-          player.sprite.setTexture(_quiz.avatars[player.avatar][player.costume], true);
+          player.skin = 0;
+          player.sprite.setTexture(_quiz.avatars[player.avatar][player.skin], true);
           break;
         }
       }
@@ -160,8 +160,8 @@ void  QUIZ::ControllerQuizScene::updateAvatar()
         {
           // Register new avatar
           player.avatar = avatar;
-          player.costume = 0;
-          player.sprite.setTexture(_quiz.avatars[player.avatar][player.costume], true);
+          player.skin = 0;
+          player.sprite.setTexture(_quiz.avatars[player.avatar][player.skin], true);
           break;
         }
       }
@@ -169,14 +169,14 @@ void  QUIZ::ControllerQuizScene::updateAvatar()
 
     // Next costume
     if (Game::Window::Instance().joystick().buttonPressed(player.joystick, player.button + QUIZ::Quiz::Button::ButtonGreen) == true) {
-      player.costume = Math::Modulo((int)player.costume + 1, (int)_quiz.avatars[player.avatar].size());
-      player.sprite.setTexture(_quiz.avatars[player.avatar][player.costume], true);
+      player.skin = Math::Modulo((int)player.skin + 1, (int)_quiz.avatars[player.avatar].size());
+      player.sprite.setTexture(_quiz.avatars[player.avatar][player.skin], true);
     }
 
     // Previous costume
     if (Game::Window::Instance().joystick().buttonPressed(player.joystick, player.button + QUIZ::Quiz::Button::ButtonYellow) == true) {
-      player.costume = Math::Modulo((int)player.costume - 1, (int)_quiz.avatars[player.avatar].size());
-      player.sprite.setTexture(_quiz.avatars[player.avatar][player.costume], true);
+      player.skin = Math::Modulo((int)player.skin - 1, (int)_quiz.avatars[player.avatar].size());
+      player.sprite.setTexture(_quiz.avatars[player.avatar][player.skin], true);
     }
   }
 }

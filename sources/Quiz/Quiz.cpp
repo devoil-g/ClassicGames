@@ -20,25 +20,25 @@ QUIZ::Quiz::Quiz() :
 
   // Load avatars from directory
   for (const auto& avatar : std::filesystem::directory_iterator(Game::Config::ExecutablePath / "assets" / "quiz" / "avatars")) {
-    std::vector<sf::Texture>  costumes;
+    std::vector<sf::Texture>  skins;
 
     // Costume directory
     if (avatar.is_directory() == true) {
-      for (const auto& costume : std::filesystem::directory_iterator(avatar))
+      for (const auto& skin : std::filesystem::directory_iterator(avatar))
       {
         // Unsupported extension
-        if (costume.path().has_extension() == false ||
-          std::find(textureExtensions.begin(), textureExtensions.end(), costume.path().extension().string().substr(1)) == textureExtensions.end())
+        if (skin.path().has_extension() == false ||
+          std::find(textureExtensions.begin(), textureExtensions.end(), skin.path().extension().string().substr(1)) == textureExtensions.end())
           continue;
 
         sf::Texture texture;
 
         // Load texture
-        if (texture.loadFromFile(costume.path().string()) == false)
+        if (texture.loadFromFile(skin.path().string()) == false)
           continue;
 
         // Add avatar to collection
-        costumes.push_back(texture);
+        skins.push_back(texture);
       }
     }
 
@@ -57,15 +57,15 @@ QUIZ::Quiz::Quiz() :
         continue;
 
       // Add avatar to collection
-      costumes.push_back(texture);
+      skins.push_back(texture);
     }
     
     // No costume to load
-    if (costumes.empty() == true)
+    if (skins.empty() == true)
       continue;
 
     // Add costumes to avatars
-    avatars.push_back(std::move(costumes));
+    avatars.push_back(std::move(skins));
 
     // Verbose
     std::cout << "Avatar '" << avatar.path().stem().string() << "' loaded." << std::endl;

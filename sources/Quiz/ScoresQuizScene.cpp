@@ -44,6 +44,8 @@ bool  QUIZ::ScoresQuizScene::update(float elapsed)
     if (_quiz.blindtests.empty() == false)
       std::cout
       << "  [B]lintest:   play blindtest (" << std::count_if(_quiz.blindtests.begin(), _quiz.blindtests.end(), [](const auto& entry) { return entry.done == false; }) << " remaining)" << std::endl;
+    std::cout
+      << std::endl;
   }
 
   // Controller selection
