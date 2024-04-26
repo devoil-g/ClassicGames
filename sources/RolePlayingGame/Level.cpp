@@ -4,11 +4,9 @@
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
-RPG::ClientLevel::ClientLevel(const RPG::ClientWorld& world, const Game::JSON::Object& json) :
+RPG::ClientLevel::ClientLevel(RPG::ClientWorld& world, const Game::JSON::Object& json) :
   name(json.get("name").string()),
   color(json.contains("color") ? json.get("color").object() : RPG::Level::DefaultColor),
-  background(json.contains("background") ? json.get("background").string() : ""),
-  foreground(json.contains("foreground") ? json.get("foreground").string() : ""),
   cells(),
   entities()
 {
@@ -19,6 +17,10 @@ RPG::ClientLevel::ClientLevel(const RPG::ClientWorld& world, const Game::JSON::O
   // Get each entities
   for (const auto& element : json.get("entities").array()._vector)
     entities.emplace_back(world, *this, element->object());
+
+  // Setup camera
+  camera.setPositionDrag(0.03125f);
+  camera.setZoomDrag(0.03125f);
 }
 
 RPG::ClientCell& RPG::ClientLevel::cell(const RPG::Coordinates& coordinates)
@@ -77,28 +79,30 @@ const RPG::ClientEntity& RPG::ClientLevel::entity(std::size_t id) const
   throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-Math::Vector<2, float>  RPG::ClientLevel::computePosition(const RPG::Coordinates& coordinates, const RPG::Position& position) const
+Math::Vector<3> RPG::ClientLevel::position(const RPG::ClientEntity& entity) const
 {
-  Math::Vector<2, float> result;
+  // Get entity position in world
+  return position(entity.coordinates, entity.position);
+}
 
-  // Cell coordinates
+Math::Vector<3> RPG::ClientLevel::position(const RPG::Coordinates& coordinates, const RPG::Position& position) const
+{
+  Math::Vector<3> result = position;
+
+  // Add cell coordinates
   result.x() += (coordinates.x() - coordinates.y()) * (int)RPG::Cell::Width;
-  result.y() += (coordinates.x() + coordinates.y()) * ((int)RPG::Cell::Height / 2);
+  result.y() -= (coordinates.x() + coordinates.y()) * ((int)RPG::Cell::Height / 2);
 
   // Add height of cell if existing
   try {
-    result.y() -= cell(coordinates).height;
+    result.z() += cell(coordinates).height;
   }
   catch (const std::exception&) {}
-
-  // Position
-  result.x() += position.x();
-  result.y() += position.y() - position.z();
 
   return result;
 }
 
-void  RPG::ClientLevel::update(const RPG::ClientWorld& world, const Game::JSON::Object& json)
+void  RPG::ClientLevel::update(RPG::ClientWorld& world, const Game::JSON::Object& json)
 {
   const auto& type = json.get("type").array().get(2).string();
 
@@ -111,7 +115,7 @@ void  RPG::ClientLevel::update(const RPG::ClientWorld& world, const Game::JSON::
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-void  RPG::ClientLevel::updateEntity(const RPG::ClientWorld& world, const Game::JSON::Object& json)
+void  RPG::ClientLevel::updateEntity(RPG::ClientWorld& world, const Game::JSON::Object& json)
 {
   const auto& type = json.get("type").array().get(3).string();
 
@@ -137,50 +141,39 @@ void  RPG::ClientLevel::updateEntity(const RPG::ClientWorld& world, const Game::
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-void  RPG::ClientLevel::update(const RPG::ClientWorld& world, float elapsed)
+void  RPG::ClientLevel::update(RPG::ClientWorld& world, float elapsed)
 {
-  // Update background and foreground
-  background.update(world, elapsed);
-  foreground.update(world, elapsed);
-
   // Update entities
   for (auto& entity : entities)
     entity.update(world, *this, elapsed);
+  
+  // Update camera
+  camera.update(elapsed);
 
-  // Sort cells by coordinates for rendering and cursor
+  // Sort cells by depth
   cells.sort([](const auto& a, const auto& b) {
-    if (a.coordinates.x() + a.coordinates.y() > b.coordinates.x() + b.coordinates.y())
-      return true;
     if (a.coordinates.x() + a.coordinates.y() < b.coordinates.x() + b.coordinates.y())
-      return false;
-    if (a.coordinates.x() < b.coordinates.x())
       return true;
-    if (a.coordinates.x() > b.coordinates.x())
+    if (a.coordinates.x() + a.coordinates.y() > b.coordinates.x() + b.coordinates.y())
       return false;
-    return true;
+    return a.coordinates.x() < b.coordinates.x();
     });
 
-  // Sort entities by coordinates/position for rendering and cursor
-  entities.sort([](const auto& a, const auto& b) {
-    if (a.coordinates.x() + a.coordinates.y() > b.coordinates.x() + b.coordinates.y())
-      return true;
-    if (a.coordinates.x() + a.coordinates.y() < b.coordinates.x() + b.coordinates.y())
-      return false;
-    if (a.position.y() < b.position.y())
-      return true;
-    if (a.position.y() > b.position.y())
-      return false;
-    if (a.position.z() < b.position.z())
-      return true;
-    if (a.position.z() > b.position.z())
-      return false;
-    if (a.position.x() < b.position.x())
-      return true;
-    if (a.position.x() > b.position.x())
-      return false;
-    return true;
-    });
+  // Sort entities by depth
+  entities.sort([this](const auto& a, const auto& b) {
+    RPG::Position aPosition = position(a);
+    RPG::Position bPosition = position(b);
 
+    if (aPosition.y() > bPosition.y())
+      return true;
+    if (aPosition.y() < bPosition.y())
+      return false;
+    if (aPosition.z() > bPosition.z())
+      return true;
+    if (aPosition.z() < bPosition.z())
+      return false;
+    return aPosition.x() < bPosition.x();
+    });
 }
 
 void  RPG::ClientLevel::draw(const RPG::ClientWorld& world) const
@@ -190,97 +183,24 @@ void  RPG::ClientLevel::draw(const RPG::ClientWorld& world) const
   // Clear window
   window.window().clear(sf::Color(color.raw));
 
-  // Draw background
-  background.draw(world);
+  // Set world view
+  camera.set();
 
   // Draw entities
-  for (const auto& entity : entities)
-    entity.draw(world, *this);
+  for (auto entity = entities.rbegin(); entity != entities.rend(); entity++)
+    entity->draw(world, *this);
 
-  // Draw foreground
-  foreground.draw(world);
-}
+  // TODO: draw cursor
 
-RPG::ClientLevel::Layer::Layer(const std::string& model) :
-  model(model),
-  elements()
-{}
-
-void  RPG::ClientLevel::Layer::update(const RPG::ClientWorld& world, float elapsed)
-{
-  // No layer
-  if (model.empty() == true)
-    return;
-
-  auto model_it = world.models.find(model);
-
-  // No model for layer
-  if (model_it == world.models.end())
-    return;
-
-  // Update each animation
-  for (const auto& [name, animation] : model_it->second.animations)
-    elements[name].update(animation, elapsed);
-}
-
-void  RPG::ClientLevel::Layer::draw(const RPG::ClientWorld& world) const
-{
-  // No layer
-  if (model.empty() == true)
-    return;
-
-  auto model_it = world.models.find(model);
-
-  // No model for layer
-  if (model_it == world.models.end())
-    return;
-
-  // Draw each animation
-  for (const auto& [name, animation] : model_it->second.animations) {
-    auto element_it = elements.find(name);
-
-    if (element_it != elements.end())
-      element_it->second.draw(model_it->second.spritesheet, animation);
-  }
-}
-
-RPG::ClientLevel::Layer::Element::Element() :
-  frame(0),
-  elapsed(0.f)
-{}
-
-void  RPG::ClientLevel::Layer::Element::update(const RPG::Model::Animation& animation, float elapsed)
-{
-  // No frames
-  if (animation.frames.empty() == true)
-    return;
-
-  this->elapsed += elapsed;
-
-  // Skip frames according to elasped time
-  while (this->elapsed > animation.frames[frame % animation.frames.size()].duration && animation.frames[frame % animation.frames.size()].duration != 0.f) {
-    this->elapsed -= animation.frames[frame % animation.frames.size()].duration;
-    frame = (frame + 1) % animation.frames.size();
-  }
-}
-
-void  RPG::ClientLevel::Layer::Element::draw(const std::string& spritesheet, const RPG::Model::Animation& animation) const
-{
-  // No frames
-  if (animation.frames.empty() == true)
-    return;
-
-  // Draw frame
-  animation.frames[frame % animation.frames.size()].draw(spritesheet, { 0.f, 0.f });
+  // Reset to default view
+  camera.set();
 }
 
 const RPG::ServerCell RPG::ServerLevel::InvalidCell = Game::JSON::Object();
 
 RPG::ServerLevel::ServerLevel(const RPG::ServerWorld& world, const Game::JSON::Object& json) :
-  name(json.get("level").string()),
+  name(json.get("name").string()),
   color(json.contains("color") ? json.get("color").object() : RPG::Level::DefaultColor),
-  background(json.contains("background") ? json.get("background").string() : ""),
-  foreground(json.contains("foreground") ? json.get("foreground").string() : ""),
   cells(),
   entities()
 {
@@ -333,12 +253,10 @@ Game::JSON::Object  RPG::ServerLevel::json() const
 
   // Serialize to JSON
   json.set("name", name);
-  if (color != RPG::Level::DefaultColor)
+  if (color != RPG::Level::DefaultColor) {
     json.set("color", color.json());
-  if (background.empty() == false)
-    json.set("background", background);
-  if (foreground.empty() == false)
-    json.set("foreground", foreground);
+    std::cout << "color: " << color.json() << std::endl;
+  }
 
   // Serialize cells to JSON
   json.set("cells", Game::JSON::Array());

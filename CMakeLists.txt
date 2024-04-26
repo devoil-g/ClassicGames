@@ -127,6 +127,8 @@ SET(GAME_GBC_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/SelectionScene.cpp
 )
 SET(GAME_RPG_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/ClientScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/ClientScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Server.hpp
@@ -286,7 +288,7 @@ FIND_PACKAGE(Threads REQUIRED)
 # Import SFML library
 INCLUDE(FetchContent)
 SET(BUILD_SHARED_LIBS OFF)
-FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TAG 2.5.1)
+FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TAG 2.6.1)
 FetchContent_MakeAvailable(SFML)
 
 # Set includes directories

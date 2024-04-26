@@ -4,8 +4,8 @@
 #include "System/Window.hpp"
 
 RPG::Camera::Camera() :
-  _targetPosition(0.f, -64.f),
-  _currentPosition(0.f, -64.f),
+  _targetPosition(0.f, 0.f),
+  _currentPosition(0.f, 0.f),
   _dragPosition(0.f),
   _targetZoom(1.f),
   _currentZoom(1.f),

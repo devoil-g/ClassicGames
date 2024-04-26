@@ -6,6 +6,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "RolePlayingGame/Color.hpp"
+#include "RolePlayingGame/Color.hpp"
 #include "RolePlayingGame/Model.hpp"
 #include "RolePlayingGame/Texture.hpp"
 #include "RolePlayingGame/Types.hpp"
@@ -30,8 +32,9 @@ namespace RPG
     const std::uint64_t id; // Unique entity identifier
 
     RPG::Coordinates coordinates; // Current cell coordinates of entity
-    RPG::Position    position;    // Position of entity in world (screen X, Y, altitude)
+    RPG::Position    position;    // Position of entity in its cell (screen X, Y, altitude)
     RPG::Direction   direction;   // Direction the entity is facing
+    RPG::Color       outline;     // Color of entity outline
 
   private:
     struct {
@@ -59,22 +62,22 @@ namespace RPG
       bool trigger;   // Entity can be triggered (button)
     } _actions;
 
-    void  updateMove(const RPG::ClientWorld& world, const RPG::ClientLevel& level, float elapsed);
-    void  updateAnimation(const RPG::ClientWorld& world, const RPG::ClientLevel& level, float elapsed);
+    void  updateMove(RPG::ClientWorld& world, RPG::ClientLevel& level, float elapsed);
+    void  updateAnimation(RPG::ClientWorld& world, RPG::ClientLevel& level, float elapsed);
 
-    void  updateMove(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const Game::JSON::Object& json);
-    void  updateAnimation(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const Game::JSON::Object& json);
+    void  updateMove(RPG::ClientWorld& world, RPG::ClientLevel& level, const Game::JSON::Object& json);
+    void  updateAnimation(RPG::ClientWorld& world, RPG::ClientLevel& level, const Game::JSON::Object& json);
 
-    void  handleMoveRun(const RPG::ClientWorld& world, const RPG::ClientLevel& level, RPG::Coordinates coordinates, RPG::Position position, RPG::Direction direction, RPG::Coordinates target, float speed); // Move to coordinates/position
-    void  handleMoveTeleport(const RPG::ClientWorld& world, const RPG::ClientLevel& level, RPG::Coordinates coordinates, RPG::Position position, RPG::Direction direction);                                  // Teleport to coordinates/position
-    void  handleMoveCancel(const RPG::ClientWorld& world, const RPG::ClientLevel& level);                                                                                                                    // Interrupt current move
+    void  handleMoveRun(RPG::ClientWorld& world, RPG::ClientLevel& level, RPG::Coordinates coordinates, RPG::Position position, RPG::Direction direction, RPG::Coordinates target, float speed); // Move to coordinates/position
+    void  handleMoveTeleport(RPG::ClientWorld& world, RPG::ClientLevel& level, RPG::Coordinates coordinates, RPG::Position position, RPG::Direction direction);                                  // Teleport to coordinates/position
+    void  handleMoveCancel(RPG::ClientWorld& world, RPG::ClientLevel& level);                                                                                                                    // Interrupt current move
 
-    void  handleAnimationStart(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const std::string& name, bool loop);
-    void  handleAnimationModel(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const std::string& name);
+    void  handleAnimationStart(RPG::ClientWorld& world, RPG::ClientLevel& level, const std::string& name, bool loop);
+    void  handleAnimationModel(RPG::ClientWorld& world, RPG::ClientLevel& level, const std::string& name);
 
   public:
     ClientEntity() = delete;
-    ClientEntity(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const Game::JSON::Object& json);
+    ClientEntity(RPG::ClientWorld& world, RPG::ClientLevel& level, const Game::JSON::Object& json);
     ClientEntity(const ClientEntity&) = delete;
     ClientEntity(ClientEntity&&) = delete;
     ~ClientEntity() = default;
@@ -82,13 +85,20 @@ namespace RPG
     ClientEntity& operator=(const ClientEntity&) = delete;
     ClientEntity& operator=(ClientEntity&&) = delete;
     
-    void  setModel(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const std::string& name);
-    void  setAnimation(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const std::string& name, bool loop);
+    void  setModel(RPG::ClientWorld& world, RPG::ClientLevel& level, const std::string& name);
+    void  setAnimation(RPG::ClientWorld& world, RPG::ClientLevel& level, const std::string& name, bool loop);
 
-    void  update(const RPG::ClientWorld& world, const RPG::ClientLevel& level, float elapsed);
-    void  draw(const RPG::ClientWorld& world, const RPG::ClientLevel& level) const;
+    void        update(RPG::ClientWorld& world, RPG::ClientLevel& level, float elapsed);
+    void        draw(const RPG::ClientWorld& world, const RPG::ClientLevel& level) const;
+    RPG::Bounds bounds(const RPG::ClientWorld& world, const RPG::ClientLevel& level) const; // Get bounds of entity in 2D world coordinates
     
-    void  update(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const Game::JSON::Object& json); // Update entity from JSON
+    void  update(RPG::ClientWorld& world, RPG::ClientLevel& level, const Game::JSON::Object& json); // Update entity from JSON
+
+    bool  isPickup() const;     // Get pickup action
+    bool  isContainer() const;  // Get container action
+    bool  isDialog() const;     // Get dialog action
+    bool  isFight() const;      // Get fight action
+    bool  isTrigger() const;    // Get trigger action
   };
 
   class ServerWorld;

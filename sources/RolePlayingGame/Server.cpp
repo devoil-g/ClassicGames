@@ -21,24 +21,36 @@ RPG::Server::~Server()
   // TODO: save
 }
 
-void  RPG::Server::send(std::size_t id, const std::string& type, Game::JSON::Object& json)
+void  RPG::Server::send(std::size_t id, const std::vector<std::string>& type, Game::JSON::Object& json)
 {
   // Add mandatory data to JSON
-  json.set("type", type);
-  json.set("tick", (double)_tick);
+  header(json, type);
 
   // Send to client
   RPG::TcpServer::send(id, json);
 }
 
-void  RPG::Server::broadcast(const std::string& type, Game::JSON::Object& json)
+void  RPG::Server::broadcast(const std::vector<std::string>& type, Game::JSON::Object& json)
 {
   // Add mandatory data to JSON
-  json.set("type", type);
-  json.set("tick", (double)_tick);
+  header(json, type);
 
   // Broadcast to clients
   RPG::TcpServer::broadcast(json);
+}
+
+void  RPG::Server::header(Game::JSON::Object& json, const std::vector<std::string>& type) const
+{
+  Game::JSON::Array typeArray;
+
+  // Serialize type
+  typeArray._vector.reserve(type.size());
+  for (const auto& field : type)
+    typeArray.push(field);
+  json.set("type", std::move(typeArray));
+
+  // Serialize tick
+  json.set("tick", (double)_tick);
 }
 
 void  RPG::Server::kick(std::size_t id)

@@ -1,495 +1,541 @@
 {
-  "name": "Demo Scene",
+  "levels": [
+    {
+      "name": "demo",
+      "color": {
+        "red": 0,
+        "green": 0,
+        "blue": 0
+      },
+      "cells": [
+        {
+          "coordinates": [ 0, 0 ],
+          "height": -32,
+          "blocked": true
+        },
+        {
+          "coordinates": [ 1, 0 ],
+          "height": -32
+        },
+        {
+          "coordinates": [ 2, 0 ],
+          "height": -24
+        },
+        {
+          "coordinates": [ 3, 0 ],
+          "height": -16
+        },
+        {
+          "coordinates": [ 4, 0 ],
+          "height": -8
+        },
+        {
+          "coordinates": [ 5, 0 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 6, 0 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 6, 1 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 7, 1 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 1, 2 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 2, 2 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 3, 2 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 4, 2 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 5, 2 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 6, 2 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 7, 2 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 2, 3 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 3, 3 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 4, 3 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 5, 3 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 6, 3 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 7, 3 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 1, 4 ],
+          "height": 0,
+          "blocked": true
+        },
+        {
+          "coordinates": [ 2, 4 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 3, 4 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 7, 4 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 8, 4 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 3, 5 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 4, 5 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 5, 5 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 6, 5 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 7, 5 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 8, 5 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 3, 6 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 4, 6 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 5, 6 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 6, 6 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 7, 6 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 8, 6 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 9, 6 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 4, 7 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 4, 8 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 5, 8 ],
+          "height": 0
+        },
+        {
+          "coordinates": [ 6, 8 ],
+          "height": 8
+        },
+        {
+          "coordinates": [ 7, 8 ],
+          "height": 16
+        },
+        {
+          "coordinates": [ 8, 8 ],
+          "height": 24
+        },
+        {
+          "coordinates": [ 9, 8 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 10, 8 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 5, 9 ],
+          "height": 0,
+          "blocked": true
+        },
+        {
+          "coordinates": [ 10, 9 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 11, 9 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 7, 10 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 8, 10 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 9, 10 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 10, 10 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 11, 10 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 7, 11 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 8, 11 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 9, 11 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 10, 11 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 11, 11 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 12, 11 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 13, 11 ],
+          "height": 32,
+          "blocked": true
+        },
+        {
+          "coordinates": [ 8, 12 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 9, 12 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 10, 12 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 11, 12 ],
+          "height": 32
+        },
+        {
+          "coordinates": [ 12, 12 ],
+          "height": 32
+        }
+      ],
+      "entities": [
+        {
+          "coordinates": [ 100, 100 ],
+          "position": [ 0, 0, -1224 ],
+          "model": "background"
+        },
+        {
+          "coordinates": [ 2, 4 ],
+          "position": [ -1, 1, 0 ],
+          "direction": "NE",
+          "model": "blue",
+          "trigger": "yes"
+        },
+        {
+          "coordinates": [ 3, 5 ],
+          "position": [ 1, 0, 0 ],
+          "direction": "SE",
+          "model": "blue",
+          "trigger": "yes"
+        },
+        {
+          "coordinates": [ 4, 5 ],
+          "position": [ 1, -1, 0 ],
+          "direction": "S",
+          "model": "blue",
+          "trigger": "yes"
+        }
+      ]
+    }
+  ],
 
-  "color": {
-    "red": 0,
-    "green": 0,
-    "blue": 0,
-    "alpha": 255
-  },
-  "background": {
-    "file": "level_01.png",
-    "left": 0,
-    "top": 0,
-    "width": 256,
-    "height": 288,
-    "offsetX": 0,
-    "offsetY": -106
-  },
-  "foreground": {},
-
-  "cellsX": 14,
-  "cellsY": 13,
-  "cells": [
-    {
-      "selectable": true,
-      "height": -24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": -24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": -24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": -16,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": -8,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-
-    {},
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-
-    {},
-    {},
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-
-    {},
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {},
-    {},
-    {},
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {},
-    {},
-    {},
-    {},
-    {},
-
-    {},
-    {},
-    {},
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {},
-    {},
-    {},
-    {},
-    {},
-
-    {},
-    {},
-    {},
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {},
-    {},
-    {},
-    {},
-
-    {},
-    {},
-    {},
-    {},
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-
-    {},
-    {},
-    {},
-    {},
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 8,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 16,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {},
-    {},
-    {},
-
-    {},
-    {},
-    {},
-    {},
-    {},
-    {
-      "selectable": true,
-      "height": 0,
-      "background": { "file": "debug.png" }
-    },
-    {},
-    {},
-    {},
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {},
-    {},
-
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {},
-    {},
-
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {
-      "selectable": true,
-      "height": 24,
-      "background": { "file": "debug.png" }
-    },
-    {}
+  "models": [
+    {
+      "name": "background",
+      "spritesheet": "level_01.png",
+      "animations": [
+        {
+          "name": "idle",
+          "frames": [
+            {
+              "offset": [ 0, 0 ],
+              "size": [ 256, 288 ],
+              "origin": [ 128, 274 ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "blue",
+      "spritesheet": "blue_character.png",
+      "animations": [
+        {
+          "name": "idle_SE",
+          "frames": [
+            {
+              "offset": [ 4, 3 ],
+              "size": [ 7, 26 ],
+              "origin": [ 4, 25 ],
+              "flipX": false,
+              "duration": 5
+            },
+            {
+              "offset": [ 20, 3 ],
+              "size": [ 7, 26 ],
+              "origin": [ 4, 25 ],
+              "flipX": false,
+              "duration": 1
+            },
+            {
+              "offset": [ 4, 3 ],
+              "size": [ 7, 26 ],
+              "origin": [ 4, 25 ],
+              "flipX": false,
+              "duration": 0.66
+            },
+            {
+              "offset": [ 36, 3 ],
+              "size": [ 7, 26 ],
+              "origin": [ 4, 25 ],
+              "flipX": false,
+              "duration": 1
+            }
+          ]
+        },
+        {
+          "name": "idle_SW",
+          "frames": [
+            {
+              "offset": [ 4, 3 ],
+              "size": [ 7, 26 ],
+              "origin": [ 4, 25 ],
+              "flipX": true,
+              "duration": 5
+            },
+            {
+              "offset": [ 20, 3 ],
+              "size": [ 7, 26 ],
+              "origin": [ 4, 25 ],
+              "flipX": true,
+              "duration": 1
+            },
+            {
+              "offset": [ 4, 3 ],
+              "size": [ 7, 26 ],
+              "origin": [ 4, 25 ],
+              "flipX": true,
+              "duration": 0.66
+            },
+            {
+              "offset": [ 36, 3 ],
+              "size": [ 7, 26 ],
+              "origin": [ 4, 25 ],
+              "flipX": true,
+              "duration": 1
+            }
+          ]
+        },
+        {
+          "name": "idle_NE",
+          "frames": [
+            {
+              "offset": [ 5, 35 ],
+              "size": [ 7, 26 ],
+              "origin": [ 3, 25 ],
+              "flipX": false,
+              "duration": 5
+            },
+            {
+              "offset": [ 21, 35 ],
+              "size": [ 7, 26 ],
+              "origin": [ 3, 25 ],
+              "flipX": false,
+              "duration": 1
+            },
+            {
+              "offset": [ 5, 35 ],
+              "size": [ 7, 26 ],
+              "origin": [ 3, 25 ],
+              "flipX": false,
+              "duration": 0.66
+            },
+            {
+              "offset": [ 37, 35 ],
+              "size": [ 7, 26 ],
+              "origin": [ 3, 25 ],
+              "flipX": false,
+              "duration": 1
+            }
+          ]
+        },
+        {
+          "name": "idle_NW",
+          "frames": [
+            {
+              "offset": [ 5, 35 ],
+              "size": [ 7, 26 ],
+              "origin": [ 3, 25 ],
+              "flipX": true,
+              "duration": 5
+            },
+            {
+              "offset": [ 21, 35 ],
+              "size": [ 7, 26 ],
+              "origin": [ 3, 25 ],
+              "flipX": true,
+              "duration": 1
+            },
+            {
+              "offset": [ 5, 35 ],
+              "size": [ 7, 26 ],
+              "origin": [ 3, 25 ],
+              "flipX": true,
+              "duration": 0.66
+            },
+            {
+              "offset": [ 37, 35 ],
+              "size": [ 7, 26 ],
+              "origin": [ 3, 25 ],
+              "flipX": true,
+              "duration": 1
+            }
+          ]
+        },
+        {
+          "name": "idle_S",
+          "frames": [
+            {
+              "offset": [ 5, 67 ],
+              "size": [ 7, 26 ],
+              "origin": [ 3, 25 ],
+              "flipX": false,
+              "duration": 5
+            },
+            {
+              "offset": [ 21, 67 ],
+              "size": [ 7, 26 ],
+              "origin": [ 3, 25 ],
+              "flipX": false,
+              "duration": 1
+            },
+            {
+              "offset": [ 5, 67 ],
+              "size": [ 7, 26 ],
+              "origin": [ 3, 25 ],
+              "flipX": false,
+              "duration": 0.66
+            },
+            {
+              "offset": [ 37, 67 ],
+              "size": [ 7, 26 ],
+              "origin": [ 3, 25 ],
+              "flipX": false,
+              "duration": 1
+            }
+          ]
+        },
+        {
+          "name": "idle_N",
+          "frames": [
+            {
+              "offset": [ 4, 99 ],
+              "size": [ 7, 26 ],
+              "origin": [ 4, 25 ],
+              "flipX": false,
+              "duration": 5
+            },
+            {
+              "offset": [ 20, 99 ],
+              "size": [ 7, 26 ],
+              "origin": [ 4, 25 ],
+              "flipX": false,
+              "duration": 1
+            },
+            {
+              "offset": [ 4, 99 ],
+              "size": [ 7, 26 ],
+              "origin": [ 4, 25 ],
+              "flipX": false,
+              "duration": 0.5
+            },
+            {
+              "offset": [ 36, 99 ],
+              "size": [ 7, 26 ],
+              "origin": [ 4, 25 ],
+              "flipX": false,
+              "duration": 1
+            }
+          ]
+        }
+      ]
+    }
   ]
 }

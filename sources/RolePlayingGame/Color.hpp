@@ -9,18 +9,24 @@ namespace RPG
   class Color // RGBA color
   {
   public:
-    static const Color        Default;      // Default color
-    static const std::uint8_t DefaultRed;   // Default red value
-    static const std::uint8_t DefaultGreen; // Default green value
-    static const std::uint8_t DefaultBlue;  // Default blue value
-    static const std::uint8_t DefaultAlpha; // Default alpha value
+    static const Color         Default;      // Default color
+    static const std::uint8_t  DefaultRed;   // Default red value
+    static const std::uint8_t  DefaultGreen; // Default green value
+    static const std::uint8_t  DefaultBlue;  // Default blue value
+    static const std::uint8_t  DefaultAlpha; // Default alpha value
 
     union {
-      std::uint8_t  red, green, blue, alpha; // Color components
-      std::uint32_t raw;                     // Raw color
+      struct {
+        std::uint8_t alpha;
+        std::uint8_t blue;
+        std::uint8_t green;
+        std::uint8_t red;
+      };                  // Color components
+      std::uint32_t raw;  // Raw color
     };
     
-    Color(std::uint8_t red = DefaultRed, std::uint8_t green = DefaultGreen, std::uint8_t blue = DefaultBlue, std::uint8_t alpha = DefaultAlpha);
+    Color(std::uint8_t red, std::uint8_t green, std::uint8_t blue, std::uint8_t alpha = DefaultAlpha);
+    Color(std::uint32_t raw = Default.raw);
     Color(const Game::JSON::Object& json);
     Color(const Color&) = default;
     Color(Color&&) = default;

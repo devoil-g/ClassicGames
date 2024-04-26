@@ -150,6 +150,18 @@ void  Game::JSON::Object::unset(const std::string& key)
     throw Game::JSON::BoundError("Key is not in JSON Object");
 }
 
+bool  Game::JSON::Object::empty() const
+{
+  // Check if map is empty
+  return _map.empty();
+}
+
+std::size_t Game::JSON::Object::size() const
+{
+  // Get number of elements in map
+  return _map.size();
+}
+
 void  Game::JSON::Object::clear()
 {
   // Reset container
@@ -216,6 +228,12 @@ void  Game::JSON::Array::unset(std::size_t position)
 
   // Remove element from container
   _vector.erase(_vector.begin() + position);
+}
+
+bool  Game::JSON::Array::empty() const
+{
+  // Check that vector is empty
+  return _vector.empty();
 }
 
 std::size_t Game::JSON::Array::size() const

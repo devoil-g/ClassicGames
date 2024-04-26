@@ -1,4 +1,5 @@
 #include "RolePlayingGame/Cell.hpp"
+#include "RolePlayingGame/Level.hpp"
 
 RPG::ClientCell::ClientCell(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const Game::JSON::Object& json) :
   coordinates(json.get("coordinates").array()),
@@ -6,21 +7,20 @@ RPG::ClientCell::ClientCell(const RPG::ClientWorld& world, const RPG::ClientLeve
   height(json.contains("height") ? (std::int16_t)json.get("height").number() : RPG::Cell::DefaultHeight)
 {}
 
-Math::Vector<2, int>  RPG::ClientCell::position() const
+RPG::Bounds RPG::ClientCell::bounds(const RPG::ClientWorld& world, const RPG::ClientLevel& level) const
 {
-  // Compute cell position in world
-  return {
-    (coordinates.x() - coordinates.y()) * (int)RPG::Cell::Width,
-    (coordinates.x() + coordinates.y()) * ((int)RPG::Cell::Height / 2) - height
-  };
-}
+  auto position = level.position(coordinates);
 
-RPG::Bounds RPG::ClientCell::bounds() const
-{
   // Get cell bounds
   return RPG::Bounds(
-    { -(int)RPG::Cell::Width / 2, -(int)RPG::Cell::Height / 2 - height },
-    { (int)RPG::Cell::Width, (int)RPG::Cell::Height }
+    { 
+      std::round((position.x() - (float)RPG::Cell::Width / 2.f)),
+      std::round((position.y() - position.z() - (float)RPG::Cell::Height / 2.f))
+    },
+    {
+      (float)RPG::Cell::Width,
+      (float)RPG::Cell::Height
+    }
   );
 }
 

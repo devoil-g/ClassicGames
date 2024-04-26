@@ -5,6 +5,8 @@
 #include <vector>
 #include <unordered_map>
 
+#include <SFML/Graphics/Shader.hpp>
+
 #include "Math/Vector.hpp"
 #include "RolePlayingGame/Color.hpp"
 #include "RolePlayingGame/Texture.hpp"
@@ -15,6 +17,24 @@ namespace RPG
 {
   class Model // Animations for an entity
   {
+  private:
+    class OutlineShader
+    {
+    private:
+      sf::Shader _shader; // SFML shader
+
+      OutlineShader();
+      OutlineShader(const OutlineShader&) = delete;
+      OutlineShader(OutlineShader&&) = delete;
+      ~OutlineShader() = default;
+
+      OutlineShader& operator=(const OutlineShader&) = delete;
+      OutlineShader& operator=(OutlineShader&&) = delete;
+
+    public:
+      static const sf::Shader* Get(RPG::Color color = RPG::Color(0, 0, 0, 255));  // Get SFML shader for outline
+    };
+
   public:
     class Animation // Frames of an animation
     {
@@ -22,20 +42,20 @@ namespace RPG
       class Frame // A single frame of animation
       {
       public:
-        static const Math::Vector<2, unsigned int> DefaultOrigin;
-        static const Math::Vector<2, unsigned int> DefaultSize;
-        static const Math::Vector<2, int>          DefaultOffset;
-        static const bool                          DefaultFlipX;
-        static const bool                          DefaultFlipY;
-        static const RPG::Color                    DefaultColor;
-        static const float                         DefaultDuration;
+        static const Math::Vector<2, int> DefaultOffset;
+        static const Math::Vector<2, int> DefaultSize;
+        static const Math::Vector<2, int> DefaultOrigin;
+        static const bool                 DefaultFlipX;
+        static const bool                 DefaultFlipY;
+        static const RPG::Color           DefaultColor;
+        static const float                DefaultDuration;
 
-        Math::Vector<2, unsigned int> origin;       // Origin of texture rectangle
-        Math::Vector<2, unsigned int> size;         // Size of texture rectangle (full texture if 0,0)
-        Math::Vector<2, int>          offset;       // Offset of the sprite from drawing position
-        bool                          flipX, flipY; // Texture horizontal and vertical flip
-        RPG::Color                    color;        // Sprite color
-        float                         duration;     // Duration of the frame in seconds (0 for infinite, default to 0)
+        const Math::Vector<2, int> offset;       // Offset of texture rectangle
+        const Math::Vector<2, int> size;         // Size of texture rectangle (full texture if 0,0)
+        const Math::Vector<2, int> origin;       // Origin of the sprite from drawing position
+        const bool                 flipX, flipY; // Texture horizontal and vertical flip
+        const RPG::Color           color;        // Sprite color
+        const float                duration;     // Duration of the frame in seconds (0 for infinite, default to 0)
 
         Frame() = delete;
         Frame(const Game::JSON::Object& json);
@@ -46,9 +66,9 @@ namespace RPG
         Frame& operator=(const Frame&) = default;
         Frame& operator=(Frame&&) = default;
 
-        Game::JSON::Object json() const;                                                                    // Serialize to JSON
-        void               draw(const RPG::Texture& texture, const Math::Vector<2, float>& position) const; // Draw frame at position
-        RPG::Bounds        bounds() const;                                                                  // Get bounds of frame
+        Game::JSON::Object json() const;                                                                                                                         // Serialize to JSON
+        void               draw(const RPG::Texture& texture, const Math::Vector<2>& position = { 0.f, 0.f }, RPG::Color outline = RPG::Color(0, 0, 0, 0)) const; // Draw frame at position
+        RPG::Bounds        bounds(const Math::Vector<2>& position = { 0.f, 0.f }) const;                                                                         // Get bounds of frame
       };
 
       std::vector<Frame> frames; // Frames of the animation

@@ -2,11 +2,12 @@
 #include "RolePlayingGame/World.hpp"
 #include "RolePlayingGame/Entity.hpp"
 
-RPG::ClientEntity::ClientEntity(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const Game::JSON::Object& json) :
+RPG::ClientEntity::ClientEntity(RPG::ClientWorld& world, RPG::ClientLevel& level, const Game::JSON::Object& json) :
   id((std::uint64_t)json.get("id").number()),
   coordinates(json.get("coordinates").array()),
   position(json.contains("position") ? json.get("position").array() : RPG::Entity::DefaultPosition),
-  direction(json.contains("direction") ? (RPG::Direction)json.get("direction").number() : RPG::Entity::DefaultDirection),
+  direction(json.contains("direction") ? RPG::StringToDirection(json.get("direction").string()) : RPG::Entity::DefaultDirection),
+  outline(0, 0, 0, 0),
   _move{
     .target = coordinates,
     .position = position,
@@ -32,12 +33,9 @@ RPG::ClientEntity::ClientEntity(const RPG::ClientWorld& world, const RPG::Client
   // Load model
   if (json.contains("model") == true)
     setModel(world, level, json.get("model").string());
-
-  // Start default animation
-  setAnimation(world, level, RPG::Model::DefaultAnimation, true);
 }
 
-void  RPG::ClientEntity::setModel(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const std::string& name)
+void  RPG::ClientEntity::setModel(RPG::ClientWorld& world, RPG::ClientLevel& level, const std::string& name)
 {
   // Invalid model name
   if (name.empty() == true)
@@ -51,30 +49,20 @@ void  RPG::ClientEntity::setModel(const RPG::ClientWorld& world, const RPG::Clie
   _animation.elapsed = 0.f;
   _animation.loop = false;
 
-  const RPG::Model* model = nullptr;
-  const RPG::Model::Animation* animation = nullptr;
-  const RPG::Texture* texture = nullptr;
-
   // Get resources
   try {
-    model = &world.model(name);
-    animation = &model->animation(RPG::Model::DefaultAnimation);
-    texture = &world.texture(model->spritesheet);
+    _animation.model = &world.model(name);
+    _animation.texture = &world.texture(_animation.model->spritesheet);
   }
   catch (const std::exception&) {
     return;
   }
 
-  // Assign resources
-  _animation.model = model;
-  _animation.animation = animation;
-  _animation.texture = texture;
-
   // Start default animation
   setAnimation(world, level, RPG::Model::DefaultAnimation, true);
 }
 
-void  RPG::ClientEntity::setAnimation(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const std::string& name, bool loop)
+void  RPG::ClientEntity::setAnimation(RPG::ClientWorld& world, RPG::ClientLevel& level, const std::string& name, bool loop)
 {
   // No model
   if (_animation.model == nullptr)
@@ -107,7 +95,7 @@ void  RPG::ClientEntity::setAnimation(const RPG::ClientWorld& world, const RPG::
   _animation.elapsed = 0.f;
 }
 
-void  RPG::ClientEntity::update(const RPG::ClientWorld& world, const RPG::ClientLevel& level, float elapsed)
+void  RPG::ClientEntity::update(RPG::ClientWorld& world, RPG::ClientLevel& level, float elapsed)
 {
   // Update animation
   updateAnimation(world, level, elapsed);
@@ -116,10 +104,14 @@ void  RPG::ClientEntity::update(const RPG::ClientWorld& world, const RPG::Client
   updateMove(world, level, elapsed);
 }
 
-void  RPG::ClientEntity::updateAnimation(const RPG::ClientWorld& world, const RPG::ClientLevel& level, float elapsed)
+void  RPG::ClientEntity::updateAnimation(RPG::ClientWorld& world, RPG::ClientLevel& level, float elapsed)
 {
   // No model or animation
   if (_animation.model == nullptr || _animation.animation == nullptr)
+    return;
+
+  // Non-ending frame
+  if (_animation.animation->frames[_animation.frame].duration == 0.f)
     return;
 
   // Increment timer
@@ -140,7 +132,7 @@ void  RPG::ClientEntity::updateAnimation(const RPG::ClientWorld& world, const RP
   }
 }
 
-void  RPG::ClientEntity::updateMove(const RPG::ClientWorld& world, const RPG::ClientLevel& level, float elapsed)
+void  RPG::ClientEntity::updateMove(RPG::ClientWorld& world, RPG::ClientLevel& level, float elapsed)
 {
   // No move
   if (_move.remaining == 0.f)
@@ -163,12 +155,26 @@ void  RPG::ClientEntity::draw(const RPG::ClientWorld& world, const RPG::ClientLe
   // No model or animation or texture
   if (_animation.model == nullptr || _animation.animation == nullptr || _animation.texture == nullptr)
     return;
-  
+ 
+  auto pos = level.position(*this);
+
   // Draw entity
-  _animation.animation->frames[_animation.frame].draw(*_animation.texture, { position.x(), position.y() - position.z() });
+  _animation.animation->frames[_animation.frame].draw(*_animation.texture, { pos.x(), pos.y() - pos.z() }, outline);
 }
 
-void  RPG::ClientEntity::update(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const Game::JSON::Object& json)
+RPG::Bounds RPG::ClientEntity::bounds(const RPG::ClientWorld& world, const RPG::ClientLevel& level) const
+{
+  // No model or animation or texture
+  if (_animation.model == nullptr || _animation.animation == nullptr || _animation.texture == nullptr)
+    return { { 0.f, 0.f }, { 0.f, 0.f } };
+
+  auto pos = level.position(*this);
+
+  // Compute frame bounds
+  return _animation.animation->frames[_animation.frame].bounds({ pos.x(), pos.y() - pos.z() });
+}
+
+void  RPG::ClientEntity::update(RPG::ClientWorld& world, RPG::ClientLevel& level, const Game::JSON::Object& json)
 {
   const auto& type = json.get("type").array().get(4).string();
 
@@ -185,7 +191,7 @@ void  RPG::ClientEntity::update(const RPG::ClientWorld& world, const RPG::Client
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-void  RPG::ClientEntity::updateMove(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const Game::JSON::Object& json)
+void  RPG::ClientEntity::updateMove(RPG::ClientWorld& world, RPG::ClientLevel& level, const Game::JSON::Object& json)
 {
   const auto& type = json.get("type").array().get(5).string();
 
@@ -216,7 +222,7 @@ void  RPG::ClientEntity::updateMove(const RPG::ClientWorld& world, const RPG::Cl
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-void  RPG::ClientEntity::updateAnimation(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const Game::JSON::Object& json)
+void  RPG::ClientEntity::updateAnimation(RPG::ClientWorld& world, RPG::ClientLevel& level, const Game::JSON::Object& json)
 {
   const auto& type = json.get("type").array().get(5).string();
 
@@ -236,7 +242,7 @@ void  RPG::ClientEntity::updateAnimation(const RPG::ClientWorld& world, const RP
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-void  RPG::ClientEntity::handleMoveRun(const RPG::ClientWorld& world, const RPG::ClientLevel& level, RPG::Coordinates coordinates, RPG::Position position, RPG::Direction direction, RPG::Coordinates target, float speed)
+void  RPG::ClientEntity::handleMoveRun(RPG::ClientWorld& world, RPG::ClientLevel& level, RPG::Coordinates coordinates, RPG::Position position, RPG::Direction direction, RPG::Coordinates target, float speed)
 {
   // Teleport
   if (speed <= 0.f) {
@@ -244,8 +250,11 @@ void  RPG::ClientEntity::handleMoveRun(const RPG::ClientWorld& world, const RPG:
     return;
   }
 
+  auto offset = level.position(coordinates) - level.position(this->coordinates);
+
   // Register move
   this->coordinates = coordinates;
+  this->position -= offset;
   this->_move.target = target;
   this->_move.position = position;
   this->_move.remaining = 1.f;
@@ -258,7 +267,7 @@ void  RPG::ClientEntity::handleMoveRun(const RPG::ClientWorld& world, const RPG:
     setAnimation(world, level, RPG::Model::WalkAnimation, true);
 }
 
-void  RPG::ClientEntity::handleMoveTeleport(const RPG::ClientWorld& world, const RPG::ClientLevel& level, RPG::Coordinates coordinates, RPG::Position position, RPG::Direction direction)
+void  RPG::ClientEntity::handleMoveTeleport(RPG::ClientWorld& world, RPG::ClientLevel& level, RPG::Coordinates coordinates, RPG::Position position, RPG::Direction direction)
 {
   // Register teleport
   this->coordinates = coordinates;
@@ -272,7 +281,7 @@ void  RPG::ClientEntity::handleMoveTeleport(const RPG::ClientWorld& world, const
   setAnimation(world, level, RPG::Model::IdleAnimation, true);
 }
 
-void  RPG::ClientEntity::handleMoveCancel(const RPG::ClientWorld& world, const RPG::ClientLevel& level)
+void  RPG::ClientEntity::handleMoveCancel(RPG::ClientWorld& world, RPG::ClientLevel& level)
 {
   // Use current position as target
   _move.target = coordinates;
@@ -282,17 +291,23 @@ void  RPG::ClientEntity::handleMoveCancel(const RPG::ClientWorld& world, const R
     setAnimation(world, level, RPG::Model::IdleAnimation, true);
 }
 
-void  RPG::ClientEntity::handleAnimationStart(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const std::string& name, bool loop)
+void  RPG::ClientEntity::handleAnimationStart(RPG::ClientWorld& world, RPG::ClientLevel& level, const std::string& name, bool loop)
 {
   // Start animation
   setAnimation(world, level, name, loop);
 }
 
-void  RPG::ClientEntity::handleAnimationModel(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const std::string& name)
+void  RPG::ClientEntity::handleAnimationModel(RPG::ClientWorld& world, RPG::ClientLevel& level, const std::string& name)
 {
   // Change model
   setModel(world, level, name);
 }
+
+bool  RPG::ClientEntity::isPickup() const { return _actions.pickup; }
+bool  RPG::ClientEntity::isContainer() const { return _actions.container; }
+bool  RPG::ClientEntity::isDialog() const { return _actions.dialog; }
+bool  RPG::ClientEntity::isFight() const { return _actions.fight; }
+bool  RPG::ClientEntity::isTrigger() const { return _actions.trigger; }
 
 std::uint64_t RPG::ServerEntity::_maxId = 0;
 
@@ -306,7 +321,7 @@ RPG::ServerEntity::ServerEntity(const RPG::ServerWorld& world, const RPG::Server
   id(json.contains("id") ? (std::uint64_t)json.get("id").number() : generateId()),
   coordinates(json.get("coordinates").array()),
   position(json.contains("position") ? json.get("position").array() : RPG::Entity::DefaultPosition),
-  direction(json.contains("direction") ? (RPG::Direction)json.get("direction").number() : RPG::Entity::DefaultDirection),
+  direction(json.contains("direction") ? RPG::StringToDirection(json.get("direction").string()) : RPG::Entity::DefaultDirection),
   _move{
     .target = coordinates,
     .completion = 1.f,
@@ -342,7 +357,6 @@ void  RPG::ServerEntity::updateMove(const RPG::ServerWorld& world, float elapsed
   if (_move.completion == 1.f && coordinates != _move.target) {
 
   }
-
 }
 
 Game::JSON::Object RPG::ServerEntity::json() const
@@ -355,7 +369,7 @@ Game::JSON::Object RPG::ServerEntity::json() const
   if (position != RPG::Entity::DefaultPosition)
     json.set("position", position.json());
   if (direction != RPG::Entity::DefaultDirection)
-    json.set("direction", (double)direction);
+    json.set("direction", RPG::DirectionToString(direction));
   
   // Serialize animation
   if (_animation.model.empty() == false)
@@ -371,7 +385,7 @@ Game::JSON::Object RPG::ServerEntity::json() const
   if (_actions.fight.empty() == false)
     json.set("fight", true);
   if (_actions.trigger.empty() == false)
-    json.set("action", true);
+    json.set("trigger", true);
 
   return json;
 }

@@ -2,7 +2,6 @@
 
 #include <unordered_map>
 
-#include "RolePlayingGame/Camera.hpp"
 #include "RolePlayingGame/Entity.hpp"
 #include "RolePlayingGame/Level.hpp"
 #include "RolePlayingGame/Model.hpp"
@@ -15,6 +14,11 @@ namespace RPG
 
   class ClientWorld
   {
+  private:
+    void loadLevel(const Game::JSON::Object& json);    // Load world from JSON
+    void loadModels(const Game::JSON::Object& json);    // Load world from JSON
+    void loadTextures(const Game::JSON::Object& json);    // Load world from JSON
+
   public:
     ClientWorld();
     ClientWorld(const ClientWorld&) = delete;
@@ -24,19 +28,15 @@ namespace RPG
     ClientWorld& operator=(const ClientWorld&) = delete;
     ClientWorld& operator=(ClientWorld&&) = delete;
 
-    std::unordered_map<std::string, RPG::ClientLevel> levels;
-    std::unordered_map<std::string, RPG::Model>       models;
-    std::unordered_map<std::string, RPG::Texture>     textures;
-    RPG::Camera                                       camera;
-
+    std::unique_ptr<RPG::ClientLevel>             level;    // Current level, empty when no level
+    std::unordered_map<std::string, RPG::Model>   models;   // Models library
+    std::unordered_map<std::string, RPG::Texture> textures; // Texture library
+    
     RPG::Model& model(const std::string& name);             // Get model
     const RPG::Model& model(const std::string& name) const; // Get model
 
     RPG::Texture& texture(const std::string& name);             // Get texture
     const RPG::Texture& texture(const std::string& name) const; // Get texture
-
-    RPG::ClientEntity&       entity(std::size_t id);       // Get entity from ID, search every level
-    const RPG::ClientEntity& entity(std::size_t id) const; // Get entity from ID, search every level
 
     void load(const Game::JSON::Object& json);    // Load world from JSON
     void update(const Game::JSON::Object& json);  // Update world from JSON

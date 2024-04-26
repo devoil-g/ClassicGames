@@ -11,7 +11,6 @@
 
 namespace Game
 {
-  
   class JSON
   {
   public:
@@ -107,9 +106,11 @@ namespace Game
       Game::JSON::Element&       operator[](const std::string& key);       // Get JSON element at key
       const Game::JSON::Element& operator[](const std::string& key) const; // Get JSON element at key
 
-      void unset(const std::string& key);          // Remove element from JSON object
-      void clear();                                // Reset JSON object
-      bool contains(const std::string& key) const; // Check if key is in JSON object
+      void        unset(const std::string& key);          // Remove element from JSON object
+      bool        empty() const;                          // Check if JSON object is empty
+      std::size_t size() const;                           // Get the number of entry in JSON object
+      void        clear();                                // Reset JSON object
+      bool        contains(const std::string& key) const; // Check if key is in JSON object
 
       std::string stringify() const override;
     };
@@ -166,6 +167,7 @@ namespace Game
       const Game::JSON::Element& operator[](std::size_t position) const; // Get JSON element at position
 
       void        unset(std::size_t position); // Remove element from JSON array
+      bool        empty() const;               // Check if array is empty
       std::size_t size() const;                // Get the size of the JSON array
       void        resize(std::size_t size);    // Resize the JSON array
       void        clear();                     // Reset JSON array

@@ -48,10 +48,9 @@ namespace RPG
     float getZoomTarget() const;  // Get target zoom value
     float getZoomDrag() const;    // Get zoom drag factor
 
-    sf::View  view() const;
-
-    void  set() const;    // Set window viewport to camera
-    void  reset() const;  // Reset window viewport
+    void     set() const;   // Set window viewport to camera
+    void     reset() const; // Reset window viewport
+    sf::View view() const;  // Get current view of camera
 
     void  update(float elapsed);  // Compute new camera position
   };

@@ -22,6 +22,9 @@ namespace RPG
     "N", "NE", "SE", "S", "SW", "NW"
   };
 
+  std::string    DirectionToString(RPG::Direction direction); // Direction to string
+  RPG::Direction StringToDirection(const std::string& name);  // String to direction
+
   using Coordinates = Math::Vector<2, int>;
   using Position = Math::Vector<3, float>;
 
@@ -37,10 +40,10 @@ namespace RPG
   class Bounds // Bounding box
   {
   public:
-    Math::Vector<2, int> origin; // Left and top position
-    Math::Vector<2, int> size;   // Width and height of bounds
+    Math::Vector<2> origin; // Left and top position
+    Math::Vector<2> size;   // Width and height of bounds
 
-    Bounds(const Math::Vector<2, int>& origin, const Math::Vector<2, int>& size);
+    Bounds(const Math::Vector<2>& origin, const Math::Vector<2>& size);
     Bounds(const Bounds&) = default;
     Bounds(Bounds&&) = default;
     ~Bounds() = default;
@@ -48,8 +51,8 @@ namespace RPG
     Bounds& operator=(const Bounds&) = default;
     Bounds& operator=(Bounds&&) = default;
 
-    bool contains(const Math::Vector<2, int>& position) const; // Ckeck if position is contained by bounds
-    bool contains(int x, int y) const;                         // Ckeck if position is contained by bounds
+    bool contains(const Math::Vector<2>& position) const; // Ckeck if position is contained by bounds
+    bool contains(float x, float y) const;                       // Ckeck if position is contained by bounds
   };
 }
 

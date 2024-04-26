@@ -96,7 +96,7 @@ void  Game::MainMenuScene::selectGameHost(Game::AbstractMenuScene::Item&)
   std::thread([&machine]() {
     try {
       auto server = std::make_unique<RPG::Server>(Game::Config::ExecutablePath / "assets" / "rpg" / "level_01.json");
-      
+
       server->run();
       machine.push<RPG::ClientScene>(std::move(server));
     }

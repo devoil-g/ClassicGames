@@ -29,6 +29,9 @@ namespace RPG
     bool             blocked;     // True if cell can be selected
     int              height;      // Height of the cell
 
+    RPG::Color hover;  // Cell hover color
+    RPG::Color cursor; // Cell cursor color
+
     ClientCell() = delete;
     ClientCell(const RPG::ClientWorld& world, const RPG::ClientLevel& level, const Game::JSON::Object& json);
     ClientCell(const ClientCell&) = delete;
@@ -38,8 +41,7 @@ namespace RPG
     ClientCell& operator=(const ClientCell&) = delete;
     ClientCell& operator=(ClientCell&&) = delete;
 
-    Math::Vector<2, int> position() const; // Get position of cell in world
-    RPG::Bounds          bounds() const;   // Get cells bounds
+    RPG::Bounds bounds(const RPG::ClientWorld& world, const RPG::ClientLevel& level) const; // Get cells bounds
   };
 
   class ServerCell
