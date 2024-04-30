@@ -13,13 +13,23 @@
 QUIZ::QuestionQuizScene::QuestionQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz) :
   Game::AbstractScene(machine),
   _quiz(quiz),
-  _display(true),
   _score((int)_quiz.players.size()),
   _current((int)_quiz.players.size()),
   _buzz(-1),
   _cooldowns(_quiz.players.size(), 0.f),
   _cooldown(10.f)
 {
+  // Set player visible
+  for (int index = 0; index < _quiz.players.size(); index++) {
+    auto& player = _quiz.players[index];
+    auto& entity = _quiz.entities.at("player_" + std::to_string(player.id));
+
+    entity.setTargetPosition((index + 1.f) / (_quiz.players.size() + 1.f), 0.5f);
+    entity.setTargetScale(0.9f / (_quiz.players.size() + 1.f), 0.75f);
+    entity.setTargetColor(1.f, 1.f, 1.f, 1.f);
+    entity.setLerp(0.0625f);
+  }
+
   // Display usage at start-up
   usage();
 }
@@ -32,29 +42,18 @@ void  QUIZ::QuestionQuizScene::usage() const
     << "Instruction for players: use the big red friendly button to buzz" << std::endl
     << std::endl
     << "Commands:" << std::endl
-    << "  [H]elp:       display this usage" << std::endl
-    << "  [S]core:      toogle score display" << std::endl
     << "  [W]rong:      wrong answer, release buzzers" << std::endl
     << "  [C]orrect:    correct answer, reset for new question" << std::endl
-    << "  [N]ext:       no answers, skip to next question" << std::endl
+    << "  [T]imeout:    timeout, skip to next question" << std::endl
+    << "  [R]eset:      quiet timeout" << std::endl
     << "  Arrow[L/R]:   set cooldown" << std::endl
     << "  Arrow[U/D]:   change question score" << std::endl
-    << "  Left click:   increase player score" << std::endl
-    << "  Right click:  decrease player score" << std::endl
     << "  [E]nd:        return to main menu" << std::endl
     << std::endl;
 }
 
 bool  QUIZ::QuestionQuizScene::update(float elapsed)
 {
-  // Toggle score display
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::S) == true)
-    _display = !_display;
-
-  // Display usage
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::H) == true)
-    usage();
-
   // Wrong answer
   if (_buzz != -1 && Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::W) == true) {
     auto  ref = Game::Audio::Sound::Instance().get();
@@ -64,13 +63,11 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
     ref.sound.play();
 
     // Set player cooldown
-    for (auto& cooldown : _cooldowns)
-      cooldown = std::max(cooldown, 0.6f);
-    _cooldowns.at(_buzz) = _cooldown + 0.6f;
+    _cooldowns[_buzz] = (_cooldown == 0.f) ? std::numeric_limits<float>::infinity() : _cooldown;
     _buzz = -1;
 
     // Decrease question score
-    _current = std::max(0, _current - 1);
+    _current = std::max(1, _current - 1);
     std::cout << "\rQuestion score decreased to " << _current << " points.        " << std::flush;
   }
 
@@ -88,7 +85,7 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
     std::cout << "\rPlayer #" << _buzz << " won " << _current << " points!            " << std::flush;
 
     // Reset players cooldown
-    std::fill(_cooldowns.begin(), _cooldowns.end(), 0.6f);
+    std::fill(_cooldowns.begin(), _cooldowns.end(), 1.2f);
     _cooldowns.at(_buzz) = 0.f;
     _buzz = -1;
 
@@ -97,12 +94,16 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
   }
 
   // Skip to next question
-  if (_buzz == -1 && Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::N) == true) {
-    auto  ref = Game::Audio::Sound::Instance().get();
+  if (_buzz == -1 && (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::N) == true || Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true))
+  {
+    // Play sound if not quiet
+    if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::N) == true) {
+      auto  ref = Game::Audio::Sound::Instance().get();
 
-    // Play correct answer sound
-    ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / "question_timesup.wav"));
-    ref.sound.play();
+      // Play correct answer sound
+      ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / "question_timesup.wav"));
+      ref.sound.play();
+    }
 
     // Reset players cooldown
     _buzz = -1;
@@ -128,14 +129,14 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
 
   // Increase question score
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Up) == true) {
-    _score = std::max(0, _score + 1);
+    _score = std::max(1, _score + 1);
     _current = _score;
     std::cout << "\rQuestion score set to " << _score << " points.        " << std::flush;
   }
 
   // Decrease question score
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Down) == true) {
-    _score = std::max(0, _score - 1);
+    _score = std::max(1, _score - 1);
     _current = _score;
     std::cout << "\rQuestion score set to " << _score << " points.        " << std::flush;
   }
@@ -144,20 +145,6 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::E) == true) {
     _machine.pop();
     return false;
-  }
-
-  // Change scores
-  if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Left) == true || Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Right) == true) {
-    for (auto player_index = 0; player_index < _quiz.players.size(); player_index++) {
-      auto& player = _quiz.players.at(player_index);
-      if (player.sprite.getGlobalBounds().contains((float)Game::Window::Instance().mouse().position().x, (float)Game::Window::Instance().mouse().position().y) == true) {
-        if (_display == true)
-          player.score = player.score
-          + (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Left) == true ? +1 : 0)
-          + (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Right) == true ? -1 : 0);
-        std::cout << "\rScore of player #" << (player_index + 1) << ": " << player.score << ".        " << std::flush;
-      }
-    }
   }
 
   // Players can buzz
@@ -178,73 +165,30 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
         // Set buzz index
         _buzz = index;
 
-        std::cout << "\rPlayer #" << _buzz << " buzzed for " << _current << " points!            " << std::flush;
+        // Player cooldown
+        for (auto& cooldown : _cooldowns)
+          cooldown = (_cooldown == 0.f) ? 0.6f : std::max(0.6f, cooldown);
+        _cooldowns.at(_buzz) = 0.f;
 
+        std::cout << "\rPlayer #" << _buzz << " buzzed for " << _current << " points!            " << std::flush;
         break;
       }
     }
+  }
+
+  // Update player color
+  for (int index = 0; index < _quiz.players.size(); index++) {
+    auto& player = _quiz.players[index];
+    auto& entity = _quiz.entities.at("player_" + std::to_string(player.id));
+
+    if (_cooldowns[index] > 0.f)
+      entity.setTargetColor(0.25f, 0.25f, 0.25f, 1.f);
+    else
+      entity.setTargetColor(1.f, 1.f, 1.f, 1.f);
   }
 
   return false;
 }
 
 void  QUIZ::QuestionQuizScene::draw()
-{
-  auto  screen = Game::Window::Instance().window().getSize();
- 
-  for (unsigned int player_index = 0; player_index < _quiz.players.size(); player_index++) {
-    auto&       player = _quiz.players[player_index];
-    sf::Sprite& sprite = player.sprite;
-
-    float x_position = screen.x / (_quiz.players.size() + 1.f) * (player_index + 1.f);
-    float y_position = screen.y / 2.f;
-
-    // Set sprite position
-    sprite.setPosition(x_position, y_position);
-    sprite.setOrigin(sprite.getLocalBounds().width / 2.f, sprite.getLocalBounds().height / 2.f);
-
-    float x_scale = (screen.x * 0.9f / (_quiz.players.size() + 1.f)) / sprite.getLocalBounds().width;
-    float y_scale = (screen.y * 0.75f) / sprite.getLocalBounds().height;
-    float scale = std::min(x_scale, y_scale);
-
-    // Set sprite size
-    sprite.setScale(scale, scale);
-
-    std::uint8_t  alpha = 255;
-
-    // Cooldown transparency
-    if (_buzz == -1 && _cooldowns.at(player_index) > 0.f)
-      alpha = (int)(std::pow(std::clamp(1.f / (_cooldowns.at(player_index) + 1.f), 0.f, 1.f), 20) * 192.f) + 63;
-    else if (_buzz != -1 && _buzz != player_index)
-      alpha = 63;
-
-    // Set transparency
-    sprite.setColor(sf::Color(255, 255, 255, alpha));
-
-    // Draw sprite
-    Game::Window::Instance().window().draw(sprite);
-
-    // Skip score display
-    if (_display == false)
-      continue;
-
-    sf::Text  score(std::to_string(player.score), Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf"), 128);
-
-    // Set score outline thickness
-    score.setOutlineThickness(5.f);
-
-    // Set size of the score
-    scale = (screen.y * 0.1f) / score.getLocalBounds().height;
-    score.setScale(scale, scale);
-
-    // Set score position
-    score.setOrigin(score.getLocalBounds().width / 2.f, score.getLocalBounds().height / 2.f);
-    score.setPosition(x_position, sprite.getGlobalBounds().top + sprite.getGlobalBounds().height);
-
-    // Set transparency
-    score.setFillColor(sf::Color(255, 255, 255, alpha));
-
-    // Draw score
-    Game::Window::Instance().window().draw(score);
-  }
-}
+{}

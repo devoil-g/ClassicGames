@@ -13,7 +13,6 @@ namespace QUIZ
   private:
     QUIZ::Quiz&         _quiz;    // Quiz instance
     sf::Music           _music;   // Background music, also used as timer
-    bool                _display; // Display score
 
   public:
     ScoresQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz);

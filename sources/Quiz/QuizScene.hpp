@@ -18,6 +18,7 @@ namespace QUIZ
 
     QUIZ::Quiz          _quiz;    // Main quiz instance
     Game::SceneMachine  _game;    // Quiz state machine
+    bool                _scores;  // Score display
     
     float               _elapsed; // Timer of forced exit
     sf::RectangleShape  _bar;     // Forced exit bar
@@ -26,7 +27,7 @@ namespace QUIZ
     QuizScene(Game::SceneMachine& machine);
     ~QuizScene() override;
 
-    bool  update(float elapsed) override;  // Update state
-    void  draw() override;                    // Draw state
+    bool  update(float elapsed) override; // Update state
+    void  draw() override;                // Draw state
   };
 }

@@ -26,13 +26,9 @@ namespace QUIZ
     std::vector<QUIZ::Quiz::Blindtest>::iterator _blindtest; // Question to be played
 
     sf::Music             _music;     // Music to be played
-    sf::Texture           _cover;     // Cover texture
-    sf::Texture           _play;      // Play texture
-    sf::Texture           _pause;     // Pause texture
     sf::RectangleShape    _bar;       // Timer bar
     State                 _state;     // Current state of blindtest
     int                   _buzz;      // Index of player answering
-    bool                  _display;   // Display score
 
     std::vector<float>  _cooldowns; // Player cooldown before answer
     float               _cooldown;  // Cooldown given to players
@@ -45,16 +41,13 @@ namespace QUIZ
     void  updatePending(float elapsed);
     void  updateAnswer(float elapsed);
 
-    void  drawPlaying();
-    void  drawPending();
-    void  drawAnswer();
-
-    void  drawTimer();
-    void  drawTexture(const sf::Texture& texture, float size);
+    void  setPlaying();
+    void  setPending();
+    void  setAnswer();
 
   public:
     BlindtestQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz);
-    ~BlindtestQuizScene() = default;
+    ~BlindtestQuizScene();
 
     bool  update(float elapsed) override; // Update state
     void  draw() override;                // Draw state

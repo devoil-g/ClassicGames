@@ -15,8 +15,7 @@ QUIZ::ControllerQuizScene::ControllerQuizScene(Game::SceneMachine& machine, QUIZ
   Game::AbstractScene(machine),
   _quiz(quiz),
   _music(),
-  _bar(sf::Vector2f(1.f, 1.f)),
-  _ping(0)
+  _bar(sf::Vector2f(1.f, 1.f))
 {
   // Load music
   if (_music.openFromFile((Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "contestants.ogg").string()) == false)
@@ -32,6 +31,17 @@ QUIZ::ControllerQuizScene::ControllerQuizScene(Game::SceneMachine& machine, QUIZ
   // Initialize timer bar
   _bar.setSize(sf::Vector2f(1.f, 1.f));
   _bar.setFillColor(sf::Color::White);
+
+  // Set player visible
+  for (int index = 0; index < _quiz.players.size(); index++) {
+    auto& player = _quiz.players[index];
+    auto& entity = _quiz.entities.at("player_" + std::to_string(player.id));
+
+    entity.setTargetPosition((index + 1.f) / (_quiz.players.size() + 1.f), 0.5f);
+    entity.setTargetScale(0.9f / (_quiz.players.size() + 1.f), 0.75f);
+    entity.setTargetColor(1.f, 1.f, 1.f, 1.f);
+    entity.setLerp(0.0625f);
+  }
 
   // Host instructions
   std::cout
@@ -77,7 +87,7 @@ void  QUIZ::ControllerQuizScene::updateRegister()
           // Check if joystick/button is already used
           if (std::find_if(_quiz.players.begin(), _quiz.players.end(), [joystick, button](const auto& player) { return player.joystick == joystick && player.button == button; }) != _quiz.players.end())
             continue;
-          
+
           unsigned int avatar = (unsigned int)-1;
 
           // Find first available avatar
@@ -102,16 +112,31 @@ void  QUIZ::ControllerQuizScene::updateRegister()
             .button = button,
             .avatar = avatar,
             .skin = 0,
-            .score = 0
+            .score = 0,
+            .id = joystick * 20 + button
             });
 
-          // Set player texture
-          _quiz.players.back().sprite.setTexture(_quiz.avatars[_quiz.players.back().avatar][_quiz.players.back().skin], true);
+          // Add player entity
+          auto& player = _quiz.entities.emplace(std::make_pair("player_" + std::to_string(_quiz.players.back().id), _quiz.avatars[_quiz.players.back().avatar][_quiz.players.back().skin])).first->second;
+          player.setPosition((float)_quiz.players.size() / (_quiz.players.size() + 1.f), 0.5f);
+          player.setScale(0.f, 0.f);
+          player.setColor(0.f, 0.f, 0.f, 0.f);
+          player.setLerp(0.0625f);
+
+          // Move every player to fit new player
+          for (int index = 0; index < _quiz.players.size(); index++) {
+            auto& entity = _quiz.entities.at("player_" + std::to_string(_quiz.players[index].id));
+
+            entity.setTargetPosition((index + 1.f) / (_quiz.players.size() + 1.f), 0.5f);
+            entity.setTargetScale(0.9f / (_quiz.players.size() + 1.f), 0.75f);
+            entity.setTargetColor(1.f, 1.f, 1.f, 1.f);
+          }
 
           auto  ref = Game::Audio::Sound::Instance().get();
 
           // Play ping sound
-          ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / ("ping" + std::to_string(_ping++ % 4 + 1) + ".wav")));
+          static int ping = 0;
+          ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / ("ping" + std::to_string(ping++ % 4 + 1) + ".wav")));
           ref.sound.play();
         }
       }
@@ -126,8 +151,19 @@ void  QUIZ::ControllerQuizScene::updateUnregister()
     for (auto iterator = _quiz.players.begin(); iterator != _quiz.players.end();)
     {
       // Remove player when sprite is clicked
-      if (iterator->sprite.getGlobalBounds().contains({ (float)Game::Window::Instance().mouse().position().x,(float)Game::Window::Instance().mouse().position().y }) == true)
+      if (_quiz.entities.at("player_" + std::to_string(iterator->id)).hover() == true) {
+        _quiz.entities.erase("player_" + std::to_string(iterator->id));
         iterator = _quiz.players.erase(iterator);
+
+        // Move every player to fit screen
+        for (int index = 0; index < _quiz.players.size(); index++) {
+          auto& entity = _quiz.entities.at("player_" + std::to_string(_quiz.players[index].id));
+
+          entity.setTargetPosition((index + 1.f) / (_quiz.players.size() + 1.f), 0.5f);
+          entity.setTargetScale(0.9f / (_quiz.players.size() + 1.f), 0.75f);
+          entity.setTargetColor(1.f, 1.f, 1.f, 1.f);
+        }
+      }
       else
         iterator++;
     }
@@ -147,7 +183,7 @@ void  QUIZ::ControllerQuizScene::updateAvatar()
           // Register new avatar
           player.avatar = avatar;
           player.skin = 0;
-          player.sprite.setTexture(_quiz.avatars[player.avatar][player.skin], true);
+          _quiz.entities.at("player_" + std::to_string(player.id)).setTexture(_quiz.avatars[player.avatar][player.skin]);
           break;
         }
       }
@@ -161,7 +197,7 @@ void  QUIZ::ControllerQuizScene::updateAvatar()
           // Register new avatar
           player.avatar = avatar;
           player.skin = 0;
-          player.sprite.setTexture(_quiz.avatars[player.avatar][player.skin], true);
+          _quiz.entities.at("player_" + std::to_string(player.id)).setTexture(_quiz.avatars[player.avatar][player.skin]);
           break;
         }
       }
@@ -170,13 +206,13 @@ void  QUIZ::ControllerQuizScene::updateAvatar()
     // Next costume
     if (Game::Window::Instance().joystick().buttonPressed(player.joystick, player.button + QUIZ::Quiz::Button::ButtonGreen) == true) {
       player.skin = Math::Modulo((int)player.skin + 1, (int)_quiz.avatars[player.avatar].size());
-      player.sprite.setTexture(_quiz.avatars[player.avatar][player.skin], true);
+      _quiz.entities.at("player_" + std::to_string(player.id)).setTexture(_quiz.avatars[player.avatar][player.skin]);
     }
 
     // Previous costume
     if (Game::Window::Instance().joystick().buttonPressed(player.joystick, player.button + QUIZ::Quiz::Button::ButtonYellow) == true) {
       player.skin = Math::Modulo((int)player.skin - 1, (int)_quiz.avatars[player.avatar].size());
-      player.sprite.setTexture(_quiz.avatars[player.avatar][player.skin], true);
+      _quiz.entities.at("player_" + std::to_string(player.id)).setTexture(_quiz.avatars[player.avatar][player.skin]);
     }
   }
 }
@@ -197,49 +233,6 @@ void  QUIZ::ControllerQuizScene::updateHost()
 }
 
 void  QUIZ::ControllerQuizScene::draw()
-{
-  // Draw nothing if timer ended
-  if (_music.getStatus() != sf::Music::Status::Playing || _music.getPlayingOffset().asSeconds() >= TimerLimit + TimerOver)
-    return;
-
-  // Draw players
-  drawPlayers();
-
-  // Draw timer bar
-  drawTimer();
-}
-
-void  QUIZ::ControllerQuizScene::drawPlayers()
-{
-  auto  screen = Game::Window::Instance().window().getSize();
-  float alpha = std::clamp(1.f - (_music.getPlayingOffset().asSeconds() - TimerLimit) / TimerOver, 0.f, 1.f);
-
-  for (unsigned int player_index = 0; player_index < _quiz.players.size(); player_index++) {
-    sf::Sprite& sprite = _quiz.players[player_index].sprite;
-
-    float x_position = screen.x / (_quiz.players.size() + 1.f) * (player_index + 1.f);
-    float y_position = screen.y / 2.f;
-
-    // Set sprite position
-    sprite.setPosition(x_position, y_position);
-    sprite.setOrigin(sprite.getLocalBounds().width / 2.f, sprite.getLocalBounds().height / 2.f);
-
-    float x_scale = (screen.x * 0.9f / (_quiz.players.size() + 1.f)) / sprite.getLocalBounds().width;
-    float y_scale = (screen.y * 0.75f) / sprite.getLocalBounds().height;
-    float scale = std::min(x_scale, y_scale);
-
-    // Set sprite size
-    sprite.setScale(scale, scale);
-
-    // Set transparency
-    sprite.setColor(sf::Color(255, 255, 255, (std::uint8_t)(255 * alpha)));
-
-    // Draw sprite
-    Game::Window::Instance().window().draw(sprite);
-  }
-}
-
-void  QUIZ::ControllerQuizScene::drawTimer()
 {
   float completion = std::clamp(_music.getPlayingOffset().asSeconds() / TimerLimit, 0.f, 1.f);
   float over = std::clamp((_music.getPlayingOffset().asSeconds() - TimerLimit) / TimerOver, 0.f, 1.f);

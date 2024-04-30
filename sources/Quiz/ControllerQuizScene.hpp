@@ -18,15 +18,11 @@ namespace QUIZ
     QUIZ::Quiz&         _quiz;  // Quiz instance
     sf::Music           _music; // Background music, also used as timer
     sf::RectangleShape  _bar;   // Timer bar
-    unsigned int        _ping;  // Register ping sound index
 
     void  updateRegister();   // Register new player
     void  updateUnregister(); // Remove a player
     void  updateAvatar();     // Change avatar of players
     void  updateHost();       // Handle host commands
-
-    void  drawPlayers();  // Draw players
-    void  drawTimer();    // Draw timer bar
 
   public:
     ControllerQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz);

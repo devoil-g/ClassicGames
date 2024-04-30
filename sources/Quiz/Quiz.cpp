@@ -4,11 +4,12 @@
 #include <random>
 #include <chrono>     
 #include <algorithm>
+#include <exception>
 
 #include <SFML/Audio.hpp>
 
-#include "System/Library/TextureLibrary.hpp"
 #include "System/Config.hpp"
+#include "System/Window.hpp"
 #include "Quiz/Quiz.hpp"
 
 QUIZ::Quiz::Quiz() :
@@ -20,7 +21,7 @@ QUIZ::Quiz::Quiz() :
 
   // Load avatars from directory
   for (const auto& avatar : std::filesystem::directory_iterator(Game::Config::ExecutablePath / "assets" / "quiz" / "avatars")) {
-    std::vector<sf::Texture>  skins;
+    std::vector<std::filesystem::path>  skins;
 
     // Costume directory
     if (avatar.is_directory() == true) {
@@ -38,7 +39,7 @@ QUIZ::Quiz::Quiz() :
           continue;
 
         // Add avatar to collection
-        skins.push_back(texture);
+        skins.push_back(skin.path());
       }
     }
 
@@ -57,7 +58,7 @@ QUIZ::Quiz::Quiz() :
         continue;
 
       // Add avatar to collection
-      skins.push_back(texture);
+      skins.push_back(avatar.path());
     }
     
     // No costume to load
@@ -69,14 +70,6 @@ QUIZ::Quiz::Quiz() :
 
     // Verbose
     std::cout << "Avatar '" << avatar.path().stem().string() << "' loaded." << std::endl;
-  }
-
-  // Smooth avatar
-  for (auto& avatar : avatars) {
-    for (auto& costume : avatar) {
-      costume.setSmooth(true);
-      costume.generateMipmap();
-    }
   }
 
   // Load blindtests from directory
@@ -132,4 +125,91 @@ QUIZ::Quiz::Quiz() :
     << "  Avatars:    " << avatars.size() << std::endl
     << "  Blindtests: " << blindtests.size() << std::endl
     << std::endl;
+}
+
+QUIZ::Quiz::Entity::Entity(const std::filesystem::path& texturePath)
+{
+  // Default values
+  setPosition(0.5f, 0.5f);
+  setScale(1.f, 1.f);
+  setColor(0.f, 0.f, 0.f, 0.f);
+  setLerp(0.f);
+  setTexture(texturePath);
+}
+
+void  QUIZ::Quiz::Entity::setPosition(float x, float y) { _position = _targetPosition = { x, y }; }
+void  QUIZ::Quiz::Entity::setTargetPosition(float x, float y) { _targetPosition = { x, y }; }
+void  QUIZ::Quiz::Entity::setScale(float x, float y) { _scale = _targetScale = { x, y }; }
+void  QUIZ::Quiz::Entity::setTargetScale(float x, float y) { _targetScale = { x, y }; }
+void  QUIZ::Quiz::Entity::setColor(float r, float g, float b, float a) { _color = _targetColor = { r, g, b, a }; }
+void  QUIZ::Quiz::Entity::setTargetColor(float r, float g, float b, float a) { _targetColor = { r, g, b, a }; }
+void  QUIZ::Quiz::Entity::setLerp(float l) { _lerp = l; }
+
+void  QUIZ::Quiz::Entity::setTexture(const std::filesystem::path& path)
+{
+  // Load texture and generate mipmap
+  if (_texture.loadFromFile(path.string()) == false || _texture.generateMipmap() == false)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // Smooth textures
+  _texture.setSmooth(true);
+
+  // Set origin to center of sprite
+  _sprite.setTexture(_texture, true);
+  _sprite.setOrigin(_texture.getSize().x / 2.f, _texture.getSize().y / 2.f);
+}
+
+Math::Vector<2> QUIZ::Quiz::Entity::getPosition() const { return _position; }
+Math::Vector<2> QUIZ::Quiz::Entity::getTargetPosition() const { return _targetPosition; }
+Math::Vector<2> QUIZ::Quiz::Entity::getScale() const { return _scale; }
+Math::Vector<2> QUIZ::Quiz::Entity::getTargetScale() const { return _targetScale; }
+Math::Vector<4> QUIZ::Quiz::Entity::getColor() const { return _color; }
+Math::Vector<4> QUIZ::Quiz::Entity::getTargetColor() const { return _targetColor; }
+float           QUIZ::Quiz::Entity::getLerp() const { return _lerp; }
+
+const sf::Sprite& QUIZ::Quiz::Entity::sprite() const
+{
+  // Get entity sprite
+  return _sprite;
+}
+
+void  QUIZ::Quiz::Entity::update(float elapsed)
+{
+  // Lerp entity component
+  _position = lerp(_position, _targetPosition, elapsed);
+  _scale = lerp(_scale, _targetScale, elapsed);
+  _color = lerp(_color, _targetColor, elapsed);
+}
+
+void  QUIZ::Quiz::Entity::draw()
+{
+  auto&           window = Game::Window::Instance();
+  Math::Vector<2> windowSize = { (float)window.window().getSize().x, (float)window.window().getSize().y };
+  Math::Vector<2> spriteSize = { (float)_texture.getSize().x, (float)_texture.getSize().y };
+  float           spriteScale = std::min(
+    windowSize.x() / spriteSize.x() * _scale.x(),
+    windowSize.y() / spriteSize.y() * _scale.y()
+  );
+
+  // Update lerp for instant move
+  update(0.f);
+
+  // Update sprite position
+  _sprite.setPosition(windowSize.x() * _position.x(), windowSize.y() * _position.y());
+  _sprite.setScale(spriteScale, spriteScale);
+  _sprite.setColor(sf::Color(
+    (std::uint8_t)(std::clamp(_color.get<0>(), 0.f, 255.f) * 255),
+    (std::uint8_t)(std::clamp(_color.get<1>(), 0.f, 255.f) * 255),
+    (std::uint8_t)(std::clamp(_color.get<2>(), 0.f, 255.f) * 255),
+    (std::uint8_t)(std::clamp(_color.get<3>(), 0.f, 255.f) * 255)
+  ));
+
+  // Draw sprite
+  window.window().draw(_sprite);
+}
+
+bool  QUIZ::Quiz::Entity::hover() const
+{
+  // Check if cursor is on sprite
+  return _sprite.getGlobalBounds().contains(Game::Window::Instance().window().mapPixelToCoords(Game::Window::Instance().mouse().position()));
 }

@@ -11,7 +11,6 @@ namespace QUIZ
   {
   private:
     QUIZ::Quiz&         _quiz;      // Quiz instance
-    bool                _display;   // Display score
     int                 _score;     // Question score
     int                 _current;   // Current question score
     int                 _buzz;      // Player buzzing

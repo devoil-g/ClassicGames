@@ -227,11 +227,13 @@ void  Game::AbstractMenuScene::drawItems()
     if (index == _select)
       _items[index].scale({ 1.28f, 1.28f });
 
+    // Center origin
+    _items[index].setOrigin(_items[index].getLocalBounds().width / 2.f, _items[index].getLocalBounds().height);
+
     // Position item
     _items[index].setPosition(
-      (Game::Window::Instance().window().getSize().x - _items[index].getGlobalBounds().width) / 2.f,
+      Game::Window::Instance().window().getSize().x / 2.f,
       Game::Window::Instance().window().getSize().y / 3.f
-      + height * scale / 2.f
       + _scroll
       + height * scale * 2.f * index
     );

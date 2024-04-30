@@ -38,9 +38,6 @@ Game::Window::Window() :
 
 bool  Game::Window::update(float elapsed)
 {
-  // Check window focus
-  bool  focus = _window.hasFocus() == true;
-
   // Clear inputs pressed/released maps
   _mouse._pressed.fill(false);
   _mouse._released.fill(false);
@@ -50,10 +47,10 @@ bool  Game::Window::update(float elapsed)
   _joystick._released.fill(std::array<bool, sf::Joystick::ButtonCount>());
 
   // Cancel down keys when no focus
-  if (focus == false) {
+  // NOTE: some joysticks are stick registered when no focus
+  if (_window.hasFocus() == false) {
     _mouse._down.fill(false);
     _keyboard._down.fill(false);
-    _joystick._down.fill(std::array<bool, sf::Joystick::ButtonCount>());
   }
 
   // Reset keyboard input text
@@ -74,55 +71,51 @@ bool  Game::Window::update(float elapsed)
     if (event.type == sf::Event::Resized)
       _window.setView(sf::View(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height)));
 
-    // Get input only if window focused
-    if (focus == true)
+    // Get inputs
+    switch (event.type)
     {
-      switch (event.type)
-      {
-        // Get mouse events
-      case sf::Event::MouseButtonPressed:
-        _mouse._down[event.mouseButton.button] = true;
-        _mouse._pressed[event.mouseButton.button] = true;
-        break;
-      case sf::Event::MouseButtonReleased:
-        _mouse._down[event.mouseButton.button] = false;
-        _mouse._released[event.mouseButton.button] = true;
-        break;
-      case sf::Event::MouseWheelMoved:
-        _mouse._wheel += event.mouseWheel.delta;
-        break;
+      // Get mouse events
+    case sf::Event::MouseButtonPressed:
+      _mouse._down[event.mouseButton.button] = true;
+      _mouse._pressed[event.mouseButton.button] = true;
+      break;
+    case sf::Event::MouseButtonReleased:
+      _mouse._down[event.mouseButton.button] = false;
+      _mouse._released[event.mouseButton.button] = true;
+      break;
+    case sf::Event::MouseWheelMoved:
+      _mouse._wheel += event.mouseWheel.delta;
+      break;
 
-        // Get keyboard events
-      case sf::Event::KeyPressed:
-        if (event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount) {
-          _keyboard._down[event.key.code] = true;
-          _keyboard._pressed[event.key.code] = true;
-        }
-        break;
-      case sf::Event::KeyReleased:
-        if (event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount) {
-          _keyboard._down[event.key.code] = false;
-          _keyboard._released[event.key.code] = true;
-        }
-        break;
-      case sf::Event::TextEntered:
-        _keyboard._text.push_back((wchar_t)event.text.unicode);
-        break;
-
-        // Get joystick events
-      case sf::Event::JoystickButtonPressed:
-        _joystick._down[event.joystickButton.joystickId][event.joystickButton.button] = true;
-        _joystick._pressed[event.joystickButton.joystickId][event.joystickButton.button] = true;
-        break;
-      case sf::Event::JoystickButtonReleased:
-        _joystick._down[event.joystickButton.joystickId][event.joystickButton.button] = false;
-        _joystick._released[event.joystickButton.joystickId][event.joystickButton.button] = true;
-        break;
-
-      default:
-        break;
+      // Get keyboard events
+    case sf::Event::KeyPressed:
+      if (event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount) {
+        _keyboard._down[event.key.code] = true;
+        _keyboard._pressed[event.key.code] = true;
       }
-      
+      break;
+    case sf::Event::KeyReleased:
+      if (event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount) {
+        _keyboard._down[event.key.code] = false;
+        _keyboard._released[event.key.code] = true;
+      }
+      break;
+    case sf::Event::TextEntered:
+      _keyboard._text.push_back((wchar_t)event.text.unicode);
+      break;
+
+      // Get joystick events
+    case sf::Event::JoystickButtonPressed:
+      _joystick._down[event.joystickButton.joystickId][event.joystickButton.button] = true;
+      _joystick._pressed[event.joystickButton.joystickId][event.joystickButton.button] = true;
+      break;
+    case sf::Event::JoystickButtonReleased:
+      _joystick._down[event.joystickButton.joystickId][event.joystickButton.button] = false;
+      _joystick._released[event.joystickButton.joystickId][event.joystickButton.button] = true;
+      break;
+
+    default:
+      break;
     }
   }
 
