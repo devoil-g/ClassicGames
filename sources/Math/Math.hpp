@@ -9,7 +9,7 @@
 #include <vector>
 
 #ifndef M_PI
-# define M_PI	3.14159265358979323846
+# define M_PI 3.14159265358979323846
 #endif
 
 #if __cplusplus < __cpp_2017
@@ -25,7 +25,7 @@ namespace std
 
 namespace Math
 {
-  constexpr float const Pi = (float)M_PI;	// Use this instead of M_PI
+  constexpr float const Pi = (float)M_PI; // Use this instead of M_PI
 
   template<int Mod>
   inline int  Modulo(int i) // Return the positive modulo Mod of i

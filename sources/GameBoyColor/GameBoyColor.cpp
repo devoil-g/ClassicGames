@@ -731,7 +731,7 @@ std::uint8_t  GBC::GameBoyColor::read(std::uint16_t addr)
   else if (addr < 0xFE00)
     return readWRam(addr - 0xE000);
 
-  // Sprite attribute table (OAM)	
+  // Sprite attribute table (OAM)
   else if (addr < 0xFEA0)
     return _ppu.readOam(addr - 0xFE00);
 
@@ -930,7 +930,7 @@ void  GBC::GameBoyColor::write(std::uint16_t addr, std::uint8_t value)
   else if (addr < 0xFE00)
     writeWRam(addr - 0xE000, value);
 
-  // Sprite attribute table (OAM)	
+  // Sprite attribute table (OAM)
   else if (addr < 0xFEA0)
     _ppu.writeOam(addr - 0xFE00, value);
 

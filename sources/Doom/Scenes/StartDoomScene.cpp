@@ -90,7 +90,7 @@ void  DOOM::StartDoomScene::updateRegister(const int id)
     {
       // Add players to game
       for (int player : _players)
-	_doom.addPlayer(player);
+        _doom.addPlayer(player);
 
       // Push loading screen
       _machine.swap<DOOM::SplashDoomScene>(_doom);
@@ -121,7 +121,7 @@ void  DOOM::StartDoomScene::draw()
   // Set text for each player slot
   for (int index = 0; index < _players.size(); index++) {
     switch (_players[index]) {
-    case -1:	// No controller
+    case -1:  // No controller
     {
       float intensity = std::sqrt(1.f - (std::cos(_elapsed * 4.f) + 1.f) / 2.f);
 
@@ -129,11 +129,11 @@ void  DOOM::StartDoomScene::draw()
       _controllers[index].setFillColor(sf::Color((sf::Uint8)(255 * intensity), (sf::Uint8)(255 * intensity), (sf::Uint8)(255 * intensity)));
       break;
     }
-    case 0:	// Keyboard/mouse
+    case 0:   // Keyboard/mouse
       _controllers[index].setString("Keyboard");
       _controllers[index].setFillColor(sf::Color::White);
       break;
-    default:	// Controller
+    default:  // Controller
       _controllers[index].setString("Controller #" + std::to_string(_players[index] - 1));
       _controllers[index].setFillColor(sf::Color::White);
       break;
@@ -171,8 +171,8 @@ void  DOOM::StartDoomScene::draw()
     _controllers[index].setScale(1.f, 1.f);
     if (_controllers[index].getGlobalBounds().width > Game::Window::Instance().window().getSize().x / _controllers.size() * 0.75f)
       _controllers[index].setScale(
-	(Game::Window::Instance().window().getSize().x * 0.75f) / (_controllers[index].getGlobalBounds().width * _controllers.size()),
-	(Game::Window::Instance().window().getSize().x * 0.75f) / (_controllers[index].getGlobalBounds().width * _controllers.size())
+        (Game::Window::Instance().window().getSize().x * 0.75f) / (_controllers[index].getGlobalBounds().width * _controllers.size()),
+        (Game::Window::Instance().window().getSize().x * 0.75f) / (_controllers[index].getGlobalBounds().width * _controllers.size())
       );
   }
 
@@ -205,15 +205,15 @@ void  DOOM::StartDoomScene::draw()
       break;
     case 0:
       _spriteKeyboard.setPosition(
-	Game::Window::Instance().window().getSize().x * (index * 2.f + 1.f) / (_players.size() * 2.f) - _spriteKeyboard.getGlobalBounds().width / 2,
-	Game::Window::Instance().window().getSize().y * 8.f / 16.f - _spriteKeyboard.getGlobalBounds().height / 2
+        Game::Window::Instance().window().getSize().x * (index * 2.f + 1.f) / (_players.size() * 2.f) - _spriteKeyboard.getGlobalBounds().width / 2,
+        Game::Window::Instance().window().getSize().y * 8.f / 16.f - _spriteKeyboard.getGlobalBounds().height / 2
       );
       Game::Window::Instance().window().draw(_spriteKeyboard);
       break;
     default:
       _spriteController.setPosition(
-	Game::Window::Instance().window().getSize().x * (index * 2.f + 1.f) / (_players.size() * 2.f) - _spriteController.getGlobalBounds().width / 2,
-	Game::Window::Instance().window().getSize().y * 8.f / 16.f - _spriteController.getGlobalBounds().height / 2
+        Game::Window::Instance().window().getSize().x * (index * 2.f + 1.f) / (_players.size() * 2.f) - _spriteController.getGlobalBounds().width / 2,
+        Game::Window::Instance().window().getSize().y * 8.f / 16.f - _spriteController.getGlobalBounds().height / 2
       );
       Game::Window::Instance().window().draw(_spriteController);
       break;

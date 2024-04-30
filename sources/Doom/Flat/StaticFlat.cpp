@@ -1,4 +1,4 @@
-#include "Doom/Flat/StaticFlat.hpp"	
+#include "Doom/Flat/StaticFlat.hpp"
 
 DOOM::StaticFlat::StaticFlat(DOOM::Doom& doom, const DOOM::Wad::RawResources::Flat& flat) :
   DOOM::AbstractFlat(doom),

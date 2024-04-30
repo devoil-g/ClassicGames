@@ -41,8 +41,8 @@ void  DOOM::Wad::load(const std::filesystem::path& path)
 void  DOOM::Wad::loadLumps(std::ifstream& file, int32_t const numlumps, int32_t const infotableofs)
 {
   std::pair<uint8_t, uint8_t> level = { 0, 0 };
-  DOOM::Wad::Lump	      lump = {};
-  int32_t		      iterator = 0;
+  DOOM::Wad::Lump             lump = {};
+  int32_t                     iterator = 0;
 
   // Initialize regex command map
   const std::list<std::pair<std::regex, std::function<void()>>> commands_regex =
@@ -305,15 +305,15 @@ void  DOOM::Wad::loadResourcePatch(std::ifstream& file, const DOOM::Wad::Lump& l
     while (true)
     {
       DOOM::Wad::RawResources::Patch::Column::Span  span;
-      uint8_t					    offset;
-      uint8_t					    size;
+      uint8_t                                       offset;
+      uint8_t                                       size;
 
       // Read span offset
       Game::Utilities::read(file, &offset);
 
       // Stop reading span if reached end of span definition
       if (offset == 255)
-	break;
+        break;
 
       // Read size of the span
       Game::Utilities::read(file, &size);

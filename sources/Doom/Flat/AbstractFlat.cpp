@@ -15,7 +15,7 @@ void                                DOOM::AbstractFlat::update(DOOM::Doom& doom,
 std::unique_ptr<DOOM::AbstractFlat> DOOM::AbstractFlat::factory(DOOM::Doom& doom, uint64_t name, const DOOM::Wad::RawResources::Flat& flat)
 {
   // List of animated flats and their frames
-  static std::vector<std::vector<uint64_t>> const	animations = {
+  static std::vector<std::vector<uint64_t>> const animations = {
     { Game::Utilities::str_to_key<uint64_t>("NUKAGE1"), Game::Utilities::str_to_key<uint64_t>("NUKAGE2"), Game::Utilities::str_to_key<uint64_t>("NUKAGE3") },                              // Green slime, nukage
     { Game::Utilities::str_to_key<uint64_t>("FWATER1"), Game::Utilities::str_to_key<uint64_t>("FWATER2"), Game::Utilities::str_to_key<uint64_t>("FWATER3"), Game::Utilities::str_to_key<uint64_t>("FWATER4") }, // Blue water
     { Game::Utilities::str_to_key<uint64_t>("SWATER1"), Game::Utilities::str_to_key<uint64_t>("SWATER2"), Game::Utilities::str_to_key<uint64_t>("SWATER3"), Game::Utilities::str_to_key<uint64_t>("SWATER4") }, // Blue water

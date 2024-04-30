@@ -182,7 +182,7 @@ void  Game::AbstractMenuScene::draw()
 
 void  Game::AbstractMenuScene::drawTitle()
 {
-  float	scale = std::min(
+  float scale = std::min(
     Game::Window::Instance().window().getSize().x / (2.f * _title.getLocalBounds().width),
     Game::Window::Instance().window().getSize().y / (8.f * _title.getLocalBounds().height)
   );
@@ -245,7 +245,7 @@ void  Game::AbstractMenuScene::drawItems()
 
 void  Game::AbstractMenuScene::drawFooter()
 {
-  float	scale = std::min(
+  float scale = std::min(
     Game::Window::Instance().window().getSize().x * 2.f / (3.f * _footer.getLocalBounds().width),
     Game::Window::Instance().window().getSize().y / (16.f * _footer.getLocalBounds().height)
   );

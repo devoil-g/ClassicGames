@@ -32,7 +32,7 @@ const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>	D
   "HDB4", "HDB5", "HDB6", "POB1", "POB2", "BRS1", "TLMP", "TLP2"
 };
 
-const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::State_Number>	DOOM::AbstractThing::_states =
+const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::State_Number> DOOM::AbstractThing::_states =
 {
   DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_TROO, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = ThingState::State_None }, // State_None
   DOOM::AbstractThing::State{.sprite = ThingSprite::Sprite_BLUD, .frame = 2, .brightness = false, .duration = 8, .action = nullptr, .next = ThingState::State_BLOOD2 }, // State_BLOOD1
@@ -4752,7 +4752,7 @@ const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingTyp
   }
 };
 
-const std::array<Math::Vector<2>, DOOM::AbstractThing::Direction::DirectionNumber>	DOOM::AbstractThing::_directions =
+const std::array<Math::Vector<2>, DOOM::AbstractThing::Direction::DirectionNumber>  DOOM::AbstractThing::_directions =
 {
   Math::Vector<2>(std::cos(Math::Pi * 0.f), std::sin(Math::Pi * 0.f)),
   Math::Vector<2>(std::cos(Math::Pi * 0.25f), std::sin(Math::Pi * 0.25f)),
@@ -4958,7 +4958,7 @@ void  DOOM::AbstractThing::A_SpawnFly(DOOM::Doom& doom)
   doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, DOOM::Enum::ThingType::ThingType_SPAWNFIRE, DOOM::Enum::ThingFlag::FlagNone, _target->position.x(), _target->position.y(), 0.f));
   doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_telept, _target->position);
 
-  static const std::array<std::pair<int, DOOM::Enum::ThingType>, 11>	monsters =
+  static const std::array<std::pair<int, DOOM::Enum::ThingType>, 11>  monsters =
   {
     std::pair<int, DOOM::Enum::ThingType>{ 50, DOOM::Enum::ThingType::ThingType_TROOP },
     std::pair<int, DOOM::Enum::ThingType>{ 90, DOOM::Enum::ThingType::ThingType_SERGEANT },
@@ -4974,8 +4974,8 @@ void  DOOM::AbstractThing::A_SpawnFly(DOOM::Doom& doom)
   };
 
   // Randomly select monster to spawn
-  int			r = std::rand() % 256;
-  DOOM::Enum::ThingType	type = std::find_if(monsters.cbegin(), monsters.cend(), [r](const std::pair<int, DOOM::Enum::ThingType>& monster) { return (r % 256) < monster.first; })->second;
+  int                   r = std::rand() % 256;
+  DOOM::Enum::ThingType type = std::find_if(monsters.cbegin(), monsters.cend(), [r](const std::pair<int, DOOM::Enum::ThingType>& monster) { return (r % 256) < monster.first; })->second;
 
   // Spawn new monster
   doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, type, DOOM::Enum::ThingFlag::FlagNone, _target->position.x(), _target->position.y(), 0.f));
@@ -5115,7 +5115,7 @@ void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, float elapsed, 
   // NOTE: we are using bounding circle instead of square
 
   // Limit movement to 30 units per tics
-  Math::Vector<2>	movement = ((_thrust.convert<2>().length() > 30.f) ? (_thrust.convert<2>() * 30.f / _thrust.convert<2>().length()) : _thrust.convert<2>())* elapsed / DOOM::Doom::Tic;
+  Math::Vector<2> movement = ((_thrust.convert<2>().length() > 30.f) ? (_thrust.convert<2>() * 30.f / _thrust.convert<2>().length()) : _thrust.convert<2>())* elapsed / DOOM::Doom::Tic;
 
   // Stop if maximum recursion depth reach
   if (depth > 4 || (movement.x() == 0.f && movement.y() == 0.f)) {
@@ -5124,7 +5124,7 @@ void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, float elapsed, 
   }
 
   // Get intersectable linedefs and things
-  std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing>>>	linedefs_things = updatePhysicsThrustLinedefsThings(doom, movement);
+  std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing>>> linedefs_things = updatePhysicsThrustLinedefsThings(doom, movement);
 
   int16_t               closest_linedef = -1;
   DOOM::AbstractThing*  closest_thing = nullptr;
@@ -5133,7 +5133,7 @@ void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, float elapsed, 
 
   // Check collision with linedefs
   for (int16_t linedef_index : linedefs_things.first) {
-    std::pair<float, Math::Vector<2>>	intersection = updatePhysicsThrustLinedef(doom, movement, linedef_index, linedef_ignored);
+    std::pair<float, Math::Vector<2>> intersection = updatePhysicsThrustLinedef(doom, movement, linedef_index, linedef_ignored);
 
     // Get nearest linedef
     if (intersection.first < closest_distance && !(flags & DOOM::Enum::ThingProperty::ThingProperty_NoClip)) {
@@ -5151,7 +5151,7 @@ void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, float elapsed, 
       if (thing.get()._remove == true)
         continue;
 
-      std::pair<float, Math::Vector<2>>	intersection = updatePhysicsThrustThing(doom, movement, thing.get(), thing_ignored);
+      std::pair<float, Math::Vector<2>> intersection = updatePhysicsThrustThing(doom, movement, thing.get(), thing_ignored);
 
       // Ignore missile emitter
       if ((flags & DOOM::Enum::ThingProperty::ThingProperty_Missile) && &thing.get() == _target)
@@ -5159,10 +5159,10 @@ void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, float elapsed, 
 
       // Get nearest thing
       if (intersection.first < closest_distance && !(flags & DOOM::Enum::ThingProperty::ThingProperty_NoClip)) {
-	closest_linedef = -1;
-	closest_thing = &thing.get();
-	closest_distance = intersection.first;
-	closest_normal = intersection.second;
+        closest_linedef = -1;
+        closest_thing = &thing.get();
+        closest_distance = intersection.first;
+        closest_normal = intersection.second;
       }
     }
 
@@ -5172,10 +5172,10 @@ void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, float elapsed, 
     if (linedef_index == closest_linedef || linedef_index == linedef_ignored)
       continue;
 
-    DOOM::AbstractLinedef &	linedef = *doom.level.linedefs[linedef_index].get();
+    DOOM::AbstractLinedef&  linedef = *doom.level.linedefs[linedef_index].get();
 
     // Compute intersection of movement with linedef
-    std::pair<float, float>	intersection = Math::intersection(
+    std::pair<float, float> intersection = Math::intersection(
       doom.level.vertexes[linedef.start],
       doom.level.vertexes[linedef.end] - doom.level.vertexes[linedef.start],
       position.convert<2>(),
@@ -5203,7 +5203,7 @@ void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, float elapsed, 
 
   // Move player to closest obstacle or full movement if none found
   if (closest_distance > 0.f) {
-    Math::Vector<2>	destination = position.convert<2>() + movement * closest_distance;
+    Math::Vector<2> destination = position.convert<2>() + movement * closest_distance;
     if (!(flags & DOOM::Enum::ThingProperty::ThingProperty_NoBlockmap))
       doom.level.blockmap.moveThing(*this, position.convert<2>(), destination);
     position.convert<2>() = destination;
@@ -5211,7 +5211,7 @@ void  DOOM::AbstractThing::updatePhysicsThrust(DOOM::Doom& doom, float elapsed, 
 
   // Re-compute movement if obstacle found
   if (closest_linedef != -1 || closest_thing != nullptr) {
-    Math::Vector<2>	closest_direction = Math::Vector<2>(+closest_normal.y(), -closest_normal.x());
+    Math::Vector<2> closest_direction = Math::Vector<2>(+closest_normal.y(), -closest_normal.x());
 
     // Slide against currently collisioned walls/things (change movement and thrust)
     _thrust.convert<2>() = closest_direction / closest_direction.length() * _thrust.convert<2>().length() * Math::Vector<2>::cos(_thrust.convert<2>(), closest_direction);
@@ -5291,8 +5291,8 @@ std::pair<float, Math::Vector<2>> DOOM::AbstractThing::updatePhysicsThrustVertex
       return { 1.f, Math::Vector<2>() };
   }
 
-  DOOM::Doom::Level::Vertex	vertex = doom.level.vertexes[vertex_index];
-  Math::Vector<2>		normal = position.convert<2>() - vertex;
+  DOOM::Doom::Level::Vertex vertex = doom.level.vertexes[vertex_index];
+  Math::Vector<2>           normal = position.convert<2>() - vertex;
 
   // Ignore intersection if moving "outside" of vertex
   if (Math::Vector<2>::cos(movement, normal) > 0.f)
@@ -5303,18 +5303,18 @@ std::pair<float, Math::Vector<2>> DOOM::AbstractThing::updatePhysicsThrustVertex
     return { 0.f, normal / normal.length() };
 
   // Intersect bounding circle with vertex
-  float	a = Math::Pow<2>(movement.x()) + Math::Pow<2>(movement.y());
-  float	b = -2.f * ((vertex.x() - position.x()) * movement.x() + (vertex.y() - position.y()) * movement.y());
-  float	c = Math::Pow<2>(vertex.x() - position.x()) + Math::Pow<2>(vertex.y() - position.y()) - Math::Pow<2>((float)attributs.radius);
-  float	delta = Math::Pow<2>(b) - 4.f * a * c;
+  float a = Math::Pow<2>(movement.x()) + Math::Pow<2>(movement.y());
+  float b = -2.f * ((vertex.x() - position.x()) * movement.x() + (vertex.y() - position.y()) * movement.y());
+  float c = Math::Pow<2>(vertex.x() - position.x()) + Math::Pow<2>(vertex.y() - position.y()) - Math::Pow<2>((float)attributs.radius);
+  float delta = Math::Pow<2>(b) - 4.f * a * c;
 
   // No intersection found
   if (delta <= 0.f)
     return { 1.f, Math::Vector<2>() };
 
   // Compute intersections
-  float	s0 = (-b - std::sqrt(delta)) / (2.f * a);
-  float	s1 = (-b + std::sqrt(delta)) / (2.f * a);
+  float s0 = (-b - std::sqrt(delta)) / (2.f * a);
+  float s1 = (-b + std::sqrt(delta)) / (2.f * a);
 
   // Return smaller solution
   if (s0 >= 0.f && s0 < 1.f)
@@ -5331,14 +5331,14 @@ std::pair<float, Math::Vector<2>> DOOM::AbstractThing::updatePhysicsThrustLinede
   if (linedef_index == ignored_index)
     return { 1.f, Math::Vector<2>() };
 
-  const DOOM::AbstractLinedef&		linedef = *doom.level.linedefs[linedef_index];
-  const DOOM::Doom::Level::Vertex&	linedef_start = doom.level.vertexes[linedef.start];
-  const DOOM::Doom::Level::Vertex&	linedef_end = doom.level.vertexes[linedef.end];
+  const DOOM::AbstractLinedef&      linedef = *doom.level.linedefs[linedef_index];
+  const DOOM::Doom::Level::Vertex&  linedef_start = doom.level.vertexes[linedef.start];
+  const DOOM::Doom::Level::Vertex&  linedef_end = doom.level.vertexes[linedef.end];
 
-  Math::Vector<2>	linedef_direction = linedef_end - linedef_start;
-  Math::Vector<2>	linedef_normal(+linedef_direction.y(), -linedef_direction.x());
-  int16_t		sidedef_front_index = linedef.front;
-  int16_t		sidedef_back_index = linedef.back;
+  Math::Vector<2> linedef_direction = linedef_end - linedef_start;
+  Math::Vector<2> linedef_normal(+linedef_direction.y(), -linedef_direction.x());
+  int16_t         sidedef_front_index = linedef.front;
+  int16_t         sidedef_back_index = linedef.back;
 
   // Normalize normal
   linedef_normal /= linedef_normal.length();
@@ -5361,7 +5361,7 @@ std::pair<float, Math::Vector<2>> DOOM::AbstractThing::updatePhysicsThrustLinede
     return { 1.f, Math::Vector<2>() };
 
   // Get intersection of thing bounding sphere and linedef line
-  std::pair<float, float>		intersection = Math::intersection(
+  std::pair<float, float> intersection = Math::intersection(
     Math::Vector<2>(position.x(), position.y()) - linedef_normal * (float)attributs.radius, movement,
     linedef_start, linedef_direction);
 
@@ -5392,7 +5392,7 @@ std::pair<float, Math::Vector<2>> DOOM::AbstractThing::updatePhysicsThrustThing(
   if (&thing == this || &thing == ignored || (thing.flags & DOOM::Enum::ThingProperty::ThingProperty_Solid) == 0)
     return { 1.f, Math::Vector<2>() };
 
-  Math::Vector<2>	initial(position.convert<2>() - thing.position.convert<2>());
+  Math::Vector<2> initial(position.convert<2>() - thing.position.convert<2>());
 
   // Check if thing is above or below
   if (thing.position.z() + thing.height <= position.z() || thing.position.z() > position.z() + attributs.height)
@@ -5406,27 +5406,27 @@ std::pair<float, Math::Vector<2>> DOOM::AbstractThing::updatePhysicsThrustThing(
       return { 1.f, Math::Vector<2>() };
   }
 
-  float	a = Math::Pow<2>(movement.x()) + Math::Pow<2>(movement.y());
-  float	b = 2.f * (movement.x() * (position.x() - thing.position.x()) + movement.y() * (position.y() - thing.position.y()));
-  float	c = Math::Pow<2>(position.x() - thing.position.x()) + Math::Pow<2>(position.y() - thing.position.y()) + Math::Pow<2>((float)(attributs.radius + thing.attributs.radius));
-  float	delta = Math::Pow<2>(b) - 4.f * a * c;
+  float a = Math::Pow<2>(movement.x()) + Math::Pow<2>(movement.y());
+  float b = 2.f * (movement.x() * (position.x() - thing.position.x()) + movement.y() * (position.y() - thing.position.y()));
+  float c = Math::Pow<2>(position.x() - thing.position.x()) + Math::Pow<2>(position.y() - thing.position.y()) + Math::Pow<2>((float)(attributs.radius + thing.attributs.radius));
+  float delta = Math::Pow<2>(b) - 4.f * a * c;
 
   // No intersection found
   if (delta <= 0.f)
     return { 1.f, Math::Vector<2>() };
 
   // Compute intersections
-  float	s0 = (-b - std::sqrt(delta)) / (2.f * a);
-  float	s1 = (-b + std::sqrt(delta)) / (2.f * a);
+  float s0 = (-b - std::sqrt(delta)) / (2.f * a);
+  float s1 = (-b + std::sqrt(delta)) / (2.f * a);
 
   // Return smaller solution
   if (s0 >= 0.f && s0 < 1.f) {
-    Math::Vector<2>	normal = position.convert<2>() + movement * s0 - thing.position.convert<2>();
+    Math::Vector<2> normal = position.convert<2>() + movement * s0 - thing.position.convert<2>();
 
     return { s0, normal / normal.length() };
   }
   else if (s1 >= 0.f && s1 < 1.f) {
-    Math::Vector<2>	normal = position.convert<2>() + movement * s1 - thing.position.convert<2>();
+    Math::Vector<2> normal = position.convert<2>() + movement * s1 - thing.position.convert<2>();
 
     return { s1, normal / normal.length() };
   }
@@ -5436,7 +5436,7 @@ std::pair<float, Math::Vector<2>> DOOM::AbstractThing::updatePhysicsThrustThing(
 
 std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing>>> DOOM::AbstractThing::updatePhysicsThrustLinedefsThings(DOOM::Doom& doom, const Math::Vector<2>& movement)
 {
-  std::set<int16_t>	blocks;
+  std::set<int16_t> blocks;
 
   // Get blockmap index at current, using the four corners
   blocks.insert(doom.level.blockmap.index(Math::Vector<2>(position.x() - (float)attributs.radius, position.y() - (float)attributs.radius)));
@@ -5450,7 +5450,7 @@ std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing
   blocks.insert(doom.level.blockmap.index(Math::Vector<2>(position.x() + movement.x() + (float)attributs.radius, position.y() + movement.y() - (float)attributs.radius)));
   blocks.insert(doom.level.blockmap.index(Math::Vector<2>(position.x() + movement.x() + (float)attributs.radius, position.y() + movement.y() + (float)attributs.radius)));
 
-  std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing>>>	linedefs_things;
+  std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing>>> linedefs_things;
 
   // Get index of linedefs to test against position
   for (int16_t block_index : blocks)
@@ -5467,9 +5467,9 @@ std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing
 
 void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, float elapsed)
 {
-  std::set<int16_t>	sectors = doom.level.getSectors(*this);
-  float			floor = std::numeric_limits<int16_t>().min();
-  float			ceiling = std::numeric_limits<int16_t>().max();
+  std::set<int16_t> sectors = doom.level.getSectors(*this);
+  float             floor = std::numeric_limits<int16_t>().min();
+  float             ceiling = std::numeric_limits<int16_t>().max();
 
   // Get target floor and ceiling height
   if (sectors.empty() == true) {
@@ -5486,9 +5486,9 @@ void  DOOM::AbstractThing::updatePhysicsGravity(DOOM::Doom& doom, float elapsed)
   for (const DOOM::AbstractThing& thing : doom.level.getThings(position.convert<2>(), attributs.radius - 1.f)) {
     if (&thing != this && thing.flags & DOOM::Enum::ThingProperty::ThingProperty_Solid) {
       if (thing.position.z() + thing.height <= position.z())
-	floor = std::max(floor, thing.position.z() + thing.height);
+        floor = std::max(floor, thing.position.z() + thing.height);
       if (thing.position.z() >= position.z() + height)
-	ceiling = std::min(ceiling, position.z() + height);
+        ceiling = std::min(ceiling, position.z() + height);
     }
   }
 
@@ -5630,9 +5630,9 @@ void  DOOM::AbstractThing::A_Chase(DOOM::Doom& doom)
     // Update target threshold
     if (_target_threshold > 0) {
       if (_target == nullptr || _target->health <= 0)
-	_target_threshold = 0;
+        _target_threshold = 0;
       else
-	_target_threshold += -1;
+        _target_threshold += -1;
     }
 
     // Turn toward movement direction
@@ -5642,17 +5642,17 @@ void  DOOM::AbstractThing::A_Chase(DOOM::Doom& doom)
       int thing_direction = Math::Modulo<Direction::DirectionNumber>((int)(0.5f + angle / (2.f * Math::Pi / (float)Direction::DirectionNumber)));
 
       if (thing_direction != _move_direction) {
-	if (Math::Modulo<Direction::DirectionNumber>(thing_direction - _move_direction) < Direction::DirectionNumber / 2)
-	  angle -= Math::Pi / 4.f;
-	else
-	  angle += Math::Pi / 4.f;
+        if (Math::Modulo<Direction::DirectionNumber>(thing_direction - _move_direction) < Direction::DirectionNumber / 2)
+          angle -= Math::Pi / 4.f;
+        else
+          angle += Math::Pi / 4.f;
       }
     }
 
     // Look for new target if necessary
     if (_target == nullptr || !(_target->flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable)) {
       if (P_LookForPlayers(doom, true) == true)
-	return;
+        return;
 
       // Change to spawn state
       setState(doom, attributs.state_spawn);
@@ -5664,7 +5664,7 @@ void  DOOM::AbstractThing::A_Chase(DOOM::Doom& doom)
       flags = (DOOM::Enum::ThingProperty)(flags & ~DOOM::Enum::ThingProperty::ThingProperty_JustAttacked);
 
       if (doom.skill != DOOM::Enum::Skill::SkillNightmare)
-	P_NewChaseDir(doom);
+        P_NewChaseDir(doom);
 
       return;
     }
@@ -5788,7 +5788,7 @@ bool  DOOM::AbstractThing::P_CheckMissileRange(DOOM::Doom& doom)
     return false;
 
   // The probability of firing depends on the distance, the closer we are the higher the chance of firing.
-  float	distance = (position.convert<2>() - _target->position.convert<2>()).length();
+  float distance = (position.convert<2>() - _target->position.convert<2>()).length();
 
   // Higher chance if no melee attack
   if (attributs.state_melee == DOOM::AbstractThing::ThingState::State_None)
@@ -5822,12 +5822,12 @@ void  DOOM::AbstractThing::P_NewChaseDir(DOOM::Doom& doom)
   if (_target == nullptr)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-  DOOM::AbstractThing::Direction	move_old = _move_direction;
-  DOOM::AbstractThing::Direction	move_opposite = (DOOM::AbstractThing::Direction)(_move_direction == DOOM::AbstractThing::Direction::DirectionNone ? DOOM::AbstractThing::Direction::DirectionNone : ((_move_direction + DOOM::AbstractThing::Direction::DirectionNumber / 2) % DOOM::AbstractThing::Direction::DirectionNumber));
-  Math::Vector<2>			delta = _target->position.convert<2>() - position.convert<2>();
+  DOOM::AbstractThing::Direction  move_old = _move_direction;
+  DOOM::AbstractThing::Direction  move_opposite = (DOOM::AbstractThing::Direction)(_move_direction == DOOM::AbstractThing::Direction::DirectionNone ? DOOM::AbstractThing::Direction::DirectionNone : ((_move_direction + DOOM::AbstractThing::Direction::DirectionNumber / 2) % DOOM::AbstractThing::Direction::DirectionNumber));
+  Math::Vector<2>                 delta = _target->position.convert<2>() - position.convert<2>();
 
-  DOOM::AbstractThing::Direction	move_x = DOOM::AbstractThing::Direction::DirectionNone;
-  DOOM::AbstractThing::Direction	move_y = DOOM::AbstractThing::Direction::DirectionNone;
+  DOOM::AbstractThing::Direction  move_x = DOOM::AbstractThing::Direction::DirectionNone;
+  DOOM::AbstractThing::Direction  move_y = DOOM::AbstractThing::Direction::DirectionNone;
 
   if (delta.x() > +10.f)
     move_x = Direction::DirectionEast;
@@ -5885,20 +5885,20 @@ void  DOOM::AbstractThing::P_NewChaseDir(DOOM::Doom& doom)
   if (std::rand() % 2 == 0) {
     for (Direction dir = Direction::DirectionEast; dir <= Direction::DirectionSouthEast; dir = (Direction)(dir + 1)) {
       if (dir != move_opposite) {
-	_move_direction = dir;
-	if (P_TryWalk(doom) == true) {
-	  return;
-	}
+        _move_direction = dir;
+        if (P_TryWalk(doom) == true) {
+          return;
+        }
       }
     }
   }
   else {
     for (Direction dir = Direction::DirectionSouthEast; dir >= Direction::DirectionEast; dir = (Direction)(dir - 1)) {
       if (dir != move_opposite) {
-	_move_direction = dir;
-	if (P_TryWalk(doom) == true) {
-	  return;
-	}
+        _move_direction = dir;
+        if (P_TryWalk(doom) == true) {
+          return;
+        }
       }
     }
   }
@@ -5990,7 +5990,7 @@ bool  DOOM::AbstractThing::P_CheckPosition(DOOM::Doom& doom, const Math::Vector<
 
   // Check collision with linedefs
   for (int16_t linedef_index : doom.level.getLinedefs(position, (float)attributs.radius)) {
-    const DOOM::AbstractLinedef&	linedef = *doom.level.linedefs[linedef_index];
+    const DOOM::AbstractLinedef&  linedef = *doom.level.linedefs[linedef_index];
 
     // One sided line
     if (linedef.back == -1)
@@ -5999,11 +5999,11 @@ bool  DOOM::AbstractThing::P_CheckPosition(DOOM::Doom& doom, const Math::Vector<
     if (!(flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)) {
       // Explicitely block monster
       if (linedef.flag & DOOM::AbstractLinedef::Flag::Impassible)
-	return false;
+        return false;
 
       // Block monster only
       if (linedef.flag & DOOM::AbstractLinedef::Flag::BlockMonsters && (flags & DOOM::Enum::ThingProperty::ThingProperty_Shootable) && type != DOOM::Enum::ThingType::ThingType_PLAYER)
-	return false;
+        return false;
     }
   }
 
@@ -6027,25 +6027,25 @@ bool  DOOM::AbstractThing::P_Move(DOOM::Doom& doom)
 
       // Find target floor and ceiling height
       for (int16_t sector_index : doom.level.getSectors(position.convert<2>() + (_directions[_move_direction] * (float)attributs.speed), attributs.radius / 2.f)) {
-	target_floor = std::max(target_floor, doom.level.sectors[sector_index].floor_current);
-	target_ceiling = std::min(target_ceiling, doom.level.sectors[sector_index].ceiling_current);
+        target_floor = std::max(target_floor, doom.level.sectors[sector_index].floor_current);
+        target_ceiling = std::min(target_ceiling, doom.level.sectors[sector_index].ceiling_current);
       }
 
       if (target_ceiling - target_floor >= height) {
-	if (position.z() < target_floor)
-	  position.z() += DOOM::AbstractThing::FloatSpeed;
-	else
-	  position.z() -= DOOM::AbstractThing::FloatSpeed;
+        if (position.z() < target_floor)
+          position.z() += DOOM::AbstractThing::FloatSpeed;
+        else
+          position.z() -= DOOM::AbstractThing::FloatSpeed;
 
-	flags = (DOOM::Enum::ThingProperty)(flags | DOOM::Enum::ThingProperty::ThingProperty_InFloat);
-	return true;
+        flags = (DOOM::Enum::ThingProperty)(flags | DOOM::Enum::ThingProperty::ThingProperty_InFloat);
+        return true;
       }
     }
 
     _move_direction = Direction::DirectionNone;
     
     // Try to open a door
-    bool	switched = false;
+    bool  switched = false;
     for (int16_t linedef_index : doom.level.getLinedefs(move_position, (float)attributs.radius))
       switched |= doom.level.linedefs[linedef_index]->switched(doom, *this);
     
@@ -6066,7 +6066,7 @@ void  DOOM::AbstractThing::A_Hoof(DOOM::Doom& doom)
 
 void  DOOM::AbstractThing::A_Scream(DOOM::Doom& doom)
 {
-  DOOM::Doom::Resources::Sound::EnumSound	sound;
+  DOOM::Doom::Resources::Sound::EnumSound sound;
 
   switch (attributs.sound_death) {
     // No death sound
@@ -6296,8 +6296,8 @@ void  DOOM::AbstractThing::A_CPosAttack(DOOM::Doom& doom)
 
 float DOOM::AbstractThing::P_AimLineAttack(DOOM::Doom& doom, const DOOM::AbstractThing& target)
 {
-  float	target_bottom = target.position.z();
-  float	target_top = target.position.z() + target.height;
+  float target_bottom = target.position.z();
+  float target_top = target.position.z() + target.height;
 
   // Check every linedefs between thing and target
   for (const std::pair<float, int16_t>& linedef_index : doom.level.getLinedefs(position.convert<2>(), target.position.convert<2>() - position.convert<2>())) {
@@ -6309,8 +6309,8 @@ float DOOM::AbstractThing::P_AimLineAttack(DOOM::Doom& doom, const DOOM::Abstrac
     if (linedef.front == -1 || linedef.back == -1)
       return std::numeric_limits<float>::quiet_NaN();
 
-    const float	sector_bottom = std::max(doom.level.sectors[doom.level.sidedefs[linedef.front].sector].floor_current, linedef.back != -1 ? doom.level.sectors[doom.level.sidedefs[linedef.back].sector].floor_current : std::numeric_limits<float>::lowest());
-    const float	sector_top = std::min(doom.level.sectors[doom.level.sidedefs[linedef.front].sector].ceiling_current, linedef.back != -1 ? doom.level.sectors[doom.level.sidedefs[linedef.back].sector].ceiling_current : std::numeric_limits<float>::max());
+    const float sector_bottom = std::max(doom.level.sectors[doom.level.sidedefs[linedef.front].sector].floor_current, linedef.back != -1 ? doom.level.sectors[doom.level.sidedefs[linedef.back].sector].floor_current : std::numeric_limits<float>::lowest());
+    const float sector_top = std::min(doom.level.sectors[doom.level.sidedefs[linedef.front].sector].ceiling_current, linedef.back != -1 ? doom.level.sectors[doom.level.sidedefs[linedef.back].sector].ceiling_current : std::numeric_limits<float>::max());
     
     target_bottom = std::max(target_bottom, (sector_bottom - (position.z() + 0.75f * height)) / linedef_index.first + (position.z() + 0.75f * attributs.height));
     target_top = std::min(target_top, (sector_top - (position.z() + 0.75f * height)) / linedef_index.first + (position.z() + 0.75f * attributs.height));
@@ -6326,9 +6326,9 @@ float DOOM::AbstractThing::P_AimLineAttack(DOOM::Doom& doom, const DOOM::Abstrac
 
 bool  DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const Math::Vector<3>& atk_origin, const Math::Vector<3>& atk_direction, float atk_damage)
 {
-  std::list<std::pair<float, int16_t>>						linedefs_list = doom.level.getLinedefs(atk_origin.convert<2>(), atk_direction.convert<2>(), atk_range);
-  std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>	things_list = doom.level.getThings(atk_origin.convert<2>(), atk_direction.convert<2>(), atk_range);
-  std::pair<float, int16_t>                                                     sector = { std::numeric_limits<float>::max(), -1 };
+  std::list<std::pair<float, int16_t>>                                      linedefs_list = doom.level.getLinedefs(atk_origin.convert<2>(), atk_direction.convert<2>(), atk_range);
+  std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>  things_list = doom.level.getThings(atk_origin.convert<2>(), atk_direction.convert<2>(), atk_range);
+  std::pair<float, int16_t>                                                 sector = { std::numeric_limits<float>::max(), -1 };
 
   // Find first shootable thing
   while (things_list.empty() == false)
@@ -6348,9 +6348,9 @@ bool  DOOM::AbstractThing::P_LineAttack(DOOM::Doom& doom, float atk_range, const
     const DOOM::Doom::Level::Vertex& linedef_start = doom.level.vertexes[linedef.start];
     const DOOM::Doom::Level::Vertex& linedef_end = doom.level.vertexes[linedef.end];
 
-    Math::Vector<2>	linedef_direction = linedef_end - linedef_start;
-    int16_t		sidedef_front_index = linedef.front;
-    int16_t		sidedef_back_index = linedef.back;
+    Math::Vector<2> linedef_direction = linedef_end - linedef_start;
+    int16_t         sidedef_front_index = linedef.front;
+    int16_t         sidedef_back_index = linedef.back;
 
     // Swap sidedef if on left side
     if (Math::Vector<2>::cos(atk_origin.convert<2>() - linedef_start, Math::Vector<2>(+linedef_direction.y(), -linedef_direction.x())) < 0.f) {
@@ -6477,9 +6477,9 @@ void  DOOM::AbstractThing::P_SpawnBlood(DOOM::Doom& doom, const Math::Vector<3>&
 
 void  DOOM::AbstractThing::P_LineSwitch(DOOM::Doom& doom, float swc_range, const Math::Vector<3>& swc_origin, const Math::Vector<3>& swc_direction)
 {
-  std::list<std::pair<float, int16_t>>						linedefs_list = doom.level.getLinedefs(swc_origin.convert<2>(), swc_direction.convert<2>(), swc_range);
-  std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>	things_list = doom.level.getThings(swc_origin.convert<2>(), swc_direction.convert<2>(), swc_range);
-  float                                                                         sector = std::numeric_limits<float>::max();
+  std::list<std::pair<float, int16_t>>                                      linedefs_list = doom.level.getLinedefs(swc_origin.convert<2>(), swc_direction.convert<2>(), swc_range);
+  std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>  things_list = doom.level.getThings(swc_origin.convert<2>(), swc_direction.convert<2>(), swc_range);
+  float                                                                     sector = std::numeric_limits<float>::max();
 
   // Find first solid thing
   while (things_list.empty() == false)
@@ -6618,7 +6618,7 @@ void  DOOM::AbstractThing::P_SpawnMissile(DOOM::Doom& doom, DOOM::Enum::ThingTyp
 
   float           target_height = P_AimLineAttack(doom, *_target);
   float           atk_slope = std::isnan(target_height) == true ? 0.f : std::atan((target_height - (position.z() + height * 0.5f)) / (_target->position.convert<2>() - position.convert<2>()).length()) + ((_target->flags & DOOM::Enum::ThingProperty::ThingProperty_Shadow) ? (Math::Random() * 2.f - 1.f) * Math::Pi / 8.f : 0);
-  float	          atk_angle = Math::Vector<2>::angle((_target->position.convert<2>() - position.convert<2>())) + ((_target->flags & DOOM::Enum::ThingProperty::ThingProperty_Shadow) ? (Math::Random() * 2.f - 1.f) * Math::Pi / 8.f : 0);
+  float           atk_angle = Math::Vector<2>::angle((_target->position.convert<2>() - position.convert<2>())) + ((_target->flags & DOOM::Enum::ThingProperty::ThingProperty_Shadow) ? (Math::Random() * 2.f - 1.f) * Math::Pi / 8.f : 0);
   Math::Vector<3> direction(std::cos(atk_angle), std::sin(atk_angle), std::tan(atk_slope));
 
   doom.level.things.push_back(std::make_unique<DOOM::AbstractThing>(doom, type, DOOM::Enum::ThingFlag::FlagNone, position.x() + std::cos(atk_angle) * attributs.radius / 2.f, position.y() + std::sin(atk_angle) * attributs.radius / 2.f, atk_angle));

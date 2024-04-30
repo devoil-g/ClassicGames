@@ -94,23 +94,26 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
   }
 
   // Skip to next question
-  if (_buzz == -1 && (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::N) == true || Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true))
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::T) == true || Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true)
   {
+    // Reset buzzers
+    std::fill(_cooldowns.begin(), _cooldowns.end(), 0.f);
+    _buzz = -1;
+
+    // Reset question score
+    _current = _score;
+
     // Play sound if not quiet
-    if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::N) == true) {
+    if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::T) == true) {
       auto  ref = Game::Audio::Sound::Instance().get();
 
       // Play correct answer sound
       ref.sound.setBuffer(Game::SoundLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "quiz" / "sounds" / "question_timesup.wav"));
       ref.sound.play();
+
+      // Wait sound before next buzz
+      std::fill(_cooldowns.begin(), _cooldowns.end(), 1.2f);
     }
-
-    // Reset players cooldown
-    _buzz = -1;
-    std::fill(_cooldowns.begin(), _cooldowns.end(), 1.2f);
-
-    // Reset question score
-    _current = _score;
 
     std::cout << "\rNew question for " << _current << " points.        " << std::flush;
   }

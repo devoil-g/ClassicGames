@@ -479,17 +479,17 @@ void  DOOM::PlayerThing::updateKeyboard(DOOM::Doom& doom, float elapsed)
 void  DOOM::PlayerThing::updateKeyboardTurn(DOOM::Doom& doom, float elapsed)
 {
   // Turn player
-  float	horizontal = 0.f;
-  float	vertical = 0.f;
+  float horizontal = 0.f;
+  float vertical = 0.f;
 
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Left) == true)	// Turn left
+  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Left) == true)  // Turn left
     horizontal += 1.f;
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Right) == true)	// Turn right
+  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Right) == true) // Turn right
     horizontal -= 1.f;
 
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Up) == true)	// Turn up
+  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Up) == true)    // Turn up
     vertical += 1.f;
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Down) == true)	// Turn down
+  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Down) == true)  // Turn down
     vertical -= 1.f;
 
   // Apply rotation to player
@@ -501,13 +501,13 @@ void  DOOM::PlayerThing::updateKeyboardMove(DOOM::Doom & doom, float elapsed)
   // Move player
   Math::Vector<2> movement(0.f, 0.f);
 
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Z) == true)	// Move forward
+  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Z) == true) // Move forward
     movement += Math::Vector<2>(+1.f, 0.f);
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::S) == true)	// Move backward
+  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::S) == true) // Move backward
     movement += Math::Vector<2>(-1.f, 0.f);
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Q) == true)	// Strafe left
+  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Q) == true) // Strafe left
     movement += Math::Vector<2>(0.f, -1.f);
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::D) == true)	// Strafe right
+  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::D) == true) // Strafe right
     movement += Math::Vector<2>(0.f, +1.f);
 
   // Handle running

@@ -218,7 +218,7 @@ namespace DOOM
     static const std::array<std::string, DOOM::AbstractThing::ThingSprite::Sprite_Number>               _sprites;     // Table of thing sprites
     static const std::array<DOOM::AbstractThing::State, DOOM::AbstractThing::ThingState::State_Number>  _states;      // Table of thing states
     static const std::array<DOOM::AbstractThing::Attributs, DOOM::Enum::ThingType::ThingType_Number>    _attributs;   // Table of thing attributs
-    static const std::array<Math::Vector<2>, DOOM::AbstractThing::Direction::DirectionNumber>	        _directions;  // Table of move direction vectors
+    static const std::array<Math::Vector<2>, DOOM::AbstractThing::Direction::DirectionNumber>           _directions;  // Table of move direction vectors
 
     // Constant values
     static const float  MeleeRange;
