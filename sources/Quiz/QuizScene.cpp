@@ -20,9 +20,6 @@ QUIZ::QuizScene::QuizScene(Game::SceneMachine& machine) :
   _elapsed(0.f),
   _bar(sf::Vector2f(1.f, 1.f))
 {
-  // Push initial states
-  _game.push<QUIZ::ControllerQuizScene>(_quiz);
-
   // Initialize force exit bar
   _bar.setSize(sf::Vector2f(1.f, 1.f));
   _bar.setFillColor(sf::Color::White);

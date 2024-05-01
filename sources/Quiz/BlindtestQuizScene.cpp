@@ -290,7 +290,7 @@ void  QUIZ::BlindtestQuizScene::updatePlaying(float elapsed)
 
         // Grey out every other players
         for (auto& cooldown : _cooldowns)
-          cooldown = (_cooldown == 0.f) ? 0.01f : std::max(0.01f, cooldown);
+          cooldown = (_cooldown == 0.f) ? 0.6f : std::max(0.6f, cooldown);
         _cooldowns[index] = 0.f;
 
         // Go to pending mode

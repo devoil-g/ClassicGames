@@ -89,10 +89,12 @@ void  RPG::ClientEntity::setAnimation(RPG::ClientWorld& world, RPG::ClientLevel&
   }
 
   // Start new animation
-  _animation.animation = animation;
-  _animation.loop = loop;
-  _animation.frame = 0;
-  _animation.elapsed = 0.f;
+  if (animation != _animation.animation || _animation.loop == false) {
+    _animation.animation = animation;
+    _animation.loop = loop;
+    _animation.frame = 0;
+    _animation.elapsed = 0.f;
+  }
 }
 
 void  RPG::ClientEntity::update(RPG::ClientWorld& world, RPG::ClientLevel& level, float elapsed)

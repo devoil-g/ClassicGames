@@ -67,7 +67,7 @@ void  RPG::ClientScene::updatePacketReceive(float elapsed)
     // Extract packet from client
     try {
       // TODO: remove this
-      std::cout << "Client received (tick: " << (std::size_t)json.get("tick").number() << ", type: " << json.get("type").array() << "): " << json << std::endl;
+      std::cout << "Client received (tick: " << (std::size_t)json.get("tick").number() << ", type: " << json.get("type").array() << ", size: " << json.stringify().length() << "): " << json << std::endl;
 
       const auto& type = json.get("type").array().get(0).string();
 
