@@ -6,8 +6,6 @@
 #include <algorithm>
 #include <exception>
 
-#include <SFML/Audio.hpp>
-
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 #include "Quiz/Quiz.hpp"
@@ -32,12 +30,6 @@ QUIZ::Quiz::Quiz() :
           std::find(textureExtensions.begin(), textureExtensions.end(), skin.path().extension().string().substr(1)) == textureExtensions.end())
           continue;
 
-        sf::Texture texture;
-
-        // Load texture
-        if (texture.loadFromFile(skin.path().string()) == false)
-          continue;
-
         // Add avatar to collection
         skins.push_back(skin.path());
       }
@@ -49,12 +41,6 @@ QUIZ::Quiz::Quiz() :
       // Unsupported extension
       if (avatar.path().has_extension() == false ||
         std::find(textureExtensions.begin(), textureExtensions.end(), avatar.path().extension().string().substr(1)) == textureExtensions.end())
-        continue;
-
-      sf::Texture texture;
-
-      // Load texture
-      if (texture.loadFromFile(avatar.path().string()) == false)
         continue;
 
       // Add avatar to collection
@@ -74,14 +60,12 @@ QUIZ::Quiz::Quiz() :
 
   // Load blindtests from directory
   for (const auto& entry : std::filesystem::directory_iterator(Game::Config::ExecutablePath / "assets" / "quiz" / "blindtest")) {
-    sf::Music music;
     auto music_path = entry.path();
     auto cover_path = Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "default.png";
 
     // Try to load file as a music
     if (music_path.has_extension() == false ||
-      std::find(musicExtensions.begin(), musicExtensions.end(), music_path.extension().string().substr(1)) == musicExtensions.end() ||
-      music.openFromFile(music_path.string()) == false)
+      std::find(musicExtensions.begin(), musicExtensions.end(), music_path.extension().string().substr(1)) == musicExtensions.end())
       continue;
 
     // Find image with same name in the directory
@@ -96,13 +80,8 @@ QUIZ::Quiz::Quiz() :
       if (std::filesystem::exists(tmp_path) == false)
         continue;
 
-      sf::Image cover;
-
-      // Try to load image
-      if (cover.loadFromFile(tmp_path.string()) == true) {
-        cover_path = tmp_path;
-        break;
-      }
+      cover_path = tmp_path;
+      break;
     }
 
     // Add blindtest to collection
