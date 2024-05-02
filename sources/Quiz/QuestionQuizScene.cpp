@@ -46,6 +46,7 @@ void  QUIZ::QuestionQuizScene::usage() const
     << "  [C]orrect:    correct answer, reset for new question" << std::endl
     << "  [T]imeout:    timeout, skip to next question" << std::endl
     << "  [R]eset:      quiet timeout" << std::endl
+    << "  [L]ock:       lock buzzers, use reset to release" << std::endl
     << "  Arrow[L/R]:   set cooldown" << std::endl
     << "  Arrow[U/D]:   change question score" << std::endl
     << "  [E]nd:        return to main menu" << std::endl
@@ -116,6 +117,16 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
     }
 
     std::cout << "\rNew question for " << _current << " points.        " << std::flush;
+  }
+
+  // Lock buzzers
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::L) == true)
+  {
+    // Infinite wait for every buzzers
+    std::fill(_cooldowns.begin(), _cooldowns.end(), std::numeric_limits<float>::infinity());
+    _buzz = -1;
+
+    std::cout << "\rBuzzers locked.                                           " << std::flush;
   }
 
   // Increase cooldown

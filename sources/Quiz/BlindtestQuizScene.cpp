@@ -101,17 +101,19 @@ void  QUIZ::BlindtestQuizScene::start()
     << "Instruction for players: use the red buzzer to answer" << std::endl
     << std::endl
     << "Commands:" << std::endl
-    << "  [Space]:    play/pause music" << std::endl
-    << "  [R]eset:    replay music from the begining" << std::endl
-    << "  Arrow[L/R]: jump music backward/forward" << std::endl
-    << "  Arrow[U/D]: change volume" << std::endl
-    << "  Page[+/-]:  change cooldown" << std::endl
-    << "  [C]orrect:  correct answer, give points, display answer" << std::endl
-    << "  [W]rong:    wrong answer, return to game" << std::endl
-    << "  [A]nswer:   display answer, no winner" << std::endl
-    << "  [N]ext:     next blindtest" << std::endl
-    << "  [B]ack:     previous blindtest" << std::endl
-    << "  [E]nd:      end blindtest" << std::endl
+    << "  [Enter]:      play/pause music" << std::endl
+    << "  [Backspace]:  replay music from the begining" << std::endl
+    << "  Arrow[L/R]:   jump music backward/forward" << std::endl
+    << "  Arrow[U/D]:   change volume" << std::endl
+    << "  Page[+/-]:    change cooldown" << std::endl
+    << "  [C]orrect:    correct answer, give points, display answer" << std::endl
+    << "  [W]rong:      wrong answer, return to game" << std::endl
+    << "  [A]nswer:     display answer, no winner" << std::endl
+    << "  [L]ock:       lock buzzers" << std::endl
+    << "  [R]elease:    release buzzers" << std::endl
+    << "  [N]ext:       next blindtest" << std::endl
+    << "  [B]ack:       previous blindtest" << std::endl
+    << "  [E]nd:        end blindtest" << std::endl
     << std::endl
     << "Remaining: " << count << std::endl
     << "Answer:    " << _blindtest->answer << (_blindtest->done == true ? " (done)" : "") << std::endl
@@ -238,7 +240,7 @@ bool  QUIZ::BlindtestQuizScene::update(float elapsed)
 void  QUIZ::BlindtestQuizScene::updatePlaying(float elapsed)
 {
   // Pause/resume music
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Enter) == true) {
     if (_music.getStatus() == sf::Sound::Playing)
       _music.pause();
     else if (_music.getStatus() == sf::Sound::Stopped) {
@@ -250,8 +252,16 @@ void  QUIZ::BlindtestQuizScene::updatePlaying(float elapsed)
   }
 
   // Reset music
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Backspace) == true)
     _music.setPlayingOffset(sf::Time::Zero);
+
+  // Lock buzzers
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::L) == true)
+    std::fill(_cooldowns.begin(), _cooldowns.end(), std::numeric_limits<float>::infinity());
+
+  // Release buzzers
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true)
+    std::fill(_cooldowns.begin(), _cooldowns.end(), 0.f);
 
   // Skip to answer
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::A) == true) {
@@ -306,8 +316,20 @@ void  QUIZ::BlindtestQuizScene::updatePlaying(float elapsed)
 
 void  QUIZ::BlindtestQuizScene::updatePending(float elapsed)
 {
+  // Lock buzzers
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::L) == true) {
+    std::fill(_cooldowns.begin(), _cooldowns.end(), std::numeric_limits<float>::infinity());
+    setPlaying();
+  }
+
+  // Release buzzers
+  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true) {
+    std::fill(_cooldowns.begin(), _cooldowns.end(), 0.f);
+    setPlaying();
+  }
+
   // Correct answer
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::C) == true) {
+  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::C) == true) {
     auto  ref = Game::Audio::Sound::Instance().get();
 
     // Play correct answer sound
@@ -354,7 +376,7 @@ void  QUIZ::BlindtestQuizScene::updatePending(float elapsed)
 void  QUIZ::BlindtestQuizScene::updateAnswer(float elapsed)
 {
   // Pause/resume music
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Enter) == true) {
     if (_music.getStatus() == sf::Sound::Playing)
       _music.pause();
     else if (_music.getStatus() == sf::Sound::Stopped) {
@@ -366,7 +388,7 @@ void  QUIZ::BlindtestQuizScene::updateAnswer(float elapsed)
   }
 
   // Reset music
-  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true)
+  else if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::BackSpace) == true)
     _music.setPlayingOffset(sf::Time::Zero);
 }
 
