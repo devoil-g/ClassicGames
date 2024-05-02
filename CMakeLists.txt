@@ -191,8 +191,6 @@ SET(GAME_STATES_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/MidiScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/SplashScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/SplashScene.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/StartScene.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/StartScene.hpp
 )
 SET(GAME_STATES_MENU_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/Menu/AbstractMenuScene.cpp

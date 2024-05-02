@@ -4,8 +4,8 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 
 #include "System/Library/TextureLibrary.hpp"
-#include "Scenes/StartScene.hpp"
 #include "Scenes/SplashScene.hpp"
+#include "Scenes/Menu/MainMenuScene.hpp"
 #include "Scenes/SceneMachine.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
@@ -34,7 +34,7 @@ bool  Game::SplashScene::update(float elapsed)
 
   // End splash screen
   if (_elapsed >= 5.f)
-    _machine.swap<Game::StartScene>();
+    _machine.swap<Game::MainMenuScene>();
 
   return false;
 }
