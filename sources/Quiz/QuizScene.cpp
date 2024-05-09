@@ -66,6 +66,12 @@ bool  QUIZ::QuizScene::update(float elapsed)
     return false;
   }
 
+  // Update scores
+  for (int index = 0; index < _quiz.players.size(); index++) {
+    auto& player = _quiz.players[index];
+    auto& entity = _quiz.entities.at("player_" + std::to_string(player.id));
+    auto& sprite = entity.sprite();
+
   // Update entities
   for (auto& [_, entity] : _quiz.entities)
     entity.update(elapsed);
@@ -96,7 +102,7 @@ void  QUIZ::QuizScene::draw()
       score.setScale(scale, scale);
 
       // Set score position
-      score.setOrigin(score.getLocalBounds().width / 2.f, score.getLocalBounds().height / 2.f);
+      score.setOrigin((score.getLocalBounds().width + score.getLocalBounds().left) / 2.f, (score.getLocalBounds().height + score.getLocalBounds().top) / 2.f);
       score.setPosition(sprite.getPosition().x, sprite.getGlobalBounds().top + sprite.getGlobalBounds().height);
 
       // Set transparency
