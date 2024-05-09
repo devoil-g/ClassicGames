@@ -6,8 +6,8 @@
 
 Game::MessageScene::MessageScene(Game::SceneMachine& machine, const std::string& message) :
   Game::AbstractScene(machine),
-  _message(message, Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
-  _return("Return", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
+  _message(message, Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf")),
+  _return("Return", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf")),
   _selected(-1)
 {}
 

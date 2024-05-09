@@ -30,6 +30,13 @@ namespace RPG
     // Signature of component's types
     using Signature = std::bitset<MaxComponents>;
 
+    // Base class of a system
+    class System
+    {
+    public:
+      std::set<Entity>  entities; // Entities in the system
+    };
+
   private:
     // Distribute entity IDs and manage signatures
     class EntityManager
@@ -266,13 +273,6 @@ namespace RPG
         for (auto& [_, array] : _arrays)
           array->destroy(entity);
       }
-    };
-
-    // Base class of a system
-    class System
-    {
-    public:
-      std::set<Entity>  entities; // Entities in the system
     };
 
     // Handle ECS systems

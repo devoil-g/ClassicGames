@@ -19,6 +19,9 @@ namespace RPG
     Texture(Texture&&) = delete;
     ~Texture() = default;
 
+    Texture& operator=(const Texture&) = delete;
+    Texture& operator=(Texture&&) = delete;
+
     sf::Texture&       get();       // Get texture primitive
     const sf::Texture& get() const; // Get texture primitive
 

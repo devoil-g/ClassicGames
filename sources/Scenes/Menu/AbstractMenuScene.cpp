@@ -7,7 +7,7 @@
 
 Game::AbstractMenuScene::AbstractMenuScene(Game::SceneMachine& machine) :
   Game::AbstractScene(machine),
-  _title("", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
+  _title("", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf")),
   _items(),
   _footer("", [](Item&) {}),
   _select(-1),

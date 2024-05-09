@@ -129,6 +129,10 @@ SET(GAME_GBC_SRCS
 SET(GAME_RPG_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Components.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Components.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Systems.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Systems.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/ClientScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/ClientScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Server.hpp

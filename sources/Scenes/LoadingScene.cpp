@@ -6,7 +6,7 @@
 
 Game::LoadingScene::LoadingScene(Game::SceneMachine& machine) :
   Game::AbstractScene(machine),
-  _text("", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf"), 1),
+  _text("", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf"), 1),
   _elapsed(0.f)
 {
   // Set taskbar status to flickering

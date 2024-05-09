@@ -86,7 +86,7 @@ void  QUIZ::QuizScene::draw()
       auto& entity = _quiz.entities.at("player_" + std::to_string(player.id));
       auto& sprite = entity.sprite();
 
-      sf::Text  score(std::to_string(player.score), Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf"), 128);
+      sf::Text  score(std::to_string(player.score), Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf"), 128);
 
       // Set score outline thickness
       score.setOutlineThickness(5.f);

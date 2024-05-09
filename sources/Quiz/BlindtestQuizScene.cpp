@@ -74,7 +74,7 @@ void  QUIZ::BlindtestQuizScene::start()
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Reset volume
-  _music.setVolume(50.f);
+  _music.setVolume(100.f);
 
   // Reset status
   std::fill(_cooldowns.begin(), _cooldowns.end(), 0.01f);

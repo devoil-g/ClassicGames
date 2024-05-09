@@ -120,6 +120,7 @@ Game::JSON::Object  RPG::Model::Animation::Frame::json() const
 void  RPG::Model::Animation::Frame::draw(const RPG::Texture& texture, const Math::Vector<2>& position, RPG::Color outline) const
 {
   sf::Sprite  sprite;
+  Math::Vector<2> rounded(std::round(position.x()), std::round(position.y()));
 
   // Set properties
   sprite.setTexture(texture.get());
@@ -133,18 +134,18 @@ void  RPG::Model::Animation::Frame::draw(const RPG::Texture& texture, const Math
     auto shader = RPG::Model::OutlineShader::Get(outline);
 
     // Draw outline
-    sprite.setPosition(std::round(position.x() - 1.f), std::round(position.y()));
+    sprite.setPosition(rounded.x() - 1.f, rounded.y());
     Game::Window::Instance().window().draw(sprite, shader);
-    sprite.setPosition(std::round(position.x() + 1.f), std::round(position.y()));
+    sprite.setPosition(rounded.x() + 1.f, rounded.y());
     Game::Window::Instance().window().draw(sprite, shader);
-    sprite.setPosition(std::round(position.x()), std::round(position.y() - 1.f));
+    sprite.setPosition(rounded.x(), rounded.y() - 1.f);
     Game::Window::Instance().window().draw(sprite, shader);
-    sprite.setPosition(std::round(position.x()), std::round(position.y() + 1.f));
+    sprite.setPosition(rounded.x(), rounded.y() + 1.f);
     Game::Window::Instance().window().draw(sprite, shader);
   }
 
   // Draw sprite
-  sprite.setPosition(std::round(position.x()), std::round(position.y()));
+  sprite.setPosition(rounded.x(), rounded.y());
   Game::Window::Instance().window().draw(sprite);
 }
 

@@ -1,3 +1,4 @@
+#include <filesystem>
 #include <stdexcept>
 
 #include "System/Config.hpp"
@@ -5,8 +6,19 @@
 
 Game::FontLibrary::FontLibrary()
 {
-  // NOTE: pre-load fonts here
-  load(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf");
+  // Preload fonts
+  for (const auto& path : std::filesystem::directory_iterator(Game::Config::ExecutablePath / "assets" / "fonts"))
+  {
+    // Attempt to load file as a font
+    try {
+      load(path);
+    }
+
+    // Ignore failures
+    catch (...) {
+      continue;
+    }
+  }
 }
 
 void  Game::FontLibrary::load(const std::filesystem::path& path)

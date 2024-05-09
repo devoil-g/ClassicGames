@@ -90,7 +90,7 @@ namespace RPG
     static const std::string WalkAnimation;
     static const std::string RunAnimation;
 
-    std::string                                spritesheet; // Path to spritesheet used for animation
+    const std::string                          spritesheet; // Path to spritesheet used for animation
     std::unordered_map<std::string, Animation> animations;  // Animations of the entity, by name
 
     Model() = delete;

@@ -15,16 +15,16 @@ DOOM::StartDoomScene::StartDoomScene(Game::SceneMachine& machine, DOOM::Doom& do
   _players({ -1, -1, -1, -1 }),
   _textureTitle(),
   _spriteTitle(),
-  _subtitle("select your controller", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
+  _subtitle("select your controller", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf")),
   _controllers(
     {
-      sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
-      sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
-      sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
-      sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf"))
+      sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf")),
+      sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf")),
+      sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf")),
+      sf::Text("PRESS START", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf"))
     }
   ),
-  _ready("READY", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "pixelated.ttf")),
+  _ready("READY", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf")),
   _elapsed(0.f),
   _textureKeyboard(), _textureController(),
   _spriteKeyboard(), _spriteController()
