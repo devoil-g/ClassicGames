@@ -46,7 +46,7 @@ QUIZ::Quiz::Quiz() :
       // Add avatar to collection
       skins.push_back(avatar.path());
     }
-    
+
     // No costume to load
     if (skins.empty() == true)
       continue;

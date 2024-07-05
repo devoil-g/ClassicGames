@@ -66,12 +66,6 @@ bool  QUIZ::QuizScene::update(float elapsed)
     return false;
   }
 
-  // Update scores
-  for (int index = 0; index < _quiz.players.size(); index++) {
-    auto& player = _quiz.players[index];
-    auto& entity = _quiz.entities.at("player_" + std::to_string(player.id));
-    auto& sprite = entity.sprite();
-
   // Update entities
   for (auto& [_, entity] : _quiz.entities)
     entity.update(elapsed);
