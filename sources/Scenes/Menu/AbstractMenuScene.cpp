@@ -255,10 +255,13 @@ void  Game::AbstractMenuScene::drawFooter()
   if (_select == _items.size())
     _footer.scale({ 1.28f, 1.28f });
 
+  // Center origin
+  _footer.setOrigin(_footer.getLocalBounds().width / 2.f, _footer.getLocalBounds().height);
+
   // Position footer
   _footer.setPosition(
-    (Game::Window::Instance().window().getSize().x - _footer.getGlobalBounds().width) / 2.f,
-    Game::Window::Instance().window().getSize().y * 7.f / 8.f - _footer.getGlobalBounds().height / 2.f
+    Game::Window::Instance().window().getSize().x / 2.f,
+    Game::Window::Instance().window().getSize().y * 7.f / 8.f
   );
 
   // Draw item
