@@ -383,7 +383,7 @@ void  GBC::PixelProcessingUnit::simulateMode3Sprites()
 
         // Register pixels according to X flip attribute
         for (std::uint8_t index = 0; index < 8; index += 1) {
-          std::uint8_t      x = (sprite.attributes & SpriteAttributes::SpriteAttributesXFlip) ? (7 - index) : (index);
+          std::uint8_t  x = (sprite.attributes & SpriteAttributes::SpriteAttributesXFlip) ? (7 - index) : (index);
 
           PixelFifo::Pixel  pixel = {
             .color = (std::uint8_t)(((tile_low & (0b10000000 >> x)) ? 0b01 : 0b00) + ((tile_high & (0b10000000 >> x)) ? 0b10 : 0b00)),
@@ -392,9 +392,11 @@ void  GBC::PixelProcessingUnit::simulateMode3Sprites()
             .priority = (std::uint8_t)iterator
           };
 
+          auto position = index + _sOffset - (_lx - sprite.x + 8);
+
           // Merge pixel in FIFO
-          if (pixel.color != 0 && (pixel.priority < _sFifo[index].priority || _sFifo[index].color == 0))
-            _sFifo[index] = pixel;
+          if (pixel.color != 0 && (pixel.priority < _sFifo[position].priority || _sFifo[position].color == 0))
+            _sFifo[position] = pixel;
         }
 
         // Wait between 6 and 11 ticks before next fetch
