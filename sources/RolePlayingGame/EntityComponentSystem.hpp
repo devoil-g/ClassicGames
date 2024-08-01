@@ -363,6 +363,12 @@ namespace RPG
       return _entities.create();
     }
 
+    Signature signatureEntity(Entity entity) // Get entity signature
+    {
+      // Return entity signature
+      return _entities.get(entity);
+    }
+
     void  destroyEntity(Entity entity) // Remove an entity
     {
       // Remove entity from each manager

@@ -15,6 +15,8 @@ namespace RPG
     static const std::uint8_t  DefaultBlue;  // Default blue value
     static const std::uint8_t  DefaultAlpha; // Default alpha value
 
+    static const Color  White, Black, Red, Green, Blue, Yellow, Magenta, Cyan, Transparent; // Default color template
+
     union {
       struct {
         std::uint8_t alpha;

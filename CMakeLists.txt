@@ -129,6 +129,8 @@ SET(GAME_GBC_SRCS
 SET(GAME_RPG_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Entities.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Entities.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Components.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Components.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Systems.hpp
@@ -147,8 +149,6 @@ SET(GAME_RPG_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Cell.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Color.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Color.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Entity.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Entity.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Level.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Level.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Model.hpp

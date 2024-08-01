@@ -7,28 +7,28 @@ RPG::ClientWorld::ClientWorld() :
   textures()
 {}
 
-RPG::Model& RPG::ClientWorld::model(const std::string& name)
-{
-  // Get model from map
-  return models.at(name);
-}
-
 const RPG::Model& RPG::ClientWorld::model(const std::string& name) const
 {
-  // Get model from map
-  return models.at(name);
-}
+  auto it = models.find(name);
 
-RPG::Texture& RPG::ClientWorld::texture(const std::string& name)
-{
-  // Get texture from map
-  return textures.emplace(name, name).first->second;
+  // Model not found
+  if (it == models.end())
+    return RPG::Model::ErrorModel;
+
+  // Get model from map
+  return it->second;
 }
 
 const RPG::Texture& RPG::ClientWorld::texture(const std::string& name) const
 {
+  auto it = textures.find(name);
+
+  // Texture not found
+  if (it == textures.end())
+    return RPG::Texture::ErrorTexture;
+
   // Get texture from map
-  return textures.at(name);
+  return it->second;
 }
 
 void  RPG::ClientWorld::load(const Game::JSON::Object& json)

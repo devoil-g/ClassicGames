@@ -58,5 +58,6 @@ namespace Math
   inline float  RadToDeg(float r) { return (r * 180.f) / Math::Pi; }; // Convert radian (* accuracy) to degree
   inline float  DegToRad(float r) { return (r * Math::Pi) / 180.f; }; // Convert degree to radian (* accuracy)
 
-  inline float  Random() { return (float)std::rand() / (float)RAND_MAX; };  // Return random value [0; 1]
+  inline float  Random(float range = 1.f) { return (float)std::rand() / (float)RAND_MAX * range; }; // Return random value [0; 1]
+  inline float  Random(float min, float max) { return min + Random(max - min); };                   // Return random value [min; max]
 }

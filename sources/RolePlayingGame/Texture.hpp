@@ -8,9 +8,13 @@ namespace RPG
 {
   class Texture
   {
+  public:
+    static const Texture  ErrorTexture;  // Error texture
+
   private:
     std::string _name;
     sf::Texture _texture;
+    bool        _error;
 
   public:
     Texture() = delete;
@@ -25,6 +29,7 @@ namespace RPG
     sf::Texture&       get();       // Get texture primitive
     const sf::Texture& get() const; // Get texture primitive
 
-    void  reload(); // Reload texture
+    void  reload();       // Reload texture
+    bool  error() const;  // Get error flag
   };
 }

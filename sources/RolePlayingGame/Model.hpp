@@ -15,8 +15,11 @@
 
 namespace RPG
 {
-  class Model // Animations for an entity
+  class Sprite
   {
+  public:
+    static const Sprite ErrorSprite;  // Error sprite
+
   private:
     class OutlineShader
     {
@@ -35,65 +38,110 @@ namespace RPG
       static const sf::Shader* Get(RPG::Color color = RPG::Color(0, 0, 0, 255));  // Get SFML shader for outline
     };
 
+    Sprite();
+
   public:
-    class Animation // Frames of an animation
-    {
-    public:
-      class Frame // A single frame of animation
-      {
-      public:
-        static const Math::Vector<2, int> DefaultOffset;
-        static const Math::Vector<2, int> DefaultSize;
-        static const Math::Vector<2, int> DefaultOrigin;
-        static const bool                 DefaultFlipX;
-        static const bool                 DefaultFlipY;
-        static const RPG::Color           DefaultColor;
-        static const float                DefaultDuration;
+    static const Math::Vector<2, std::int16_t>  DefaultOffset;
+    static const Math::Vector<2, std::int16_t>  DefaultSize;
+    static const Math::Vector<2, std::int16_t>  DefaultOrigin;
+    static const bool                           DefaultFlipX;
+    static const bool                           DefaultFlipY;
+    static const RPG::Color                     DefaultColor;
+    static const std::string                    DefaultTexture;
 
-        const Math::Vector<2, int> offset;       // Offset of texture rectangle
-        const Math::Vector<2, int> size;         // Size of texture rectangle (full texture if 0,0)
-        const Math::Vector<2, int> origin;       // Origin of the sprite from drawing position
-        const bool                 flipX, flipY; // Texture horizontal and vertical flip
-        const RPG::Color           color;        // Sprite color
-        const float                duration;     // Duration of the frame in seconds (0 for infinite, default to 0)
+    Math::Vector<2, std::int16_t> offset;       // Offset of texture rectangle
+    Math::Vector<2, std::int16_t> size;         // Size of texture rectangle (full texture if 0,0)
+    Math::Vector<2, std::int16_t> origin;       // Origin of the sprite from drawing position
+    bool                          flipX, flipY; // Texture horizontal and vertical flip
+    RPG::Color                    color;        // Sprite color
+    std::string                   path;         // Path of the texture
+    const RPG::Texture*           texture;      // Pointer to texture
 
-        Frame() = delete;
-        Frame(const Game::JSON::Object& json);
-        Frame(const Frame&) = default;
-        Frame(Frame&&) = default;
-        ~Frame() = default;
+    Sprite(const Game::JSON::Object& json);
+    Sprite(const Sprite&) = default;
+    Sprite(Sprite&&) = default;
+    ~Sprite() = default;
 
-        Frame& operator=(const Frame&) = default;
-        Frame& operator=(Frame&&) = default;
+    Sprite& operator=(const Sprite&) = default;
+    Sprite& operator=(Sprite&&) = default;
+    bool    operator==(const Sprite&) const = default;
 
-        Game::JSON::Object json() const;                                                                                                                         // Serialize to JSON
-        void               draw(const RPG::Texture& texture, const Math::Vector<2>& position = { 0.f, 0.f }, RPG::Color outline = RPG::Color(0, 0, 0, 0)) const; // Draw frame at position
-        RPG::Bounds        bounds(const Math::Vector<2>& position = { 0.f, 0.f }) const;                                                                         // Get bounds of frame
-      };
+    Game::JSON::Object  json() const; // Serialize to JSON
 
-      std::vector<Frame> frames; // Frames of the animation
+    void        draw(const Math::Vector<2>& position = { 0.f, 0.f }, RPG::Color color = RPG::Color::White, RPG::Color outline = RPG::Color::Transparent) const; // Draw frame at position
+    RPG::Bounds bounds(const Math::Vector<2>& position = { 0.f, 0.f }) const;                                                                                   // Get bounds of frame
+  };
 
-      Animation() = delete;
-      Animation(const Game::JSON::Object& json);
-      Animation(const Animation&) = default;
-      Animation(Animation&&) = default;
-      ~Animation() = default;
+  class Frame
+  {
+  public:
+    static const Frame  ErrorFrame; // Error frame
 
-      Animation& operator=(const Animation&) = default;
-      Animation& operator=(Animation&&) = default;
+  private:
+    Frame();
 
-      Game::JSON::Object json() const; // Serialize to JSON
-    };
+  public:
+    static const std::array<RPG::Sprite, RPG::Direction::DirectionCount>  DefaultSprites;
+    static const float                                                    DefaultDuration;
 
+    std::array<RPG::Sprite, RPG::Direction::DirectionCount> sprites;  // Sprites of frame, per direction
+    float                                                   duration; // Duration of the frame in seconds (0 for infinite, default to 0)
+
+    Frame(const Game::JSON::Object& json);
+    Frame(const Frame&) = default;
+    Frame(Frame&&) = default;
+    ~Frame() = default;
+
+    Frame& operator=(const Frame&) = default;
+    Frame& operator=(Frame&&) = default;
+
+    Game::JSON::Object  json() const; // Serialize to JSON
+
+    void        draw(RPG::Direction direction = RPG::Direction::DirectionNorth, const Math::Vector<2>& position = { 0.f, 0.f }, RPG::Color outline = RPG::Color(0, 0, 0, 0)) const; // Draw frame at position
+    RPG::Bounds bounds(RPG::Direction direction = RPG::Direction::DirectionNorth, const Math::Vector<2>& position = { 0.f, 0.f }) const;                                            // Get bounds of frame
+  };
+
+  class Animation
+  {
+  public:
+    static const Animation  ErrorAnimation; // Error animation
+
+  private:
+    std::vector<Frame>  _frames;  // Frames of the animation
+
+    Animation();
+
+  public:
     static const std::string DefaultAnimation;
     static const std::string IdleAnimation;
     static const std::string WalkAnimation;
     static const std::string RunAnimation;
 
-    const std::string                          spritesheet; // Path to spritesheet used for animation
-    std::unordered_map<std::string, Animation> animations;  // Animations of the entity, by name
+    Animation(const Game::JSON::Object& json);
+    Animation(const Animation&) = default;
+    Animation(Animation&&) = default;
+    ~Animation() = default;
 
-    Model() = delete;
+    Animation& operator=(const Animation&) = default;
+    Animation& operator=(Animation&&) = default;
+
+    Game::JSON::Object  json() const; // Serialize to JSON
+
+    std::size_t       count() const;                  // Get the number of frames in animation
+    const RPG::Frame& frame(std::size_t index) const; // Get frame of animation
+  };
+
+  class Model
+  {
+  public:
+    static const Model  ErrorModel; // Error model
+
+  private:
+    std::unordered_map<std::string, RPG::Animation> _animations;  // Animations stored by direction/name
+
+    Model();
+
+  public:
     Model(const Game::JSON::Object& json);
     Model(const Model&) = default;
     Model(Model&&) = default;
@@ -102,9 +150,9 @@ namespace RPG
     Model& operator=(const Model&) = default;
     Model& operator=(Model&&) = default;
 
-    RPG::Model::Animation&       animation(const std::string& name);
-    const RPG::Model::Animation& animation(const std::string& name) const;
+    Game::JSON::Object  json() const; // Serialize to JSON
 
-    Game::JSON::Object json() const; // Serialize to JSON
+    const RPG::Animation& animation(const std::string& name) const; // Get an animation of model
+    const RPG::Animation& random() const;                           // Get a random animation of model
   };
 }

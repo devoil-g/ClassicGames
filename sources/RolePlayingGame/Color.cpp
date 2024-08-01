@@ -6,6 +6,16 @@ const std::uint8_t  RPG::Color::DefaultGreen = 255;
 const std::uint8_t  RPG::Color::DefaultBlue = 255;
 const std::uint8_t  RPG::Color::DefaultAlpha = 255;
 
+const RPG::Color    RPG::Color::White = RPG::Color(255, 255, 255);
+const RPG::Color    RPG::Color::Black = RPG::Color(0, 0, 0);
+const RPG::Color    RPG::Color::Red = RPG::Color(255, 0, 0);
+const RPG::Color    RPG::Color::Green = RPG::Color(0, 255, 0);
+const RPG::Color    RPG::Color::Blue = RPG::Color(0, 0, 255);
+const RPG::Color    RPG::Color::Yellow = RPG::Color(255, 255, 0);
+const RPG::Color    RPG::Color::Magenta = RPG::Color(255, 0, 255);
+const RPG::Color    RPG::Color::Cyan = RPG::Color(0, 255, 255);
+const RPG::Color    RPG::Color::Transparent = RPG::Color(255, 255, 255, 0);
+
 RPG::Color::Color(std::uint8_t red, std::uint8_t green, std::uint8_t blue, std::uint8_t alpha) :
   raw(((std::uint32_t)red << 24) + ((std::uint32_t)green << 16) + ((std::uint32_t)blue << 8) + ((std::uint32_t)alpha << 0))
 {}

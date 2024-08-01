@@ -29,15 +29,7 @@ namespace RPG
     ClientWorld& operator=(ClientWorld&&) = delete;
 
     std::unique_ptr<RPG::ClientLevel>             level;    // Current level, empty when no level
-    std::unordered_map<std::string, RPG::Model>   models;   // Models library
-    std::unordered_map<std::string, RPG::Texture> textures; // Texture library
     
-    RPG::Model& model(const std::string& name);             // Get model
-    const RPG::Model& model(const std::string& name) const; // Get model
-
-    RPG::Texture& texture(const std::string& name);             // Get texture
-    const RPG::Texture& texture(const std::string& name) const; // Get texture
-
     void load(const Game::JSON::Object& json);    // Load world from JSON
     void update(const Game::JSON::Object& json);  // Update world from JSON
 

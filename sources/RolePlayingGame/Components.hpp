@@ -5,6 +5,48 @@
 
 namespace RPG
 {
+  // COMMON COMPONENTS --------------------------------------------------------
+
+  class BaseComponent
+  {
+  public:
+    std::string       model;        // Entity's model name
+    RPG::Coordinates  coordinates;  // Cell coordinates of entity
+    RPG::Position     position;     // Position of the entity in world
+
+    BaseComponent();
+    BaseComponent(const BaseComponent&) = default;
+    BaseComponent(BaseComponent &&) = default;
+    ~BaseComponent() = default;
+
+    BaseComponent& operator=(const BaseComponent&) = default;
+    BaseComponent& operator=(BaseComponent&&) = default;
+  };
+
+  // SERVER COMPONENTS --------------------------------------------------------
+
+  class ServerActionComponent
+  {
+  public:
+    class AbstractAction
+    {
+    public:
+      AbstractAction() = default;
+      AbstractAction(const AbstractAction&) = default;
+      AbstractAction(AbstractAction&&) = default;
+      virtual ~AbstractAction() = 0;
+
+      AbstractAction& operator=(const AbstractAction&) = default;
+      AbstractAction& operator=(AbstractAction&&) = default;
+
+      virtual bool execute() = 0;
+    };
+
+
+  };
+
+  // CLIENT COMPONENTS --------------------------------------------------------
+
   class PositionComponent
   {
   public:
@@ -18,6 +60,56 @@ namespace RPG
 
     PositionComponent& operator=(const PositionComponent&) = default;
     PositionComponent& operator=(PositionComponent&&) = default;
+  };
+
+  class SpriteComponent
+  {
+  public:
+    const RPG::Sprite*  sprite;   // Sprite of the entity
+    RPG::Color          color;    // Sprite color
+    RPG::Color          outline;  // Outline color
+
+    SpriteComponent();
+    SpriteComponent(const SpriteComponent&) = default;
+    SpriteComponent(SpriteComponent&&) = default;
+    ~SpriteComponent() = default;
+
+    SpriteComponent&  operator=(const SpriteComponent&) = default;
+    SpriteComponent&  operator=(SpriteComponent&&) = default;
+  };
+
+  class AnimationComponent
+  {
+  public:
+    const RPG::Model*     model;       // Model of the entity
+    const RPG::Animation* animation;   // Current animation
+
+    std::size_t frame;   // Current frame
+    float       elapsed; // Time elapsed on current frame
+    bool        loop;    // True: loop animation, false: idle when over
+
+    AnimationComponent();
+    AnimationComponent(const AnimationComponent&) = default;
+    AnimationComponent(AnimationComponent&&) = default;
+    ~AnimationComponent() = default;
+
+    AnimationComponent& operator=(const AnimationComponent&) = default;
+    AnimationComponent& operator=(AnimationComponent&&) = default;
+  };
+
+  class MoveComponent
+  {
+  public:
+    Math::Vector<3, float>  position;   // Target position
+    float                   remaining;  // Remaining time
+
+    MoveComponent();
+    MoveComponent(const MoveComponent&) = default;
+    MoveComponent(MoveComponent&&) = default;
+    ~MoveComponent() = default;
+
+    MoveComponent&  operator=(const MoveComponent&) = default;
+    MoveComponent&  operator=(MoveComponent&&) = default;
   };
 
   class CoordinatesComponent
@@ -34,39 +126,49 @@ namespace RPG
     CoordinatesComponent& operator=(CoordinatesComponent&&) = default;
   };
 
-  class DrawableComponent
+  class ParticleComponent
   {
   public:
-    RPG::Model*             model;      // Model of the entity
-    RPG::Model::Animation*  animation;  // Current animation
-    RPG::Texture*           texture;    // Texture of the model
-    RPG::Color              outline;    // Outline color
+    Math::Vector<3> physicsSpeed;     // Particule speed vector
+    Math::Vector<3> physicsGravity;   // Gravity vector, applied on speed vector
+    float           physicsDrag;      // Drag factor, applied on speed vector
+    float           physicsFloor;     // Floor height
+    RPG::Color      colorStart;       // Start color of the particle
+    RPG::Color      colorEnd;         // End color of particle
+    float           durationFadeIn;   // Duration of particle fade in
+    float           durationLife;     // Duration of particle life
+    float           durationFadeOut;  // Duration of particle fade out
 
-    std::size_t frame;   // Current frame
-    float       elapsed; // Time elapsed on current frame
-    bool        loop;    // True: loop animation, false: idle when over
+    float           elapsed;          // Elapsed time of particle
 
-    DrawableComponent();
-    DrawableComponent(const DrawableComponent&) = default;
-    DrawableComponent(DrawableComponent&&) = default;
-    ~DrawableComponent() = default;
+    ParticleComponent();
+    ParticleComponent(const ParticleComponent&) = default;
+    ParticleComponent(ParticleComponent&&) = default;
+    ~ParticleComponent() = default;
 
-    DrawableComponent& operator=(const DrawableComponent&) = default;
-    DrawableComponent& operator=(DrawableComponent&&) = default;
+    ParticleComponent& operator=(const ParticleComponent&) = default;
+    ParticleComponent& operator=(ParticleComponent&&) = default;
   };
 
-  class BoundsComponent // Used for selectable entities
+  class ParticleEmitterComponent
   {
   public:
-    RPG::Bounds bounds;
+    Math::Vector<3>         size;                         // Size of the emitter
+    Math::Vector<3>         offset;                       // Offset of the emitter (added to position)
+    float                   frequencyLow, frequencyHigh;  // Number of particles emitted per second, low and high frequency
+    RPG::ParticleComponent  particleLow, particleHigh;    // Emitted particles properties, low and high properties
+    std::string             model;                        // Name of the model of particles
 
-    BoundsComponent();
-    BoundsComponent(const BoundsComponent&) = default;
-    BoundsComponent(BoundsComponent&&) = default;
-    ~BoundsComponent() = default;
+    float           next;                         // Time before next particle
+    float           duration;                     // Duration of the emitter
 
-    BoundsComponent& operator=(const BoundsComponent&) = default;
-    BoundsComponent& operator=(BoundsComponent&&) = default;
+    ParticleEmitterComponent();
+    ParticleEmitterComponent(const ParticleEmitterComponent&) = default;
+    ParticleEmitterComponent(ParticleEmitterComponent&&) = default;
+    ~ParticleEmitterComponent() = default;
+
+    ParticleEmitterComponent& operator=(const ParticleEmitterComponent&) = default;
+    ParticleEmitterComponent& operator=(ParticleEmitterComponent&&) = default;
   };
 
   class ActionsComponent
@@ -77,6 +179,8 @@ namespace RPG
     bool  dialog;     // Entity can be talked to (dialog)
     bool  fight;      // Entity can be attacked (fighter)
     bool  trigger;    // Entity can be triggered (button)
+
+    RPG::Bounds bounds; // Bound of the entity
 
     ActionsComponent();
     ActionsComponent(const ActionsComponent&) = default;
