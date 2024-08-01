@@ -307,18 +307,6 @@ void  GBC::AudioProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
     }
     break;
 
-  case IO::NR12:    // Channel 1 Envelope, R/W
-    // Write register
-    _gbc._io[IO::NR12] = value;
-
-    // Update channel envelope
-    _sound1.envelope = ((_gbc._io[IO::NR12] & 0b11110000) >> 4) / 16.f;
-    _sound1.envelopeDirection = (_gbc._io[IO::NR12] & 0b00001000) ? true : false;
-    _sound1.envelopeTime = (_gbc._io[IO::NR12] & 0b00000111) ?
-      (_gbc._io[IO::NR12] & 0b00000111) / 64.f :
-      999.f;
-    break;
-  
   case IO::NR13:    // Channel 1 Frequency lower 8 bits, W
     // Write register
     _gbc._io[IO::NR13] = value;
@@ -351,6 +339,11 @@ void  GBC::AudioProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
       _sound1.length = (_gbc._io[IO::NR14] & 0b01000000) ?
         (64 - (_gbc._io[IO::NR11] & 0b00111111)) / 256.f :
         999.f;
+      _sound1.envelope = ((_gbc._io[IO::NR12] & 0b11110000) >> 4) / 16.f;
+      _sound1.envelopeDirection = (_gbc._io[IO::NR12] & 0b00001000) ? true : false;
+      _sound1.envelopeTime = (_gbc._io[IO::NR12] & 0b00000111) ?
+        (_gbc._io[IO::NR12] & 0b00000111) / 64.f :
+        999.f;
       _sound1.envelopeElapsed = 0.f;
       _sound1.clock = 0.f;
     }
@@ -367,18 +360,6 @@ void  GBC::AudioProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
       _sound2.wave = wave[(_gbc._io[IO::NR21] & 0b11000000) >> 6];
     }
 
-    break;
-
-  case IO::NR22:    // Channel 2 Envelope, R/W
-    // Write register
-    _gbc._io[IO::NR22] = value;
-
-    // Update channel envelope
-    _sound2.envelope = ((_gbc._io[IO::NR22] & 0b11110000) >> 4) / 16.f;
-    _sound2.envelopeDirection = (_gbc._io[IO::NR22] & 0b00001000) ? true : false;
-    _sound2.envelopeTime = (_gbc._io[IO::NR22] & 0b00000111) ?
-      (_gbc._io[IO::NR22] & 0b00000111) / 64.f :
-      999.f;
     break;
 
   case IO::NR23:    // Channel 2 Frequency lower 8 bits, W
@@ -410,6 +391,11 @@ void  GBC::AudioProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
     if (value & 0b10000000) {
       _sound2.length = (_gbc._io[IO::NR24] & 0b01000000) ?
         (64 - (_gbc._io[IO::NR21] & 0b00111111)) / 256.f :
+        999.f;
+      _sound2.envelope = ((_gbc._io[IO::NR22] & 0b11110000) >> 4) / 16.f;
+      _sound2.envelopeDirection = (_gbc._io[IO::NR22] & 0b00001000) ? true : false;
+      _sound2.envelopeTime = (_gbc._io[IO::NR22] & 0b00000111) ?
+        (_gbc._io[IO::NR22] & 0b00000111) / 64.f :
         999.f;
       _sound2.envelopeElapsed = 0.f;
       _sound2.clock = 0.f;
@@ -462,18 +448,6 @@ void  GBC::AudioProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
     }
     break;
 
-  case IO::NR42:    // Channel 4 Envelope, R/W
-    // Write register
-    _gbc._io[IO::NR42] = value;
-
-    // Update channel envelope
-    _sound4.envelope = ((_gbc._io[IO::NR42] & 0b11110000) >> 4) / 16.f;
-    _sound4.envelopeDirection = (_gbc._io[IO::NR42] & 0b00001000) ? true : false;
-    _sound4.envelopeTime = (_gbc._io[IO::NR42] & 0b00000111) ?
-      (_gbc._io[IO::NR42] & 0b00000111) / 64.f :
-      999.f;
-    break;
-
   case IO::NR43:    // Channel 4 Polynomial counter, R/W
     // Write register
     _gbc._io[IO::NR43] = value;
@@ -493,6 +467,11 @@ void  GBC::AudioProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
     if (value & 0b10000000) {
       _sound4.length = (_gbc._io[IO::NR44] & 0b01000000) ?
         (64 - (_gbc._io[IO::NR41] & 0b00111111)) / 256.f :
+        999.f;
+      _sound4.envelope = ((_gbc._io[IO::NR42] & 0b11110000) >> 4) / 16.f;
+      _sound4.envelopeDirection = (_gbc._io[IO::NR42] & 0b00001000) ? true : false;
+      _sound4.envelopeTime = (_gbc._io[IO::NR42] & 0b00000111) ?
+        (_gbc._io[IO::NR42] & 0b00000111) / 64.f :
         999.f;
       _sound4.envelopeElapsed = 0.f;
       _sound4.counterElapsed = 0.f;
@@ -547,9 +526,12 @@ void  GBC::AudioProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
     _sound3.wave[(address - IO::WAVE00) * 2 + 1] = ((value & 0b00001111) >> 0) / 8.f - 1.f;
     break;
 
+  case IO::NR12:    // Channel 1 Envelope, R/W
+  case IO::NR22:    // Channel 2 Envelope, R/W
   case IO::NR30:    // Channel 3 Sound on/off, R/W
   case IO::NR31:    // Channel 3 Length, W
   case IO::NR41:    // Channel 4 Length, W
+  case IO::NR42:    // Channel 4 Envelope, R/W
   case IO::NR50:    // Sound stereo left/right volume, R/W, 6-5-4 left volume, 2-1-0 right volume (bits 7&3 not implemented, Vin output)
   case IO::NR51:    // Sound stereo left/right enable, R/W, bits 7-6-5-4 output sound 4-3-2-1 to left, bits 3-2-1-0 output sound 4-3-2-1 to right
     // Basic write, just write value to register
