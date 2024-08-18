@@ -13,7 +13,7 @@
 QUIZ::QuestionQuizScene::QuestionQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz) :
   Game::AbstractScene(machine),
   _quiz(quiz),
-  _score((int)_quiz.players.size()),
+  _score(std::max((int)_quiz.players.size(), 1)),
   _current((int)_quiz.players.size()),
   _buzz(-1),
   _cooldowns(_quiz.players.size(), 0.f),
