@@ -8,9 +8,6 @@ namespace RPG
 {
   class Texture
   {
-  public:
-    static const Texture  ErrorTexture;  // Error texture
-
   private:
     std::string _name;
     sf::Texture _texture;

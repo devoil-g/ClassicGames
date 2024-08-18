@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -15,12 +16,16 @@
 
 namespace RPG
 {
+  class Model;
+  class Animation;
+  class Frame;
+  class Sprite;
+  
   class Sprite
   {
-  public:
-    static const Sprite ErrorSprite;  // Error sprite
-
   private:
+    friend RPG::Frame;
+
     class OutlineShader
     {
     private:
@@ -49,6 +54,8 @@ namespace RPG
     static const RPG::Color                     DefaultColor;
     static const std::string                    DefaultTexture;
 
+    static const Sprite ErrorSprite;  // Error sprite
+
     Math::Vector<2, std::int16_t> offset;       // Offset of texture rectangle
     Math::Vector<2, std::int16_t> size;         // Size of texture rectangle (full texture if 0,0)
     Math::Vector<2, std::int16_t> origin;       // Origin of the sprite from drawing position
@@ -70,19 +77,22 @@ namespace RPG
 
     void        draw(const Math::Vector<2>& position = { 0.f, 0.f }, RPG::Color color = RPG::Color::White, RPG::Color outline = RPG::Color::Transparent) const; // Draw frame at position
     RPG::Bounds bounds(const Math::Vector<2>& position = { 0.f, 0.f }) const;                                                                                   // Get bounds of frame
+
+    void  resolve(const std::function<const RPG::Texture& (const std::string&)> library); // Resolve texture in sprites
   };
 
   class Frame
   {
-  public:
-    static const Frame  ErrorFrame; // Error frame
-
   private:
+    friend RPG::Animation;
+
     Frame();
 
   public:
     static const std::array<RPG::Sprite, RPG::Direction::DirectionCount>  DefaultSprites;
     static const float                                                    DefaultDuration;
+
+    static const Frame  ErrorFrame; // Error frame
 
     std::array<RPG::Sprite, RPG::Direction::DirectionCount> sprites;  // Sprites of frame, per direction
     float                                                   duration; // Duration of the frame in seconds (0 for infinite, default to 0)
@@ -97,8 +107,10 @@ namespace RPG
 
     Game::JSON::Object  json() const; // Serialize to JSON
 
-    void        draw(RPG::Direction direction = RPG::Direction::DirectionNorth, const Math::Vector<2>& position = { 0.f, 0.f }, RPG::Color outline = RPG::Color(0, 0, 0, 0)) const; // Draw frame at position
-    RPG::Bounds bounds(RPG::Direction direction = RPG::Direction::DirectionNorth, const Math::Vector<2>& position = { 0.f, 0.f }) const;                                            // Get bounds of frame
+    void        draw(RPG::Direction direction = RPG::Direction::DirectionNorth, const Math::Vector<2>& position = { 0.f, 0.f }, RPG::Color color = RPG::Color::White, RPG::Color outline = RPG::Color::Transparent) const;  // Draw frame at position
+    RPG::Bounds bounds(RPG::Direction direction = RPG::Direction::DirectionNorth, const Math::Vector<2>& position = { 0.f, 0.f }) const;                                                                                    // Get bounds of frame
+
+    void  resolve(const std::function<const RPG::Texture& (const std::string&)> library); // Resolve texture in sprites
   };
 
   class Animation
@@ -129,19 +141,20 @@ namespace RPG
 
     std::size_t       count() const;                  // Get the number of frames in animation
     const RPG::Frame& frame(std::size_t index) const; // Get frame of animation
+
+    void  resolve(const std::function<const RPG::Texture& (const std::string&)> library); // Resolve texture in sprites
   };
 
   class Model
   {
-  public:
-    static const Model  ErrorModel; // Error model
-
   private:
     std::unordered_map<std::string, RPG::Animation> _animations;  // Animations stored by direction/name
 
     Model();
 
   public:
+    static const Model  ErrorModel; // Error model
+
     Model(const Game::JSON::Object& json);
     Model(const Model&) = default;
     Model(Model&&) = default;
@@ -154,5 +167,7 @@ namespace RPG
 
     const RPG::Animation& animation(const std::string& name) const; // Get an animation of model
     const RPG::Animation& random() const;                           // Get a random animation of model
+
+    void  resolve(const std::function<const RPG::Texture& (const std::string&)> library); // Resolve texture in sprites
   };
 }

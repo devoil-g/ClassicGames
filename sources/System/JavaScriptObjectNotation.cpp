@@ -115,7 +115,7 @@ Game::JSON::Element& Game::JSON::Object::get(const std::string& key)
 
   // Check that key exists
   if (it == _map.end())
-    throw Game::JSON::BoundError("Key is not in JSON Object");
+    throw Game::JSON::BoundError("Key '" + key + "' is not in JSON Object");
 
   return *it->second;
 }
@@ -126,7 +126,7 @@ const Game::JSON::Element& Game::JSON::Object::get(const std::string& key) const
 
   // Check that key exists
   if (it == _map.end())
-    throw Game::JSON::BoundError("Key is not in JSON Object");
+    throw Game::JSON::BoundError("Key '" + key + "' is not in JSON Object");
 
   return *it->second;
 }
@@ -147,7 +147,7 @@ void  Game::JSON::Object::unset(const std::string& key)
 {
   // Remove element from map
   if (_map.erase(key) == 0)
-    throw Game::JSON::BoundError("Key is not in JSON Object");
+    throw Game::JSON::BoundError("Key '" + key + "' is not in JSON Object");
 }
 
 bool  Game::JSON::Object::empty() const
@@ -184,7 +184,7 @@ void  Game::JSON::Array::set(std::size_t position, std::unique_ptr<Game::JSON::E
 {
   // Check position
   if (position >= size())
-    throw Game::JSON::BoundError("Position is not in JSON Array");
+    throw Game::JSON::BoundError("Position '" + std::to_string(position) + "' is not in JSON Array");
 
   // Set element
   _vector[position] = std::move(element);
@@ -194,7 +194,7 @@ Game::JSON::Element& Game::JSON::Array::get(std::size_t position)
 {
   // Check position
   if (position >= _vector.size())
-    throw Game::JSON::BoundError("Position is not in JSON Array");
+    throw Game::JSON::BoundError("Position '" + std::to_string(position) + "' is not in JSON Array");
 
   return *_vector[position];
 }
@@ -203,7 +203,7 @@ const Game::JSON::Element& Game::JSON::Array::get(std::size_t position) const
 {
   // Check position
   if (position >= _vector.size())
-    throw Game::JSON::BoundError("Position is not in JSON Array");
+    throw Game::JSON::BoundError("Position '" + std::to_string(position) + "' is not in JSON Array");
 
   return *_vector[position];
 }
@@ -224,7 +224,7 @@ void  Game::JSON::Array::unset(std::size_t position)
 {
   // Invalid position
   if (position >= size())
-    throw Game::JSON::BoundError("Position is not in JSON Array");
+    throw Game::JSON::BoundError("Position '" + std::to_string(position) + "' is not in JSON Array");
 
   // Remove element from container
   _vector.erase(_vector.begin() + position);

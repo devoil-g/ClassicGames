@@ -21,8 +21,7 @@ Math::Vector<2> RPG::Camera::coordsToPixel(const Math::Vector<2>& coords) const
 
 Math::Vector<2> RPG::Camera::pixelToCoords(const Math::Vector<2>& pixel) const
 {
-  auto& window = Game::Window::Instance().window();
-  auto coords = window.mapPixelToCoords({ (int)pixel.x(), (int)pixel.y()}, view());
+  auto coords = Game::Window::Instance().window().mapPixelToCoords({ (int)pixel.x(), (int)pixel.y()}, view());
 
   return { coords.x, coords.y };
 }
@@ -77,7 +76,7 @@ void  RPG::Camera::setZoom(float scale)
     return;
 
   // Set current and target
-  _targetZoom = std::max(scale, 0.001f);
+  _targetZoom = std::clamp(scale, 0.04f, 50.f);
   _currentZoom = _targetZoom;
 }
 
@@ -88,7 +87,7 @@ void  RPG::Camera::setZoomTarget(float scale)
     return;
 
   // Set target
-  _targetZoom = std::max(scale, 0.001f);
+  _targetZoom = std::clamp(scale, 0.04f, 50.f);
 
   // Instant zoom
   if (_dragZoom == 0.f)

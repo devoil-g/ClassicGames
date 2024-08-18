@@ -1,28 +1,67 @@
 #include <SFML/Network/IpAddress.hpp>
 
-#include "System/Config.hpp"
-#include "System/Window.hpp"
-#include "System/Library/TextureLibrary.hpp"
 #include "RolePlayingGame/ClientScene.hpp"
+#include "RolePlayingGame/Components.hpp"
+#include "RolePlayingGame/Systems.hpp"
 
 RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::unique_ptr<RPG::Server>&& server) :
-  Game::AbstractScene(machine),
-  _server(std::move(server)),
-  _client(_server->getPort(), sf::IpAddress::LocalHost.toInteger()),
-  _world()
-{}
+  ClientScene(machine, server->getPort(), sf::IpAddress::LocalHost.toInteger())
+{
+  // Client hold server instance
+  _server = std::move(server);
+}
 
 RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::uint16_t port, std::uint32_t address) :
   Game::AbstractScene(machine),
   _server(),
   _client(port, address),
-  _world()
-{}
-
-void  RPG::ClientScene::send(const std::string& type, Game::JSON::Object& json)
+  _ecs()
 {
-  // Add type field
-  json.set("type", type);
+  // Register ECS components
+  _ecs.addComponent<RPG::CellComponent>();
+  _ecs.addComponent<RPG::EntityComponent>();
+  _ecs.addComponent<RPG::DisplayComponent>();
+  _ecs.addComponent<RPG::NetworkComponent>();
+  _ecs.addComponent<RPG::ParticleComponent>();
+  _ecs.addComponent<RPG::ParticleEmitterComponent>();
+
+  RPG::ECS::Signature signature;
+
+  // Register ECS systems
+  signature.reset();
+  signature.set(_ecs.typeComponent<RPG::EntityComponent>());
+  signature.set(_ecs.typeComponent<RPG::DisplayComponent>());
+  _ecs.addSystem<RPG::ClientEntitySystem>(signature);
+  signature.reset();
+  signature.set(_ecs.typeComponent<RPG::EntityComponent>());
+  signature.set(_ecs.typeComponent<RPG::NetworkComponent>());
+  signature.set(_ecs.typeComponent<RPG::DisplayComponent>());
+  _ecs.addSystem<RPG::ClientNetworkSystem>(signature);
+  signature.reset();
+  signature.set(_ecs.typeComponent<RPG::CellComponent>());
+  signature.set(_ecs.typeComponent<RPG::ParticleEmitterComponent>());
+  _ecs.addSystem<RPG::ClientBoardSystem>(signature);
+  signature.reset();
+  signature.set(_ecs.typeComponent<RPG::DisplayComponent>());
+  _ecs.addSystem<RPG::ClientDisplaySystem>(signature);
+  signature.reset();
+  signature.set(_ecs.typeComponent<RPG::ParticleComponent>());
+  signature.set(_ecs.typeComponent<RPG::DisplayComponent>());
+  _ecs.addSystem<RPG::ParticleSystem>(signature);
+  signature.reset();
+  signature.set(_ecs.typeComponent<RPG::ParticleEmitterComponent>());
+  _ecs.addSystem<RPG::ParticleEmitterSystem>(signature);
+}
+
+void  RPG::ClientScene::send(const std::vector<std::string>& type, Game::JSON::Object& json)
+{
+  Game::JSON::Array typeArray;
+
+  // Serialize type
+  typeArray._vector.reserve(type.size());
+  for (const auto& field : type)
+    typeArray.push(field);
+  json.set("type", std::move(typeArray));
 
   // Send packet to server
   _client.send(json);
@@ -31,21 +70,25 @@ void  RPG::ClientScene::send(const std::string& type, Game::JSON::Object& json)
 bool  RPG::ClientScene::update(float elapsed)
 {
   // Receive available packets
-  updatePacketReceive(elapsed);
+  updateReceive(elapsed);
 
-  // Keyboard and mouse inputs
-  updateInputs(elapsed);
+  _ecs.getSystem<RPG::ClientDisplaySystem>().executeCamera(_ecs, elapsed);
+  _ecs.getSystem<RPG::ParticleSystem>().execute(_ecs, elapsed);
+  _ecs.getSystem<RPG::ParticleEmitterSystem>().execute(_ecs, elapsed);
+  _ecs.getSystem<RPG::ClientDisplaySystem>().executeAnimation(_ecs, elapsed);
+  _ecs.getSystem<RPG::ClientBoardSystem>().executeCell(_ecs, elapsed);
+  _ecs.getSystem<RPG::ClientEntitySystem>().executePosition(_ecs);
 
-  // Update world
-  _world.update(*this, elapsed);
+  // Update ECS
+  // TODO
 
   // Send pending packets
-  updatePacketSend(elapsed);
+  updateSend(elapsed);
 
   return false;
 }
 
-void  RPG::ClientScene::updatePacketReceive(float elapsed)
+void  RPG::ClientScene::updateReceive(float elapsed)
 {
   // Poll pending packets
   while (true)
@@ -66,133 +109,42 @@ void  RPG::ClientScene::updatePacketReceive(float elapsed)
 
     // Extract packet from client
     try {
-      // TODO: remove this
-      std::cout << "Client received (tick: " << (std::size_t)json.get("tick").number() << ", type: " << json.get("type").array() << ", size: " << json.stringify().length() << "): " << json << std::endl;
-
-      const auto& type = json.get("type").array().get(0).string();
-
-      // Handle request
-      if (type == "load")
-        _world.load(json);
-      else if (type == "update")
-        _world.update(json);
-      else
-        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+      updatePacket(json, elapsed);
     }
-    catch (...) {
-      std::cout << "[RPG::Client] Invalid request from server." << std::endl;
-
+    catch (const std::exception& exception) {
+      std::cout << "[RPG::Client] Invalid request from server (" << exception.what() << ")." << std::endl;
     }
   }
 }
 
-void  RPG::ClientScene::updatePacketSend(float elapsed)
+void  RPG::ClientScene::updatePacket(const Game::JSON::Object& json, float elapsed)
+{
+  // TODO: remove this
+  std::cout << "Client received (tick: " << (std::size_t)json.get("tick").number() << ", type: " << json.get("type").array() << ", size: " << json.stringify().length() << "): " << json << std::endl;
+
+  const auto& type = json.get("type").array().get(0).string();
+
+  // Handle request
+  if (type == "network")
+    _ecs.getSystem<RPG::ClientNetworkSystem>().handlePacket(_ecs, *this, json);
+  else if (type == "display")
+    _ecs.getSystem<RPG::ClientDisplaySystem>().handlePacket(_ecs, *this, json);
+  else if (type == "board")
+    _ecs.getSystem<RPG::ClientBoardSystem>().handlePacket(_ecs, *this, json);
+  else if (type == "entity")
+    _ecs.getSystem<RPG::ClientEntitySystem>().handlePacket(_ecs, *this, json);
+  else
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+}
+
+void  RPG::ClientScene::updateSend(float elapsed)
 {
   // Send pending packets
   _client.send();
 }
 
-void  RPG::ClientScene::updateInputs(float elapsed)
-{
-  // Camera controls
-  updateInputsCamera(elapsed);
-
-  // Cursor on level
-  updateInputsLevel(elapsed);
-}
-
-void  RPG::ClientScene::updateInputsCamera(float elapsed)
-{
-  // No level
-  if (_world.level == nullptr)
-    return;
-
-  auto&           window = Game::Window::Instance();
-  Math::Vector<2> size((float)window.window().getSize().x, (float)window.window().getSize().y);
-  Math::Vector<2> mouse((float)window.mouse().position().x, (float)window.mouse().position().y);
-  Math::Vector<2> offset;
-  float           zoom = 1.f;
-
-  // Camera position (ZQSD)
-  offset += Math::Vector<2>(
-    (window.keyboard().keyDown(sf::Keyboard::Q) ? -1.f : 0.f) + (window.keyboard().keyDown(sf::Keyboard::D) ? +1.f : 0.f),
-    (window.keyboard().keyDown(sf::Keyboard::Z) ? -1.f : 0.f) + (window.keyboard().keyDown(sf::Keyboard::S) ? +1.f : 0.f)
-  );
-
-  // Mouse inside window
-  if (mouse.x() >= 0.f && mouse.x() < size.x() && mouse.y() >= 0.f && mouse.y() < size.y())
-  {
-    // Camera position (cursor on screen border)
-    offset += Math::Vector<2>(
-      (mouse.x() < 16.f ? -1.f : 0.f) + (mouse.x() >= size.x() - 16.f ? +1.f : 0.f),
-      (mouse.y() < 16.f ? -1.f : 0.f) + (mouse.y() >= size.y() - 16.f ? +1.f : 0.f)
-    );
-
-    // Limit move to -1,+1
-    offset.x() = std::clamp(offset.x(), -1.f, +1.f);
-    offset.y() = std::clamp(offset.y(), -1.f, +1.f);
-
-    // Camera zoom (mouse wheel)
-    zoom = (float)std::pow(1.28f, window.mouse().wheel());
-  }
-
-  // Camera move
-  _world.level->camera.setPositionTarget(_world.level->camera.getPositionTarget() + offset * elapsed * 96.f / _world.level->camera.getZoom());
-
-  // Camera zoom (mouse wheel)
-  _world.level->camera.setZoomTarget(_world.level->camera.getZoomTarget() * zoom);
-}
-
-void  RPG::ClientScene::updateInputsLevel(float elapsed)
-{
-  // No level
-  if (_world.level == nullptr)
-    return;
-  
-  auto&           window = Game::Window::Instance();
-  Math::Vector<2> size((float)window.window().getSize().x, (float)window.window().getSize().y);
-  Math::Vector<2> mouseScreen((float)window.mouse().position().x, (float)window.mouse().position().y);
-  Math::Vector<2> mouseWorld(_world.level->camera.pixelToCoords(mouseScreen));
-  bool            show = window.keyboard().keyDown(sf::Keyboard::LAlt);
-
-  RPG::ClientEntity* selectedEntity = nullptr;
-  RPG::ClientCell*   selectedCell = nullptr;
-
-  // Entity outline color
-  for (auto& entity : _world.level->entities)
-  {
-    // Reset outline color
-    entity.outline = show == true ? RPG::Color(0, 0, 0, 255) : RPG::Color(0, 0, 0, 0);
-
-    // Selectable entity
-    if (selectedEntity == nullptr && entity.isTrigger() == true && entity.bounds(_world, *_world.level).contains(mouseWorld) == true) {
-      entity.outline = RPG::Color(255, 255, 255, 255);
-      selectedEntity = &entity;
-    }
-  }
-
-  // Cell cursor
-  for (auto& cell : _world.level->cells)
-  {
-    // Reset color
-    cell.hover = RPG::Color(0);
-    cell.cursor = RPG::Color(0);
-
-    // Selectable cell
-    if (selectedEntity == nullptr && selectedCell == nullptr && cell.blocked == false && cell.bounds(_world, *_world.level).contains(mouseWorld) == true) {
-      cell.hover = RPG::Color(255, 255, 255, 255);
-      cell.cursor = RPG::Color(0);
-    }
-  }
-
-  // Mouse outside window
-  if (mouseScreen.x() < 0 || mouseScreen.x() >= size.x() || mouseScreen.y() < 0 || mouseScreen.y() >= size.y())
-    return;
-
-}
-
 void  RPG::ClientScene::draw()
 {
-  // TODO
-  _world.draw();
+  // Draw entities
+  _ecs.getSystem<RPG::ClientDisplaySystem>().executeDraw(_ecs);
 }

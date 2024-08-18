@@ -3,8 +3,6 @@
 #include "RolePlayingGame/Texture.hpp"
 #include "System/Config.hpp"
 
-const RPG::Texture  RPG::Texture::ErrorTexture("error.png");
-
 RPG::Texture::Texture(const std::string& name) :
   _name(name),
   _texture(),
@@ -42,7 +40,7 @@ void  RPG::Texture::reload()
   else
   {
     // Load error texture
-    if (_texture.loadFromFile((Game::Config::ExecutablePath / "assets" / "rpg" / _name).string()) == false)
+    if (_texture.loadFromFile((Game::Config::ExecutablePath / "assets" / "rpg" / "error.png").string()) == false)
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
     _error = true;

@@ -1,11 +1,11 @@
 #pragma once
 
 #include <filesystem>
-#include <list>
-#include <vector>
+#include <unordered_map>
 
+#include "RolePlayingGame/EntityComponentSystem.hpp"
+#include "RolePlayingGame/Model.hpp"
 #include "RolePlayingGame/TcpServer.hpp"
-#include "RolePlayingGame/World.hpp"
 #include "System/JavaScriptObjectNotation.hpp"
 
 namespace RPG
@@ -13,15 +13,19 @@ namespace RPG
   class Server : public RPG::TcpServer
   {
   private:
-    RPG::ServerWorld  _world;
-    std::size_t       _tick;
-    
+    std::size_t _tick;
+
+    RPG::ECS                                    _ecs;     // Server game ECS
+    std::unordered_map<std::string, RPG::Model> _models;  // Registered models
+
     virtual void  onConnect(std::size_t id) override;                                 // Called when a new TCP client connect
     virtual void  onDisconnect(std::size_t id) override;                              // Called when a TCP client disconnect
     virtual void  onReceive(std::size_t id, const Game::JSON::Object& json) override; // Called when a packet is received from TCP client
     virtual void  onTick() override;                                                  // Called once per tick
 
     void  header(Game::JSON::Object& json, const std::vector<std::string>& type) const; // Add type and tick to packet
+
+    void  load(const std::filesystem::path& path);  // Load world from JSON
 
   public:
     Server(const std::filesystem::path& config, std::uint16_t port = 0, std::uint32_t address = 0);

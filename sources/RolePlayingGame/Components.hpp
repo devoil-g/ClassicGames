@@ -2,100 +2,161 @@
 
 #include "Math/Vector.hpp"
 #include "RolePlayingGame/Model.hpp"
+#include "RolePlayingGame/EntityComponentSystem.hpp"
 
 namespace RPG
 {
-  // COMMON COMPONENTS --------------------------------------------------------
-
-  class BaseComponent
+  class EntityComponent
   {
   public:
-    std::string       model;        // Entity's model name
-    RPG::Coordinates  coordinates;  // Cell coordinates of entity
-    RPG::Position     position;     // Position of the entity in world
+    static const RPG::Coordinates DefaultCoordinates;
+    static const RPG::Direction   DefaultDirection;
+    static const RPG::Position    DefaultPosition;
+    static const std::string      DefaultModel;
 
-    BaseComponent();
-    BaseComponent(const BaseComponent&) = default;
-    BaseComponent(BaseComponent &&) = default;
-    ~BaseComponent() = default;
+    std::string       id;           // Identifier of entity
+    RPG::Coordinates  coordinates;  // Coordinates of entity's cell
+    RPG::Direction    direction;    // Direction the entity is facing
+    RPG::Position     position;     // Position of entity in its cell
+    std::string       model;        // Model of the entity
+   
+    // Characteristics
+    int attack;
+    int defense;
 
-    BaseComponent& operator=(const BaseComponent&) = default;
-    BaseComponent& operator=(BaseComponent&&) = default;
+    EntityComponent();
+    EntityComponent(const Game::JSON::Object& json);
+    EntityComponent(const EntityComponent&) = default;
+    EntityComponent(EntityComponent&&) = default;
+    ~EntityComponent() = default;
+
+    EntityComponent&  operator=(const EntityComponent&) = default;
+    EntityComponent&  operator=(EntityComponent&&) = default;
+
+    Game::JSON::Object  json() const; // Serialize to JSON
   };
 
-  // SERVER COMPONENTS --------------------------------------------------------
 
-  class ServerActionComponent
+  class NetworkComponent
   {
   public:
-    class AbstractAction
-    {
-    public:
-      AbstractAction() = default;
-      AbstractAction(const AbstractAction&) = default;
-      AbstractAction(AbstractAction&&) = default;
-      virtual ~AbstractAction() = 0;
+    static const std::size_t  NoController;
 
-      AbstractAction& operator=(const AbstractAction&) = default;
-      AbstractAction& operator=(AbstractAction&&) = default;
+    std::size_t controller; // ID of network controller of entity, 0 for none
 
-      virtual bool execute() = 0;
-    };
+    NetworkComponent();
+    NetworkComponent(const NetworkComponent&) = default;
+    NetworkComponent(NetworkComponent&&) = default;
+    ~NetworkComponent() = default;
 
-
+    NetworkComponent& operator=(const NetworkComponent&) = default;
+    NetworkComponent& operator=(NetworkComponent&&) = default;
   };
 
-  // CLIENT COMPONENTS --------------------------------------------------------
-
-  class PositionComponent
+  class CellComponent
   {
   public:
-    Math::Vector<3, float>  position;   // Position of entity on its cell (x: screen +X, y: screen +Y, z: screen -Y)
-    RPG::Direction          direction;  // Direction the entity is facing
+    static const RPG::Coordinates DefaultCoordinates;
+    static const float            DefaultHeight;
+    static const bool             DefaultBlocked;
 
-    PositionComponent();
-    PositionComponent(const PositionComponent&) = default;
-    PositionComponent(PositionComponent&&) = default;
-    ~PositionComponent() = default;
+    RPG::Coordinates  coordinates;  // Coordinates of the cell
+    float             height;       // Height of the cell
+    bool              blocked;      // Cell can't be walked
 
-    PositionComponent& operator=(const PositionComponent&) = default;
-    PositionComponent& operator=(PositionComponent&&) = default;
+    CellComponent();
+    CellComponent(const Game::JSON::Object& json);
+    CellComponent(const CellComponent&) = default;
+    CellComponent(CellComponent&&) = default;
+    ~CellComponent() = default;
+
+    CellComponent&  operator=(const CellComponent&) = default;
+    CellComponent&  operator=(CellComponent&&) = default;
+
+    Game::JSON::Object  json() const; // Serialize to JSON
   };
 
-  class SpriteComponent
+  class DisplayComponent
   {
   public:
-    const RPG::Sprite*  sprite;   // Sprite of the entity
-    RPG::Color          color;    // Sprite color
-    RPG::Color          outline;  // Outline color
+    RPG::Position   position;   // Position of entity in 3D world
+    RPG::Direction  direction;  // Direction the entity is facing
+    RPG::Color      color;      // Sprite color
+    RPG::Color      outline;    // Outline color
+    
+    const RPG::Model*     model;      // Current model
+    const RPG::Animation* animation;  // Current animation
+    
+    std::size_t frame;    // Current frame
+    float       elapsed;  // Time elapsed on current frame
+    bool        loop;     // True: loop animation, false: idle when over
 
-    SpriteComponent();
-    SpriteComponent(const SpriteComponent&) = default;
-    SpriteComponent(SpriteComponent&&) = default;
-    ~SpriteComponent() = default;
+    DisplayComponent();
+    DisplayComponent(const DisplayComponent&) = default;
+    DisplayComponent(DisplayComponent&&) = default;
+    ~DisplayComponent() = default;
 
-    SpriteComponent&  operator=(const SpriteComponent&) = default;
-    SpriteComponent&  operator=(SpriteComponent&&) = default;
+    DisplayComponent& operator=(const DisplayComponent&) = default;
+    DisplayComponent& operator=(DisplayComponent&&) = default;
   };
 
-  class AnimationComponent
+  class ParticleComponent
   {
   public:
-    const RPG::Model*     model;       // Model of the entity
-    const RPG::Animation* animation;   // Current animation
+    Math::Vector<3> physicsSpeed;     // Particule speed vector
+    Math::Vector<3> physicsGravity;   // Gravity vector, applied on speed vector
+    float           physicsDrag;      // Drag factor, applied on speed vector
+    float           physicsFloor;     // Floor height
+    RPG::Color      colorStart;       // Start color of the particle
+    RPG::Color      colorEnd;         // End color of particle
+    float           durationFadeIn;   // Duration of particle fade in
+    float           durationLife;     // Duration of particle life
+    float           durationFadeOut;  // Duration of particle fade out
 
-    std::size_t frame;   // Current frame
-    float       elapsed; // Time elapsed on current frame
-    bool        loop;    // True: loop animation, false: idle when over
+    float elapsed;  // Elapsed time of particle
 
-    AnimationComponent();
-    AnimationComponent(const AnimationComponent&) = default;
-    AnimationComponent(AnimationComponent&&) = default;
-    ~AnimationComponent() = default;
+    ParticleComponent();
+    ParticleComponent(const ParticleComponent&) = default;
+    ParticleComponent(ParticleComponent&&) = default;
+    ~ParticleComponent() = default;
 
-    AnimationComponent& operator=(const AnimationComponent&) = default;
-    AnimationComponent& operator=(AnimationComponent&&) = default;
+    ParticleComponent& operator=(const ParticleComponent&) = default;
+    ParticleComponent& operator=(ParticleComponent&&) = default;
   };
+
+  class ParticleEmitterComponent
+  {
+  public:
+    Math::Vector<3>         size;                         // Size of the emitter
+    Math::Vector<3>         position;                     // Position of the emitter
+    float                   frequencyLow, frequencyHigh;  // Number of particles emitted per second, low and high frequency
+    RPG::ParticleComponent  particleLow, particleHigh;    // Emitted particles properties, low and high properties
+    std::string             model;                        // Name of the model of particles
+
+    float next;     // Time before next particle
+    float duration; // Duration of the emitter
+
+    ParticleEmitterComponent();
+    ParticleEmitterComponent(const ParticleEmitterComponent&) = default;
+    ParticleEmitterComponent(ParticleEmitterComponent&&) = default;
+    ~ParticleEmitterComponent() = default;
+
+    ParticleEmitterComponent& operator=(const ParticleEmitterComponent&) = default;
+    ParticleEmitterComponent& operator=(ParticleEmitterComponent&&) = default;
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   class MoveComponent
   {
@@ -124,70 +185,5 @@ namespace RPG
 
     CoordinatesComponent& operator=(const CoordinatesComponent&) = default;
     CoordinatesComponent& operator=(CoordinatesComponent&&) = default;
-  };
-
-  class ParticleComponent
-  {
-  public:
-    Math::Vector<3> physicsSpeed;     // Particule speed vector
-    Math::Vector<3> physicsGravity;   // Gravity vector, applied on speed vector
-    float           physicsDrag;      // Drag factor, applied on speed vector
-    float           physicsFloor;     // Floor height
-    RPG::Color      colorStart;       // Start color of the particle
-    RPG::Color      colorEnd;         // End color of particle
-    float           durationFadeIn;   // Duration of particle fade in
-    float           durationLife;     // Duration of particle life
-    float           durationFadeOut;  // Duration of particle fade out
-
-    float           elapsed;          // Elapsed time of particle
-
-    ParticleComponent();
-    ParticleComponent(const ParticleComponent&) = default;
-    ParticleComponent(ParticleComponent&&) = default;
-    ~ParticleComponent() = default;
-
-    ParticleComponent& operator=(const ParticleComponent&) = default;
-    ParticleComponent& operator=(ParticleComponent&&) = default;
-  };
-
-  class ParticleEmitterComponent
-  {
-  public:
-    Math::Vector<3>         size;                         // Size of the emitter
-    Math::Vector<3>         offset;                       // Offset of the emitter (added to position)
-    float                   frequencyLow, frequencyHigh;  // Number of particles emitted per second, low and high frequency
-    RPG::ParticleComponent  particleLow, particleHigh;    // Emitted particles properties, low and high properties
-    std::string             model;                        // Name of the model of particles
-
-    float           next;                         // Time before next particle
-    float           duration;                     // Duration of the emitter
-
-    ParticleEmitterComponent();
-    ParticleEmitterComponent(const ParticleEmitterComponent&) = default;
-    ParticleEmitterComponent(ParticleEmitterComponent&&) = default;
-    ~ParticleEmitterComponent() = default;
-
-    ParticleEmitterComponent& operator=(const ParticleEmitterComponent&) = default;
-    ParticleEmitterComponent& operator=(ParticleEmitterComponent&&) = default;
-  };
-
-  class ActionsComponent
-  {
-  public:
-    bool  pickup;     // Entity can be picked-up (item)
-    bool  container;  // Entity can be opened (chest)
-    bool  dialog;     // Entity can be talked to (dialog)
-    bool  fight;      // Entity can be attacked (fighter)
-    bool  trigger;    // Entity can be triggered (button)
-
-    RPG::Bounds bounds; // Bound of the entity
-
-    ActionsComponent();
-    ActionsComponent(const ActionsComponent&) = default;
-    ActionsComponent(ActionsComponent&&) = default;
-    ~ActionsComponent() = default;
-
-    ActionsComponent& operator=(const ActionsComponent&) = default;
-    ActionsComponent& operator=(ActionsComponent&&) = default;
   };
 }

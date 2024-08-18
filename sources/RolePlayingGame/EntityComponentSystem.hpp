@@ -12,6 +12,7 @@
 namespace RPG
 {
   // https://austinmorlan.com/posts/entity_component_system/
+  // Removed data packing of ComponentArray for performance
   class EntityComponentSystem
   {
   public:
@@ -19,7 +20,10 @@ namespace RPG
     using Entity = std::uint16_t;
 
     // Max number of entity
-    static const Entity MaxEntities = 2048;
+    static const Entity MaxEntities = 8162;
+
+    // ID of an invalid entity
+    static const Entity InvalidEntity = MaxEntities;
 
     // ID of a component type
     using ComponentType = std::uint8_t;
@@ -35,6 +39,14 @@ namespace RPG
     {
     public:
       std::set<Entity>  entities; // Entities in the system
+
+      System() = default;
+      System(const System&) = delete;
+      System(System&&) = delete;
+      virtual ~System() = default;
+
+      System& operator=(const System&) = delete;
+      System& operator=(System&&) = delete;
     };
 
   private:
@@ -69,6 +81,8 @@ namespace RPG
 
         // Remove ID from queue
         _availableEntities.pop();
+
+        //printf("%lu\n", _availableEntities.size());
 
         return entity;
       }
@@ -107,7 +121,7 @@ namespace RPG
     public:
       virtual ~IComponentArray() = default;
 
-      virtual void destroy(Entity entity) = 0; // Remove entity data from array
+      virtual void  destroy(Entity entity) = 0; // Destroy entity
     };
 
     // Store data of a component type
@@ -115,9 +129,10 @@ namespace RPG
     class ComponentArray : public IComponentArray
     {
     private:
-      std::array<Component, MaxEntities>      _data;          // Packet array of component data
-      std::unordered_map<Entity, std::size_t> _entityToIndex; // Map from an entity ID to a data index
-      std::unordered_map<std::size_t, Entity> _indexToEntity; // Map from a data index to an entity ID
+#ifndef NDEBUG
+      std::set<Entity>  _entities;  // Entity with data registered
+#endif
+      std::array<Component, MaxEntities>      _data;          // Packed array of component data
 
     public:
       ComponentArray() = default;
@@ -130,63 +145,49 @@ namespace RPG
 
       void add(Entity entity, Component&& component = Component()) // Add component to entity
       {
-        assert(_entityToIndex.find(entity) == _entityToIndex.end() && "Component added to same entity more than once.");
+#ifndef NDEBUG
+        assert(_entities.contains(entity) == false && "Entity already registered.");
+        _entities.insert(entity);
+#endif
 
-        // Get index of entity's new component
-        std::size_t index = _entityToIndex.size();
-
-        // Register new component
-        _entityToIndex[entity] = index;
-        _indexToEntity[index] = entity;
-        _data[index] = std::move(component);
+        // Move data to array
+        _data[entity] = std::move(component);
       }
 
       void add(Entity entity, const Component& component) // Add component to entity
       {
-        assert(_entityToIndex.find(entity) == _entityToIndex.end() && "Component added to same entity more than once.");
+#ifndef NDEBUG
+        assert(_entities.contains(entity) == false && "Entity already registered.");
+        _entities.insert(entity);
+#endif
 
-        // Get index of entity's new component
-        std::size_t index = _entityToIndex.size();
-
-        // Register new component
-        _entityToIndex[entity] = index;
-        _indexToEntity[index] = entity;
-        _data[index] = component;
+        // Copy data to array
+        _data[entity] = component;
       }
 
       void remove(Entity entity)
       {
-        assert(_entityToIndex.find(entity) != _entityToIndex.end() && "Removing non-existent component.");
-
-        auto removedIndex = _entityToIndex[entity];
-        auto movedIndex = _entityToIndex.size() - 1;
-        auto movedEntity = _indexToEntity[movedIndex];
-
-        // Move last data to deleted index
-        _data[removedIndex] = std::move(_data[movedIndex]);
-
-        // Update entity/index maps
-        _entityToIndex[movedEntity] = removedIndex;
-        _indexToEntity[removedIndex] = movedEntity;
-
-        // Remove deleted entity/index from entity/index maps
-        _entityToIndex.erase(entity);
-        _indexToEntity.erase(movedIndex);
+#ifndef NDEBUG
+        assert(_entities.contains(entity) == true && "Entity not registered");
+        _entities.erase(entity);
+#endif
       }
 
       Component& get(Entity entity)
       {
-        assert(_entityToIndex.find(entity) == _entityToIndex.end() && "Component non register in entity.");
+#ifndef NDEBUG
+        assert(_entities.contains(entity) == true && "Entity not registered");
+#endif
 
         // Get component data of entity
-        return _data[_entityToIndex[entity]];
+        return _data[entity];
       }
 
-      void destroy(Entity entity) override // Remove entity data from array
+      void  destroy(Entity entity)
       {
-        // Remove only registered entities
-        if (_entityToIndex.find(entity) != _entityToIndex.end())
-          remove(entity);
+#ifndef NDEBUG
+        _entities.erase(entity);
+#endif
       }
     };
 
@@ -267,9 +268,9 @@ namespace RPG
         return *static_cast<ComponentArray<Component>*>(_arrays[name].get());
       }
 
-      void destroy(Entity entity)
+      void  destroy(Entity entity)
       {
-        // Remove entity from each component array
+        // Remove entity from every component array
         for (auto& [_, array] : _arrays)
           array->destroy(entity);
       }
@@ -304,10 +305,10 @@ namespace RPG
         assert(_systems.find(name) == _systems.end() && "Registering system more than once.");
 
         auto  system = std::make_unique<NewSystem>();
-        auto& ref = *system->get();
+        auto& ref = *system;
 
         // Add new system and its signature to manager
-        _systems.insert({ name, { std::move(system), signature }});
+        _systems.insert({ name, Pair{ .system = std::move(system), .signature = signature }});
 
         // Return reference of new system
         return ref;

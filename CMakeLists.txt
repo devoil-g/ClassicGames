@@ -145,20 +145,14 @@ SET(GAME_RPG_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/TcpClient.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Camera.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Camera.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Cell.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Cell.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Color.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Color.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Level.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Level.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Model.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Model.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Texture.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Texture.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Types.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Types.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/World.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/World.cpp
 )
 SET(GAME_QUIZ_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/BlindtestQuizScene.hpp

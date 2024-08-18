@@ -1,22 +1,24 @@
+#include <cassert>
+
 #include <SFML/Graphics/Sprite.hpp>
 
 #include "RolePlayingGame/Model.hpp"
 #include "System/Window.hpp"
 
-const RPG::Sprite RPG::Sprite::ErrorSprite = RPG::Sprite();
-
-const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultOffset = { 0, 0 };
-const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultSize = { 0, 0 };
-const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultOrigin = { 0, 0 };
+const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultOffset = { (std::int16_t)0, (std::int16_t)0 };
+const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultSize = { (std::int16_t)0, (std::int16_t)0 };
+const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultOrigin = { (std::int16_t)0, (std::int16_t)0 };
 const bool                          RPG::Sprite::DefaultFlipX = false;
 const bool                          RPG::Sprite::DefaultFlipY = false;
 const RPG::Color                    RPG::Sprite::DefaultColor = RPG::Color::White;
 const std::string                   RPG::Sprite::DefaultTexture = "error.png";
 
+const RPG::Sprite RPG::Sprite::ErrorSprite;
+
 RPG::Sprite::Sprite() :
-  offset(0, 0),
-  size(8, 8),
-  origin(4, 4),
+  offset((std::int16_t)0, (std::int16_t)0),
+  size((std::int16_t)8, (std::int16_t)8),
+  origin((std::int16_t)4, (std::int16_t)4),
   flipX(false),
   flipY(false),
   color(RPG::Color::White),
@@ -60,9 +62,12 @@ Game::JSON::Object  RPG::Sprite::json() const
 
 void  RPG::Sprite::draw(const Math::Vector<2>& position, RPG::Color color, RPG::Color outline) const
 {
-  // Check texture
-  if (texture == nullptr)
+  // Sprite not visible
+  if (this->color.alpha == 0.f && color.alpha == 0.f)
     return;
+
+  // No texture
+  assert(texture != nullptr && "Missing texture.");
 
   auto&           window = Game::Window::Instance();
   sf::Sprite      sprite;
@@ -73,7 +78,7 @@ void  RPG::Sprite::draw(const Math::Vector<2>& position, RPG::Color color, RPG::
   sprite.setTextureRect(sf::IntRect(offset.x(), offset.y(), size.x(), size.y()));
   sprite.setScale(flipX == true ? -1.f : +1.f, flipY == true ? -1.f : +1.f);
   sprite.setOrigin((float)origin.x(), (float)origin.y());
-  sprite.setColor(sf::Color((color * this->color).raw));
+  sprite.setColor(sf::Color((color * this->color).uint32()));
 
   // Draw outline
   if (outline.alpha > 0) {
@@ -131,24 +136,26 @@ const sf::Shader* RPG::Sprite::OutlineShader::Get(RPG::Color color)
   static RPG::Sprite::OutlineShader shader;
 
   // Set outline color
-  shader._shader.setParameter("color", sf::Color(color.red, color.green, color.blue, color.alpha));
+  shader._shader.setParameter("color", sf::Color(color.uint32()));
 
   return &shader._shader;
 }
 
+void  RPG::Sprite::resolve(const std::function<const RPG::Texture& (const std::string&)> library)
+{
+  // Reload texture pointer
+  texture = &library(path);
+}
+
 // --- FRAME ------------------------------------------------------------------------------------------------------------------
+
+const std::array<RPG::Sprite, RPG::Direction::DirectionCount> RPG::Frame::DefaultSprites = { RPG::Sprite(), RPG::Sprite(), RPG::Sprite(), RPG::Sprite(), RPG::Sprite(), RPG::Sprite() };
+const float RPG::Frame::DefaultDuration = 0.f;
 
 const RPG::Frame  RPG::Frame::ErrorFrame = RPG::Frame();
 
-const std::array<RPG::Sprite, RPG::Direction::DirectionCount> RPG::Frame::DefaultSprites = {
-  RPG::Sprite::ErrorSprite, RPG::Sprite::ErrorSprite, RPG::Sprite::ErrorSprite,
-  RPG::Sprite::ErrorSprite, RPG::Sprite::ErrorSprite, RPG::Sprite::ErrorSprite
-};
-
-const float RPG::Frame::DefaultDuration = 0.f;
-
 RPG::Frame::Frame() :
-  sprites(DefaultSprites),
+  sprites{ RPG::Sprite(), RPG::Sprite(), RPG::Sprite(), RPG::Sprite(), RPG::Sprite(), RPG::Sprite() },
   duration(0.f)
 {}
 
@@ -205,7 +212,7 @@ Game::JSON::Object  RPG::Frame::json() const
 
   // Check if every frame is identical
   for (auto direction = 1; direction < RPG::Direction::DirectionCount; direction++) {
-    if (sprites[0] != sprites[1]) {
+    if (sprites[0] != sprites[direction]) {
       same = false;
       break;
     }
@@ -219,18 +226,24 @@ Game::JSON::Object  RPG::Frame::json() const
   else {
     auto array = Game::JSON::Array();
 
-    array.resize(RPG::Direction::DirectionCount);
-    for (auto direction = 0; direction < RPG::Direction::DirectionCount; direction++)
-      array.set(direction, sprites[direction].json());
+    array._vector.reserve(RPG::Direction::DirectionCount);
+    for (auto direction = 0; direction < RPG::Direction::DirectionCount; direction++) {
+      auto sprite = sprites[direction].json();
+
+      sprite.set("direction", RPG::DirectionToString((RPG::Direction)direction));
+      array.push(std::move(sprite));
+    }
 
     json.set("sprites", std::move(array));
   }
+
+  return json;
 }
 
-void  RPG::Frame::draw(RPG::Direction direction, const Math::Vector<2>& position, RPG::Color outline) const
+void  RPG::Frame::draw(RPG::Direction direction, const Math::Vector<2>& position, RPG::Color color, RPG::Color outline) const
 {
   // Draw sprite
-  sprites[direction].draw(position, outline);
+  sprites[direction].draw(position, color, outline);
 }
 
 RPG::Bounds RPG::Frame::bounds(RPG::Direction direction, const Math::Vector<2>& position) const
@@ -239,17 +252,24 @@ RPG::Bounds RPG::Frame::bounds(RPG::Direction direction, const Math::Vector<2>& 
   return sprites[direction].bounds(position);
 }
 
+void  RPG::Frame::resolve(const std::function<const RPG::Texture& (const std::string&)> library)
+{
+  // Resolve texture of each sprite
+  for (auto& sprite : sprites)
+    sprite.resolve(library);
+}
+
 // --- ANIMATION --------------------------------------------------------------------------------------------------------------
 
 const RPG::Animation  RPG::Animation::ErrorAnimation = RPG::Animation();
 
-const std::string RPG::Animation::DefaultAnimation = RPG::Animation::IdleAnimation;
+const std::string RPG::Animation::DefaultAnimation = "idle";
 const std::string RPG::Animation::IdleAnimation = "idle";
 const std::string RPG::Animation::WalkAnimation = "walk";
 const std::string RPG::Animation::RunAnimation = "run";
 
 RPG::Animation::Animation() :
-  _frames({ RPG::Frame::ErrorFrame })
+  _frames()
 {}
 
 RPG::Animation::Animation(const Game::JSON::Object& json) :
@@ -292,6 +312,13 @@ const RPG::Frame& RPG::Animation::frame(std::size_t index) const
   return _frames[index];
 }
 
+void  RPG::Animation::resolve(const std::function<const RPG::Texture& (const std::string&)> library)
+{
+  // Resolve texture of each frame
+  for (auto& frame : _frames)
+    frame.resolve(library);
+}
+
 // --- MODEL ------------------------------------------------------------------------------------------------------------------
 
 const RPG::Model  RPG::Model::ErrorModel = RPG::Model();
@@ -305,7 +332,7 @@ RPG::Model::Model(const Game::JSON::Object& json) :
 {
   // Get animations from JSON
   for (const auto& animation : json.get("animations").array()._vector)
-    _animations.emplace(animation->object().get("name").string(), std::move(animation->object()));
+    _animations.emplace(animation->object().get("name").string(), animation->object());
 }
 
 Game::JSON::Object  RPG::Model::json() const
@@ -344,4 +371,11 @@ const RPG::Animation& RPG::Model::random() const
 
   // Select a random animation
   return std::next(_animations.begin(), std::rand() % _animations.size())->second;
+}
+
+void  RPG::Model::resolve(const std::function<const RPG::Texture& (const std::string&)> library)
+{
+  // Resolve texture of each animation
+  for (auto& [_, animation] : _animations)
+    animation.resolve(library);
 }
