@@ -77,7 +77,7 @@ void  RPG::ClientEntitySystem::executePosition(RPG::ECS& ecs, RPG::ECS::Entity e
   const auto& entityComponent = ecs.getComponent<RPG::EntityComponent>(entity);
   auto& displayComponent = ecs.getComponent<RPG::DisplayComponent>(entity);
   auto& cellSystem = ecs.getSystem<RPG::ClientBoardSystem>();
-  auto cellEntity = cellSystem.getCell(ecs, entityComponent.coordinates);
+  auto cellEntity = cellSystem.getCell(entityComponent.coordinates);
   float cellHeight = 0.f;
 
   // Check if cell exist to take its height
@@ -195,9 +195,11 @@ RPG::ClientDisplaySystem::ClientDisplaySystem() :
   _camera(),
   _textures()
 {
-  ((RPG::Sprite*)&RPG::Sprite::ErrorSprite)->texture = &getTexture("error.png");
+  // TODO
+  // Ugly fix for texture binding of error sprites
+  ((RPG::Sprite*)&RPG::Sprite::ErrorSprite)->texture = &getTexture(RPG::Sprite::ErrorSprite.path);
   for (auto& sprite : ((RPG::Frame*)&RPG::Frame::ErrorFrame)->sprites)
-    sprite.texture = &getTexture("error.png");
+    sprite.texture = &getTexture(sprite.path);
 
   // Setup camera
   _camera.setPositionDrag(0.03125f);
@@ -470,15 +472,36 @@ void  RPG::ClientDisplaySystem::handleLoadTexture(RPG::ECS& ecs, RPG::ClientScen
   // TODO
 }
 
-RPG::ECS::Entity  RPG::BoardSystem::getCell(RPG::ECS& ecs, RPG::Coordinates coordinates)
+RPG::ECS::Entity  RPG::BoardSystem::getCell(RPG::Coordinates coordinates) const
 {
-  // Find cell at coordinate
-  for (auto entity : entities)
-    if (coordinates == ecs.getComponent<RPG::CellComponent>(entity).coordinates)
-      return entity;
+  auto it = _map.find(coordinates);
 
-  // No matching cell
-  return RPG::ECS::InvalidEntity;
+  // No cell found
+  if (it == _map.end())
+    return RPG::ECS::InvalidEntity;
+
+  // Return entity ID of cell
+  return it->second;
+}
+
+void  RPG::BoardSystem::registerCell(RPG::ECS& ecs, RPG::ECS::Entity entity)
+{
+  auto& cell = ecs.getComponent<RPG::CellComponent>(entity);
+
+  assert(_map.contains(cell.coordinates) == false && "Cell already registered.");
+
+  // Register cell in map
+  _map.emplace(cell.coordinates, entity);
+}
+
+void  RPG::BoardSystem::unregisterCell(RPG::ECS& ecs, RPG::ECS::Entity entity)
+{
+  auto& cell = ecs.getComponent<RPG::CellComponent>(entity);
+
+  assert(_map.contains(cell.coordinates) == true && "Cell not registered.");
+
+  // Unregister cell
+  _map.erase(cell.coordinates);
 }
 
 void  RPG::ServerBoardSystem::load(RPG::ECS& ecs, const Game::JSON::Array& cells)
@@ -488,6 +511,7 @@ void  RPG::ServerBoardSystem::load(RPG::ECS& ecs, const Game::JSON::Array& cells
     auto entity = ecs.createEntity();
 
     ecs.addComponent<RPG::CellComponent>(entity, element->object());
+    registerCell(ecs, entity);
   }
 }
 
@@ -550,6 +574,9 @@ void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& c
     auto entity = ecs.createEntity();
 
     ecs.addComponent<RPG::CellComponent>(entity, element->object());
+    registerCell(ecs, entity);
+
+    // TODO: remove this
     ecs.addComponent<RPG::ParticleEmitterComponent>(entity);
     ecs.addComponent<RPG::DisplayComponent>(entity);
     

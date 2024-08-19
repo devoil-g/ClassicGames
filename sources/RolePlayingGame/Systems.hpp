@@ -165,6 +165,9 @@ namespace RPG
 
   class BoardSystem : public RPG::ECS::System
   {
+  private:
+    std::unordered_map<RPG::Coordinates, RPG::ECS::Entity>  _map; // Map of coordinates to entity
+
   public:
     BoardSystem() = default;
     BoardSystem(const BoardSystem&) = delete;
@@ -174,7 +177,9 @@ namespace RPG
     BoardSystem& operator=(const BoardSystem&) = delete;
     BoardSystem& operator=(BoardSystem&&) = delete;
 
-    RPG::ECS::Entity  getCell(RPG::ECS& ecs, RPG::Coordinates coordinates);
+    RPG::ECS::Entity  getCell(RPG::Coordinates coordinates) const;            // Get cell registered on board
+    void              registerCell(RPG::ECS& ecs, RPG::ECS::Entity entity);   // Register a cell on board
+    void              unregisterCell(RPG::ECS& ecs, RPG::ECS::Entity entity); // Unregister a cell on board
   };
 
   class ServerBoardSystem : public BoardSystem
