@@ -8,8 +8,7 @@
 const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultOffset = { (std::int16_t)0, (std::int16_t)0 };
 const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultSize = { (std::int16_t)0, (std::int16_t)0 };
 const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultOrigin = { (std::int16_t)0, (std::int16_t)0 };
-const bool                          RPG::Sprite::DefaultFlipX = false;
-const bool                          RPG::Sprite::DefaultFlipY = false;
+const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultScale = { (std::int16_t)1, (std::int16_t)1 };
 const RPG::Color                    RPG::Sprite::DefaultColor = RPG::Color::White;
 const std::string                   RPG::Sprite::DefaultTexture = "error.png";
 
@@ -19,8 +18,7 @@ RPG::Sprite::Sprite() :
   offset((std::int16_t)0, (std::int16_t)0),
   size((std::int16_t)8, (std::int16_t)8),
   origin((std::int16_t)4, (std::int16_t)4),
-  flipX(false),
-  flipY(false),
+  scale((std::int16_t)1, (std::int16_t)1),
   color(RPG::Color::White),
   path("error.png"),
   texture(nullptr)
@@ -30,8 +28,7 @@ RPG::Sprite::Sprite(const Game::JSON::Object& json) :
   offset(json.contains("offset") ? json.get("offset").array() : DefaultOffset),
   size(json.contains("size") ? json.get("size").array() : DefaultSize),
   origin(json.contains("origin") ? json.get("origin").array() : DefaultOrigin),
-  flipX(json.contains("flipX") ? json.get("flipX").boolean() : DefaultFlipX),
-  flipY(json.contains("flipY") ? json.get("flipY").boolean() : DefaultFlipY),
+  scale(json.contains("scale") ? json.get("scale").array() : DefaultScale),
   color(json.contains("color") ? json.get("color").object() : DefaultColor),
   path(json.contains("texture") ? json.get("texture").string() : DefaultTexture),
   texture(nullptr)
@@ -48,10 +45,8 @@ Game::JSON::Object  RPG::Sprite::json() const
     json.set("size", size.json());
   if (origin != DefaultOrigin)
     json.set("origin", origin.json());
-  if (flipX != DefaultFlipX)
-    json.set("flipX", flipX);
-  if (flipY != DefaultFlipY)
-    json.set("flipY", flipY);
+  if (scale != DefaultScale)
+    json.set("scale", scale.json());
   if (color != DefaultColor)
     json.set("color", color.json());
   if (path != DefaultTexture)
@@ -76,8 +71,8 @@ void  RPG::Sprite::draw(const Math::Vector<2>& position, RPG::Color color, RPG::
   // Set properties
   sprite.setTexture(texture->get());
   sprite.setTextureRect(sf::IntRect(offset.x(), offset.y(), size.x(), size.y()));
-  sprite.setScale(flipX == true ? -1.f : +1.f, flipY == true ? -1.f : +1.f);
   sprite.setOrigin((float)origin.x(), (float)origin.y());
+  sprite.setScale((float)scale.x(), (float)scale.y());
   sprite.setColor(sf::Color((color * this->color).uint32()));
 
   // Draw outline
@@ -108,9 +103,9 @@ RPG::Bounds RPG::Sprite::bounds(const Math::Vector<2>& position) const
   // Set properties
   sprite.setPosition(rounded.x(), rounded.y());
   sprite.setTextureRect(sf::IntRect(offset.x(), offset.y(), size.x(), size.y()));
-  sprite.setScale(flipX == true ? -1.f : +1.f, flipY == true ? -1.f : +1.f);
   sprite.setOrigin((float)origin.x(), (float)origin.y());
-
+  sprite.setScale((float)scale.x(), (float)scale.y());
+  
   // Use SFML to compute sprite bounds
   auto bounds = sprite.getGlobalBounds();
 

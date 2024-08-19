@@ -49,8 +49,7 @@ namespace RPG
     static const Math::Vector<2, std::int16_t>  DefaultOffset;
     static const Math::Vector<2, std::int16_t>  DefaultSize;
     static const Math::Vector<2, std::int16_t>  DefaultOrigin;
-    static const bool                           DefaultFlipX;
-    static const bool                           DefaultFlipY;
+    static const Math::Vector<2, std::int16_t>  DefaultScale;
     static const RPG::Color                     DefaultColor;
     static const std::string                    DefaultTexture;
 
@@ -59,7 +58,7 @@ namespace RPG
     Math::Vector<2, std::int16_t> offset;       // Offset of texture rectangle
     Math::Vector<2, std::int16_t> size;         // Size of texture rectangle (full texture if 0,0)
     Math::Vector<2, std::int16_t> origin;       // Origin of the sprite from drawing position
-    bool                          flipX, flipY; // Texture horizontal and vertical flip
+    Math::Vector<2, std::int16_t> scale;        // Scaling of sprite
     RPG::Color                    color;        // Sprite color
     std::string                   path;         // Path of the texture
     const RPG::Texture*           texture;      // Pointer to texture
