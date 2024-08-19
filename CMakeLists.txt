@@ -258,7 +258,7 @@ SET(GAME_RSRC
 	${CMAKE_CURRENT_SOURCE_DIR}/assets/icons/Icons.rc
 	${CMAKE_CURRENT_SOURCE_DIR}/assets/levels/dmsp1666.txt
 	${CMAKE_CURRENT_SOURCE_DIR}/assets/levels/MUSform.txt
-	${CMAKE_CURRENT_SOURCE_DIR}/assets/rpg/level_01.json
+	${CMAKE_CURRENT_SOURCE_DIR}/assets/rpg/world.json
 )
 
 # Set game source groups
