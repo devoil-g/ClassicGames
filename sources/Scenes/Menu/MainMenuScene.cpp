@@ -7,6 +7,7 @@
 #include "RolePlayingGame/Server.hpp"
 #include "Scenes/Menu/MainMenuScene.hpp"
 #include "Scenes/Menu/OptionsMenuScene.hpp"
+#include "Scenes/ExitScene.hpp"
 #include "Scenes/LoadingScene.hpp"
 #include "Scenes/MessageScene.hpp"
 #include "Scenes/SceneMachine.hpp"
@@ -44,7 +45,7 @@ void  Game::MainMenuScene::selectDoom(Game::AbstractMenuScene::Item&, const std:
   // Start to load DOOM game
   std::thread([&machine, wad, mode]() {
     try {
-      machine.swap<DOOM::DoomScene>(wad, mode);
+      machine.swap<Game::ExitScene<DOOM::DoomScene>>(wad, mode);
     }
     catch (const std::exception&) {
       machine.swap<Game::MessageScene>("Error: failed to run DOOM.");
@@ -75,7 +76,7 @@ void  Game::MainMenuScene::selectQuiz(Game::AbstractMenuScene::Item&)
   std::thread([&machine]() {
     // Go to quiz scene
     try {
-    machine.swap<QUIZ::QuizScene>();
+    machine.swap<Game::ExitScene<QUIZ::QuizScene>>();
   }
 
   // Error message when quiz loading failed
@@ -98,7 +99,7 @@ void  Game::MainMenuScene::selectGameHost(Game::AbstractMenuScene::Item&)
       auto server = std::make_unique<RPG::Server>(Game::Config::ExecutablePath / "assets" / "rpg" / "level_01.json");
 
       server->run();
-      machine.push<RPG::ClientScene>(std::move(server));
+      machine.swap<Game::ExitScene<RPG::ClientScene>>(std::move(server));
     }
     catch (const std::exception& e) {
       //machine.swap<Game::MessageScene>("Error: failed to start RPG.");

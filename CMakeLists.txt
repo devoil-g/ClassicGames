@@ -181,6 +181,8 @@ SET(GAME_STATES_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/SceneMachine.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/AbstractScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/AbstractScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/ExitScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/ExitScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/LoadingScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/LoadingScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/MessageScene.cpp

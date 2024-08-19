@@ -15,15 +15,10 @@ namespace DOOM
   class DoomScene : public Game::AbstractScene
   {
   private:
-    static const float  ForcedExit; // Forced exit time limit
-
     DOOM::Doom          _doom;    // Main DOOM instance
     Game::SceneMachine  _game;    // DOOM state machine
     sf::Texture         _texture; // Image in graphic memory
     sf::Sprite          _sprite;  // Display rendered texture
-
-    float               _elapsed; // Timer of forced exit
-    sf::RectangleShape  _bar;     // Forced exit bar
     
   public:
     DoomScene(Game::SceneMachine& machine, const std::filesystem::path& wad, DOOM::Enum::Mode mode);

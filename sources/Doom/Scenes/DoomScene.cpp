@@ -6,14 +6,10 @@
 #include "System/Window.hpp"
 #include "System/Audio/Sound.hpp"
 
-const float DOOM::DoomScene::ForcedExit = 1.f;
-
 DOOM::DoomScene::DoomScene(Game::SceneMachine& machine, const std::filesystem::path& wad, DOOM::Enum::Mode mode) :
   Game::AbstractScene(machine),
   _doom(),
-  _game(),
-  _elapsed(0.f),
-  _bar(sf::Vector2f(1.f, 1.f))
+  _game()
 {
   // Load WAD
   _doom.load(wad, mode);
@@ -24,10 +20,6 @@ DOOM::DoomScene::DoomScene(Game::SceneMachine& machine, const std::filesystem::p
 
   // Push initial state
   _game.push<DOOM::StartDoomScene>(_doom);
-
-  // Initialize force exit bar
-  _bar.setSize(sf::Vector2f(1.f, 1.f));
-  _bar.setFillColor(sf::Color::White);
 }
 
 DOOM::DoomScene::~DoomScene()
@@ -38,19 +30,6 @@ DOOM::DoomScene::~DoomScene()
 
 bool  DOOM::DoomScene::update(float elapsed)
 {
-  // Update exit timer
-  _elapsed += elapsed;
-
-  // Reset timer when ESC is not pressed
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Escape) == false)
-    _elapsed = 0.f;
-
-  // Exit if limit reached
-  if (_elapsed > DOOM::DoomScene::ForcedExit) {
-    _machine.pop();
-    return false;
-  }
-
   // Update game
   if (_game.update(elapsed) == true) {
     _machine.pop();
@@ -82,8 +61,4 @@ void  DOOM::DoomScene::draw()
     // Draw DOOM rendering target
     Game::Window::Instance().draw(_sprite, DOOM::Doom::RenderStretching);
   }
-
-  // Draw forced exit bar
-  _bar.setScale(Game::Window::Instance().window().getSize().x * _elapsed / DOOM::DoomScene::ForcedExit, 4.f);
-  Game::Window::Instance().window().draw(_bar);
 }

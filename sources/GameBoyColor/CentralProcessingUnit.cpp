@@ -1440,6 +1440,19 @@ void  GBC::CentralProcessingUnit::instruction_INTERRUPT()
   _opcode = 0;
   _set = InstructionSet::InstructionSetSpecial;
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    // Decrement PC back to current instruction opcode
+    cpu._rPC.u16 -= 1;
+    });
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._rSP.u16 -= 1;
+    });
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._bus.write(cpu._rSP.u16, cpu._rPC.u8.high);
+    cpu._rSP.u16 -= 1;
+    });
+  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
+    cpu._bus.write(cpu._rSP.u16, cpu._rPC.u8.low);
+
     // Interrupt Enable register
     auto interruptEnable = cpu._gbc.read(0xFFFF);
 
@@ -1467,26 +1480,13 @@ void  GBC::CentralProcessingUnit::instruction_INTERRUPT()
       while ((interrupt = (GBC::GameBoyColor::Interrupt)(interrupt >> 1)) != 0)
         cpu._rW.u16 += 0x0008;
 
-      // Decrement PC back to current instruction opcode
-      cpu._rPC.u16 -= 1;
-
       return;
     }
 
-#ifdef _DEBUG
+#ifndef NDEBUG
     // Not supposed to happen
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 #endif
-    });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._rSP.u16 -= 1;
-    });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._bus.write(cpu._rSP.u16, cpu._rPC.u8.high);
-    cpu._rSP.u16 -= 1;
-    });
-  _instructions.push([](GBC::CentralProcessingUnit& cpu) {
-    cpu._bus.write(cpu._rSP.u16, cpu._rPC.u8.low);
     });
   _instructions.push([](GBC::CentralProcessingUnit& cpu) {
     cpu._rPC = cpu._rW;

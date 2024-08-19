@@ -1,6 +1,7 @@
 #include <filesystem>
 
 #include "System/Library/FontLibrary.hpp"
+#include "Scenes/ExitScene.hpp"
 #include "Scenes/MessageScene.hpp"
 #include "GameBoyColor/EmulationScene.hpp"
 #include "GameBoyColor/GameBoyColor.hpp"
@@ -56,7 +57,7 @@ bool  GBC::SelectionScene::update(float elapsed)
     Game::SceneMachine& machine = _machine;
 
     try {
-      machine.swap<GBC::EmulationScene>(_selected);
+      machine.swap<Game::ExitScene<GBC::EmulationScene>>(_selected);
     }
     catch (const std::exception&) {
       machine.swap<Game::MessageScene>("Error: failed to run game\n" + _selected.string());

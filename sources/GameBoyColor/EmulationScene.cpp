@@ -5,22 +5,14 @@
 #include "Math/Math.hpp"
 #include "System/Window.hpp"
 
-const float GBC::EmulationScene::ForcedExit = 1.f;
-
 GBC::EmulationScene::EmulationScene(Game::SceneMachine& machine, const std::filesystem::path& filename) :
   Game::AbstractScene(machine),
   _gbc(filename),
   _sprite(_gbc.lcd()),
   _fps(-0.42f),
-  _exit(0.f),
-  _bar(sf::Vector2f(1.f, 1.f)),
   _stream(),
   _sync(Game::Window::Instance().getVerticalSync())
 {
-  // Initialize force exit bar
-  _bar.setSize(sf::Vector2f(1.f, 1.f));
-  _bar.setFillColor(sf::Color::White);
-
   // Start sound stream
   _stream.setVolume(30.f);
   _stream.play();
@@ -41,24 +33,13 @@ GBC::EmulationScene::~EmulationScene()
 bool  GBC::EmulationScene::update(float elapsed)
 {
   // Update timers
-  _exit += elapsed;
   _fps = std::min(_fps + elapsed, 2.f * (GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank) * GBC::PixelProcessingUnit::ScanlineDuration / Math::Pow<22>(2));
-
-  // Reset exit timer when ESC is not pressed
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Escape) == false)
-    _exit = 0.f;
 
   // Sound volume control
   if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Subtract) == true)
     _stream.setVolume(std::clamp(_stream.getVolume() - elapsed * 64.f, 0.f, 100.f));
   if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Add) == true)
     _stream.setVolume(std::clamp(_stream.getVolume() + elapsed * 64.f, 0.f, 100.f));
-
-  // Exit if limit reached
-  if (_exit > GBC::EmulationScene::ForcedExit) {
-    _machine.pop();
-    return false;
-  }
 
   const std::array<sf::Keyboard::Key, 12> save_slots = {
     sf::Keyboard::F1, sf::Keyboard::F2, sf::Keyboard::F3, sf::Keyboard::F4,
@@ -99,10 +80,6 @@ void  GBC::EmulationScene::draw()
 
   // Draw GBC rendering target
   Game::Window::Instance().draw(_sprite);
-
-  // Draw forced exit bar
-  _bar.setScale(Game::Window::Instance().window().getSize().x * _exit / GBC::EmulationScene::ForcedExit, 4.f);
-  Game::Window::Instance().window().draw(_bar);
 }
 
 GBC::EmulationScene::SoundStream::SoundStream() :

@@ -10,20 +10,12 @@
 #include "System/Audio/Sound.hpp"
 #include "System/Library/FontLibrary.hpp"
 
-const float QUIZ::QuizScene::ForcedExit = 1.f;
-
 QUIZ::QuizScene::QuizScene(Game::SceneMachine& machine) :
   Game::AbstractScene(machine),
   _quiz(),
   _game(),
-  _scores(false),
-  _elapsed(0.f),
-  _bar(sf::Vector2f(1.f, 1.f))
-{
-  // Initialize force exit bar
-  _bar.setSize(sf::Vector2f(1.f, 1.f));
-  _bar.setFillColor(sf::Color::White);
-}
+  _scores(false)
+{}
 
 QUIZ::QuizScene::~QuizScene()
 {
@@ -33,22 +25,9 @@ QUIZ::QuizScene::~QuizScene()
 
 bool  QUIZ::QuizScene::update(float elapsed)
 {
-  // Update exit timer
-  _elapsed += elapsed;
-
-  // Reset timer when ESC is not pressed
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Escape) == false)
-    _elapsed = 0.f;
-
   // Toogle score display
   if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Tab) == true)
     _scores = !_scores;
-
-  // Exit if limit reached
-  if (_elapsed > QUIZ::QuizScene::ForcedExit) {
-    _machine.pop();
-    return false;
-  }
 
   // Change scores
   if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Left) == true || Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Right) == true) {
@@ -110,8 +89,4 @@ void  QUIZ::QuizScene::draw()
   
   // Draw quiz
   _game.draw();
-  
-  // Draw forced exit bar
-  _bar.setScale(Game::Window::Instance().window().getSize().x * _elapsed / QUIZ::QuizScene::ForcedExit, 4.f);
-  Game::Window::Instance().window().draw(_bar);
 }
