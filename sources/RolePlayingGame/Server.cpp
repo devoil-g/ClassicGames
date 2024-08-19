@@ -2,16 +2,21 @@
 
 #include <SFML/Network/IpAddress.hpp>
 
-#include "RolePlayingGame/Components.hpp"
-#include "RolePlayingGame/Systems.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/CellComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/DisplayComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/NetworkComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/DisplaySystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/NetworkSystem.hpp"
 #include "RolePlayingGame/Server.hpp"
 #include "System/Config.hpp"
 
 RPG::Server::Server(const std::filesystem::path& config, std::uint16_t port, std::uint32_t address) :
   RPG::TcpServer(port, address),
   _tick(0),
-  _ecs(),
-  _models()
+  _ecs()
 {
   // Register ECS components
   _ecs.addComponent<RPG::CellComponent>();

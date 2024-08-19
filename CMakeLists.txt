@@ -127,14 +127,6 @@ SET(GAME_GBC_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/SelectionScene.cpp
 )
 SET(GAME_RPG_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Entities.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Entities.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Components.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Components.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Systems.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Systems.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/ClientScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/ClientScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Server.hpp
@@ -153,6 +145,42 @@ SET(GAME_RPG_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Texture.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Types.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Types.cpp
+)
+SET(GAME_RPG_ECS_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/EntityComponentSystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/EntityComponentSystem.cpp
+)
+SET(GAME_RPG_ECS_COMPONENTS_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/Components.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/Components.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/CellComponent.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/CellComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/DisplayComponent.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/DisplayComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/EntityComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/NetworkComponent.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/NetworkComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ParticleComponent.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ParticleComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ParticleEmitterComponent.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ParticleEmitterComponent.cpp
+)
+SET(GAME_RPG_ECS_SYSTEMS_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/Systems.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/Systems.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/DisplaySystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/DisplaySystem.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/NetworkSystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/NetworkSystem.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ParticleEmitterSystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ParticleEmitterSystem.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ParticleSystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ParticleSystem.cpp
 )
 SET(GAME_QUIZ_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/BlindtestQuizScene.hpp
@@ -243,6 +271,9 @@ SET(GAME_SRCS
 	${GAME_DOOM_STATES_SRCS}
 	${GAME_GBC_SRCS}
 	${GAME_RPG_SRCS}
+	${GAME_RPG_ECS_SRCS}
+	${GAME_RPG_ECS_COMPONENTS_SRCS}
+	${GAME_RPG_ECS_SYSTEMS_SRCS}
 	${GAME_QUIZ_SRCS}
 	${GAME_MATH_SRCS}
 	${GAME_STATES_SRCS}
@@ -271,6 +302,9 @@ SOURCE_GROUP("\\Doom\\Thing\\" FILES ${GAME_DOOM_THING_SRCS})
 SOURCE_GROUP("\\Doom\\Scenes\\" FILES ${GAME_DOOM_STATES_SRCS})
 SOURCE_GROUP("\\GameBoyColor\\" FILES ${GAME_GBC_SRCS})
 SOURCE_GROUP("\\RolePlayingGame\\" FILES ${GAME_RPG_SRCS})
+SOURCE_GROUP("\\RolePlayingGame\\EntityComponentSystem\\" FILES ${GAME_RPG_ECS_SRCS})
+SOURCE_GROUP("\\RolePlayingGame\\EntityComponentSystem\\Components\\" FILES ${GAME_RPG_ECS_COMPONENTS_SRCS})
+SOURCE_GROUP("\\RolePlayingGame\\EntityComponentSystem\\Systems\\" FILES ${GAME_RPG_ECS_SYSTEMS_SRCS})
 SOURCE_GROUP("\\Quiz\\" FILES ${GAME_QUIZ_SRCS})
 SOURCE_GROUP("\\Math\\" FILES ${GAME_MATH_SRCS})
 SOURCE_GROUP("\\Scenes\\" FILES ${GAME_STATES_SRCS})

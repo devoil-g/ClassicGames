@@ -3,8 +3,7 @@
 #include <filesystem>
 #include <unordered_map>
 
-#include "RolePlayingGame/EntityComponentSystem.hpp"
-#include "RolePlayingGame/Model.hpp"
+#include "RolePlayingGame/EntityComponentSystem/EntityComponentSystem.hpp"
 #include "RolePlayingGame/TcpServer.hpp"
 #include "System/JavaScriptObjectNotation.hpp"
 
@@ -15,8 +14,7 @@ namespace RPG
   private:
     std::size_t _tick;
 
-    RPG::ECS                                    _ecs;     // Server game ECS
-    std::unordered_map<std::string, RPG::Model> _models;  // Registered models
+    RPG::ECS  _ecs; // Server game ECS
 
     virtual void  onConnect(std::size_t id) override;                                 // Called when a new TCP client connect
     virtual void  onDisconnect(std::size_t id) override;                              // Called when a TCP client disconnect

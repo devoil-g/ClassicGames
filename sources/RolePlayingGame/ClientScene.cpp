@@ -1,8 +1,18 @@
 #include <SFML/Network/IpAddress.hpp>
 
 #include "RolePlayingGame/ClientScene.hpp"
-#include "RolePlayingGame/Components.hpp"
-#include "RolePlayingGame/Systems.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/CellComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/DisplayComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/NetworkComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/ParticleComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/ParticleEmitterComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/DisplaySystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/NetworkSystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/ParticleSystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/ParticleEmitterSystem.hpp"
 
 RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::unique_ptr<RPG::Server>&& server) :
   ClientScene(machine, server->getPort(), sf::IpAddress::LocalHost.toInteger())
