@@ -42,7 +42,7 @@ RPG::Server::Server(const std::filesystem::path& config, std::uint16_t port, std
   _ecs.addSystem<RPG::ServerDisplaySystem>(signature);
 
   // Load level
-  load(Game::Config::ExecutablePath / "assets" / "rpg" / "level_01.json");
+  load(Game::Config::ExecutablePath / "assets" / "rpg" / "world.json");
 
   // TODO: remove this
   std::cout << "[RPG::Server] Server started: " << sf::IpAddress::getPublicAddress() << ":" << getPort() << "." << std::endl;
