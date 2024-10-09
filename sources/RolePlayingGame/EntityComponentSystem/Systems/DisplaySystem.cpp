@@ -109,9 +109,14 @@ void  RPG::ClientDisplaySystem::executeCamera(RPG::ECS& ecs, float elapsed)
   // Camera move
   _camera.setPositionTarget(_camera.getPositionTarget() + offset * elapsed * 96.f / _camera.getZoom());
 
-  // Camera zoom (mouse wheel)
+  float oldZoom = _camera.getZoomTarget();
+
+  // Camera zoom
   _camera.setZoomTarget(_camera.getZoomTarget() * zoom);
 
+  // Camera zoom movement to keep same object under the mouse
+  _camera.setPositionTarget(_camera.getPositionTarget() + (_camera.getPositionTarget() - _camera.pixelToCoordsTarget(mouse)) * (1.f - _camera.getZoomTarget() / oldZoom));
+  
   // Update camera
   _camera.update(elapsed);
 }

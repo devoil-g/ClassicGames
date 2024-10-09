@@ -10,7 +10,7 @@ namespace RPG
   {
   private:
     static const unsigned int ScreenWidth = 128;  // World X resolution at zoom level 1.0
-    static const unsigned int ScreenHeight = 72; // World Y resolution at zoom level 1.0
+    static const unsigned int ScreenHeight = 72;  // World Y resolution at zoom level 1.0
 
     Math::Vector<2> _targetPosition;  // Target camera position
     Math::Vector<2> _currentPosition; // Current camera position
@@ -29,9 +29,11 @@ namespace RPG
     Camera& operator=(const Camera&) = default;
     Camera& operator=(Camera&&) = default;
 
-    Math::Vector<2> coordsToPixel(const Math::Vector<2>& coords) const; // Get pixel coordinates from world position
-    Math::Vector<2> pixelToCoords(const Math::Vector<2>& pixel) const;  // Get world position from pixel coordinates
-    
+    Math::Vector<2> coordsToPixel(const Math::Vector<2>& coords) const;       // Get pixel coordinates from current world position
+    Math::Vector<2> pixelToCoords(const Math::Vector<2>& pixel) const;        // Get current world position from pixel coordinates
+    Math::Vector<2> coordsToPixelTarget(const Math::Vector<2>& coords) const; // Get pixel coordinates from target world position
+    Math::Vector<2> pixelToCoordsTarget(const Math::Vector<2>& pixel) const;  // Get target world position from pixel coordinates
+
     void  setPosition(const Math::Vector<2>& position);       // Set current and target camera center
     void  setPositionTarget(const Math::Vector<2>& position); // Set target camera center
     void  setPositionDrag(float drag);                        // Set move drag factor
@@ -48,9 +50,10 @@ namespace RPG
     float getZoomTarget() const;  // Get target zoom value
     float getZoomDrag() const;    // Get zoom drag factor
 
-    void     set() const;   // Set window viewport to camera
-    void     reset() const; // Reset window viewport
-    sf::View view() const;  // Get current view of camera
+    void     set() const;         // Set window viewport to current camera
+    void     reset() const;       // Reset window viewport
+    sf::View view() const;        // Get current view of camera
+    sf::View viewTarget() const;  // Get target view of camera
 
     void  update(float elapsed);  // Compute new camera position
   };
