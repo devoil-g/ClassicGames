@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <stdexcept>
 
 #include <SFML/Network/SocketSelector.hpp>
