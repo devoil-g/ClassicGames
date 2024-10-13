@@ -9,7 +9,8 @@ RPG::Camera::Camera() :
   _dragPosition(0.f),
   _targetZoom(1.f),
   _currentZoom(1.f),
-  _dragZoom(0.f)
+  _dragZoom(0.f),
+  _coordinatesZoom(0.f, 0.f)
 {}
 
 Math::Vector<2> RPG::Camera::coordsToPixel(const Math::Vector<2>& coords) const
@@ -106,6 +107,20 @@ void  RPG::Camera::setZoomTarget(float scale)
   // Instant zoom
   if (_dragZoom == 0.f)
     _currentZoom = _targetZoom;
+
+  auto  size = Game::Window::Instance().window().getSize();
+
+  // Set zoom to center of the screen
+  _coordinatesZoom = { size.x / 2.f, size.y / 2.f };
+}
+
+void  RPG::Camera::setZoomTarget(float scale, const Math::Vector<2>& coordinates)
+{
+  // Set zoom target
+  setZoomTarget(scale);
+
+  // Override coordinates
+  _coordinatesZoom = coordinates;
 }
 
 void  RPG::Camera::setZoomDrag(float drag)
@@ -188,10 +203,19 @@ void  RPG::Camera::update(float elapsed)
   // Move camera
   _currentPosition += (_targetPosition - _currentPosition) * positionCompleted;
   
+
+  auto oldCursor = pixelToCoords(_coordinatesZoom);
   float zoomCompleted = (_dragZoom > 0.f) ?
     (1.f - (1.f / std::pow(2.f, elapsed / _dragZoom))) :
     (1.f);
-
+  
   // Zoom camera
   _currentZoom += (_targetZoom - _currentZoom) * zoomCompleted;
+
+  auto newCursor = pixelToCoords(_coordinatesZoom);
+  auto offsetZoom = oldCursor - newCursor;
+
+  // Zoom move camera to mouse coordinates
+  _currentPosition += offsetZoom;
+  _targetPosition += offsetZoom;
 }

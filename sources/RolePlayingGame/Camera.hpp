@@ -16,9 +16,10 @@ namespace RPG
     Math::Vector<2> _currentPosition; // Current camera position
     float           _dragPosition;    // Move drag factor, used for smooth movement (time to move half the way)
 
-    float _targetZoom;  // Target camera zoom
-    float _currentZoom; // Current camera zoom
-    float _dragZoom;    // Zoom drag factor, used for smooth zoom
+    float           _targetZoom;      // Target camera zoom
+    float           _currentZoom;     // Current camera zoom
+    float           _dragZoom;        // Zoom drag factor, used for smooth zoom
+    Math::Vector<2> _coordinatesZoom; // Coordinates of la mouse zoom on window
 
   public:
     Camera();
@@ -42,9 +43,10 @@ namespace RPG
     Math::Vector<2> getPositionTarget() const;  // Get target position of the center of the screen
     float           getPositionDrag() const;    // Get position drag factor
 
-    void  setZoom(float scale);         // Set current and target zoom value
-    void  setZoomTarget(float scale);   // Set target zoom value
-    void  setZoomDrag(float drag);      // Set zoom drag factor
+    void  setZoom(float scale);                                           // Set current and target zoom value
+    void  setZoomTarget(float scale);                                     // Set target zoom value to screen center
+    void  setZoomTarget(float scale, const Math::Vector<2>& coordinates); // Set target zoom value to specific screen coordinates
+    void  setZoomDrag(float drag);                                        // Set zoom drag factor
 
     float getZoom() const;        // Get current zoom value
     float getZoomTarget() const;  // Get target zoom value
