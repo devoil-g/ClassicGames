@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "RolePlayingGame/Color.hpp"
 
 const RPG::Color  RPG::Color::Default = RPG::Color(DefaultRed, DefaultGreen, DefaultBlue, DefaultAlpha);
