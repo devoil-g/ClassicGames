@@ -1,161 +1,196 @@
-#include <cassert>
-
-#include <SFML/Graphics/Sprite.hpp>
-
 #include "RolePlayingGame/Model.hpp"
-#include "System/Window.hpp"
 
-const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultOffset = { (std::int16_t)0, (std::int16_t)0 };
-const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultSize = { (std::int16_t)0, (std::int16_t)0 };
-const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultOrigin = { (std::int16_t)0, (std::int16_t)0 };
-const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultScale = { (std::int16_t)1, (std::int16_t)1 };
-const RPG::Color                    RPG::Sprite::DefaultColor = RPG::Color::White;
-const std::string                   RPG::Sprite::DefaultTexture = "error.png";
+const RPG::Model  RPG::Model::ErrorModel;
 
-const RPG::Sprite RPG::Sprite::ErrorSprite;
-
-RPG::Sprite::Sprite() :
-  offset((std::int16_t)0, (std::int16_t)0),
-  size((std::int16_t)8, (std::int16_t)8),
-  origin((std::int16_t)4, (std::int16_t)4),
-  scale((std::int16_t)1, (std::int16_t)1),
-  color(RPG::Color::White),
-  path("error.png"),
-  texture(nullptr)
+RPG::Model::Model() :
+  _animations()
 {}
 
-RPG::Sprite::Sprite(const Game::JSON::Object& json) :
-  offset(json.contains("offset") ? json.get("offset").array() : DefaultOffset),
-  size(json.contains("size") ? json.get("size").array() : DefaultSize),
-  origin(json.contains("origin") ? json.get("origin").array() : DefaultOrigin),
-  scale(json.contains("scale") ? json.get("scale").array() : DefaultScale),
-  color(json.contains("color") ? json.get("color").object() : DefaultColor),
-  path(json.contains("texture") ? json.get("texture").string() : DefaultTexture),
-  texture(nullptr)
-{}
+RPG::Model::Model(const Game::JSON::Object& json) :
+  _animations()
+{
+  // Get animations from JSON
+  for (const auto& animation : json.get("animations").array()._vector)
+    _animations.emplace(animation->object().get("name").string(), animation->object());
+}
 
-Game::JSON::Object  RPG::Sprite::json() const
+Game::JSON::Object  RPG::Model::json() const
 {
   Game::JSON::Object  json;
 
-  // Serialize to JSON
-  if (offset != DefaultOffset)
-    json.set("offset", offset.json());
-  if (size != DefaultSize)
-    json.set("size", size.json());
-  if (origin != DefaultOrigin)
-    json.set("origin", origin.json());
-  if (scale != DefaultScale)
-    json.set("scale", scale.json());
-  if (color != DefaultColor)
-    json.set("color", color.json());
-  if (path != DefaultTexture)
-    json.set("texture", path);
+  // Serialize animations to JSON
+  json.set("animations", Game::JSON::Array());
+  for (const auto& [name, animation] : _animations) {
+    auto value = animation.json();
+
+    value.set("name", name);
+    json.get("animations").array().push(std::move(value));
+  }
 
   return json;
 }
 
-void  RPG::Sprite::draw(const Math::Vector<2>& position, RPG::Color color, RPG::Color outline) const
+void  RPG::Model::resolve(const std::function<const RPG::Texture& (const std::string&)> library)
 {
-  // Sprite not visible
-  if (this->color.alpha == 0.f && color.alpha == 0.f)
-    return;
-
-  // No texture
-  assert(texture != nullptr && "Missing texture.");
-
-  auto&           window = Game::Window::Instance();
-  sf::Sprite      sprite;
-  Math::Vector<2> rounded(std::round(position.x()), std::round(position.y()));
-
-  // Set properties
-  sprite.setTexture(texture->get());
-  sprite.setTextureRect(sf::IntRect(offset.x(), offset.y(), size.x(), size.y()));
-  sprite.setOrigin((float)origin.x(), (float)origin.y());
-  sprite.setScale((float)scale.x(), (float)scale.y());
-  sprite.setColor(sf::Color((color * this->color).uint32()));
-
-  // Draw outline
-  if (outline.alpha > 0) {
-    auto shader = RPG::Sprite::OutlineShader::Get(outline);
-
-    // Draw outline
-    sprite.setPosition(rounded.x() - 1.f, rounded.y());
-    window.window().draw(sprite, shader);
-    sprite.setPosition(rounded.x() + 1.f, rounded.y());
-    window.window().draw(sprite, shader);
-    sprite.setPosition(rounded.x(), rounded.y() - 1.f);
-    window.window().draw(sprite, shader);
-    sprite.setPosition(rounded.x(), rounded.y() + 1.f);
-    window.window().draw(sprite, shader);
-  }
-
-  // Draw sprite
-  sprite.setPosition(rounded.x(), rounded.y());
-  window.window().draw(sprite);
+  // Resolve texture of each animation
+  for (auto& [_, animation] : _animations)
+    for (auto& frame : animation.frames)
+      for (auto& sprite : frame.sprites)
+        sprite.texture = &library(sprite.path);
 }
 
-RPG::Bounds RPG::Sprite::bounds(const Math::Vector<2>& position) const
-{
-  sf::Sprite      sprite;
-  Math::Vector<2> rounded(std::round(position.x()), std::round(position.y()));
+const std::string RPG::Model::Actor::DefaultAnimation = "idle";
+const std::string RPG::Model::Actor::IdleAnimation = "idle";
+const std::string RPG::Model::Actor::WalkAnimation = "walk";
+const std::string RPG::Model::Actor::RunAnimation = "run";
 
-  // Set properties
-  sprite.setPosition(rounded.x(), rounded.y());
-  sprite.setTextureRect(sf::IntRect(offset.x(), offset.y(), size.x(), size.y()));
-  sprite.setOrigin((float)origin.x(), (float)origin.y());
-  sprite.setScale((float)scale.x(), (float)scale.y());
-  
-  // Use SFML to compute sprite bounds
-  auto bounds = sprite.getGlobalBounds();
-
-  return RPG::Bounds(
-    { std::round(bounds.left), std::round(bounds.top) },
-    { std::round(bounds.width), std::round(bounds.height) }
-  );
-}
-
-RPG::Sprite::OutlineShader::OutlineShader() :
-  _shader()
-{
-  // Failed to load shader
-  if (_shader.loadFromMemory("uniform vec4 color; uniform sampler2D texture; void main() { vec4 pixel = texture2D(texture, gl_TexCoord[0].xy); pixel.xyz = color.xyz; pixel.w = pixel.w * color.w; gl_FragColor = gl_Color * pixel; }", sf::Shader::Type::Fragment) == false)
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-  // Bind SFML texture of drawable
-  _shader.setParameter("texture", sf::Shader::CurrentTexture);
-}
-
-const sf::Shader* RPG::Sprite::OutlineShader::Get(RPG::Color color)
-{
-  static RPG::Sprite::OutlineShader shader;
-
-  // Set outline color
-  shader._shader.setParameter("color", sf::Color(color.uint32()));
-
-  return &shader._shader;
-}
-
-void  RPG::Sprite::resolve(const std::function<const RPG::Texture& (const std::string&)> library)
-{
-  // Reload texture pointer
-  texture = &library(path);
-}
-
-// --- FRAME ------------------------------------------------------------------------------------------------------------------
-
-const std::array<RPG::Sprite, RPG::Direction::DirectionCount> RPG::Frame::DefaultSprites = { RPG::Sprite(), RPG::Sprite(), RPG::Sprite(), RPG::Sprite(), RPG::Sprite(), RPG::Sprite() };
-const float RPG::Frame::DefaultDuration = 0.f;
-
-const RPG::Frame  RPG::Frame::ErrorFrame = RPG::Frame();
-
-RPG::Frame::Frame() :
-  sprites{ RPG::Sprite(), RPG::Sprite(), RPG::Sprite(), RPG::Sprite(), RPG::Sprite(), RPG::Sprite() },
-  duration(0.f)
+RPG::Model::Actor::Actor() :
+  _model(nullptr),
+  _animation(nullptr),
+  _frame(0),
+  _duration(0.f),
+  _speed(1.f),
+  _loop(false)
 {}
 
-RPG::Frame::Frame(const Game::JSON::Object& json) :
-  sprites(DefaultSprites),
+RPG::Model::Actor::Actor(const RPG::Model& model) :
+  Actor()
+{
+  // Start with default animation
+  setModel(model);
+}
+
+void  RPG::Model::Actor::update(float elapsed)
+{
+  // No animation
+  if (_animation == nullptr)
+    return;
+
+  // Consume animation time
+  _duration -= elapsed * _speed;
+
+  while (_duration < 0.f && _animation->frames[_frame].duration > 0.f)
+  {
+    // Get to next frame
+    _frame = (_frame + 1) % _animation->frames.size();
+
+    // Animation not looping
+    if (_frame == 0 && _loop == false)
+      setAnimation(RPG::Model::Actor::DefaultAnimation, 1.f, true);
+
+    // Increase animation timer with new frame duration
+    else {
+      if (_animation->frames[_frame].duration > 0.f)
+        _duration += _animation->frames[_frame].duration;
+      else
+        _duration = 0.f;
+    }
+      
+  }
+}
+
+const RPG::Sprite& RPG::Model::Actor::sprite(RPG::Direction direction) const
+{
+  // No animation
+  if (_animation == nullptr)
+    return RPG::Sprite::ErrorSprite;
+
+  // Get current frame of animation
+  else
+    return _animation->frames[_frame].sprites[direction];
+}
+
+void  RPG::Model::Actor::setModel(const RPG::Model& model)
+{
+  // Change model
+  _model = &model;
+
+  // Reset to default animation
+  setAnimation(RPG::Model::Actor::DefaultAnimation, true, 1.f);
+}
+
+void  RPG::Model::Actor::setAnimation(const std::string& name, bool loop, float speed)
+{
+  // No model
+  if (_model == nullptr)
+    return;
+
+  auto iterator = _model->_animations.find(name);
+
+  // Invalid animation
+  if (iterator == _model->_animations.end()) {
+    _animation = nullptr;
+    _frame = 0;
+    _duration = 0.f;
+    _speed = 1.f;
+    _loop = false;
+  }
+
+  // Register new animation
+  else {
+    _animation = &iterator->second;
+    _frame = 0;
+    _duration = std::min(0.f, _duration) + _animation->frames[_frame].duration;
+    _speed = speed;
+    _loop = loop;
+  }
+}
+
+void  RPG::Model::Actor::setAnimationRandom(bool loop, float speed)
+{
+  // No model
+  if (_model == nullptr)
+    return;
+
+  // Error, no animation
+  if (_model->_animations.empty() == true)
+    setAnimation(RPG::Model::Actor::DefaultAnimation, 1.f, true);
+
+  // Select a random animation
+  else
+    setAnimation(std::next(_model->_animations.begin(), std::rand() % _model->_animations.size())->first, loop, speed);
+}
+
+bool  RPG::Model::Actor::operator==(const RPG::Model& model)
+{
+  // Compare model pointers
+  return _model == &model;
+}
+
+bool  RPG::Model::Actor::operator!=(const RPG::Model& model)
+{
+  // Inverse comparison
+  return !(*this == model);
+}
+
+RPG::Model::Animation::Animation(const Game::JSON::Object& json) :
+  frames()
+{
+  // Get animation frames from JSON
+  for (const auto& frame : json.get("frames").array()._vector)
+    frames.emplace_back(frame->object());
+
+  // No frames
+  if (frames.empty() == true)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+}
+
+Game::JSON::Object  RPG::Model::Animation::json() const
+{
+  Game::JSON::Object  json;
+
+  // Serialize to JSON
+  json.set("frames", Game::JSON::Array());
+  for (const auto& frame : frames)
+    json.get("frames").array().push(frame.json());
+
+  return json;
+}
+
+const float RPG::Model::Animation::Frame::DefaultDuration = 1.f;
+
+RPG::Model::Animation::Frame::Frame(const Game::JSON::Object& json) :
+  sprites(),
   duration(json.contains("duration") ? (float)json.get("duration").number() : DefaultDuration)
 {
   // Load sprites of frame
@@ -164,7 +199,7 @@ RPG::Frame::Frame(const Game::JSON::Object& json) :
     // Single sprite, applied to every direction
     if (json.get("sprites").type() == Game::JSON::Type::TypeObject)
       sprites.fill(json.get("sprites").object());
-    
+
     // Define sprite for every direction
     else {
       std::array<bool, RPG::Direction::DirectionCount>  done;
@@ -193,7 +228,7 @@ RPG::Frame::Frame(const Game::JSON::Object& json) :
   }
 }
 
-Game::JSON::Object  RPG::Frame::json() const
+Game::JSON::Object  RPG::Model::Animation::Frame::json() const
 {
   Game::JSON::Object  json;
 
@@ -233,144 +268,4 @@ Game::JSON::Object  RPG::Frame::json() const
   }
 
   return json;
-}
-
-void  RPG::Frame::draw(RPG::Direction direction, const Math::Vector<2>& position, RPG::Color color, RPG::Color outline) const
-{
-  // Draw sprite
-  sprites[direction].draw(position, color, outline);
-}
-
-RPG::Bounds RPG::Frame::bounds(RPG::Direction direction, const Math::Vector<2>& position) const
-{
-  // Get sprite bounds
-  return sprites[direction].bounds(position);
-}
-
-void  RPG::Frame::resolve(const std::function<const RPG::Texture& (const std::string&)> library)
-{
-  // Resolve texture of each sprite
-  for (auto& sprite : sprites)
-    sprite.resolve(library);
-}
-
-// --- ANIMATION --------------------------------------------------------------------------------------------------------------
-
-const RPG::Animation  RPG::Animation::ErrorAnimation = RPG::Animation();
-
-const std::string RPG::Animation::DefaultAnimation = "idle";
-const std::string RPG::Animation::IdleAnimation = "idle";
-const std::string RPG::Animation::WalkAnimation = "walk";
-const std::string RPG::Animation::RunAnimation = "run";
-
-RPG::Animation::Animation() :
-  _frames()
-{}
-
-RPG::Animation::Animation(const Game::JSON::Object& json) :
-  _frames()
-{
-  // Get animation frames from JSON
-  for (const auto& frame : json.get("frames").array()._vector)
-    _frames.emplace_back(frame->object());
-
-  // No frames
-  if (_frames.empty() == true)
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-}
-
-Game::JSON::Object  RPG::Animation::json() const
-{
-  Game::JSON::Object  json;
-
-  // Serialize to JSON
-  json.set("frames", Game::JSON::Array());
-  for (const auto& frame : _frames)
-    json.get("frames").array().push(frame.json());
-
-  return json;
-}
-
-std::size_t RPG::Animation::count() const
-{
-  // Get the number of frames
-  return _frames.size();
-}
-
-const RPG::Frame& RPG::Animation::frame(std::size_t index) const
-{
-  // Out of bound
-  if (index >= _frames.size())
-    return RPG::Frame::ErrorFrame;
-
-  // Get frame at index
-  return _frames[index];
-}
-
-void  RPG::Animation::resolve(const std::function<const RPG::Texture& (const std::string&)> library)
-{
-  // Resolve texture of each frame
-  for (auto& frame : _frames)
-    frame.resolve(library);
-}
-
-// --- MODEL ------------------------------------------------------------------------------------------------------------------
-
-const RPG::Model  RPG::Model::ErrorModel = RPG::Model();
-
-RPG::Model::Model() :
-  _animations()
-{}
-
-RPG::Model::Model(const Game::JSON::Object& json) :
-  _animations()
-{
-  // Get animations from JSON
-  for (const auto& animation : json.get("animations").array()._vector)
-    _animations.emplace(animation->object().get("name").string(), animation->object());
-}
-
-Game::JSON::Object  RPG::Model::json() const
-{
-  Game::JSON::Object  json;
-
-  // Serialize animations to JSON
-  json.set("animations", Game::JSON::Array());
-  for (const auto& [name, animation] : _animations) {
-    auto value = animation.json();
-
-    value.set("name", name);
-    json.get("animations").array().push(std::move(value));
-  }
-
-  return json;
-}
-
-const RPG::Animation& RPG::Model::animation(const std::string& name) const
-{
-  auto iterator = _animations.find(name);
-
-  // Animation found
-  if (iterator != _animations.end())
-    return iterator->second;
-
-  // Error
-  return RPG::Animation::ErrorAnimation;
-}
-
-const RPG::Animation& RPG::Model::random() const
-{
-  // Error, no animation
-  if (_animations.empty() == true)
-    return RPG::Animation::ErrorAnimation;
-
-  // Select a random animation
-  return std::next(_animations.begin(), std::rand() % _animations.size())->second;
-}
-
-void  RPG::Model::resolve(const std::function<const RPG::Texture& (const std::string&)> library)
-{
-  // Resolve texture of each animation
-  for (auto& [_, animation] : _animations)
-    animation.resolve(library);
 }

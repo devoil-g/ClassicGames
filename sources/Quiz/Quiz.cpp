@@ -1,4 +1,4 @@
-#include <array>
+﻿#include <array>
 #include <filesystem>
 #include <iostream>
 #include <random>
@@ -8,11 +8,14 @@
 
 #include "System/Config.hpp"
 #include "System/Window.hpp"
+#include "System/Library/FontLibrary.hpp"
 #include "Quiz/Quiz.hpp"
 
 QUIZ::Quiz::Quiz() :
   avatars(),
-  players()
+  players(),
+  blindtests(),
+  questions()
 {
   const std::array<std::string, 9> textureExtensions = { "jpg", "png", "bmp", "tga", "jpeg", "gif", "psd", "hdr", "pic" };
   const std::array<std::string, 3> musicExtensions = { "ogg", "wav", "flac" };
@@ -92,6 +95,29 @@ QUIZ::Quiz::Quiz() :
       .done = false
       });
 
+    // Add blindtest to questions bank
+    questions.push_back({
+      .id = std::to_string(std::rand()),
+
+      .questionText = "Blindtest",
+      .questionAudio = music_path,
+      .questionImage = Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "audio.png",
+      .questionPoints = 1,
+      .questionInfo = "",
+
+      .answerChoices = { music_path.stem().string() },
+      .answerCorrect = 0,
+      .answerTimeout = 5.f,
+      .answerNextout = false,
+
+      .correctText = "",
+      .correctAudio = "",
+      .correctImage = cover_path,
+      .correctInfo = "",
+
+      .done = false
+      });
+
     // Verbose
     std::cout << "Blindtest '" << music_path.stem().string() << "' loaded." << std::endl;
   }
@@ -99,21 +125,33 @@ QUIZ::Quiz::Quiz() :
   // Shuffle blindtest
   std::shuffle(blindtests.begin(), blindtests.end(), std::default_random_engine((unsigned int)std::chrono::system_clock::now().time_since_epoch().count()));
 
+  // Shuffle questions
+  std::shuffle(questions.begin(), questions.end(), std::default_random_engine((unsigned int)std::chrono::system_clock::now().time_since_epoch().count()));
+
   std::cout << std::endl
     << "Quiz loaded:" << std::endl
     << "  Avatars:    " << avatars.size() << std::endl
-    << "  Blindtests: " << blindtests.size() << std::endl
+    << "  Questions:  " << questions.size() << std::endl
     << std::endl;
 }
 
-QUIZ::Quiz::Entity::Entity(const std::filesystem::path& texturePath)
+QUIZ::Quiz::Entity::Entity()
+{
+  // Default values
+  reset();
+}
+
+void  QUIZ::Quiz::Entity::reset()
 {
   // Default values
   setPosition(0.5f, 0.5f);
   setScale(1.f, 1.f);
   setColor(0.f, 0.f, 0.f, 0.f);
   setLerp(0.f);
-  setTexture(texturePath);
+  setTexture();
+  setText();
+  setDead(false);
+  setOutline(0.f);
 }
 
 void  QUIZ::Quiz::Entity::setPosition(float x, float y) { _position = _targetPosition = { x, y }; }
@@ -122,10 +160,23 @@ void  QUIZ::Quiz::Entity::setScale(float x, float y) { _scale = _targetScale = {
 void  QUIZ::Quiz::Entity::setTargetScale(float x, float y) { _targetScale = { x, y }; }
 void  QUIZ::Quiz::Entity::setColor(float r, float g, float b, float a) { _color = _targetColor = { r, g, b, a }; }
 void  QUIZ::Quiz::Entity::setTargetColor(float r, float g, float b, float a) { _targetColor = { r, g, b, a }; }
+void  QUIZ::Quiz::Entity::setOutline(float t) { _outline = t; }
 void  QUIZ::Quiz::Entity::setLerp(float l) { _lerp = l; }
+void  QUIZ::Quiz::Entity::setDead(bool v) { _dead = v; }
 
 void  QUIZ::Quiz::Entity::setTexture(const std::filesystem::path& path)
 {
+  // Unload texture
+  if (path.empty() == true) {
+    sf::Image image;
+
+    // Set texture as a transparent 1x1 image
+    image.create(1, 1, sf::Color::Transparent);
+    _texture.create(1, 1);
+    _texture.update(image);
+    return;
+  }
+
   // Load texture and generate mipmap
   if (_texture.loadFromFile(path.string()) == false || _texture.generateMipmap() == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
@@ -138,13 +189,29 @@ void  QUIZ::Quiz::Entity::setTexture(const std::filesystem::path& path)
   _sprite.setOrigin(_texture.getSize().x / 2.f, _texture.getSize().y / 2.f);
 }
 
+void  QUIZ::Quiz::Entity::setText(const std::string& text)
+{
+  // Change text
+  _text.setString(text);
+  _text.setFont(Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf"));
+  _text.setCharacterSize(128);
+
+  // Set origin to center of text
+  _text.setOrigin(
+    _text.getLocalBounds().getPosition().x + _text.getLocalBounds().getSize().x / 2.f,
+    _text.getLocalBounds().getPosition().y + _text.getLocalBounds().getSize().y / 2.f
+  );
+}
+
 Math::Vector<2> QUIZ::Quiz::Entity::getPosition() const { return _position; }
 Math::Vector<2> QUIZ::Quiz::Entity::getTargetPosition() const { return _targetPosition; }
 Math::Vector<2> QUIZ::Quiz::Entity::getScale() const { return _scale; }
 Math::Vector<2> QUIZ::Quiz::Entity::getTargetScale() const { return _targetScale; }
 Math::Vector<4> QUIZ::Quiz::Entity::getColor() const { return _color; }
 Math::Vector<4> QUIZ::Quiz::Entity::getTargetColor() const { return _targetColor; }
+float           QUIZ::Quiz::Entity::getOutline() const { return _outline; }
 float           QUIZ::Quiz::Entity::getLerp() const { return _lerp; }
+bool            QUIZ::Quiz::Entity::getDead() const { return _dead; }
 
 const sf::Sprite& QUIZ::Quiz::Entity::sprite() const
 {
@@ -152,12 +219,26 @@ const sf::Sprite& QUIZ::Quiz::Entity::sprite() const
   return _sprite;
 }
 
-void  QUIZ::Quiz::Entity::update(float elapsed)
+bool  QUIZ::Quiz::Entity::update(float elapsed)
 {
   // Lerp entity component
   _position = lerp(_position, _targetPosition, elapsed);
   _scale = lerp(_scale, _targetScale, elapsed);
   _color = lerp(_color, _targetColor, elapsed);
+
+  // Check if entity is dead
+  if (_dead == true)
+  {
+    // Will never die, instant deletion
+    if (_targetColor.get<3>() != 0.f && _targetScale.get<0>() != 0.f && _targetScale.get<1>() != 0.f)
+      return true;
+
+    // Dead condition met
+    if (_color.get<3>() == 0.f || _scale.get<0>() == 0.f || _scale.get<1>() == 0.f)
+      return true;
+  }
+
+  return false;
 }
 
 void  QUIZ::Quiz::Entity::draw()
@@ -185,6 +266,46 @@ void  QUIZ::Quiz::Entity::draw()
 
   // Draw sprite
   window.window().draw(_sprite);
+
+  Math::Vector<2> textSize = { _text.getLocalBounds().getSize().x, _text.getLocalBounds().getSize().y };
+  float           textScale = std::min(
+    windowSize.x() / textSize.x() * _scale.x(),
+    windowSize.y() / textSize.y() * _scale.y()
+  ) * 0.9f;
+
+  // Update text position
+  _text.setPosition(windowSize.x() * _position.x(), windowSize.y() * _position.y());
+  _text.setScale(textScale, textScale);
+  _text.setOutlineColor(sf::Color(0, 0, 0, (std::uint8_t)(std::clamp(_color.get<3>(), 0.f, 255.f) * 255)));
+  _text.setFillColor(sf::Color(
+    (std::uint8_t)(std::clamp(_color.get<0>(), 0.f, 255.f) * 255),
+    (std::uint8_t)(std::clamp(_color.get<1>(), 0.f, 255.f) * 255),
+    (std::uint8_t)(std::clamp(_color.get<2>(), 0.f, 255.f) * 255),
+    (std::uint8_t)(std::clamp(_color.get<3>(), 0.f, 255.f) * 255)
+  ));
+
+  // Draw text
+  window.window().draw(_text);
+
+  if (_outline > 0.f) {
+    sf::RectangleShape  rectangle;
+
+    // Update rectangle position
+    rectangle.setPosition(windowSize.x() * _position.x(), windowSize.y() * _position.y());
+    rectangle.setSize(sf::Vector2f(windowSize.x() * _scale.x(), windowSize.y() * _scale.y()));
+    rectangle.setOrigin(rectangle.getSize() / 2.f);
+    rectangle.setOutlineThickness(std::min(windowSize.x(), windowSize.y()) * _outline);
+    rectangle.setFillColor(sf::Color::Transparent);
+    rectangle.setOutlineColor(sf::Color(
+      (std::uint8_t)(std::clamp(_color.get<0>(), 0.f, 255.f) * 255),
+      (std::uint8_t)(std::clamp(_color.get<1>(), 0.f, 255.f) * 255),
+      (std::uint8_t)(std::clamp(_color.get<2>(), 0.f, 255.f) * 255),
+      (std::uint8_t)(std::clamp(_color.get<3>(), 0.f, 255.f) * 255)
+    ));
+
+    // Draw rectangle
+    window.window().draw(rectangle);
+  }
 }
 
 bool  QUIZ::Quiz::Entity::hover() const

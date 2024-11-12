@@ -1,7 +1,7 @@
-#include "RolePlayingGame/EntityComponentSystem/Systems/DisplaySystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/ParticleEmitterSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/ParticleSystem.hpp"
-#include "RolePlayingGame/EntityComponentSystem/Components/DisplayComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ParticleComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ParticleEmitterComponent.hpp"
 
@@ -16,7 +16,7 @@ void  RPG::ParticleEmitterSystem::executeParticleEmitter(RPG::ECS& ecs, RPG::ECS
 {
   auto& emitter = ecs.getComponent<RPG::ParticleEmitterComponent>(entity);
   auto& particleSystem = ecs.getSystem<RPG::ParticleSystem>();
-  auto& displaySystem = ecs.getSystem<RPG::ClientDisplaySystem>();
+  auto& modelSystem = ecs.getSystem<RPG::ClientModelSystem>();
 
   // Emit particles
   while (true)
@@ -36,10 +36,10 @@ void  RPG::ParticleEmitterSystem::executeParticleEmitter(RPG::ECS& ecs, RPG::ECS
     auto particle = ecs.createEntity();
 
     // Generate particle
-    ecs.addComponent<RPG::DisplayComponent>(particle);
+    ecs.addComponent<RPG::ModelComponent>(particle);
     ecs.addComponent<RPG::ParticleComponent>(particle);
     
-    auto& particleDisplay = ecs.getComponent<RPG::DisplayComponent>(particle);
+    auto& particleDisplay = ecs.getComponent<RPG::ModelComponent>(particle);
     auto& particleComponent = ecs.getComponent<RPG::ParticleComponent>(particle);
 
     // Randomize initial position
@@ -49,8 +49,8 @@ void  RPG::ParticleEmitterSystem::executeParticleEmitter(RPG::ECS& ecs, RPG::ECS
       - (emitter.size / 2.f);
 
     // Set particle model
-    displaySystem.setModel(ecs, particle, emitter.model);
-    displaySystem.setRandomAnimation(ecs, particle, true);
+    modelSystem.setModel(ecs, particle, emitter.model);
+    modelSystem.setAnimationRandom(ecs, particle, true);
 
     // Randomize particle
     particleComponent.physicsSpeed = Math::Vector<3>(
@@ -82,7 +82,7 @@ void  RPG::ParticleEmitterSystem::executeParticleEmitter(RPG::ECS& ecs, RPG::ECS
     particleComponent.durationFadeOut = Math::Random(emitter.particleLow.durationFadeOut, emitter.particleHigh.durationFadeOut);
 
     // Update particle timer
-    displaySystem.executeAnimation(ecs, particle, elapsed);
+    modelSystem.executeAnimation(ecs, particle, elapsed);
     particleSystem.executeParticle(ecs, particle, elapsed);
   }
 }

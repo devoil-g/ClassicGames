@@ -36,6 +36,7 @@ namespace Game
 
     // Push initial state
     game.push<Game::SplashScene>();
+    //game.push<Game::MainMenuScene>();
 
     // TODO: remove this
     auto server = std::make_unique<RPG::Server>(Game::Config::ExecutablePath / "assets" / "rpg" / "world.json");

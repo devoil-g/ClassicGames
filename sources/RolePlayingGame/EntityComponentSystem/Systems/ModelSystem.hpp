@@ -13,7 +13,7 @@ namespace RPG
 {
   class ClientScene;
 
-  class DisplaySystem : public RPG::ECS::System
+  class ModelSystem : public RPG::ECS::System
   {
   public:
     static const float  CellOffsetX;
@@ -23,31 +23,31 @@ namespace RPG
     std::unordered_map<std::string, RPG::Model> _models;  // Registered models
 
   public:
-    DisplaySystem() = default;
-    DisplaySystem(const DisplaySystem&) = delete;
-    DisplaySystem(DisplaySystem&&) = delete;
-    ~DisplaySystem() = default;
+    ModelSystem() = default;
+    ModelSystem(const ModelSystem&) = delete;
+    ModelSystem(ModelSystem&&) = delete;
+    ~ModelSystem() = default;
 
-    DisplaySystem& operator=(const DisplaySystem&) = delete;
-    DisplaySystem& operator=(DisplaySystem&&) = delete;
+    ModelSystem& operator=(const ModelSystem&) = delete;
+    ModelSystem& operator=(ModelSystem&&) = delete;
   };
 
-  class ServerDisplaySystem : public RPG::DisplaySystem
+  class ServerModelSystem : public RPG::ModelSystem
   {
   public:
-    ServerDisplaySystem() = default;
-    ServerDisplaySystem(const ServerDisplaySystem&) = delete;
-    ServerDisplaySystem(ServerDisplaySystem&&) = delete;
-    ~ServerDisplaySystem() = default;
+    ServerModelSystem() = default;
+    ServerModelSystem(const ServerModelSystem&) = delete;
+    ServerModelSystem(ServerModelSystem&&) = delete;
+    ~ServerModelSystem() = default;
 
-    ServerDisplaySystem&  operator=(const ServerDisplaySystem&) = delete;
-    ServerDisplaySystem&  operator=(ServerDisplaySystem&&) = delete;
+    ServerModelSystem&  operator=(const ServerModelSystem&) = delete;
+    ServerModelSystem&  operator=(ServerModelSystem&&) = delete;
 
     void              load(RPG::ECS& ecs, const Game::JSON::Array& models); // Deserialize models from JSON array
     Game::JSON::Array json(RPG::ECS& ecs) const;                            // Serialize models to JSON array
   };
 
-  class ClientDisplaySystem : public RPG::DisplaySystem
+  class ClientModelSystem : public RPG::ModelSystem
   {
   private:
     RPG::Camera                                   _camera;    // Camera of the scene
@@ -60,23 +60,21 @@ namespace RPG
     static bool CloserEntity(RPG::ECS& ecs, RPG::ECS::Entity aEntity, RPG::ECS::Entity bEntity);  // Check if A if closer to the camera than B
     static bool FartherEntity(RPG::ECS& ecs, RPG::ECS::Entity aEntity, RPG::ECS::Entity bEntity); // Check if A if farther to the camera than B
 
-    ClientDisplaySystem();
-    ClientDisplaySystem(const ClientDisplaySystem&) = delete;
-    ClientDisplaySystem(ClientDisplaySystem&&) = delete;
-    ~ClientDisplaySystem() = default;
+    ClientModelSystem();
+    ClientModelSystem(const ClientModelSystem&) = delete;
+    ClientModelSystem(ClientModelSystem&&) = delete;
+    ~ClientModelSystem() = default;
 
-    ClientDisplaySystem&  operator=(const ClientDisplaySystem&) = delete;
-    ClientDisplaySystem&  operator=(ClientDisplaySystem&&) = delete;
+    ClientModelSystem&  operator=(const ClientModelSystem&) = delete;
+    ClientModelSystem&  operator=(ClientModelSystem&&) = delete;
 
     const RPG::Camera&  getCamera() const;  // Get current camera
 
     bool  intersect(RPG::ECS& ecs, RPG::ECS::Entity entity, const Math::Vector<2>& coords) const; // Check if coords is in bound of entity
 
-    void  setModel(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::string& name);                        // Set model of entity
-    void  setModel(RPG::ECS& ecs, RPG::ECS::Entity entity, const RPG::Model& model);                        // Set model of entity
-    void  setAnimation(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::string& name, bool loop);         // Set animation of entity
-    void  setAnimation(RPG::ECS& ecs, RPG::ECS::Entity entity, const RPG::Animation& animation, bool loop); // Set animation of entity
-    void  setRandomAnimation(RPG::ECS& ecs, RPG::ECS::Entity entity, bool loop);                            // Set a random animation of entity
+    void  setModel(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::string& name);                                            // Set model of entity
+    void  setAnimation(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::string& name, bool loop = false, float speed = 1.f);  // Set animation of entity
+    void  setAnimationRandom(RPG::ECS& ecs, RPG::ECS::Entity entity, bool loop, float speed = 1.f);                             // Set a random animation of entity
 
     void  executeCamera(RPG::ECS& ecs, float elapsed);                              // Update camera control
     void  executeAnimation(RPG::ECS& ecs, float elapsed);                           // Update animation of every entity

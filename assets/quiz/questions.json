@@ -1,0 +1,27 @@
+{
+  "quiz": [
+    {
+      "id": "001",
+
+      "question": {
+        "text": "Dans l'episode TOMB RAIDER de Joueur du Grenier,\nArchibald Von Grenier est trahi par Traitropoulos,\nJafar et...",
+        "audio": "/assets/quiz/blindtest/music.ogg",
+        "image": "/assets/quiz/image/image.png",
+        "info": "Mais comment avez vous pu..."
+      },
+
+      "points": {
+        "correct": 3,
+        "wrong": -1
+      },
+
+      "answer": {
+        "type": "mcq",
+        "choices": [ "Pierre-Henri Judas", "Jean Sarkory", "Seb", "Archibald Von Grenier" ],
+        "shuffle": true,
+        "timelimit": 20,
+        "info": "'Pierre-Henri Judas, mon fidele ami d'enfance qui m'accompagne partout dans mes aventure depuis pres de 15 ans ! Mais comment avez vous pu...''"
+      }
+    }
+  ]
+}

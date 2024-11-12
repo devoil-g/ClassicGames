@@ -3,14 +3,14 @@
 #include "RolePlayingGame/ClientScene.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/CellComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp"
-#include "RolePlayingGame/EntityComponentSystem/Components/DisplayComponent.hpp"
-#include "RolePlayingGame/EntityComponentSystem/Components/NetworkComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/ControllerComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ParticleComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ParticleEmitterComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.hpp"
-#include "RolePlayingGame/EntityComponentSystem/Systems/DisplaySystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.hpp"
-#include "RolePlayingGame/EntityComponentSystem/Systems/NetworkSystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/ControllerSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/ParticleSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/ParticleEmitterSystem.hpp"
 
@@ -30,8 +30,8 @@ RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::uint16_t port, s
   // Register ECS components
   _ecs.addComponent<RPG::CellComponent>();
   _ecs.addComponent<RPG::EntityComponent>();
-  _ecs.addComponent<RPG::DisplayComponent>();
-  _ecs.addComponent<RPG::NetworkComponent>();
+  _ecs.addComponent<RPG::ModelComponent>();
+  _ecs.addComponent<RPG::ControllerComponent>();
   _ecs.addComponent<RPG::ParticleComponent>();
   _ecs.addComponent<RPG::ParticleEmitterComponent>();
 
@@ -40,23 +40,23 @@ RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::uint16_t port, s
   // Register ECS systems
   signature.reset();
   signature.set(_ecs.typeComponent<RPG::EntityComponent>());
-  signature.set(_ecs.typeComponent<RPG::DisplayComponent>());
+  signature.set(_ecs.typeComponent<RPG::ModelComponent>());
   _ecs.addSystem<RPG::ClientEntitySystem>(signature);
   signature.reset();
   signature.set(_ecs.typeComponent<RPG::EntityComponent>());
-  signature.set(_ecs.typeComponent<RPG::NetworkComponent>());
-  signature.set(_ecs.typeComponent<RPG::DisplayComponent>());
-  _ecs.addSystem<RPG::ClientNetworkSystem>(signature);
+  signature.set(_ecs.typeComponent<RPG::ControllerComponent>());
+  signature.set(_ecs.typeComponent<RPG::ModelComponent>());
+  _ecs.addSystem<RPG::ClientControllerSystem>(signature);
   signature.reset();
   signature.set(_ecs.typeComponent<RPG::CellComponent>());
   signature.set(_ecs.typeComponent<RPG::ParticleEmitterComponent>());
   _ecs.addSystem<RPG::ClientBoardSystem>(signature);
   signature.reset();
-  signature.set(_ecs.typeComponent<RPG::DisplayComponent>());
-  _ecs.addSystem<RPG::ClientDisplaySystem>(signature);
+  signature.set(_ecs.typeComponent<RPG::ModelComponent>());
+  _ecs.addSystem<RPG::ClientModelSystem>(signature);
   signature.reset();
   signature.set(_ecs.typeComponent<RPG::ParticleComponent>());
-  signature.set(_ecs.typeComponent<RPG::DisplayComponent>());
+  signature.set(_ecs.typeComponent<RPG::ModelComponent>());
   _ecs.addSystem<RPG::ParticleSystem>(signature);
   signature.reset();
   signature.set(_ecs.typeComponent<RPG::ParticleEmitterComponent>());
@@ -82,10 +82,10 @@ bool  RPG::ClientScene::update(float elapsed)
   // Receive available packets
   updateReceive(elapsed);
 
-  _ecs.getSystem<RPG::ClientDisplaySystem>().executeCamera(_ecs, elapsed);
+  _ecs.getSystem<RPG::ClientModelSystem>().executeCamera(_ecs, elapsed);
   _ecs.getSystem<RPG::ParticleSystem>().execute(_ecs, elapsed);
   _ecs.getSystem<RPG::ParticleEmitterSystem>().execute(_ecs, elapsed);
-  _ecs.getSystem<RPG::ClientDisplaySystem>().executeAnimation(_ecs, elapsed);
+  _ecs.getSystem<RPG::ClientModelSystem>().executeAnimation(_ecs, elapsed);
   _ecs.getSystem<RPG::ClientBoardSystem>().executeCell(_ecs, elapsed);
   _ecs.getSystem<RPG::ClientEntitySystem>().executePosition(_ecs);
 
@@ -135,10 +135,10 @@ void  RPG::ClientScene::updatePacket(const Game::JSON::Object& json, float elaps
   const auto& type = json.get("type").array().get(0).string();
 
   // Handle request
-  if (type == "network")
-    _ecs.getSystem<RPG::ClientNetworkSystem>().handlePacket(_ecs, *this, json);
+  if (type == "controller")
+    _ecs.getSystem<RPG::ClientControllerSystem>().handlePacket(_ecs, *this, json);
   else if (type == "display")
-    _ecs.getSystem<RPG::ClientDisplaySystem>().handlePacket(_ecs, *this, json);
+    _ecs.getSystem<RPG::ClientModelSystem>().handlePacket(_ecs, *this, json);
   else if (type == "board")
     _ecs.getSystem<RPG::ClientBoardSystem>().handlePacket(_ecs, *this, json);
   else if (type == "entity")
@@ -156,5 +156,5 @@ void  RPG::ClientScene::updateSend(float elapsed)
 void  RPG::ClientScene::draw()
 {
   // Draw entities
-  _ecs.getSystem<RPG::ClientDisplaySystem>().executeDraw(_ecs);
+  _ecs.getSystem<RPG::ClientModelSystem>().executeDraw(_ecs);
 }

@@ -10,17 +10,11 @@ namespace QUIZ
   class QuestionQuizScene : public Game::AbstractScene
   {
   private:
-    QUIZ::Quiz&         _quiz;      // Quiz instance
-    int                 _score;     // Question score
-    int                 _current;   // Current question score
-    int                 _buzz;      // Player buzzing
-    std::vector<float>  _cooldowns; // Players cooldown
-    float               _cooldown;  // Buzz cooldown
-
-    void  usage() const;
+    QUIZ::Quiz&             _quiz;      // Quiz instance
+    //QUIZ::Quiz::Question&   _question;  // Current question
 
   public:
-    QuestionQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz);
+    QuestionQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz/*, QUIZ::Quiz::Question& question*/);
     ~QuestionQuizScene() = default;
 
     bool  update(float elapsed) override; // Update state

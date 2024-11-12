@@ -1,7 +1,7 @@
 #include "RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.hpp"
-#include "RolePlayingGame/EntityComponentSystem/Systems/DisplaySystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/CellComponent.hpp"
-#include "RolePlayingGame/EntityComponentSystem/Components/DisplayComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ParticleEmitterComponent.hpp"
 
 RPG::ECS::Entity  RPG::BoardSystem::getCell(RPG::Coordinates coordinates) const
@@ -99,7 +99,7 @@ void  RPG::ClientBoardSystem::handleLoad(RPG::ECS& ecs, RPG::ClientScene& client
 
 void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
 {
-  auto& displaySystem = ecs.getSystem<RPG::ClientDisplaySystem>();
+  auto& modelSystem = ecs.getSystem<RPG::ClientModelSystem>();
 
   // Create each cells of the board
   for (const auto& element : json.get("cells").array()._vector) {
@@ -110,24 +110,24 @@ void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& c
 
     // TODO: remove this
     ecs.addComponent<RPG::ParticleEmitterComponent>(entity);
-    ecs.addComponent<RPG::DisplayComponent>(entity);
+    ecs.addComponent<RPG::ModelComponent>(entity);
     
     auto& cell = ecs.getComponent<RPG::CellComponent>(entity);
     auto& emitter = ecs.getComponent<RPG::ParticleEmitterComponent>(entity);
-    auto& display = ecs.getComponent<RPG::DisplayComponent>(entity);
+    auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
 
-    displaySystem.setModel(ecs, entity, "test_tile" + std::to_string((cell.coordinates.x() + cell.coordinates.y()) % 3 + 1));
-    display.position = {
-      ((+cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::ClientDisplaySystem::CellOffsetX,
-      ((-cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::ClientDisplaySystem::CellOffsetY - RPG::ClientDisplaySystem::CellOffsetY,
+    modelSystem.setModel(ecs, entity, "test_tile" + std::to_string((cell.coordinates.x() + cell.coordinates.y()) % 3 + 1));
+    model.position = {
+      ((+cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::ClientModelSystem::CellOffsetX,
+      ((-cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::ClientModelSystem::CellOffsetY - RPG::ClientModelSystem::CellOffsetY,
       cell.height
     };
 
     emitter.duration = ((cell.coordinates.x() + cell.coordinates.y()) % 3) == 0 ? 1000.f : 0.f;
-    emitter.size = { RPG::ClientDisplaySystem::CellOffsetX, RPG::ClientDisplaySystem::CellOffsetY * 2, 0.f };
+    emitter.size = { RPG::ClientModelSystem::CellOffsetX, RPG::ClientModelSystem::CellOffsetY * 2, 0.f };
     emitter.position = {
-      ((+cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::ClientDisplaySystem::CellOffsetX,
-      ((-cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::ClientDisplaySystem::CellOffsetY,
+      ((+cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::ClientModelSystem::CellOffsetX,
+      ((-cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::ClientModelSystem::CellOffsetY,
       cell.height
     };
     emitter.frequencyLow = 4.0f;

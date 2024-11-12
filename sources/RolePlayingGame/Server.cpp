@@ -3,13 +3,13 @@
 #include <SFML/Network/IpAddress.hpp>
 
 #include "RolePlayingGame/EntityComponentSystem/Components/CellComponent.hpp"
-#include "RolePlayingGame/EntityComponentSystem/Components/DisplayComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp"
-#include "RolePlayingGame/EntityComponentSystem/Components/NetworkComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/ControllerComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.hpp"
-#include "RolePlayingGame/EntityComponentSystem/Systems/DisplaySystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.hpp"
-#include "RolePlayingGame/EntityComponentSystem/Systems/NetworkSystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/ControllerSystem.hpp"
 #include "RolePlayingGame/Server.hpp"
 #include "System/Config.hpp"
 
@@ -21,8 +21,8 @@ RPG::Server::Server(const std::filesystem::path& config, std::uint16_t port, std
   // Register ECS components
   _ecs.addComponent<RPG::CellComponent>();
   _ecs.addComponent<RPG::EntityComponent>();
-  _ecs.addComponent<RPG::DisplayComponent>(); // NOTE: not really used in server, only for model library
-  _ecs.addComponent<RPG::NetworkComponent>();
+  _ecs.addComponent<RPG::ModelComponent>(); // NOTE: not really used in server, only for model library
+  _ecs.addComponent<RPG::ControllerComponent>();
 
   RPG::ECS::Signature signature;
 
@@ -35,11 +35,11 @@ RPG::Server::Server(const std::filesystem::path& config, std::uint16_t port, std
   _ecs.addSystem<RPG::ServerEntitySystem>(signature);
   signature.reset();
   signature.set(_ecs.typeComponent<RPG::EntityComponent>());
-  signature.set(_ecs.typeComponent<RPG::NetworkComponent>());
-  _ecs.addSystem<RPG::ServerNetworkSystem>(signature);
+  signature.set(_ecs.typeComponent<RPG::ControllerComponent>());
+  _ecs.addSystem<RPG::ServerControllerSystem>(signature);
   signature.reset();
-  signature.set(_ecs.typeComponent<RPG::DisplayComponent>());
-  _ecs.addSystem<RPG::ServerDisplaySystem>(signature);
+  signature.set(_ecs.typeComponent<RPG::ModelComponent>());
+  _ecs.addSystem<RPG::ServerModelSystem>(signature);
 
   // Load level
   load(Game::Config::ExecutablePath / "assets" / "rpg" / "world.json");
@@ -104,7 +104,7 @@ void  RPG::Server::onConnect(std::size_t id)
 
   // Send models
   json.clear();
-  json.set("models", _ecs.getSystem<RPG::ServerDisplaySystem>().json(_ecs));
+  json.set("models", _ecs.getSystem<RPG::ServerModelSystem>().json(_ecs));
   send(id, { "display", "load", "models" }, json);
 
   // Send cells
@@ -118,13 +118,13 @@ void  RPG::Server::onConnect(std::size_t id)
   send(id, { "entity", "load", "entities" }, json);
 
   // Add new player
-  _ecs.getSystem<RPG::ServerNetworkSystem>().connect(_ecs, *this, id);
+  _ecs.getSystem<RPG::ServerControllerSystem>().connect(_ecs, *this, id);
 }
 
 void  RPG::Server::onDisconnect(std::size_t id)
 {
   // Remove player
-  _ecs.getSystem<RPG::ServerNetworkSystem>().disconnect(_ecs, *this, id);
+  _ecs.getSystem<RPG::ServerControllerSystem>().disconnect(_ecs, *this, id);
 }
 
 void  RPG::Server::onReceive(std::size_t id, const Game::JSON::Object& json)
@@ -151,7 +151,7 @@ void  RPG::Server::load(const std::filesystem::path& path)
   Game::JSON::Object json = Game::JSON::load(path);
 
   // Load models
-  _ecs.getSystem<RPG::ServerDisplaySystem>().load(_ecs, json.get("models").array());
+  _ecs.getSystem<RPG::ServerModelSystem>().load(_ecs, json.get("models").array());
 
   // Create board cells
   _ecs.getSystem<RPG::ServerBoardSystem>().load(_ecs, json.get("cells").array());

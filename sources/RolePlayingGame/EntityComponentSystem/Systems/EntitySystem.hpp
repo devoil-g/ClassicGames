@@ -52,8 +52,8 @@ namespace RPG
 
     RPG::ECS::Entity  getEntityAtPixel(RPG::ECS& ecs, const Math::Vector<2>& pixel) const; // Get entity at mouse position
 
-    void  executePosition(RPG::ECS& ecs);                           // Update DisplayComponent with new position of entities
-    void  executePosition(RPG::ECS& ecs, RPG::ECS::Entity entity);  // Update DisplayComponent with new position of a single entity
+    void  executePosition(RPG::ECS& ecs);                           // Update WorldComponent with new position of entities
+    void  executePosition(RPG::ECS& ecs, RPG::ECS::Entity entity);  // Update WorldComponent with new position of a single entity
 
     void  handlePacket(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json);        // Handle a packet
     void  handleLoad(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json);          // Load/reload of resources

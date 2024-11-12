@@ -11,7 +11,7 @@ namespace RPG
   class Server;
   class ClientScene;
 
-  class NetworkSystem : public RPG::ECS::System
+  class ControllerSystem : public RPG::ECS::System
   {
   public:
     class Player
@@ -39,50 +39,54 @@ namespace RPG
     std::unordered_map<std::size_t, Player> _players; // Description of each player
 
   public:
-    NetworkSystem() = default;
-    NetworkSystem(const NetworkSystem&) = delete;
-    NetworkSystem(NetworkSystem&&) = delete;
-    ~NetworkSystem() = default;
+    ControllerSystem() = default;
+    ControllerSystem(const ControllerSystem&) = delete;
+    ControllerSystem(ControllerSystem&&) = delete;
+    ~ControllerSystem() = default;
 
     const Player& getPlayer(std::size_t controller) const;  // Get player informations
 
-    NetworkSystem& operator=(const NetworkSystem&) = delete;
-    NetworkSystem& operator=(NetworkSystem&&) = delete;
+    ControllerSystem& operator=(const ControllerSystem&) = delete;
+    ControllerSystem& operator=(ControllerSystem&&) = delete;
   };
 
-  class ServerNetworkSystem : public RPG::NetworkSystem
+  class ServerControllerSystem : public RPG::ControllerSystem
   {
   public:
-    ServerNetworkSystem() = default;
-    ServerNetworkSystem(const ServerNetworkSystem&) = delete;
-    ServerNetworkSystem(ServerNetworkSystem&&) = delete;
-    ~ServerNetworkSystem() = default;
+    ServerControllerSystem() = default;
+    ServerControllerSystem(const ServerControllerSystem&) = delete;
+    ServerControllerSystem(ServerControllerSystem&&) = delete;
+    ~ServerControllerSystem() = default;
 
-    ServerNetworkSystem&  operator=(const ServerNetworkSystem&) = delete;
-    ServerNetworkSystem&  operator=(ServerNetworkSystem&&) = delete;
+    ServerControllerSystem&  operator=(const ServerControllerSystem&) = delete;
+    ServerControllerSystem&  operator=(ServerControllerSystem&&) = delete;
 
     void  connect(RPG::ECS& ecs, RPG::Server& server, std::size_t id);    // New player join the game
     void  disconnect(RPG::ECS& ecs, RPG::Server& server, std::size_t id); // A player leave the game
   };
 
-  class ClientNetworkSystem : public RPG::NetworkSystem
+  class ClientControllerSystem : public RPG::ControllerSystem
   {
   private:
-    std::size_t self; // ID of player
+    std::size_t                 _self;        // ID of player
+    std::list<RPG::ECS::Entity> _controlled;  // 
 
   public:
-    ClientNetworkSystem();
-    ClientNetworkSystem(const ClientNetworkSystem&) = delete;
-    ClientNetworkSystem(ClientNetworkSystem&&) = delete;
-    ~ClientNetworkSystem() = default;
+    ClientControllerSystem();
+    ClientControllerSystem(const ClientControllerSystem&) = delete;
+    ClientControllerSystem(ClientControllerSystem&&) = delete;
+    ~ClientControllerSystem() = default;
 
-    ClientNetworkSystem& operator=(const ClientNetworkSystem&) = delete;
-    ClientNetworkSystem& operator=(ClientNetworkSystem&&) = delete;
+    ClientControllerSystem& operator=(const ClientControllerSystem&) = delete;
+    ClientControllerSystem& operator=(ClientControllerSystem&&) = delete;
 
     void  handlePacket(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json);      // Handle a packet
     void  handleConnect(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json);     // New player join the game
     void  handleDisconnect(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json);  // A player leave the game
     void  handleAssign(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json);      // Assign an entity to a player
     void  handlePlayer(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json);      // Update player informations
+
+    void  executeUpdate(RPG::ECS& ecs, float elapsed);  // Update controller bar
+    void  executeDraw(RPG::ECS& ecs);                   // Draw controller bar
   };
 }

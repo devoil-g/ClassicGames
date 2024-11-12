@@ -117,11 +117,14 @@ void  QUIZ::ControllerQuizScene::updateRegister()
             });
 
           // Add player entity
-          auto& player = _quiz.entities.emplace(std::make_pair("player_" + std::to_string(_quiz.players.back().id), _quiz.avatars[_quiz.players.back().avatar][_quiz.players.back().skin])).first->second;
+          auto& player = _quiz.entities["player_" + std::to_string(_quiz.players.back().id)];
+
+          player.reset();
           player.setPosition((float)_quiz.players.size() / (_quiz.players.size() + 1.f), 0.5f);
           player.setScale(0.f, 0.f);
           player.setColor(0.f, 0.f, 0.f, 0.f);
           player.setLerp(0.0625f);
+          player.setTexture(_quiz.avatars[_quiz.players.back().avatar][_quiz.players.back().skin]);
 
           // Move every player to fit new player
           for (int index = 0; index < _quiz.players.size(); index++) {
@@ -151,8 +154,13 @@ void  QUIZ::ControllerQuizScene::updateUnregister()
     for (auto iterator = _quiz.players.begin(); iterator != _quiz.players.end();)
     {
       // Remove player when sprite is clicked
-      if (_quiz.entities.at("player_" + std::to_string(iterator->id)).hover() == true) {
-        _quiz.entities.erase("player_" + std::to_string(iterator->id));
+      if (_quiz.entities.at("player_" + std::to_string(iterator->id)).hover() == true)
+      {
+        // Kill entity
+        _quiz.entities.at("player_" + std::to_string(iterator->id)).setTargetScale(0.f, 0.f);
+        _quiz.entities.at("player_" + std::to_string(iterator->id)).setTargetColor(1.f, 1.f, 1.f, 0.f);
+        _quiz.entities.at("player_" + std::to_string(iterator->id)).setDead(true);
+
         iterator = _quiz.players.erase(iterator);
 
         // Move every player to fit screen

@@ -45,9 +45,16 @@ bool  QUIZ::QuizScene::update(float elapsed)
     return false;
   }
 
+  std::list<std::string> toDelete;
+
   // Update entities
-  for (auto& [_, entity] : _quiz.entities)
-    entity.update(elapsed);
+  for (auto& [name, entity] : _quiz.entities)
+    if (entity.update(elapsed) == true)
+      toDelete.emplace_front(name);
+
+  // Remove dead entities
+  for (const auto& name : toDelete)
+    _quiz.entities.erase(name);
 
   return false;
 }

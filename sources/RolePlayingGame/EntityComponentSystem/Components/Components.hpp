@@ -1,7 +1,22 @@
 #pragma once
 
+#include "RolePlayingGame/Color.hpp"
+#include "RolePlayingGame/Model.hpp"
+
 namespace RPG
 {
+  class InterfaceComponent
+  {
+  public:
+    InterfaceComponent();
+    InterfaceComponent(const InterfaceComponent&) = default;
+    InterfaceComponent(InterfaceComponent&&) = default;
+    ~InterfaceComponent() = default;
+
+    InterfaceComponent& operator=(const InterfaceComponent&) = default;
+    InterfaceComponent& operator=(InterfaceComponent&&) = default;
+  };
+
   /*
   class MoveComponent
   {

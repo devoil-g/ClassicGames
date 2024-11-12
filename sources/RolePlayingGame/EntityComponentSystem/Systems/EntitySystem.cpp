@@ -1,10 +1,10 @@
 #include "RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.hpp"
-#include "RolePlayingGame/EntityComponentSystem/Systems/DisplaySystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/CellComponent.hpp"
-#include "RolePlayingGame/EntityComponentSystem/Components/DisplayComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp"
-#include "RolePlayingGame/EntityComponentSystem/Components/NetworkComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/ControllerComponent.hpp"
 
 RPG::ECS::Entity  RPG::EntitySystem::getEntity(RPG::ECS& ecs, const std::string& id) const
 {
@@ -24,7 +24,7 @@ void  RPG::ServerEntitySystem::load(RPG::ECS& ecs, const Game::JSON::Array& enti
     auto entity = ecs.createEntity();
 
     ecs.addComponent<RPG::EntityComponent>(entity, element->object());
-    ecs.addComponent<RPG::NetworkComponent>(entity);
+    ecs.addComponent<RPG::ControllerComponent>(entity);
   }
 }
 
@@ -42,8 +42,8 @@ Game::JSON::Array RPG::ServerEntitySystem::json(RPG::ECS& ecs) const
 
 RPG::ECS::Entity  RPG::ClientEntitySystem::getEntityAtPixel(RPG::ECS& ecs, const Math::Vector<2>& pixel) const
 {
-  const auto&                                         displaySystem = ecs.getSystem<RPG::ClientDisplaySystem>();
-  auto                                                position = displaySystem.getCamera().pixelToCoords(pixel);
+  const auto&                                         modelSystem = ecs.getSystem<RPG::ClientModelSystem>();
+  auto                                                position = modelSystem.getCamera().pixelToCoords(pixel);
   std::array<RPG::ECS::Entity, RPG::ECS::MaxEntities> interactive;
   std::size_t                                         count = 0;
 
@@ -56,12 +56,12 @@ RPG::ECS::Entity  RPG::ClientEntitySystem::getEntityAtPixel(RPG::ECS& ecs, const
 
   // Sort drawables by depth
   std::sort(interactive.begin(), interactive.begin() + count, [&ecs](auto aEntity, auto bEntity) {
-    return RPG::ClientDisplaySystem::CloserEntity(ecs, aEntity, bEntity);
+    return RPG::ClientModelSystem::CloserEntity(ecs, aEntity, bEntity);
     });
 
   // Find first matching entity
   for (size_t index = 0; index < count; index++)
-    if (displaySystem.intersect(ecs, interactive[index], position) == true)
+    if (modelSystem.intersect(ecs, interactive[index], position) == true)
       return interactive[index];
 
   // No match
@@ -78,7 +78,7 @@ void  RPG::ClientEntitySystem::executePosition(RPG::ECS& ecs)
 void  RPG::ClientEntitySystem::executePosition(RPG::ECS& ecs, RPG::ECS::Entity entity)
 {
   const auto& entityComponent = ecs.getComponent<RPG::EntityComponent>(entity);
-  auto& displayComponent = ecs.getComponent<RPG::DisplayComponent>(entity);
+  auto& displayComponent = ecs.getComponent<RPG::ModelComponent>(entity);
   auto& cellSystem = ecs.getSystem<RPG::ClientBoardSystem>();
   auto cellEntity = cellSystem.getCell(entityComponent.coordinates);
   float cellHeight = 0.f;
@@ -88,8 +88,8 @@ void  RPG::ClientEntitySystem::executePosition(RPG::ECS& ecs, RPG::ECS::Entity e
     cellHeight = ecs.getComponent<RPG::CellComponent>(cellEntity).height;
 
   // Compute display position
-  displayComponent.position.x() = ((+entityComponent.coordinates.x()) + (-entityComponent.coordinates.y()) + (+entityComponent.position.x())) * RPG::DisplaySystem::CellOffsetX;
-  displayComponent.position.y() = ((-entityComponent.coordinates.x()) + (-entityComponent.coordinates.y()) + (+entityComponent.position.y())) * RPG::DisplaySystem::CellOffsetY;
+  displayComponent.position.x() = ((+entityComponent.coordinates.x()) + (-entityComponent.coordinates.y()) + (+entityComponent.position.x())) * RPG::ModelSystem::CellOffsetX;
+  displayComponent.position.y() = ((-entityComponent.coordinates.x()) + (-entityComponent.coordinates.y()) + (+entityComponent.position.y())) * RPG::ModelSystem::CellOffsetY;
   displayComponent.position.z() = entityComponent.position.z() + cellHeight;
   displayComponent.direction = entityComponent.direction;
 }
@@ -122,14 +122,14 @@ void  RPG::ClientEntitySystem::handleLoad(RPG::ECS& ecs, RPG::ClientScene& clien
 
 void  RPG::ClientEntitySystem::handleLoadEntities(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
 {
-  auto& displaySystem = ecs.getSystem<RPG::ClientDisplaySystem>();
+  auto& displaySystem = ecs.getSystem<RPG::ClientModelSystem>();
   
   // Load entities
   for (const auto& element : json.get("entities").array()._vector) {
     auto entity = ecs.createEntity();
 
     ecs.addComponent<RPG::EntityComponent>(entity, element->object());
-    ecs.addComponent<RPG::DisplayComponent>(entity);
+    ecs.addComponent<RPG::ModelComponent>(entity);
 
     // Set model of entity
     displaySystem.setModel(ecs, entity, ecs.getComponent<RPG::EntityComponent>(entity).model);

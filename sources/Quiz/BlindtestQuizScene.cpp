@@ -27,27 +27,35 @@ QUIZ::BlindtestQuizScene::BlindtestQuizScene(Game::SceneMachine& machine, QUIZ::
   _bar.setFillColor(sf::Color::White);
 
   // Load entities
-  auto& play = _quiz.entities.emplace(std::make_pair("play", Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "play.png")).first->second;
-  auto& pause = _quiz.entities.emplace(std::make_pair("pause", Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "pause.png")).first->second;
-  auto& cover = _quiz.entities.emplace(std::make_pair("cover", Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "default.png")).first->second;
-  auto& winner = _quiz.entities.emplace(std::make_pair("winner", Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "default.png")).first->second;
+  auto& play = _quiz.entities["play"];
+  auto& pause = _quiz.entities["pause"];
+  auto& cover = _quiz.entities["cover"];
+  auto& winner = _quiz.entities["winner"];
 
+  play.reset();
   play.setPosition(1.f / 12.f, 1.f / 12.f);
   play.setScale(1.f / 8.f, 1.f / 8.f);
   play.setColor(1.f, 1.f, 1.f, 0.f);
   play.setLerp(0.0625f);
+  play.setTexture(Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "play.png");
+  pause.reset();
   pause.setPosition(1.f / 12.f, 1.f / 12.f);
   pause.setScale(1.f / 8.f, 1.f / 8.f);
   pause.setColor(1.f, 1.f, 1.f, 0.f);
   pause.setLerp(0.0625f);
+  pause.setTexture(Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "pause.png");
+  cover.reset();
   cover.setPosition(0.5f, 0.5f);
   cover.setScale(0.9f, 0.9f);
   cover.setColor(1.f, 1.f, 1.f, 0.f);
   cover.setLerp(0.125f);
+  cover.setTexture(Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "default.png");
+  winner.reset();
   winner.setPosition(11.f / 12.f, 1.f / 12.f);
   winner.setScale(1.f / 8.f, 1.f / 8.f);
   winner.setColor(1.f, 1.f, 1.f, 0.f);
   winner.setLerp(0.125f);
+  winner.setTexture(Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "default.png");
 
   // Select first unplayed blindtest
   _blindtest = std::find_if(_quiz.blindtests.begin(), _quiz.blindtests.end(), [](const auto& entry) { return entry.done == false; });
