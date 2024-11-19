@@ -137,7 +137,7 @@ void  RPG::ClientScene::updatePacket(const Game::JSON::Object& json, float elaps
   // Handle request
   if (type == "controller")
     _ecs.getSystem<RPG::ClientControllerSystem>().handlePacket(_ecs, *this, json);
-  else if (type == "display")
+  else if (type == "model")
     _ecs.getSystem<RPG::ClientModelSystem>().handlePacket(_ecs, *this, json);
   else if (type == "board")
     _ecs.getSystem<RPG::ClientBoardSystem>().handlePacket(_ecs, *this, json);

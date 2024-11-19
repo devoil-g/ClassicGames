@@ -83,6 +83,7 @@ namespace RPG
 
       void                update(float elapsed);                  // Update actor animation
       const RPG::Sprite&  sprite(RPG::Direction direction) const; // Get current sprite
+      const std::string&  icon() const;                           // Get actor's icon name
 
       void  setModel(const RPG::Model& model);                                            // Reset actor's model
       void  setAnimation(const std::string& name, bool loop = false, float speed = 1.f);  // Start an animation
@@ -92,7 +93,10 @@ namespace RPG
     friend  RPG::Model::Actor;
 
   private:
+    static const std::string  DefaultIcon;
+
     std::unordered_map<std::string, RPG::Model::Animation>  _animations;  // Animations stored by direction/name
+    std::string                                             _icon;        // Name of model's icon
 
     Model();
 

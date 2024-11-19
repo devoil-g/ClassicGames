@@ -5,6 +5,17 @@
 const float RPG::ModelSystem::CellOffsetX(14.f);
 const float RPG::ModelSystem::CellOffsetY(6.f);
 
+const RPG::Model& RPG::ModelSystem::getModel(const std::string& name) const
+{
+  auto iterator = _models.find(name);
+
+  // Handle errors
+  if (iterator == _models.end())
+    return RPG::Model::ErrorModel;
+  else
+    return iterator->second;
+}
+
 void  RPG::ServerModelSystem::load(RPG::ECS& ecs, const Game::JSON::Array& models)
 {
   // Load each models
@@ -214,6 +225,14 @@ const RPG::Camera&  RPG::ClientModelSystem::getCamera() const
 {
   // Get current camera
   return _camera;
+}
+
+const RPG::Model::Actor& RPG::ClientModelSystem::getActor(RPG::ECS& ecs, RPG::ECS::Entity entity) const
+{
+  auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
+
+  // Get entity's model actor
+  return model.actor;
 }
 
 bool  RPG::ClientModelSystem::intersect(RPG::ECS& ecs, RPG::ECS::Entity entity, const Math::Vector<2>& coords) const

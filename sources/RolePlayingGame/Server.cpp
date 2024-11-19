@@ -105,7 +105,7 @@ void  RPG::Server::onConnect(std::size_t id)
   // Send models
   json.clear();
   json.set("models", _ecs.getSystem<RPG::ServerModelSystem>().json(_ecs));
-  send(id, { "display", "load", "models" }, json);
+  send(id, { "model", "load", "models" }, json);
 
   // Send cells
   json.clear();

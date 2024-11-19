@@ -125,7 +125,9 @@ void  RPG::ServerControllerSystem::disconnect(RPG::ECS& ecs, RPG::Server& server
 }
 
 RPG::ClientControllerSystem::ClientControllerSystem() :
-  _self(RPG::ControllerComponent::NoController)
+  _self(RPG::ControllerComponent::NoController),
+  _controlled(RPG::ECS::MaxEntities),
+  _assigned()
 {}
 
 void  RPG::ClientControllerSystem::handlePacket(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
@@ -202,16 +204,27 @@ void  RPG::ClientControllerSystem::handleAssign(RPG::ECS& ecs, RPG::ClientScene&
     ecs.addComponent<RPG::ControllerComponent>(entity);
 
   auto controller = (std::size_t)json.get("controller").number();
-  auto controllerIterator = std::find(_controlled.begin(), _controlled.end(), entity);
-  auto isControlled = controllerIterator != _controlled.end();
+  auto controllerIterator = std::find(_assigned.begin(), _assigned.end(), entity);
+  auto isControlled = controllerIterator != _assigned.end();
 
   // Add entity to controlled entities list
-  if (controllerIterator == _controlled.end() && controller == _self)
-    _controlled.push_back(entity);
+  if (controllerIterator == _assigned.end() && controller == _self) {
+    _assigned.push_back(entity);
+
+    // First controlled entity
+    if (_assigned.size() == 1)
+      _controlled = entity;
+  }
+    
 
   // Remove entity from controlled entities list
-  if (controllerIterator != _controlled.end() && controller != _self)
-    _controlled.erase(controllerIterator);
+  if (controllerIterator != _assigned.end() && controller != _self) {
+    _assigned.erase(controllerIterator);
+
+    // Entity is currently controlled
+    if (controller == _controlled)
+      _controlled = RPG::ECS::MaxEntities;
+  }
 
   // Assign entity controller
   ecs.getComponent<RPG::ControllerComponent>(entity).controller = controller;
@@ -225,9 +238,14 @@ void  RPG::ClientControllerSystem::handlePlayer(RPG::ECS& ecs, RPG::ClientScene&
   if (_players.contains(controller) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-  // Reload player info from JSON
+  // Reload player info from JSON 
   _players.at(controller) = json;
 }
 
-void  RPG::ClientControllerSystem::executeDraw(RPG::ECS& ecs)
+void  RPG::ClientControllerSystem::executeUpdate(RPG::ECS& ecs, float elapsed)
 {}
+
+void  RPG::ClientControllerSystem::executeDraw(RPG::ECS& ecs)
+{
+  
+}

@@ -2,8 +2,12 @@
 
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 #include "Scenes/AbstractScene.hpp"
+#include "RolePlayingGame/Icon.hpp"
+#include "RolePlayingGame/Model.hpp"
+#include "RolePlayingGame/Texture.hpp"
 #include "RolePlayingGame/Server.hpp"
 #include "RolePlayingGame/TcpClient.hpp"
 
@@ -15,7 +19,7 @@ namespace RPG
     std::unique_ptr<RPG::Server>  _server;  // Server instance (localhost)
     RPG::TcpClient                _client;  // Client TCP connexion
     RPG::ECS                      _ecs;     // Client game ECS
-    
+
     void  updateReceive(float elapsed);                                 // Read available packets
     void  updatePacket(const Game::JSON::Object& json, float elapsed);  // Handle received packet
     void  updateSend(float elapsed);                                    // Send pending packets

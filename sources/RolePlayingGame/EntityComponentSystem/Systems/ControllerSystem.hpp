@@ -69,7 +69,8 @@ namespace RPG
   {
   private:
     std::size_t                 _self;        // ID of player
-    std::list<RPG::ECS::Entity> _controlled;  // 
+    RPG::ECS::Entity            _controlled;  // Entity currently controlled
+    std::list<RPG::ECS::Entity> _assigned;    // Entities assigned to player
 
   public:
     ClientControllerSystem();

@@ -1,13 +1,16 @@
 #include "RolePlayingGame/Model.hpp"
 
+const std::string RPG::Model::DefaultIcon = "";
 const RPG::Model  RPG::Model::ErrorModel;
 
 RPG::Model::Model() :
-  _animations()
+  _animations(),
+  _icon()
 {}
 
 RPG::Model::Model(const Game::JSON::Object& json) :
-  _animations()
+  _animations(),
+  _icon(json.contains("icon") ? json.get("icon").string() : DefaultIcon)
 {
   // Get animations from JSON
   for (const auto& animation : json.get("animations").array()._vector)
@@ -85,7 +88,6 @@ void  RPG::Model::Actor::update(float elapsed)
       else
         _duration = 0.f;
     }
-      
   }
 }
 
@@ -98,6 +100,16 @@ const RPG::Sprite& RPG::Model::Actor::sprite(RPG::Direction direction) const
   // Get current frame of animation
   else
     return _animation->frames[_frame].sprites[direction];
+}
+
+const std::string& RPG::Model::Actor::icon() const
+{
+  // No model
+  if (_model == nullptr)
+    return RPG::Model::ErrorModel._icon;
+
+  // Get current model icon
+  return _model->_icon;
 }
 
 void  RPG::Model::Actor::setModel(const RPG::Model& model)

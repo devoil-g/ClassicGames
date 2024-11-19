@@ -21,6 +21,8 @@ namespace RPG
 
   protected:
     std::unordered_map<std::string, RPG::Model> _models;  // Registered models
+    
+    const RPG::Model& getModel(const std::string& name) const;
 
   public:
     ModelSystem() = default;
@@ -68,7 +70,8 @@ namespace RPG
     ClientModelSystem&  operator=(const ClientModelSystem&) = delete;
     ClientModelSystem&  operator=(ClientModelSystem&&) = delete;
 
-    const RPG::Camera&  getCamera() const;  // Get current camera
+    const RPG::Camera&        getCamera() const;                                      // Get current camera
+    const RPG::Model::Actor&  getActor(RPG::ECS& ecs, RPG::ECS::Entity entity) const; // Get actor of a given entity
 
     bool  intersect(RPG::ECS& ecs, RPG::ECS::Entity entity, const Math::Vector<2>& coords) const; // Check if coords is in bound of entity
 
