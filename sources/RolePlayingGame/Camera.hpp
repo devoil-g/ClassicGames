@@ -9,8 +9,8 @@ namespace RPG
   class Camera
   {
   private:
-    static const unsigned int ScreenWidth = 256;  // World X resolution at zoom level 1.0
-    static const unsigned int ScreenHeight = 144; // World Y resolution at zoom level 1.0
+    static const unsigned int ScreenWidth = 192;  // World X resolution at zoom level 1.0
+    static const unsigned int ScreenHeight = 108; // World Y resolution at zoom level 1.0
 
     Math::Vector<2> _targetPosition;  // Target camera position
     Math::Vector<2> _currentPosition; // Current camera position

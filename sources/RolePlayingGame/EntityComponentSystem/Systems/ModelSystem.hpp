@@ -56,7 +56,6 @@ namespace RPG
     std::unordered_map<std::string, RPG::Texture> _textures;  // Loaded textures
 
     const RPG::Texture& getTexture(const std::string& name);      // Get texture from cache
-    const RPG::Model&   getModel(const std::string& name) const;  // Get model from library
 
   public:
     static bool CloserEntity(RPG::ECS& ecs, RPG::ECS::Entity aEntity, RPG::ECS::Entity bEntity);  // Check if A if closer to the camera than B
@@ -71,8 +70,9 @@ namespace RPG
     ClientModelSystem&  operator=(ClientModelSystem&&) = delete;
 
     const RPG::Camera&        getCamera() const;                                      // Get current camera
+    RPG::Model::Actor         getActor(const std::string& name) const;                // Get a new model's actor by name
     const RPG::Model::Actor&  getActor(RPG::ECS& ecs, RPG::ECS::Entity entity) const; // Get actor of a given entity
-
+    
     bool  intersect(RPG::ECS& ecs, RPG::ECS::Entity entity, const Math::Vector<2>& coords) const; // Check if coords is in bound of entity
 
     void  setModel(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::string& name);                                            // Set model of entity

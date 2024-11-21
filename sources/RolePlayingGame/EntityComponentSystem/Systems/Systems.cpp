@@ -1,6 +1,40 @@
 #include "RolePlayingGame/EntityComponentSystem/Systems/Systems.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/Components.hpp"
 
+const RPG::Icon& RPG::IconSystem::getIcon(const std::string& name) const
+{
+  auto iterator = _icons.find(name);
+
+  // Handle errors
+  if (iterator == _icons.end())
+    return RPG::Icon::ErrorIcon;
+  else
+    return iterator->second;
+}
+
+void  RPG::ServerIconSystem::load(RPG::ECS& ecs, const Game::JSON::Array& models)
+{
+  // Load each icons
+  for (const auto& model : models._vector)
+    _icons.emplace(model->object().get("name").string(), model->object());
+}
+
+Game::JSON::Array RPG::ServerIconSystem::json(RPG::ECS& ecs) const
+{
+  Game::JSON::Array array;
+
+  // Serialize each icon
+  array._vector.reserve(_icons.size());
+  for (const auto& [name, icon] : _icons) {
+    auto json = icon.json();
+
+    json.set("name", name);
+    array.push(std::move(json));
+  }
+
+  return array;
+}
+
 /*
 void  RPG::MovingSystem::setMove(RPG::ECS& ecs, RPG::ClientWorld& world, RPG::ClientLevel& level, RPG::ECS::Entity entity, Math::Vector<3, float> position, float duration)
 {

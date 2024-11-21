@@ -185,18 +185,6 @@ const RPG::Texture& RPG::ClientModelSystem::getTexture(const std::string& name)
   return _textures.emplace(name, name).first->second;
 }
 
-const RPG::Model& RPG::ClientModelSystem::getModel(const std::string& name) const
-{
-  auto it = _models.find(name);
-
-  // Model not found
-  if (it == _models.end())
-    return RPG::Model::ErrorModel;
-
-  // Get model from map
-  return it->second;
-}
-
 void  RPG::ClientModelSystem::setModel(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::string& name)
 {
   auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
@@ -225,6 +213,12 @@ const RPG::Camera&  RPG::ClientModelSystem::getCamera() const
 {
   // Get current camera
   return _camera;
+}
+
+RPG::Model::Actor RPG::ClientModelSystem::getActor(const std::string& name) const
+{
+  // Get model from base class
+  return RPG::ModelSystem::getModel(name);
 }
 
 const RPG::Model::Actor& RPG::ClientModelSystem::getActor(RPG::ECS& ecs, RPG::ECS::Entity entity) const
