@@ -3,6 +3,8 @@
 #include <string>
 #include <unordered_map>
 
+#include <SFML/Graphics/RenderTexture.hpp>
+
 #include "RolePlayingGame/EntityComponentSystem/EntityComponentSystem.hpp"
 #include "RolePlayingGame/Icon.hpp"
 
@@ -42,6 +44,43 @@ namespace RPG
 
     void              load(RPG::ECS& ecs, const Game::JSON::Array& icons);  // Deserialize icons from JSON array
     Game::JSON::Array json(RPG::ECS& ecs) const;                            // Serialize icons to JSON array
+  };
+
+  class ClientIconSystem : public RPG::IconSystem
+  {
+  public:
+    class Window
+    {
+    public:
+      enum Position
+      {
+        PositionCenter,
+        PositionTop,
+        PositionTopRight,
+        PositionRight,
+        PositionBottomRight,
+        PositionBottom,
+        PositionBottomLeft,
+        PositionLeft,
+        PositionTopLeft,
+
+        PositionCount
+      };
+
+    private:
+      sf::RenderTexture _texture;   // Texture where is rendered the window
+      Position          _position;  // Position of window
+
+    public:
+      Window() = delete;
+      Window(const Math::Vector<2, unsigned int>& size, Position position);
+      Window(const Window&) = delete;
+      Window(Window&&) = delete;
+      ~Window() = delete;
+
+      Window& operator=(const Window&) = delete;
+      Window& operator=(const Window&&) = delete;
+    };
   };
 
   /*
