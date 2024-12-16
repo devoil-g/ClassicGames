@@ -89,5 +89,7 @@ namespace RPG
 
     void  executeUpdate(RPG::ECS& ecs, float elapsed);  // Update controller bar
     void  executeDraw(RPG::ECS& ecs);                   // Draw controller bar
+
+    void  select(RPG::ECS& ecs, RPG::ECS::Entity entity); // Select an entity to be controlled
   };
 }

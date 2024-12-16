@@ -20,7 +20,7 @@ namespace RPG
     using Entity = std::uint16_t;
 
     // Max number of entity
-    static const Entity MaxEntities = 8162;
+    static const Entity MaxEntities = std::numeric_limits<Entity>::max();
 
     // ID of an invalid entity
     static const Entity InvalidEntity = MaxEntities;

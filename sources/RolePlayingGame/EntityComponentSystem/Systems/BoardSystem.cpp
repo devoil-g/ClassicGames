@@ -113,7 +113,6 @@ void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& c
     ecs.addComponent<RPG::ModelComponent>(entity);
     
     auto& cell = ecs.getComponent<RPG::CellComponent>(entity);
-    auto& emitter = ecs.getComponent<RPG::ParticleEmitterComponent>(entity);
     auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
 
     modelSystem.setModel(ecs, entity, "test_tile" + std::to_string((cell.coordinates.x() + cell.coordinates.y()) % 3 + 1));
@@ -122,25 +121,5 @@ void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& c
       ((-cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::ClientModelSystem::CellOffsetY - RPG::ClientModelSystem::CellOffsetY,
       cell.height
     };
-
-    emitter.duration = ((cell.coordinates.x() + cell.coordinates.y()) % 3) == 0 ? 1000.f : 0.f;
-    emitter.size = { RPG::ClientModelSystem::CellOffsetX, RPG::ClientModelSystem::CellOffsetY * 2, 0.f };
-    emitter.position = {
-      ((+cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::ClientModelSystem::CellOffsetX,
-      ((-cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::ClientModelSystem::CellOffsetY,
-      cell.height
-    };
-    emitter.frequencyLow = 4.0f;
-    emitter.frequencyHigh = 12.f;
-    emitter.model = "error";
-    emitter.particleLow.durationLife = emitter.particleHigh.durationLife = 1.f;
-    emitter.particleLow.durationFadeIn = emitter.particleHigh.durationFadeIn = 0.2f;
-    emitter.particleLow.durationFadeOut = emitter.particleHigh.durationFadeOut = 0.8f;
-    emitter.particleLow.physicsGravity.z() = emitter.particleHigh.physicsGravity.z() = 4.f;
-    emitter.particleLow.physicsSpeed.z() = emitter.particleHigh.physicsSpeed.z() = 2.f;
-    emitter.particleLow.physicsDrag = emitter.particleHigh.physicsDrag = 0.1f;
-    emitter.particleLow.physicsFloor = emitter.particleHigh.physicsFloor = cell.height;
-    emitter.particleLow.colorStart.alpha = emitter.particleLow.colorEnd.alpha = 0.3f;
-    emitter.particleHigh.colorStart.alpha = emitter.particleHigh.colorEnd.alpha = 0.5f;
   }
 }

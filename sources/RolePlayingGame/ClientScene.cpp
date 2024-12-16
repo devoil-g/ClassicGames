@@ -82,6 +82,7 @@ bool  RPG::ClientScene::update(float elapsed)
   // Receive available packets
   updateReceive(elapsed);
 
+  _ecs.getSystem<RPG::ClientControllerSystem>().executeUpdate(_ecs, elapsed);
   _ecs.getSystem<RPG::ClientModelSystem>().executeCamera(_ecs, elapsed);
   _ecs.getSystem<RPG::ParticleSystem>().execute(_ecs, elapsed);
   _ecs.getSystem<RPG::ParticleEmitterSystem>().execute(_ecs, elapsed);

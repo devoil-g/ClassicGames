@@ -4,9 +4,10 @@
 #include "RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ControllerComponent.hpp"
 #include "RolePlayingGame/Server.hpp"
+#include "System/Window.hpp"
 
-const std::string                 RPG::ControllerSystem::Player::DefaultName("");
-const RPG::ControllerSystem::Player  RPG::ControllerSystem::Player::ErrorPlayer;
+const std::string                   RPG::ControllerSystem::Player::DefaultName("");
+const RPG::ControllerSystem::Player RPG::ControllerSystem::Player::ErrorPlayer;
 
 RPG::ControllerSystem::Player::Player() :
   name(DefaultName)
@@ -126,7 +127,7 @@ void  RPG::ServerControllerSystem::disconnect(RPG::ECS& ecs, RPG::Server& server
 
 RPG::ClientControllerSystem::ClientControllerSystem() :
   _self(RPG::ControllerComponent::NoController),
-  _controlled(RPG::ECS::MaxEntities),
+  _controlled(RPG::ECS::InvalidEntity),
   _assigned()
 {}
 
@@ -205,17 +206,10 @@ void  RPG::ClientControllerSystem::handleAssign(RPG::ECS& ecs, RPG::ClientScene&
 
   auto controller = (std::size_t)json.get("controller").number();
   auto controllerIterator = std::find(_assigned.begin(), _assigned.end(), entity);
-  auto isControlled = controllerIterator != _assigned.end();
 
   // Add entity to controlled entities list
-  if (controllerIterator == _assigned.end() && controller == _self) {
+  if (controllerIterator == _assigned.end() && controller == _self)
     _assigned.push_back(entity);
-
-    // First controlled entity
-    if (_assigned.size() == 1)
-      _controlled = entity;
-  }
-    
 
   // Remove entity from controlled entities list
   if (controllerIterator != _assigned.end() && controller != _self) {
@@ -223,7 +217,7 @@ void  RPG::ClientControllerSystem::handleAssign(RPG::ECS& ecs, RPG::ClientScene&
 
     // Entity is currently controlled
     if (controller == _controlled)
-      _controlled = RPG::ECS::MaxEntities;
+      select(ecs, RPG::ECS::InvalidEntity);
   }
 
   // Assign entity controller
@@ -243,9 +237,45 @@ void  RPG::ClientControllerSystem::handlePlayer(RPG::ECS& ecs, RPG::ClientScene&
 }
 
 void  RPG::ClientControllerSystem::executeUpdate(RPG::ECS& ecs, float elapsed)
-{}
+{
+  Game::Window& window = Game::Window::Instance();
+
+  // Key binding to controlled entity
+  constexpr std::array<sf::Keyboard::Key, 12> shortcuts = {
+    sf::Keyboard::Key::F1,
+    sf::Keyboard::Key::F2,
+    sf::Keyboard::Key::F3,
+    sf::Keyboard::Key::F4,
+    sf::Keyboard::Key::F5,
+    sf::Keyboard::Key::F6,
+    sf::Keyboard::Key::F7,
+    sf::Keyboard::Key::F8,
+    sf::Keyboard::Key::F9,
+    sf::Keyboard::Key::F10,
+    sf::Keyboard::Key::F11,
+    sf::Keyboard::Key::F12,
+  };
+
+  // Select entity with shortcut keys
+  for (auto index = 0; index < shortcuts.size() && index < _assigned.size(); index++)
+    if (window.keyboard().keyPressed(shortcuts[index]) == true)
+      select(ecs, *std::next(_assigned.begin(), index));
+}
 
 void  RPG::ClientControllerSystem::executeDraw(RPG::ECS& ecs)
 {
   
+}
+
+void  RPG::ClientControllerSystem::select(RPG::ECS& ecs, RPG::ECS::Entity entity)
+{
+  // Not controlled entities are considered as invalid
+  if (entity != RPG::ECS::InvalidEntity && std::find(_assigned.begin(), _assigned.end(), entity) == _assigned.end())
+    entity = RPG::ECS::InvalidEntity;
+
+  // Set given entity as controlled
+  _controlled = entity;
+
+  // TODO: remove this
+  std::cout << "[DEBUG::ClientControllerSystem]: taking control of entity #" << entity << " (" << (entity == RPG::ECS::InvalidEntity ? "none" : ecs.getComponent<RPG::EntityComponent>(entity).id) << ")." << std::endl;
 }
