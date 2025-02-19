@@ -15,17 +15,14 @@ namespace RPG
 
   class ModelSystem : public RPG::ECS::System
   {
-  public:
-    static const float  CellOffsetX;
-    static const float  CellOffsetY;
-
   protected:
     std::unordered_map<std::string, RPG::Model> _models;  // Registered models
     
-    const RPG::Model& getModel(const std::string& name) const;
+    const RPG::Model& getModel(const std::string& name);
 
   public:
-    ModelSystem() = default;
+    ModelSystem() = delete;
+    ModelSystem(RPG::ECS& ecs);
     ModelSystem(const ModelSystem&) = delete;
     ModelSystem(ModelSystem&&) = delete;
     ~ModelSystem() = default;
@@ -37,7 +34,8 @@ namespace RPG
   class ServerModelSystem : public RPG::ModelSystem
   {
   public:
-    ServerModelSystem() = default;
+    ServerModelSystem() = delete;
+    ServerModelSystem(RPG::ECS& ecs);
     ServerModelSystem(const ServerModelSystem&) = delete;
     ServerModelSystem(ServerModelSystem&&) = delete;
     ~ServerModelSystem() = default;
@@ -55,13 +53,14 @@ namespace RPG
     RPG::Camera                                   _camera;    // Camera of the scene
     std::unordered_map<std::string, RPG::Texture> _textures;  // Loaded textures
 
-    const RPG::Texture& getTexture(const std::string& name);      // Get texture from cache
+    const RPG::Texture& getTexture(const std::string& name);  // Get texture from cache
 
   public:
     static bool CloserEntity(RPG::ECS& ecs, RPG::ECS::Entity aEntity, RPG::ECS::Entity bEntity);  // Check if A if closer to the camera than B
     static bool FartherEntity(RPG::ECS& ecs, RPG::ECS::Entity aEntity, RPG::ECS::Entity bEntity); // Check if A if farther to the camera than B
 
-    ClientModelSystem();
+    ClientModelSystem() = delete;
+    ClientModelSystem(RPG::ECS& ecs);
     ClientModelSystem(const ClientModelSystem&) = delete;
     ClientModelSystem(ClientModelSystem&&) = delete;
     ~ClientModelSystem() = default;
@@ -69,9 +68,7 @@ namespace RPG
     ClientModelSystem&  operator=(const ClientModelSystem&) = delete;
     ClientModelSystem&  operator=(ClientModelSystem&&) = delete;
 
-    const RPG::Camera&        getCamera() const;                                      // Get current camera
-    RPG::Model::Actor         getActor(const std::string& name) const;                // Get a new model's actor by name
-    const RPG::Model::Actor&  getActor(RPG::ECS& ecs, RPG::ECS::Entity entity) const; // Get actor of a given entity
+    const RPG::Camera&        getCamera() const;  // Get current camera
     
     bool  intersect(RPG::ECS& ecs, RPG::ECS::Entity entity, const Math::Vector<2>& coords) const; // Check if coords is in bound of entity
 

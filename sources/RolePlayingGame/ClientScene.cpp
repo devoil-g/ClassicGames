@@ -48,12 +48,13 @@ RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::uint16_t port, s
   signature.set(_ecs.typeComponent<RPG::ModelComponent>());
   _ecs.addSystem<RPG::ClientControllerSystem>(signature);
   signature.reset();
-  signature.set(_ecs.typeComponent<RPG::CellComponent>());
-  signature.set(_ecs.typeComponent<RPG::ParticleEmitterComponent>());
-  _ecs.addSystem<RPG::ClientBoardSystem>(signature);
-  signature.reset();
   signature.set(_ecs.typeComponent<RPG::ModelComponent>());
   _ecs.addSystem<RPG::ClientModelSystem>(signature);
+  signature.reset();
+  signature.set(_ecs.typeComponent<RPG::CellComponent>());
+  signature.set(_ecs.typeComponent<RPG::ModelComponent>());
+  signature.set(_ecs.typeComponent<RPG::ParticleEmitterComponent>());
+  _ecs.addSystem<RPG::ClientBoardSystem>(signature);
   signature.reset();
   signature.set(_ecs.typeComponent<RPG::ParticleComponent>());
   signature.set(_ecs.typeComponent<RPG::ModelComponent>());

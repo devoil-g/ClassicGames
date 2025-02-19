@@ -1,15 +1,14 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include <vector>
-#include <unordered_map>
 
 #include "Scenes/AbstractScene.hpp"
-#include "RolePlayingGame/Icon.hpp"
-#include "RolePlayingGame/Model.hpp"
-#include "RolePlayingGame/Texture.hpp"
 #include "RolePlayingGame/Server.hpp"
 #include "RolePlayingGame/TcpClient.hpp"
+#include "RolePlayingGame/EntityComponentSystem/EntityComponentSystem.hpp"
+#include "System/JavaScriptObjectNotation.hpp"
 
 namespace RPG
 {

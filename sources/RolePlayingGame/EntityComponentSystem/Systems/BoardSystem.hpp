@@ -16,7 +16,8 @@ namespace RPG
     std::unordered_map<RPG::Coordinates, RPG::ECS::Entity>  _map; // Map of coordinates to entity
 
   public:
-    BoardSystem() = default;
+    BoardSystem() = delete;
+    BoardSystem(RPG::ECS& ecs);
     BoardSystem(const BoardSystem&) = delete;
     BoardSystem(BoardSystem&&) = delete;
     ~BoardSystem() = default;
@@ -32,7 +33,8 @@ namespace RPG
   class ServerBoardSystem : public BoardSystem
   {
   public:
-    ServerBoardSystem() = default;
+    ServerBoardSystem() = delete;
+    ServerBoardSystem(RPG::ECS& ecs);
     ServerBoardSystem(const ServerBoardSystem&) = delete;
     ServerBoardSystem(ServerBoardSystem&&) = delete;
     ~ServerBoardSystem() = default;
@@ -46,8 +48,12 @@ namespace RPG
 
   class ClientBoardSystem : public BoardSystem
   {
+  private:
+    RPG::ECS::Entity  _cursor;  // Entity of cursor
+
   public:
-    ClientBoardSystem() = default;
+    ClientBoardSystem() = delete;
+    ClientBoardSystem(RPG::ECS& ecs);
     ClientBoardSystem(const ClientBoardSystem&) = delete;
     ClientBoardSystem(ClientBoardSystem&&) = delete;
     ~ClientBoardSystem() = default;

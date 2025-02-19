@@ -298,13 +298,13 @@ namespace RPG
       SystemManager& operator=(SystemManager&&) = delete;
 
       template<typename NewSystem>
-      NewSystem&  add(Signature signature) // Add a new system to manager
+      NewSystem&  add(Signature signature, EntityComponentSystem& ecs) // Add a new system to manager
       {
         const char* name = typeid(NewSystem).name();
 
         assert(_systems.find(name) == _systems.end() && "Registering system more than once.");
 
-        auto  system = std::make_unique<NewSystem>();
+        auto  system = std::make_unique<NewSystem>(ecs);
         auto& ref = *system;
 
         // Add new system and its signature to manager
@@ -447,7 +447,7 @@ namespace RPG
     NewSystem& addSystem(Signature signature)  // Add a new system to ECS
     {
       // Add new system
-      return _systems.add<NewSystem>(signature);
+      return _systems.add<NewSystem>(signature, *this);
     }
 
     template<typename GetSystem>

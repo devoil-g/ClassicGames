@@ -39,7 +39,8 @@ namespace RPG
     std::unordered_map<std::size_t, Player> _players; // Description of each player
 
   public:
-    ControllerSystem() = default;
+    ControllerSystem() = delete;
+    ControllerSystem(RPG::ECS& ecs);
     ControllerSystem(const ControllerSystem&) = delete;
     ControllerSystem(ControllerSystem&&) = delete;
     ~ControllerSystem() = default;
@@ -53,7 +54,8 @@ namespace RPG
   class ServerControllerSystem : public RPG::ControllerSystem
   {
   public:
-    ServerControllerSystem() = default;
+    ServerControllerSystem() = delete;
+    ServerControllerSystem(RPG::ECS& ecs);
     ServerControllerSystem(const ServerControllerSystem&) = delete;
     ServerControllerSystem(ServerControllerSystem&&) = delete;
     ~ServerControllerSystem() = default;
@@ -73,7 +75,8 @@ namespace RPG
     std::list<RPG::ECS::Entity> _assigned;    // Entities assigned to player
 
   public:
-    ClientControllerSystem();
+    ClientControllerSystem() = delete;
+    ClientControllerSystem(RPG::ECS& ecs);
     ClientControllerSystem(const ClientControllerSystem&) = delete;
     ClientControllerSystem(ClientControllerSystem&&) = delete;
     ~ClientControllerSystem() = default;

@@ -18,7 +18,7 @@ namespace RPG
 
     DirectionCount  // Number of directions
   };
-
+  
   const std::array<std::string, RPG::Direction::DirectionCount> DirectionNames = {
     "N", "NE", "SE", "S", "SW", "NW"
   };
@@ -37,6 +37,9 @@ namespace RPG
     RPG::Coordinates(-1, 0),  // South West
     RPG::Coordinates(0, +1)   // North West
   };
+
+  const Math::Vector<2> CellSize = { 18.f, 12.f };
+  const Math::Vector<2> CellOffset = { 18.f, 6.f };
 
   class Bounds // Bounding box
   {

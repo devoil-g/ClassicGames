@@ -17,6 +17,9 @@ RPG::ControllerSystem::Player::Player(const Game::JSON::Object& json) :
   name(json.contains("name") ? json.get("name").string() : DefaultName)
 {}
 
+RPG::ControllerSystem::ControllerSystem(RPG::ECS& ecs)
+{}
+
 const RPG::ControllerSystem::Player& RPG::ControllerSystem::getPlayer(std::size_t controller) const
 {
   auto iterator = _players.find(controller);
@@ -39,6 +42,10 @@ Game::JSON::Object  RPG::ControllerSystem::Player::json() const
 
   return json;
 }
+
+RPG::ServerControllerSystem::ServerControllerSystem(RPG::ECS& ecs) :
+  RPG::ControllerSystem(ecs)
+{}
 
 void  RPG::ServerControllerSystem::connect(RPG::ECS& ecs, RPG::Server& server, std::size_t id)
 {
@@ -125,7 +132,8 @@ void  RPG::ServerControllerSystem::disconnect(RPG::ECS& ecs, RPG::Server& server
   std::cerr << "[DEBUG::server] Client #" << id << " disconnected." << std::endl;
 }
 
-RPG::ClientControllerSystem::ClientControllerSystem() :
+RPG::ClientControllerSystem::ClientControllerSystem(RPG::ECS& ecs) :
+  RPG::ControllerSystem(ecs),
   _self(RPG::ControllerComponent::NoController),
   _controlled(RPG::ECS::InvalidEntity),
   _assigned()

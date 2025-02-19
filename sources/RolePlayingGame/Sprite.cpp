@@ -5,33 +5,32 @@
 #include "RolePlayingGame/Sprite.hpp"
 #include "System/Window.hpp"
 
-const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultOffset = { (std::int16_t)0, (std::int16_t)0 };
-const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultSize = { (std::int16_t)0, (std::int16_t)0 };
+const RPG::Sprite::Bounds           RPG::Sprite::DefaultTexture = { .origin = { (std::int16_t)0, (std::int16_t)0 }, .size = { (std::int16_t)0, (std::int16_t)0 } };
 const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultOrigin = { (std::int16_t)0, (std::int16_t)0 };
 const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultScale = { (std::int16_t)1, (std::int16_t)1 };
 const RPG::Color                    RPG::Sprite::DefaultColor = RPG::Color::White;
-const std::string                   RPG::Sprite::DefaultTexture = "error.png";
+const std::string                   RPG::Sprite::DefaultPath = "error.png";
 
 const RPG::Sprite RPG::Sprite::ErrorSprite;
 
 RPG::Sprite::Sprite() :
-  offset((std::int16_t)0, (std::int16_t)0),
-  size((std::int16_t)8, (std::int16_t)8),
+  texture{ .origin { (std::int16_t)0, (std::int16_t)0 }, .size = { (std::int16_t)8, (std::int16_t)8 } },
+  select(texture),
   origin((std::int16_t)4, (std::int16_t)4),
   scale((std::int16_t)1, (std::int16_t)1),
   color(RPG::Color::White),
   path("error.png"),
-  texture(nullptr)
+  pointer(nullptr)
 {}
 
 RPG::Sprite::Sprite(const Game::JSON::Object& json) :
-  offset(json.contains("offset") ? json.get("offset").array() : DefaultOffset),
-  size(json.contains("size") ? json.get("size").array() : DefaultSize),
+  texture(json.contains("texture") ? RPG::Sprite::Bounds{.origin{ json.get("texture").object().get("origin").array() }, .size{ json.get("texture").object().get("size").array() } } : DefaultTexture),
+  select(json.contains("select") ? RPG::Sprite::Bounds{ .origin{ json.get("select").object().get("origin").array() }, .size{ json.get("select").object().get("size").array() } } : texture),
   origin(json.contains("origin") ? json.get("origin").array() : DefaultOrigin),
   scale(json.contains("scale") ? json.get("scale").array() : DefaultScale),
   color(json.contains("color") ? json.get("color").object() : DefaultColor),
-  path(json.contains("texture") ? json.get("texture").string() : DefaultTexture),
-  texture(nullptr)
+  path(json.contains("texture") ? json.get("path").string() : DefaultPath),
+  pointer(nullptr)
 {}
 
 Game::JSON::Object  RPG::Sprite::json() const
@@ -39,18 +38,24 @@ Game::JSON::Object  RPG::Sprite::json() const
   Game::JSON::Object  json;
 
   // Serialize to JSON
-  if (offset != DefaultOffset)
-    json.set("offset", offset.json());
-  if (size != DefaultSize)
-    json.set("size", size.json());
+  if (texture != DefaultTexture) {
+    json.set("texture", Game::JSON::Object());
+    json.get("texture").object().set("origin", texture.origin.json());
+    json.get("texture").object().set("size", texture.size.json());
+  }
+  if (select != texture) {
+    json.set("select", Game::JSON::Object());
+    json.get("select").object().set("origin", texture.origin.json());
+    json.get("select").object().set("size", texture.size.json());
+  }
   if (origin != DefaultOrigin)
     json.set("origin", origin.json());
   if (scale != DefaultScale)
     json.set("scale", scale.json());
   if (color != DefaultColor)
     json.set("color", color.json());
-  if (path != DefaultTexture)
-    json.set("texture", path);
+  if (path != DefaultPath)
+    json.set("path", path);
 
   return json;
 }
@@ -62,15 +67,15 @@ void  RPG::Sprite::draw(const Math::Vector<2>& position, RPG::Color color, RPG::
     return;
 
   // No texture
-  assert(texture != nullptr && "Missing texture.");
+  assert(pointer != nullptr && "Missing texture.");
 
   auto&           window = Game::Window::Instance();
   sf::Sprite      sprite;
   Math::Vector<2> rounded(std::round(position.x()), std::round(position.y()));
 
   // Set properties
-  sprite.setTexture(texture->get());
-  sprite.setTextureRect(sf::IntRect(offset.x(), offset.y(), size.x(), size.y()));
+  sprite.setTexture(pointer->get());
+  sprite.setTextureRect(sf::IntRect(texture.origin.x(), texture.origin.y(), texture.size.x(), texture.size.y()));
   sprite.setOrigin((float)origin.x(), (float)origin.y());
   sprite.setScale((float)scale.x(), (float)scale.y());
   sprite.setColor(sf::Color((color * this->color).uint32()));
@@ -102,7 +107,7 @@ RPG::Bounds RPG::Sprite::bounds(const Math::Vector<2>& position) const
 
   // Set properties
   sprite.setPosition(rounded.x(), rounded.y());
-  sprite.setTextureRect(sf::IntRect(offset.x(), offset.y(), size.x(), size.y()));
+  sprite.setTextureRect(sf::IntRect(select.origin.x(), select.origin.y(), select.size.x(), select.size.y()));
   sprite.setOrigin((float)origin.x(), (float)origin.y());
   sprite.setScale((float)scale.x(), (float)scale.y());
   

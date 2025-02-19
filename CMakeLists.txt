@@ -139,8 +139,6 @@ SET(GAME_RPG_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Camera.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Color.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Color.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Icon.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Icon.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Model.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Model.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Sprite.hpp

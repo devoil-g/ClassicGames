@@ -34,22 +34,30 @@ namespace RPG
     };
 
   public:
-    static const Math::Vector<2, std::int16_t>  DefaultOffset;
-    static const Math::Vector<2, std::int16_t>  DefaultSize;
+    struct Bounds
+    {
+      Math::Vector<2, std::int16_t> origin; // Left and top position
+      Math::Vector<2, std::int16_t> size;   // Width and height of bounds
+      
+      bool  operator==(const Bounds&) const = default;
+      bool  operator!=(const Bounds&) const = default;
+    };
+
+    static const Bounds                         DefaultTexture;
     static const Math::Vector<2, std::int16_t>  DefaultOrigin;
     static const Math::Vector<2, std::int16_t>  DefaultScale;
     static const RPG::Color                     DefaultColor;
-    static const std::string                    DefaultTexture;
+    static const std::string                    DefaultPath;
 
     static const Sprite ErrorSprite;  // Error sprite
 
-    Math::Vector<2, std::int16_t> offset;       // Offset of texture rectangle
-    Math::Vector<2, std::int16_t> size;         // Size of texture rectangle (full texture if 0,0)
-    Math::Vector<2, std::int16_t> origin;       // Origin of the sprite from drawing position
-    Math::Vector<2, std::int16_t> scale;        // Scaling of sprite
-    RPG::Color                    color;        // Sprite color
-    std::string                   path;         // Path of the texture
-    const RPG::Texture*           texture;      // Pointer to texture
+    Bounds                        texture;  // Bounds of texture
+    Bounds                        select;   // Bounds for selection
+    Math::Vector<2, std::int16_t> origin;   // Origin of the sprite from drawing position
+    Math::Vector<2, std::int16_t> scale;    // Scaling of sprite
+    RPG::Color                    color;    // Sprite color
+    std::string                   path;     // Path of the texture
+    const RPG::Texture*           pointer;  // Pointer to texture
 
     Sprite();
     Sprite(const Game::JSON::Object& json);

@@ -39,7 +39,7 @@ void  RPG::Model::resolve(const std::function<const RPG::Texture& (const std::st
   for (auto& [_, animation] : _animations)
     for (auto& frame : animation.frames)
       for (auto& sprite : frame.sprites)
-        sprite.texture = &library(sprite.path);
+        sprite.pointer = &library(sprite.path);
 }
 
 const std::string RPG::Model::Actor::DefaultAnimation = "idle";
@@ -53,6 +53,7 @@ RPG::Model::Actor::Actor() :
   _frame(0),
   _duration(0.f),
   _speed(1.f),
+  _elapsed(0.f),
   _loop(false)
 {}
 
@@ -65,21 +66,24 @@ RPG::Model::Actor::Actor(const RPG::Model& model) :
 
 void  RPG::Model::Actor::update(float elapsed)
 {
-  // No animation
-  if (_animation == nullptr)
-    return;
-
   // Consume animation time
   _duration -= elapsed * _speed;
+  _elapsed += elapsed * _speed;
 
-  while (_duration < 0.f && _animation->frames[_frame].duration > 0.f)
+  // Run animation
+  while (_animation != nullptr && _duration < 0.f && _animation->frames[_frame].duration > 0.f)
   {
     // Get to next frame
     _frame = (_frame + 1) % _animation->frames.size();
 
     // Animation not looping
-    if (_frame == 0 && _loop == false)
+    if (_frame == 0 && _loop == false) {
+      float save = _duration;
+
       setAnimation(RPG::Model::Actor::DefaultAnimation, 1.f, true);
+      _duration = save;
+      _elapsed = -save;
+    }
 
     // Increase animation timer with new frame duration
     else {
@@ -98,8 +102,11 @@ const RPG::Sprite& RPG::Model::Actor::sprite(RPG::Direction direction) const
     return RPG::Sprite::ErrorSprite;
 
   // Get current frame of animation
-  else
-    return _animation->frames[_frame].sprites[direction];
+  else {
+    const auto& sprites = _animation->frames[_frame].sprites;
+
+    return sprites[direction % sprites.size()];
+  }
 }
 
 const std::string& RPG::Model::Actor::icon() const
@@ -135,6 +142,7 @@ void  RPG::Model::Actor::setAnimation(const std::string& name, bool loop, float 
     _frame = 0;
     _duration = 0.f;
     _speed = 1.f;
+    _elapsed = 0.f;
     _loop = false;
   }
 
@@ -144,6 +152,7 @@ void  RPG::Model::Actor::setAnimation(const std::string& name, bool loop, float 
     _frame = 0;
     _duration = std::min(0.f, _duration) + _animation->frames[_frame].duration;
     _speed = speed;
+    _elapsed = 0.f;
     _loop = loop;
   }
 }
@@ -163,6 +172,22 @@ void  RPG::Model::Actor::setAnimationRandom(bool loop, float speed)
     setAnimation(std::next(_model->_animations.begin(), std::rand() % _model->_animations.size())->first, loop, speed);
 }
 
+float RPG::Model::Actor::getAnimationElapsed() const
+{
+  // Get elapsed time in current animation
+  return _elapsed;
+}
+
+float RPG::Model::Actor::getAnimationDuration() const
+{
+  // No animation
+  if (_animation == nullptr)
+    return 0.f;
+
+  // Get duration of current animation
+  return _animation->duration;
+}
+
 bool  RPG::Model::Actor::operator==(const RPG::Model& model)
 {
   // Compare model pointers
@@ -176,7 +201,8 @@ bool  RPG::Model::Actor::operator!=(const RPG::Model& model)
 }
 
 RPG::Model::Animation::Animation(const Game::JSON::Object& json) :
-  frames()
+  frames(),
+  duration(0.f)
 {
   // Get animation frames from JSON
   for (const auto& frame : json.get("frames").array()._vector)
@@ -185,6 +211,10 @@ RPG::Model::Animation::Animation(const Game::JSON::Object& json) :
   // No frames
   if (frames.empty() == true)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // Compute total duration of animation
+  for (const auto& frame : frames)
+    duration += frame.duration;
 }
 
 Game::JSON::Object  RPG::Model::Animation::json() const
@@ -205,38 +235,37 @@ RPG::Model::Animation::Frame::Frame(const Game::JSON::Object& json) :
   sprites(),
   duration(json.contains("duration") ? (float)json.get("duration").number() : DefaultDuration)
 {
-  // Load sprites of frame
-  if (json.contains("sprites") == true)
-  {
-    // Single sprite, applied to every direction
-    if (json.get("sprites").type() == Game::JSON::Type::TypeObject)
-      sprites.fill(json.get("sprites").object());
+  // Single sprite, applied to every direction
+  if (json.get("sprites").type() == Game::JSON::Type::TypeObject)
+    sprites.push_back(json.get("sprites").object());
 
-    // Define sprite for every direction
-    else {
-      std::array<bool, RPG::Direction::DirectionCount>  done;
+  // Define sprite for every direction
+  else {
+    std::array<bool, RPG::Direction::DirectionCount>  done;
 
-      // To check if every direction is filled
-      done.fill(false);
+    // To check if every direction is filled
+    done.fill(false);
 
-      // Get each sprite from JSON
-      for (const auto& sprite : json.get("sprites").array()._vector) {
-        const auto& object = sprite->object();
-        auto direction = RPG::StringToDirection(object.get("direction").string());
+    // Resize container to fit every direction
+    sprites.resize(RPG::Direction::DirectionCount);
 
-        // Already defined
-        if (done[direction] == true)
-          throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+    // Get each sprite from JSON
+    for (const auto& sprite : json.get("sprites").array()._vector) {
+      const auto& object = sprite->object();
+      auto direction = RPG::StringToDirection(object.get("direction").string());
 
-        done[direction] = true;
-        sprites[direction] = object;
-      }
+      // Already defined
+      if (done[direction] == true)
+        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-      // Check that each direction is defined
-      for (auto defined : done)
-        if (defined == false)
-          throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+      done[direction] = true;
+      sprites[direction] = object;
     }
+
+    // Check that each direction is defined
+    for (auto defined : done)
+      if (defined == false)
+        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
   }
 }
 
@@ -248,20 +277,8 @@ Game::JSON::Object  RPG::Model::Animation::Frame::json() const
   if (duration != DefaultDuration)
     json.set("duration", duration);
 
-  bool  same = true;
-
-  std::array<std::string, RPG::Direction::DirectionCount> strings;
-
-  // Check if every frame is identical
-  for (auto direction = 1; direction < RPG::Direction::DirectionCount; direction++) {
-    if (sprites[0] != sprites[direction]) {
-      same = false;
-      break;
-    }
-  }
-
-  // Identical sprites
-  if (same == true)
+  // Simple frame
+  if (sprites.size() == 1)
     json.set("sprites", sprites.front().json());
 
   // Different sprites

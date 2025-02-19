@@ -6,6 +6,9 @@
 #include "RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ControllerComponent.hpp"
 
+RPG::EntitySystem::EntitySystem(RPG::ECS& ecs)
+{}
+
 RPG::ECS::Entity  RPG::EntitySystem::getEntity(RPG::ECS& ecs, const std::string& id) const
 {
   // Find entity matching ID
@@ -16,6 +19,10 @@ RPG::ECS::Entity  RPG::EntitySystem::getEntity(RPG::ECS& ecs, const std::string&
   // No match
   return RPG::ECS::InvalidEntity;
 }
+
+RPG::ServerEntitySystem::ServerEntitySystem(RPG::ECS& ecs) :
+  RPG::EntitySystem(ecs)
+{}
 
 void  RPG::ServerEntitySystem::load(RPG::ECS& ecs, const Game::JSON::Array& entities)
 {
@@ -39,6 +46,10 @@ Game::JSON::Array RPG::ServerEntitySystem::json(RPG::ECS& ecs) const
 
   return array;
 }
+
+RPG::ClientEntitySystem::ClientEntitySystem(RPG::ECS& ecs) :
+  RPG::EntitySystem(ecs)
+{}
 
 RPG::ECS::Entity  RPG::ClientEntitySystem::getEntityAtPixel(RPG::ECS& ecs, const Math::Vector<2>& pixel) const
 {
@@ -88,8 +99,8 @@ void  RPG::ClientEntitySystem::executePosition(RPG::ECS& ecs, RPG::ECS::Entity e
     cellHeight = ecs.getComponent<RPG::CellComponent>(cellEntity).height;
 
   // Compute display position
-  displayComponent.position.x() = ((+entityComponent.coordinates.x()) + (-entityComponent.coordinates.y()) + (+entityComponent.position.x())) * RPG::ModelSystem::CellOffsetX;
-  displayComponent.position.y() = ((-entityComponent.coordinates.x()) + (-entityComponent.coordinates.y()) + (+entityComponent.position.y())) * RPG::ModelSystem::CellOffsetY;
+  displayComponent.position.x() = ((+entityComponent.coordinates.x()) + (-entityComponent.coordinates.y()) + (+entityComponent.position.x())) * RPG::CellOffset.x();
+  displayComponent.position.y() = ((-entityComponent.coordinates.x()) + (-entityComponent.coordinates.y()) + (+entityComponent.position.y())) * RPG::CellOffset.y();
   displayComponent.position.z() = entityComponent.position.z() + cellHeight;
   displayComponent.direction = entityComponent.direction;
 }
@@ -130,6 +141,9 @@ void  RPG::ClientEntitySystem::handleLoadEntities(RPG::ECS& ecs, RPG::ClientScen
 
     ecs.addComponent<RPG::EntityComponent>(entity, element->object());
     ecs.addComponent<RPG::ModelComponent>(entity);
+
+    // Set layer of entity
+    ecs.getComponent<RPG::ModelComponent>(entity).layer = RPG::ModelComponent::Layer::LayerEntity;
 
     // Set model of entity
     displaySystem.setModel(ecs, entity, ecs.getComponent<RPG::EntityComponent>(entity).model);

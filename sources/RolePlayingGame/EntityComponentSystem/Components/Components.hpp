@@ -5,16 +5,18 @@
 
 namespace RPG
 {
-  class InterfaceComponent
+  class CursorComponent
   {
   public:
-    InterfaceComponent();
-    InterfaceComponent(const InterfaceComponent&) = default;
-    InterfaceComponent(InterfaceComponent&&) = default;
-    ~InterfaceComponent() = default;
+    bool  grid; // 
 
-    InterfaceComponent& operator=(const InterfaceComponent&) = default;
-    InterfaceComponent& operator=(InterfaceComponent&&) = default;
+    CursorComponent();
+    CursorComponent(const CursorComponent&) = default;
+    CursorComponent(CursorComponent&&) = default;
+    ~CursorComponent() = default;
+
+    CursorComponent& operator=(const CursorComponent&) = default;
+    CursorComponent& operator=(CursorComponent&&) = default;
   };
 
   /*

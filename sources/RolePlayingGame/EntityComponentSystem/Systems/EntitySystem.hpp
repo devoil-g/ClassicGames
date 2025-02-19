@@ -13,7 +13,8 @@ namespace RPG
   class EntitySystem : public RPG::ECS::System
   {
   public:
-    EntitySystem() = default;
+    EntitySystem() = delete;
+    EntitySystem(RPG::ECS& ecs);
     EntitySystem(const EntitySystem&) = delete;
     EntitySystem(EntitySystem&&) = delete;
     ~EntitySystem() = default;
@@ -27,7 +28,8 @@ namespace RPG
   class ServerEntitySystem : public RPG::EntitySystem
   {
   public:
-    ServerEntitySystem() = default;
+    ServerEntitySystem() = delete;
+    ServerEntitySystem(RPG::ECS& ecs);
     ServerEntitySystem(const ServerEntitySystem&) = delete;
     ServerEntitySystem(ServerEntitySystem&&) = delete;
     ~ServerEntitySystem() = default;
@@ -42,7 +44,8 @@ namespace RPG
   class ClientEntitySystem : public RPG::EntitySystem
   {
   public:
-    ClientEntitySystem() = default;
+    ClientEntitySystem() = delete;
+    ClientEntitySystem(RPG::ECS& ecs);
     ClientEntitySystem(const ClientEntitySystem&) = delete;
     ClientEntitySystem(ClientEntitySystem&&) = delete;
     ~ClientEntitySystem() = default;

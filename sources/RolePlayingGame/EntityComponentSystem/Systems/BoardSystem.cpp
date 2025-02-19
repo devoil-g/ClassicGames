@@ -4,6 +4,9 @@
 #include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ParticleEmitterComponent.hpp"
 
+RPG::BoardSystem::BoardSystem(RPG::ECS& ecs)
+{}
+
 RPG::ECS::Entity  RPG::BoardSystem::getCell(RPG::Coordinates coordinates) const
 {
   auto it = _map.find(coordinates);
@@ -36,6 +39,10 @@ void  RPG::BoardSystem::unregisterCell(RPG::ECS& ecs, RPG::ECS::Entity entity)
   _map.erase(cell.coordinates);
 }
 
+RPG::ServerBoardSystem::ServerBoardSystem(RPG::ECS& ecs) :
+  RPG::BoardSystem(ecs)
+{}
+
 void  RPG::ServerBoardSystem::load(RPG::ECS& ecs, const Game::JSON::Array& cells)
 {
   // Create each cells of the board
@@ -59,6 +66,20 @@ Game::JSON::Array RPG::ServerBoardSystem::json(RPG::ECS& ecs) const
   return array;
 }
 
+RPG::ClientBoardSystem::ClientBoardSystem(RPG::ECS& ecs) :
+  RPG::BoardSystem(ecs),
+  _cursor(ecs.createEntity())
+{
+  ecs.addComponent<RPG::ModelComponent>(_cursor);
+
+  auto& modelSystem = ecs.getSystem<RPG::ClientModelSystem>();
+  auto& cursorModel = ecs.getComponent<RPG::ModelComponent>(_cursor);
+
+  // Set cursor
+  modelSystem.setModel(ecs, _cursor, "cursor");
+  cursorModel.layer = RPG::ModelComponent::Layer::LayerBoard;
+}
+
 void  RPG::ClientBoardSystem::executeCell(RPG::ECS& ecs, float elapsed)
 {
   // Update each cell of the board
@@ -68,7 +89,12 @@ void  RPG::ClientBoardSystem::executeCell(RPG::ECS& ecs, float elapsed)
 
 void  RPG::ClientBoardSystem::executeCell(RPG::ECS& ecs, RPG::ECS::Entity entity, float elapsed)
 {
-  // TODO
+  auto& cell = ecs.getComponent<RPG::CellComponent>(entity);
+  auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
+
+  model.position.x() = ((+cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::CellOffset.x();
+  model.position.y() = ((-cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::CellOffset.y();
+  model.position.z() = cell.height;
 }
 
 void  RPG::ClientBoardSystem::handlePacket(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
@@ -105,21 +131,21 @@ void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& c
   for (const auto& element : json.get("cells").array()._vector) {
     auto entity = ecs.createEntity();
 
+    // Register component
     ecs.addComponent<RPG::CellComponent>(entity, element->object());
+    ecs.addComponent<RPG::ModelComponent>(entity);
+    ecs.addComponent<RPG::ParticleEmitterComponent>(entity);
+
+    // Register cell in coordinates map
     registerCell(ecs, entity);
 
-    // TODO: remove this
-    ecs.addComponent<RPG::ParticleEmitterComponent>(entity);
-    ecs.addComponent<RPG::ModelComponent>(entity);
-    
-    auto& cell = ecs.getComponent<RPG::CellComponent>(entity);
-    auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
+    auto& modelComponent = ecs.getComponent<RPG::ModelComponent>(entity);
+    auto& modelSystem = ecs.getSystem<RPG::ClientModelSystem>();
 
-    modelSystem.setModel(ecs, entity, "test_tile" + std::to_string((cell.coordinates.x() + cell.coordinates.y()) % 3 + 1));
-    model.position = {
-      ((+cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::ClientModelSystem::CellOffsetX,
-      ((-cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::ClientModelSystem::CellOffsetY - RPG::ClientModelSystem::CellOffsetY,
-      cell.height
-    };
+    // Initialize cell model
+    modelComponent.layer = RPG::ModelComponent::Layer::LayerBoard;
+    modelComponent.color.alpha = 0.125f;
+    modelSystem.setModel(ecs, entity, "cell");
+    modelSystem.setAnimation(ecs, entity, "select");
   }
 }

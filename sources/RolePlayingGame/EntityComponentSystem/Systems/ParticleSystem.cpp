@@ -2,6 +2,9 @@
 #include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ParticleComponent.hpp"
 
+RPG::ParticleSystem::ParticleSystem(RPG::ECS& ecs)
+{}
+
 void RPG::ParticleSystem::execute(RPG::ECS& ecs, float elapsed)
 {
   // Update each particle

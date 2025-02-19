@@ -2,11 +2,14 @@
 #include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
 #include "System/Window.hpp"
 
-const float RPG::ModelSystem::CellOffsetX(14.f);
-const float RPG::ModelSystem::CellOffsetY(6.f);
+RPG::ModelSystem::ModelSystem(RPG::ECS& ecs)
+{}
 
-const RPG::Model& RPG::ModelSystem::getModel(const std::string& name) const
+const RPG::Model& RPG::ModelSystem::getModel(const std::string& name)
 {
+  // Get model, or error model if not loaded
+  return _models.emplace(name, RPG::Model::ErrorModel).first->second;
+
   auto iterator = _models.find(name);
 
   // Handle errors
@@ -15,6 +18,10 @@ const RPG::Model& RPG::ModelSystem::getModel(const std::string& name) const
   else
     return iterator->second;
 }
+
+RPG::ServerModelSystem::ServerModelSystem(RPG::ECS& ecs) :
+  RPG::ModelSystem(ecs)
+{}
 
 void  RPG::ServerModelSystem::load(RPG::ECS& ecs, const Game::JSON::Array& models)
 {
@@ -71,13 +78,14 @@ bool  RPG::ClientModelSystem::FartherEntity(RPG::ECS& ecs, RPG::ECS::Entity aEnt
   return aPosition.x() > bPosition.x();
 }
 
-RPG::ClientModelSystem::ClientModelSystem() :
+RPG::ClientModelSystem::ClientModelSystem(RPG::ECS& ecs) :
+  RPG::ModelSystem(ecs),
   _camera(),
   _textures()
 {
   // TODO
   // Ugly fix for texture binding of error sprites
-  ((RPG::Sprite*)&RPG::Sprite::ErrorSprite)->texture = &getTexture(RPG::Sprite::ErrorSprite.path);
+  ((RPG::Sprite*)&RPG::Sprite::ErrorSprite)->pointer = &getTexture(RPG::Sprite::ErrorSprite.path);
 
   // Setup camera
   _camera.setPositionDrag(0.03125f);
@@ -146,18 +154,30 @@ void  RPG::ClientModelSystem::executeDraw(RPG::ECS& ecs)
   std::array<RPG::ECS::Entity, RPG::ECS::MaxEntities> drawables;
   std::size_t                                         count = 0;
 
-  auto view = _camera.view();
-
   // Get every drawables in an array
   for (auto entity : entities) {
-    
     drawables[count] = entity;
     count += 1;
   }
 
   // Sort drawables by depth
   std::sort(drawables.begin(), drawables.begin() + count, [&ecs](auto aEntity, auto bEntity) {
-    return RPG::ClientModelSystem::FartherEntity(ecs, aEntity, bEntity);
+    const auto  aModel = ecs.getComponent<RPG::ModelComponent>(aEntity);
+    const auto  bModel = ecs.getComponent<RPG::ModelComponent>(bEntity);
+
+    if (aModel.layer < bModel.layer)
+      return true;
+    if (aModel.layer > bModel.layer)
+      return false;
+    if (aModel.position.y() < bModel.position.y())
+      return true;
+    if (aModel.position.y() > bModel.position.y())
+      return false;
+    if (aModel.position.z() < bModel.position.z())
+      return true;
+    if (aModel.position.z() > bModel.position.z())
+      return false;
+    return aModel.position.x() > bModel.position.x();
     });
 
   // Set camera to world view
@@ -213,20 +233,6 @@ const RPG::Camera&  RPG::ClientModelSystem::getCamera() const
 {
   // Get current camera
   return _camera;
-}
-
-RPG::Model::Actor RPG::ClientModelSystem::getActor(const std::string& name) const
-{
-  // Get model from base class
-  return RPG::ModelSystem::getModel(name);
-}
-
-const RPG::Model::Actor& RPG::ClientModelSystem::getActor(RPG::ECS& ecs, RPG::ECS::Entity entity) const
-{
-  auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
-
-  // Get entity's model actor
-  return model.actor;
 }
 
 bool  RPG::ClientModelSystem::intersect(RPG::ECS& ecs, RPG::ECS::Entity entity, const Math::Vector<2>& coords) const

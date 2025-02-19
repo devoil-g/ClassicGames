@@ -7,7 +7,8 @@ namespace RPG
   class ParticleSystem : public RPG::ECS::System
   {
   public:
-    ParticleSystem() = default;
+    ParticleSystem() = delete;
+    ParticleSystem(RPG::ECS& ecs);
     ParticleSystem(const ParticleSystem&) = delete;
     ParticleSystem(ParticleSystem&&) = delete;
     ~ParticleSystem() = default;

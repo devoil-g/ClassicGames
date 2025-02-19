@@ -10,7 +10,7 @@ unsigned int const  Game::Window::DefaultWidth = 960;
 unsigned int const  Game::Window::DefaultHeight = 540;
 unsigned int const  Game::Window::DefaultAntialiasing = 4;
 float const         Game::Window::FpsRefresh = 1.f;
-bool const          Game::Window::DefaultVerticalSync = true;
+bool const          Game::Window::DefaultVerticalSync = false;
 float const         Game::Window::Joystick::DeadZone = 20.f;
 
 Game::Window& Game::Window::Instance()

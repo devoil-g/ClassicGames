@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -13,7 +14,7 @@
 
 namespace RPG
 {
-  class Model
+  class Model : public std::enable_shared_from_this<Model>
   {
   private:
     class Animation
@@ -24,8 +25,8 @@ namespace RPG
       public:
         static const float  DefaultDuration;
 
-        std::array<RPG::Sprite, RPG::Direction::DirectionCount> sprites;  // Sprites of frame, per direction
-        float                                                   duration; // Duration of the frame in seconds (0 for infinite, default to 0)
+        std::vector<RPG::Sprite>  sprites;  // Sprites of frame, per direction or unique
+        float                     duration; // Duration of the frame in seconds (0 for infinite, default to 0)
 
         Frame(const Game::JSON::Object& json);
         Frame(const Frame&) = default;
@@ -38,7 +39,8 @@ namespace RPG
         Game::JSON::Object  json() const; // Serialize to JSON
       };
 
-      std::vector<Frame>  frames;  // Frames of the animation
+      std::vector<Frame>  frames;   // Frames of the animation
+      float               duration; // Total duration of animation
 
       Animation(const Game::JSON::Object& json);
       Animation(const Animation&) = default;
@@ -66,6 +68,7 @@ namespace RPG
       std::size_t                   _frame;     // Current frame index
       float                         _duration;  // Remaining time of current frame
       float                         _speed;     // Speed of animation
+      float                         _elapsed;   // Elapsed time in animation
       bool                          _loop;      // Animation looping flag
 
     public:
@@ -88,6 +91,9 @@ namespace RPG
       void  setModel(const RPG::Model& model);                                            // Reset actor's model
       void  setAnimation(const std::string& name, bool loop = false, float speed = 1.f);  // Start an animation
       void  setAnimationRandom(bool loop = false, float speed = 1.f);                     // Start a random animation (used for particles)
+
+      float getAnimationElapsed() const;  // Get elapsed time in current animation
+      float getAnimationDuration() const; // Get duration of current animation
     };
 
     friend  RPG::Model::Actor;

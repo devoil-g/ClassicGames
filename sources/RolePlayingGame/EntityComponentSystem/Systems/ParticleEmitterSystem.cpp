@@ -5,6 +5,9 @@
 #include "RolePlayingGame/EntityComponentSystem/Components/ParticleComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ParticleEmitterComponent.hpp"
 
+RPG::ParticleEmitterSystem::ParticleEmitterSystem(RPG::ECS& ecs)
+{}
+
 void  RPG::ParticleEmitterSystem::execute(RPG::ECS& ecs, float elapsed)
 {
   // Update each particle emitter
