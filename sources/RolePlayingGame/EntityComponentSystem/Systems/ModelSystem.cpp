@@ -162,8 +162,8 @@ void  RPG::ClientModelSystem::executeDraw(RPG::ECS& ecs)
 
   // Sort drawables by depth
   std::sort(drawables.begin(), drawables.begin() + count, [&ecs](auto aEntity, auto bEntity) {
-    const auto  aModel = ecs.getComponent<RPG::ModelComponent>(aEntity);
-    const auto  bModel = ecs.getComponent<RPG::ModelComponent>(bEntity);
+    const auto& aModel = ecs.getComponent<RPG::ModelComponent>(aEntity);
+    const auto& bModel = ecs.getComponent<RPG::ModelComponent>(bEntity);
 
     if (aModel.layer < bModel.layer)
       return true;

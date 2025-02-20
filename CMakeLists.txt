@@ -155,6 +155,8 @@ SET(GAME_RPG_ECS_SRCS
 SET(GAME_RPG_ECS_COMPONENTS_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/Components.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/Components.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/BoardComponent.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/BoardComponent.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/CellComponent.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/CellComponent.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ControllerComponent.hpp

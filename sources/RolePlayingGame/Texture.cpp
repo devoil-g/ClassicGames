@@ -34,6 +34,7 @@ void  RPG::Texture::reload()
     _error = false;
     _texture.setRepeated(false);
     _texture.setSmooth(false);
+    _texture.generateMipmap();
   }
 
   // Failed to load texture
@@ -46,6 +47,7 @@ void  RPG::Texture::reload()
     _error = true;
     _texture.setRepeated(true);
     _texture.setSmooth(false);
+    _texture.generateMipmap();
   }
 }
 

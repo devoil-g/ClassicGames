@@ -47,7 +47,7 @@ bool  Game::Window::update(float elapsed)
   _joystick._released.fill(std::array<bool, sf::Joystick::ButtonCount>());
 
   // Cancel down keys when no focus
-  // NOTE: some joysticks are stick registered when no focus
+  // NOTE: some joysticks are registered when no focus
   if (_window.hasFocus() == false) {
     _mouse._down.fill(false);
     _keyboard._down.fill(false);

@@ -5,20 +5,6 @@
 
 namespace RPG
 {
-  class CursorComponent
-  {
-  public:
-    bool  grid; // 
-
-    CursorComponent();
-    CursorComponent(const CursorComponent&) = default;
-    CursorComponent(CursorComponent&&) = default;
-    ~CursorComponent() = default;
-
-    CursorComponent& operator=(const CursorComponent&) = default;
-    CursorComponent& operator=(CursorComponent&&) = default;
-  };
-
   /*
   class MoveComponent
   {

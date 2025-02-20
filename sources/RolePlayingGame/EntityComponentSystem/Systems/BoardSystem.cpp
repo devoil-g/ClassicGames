@@ -68,16 +68,91 @@ Game::JSON::Array RPG::ServerBoardSystem::json(RPG::ECS& ecs) const
 
 RPG::ClientBoardSystem::ClientBoardSystem(RPG::ECS& ecs) :
   RPG::BoardSystem(ecs),
-  _cursor(ecs.createEntity())
+  _cursorModel(ecs.createEntity()),
+  _cursorCell(RPG::ECS::InvalidEntity)
 {
-  ecs.addComponent<RPG::ModelComponent>(_cursor);
+  // Set up cursor model
+  ecs.addComponent<RPG::ModelComponent>(_cursorModel);
+  ecs.getSystem<RPG::ClientModelSystem>().setModel(ecs, _cursorModel, "cursor");
+  ecs.getComponent<RPG::ModelComponent>(_cursorModel).layer = RPG::ModelComponent::Layer::LayerBoard;
 
-  auto& modelSystem = ecs.getSystem<RPG::ClientModelSystem>();
-  auto& cursorModel = ecs.getComponent<RPG::ModelComponent>(_cursor);
+  // First update of cursor
+  executeCursor(ecs, 0.f);
+}
 
-  // Set cursor
-  modelSystem.setModel(ecs, _cursor, "cursor");
-  cursorModel.layer = RPG::ModelComponent::Layer::LayerBoard;
+RPG::ECS::Entity  RPG::ClientBoardSystem::getCursor() const
+{
+  // Get current cursor cell
+  return _cursorCell;
+}
+
+void  RPG::ClientBoardSystem::setCursor(RPG::ECS::Entity entity)
+{
+  assert((entity == RPG::ECS::InvalidEntity || entities.contains(entity) == true) && "Entity is not a cell");
+
+  // Set new cell of cursor
+  _cursorCell = entity;
+}
+
+RPG::ECS::Entity  RPG::ClientBoardSystem::intersect(RPG::ECS& ecs, const Math::Vector<2>& coords) const
+{
+  std::array<RPG::ECS::Entity, RPG::ECS::MaxEntities> cells;
+  std::size_t                                         count = 0;
+
+  long  column = (long)std::round(coords.x() / RPG::CellOffset.x());
+
+  std::cout << "column: " << column << std::endl;
+
+  // Get cells in column
+  for (auto entity : entities) {
+    const auto& cell = ecs.getComponent<RPG::CellComponent>(entity);
+
+    // Select only cells in column
+    if (cell.coordinates.x() - cell.coordinates.y() == column) {
+      cells[count] = entity;
+      count += 1;
+    }
+  }
+
+  // Sort cells by depth
+  std::sort(cells.begin(), cells.begin() + count, [&ecs](auto aEntity, auto bEntity) {
+    const auto& aCell = ecs.getComponent<RPG::CellComponent>(aEntity);
+    const auto& bCell = ecs.getComponent<RPG::CellComponent>(bEntity);
+
+    return (aCell.coordinates.x() + aCell.coordinates.y()) < (bCell.coordinates.x() + bCell.coordinates.y());
+    });
+
+  // Get first cell matching Y coords
+  for (int index = 0; index < count; index++) {
+    const auto& model = ecs.getComponent<RPG::ModelComponent>(cells[index]);
+    
+    // Check matching height
+    if (coords.y() > model.position.y() - model.position.z() - RPG::CellSize.y() / 2 && coords.y() < model.position.y() - model.position.z() + RPG::CellSize.y() / 2)
+      return cells[index];
+  }
+
+  // No cell found
+  return RPG::ECS::InvalidEntity;
+}
+
+void  RPG::ClientBoardSystem::executeCursor(RPG::ECS& ecs, float elapsed)
+{
+  auto& model = ecs.getComponent<RPG::ModelComponent>(_cursorModel);
+
+  // No cell selected, transparent cursor
+  if (_cursorCell == RPG::ECS::InvalidEntity) {
+    model.color.alpha = 0.f;
+  }
+  
+  // Cell selected, set visibility and position of cursor
+  else {
+    const auto& cell = ecs.getComponent<RPG::CellComponent>(_cursorCell);
+
+    model.color.alpha = 1.f;
+    model.position.x() = ((+cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::CellOffset.x();
+    model.position.y() = ((-cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::CellOffset.y();
+    model.position.z() = cell.height + 0.01f;
+  }
 }
 
 void  RPG::ClientBoardSystem::executeCell(RPG::ECS& ecs, float elapsed)

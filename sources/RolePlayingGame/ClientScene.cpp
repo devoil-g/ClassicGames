@@ -13,6 +13,7 @@
 #include "RolePlayingGame/EntityComponentSystem/Systems/ControllerSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/ParticleSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/ParticleEmitterSystem.hpp"
+#include "System/Window.hpp"
 
 RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::unique_ptr<RPG::Server>&& server) :
   ClientScene(machine, server->getPort(), sf::IpAddress::LocalHost.toInteger())
@@ -83,16 +84,23 @@ bool  RPG::ClientScene::update(float elapsed)
   // Receive available packets
   updateReceive(elapsed);
 
+  // Update ECS
   _ecs.getSystem<RPG::ClientControllerSystem>().executeUpdate(_ecs, elapsed);
   _ecs.getSystem<RPG::ClientModelSystem>().executeCamera(_ecs, elapsed);
   _ecs.getSystem<RPG::ParticleSystem>().execute(_ecs, elapsed);
   _ecs.getSystem<RPG::ParticleEmitterSystem>().execute(_ecs, elapsed);
   _ecs.getSystem<RPG::ClientModelSystem>().executeAnimation(_ecs, elapsed);
+  _ecs.getSystem<RPG::ClientBoardSystem>().executeCursor(_ecs, elapsed);
   _ecs.getSystem<RPG::ClientBoardSystem>().executeCell(_ecs, elapsed);
   _ecs.getSystem<RPG::ClientEntitySystem>().executePosition(_ecs);
 
-  // Update ECS
   // TODO
+  if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Left) == true) {
+    auto cursorPixel = Game::Window::Instance().mouse().position();
+    auto cursorCoords = _ecs.getSystem<RPG::ClientModelSystem>().getCamera().pixelToCoords({ (float)cursorPixel.x, (float)cursorPixel.y });
+    auto cell = _ecs.getSystem<RPG::ClientBoardSystem>().intersect(_ecs, cursorCoords);
+    std::cout << "Select cell: " << cursorCoords << " " << cell << std::endl;
+  }
 
   // Send pending packets
   updateSend(elapsed);

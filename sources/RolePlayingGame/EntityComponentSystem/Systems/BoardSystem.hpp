@@ -49,7 +49,8 @@ namespace RPG
   class ClientBoardSystem : public BoardSystem
   {
   private:
-    RPG::ECS::Entity  _cursor;  // Entity of cursor
+    RPG::ECS::Entity  _cursorModel; // Model of the cursor
+    RPG::ECS::Entity  _cursorCell;  // Cell of cursor
 
   public:
     ClientBoardSystem() = delete;
@@ -61,6 +62,12 @@ namespace RPG
     ClientBoardSystem& operator=(const ClientBoardSystem&) = delete;
     ClientBoardSystem& operator=(ClientBoardSystem&&) = delete;
 
+    RPG::ECS::Entity  getCursor() const;                  // Get current cursor cell
+    void              setCursor(RPG::ECS::Entity entity); // Change cursor cell
+    
+    RPG::ECS::Entity  intersect(RPG::ECS& ecs, const Math::Vector<2>& coords) const;  // Find cell at coords
+    
+    void  executeCursor(RPG::ECS& ecs, float elapsed);                        // Update bord cursor
     void  executeCell(RPG::ECS& ecs, float elapsed);                          // Update cells board
     void  executeCell(RPG::ECS& ecs, RPG::ECS::Entity entity, float elapsed); // Update a single cell
 
