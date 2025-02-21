@@ -51,10 +51,9 @@ RPG::ClientEntitySystem::ClientEntitySystem(RPG::ECS& ecs) :
   RPG::EntitySystem(ecs)
 {}
 
-RPG::ECS::Entity  RPG::ClientEntitySystem::getEntityAtPixel(RPG::ECS& ecs, const Math::Vector<2>& pixel) const
+RPG::ECS::Entity  RPG::ClientEntitySystem::intersect(RPG::ECS& ecs, const Math::Vector<2>& coords) const
 {
   const auto&                                         modelSystem = ecs.getSystem<RPG::ClientModelSystem>();
-  auto                                                position = modelSystem.getCamera().pixelToCoords(pixel);
   std::array<RPG::ECS::Entity, RPG::ECS::MaxEntities> interactive;
   std::size_t                                         count = 0;
 
@@ -65,18 +64,35 @@ RPG::ECS::Entity  RPG::ClientEntitySystem::getEntityAtPixel(RPG::ECS& ecs, const
     count += 1;
   }
 
-  // Sort drawables by depth
+  // Sort entities by depth
   std::sort(interactive.begin(), interactive.begin() + count, [&ecs](auto aEntity, auto bEntity) {
-    return RPG::ClientModelSystem::CloserEntity(ecs, aEntity, bEntity);
+    const auto& aModel = ecs.getComponent<RPG::ModelComponent>(aEntity);
+    const auto& bModel = ecs.getComponent<RPG::ModelComponent>(bEntity);
+
+    if (aModel.position.y() > bModel.position.y())
+      return true;
+    if (aModel.position.y() < bModel.position.y())
+      return false;
+    if (aModel.position.z() > bModel.position.z())
+      return true;
+    if (aModel.position.z() < bModel.position.z())
+      return false;
+    return aModel.position.x() < bModel.position.x();
     });
 
   // Find first matching entity
   for (size_t index = 0; index < count; index++)
-    if (modelSystem.intersect(ecs, interactive[index], position) == true)
+    if (modelSystem.intersect(ecs, interactive[index], coords) == true)
       return interactive[index];
 
   // No match
   return RPG::ECS::InvalidEntity;
+}
+
+bool  RPG::ClientEntitySystem::intersect(RPG::ECS& ecs, RPG::ECS::Entity entity, const Math::Vector<2>& coords) const
+{
+  // Check collision with model
+  return ecs.getSystem<RPG::ClientModelSystem>().intersect(ecs, entity, coords);
 }
 
 void  RPG::ClientEntitySystem::executePosition(RPG::ECS& ecs)

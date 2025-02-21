@@ -62,8 +62,8 @@ namespace RPG
     ClientBoardSystem& operator=(const ClientBoardSystem&) = delete;
     ClientBoardSystem& operator=(ClientBoardSystem&&) = delete;
 
-    RPG::ECS::Entity  getCursor() const;                  // Get current cursor cell
-    void              setCursor(RPG::ECS::Entity entity); // Change cursor cell
+    RPG::ECS::Entity  getCursor() const;                                  // Get current cursor cell
+    void              setCursor(RPG::ECS& ecs, RPG::ECS::Entity entity);  // Change cursor cell
     
     RPG::ECS::Entity  intersect(RPG::ECS& ecs, const Math::Vector<2>& coords) const;  // Find cell at coords
     

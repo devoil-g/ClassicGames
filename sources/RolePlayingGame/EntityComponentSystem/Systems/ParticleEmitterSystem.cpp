@@ -25,9 +25,9 @@ void  RPG::ParticleEmitterSystem::executeParticleEmitter(RPG::ECS& ecs, RPG::ECS
   while (true)
   {
     // No more particle to emit
-    if (elapsed < emitter.next || emitter.duration < emitter.next) {
-      emitter.duration -= elapsed;
-      emitter.next -= elapsed;
+    if (elapsed <= emitter.next || emitter.duration <= emitter.next) {
+      emitter.duration = std::max(emitter.duration - elapsed, 0.f);
+      emitter.next = std::max(emitter.next - elapsed, 0.f);
       break;
     }
 

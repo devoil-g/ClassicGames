@@ -53,7 +53,8 @@ namespace RPG
     ClientEntitySystem& operator=(const ClientEntitySystem&) = delete;
     ClientEntitySystem& operator=(ClientEntitySystem&&) = delete;
 
-    RPG::ECS::Entity  getEntityAtPixel(RPG::ECS& ecs, const Math::Vector<2>& pixel) const; // Get entity at mouse position
+    RPG::ECS::Entity  intersect(RPG::ECS& ecs, const Math::Vector<2>& coords) const;                          // Find entity at coords
+    bool              intersect(RPG::ECS& ecs, RPG::ECS::Entity entity, const Math::Vector<2>& coords) const; // Check entity intersect at position
 
     void  executePosition(RPG::ECS& ecs);                           // Update WorldComponent with new position of entities
     void  executePosition(RPG::ECS& ecs, RPG::ECS::Entity entity);  // Update WorldComponent with new position of a single entity

@@ -1,6 +1,7 @@
 #include <SFML/Network/IpAddress.hpp>
 
 #include "RolePlayingGame/ClientScene.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/BoardComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/CellComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
@@ -29,6 +30,7 @@ RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::uint16_t port, s
   _ecs()
 {
   // Register ECS components
+  _ecs.addComponent<RPG::BoardComponent>();
   _ecs.addComponent<RPG::CellComponent>();
   _ecs.addComponent<RPG::EntityComponent>();
   _ecs.addComponent<RPG::ModelComponent>();
@@ -52,6 +54,7 @@ RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::uint16_t port, s
   signature.set(_ecs.typeComponent<RPG::ModelComponent>());
   _ecs.addSystem<RPG::ClientModelSystem>(signature);
   signature.reset();
+  signature.set(_ecs.typeComponent<RPG::BoardComponent>());
   signature.set(_ecs.typeComponent<RPG::CellComponent>());
   signature.set(_ecs.typeComponent<RPG::ModelComponent>());
   signature.set(_ecs.typeComponent<RPG::ParticleEmitterComponent>());
@@ -98,8 +101,11 @@ bool  RPG::ClientScene::update(float elapsed)
   if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Left) == true) {
     auto cursorPixel = Game::Window::Instance().mouse().position();
     auto cursorCoords = _ecs.getSystem<RPG::ClientModelSystem>().getCamera().pixelToCoords({ (float)cursorPixel.x, (float)cursorPixel.y });
+    auto entity = _ecs.getSystem<RPG::ClientEntitySystem>().intersect(_ecs, cursorCoords);
     auto cell = _ecs.getSystem<RPG::ClientBoardSystem>().intersect(_ecs, cursorCoords);
-    std::cout << "Select cell: " << cursorCoords << " " << cell << std::endl;
+    std::cout << "Entity: " << entity << " ; Cell: " << cell << std::endl;
+
+    _ecs.getSystem<RPG::ClientBoardSystem>().setCursor(_ecs, _ecs.getSystem<RPG::ClientBoardSystem>().intersect(_ecs, cursorCoords));
   }
 
   // Send pending packets

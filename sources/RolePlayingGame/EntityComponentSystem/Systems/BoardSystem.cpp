@@ -1,5 +1,6 @@
 #include "RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/BoardComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/CellComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ParticleEmitterComponent.hpp"
@@ -86,12 +87,20 @@ RPG::ECS::Entity  RPG::ClientBoardSystem::getCursor() const
   return _cursorCell;
 }
 
-void  RPG::ClientBoardSystem::setCursor(RPG::ECS::Entity entity)
+void  RPG::ClientBoardSystem::setCursor(RPG::ECS& ecs, RPG::ECS::Entity entity)
 {
   assert((entity == RPG::ECS::InvalidEntity || entities.contains(entity) == true) && "Entity is not a cell");
 
+  // Cancel previous particle emitter
+  if (_cursorCell != RPG::ECS::InvalidEntity)
+    ecs.getComponent<RPG::ParticleEmitterComponent>(_cursorCell).duration = 0.f;
+
   // Set new cell of cursor
   _cursorCell = entity;
+
+  // Trigger new particle emitter
+  if (_cursorCell != RPG::ECS::InvalidEntity)
+    ecs.getComponent<RPG::ParticleEmitterComponent>(_cursorCell).duration = 999.f;
 }
 
 RPG::ECS::Entity  RPG::ClientBoardSystem::intersect(RPG::ECS& ecs, const Math::Vector<2>& coords) const
@@ -100,8 +109,6 @@ RPG::ECS::Entity  RPG::ClientBoardSystem::intersect(RPG::ECS& ecs, const Math::V
   std::size_t                                         count = 0;
 
   long  column = (long)std::round(coords.x() / RPG::CellOffset.x());
-
-  std::cout << "column: " << column << std::endl;
 
   // Get cells in column
   for (auto entity : entities) {
@@ -124,10 +131,11 @@ RPG::ECS::Entity  RPG::ClientBoardSystem::intersect(RPG::ECS& ecs, const Math::V
 
   // Get first cell matching Y coords
   for (int index = 0; index < count; index++) {
-    const auto& model = ecs.getComponent<RPG::ModelComponent>(cells[index]);
-    
+    const auto& cell = ecs.getComponent<RPG::CellComponent>(cells[index]);
+    float height = (cell.coordinates.x() + cell.coordinates.y()) * -RPG::CellOffset.y() - cell.height;
+
     // Check matching height
-    if (coords.y() > model.position.y() - model.position.z() - RPG::CellSize.y() / 2 && coords.y() < model.position.y() - model.position.z() + RPG::CellSize.y() / 2)
+    if (coords.y() > height - RPG::CellSize.y() / 2 && coords.y() < height + RPG::CellSize.y() / 2)
       return cells[index];
   }
 
@@ -166,10 +174,12 @@ void  RPG::ClientBoardSystem::executeCell(RPG::ECS& ecs, RPG::ECS::Entity entity
 {
   auto& cell = ecs.getComponent<RPG::CellComponent>(entity);
   auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
+  auto& particle = ecs.getComponent<RPG::ParticleEmitterComponent>(entity);
 
   model.position.x() = ((+cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::CellOffset.x();
   model.position.y() = ((-cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::CellOffset.y();
   model.position.z() = cell.height;
+  particle.position = model.position;
 }
 
 void  RPG::ClientBoardSystem::handlePacket(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
@@ -207,6 +217,7 @@ void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& c
     auto entity = ecs.createEntity();
 
     // Register component
+    ecs.addComponent<RPG::BoardComponent>(entity);
     ecs.addComponent<RPG::CellComponent>(entity, element->object());
     ecs.addComponent<RPG::ModelComponent>(entity);
     ecs.addComponent<RPG::ParticleEmitterComponent>(entity);
@@ -216,11 +227,37 @@ void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& c
 
     auto& modelComponent = ecs.getComponent<RPG::ModelComponent>(entity);
     auto& modelSystem = ecs.getSystem<RPG::ClientModelSystem>();
-
+    auto& particleComponent = ecs.getComponent<RPG::ParticleEmitterComponent>(entity);
+    
     // Initialize cell model
     modelComponent.layer = RPG::ModelComponent::Layer::LayerBoard;
     modelComponent.color.alpha = 0.125f;
     modelSystem.setModel(ecs, entity, "cell");
     modelSystem.setAnimation(ecs, entity, "select");
+
+    particleComponent.frequencyLow = 8.f;
+    particleComponent.frequencyHigh = 12.f;
+    particleComponent.size = { RPG::CellSize.x(), RPG::CellSize.y(), 0.f };
+    particleComponent.duration = 0.f;
+    particleComponent.particleLow.colorStart = RPG::Color(1.f, 1.f, 1.f, 0.4f);
+    particleComponent.particleLow.colorEnd = RPG::Color(1.f, 1.f, 1.f, 0.4f);
+    particleComponent.particleHigh.colorStart = RPG::Color(1.f, 1.f, 1.f, 0.8f);
+    particleComponent.particleHigh.colorEnd = RPG::Color(1.f, 1.f, 1.f, 0.8f);
+    particleComponent.particleLow.durationFadeIn = 0.3f;
+    particleComponent.particleHigh.durationFadeIn = 0.5f;
+    particleComponent.particleLow.durationLife = 0.8f;
+    particleComponent.particleHigh.durationLife = 1.2f;
+    particleComponent.particleLow.durationFadeOut = 0.3f;
+    particleComponent.particleHigh.durationFadeOut = 0.5f;
+    particleComponent.particleLow.physicsDrag = 0.f;
+    particleComponent.particleHigh.physicsDrag = 0.f;
+    particleComponent.particleLow.physicsFloor = std::numeric_limits<float>::min();
+    particleComponent.particleHigh.physicsFloor = std::numeric_limits<float>::min();
+    particleComponent.particleLow.physicsGravity = { 0.f, 0.f, +6.4f };
+    particleComponent.particleHigh.physicsGravity = { 0.f, 0.f, +9.6f };
+    particleComponent.particleLow.physicsSpeed = { 0.f, 0.f, +4.8f };
+    particleComponent.particleHigh.physicsSpeed = { 0.f, 0.f, +6.4f };
+
+    executeCell(ecs, entity, 0.f);
   }
 }
