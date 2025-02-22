@@ -42,18 +42,27 @@ void  RPG::ParticleEmitterSystem::executeParticleEmitter(RPG::ECS& ecs, RPG::ECS
     ecs.addComponent<RPG::ModelComponent>(particle);
     ecs.addComponent<RPG::ParticleComponent>(particle);
     
-    auto& particleDisplay = ecs.getComponent<RPG::ModelComponent>(particle);
+    auto& particleModel = ecs.getComponent<RPG::ModelComponent>(particle);
     auto& particleComponent = ecs.getComponent<RPG::ParticleComponent>(particle);
 
+    // Generate random position
+    auto direction = Math::Vector<3>(
+      Math::Random() - 0.5f, Math::Random() - 0.5f, Math::Random() - 0.5f
+    );
+
+    auto length = direction.length();
+
+    // Normalize random direction
+    if (length != 0.f)
+      direction *= std::cbrt(Math::Random()) / length;
+
     // Randomize initial position
-    particleDisplay.position =
-      emitter.position
-      + RPG::Position(Math::Random(emitter.size.x()), Math::Random(emitter.size.y()), Math::Random(emitter.size.z()))
-      - (emitter.size / 2.f);
+    particleModel.position = emitter.position + direction * emitter.size / 2;
+    particleModel.layer = RPG::ModelComponent::Layer::LayerEntity;
 
     // Set particle model
-    modelSystem.setModel(ecs, particle, emitter.model);
-    modelSystem.setAnimationRandom(ecs, particle, true);
+    //modelSystem.setModel(ecs, particle, emitter.model);
+    //modelSystem.setAnimationRandom(ecs, particle, true);
 
     // Randomize particle
     particleComponent.physicsSpeed = Math::Vector<3>(

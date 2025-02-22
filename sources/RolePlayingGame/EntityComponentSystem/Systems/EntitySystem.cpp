@@ -69,15 +69,15 @@ RPG::ECS::Entity  RPG::ClientEntitySystem::intersect(RPG::ECS& ecs, const Math::
     const auto& aModel = ecs.getComponent<RPG::ModelComponent>(aEntity);
     const auto& bModel = ecs.getComponent<RPG::ModelComponent>(bEntity);
 
-    if (aModel.position.y() > bModel.position.y())
+    if (aModel.position.x() + aModel.position.y() < bModel.position.x() + bModel.position.y())
       return true;
-    if (aModel.position.y() < bModel.position.y())
+    if (aModel.position.x() + aModel.position.y() > bModel.position.x() + bModel.position.y())
       return false;
     if (aModel.position.z() > bModel.position.z())
       return true;
     if (aModel.position.z() < bModel.position.z())
       return false;
-    return aModel.position.x() < bModel.position.x();
+    return aModel.position.x() - aModel.position.y() < bModel.position.x() - bModel.position.y();
     });
 
   // Find first matching entity
@@ -115,8 +115,8 @@ void  RPG::ClientEntitySystem::executePosition(RPG::ECS& ecs, RPG::ECS::Entity e
     cellHeight = ecs.getComponent<RPG::CellComponent>(cellEntity).height;
 
   // Compute display position
-  displayComponent.position.x() = ((+entityComponent.coordinates.x()) + (-entityComponent.coordinates.y()) + (+entityComponent.position.x())) * RPG::CellOffset.x();
-  displayComponent.position.y() = ((-entityComponent.coordinates.x()) + (-entityComponent.coordinates.y()) + (+entityComponent.position.y())) * RPG::CellOffset.y();
+  displayComponent.position.x() = entityComponent.coordinates.x() + entityComponent.position.x();
+  displayComponent.position.y() = entityComponent.coordinates.y() + entityComponent.position.y();
   displayComponent.position.z() = entityComponent.position.z() + cellHeight;
   displayComponent.direction = entityComponent.direction;
 }

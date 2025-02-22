@@ -44,7 +44,7 @@ namespace RPG
     };
 
     static const Bounds                         DefaultTexture;
-    static const Math::Vector<2, std::int16_t>  DefaultOrigin;
+    static const Math::Vector<2, float>         DefaultOrigin;
     static const Math::Vector<2, std::int16_t>  DefaultScale;
     static const RPG::Color                     DefaultColor;
     static const std::string                    DefaultPath;
@@ -53,7 +53,7 @@ namespace RPG
 
     Bounds                        texture;  // Bounds of texture
     Bounds                        select;   // Bounds for selection
-    Math::Vector<2, std::int16_t> origin;   // Origin of the sprite from drawing position
+    Math::Vector<2, float>        origin;   // Origin of the sprite from drawing position
     Math::Vector<2, std::int16_t> scale;    // Scaling of sprite
     RPG::Color                    color;    // Sprite color
     std::string                   path;     // Path of the texture

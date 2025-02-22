@@ -39,7 +39,7 @@ namespace RPG
   };
 
   const Math::Vector<2> CellSize = { 18.f, 12.f };
-  const Math::Vector<2> CellOffset = { 18.f, 6.f };
+  const Math::Vector<3> CellOffset = { 18.f, 6.f, 12.f };
 
   class Bounds // Bounding box
   {

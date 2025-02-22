@@ -169,15 +169,15 @@ void  RPG::ClientModelSystem::executeDraw(RPG::ECS& ecs)
       return true;
     if (aModel.layer > bModel.layer)
       return false;
-    if (aModel.position.y() < bModel.position.y())
+    if (aModel.position.x() + aModel.position.y() > bModel.position.x() + bModel.position.y())
       return true;
-    if (aModel.position.y() > bModel.position.y())
+    if (aModel.position.x() + aModel.position.y() < bModel.position.x() + bModel.position.y())
       return false;
     if (aModel.position.z() < bModel.position.z())
       return true;
     if (aModel.position.z() > bModel.position.z())
       return false;
-    return aModel.position.x() > bModel.position.x();
+    return aModel.position.x() - aModel.position.y() > bModel.position.x() - bModel.position.y();
     });
 
   // Set camera to world view
@@ -193,10 +193,14 @@ void  RPG::ClientModelSystem::executeDraw(RPG::ECS& ecs)
 
 void  RPG::ClientModelSystem::executeDraw(RPG::ECS& ecs, RPG::ECS::Entity entity)
 {
-  const auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
+  const auto&     model = ecs.getComponent<RPG::ModelComponent>(entity);
+  Math::Vector<2> position = {
+    (model.position.x() - model.position.y()) * +RPG::CellOffset.x(),
+    (model.position.x() + model.position.y()) * -RPG::CellOffset.y() + model.position.z() * -RPG::CellOffset.z()
+  };
 
   // Draw frame
-  model.actor.sprite(model.direction).draw({ model.position.x(), model.position.y() - model.position.z() }, model.color, model.outline);
+  model.actor.sprite(model.direction).draw(position, model.color, model.outline);
 }
 
 const RPG::Texture& RPG::ClientModelSystem::getTexture(const std::string& name)
@@ -238,9 +242,13 @@ const RPG::Camera&  RPG::ClientModelSystem::getCamera() const
 bool  RPG::ClientModelSystem::intersect(RPG::ECS& ecs, RPG::ECS::Entity entity, const Math::Vector<2>& coords) const
 {
   const auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
+  Math::Vector<2> position = {
+    (model.position.x() - model.position.y()) * +RPG::CellOffset.x(),
+    (model.position.x() + model.position.y()) * -RPG::CellOffset.y() + model.position.z() * -RPG::CellOffset.z()
+  };
 
   // Get intersection of coords with sprite
-  return model.actor.sprite(model.direction).bounds({ model.position.x(), model.position.y() - model.position.z() }).contains(coords);
+  return model.actor.sprite(model.direction).bounds(position).contains(coords);
 }
 
 void  RPG::ClientModelSystem::handlePacket(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)

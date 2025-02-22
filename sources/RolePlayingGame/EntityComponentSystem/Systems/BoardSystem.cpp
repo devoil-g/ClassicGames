@@ -157,9 +157,9 @@ void  RPG::ClientBoardSystem::executeCursor(RPG::ECS& ecs, float elapsed)
     const auto& cell = ecs.getComponent<RPG::CellComponent>(_cursorCell);
 
     model.color.alpha = 1.f;
-    model.position.x() = ((+cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::CellOffset.x();
-    model.position.y() = ((-cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::CellOffset.y();
-    model.position.z() = cell.height + 0.01f;
+    model.position.x() = (float)cell.coordinates.x();
+    model.position.y() = (float)cell.coordinates.y();
+    model.position.z() = cell.height + 0.001f;
   }
 }
 
@@ -176,8 +176,8 @@ void  RPG::ClientBoardSystem::executeCell(RPG::ECS& ecs, RPG::ECS::Entity entity
   auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
   auto& particle = ecs.getComponent<RPG::ParticleEmitterComponent>(entity);
 
-  model.position.x() = ((+cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::CellOffset.x();
-  model.position.y() = ((-cell.coordinates.x()) + (-cell.coordinates.y())) * RPG::CellOffset.y();
+  model.position.x() = (float)cell.coordinates.x();
+  model.position.y() = (float)cell.coordinates.y();
   model.position.z() = cell.height;
   particle.position = model.position;
 }
@@ -237,7 +237,7 @@ void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& c
 
     particleComponent.frequencyLow = 8.f;
     particleComponent.frequencyHigh = 12.f;
-    particleComponent.size = { RPG::CellSize.x(), RPG::CellSize.y(), 0.f };
+    particleComponent.size = { 0.75f, 0.75f, 0.f };
     particleComponent.duration = 0.f;
     particleComponent.particleLow.colorStart = RPG::Color(1.f, 1.f, 1.f, 0.4f);
     particleComponent.particleLow.colorEnd = RPG::Color(1.f, 1.f, 1.f, 0.4f);
@@ -253,10 +253,10 @@ void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& c
     particleComponent.particleHigh.physicsDrag = 0.f;
     particleComponent.particleLow.physicsFloor = std::numeric_limits<float>::min();
     particleComponent.particleHigh.physicsFloor = std::numeric_limits<float>::min();
-    particleComponent.particleLow.physicsGravity = { 0.f, 0.f, +6.4f };
-    particleComponent.particleHigh.physicsGravity = { 0.f, 0.f, +9.6f };
-    particleComponent.particleLow.physicsSpeed = { 0.f, 0.f, +4.8f };
-    particleComponent.particleHigh.physicsSpeed = { 0.f, 0.f, +6.4f };
+    particleComponent.particleLow.physicsGravity = { 0.f, 0.f, +1.f };
+    particleComponent.particleHigh.physicsGravity = { 0.f, 0.f, +1.25f };
+    particleComponent.particleLow.physicsSpeed = { 0.f, 0.f, +0.5f };
+    particleComponent.particleHigh.physicsSpeed = { 0.f, 0.f, +0.625f };
 
     executeCell(ecs, entity, 0.f);
   }

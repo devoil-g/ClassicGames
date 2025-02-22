@@ -6,7 +6,7 @@
 #include "System/Window.hpp"
 
 const RPG::Sprite::Bounds           RPG::Sprite::DefaultTexture = { .origin = { (std::int16_t)0, (std::int16_t)0 }, .size = { (std::int16_t)0, (std::int16_t)0 } };
-const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultOrigin = { (std::int16_t)0, (std::int16_t)0 };
+const Math::Vector<2, float>        RPG::Sprite::DefaultOrigin = { 0.f, 0.f };
 const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultScale = { (std::int16_t)1, (std::int16_t)1 };
 const RPG::Color                    RPG::Sprite::DefaultColor = RPG::Color::White;
 const std::string                   RPG::Sprite::DefaultPath = "error.png";
@@ -16,7 +16,7 @@ const RPG::Sprite RPG::Sprite::ErrorSprite;
 RPG::Sprite::Sprite() :
   texture{ .origin { (std::int16_t)0, (std::int16_t)0 }, .size = { (std::int16_t)8, (std::int16_t)8 } },
   select(texture),
-  origin((std::int16_t)4, (std::int16_t)4),
+  origin(4.f, 4.f),
   scale((std::int16_t)1, (std::int16_t)1),
   color(RPG::Color::White),
   path("error.png"),
@@ -70,13 +70,14 @@ void  RPG::Sprite::draw(const Math::Vector<2>& position, RPG::Color color, RPG::
   assert(pointer != nullptr && "Missing texture.");
 
   auto&           window = Game::Window::Instance();
+  Math::Vector<2> originTrunc;
+  Math::Vector<2> rounded(std::round(position.x() - std::modf(origin.x(), &originTrunc.x())), std::round(position.y() - std::modf(origin.y(), &originTrunc.y())));
   sf::Sprite      sprite;
-  Math::Vector<2> rounded(std::round(position.x()), std::round(position.y()));
 
   // Set properties
   sprite.setTexture(pointer->get());
   sprite.setTextureRect(sf::IntRect(texture.origin.x(), texture.origin.y(), texture.size.x(), texture.size.y()));
-  sprite.setOrigin((float)origin.x(), (float)origin.y());
+  sprite.setOrigin(originTrunc.x(), originTrunc.y());
   sprite.setScale((float)scale.x(), (float)scale.y());
   sprite.setColor(sf::Color((color * this->color).uint32()));
 
@@ -103,12 +104,13 @@ void  RPG::Sprite::draw(const Math::Vector<2>& position, RPG::Color color, RPG::
 RPG::Bounds RPG::Sprite::bounds(const Math::Vector<2>& position) const
 {
   sf::Sprite      sprite;
-  Math::Vector<2> rounded(std::round(position.x()), std::round(position.y()));
-
+  Math::Vector<2> originTrunc;
+  Math::Vector<2> rounded(std::round(position.x() - std::modf(origin.x(), &originTrunc.x())), std::round(position.y() - std::modf(origin.y(), &originTrunc.y())));
+  
   // Set properties
   sprite.setPosition(rounded.x(), rounded.y());
   sprite.setTextureRect(sf::IntRect(select.origin.x(), select.origin.y(), select.size.x(), select.size.y()));
-  sprite.setOrigin((float)origin.x(), (float)origin.y());
+  sprite.setOrigin(originTrunc.x(), originTrunc.y());
   sprite.setScale((float)scale.x(), (float)scale.y());
   
   // Use SFML to compute sprite bounds
