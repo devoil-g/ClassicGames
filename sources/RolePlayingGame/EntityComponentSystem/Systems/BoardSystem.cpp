@@ -108,7 +108,7 @@ RPG::ECS::Entity  RPG::ClientBoardSystem::intersect(RPG::ECS& ecs, const Math::V
   std::array<RPG::ECS::Entity, RPG::ECS::MaxEntities> cells;
   std::size_t                                         count = 0;
 
-  long  column = (long)std::round(coords.x() / RPG::CellOffset.x());
+  int column = (long)std::round(coords.x() / RPG::CellOffset.x());
 
   // Get cells in column
   for (auto entity : entities) {
@@ -132,7 +132,7 @@ RPG::ECS::Entity  RPG::ClientBoardSystem::intersect(RPG::ECS& ecs, const Math::V
   // Get first cell matching Y coords
   for (int index = 0; index < count; index++) {
     const auto& cell = ecs.getComponent<RPG::CellComponent>(cells[index]);
-    float height = (cell.coordinates.x() + cell.coordinates.y()) * -RPG::CellOffset.y() - cell.height;
+    float height = (cell.coordinates.x() + cell.coordinates.y()) * -RPG::CellOffset.y() + cell.height * -RPG::CellOffset.z();
 
     // Check matching height
     if (coords.y() > height - RPG::CellSize.y() / 2 && coords.y() < height + RPG::CellSize.y() / 2)
@@ -231,32 +231,33 @@ void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& c
     
     // Initialize cell model
     modelComponent.layer = RPG::ModelComponent::Layer::LayerBoard;
-    modelComponent.color.alpha = 0.125f;
+    modelComponent.color.alpha = 0.25f;
     modelSystem.setModel(ecs, entity, "cell");
     modelSystem.setAnimation(ecs, entity, "select");
 
-    particleComponent.frequencyLow = 8.f;
-    particleComponent.frequencyHigh = 12.f;
+    particleComponent.animation = "simple";
+    particleComponent.frequencyLow = 16.f;
+    particleComponent.frequencyHigh = 24.f;
     particleComponent.size = { 0.75f, 0.75f, 0.f };
     particleComponent.duration = 0.f;
     particleComponent.particleLow.colorStart = RPG::Color(1.f, 1.f, 1.f, 0.4f);
     particleComponent.particleLow.colorEnd = RPG::Color(1.f, 1.f, 1.f, 0.4f);
     particleComponent.particleHigh.colorStart = RPG::Color(1.f, 1.f, 1.f, 0.8f);
     particleComponent.particleHigh.colorEnd = RPG::Color(1.f, 1.f, 1.f, 0.8f);
-    particleComponent.particleLow.durationFadeIn = 0.3f;
-    particleComponent.particleHigh.durationFadeIn = 0.5f;
-    particleComponent.particleLow.durationLife = 0.8f;
-    particleComponent.particleHigh.durationLife = 1.2f;
-    particleComponent.particleLow.durationFadeOut = 0.3f;
-    particleComponent.particleHigh.durationFadeOut = 0.5f;
+    particleComponent.particleLow.durationFadeIn = 0.2f;
+    particleComponent.particleHigh.durationFadeIn = 0.3f;
+    particleComponent.particleLow.durationLife = 0.4f;
+    particleComponent.particleHigh.durationLife = 0.6f;
+    particleComponent.particleLow.durationFadeOut = 0.2f;
+    particleComponent.particleHigh.durationFadeOut = 0.3f;
     particleComponent.particleLow.physicsDrag = 0.f;
     particleComponent.particleHigh.physicsDrag = 0.f;
     particleComponent.particleLow.physicsFloor = std::numeric_limits<float>::min();
     particleComponent.particleHigh.physicsFloor = std::numeric_limits<float>::min();
-    particleComponent.particleLow.physicsGravity = { 0.f, 0.f, +1.f };
-    particleComponent.particleHigh.physicsGravity = { 0.f, 0.f, +1.25f };
-    particleComponent.particleLow.physicsSpeed = { 0.f, 0.f, +0.5f };
-    particleComponent.particleHigh.physicsSpeed = { 0.f, 0.f, +0.625f };
+    particleComponent.particleLow.physicsGravity = { 0.f, 0.f, +2.f };
+    particleComponent.particleHigh.physicsGravity = { 0.f, 0.f, +2.5f };
+    particleComponent.particleLow.physicsSpeed = { 0.f, 0.f, +0.2f };
+    particleComponent.particleHigh.physicsSpeed = { 0.f, 0.f, +0.3f };
 
     executeCell(ecs, entity, 0.f);
   }

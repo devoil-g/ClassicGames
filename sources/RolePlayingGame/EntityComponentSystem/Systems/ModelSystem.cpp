@@ -225,14 +225,6 @@ void  RPG::ClientModelSystem::setAnimation(RPG::ECS& ecs, RPG::ECS::Entity entit
   model.actor.setAnimation(name, loop, speed);
 }
 
-void  RPG::ClientModelSystem::setAnimationRandom(RPG::ECS& ecs, RPG::ECS::Entity entity, bool loop, float speed)
-{
-  auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
-
-  // Set component's actor animation
-  model.actor.setAnimationRandom(loop, speed);
-}
-
 const RPG::Camera&  RPG::ClientModelSystem::getCamera() const
 {
   // Get current camera

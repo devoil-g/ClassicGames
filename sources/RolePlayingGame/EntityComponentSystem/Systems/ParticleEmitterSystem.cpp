@@ -61,8 +61,8 @@ void  RPG::ParticleEmitterSystem::executeParticleEmitter(RPG::ECS& ecs, RPG::ECS
     particleModel.layer = RPG::ModelComponent::Layer::LayerEntity;
 
     // Set particle model
-    //modelSystem.setModel(ecs, particle, emitter.model);
-    //modelSystem.setAnimationRandom(ecs, particle, true);
+    modelSystem.setModel(ecs, particle, "particles");
+    modelSystem.setAnimation(ecs, particle, emitter.animation, true);
 
     // Randomize particle
     particleComponent.physicsSpeed = Math::Vector<3>(

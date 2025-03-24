@@ -90,7 +90,6 @@ namespace RPG
 
       void  setModel(const RPG::Model& model);                                            // Reset actor's model
       void  setAnimation(const std::string& name, bool loop = false, float speed = 1.f);  // Start an animation
-      void  setAnimationRandom(bool loop = false, float speed = 1.f);                     // Start a random animation (used for particles)
 
       float getAnimationElapsed() const;  // Get elapsed time in current animation
       float getAnimationDuration() const; // Get duration of current animation

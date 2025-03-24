@@ -98,15 +98,17 @@ bool  RPG::ClientScene::update(float elapsed)
   _ecs.getSystem<RPG::ClientEntitySystem>().executePosition(_ecs);
 
   // TODO
-  if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Left) == true) {
-    auto cursorPixel = Game::Window::Instance().mouse().position();
-    auto cursorCoords = _ecs.getSystem<RPG::ClientModelSystem>().getCamera().pixelToCoords({ (float)cursorPixel.x, (float)cursorPixel.y });
-    auto entity = _ecs.getSystem<RPG::ClientEntitySystem>().intersect(_ecs, cursorCoords);
-    auto cell = _ecs.getSystem<RPG::ClientBoardSystem>().intersect(_ecs, cursorCoords);
-    std::cout << "Entity: " << entity << " ; Cell: " << cell << std::endl;
+  auto cursorPixel = Game::Window::Instance().mouse().position();
+  auto cursorCoords = _ecs.getSystem<RPG::ClientModelSystem>().getCamera().pixelToCoords({ (float)cursorPixel.x, (float)cursorPixel.y });
+  auto entity = _ecs.getSystem<RPG::ClientEntitySystem>().intersect(_ecs, cursorCoords);
+  auto cell = _ecs.getSystem<RPG::ClientBoardSystem>().intersect(_ecs, cursorCoords);
 
-    _ecs.getSystem<RPG::ClientBoardSystem>().setCursor(_ecs, _ecs.getSystem<RPG::ClientBoardSystem>().intersect(_ecs, cursorCoords));
+  if (entity != RPG::ECS::InvalidEntity) {
+    
+    _ecs.getSystem<RPG::ClientBoardSystem>().setCursor(_ecs, RPG::ECS::InvalidEntity);
   }
+  else
+    _ecs.getSystem<RPG::ClientBoardSystem>().setCursor(_ecs, cell);
 
   // Send pending packets
   updateSend(elapsed);
@@ -172,5 +174,6 @@ void  RPG::ClientScene::updateSend(float elapsed)
 void  RPG::ClientScene::draw()
 {
   // Draw entities
+  _ecs.getSystem<RPG::ClientControllerSystem>().executeDraw(_ecs);
   _ecs.getSystem<RPG::ClientModelSystem>().executeDraw(_ecs);
 }

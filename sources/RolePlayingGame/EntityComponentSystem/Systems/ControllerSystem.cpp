@@ -3,6 +3,7 @@
 #include "RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ControllerComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
 #include "RolePlayingGame/Server.hpp"
 #include "System/Window.hpp"
 
@@ -272,7 +273,22 @@ void  RPG::ClientControllerSystem::executeUpdate(RPG::ECS& ecs, float elapsed)
 
 void  RPG::ClientControllerSystem::executeDraw(RPG::ECS& ecs)
 {
-  
+  for (auto entity : entities)
+  {
+    auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
+
+    // Reset outline
+    model.outline = RPG::Color::Transparent;
+
+    // Assigned characters have black outline
+    if (std::find(_assigned.begin(), _assigned.end(), entity) != _assigned.end()) {
+      model.outline = RPG::Color::Black;
+
+      // Controller entity have white outline
+      if (entity == _controlled)
+        model.outline = RPG::Color::White;
+    }
+  }
 }
 
 void  RPG::ClientControllerSystem::select(RPG::ECS& ecs, RPG::ECS::Entity entity)

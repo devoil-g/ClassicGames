@@ -157,21 +157,6 @@ void  RPG::Model::Actor::setAnimation(const std::string& name, bool loop, float 
   }
 }
 
-void  RPG::Model::Actor::setAnimationRandom(bool loop, float speed)
-{
-  // No model
-  if (_model == nullptr)
-    return;
-
-  // Error, no animation
-  if (_model->_animations.empty() == true)
-    setAnimation(RPG::Model::Actor::DefaultAnimation, 1.f, true);
-
-  // Select a random animation
-  else
-    setAnimation(std::next(_model->_animations.begin(), std::rand() % _model->_animations.size())->first, loop, speed);
-}
-
 float RPG::Model::Actor::getAnimationElapsed() const
 {
   // Get elapsed time in current animation

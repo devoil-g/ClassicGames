@@ -733,7 +733,7 @@
       "model": "red"
     },
     {
-      "id": "player_3",
+      "id": "player_4",
       "coordinates": [ 4, 3 ],
       "direction": "SW",
       "model": "yellow"
@@ -741,6 +741,28 @@
   ],
 
   "models": [
+    {
+      "name": "particles",
+      "animations": [
+        {
+          "name": "simple",
+          "frames": [
+            {
+              "duration": 0,
+              "sprites": {
+                "texture": {
+                  "origin": [ 0, 0 ],
+                  "size": [ 16, 16 ]
+                },
+                "origin": [ 7.5, 7.5 ],
+                "path": "particles.png"
+              }
+            }
+          ]
+        }
+      ]
+    },
+
     {
       "name": "blue",
       "animations": [
@@ -756,6 +778,10 @@
                     "origin": [ 0, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -765,6 +791,10 @@
                   "texture": {
                     "origin": [ 0, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -776,6 +806,10 @@
                     "origin": [ 0, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -785,6 +819,10 @@
                   "texture": {
                     "origin": [ 0, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -796,6 +834,10 @@
                     "origin": [ 0, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -805,6 +847,10 @@
                   "texture": {
                     "origin": [ 0, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -821,6 +867,10 @@
                     "origin": [ 64, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -830,6 +880,10 @@
                   "texture": {
                     "origin": [ 64, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -841,6 +895,10 @@
                     "origin": [ 64, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -850,6 +908,10 @@
                   "texture": {
                     "origin": [ 64, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -861,6 +923,10 @@
                     "origin": [ 64, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -870,6 +936,10 @@
                   "texture": {
                     "origin": [ 64, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 14, 4 ],
+                    "size": [ 4, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -886,6 +956,10 @@
                     "origin": [ 96, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -895,6 +969,10 @@
                   "texture": {
                     "origin": [ 96, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -906,6 +984,10 @@
                     "origin": [ 96, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -915,6 +997,10 @@
                   "texture": {
                     "origin": [ 96, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -926,6 +1012,10 @@
                     "origin": [ 96, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -935,6 +1025,10 @@
                   "texture": {
                     "origin": [ 96, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -951,6 +1045,10 @@
                     "origin": [ 0, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -960,6 +1058,10 @@
                   "texture": {
                     "origin": [ 0, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -971,6 +1073,10 @@
                     "origin": [ 0, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -980,6 +1086,10 @@
                   "texture": {
                     "origin": [ 0, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -991,6 +1101,10 @@
                     "origin": [ 0, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1000,6 +1114,10 @@
                   "texture": {
                     "origin": [ 0, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1016,6 +1134,10 @@
                     "origin": [ 32, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1025,6 +1147,10 @@
                   "texture": {
                     "origin": [ 32, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1036,6 +1162,10 @@
                     "origin": [ 32, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1045,6 +1175,10 @@
                   "texture": {
                     "origin": [ 32, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1056,6 +1190,10 @@
                     "origin": [ 32, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1065,6 +1203,10 @@
                   "texture": {
                     "origin": [ 32, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1086,6 +1228,10 @@
                     "origin": [ 0, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1095,6 +1241,10 @@
                   "texture": {
                     "origin": [ 0, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1106,6 +1256,10 @@
                     "origin": [ 0, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1115,6 +1269,10 @@
                   "texture": {
                     "origin": [ 0, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1126,6 +1284,10 @@
                     "origin": [ 0, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1135,6 +1297,10 @@
                   "texture": {
                     "origin": [ 0, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1151,6 +1317,10 @@
                     "origin": [ 32, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1160,6 +1330,10 @@
                   "texture": {
                     "origin": [ 32, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1171,6 +1345,10 @@
                     "origin": [ 32, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1180,6 +1358,10 @@
                   "texture": {
                     "origin": [ 32, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1191,6 +1373,10 @@
                     "origin": [ 32, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1200,6 +1386,10 @@
                   "texture": {
                     "origin": [ 32, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1216,6 +1406,10 @@
                     "origin": [ 64, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1225,6 +1419,10 @@
                   "texture": {
                     "origin": [ 64, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1236,6 +1434,10 @@
                     "origin": [ 64, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1245,6 +1447,10 @@
                   "texture": {
                     "origin": [ 64, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1256,6 +1462,10 @@
                     "origin": [ 64, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1265,6 +1475,10 @@
                   "texture": {
                     "origin": [ 64, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1281,6 +1495,10 @@
                     "origin": [ 96, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1290,6 +1508,10 @@
                   "texture": {
                     "origin": [ 96, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1301,6 +1523,10 @@
                     "origin": [ 96, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1310,6 +1536,10 @@
                   "texture": {
                     "origin": [ 96, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1321,6 +1551,10 @@
                     "origin": [ 96, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1330,6 +1564,10 @@
                   "texture": {
                     "origin": [ 96, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1346,6 +1584,10 @@
                     "origin": [ 128, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1355,6 +1597,10 @@
                   "texture": {
                     "origin": [ 128, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1366,6 +1612,10 @@
                     "origin": [ 128, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1375,6 +1625,10 @@
                   "texture": {
                     "origin": [ 128, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1386,6 +1640,10 @@
                     "origin": [ 128, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1395,6 +1653,10 @@
                   "texture": {
                     "origin": [ 128, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1411,6 +1673,10 @@
                     "origin": [ 160, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1420,6 +1686,10 @@
                   "texture": {
                     "origin": [ 160, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1431,6 +1701,10 @@
                     "origin": [ 160, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1440,6 +1714,10 @@
                   "texture": {
                     "origin": [ 160, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1451,6 +1729,10 @@
                     "origin": [ 160, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1460,6 +1742,10 @@
                   "texture": {
                     "origin": [ 160, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1476,6 +1762,10 @@
                     "origin": [ 192, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1485,6 +1775,10 @@
                   "texture": {
                     "origin": [ 192, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1496,6 +1790,10 @@
                     "origin": [ 192, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1505,6 +1803,10 @@
                   "texture": {
                     "origin": [ 192, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1516,6 +1818,10 @@
                     "origin": [ 192, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1525,6 +1831,10 @@
                   "texture": {
                     "origin": [ 192, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1541,6 +1851,10 @@
                     "origin": [ 224, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1550,6 +1864,10 @@
                   "texture": {
                     "origin": [ 224, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1561,6 +1879,10 @@
                     "origin": [ 224, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1570,6 +1892,10 @@
                   "texture": {
                     "origin": [ 224, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1581,6 +1907,10 @@
                     "origin": [ 224, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1590,6 +1920,10 @@
                   "texture": {
                     "origin": [ 224, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1611,6 +1945,10 @@
                     "origin": [ 0, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1620,6 +1958,10 @@
                   "texture": {
                     "origin": [ 0, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1631,6 +1973,10 @@
                     "origin": [ 0, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1640,6 +1986,10 @@
                   "texture": {
                     "origin": [ 0, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1651,6 +2001,10 @@
                     "origin": [ 0, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1660,6 +2014,10 @@
                   "texture": {
                     "origin": [ 0, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1676,6 +2034,10 @@
                     "origin": [ 32, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1685,6 +2047,10 @@
                   "texture": {
                     "origin": [ 32, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1696,6 +2062,10 @@
                     "origin": [ 32, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1705,6 +2075,10 @@
                   "texture": {
                     "origin": [ 32, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1716,6 +2090,10 @@
                     "origin": [ 32, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1725,6 +2103,10 @@
                   "texture": {
                     "origin": [ 32, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1741,6 +2123,10 @@
                     "origin": [ 64, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1750,6 +2136,10 @@
                   "texture": {
                     "origin": [ 64, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1761,6 +2151,10 @@
                     "origin": [ 64, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1770,6 +2164,10 @@
                   "texture": {
                     "origin": [ 64, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1781,6 +2179,10 @@
                     "origin": [ 64, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1790,6 +2192,10 @@
                   "texture": {
                     "origin": [ 64, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1806,6 +2212,10 @@
                     "origin": [ 96, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1815,6 +2225,10 @@
                   "texture": {
                     "origin": [ 96, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1826,6 +2240,10 @@
                     "origin": [ 96, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1835,6 +2253,10 @@
                   "texture": {
                     "origin": [ 96, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1846,6 +2268,10 @@
                     "origin": [ 96, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1855,6 +2281,10 @@
                   "texture": {
                     "origin": [ 96, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1871,6 +2301,10 @@
                     "origin": [ 128, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1880,6 +2314,10 @@
                   "texture": {
                     "origin": [ 128, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1891,6 +2329,10 @@
                     "origin": [ 128, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1900,6 +2342,10 @@
                   "texture": {
                     "origin": [ 128, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1911,6 +2357,10 @@
                     "origin": [ 128, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1920,6 +2370,10 @@
                   "texture": {
                     "origin": [ 128, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1936,6 +2390,10 @@
                     "origin": [ 160, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1945,6 +2403,10 @@
                   "texture": {
                     "origin": [ 160, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1956,6 +2418,10 @@
                     "origin": [ 160, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1965,6 +2431,10 @@
                   "texture": {
                     "origin": [ 160, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -1976,6 +2446,10 @@
                     "origin": [ 160, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -1985,6 +2459,10 @@
                   "texture": {
                     "origin": [ 160, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2001,6 +2479,10 @@
                     "origin": [ 192, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -2010,6 +2492,10 @@
                   "texture": {
                     "origin": [ 192, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2021,6 +2507,10 @@
                     "origin": [ 192, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -2030,6 +2520,10 @@
                   "texture": {
                     "origin": [ 192, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2041,6 +2535,10 @@
                     "origin": [ 192, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -2050,6 +2548,10 @@
                   "texture": {
                     "origin": [ 192, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2066,6 +2568,10 @@
                     "origin": [ 224, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -2075,6 +2581,10 @@
                   "texture": {
                     "origin": [ 224, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2086,6 +2596,10 @@
                     "origin": [ 224, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -2095,6 +2609,10 @@
                   "texture": {
                     "origin": [ 224, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2106,6 +2624,10 @@
                     "origin": [ 224, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "blue.png"
@@ -2115,6 +2637,10 @@
                   "texture": {
                     "origin": [ 224, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2142,6 +2668,10 @@
                     "origin": [ 0, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2151,6 +2681,10 @@
                   "texture": {
                     "origin": [ 0, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2162,6 +2696,10 @@
                     "origin": [ 0, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2171,6 +2709,10 @@
                   "texture": {
                     "origin": [ 0, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2182,6 +2724,10 @@
                     "origin": [ 0, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2191,6 +2737,10 @@
                   "texture": {
                     "origin": [ 0, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2207,6 +2757,10 @@
                     "origin": [ 64, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2216,6 +2770,10 @@
                   "texture": {
                     "origin": [ 64, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2227,6 +2785,10 @@
                     "origin": [ 64, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2236,6 +2798,10 @@
                   "texture": {
                     "origin": [ 64, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2247,6 +2813,10 @@
                     "origin": [ 64, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2256,6 +2826,10 @@
                   "texture": {
                     "origin": [ 64, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 14, 4 ],
+                    "size": [ 4, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2272,6 +2846,10 @@
                     "origin": [ 96, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2281,6 +2859,10 @@
                   "texture": {
                     "origin": [ 96, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2292,6 +2874,10 @@
                     "origin": [ 96, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2301,6 +2887,10 @@
                   "texture": {
                     "origin": [ 96, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2312,6 +2902,10 @@
                     "origin": [ 96, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2321,6 +2915,10 @@
                   "texture": {
                     "origin": [ 96, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2337,6 +2935,10 @@
                     "origin": [ 0, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2346,6 +2948,10 @@
                   "texture": {
                     "origin": [ 0, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2357,6 +2963,10 @@
                     "origin": [ 0, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2366,6 +2976,10 @@
                   "texture": {
                     "origin": [ 0, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2377,6 +2991,10 @@
                     "origin": [ 0, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2386,6 +3004,10 @@
                   "texture": {
                     "origin": [ 0, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2402,6 +3024,10 @@
                     "origin": [ 32, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2411,6 +3037,10 @@
                   "texture": {
                     "origin": [ 32, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2422,6 +3052,10 @@
                     "origin": [ 32, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2431,6 +3065,10 @@
                   "texture": {
                     "origin": [ 32, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2442,6 +3080,10 @@
                     "origin": [ 32, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2451,6 +3093,10 @@
                   "texture": {
                     "origin": [ 32, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2472,6 +3118,10 @@
                     "origin": [ 0, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2481,6 +3131,10 @@
                   "texture": {
                     "origin": [ 0, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2492,6 +3146,10 @@
                     "origin": [ 0, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2501,6 +3159,10 @@
                   "texture": {
                     "origin": [ 0, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2512,6 +3174,10 @@
                     "origin": [ 0, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2521,6 +3187,10 @@
                   "texture": {
                     "origin": [ 0, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2537,6 +3207,10 @@
                     "origin": [ 32, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2546,6 +3220,10 @@
                   "texture": {
                     "origin": [ 32, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2557,6 +3235,10 @@
                     "origin": [ 32, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2566,6 +3248,10 @@
                   "texture": {
                     "origin": [ 32, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2577,6 +3263,10 @@
                     "origin": [ 32, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2586,6 +3276,10 @@
                   "texture": {
                     "origin": [ 32, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2602,6 +3296,10 @@
                     "origin": [ 64, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2611,6 +3309,10 @@
                   "texture": {
                     "origin": [ 64, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2622,6 +3324,10 @@
                     "origin": [ 64, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2631,6 +3337,10 @@
                   "texture": {
                     "origin": [ 64, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2642,6 +3352,10 @@
                     "origin": [ 64, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2651,6 +3365,10 @@
                   "texture": {
                     "origin": [ 64, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2667,6 +3385,10 @@
                     "origin": [ 96, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2676,6 +3398,10 @@
                   "texture": {
                     "origin": [ 96, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2687,6 +3413,10 @@
                     "origin": [ 96, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2696,6 +3426,10 @@
                   "texture": {
                     "origin": [ 96, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2707,6 +3441,10 @@
                     "origin": [ 96, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2716,6 +3454,10 @@
                   "texture": {
                     "origin": [ 96, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2732,6 +3474,10 @@
                     "origin": [ 128, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2741,6 +3487,10 @@
                   "texture": {
                     "origin": [ 128, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2752,6 +3502,10 @@
                     "origin": [ 128, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2761,6 +3515,10 @@
                   "texture": {
                     "origin": [ 128, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2772,6 +3530,10 @@
                     "origin": [ 128, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2781,6 +3543,10 @@
                   "texture": {
                     "origin": [ 128, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2797,6 +3563,10 @@
                     "origin": [ 160, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2806,6 +3576,10 @@
                   "texture": {
                     "origin": [ 160, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2817,6 +3591,10 @@
                     "origin": [ 160, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2826,6 +3604,10 @@
                   "texture": {
                     "origin": [ 160, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2837,6 +3619,10 @@
                     "origin": [ 160, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2846,6 +3632,10 @@
                   "texture": {
                     "origin": [ 160, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2862,6 +3652,10 @@
                     "origin": [ 192, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2871,6 +3665,10 @@
                   "texture": {
                     "origin": [ 192, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2882,6 +3680,10 @@
                     "origin": [ 192, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2891,6 +3693,10 @@
                   "texture": {
                     "origin": [ 192, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2902,6 +3708,10 @@
                     "origin": [ 192, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2911,6 +3721,10 @@
                   "texture": {
                     "origin": [ 192, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2927,6 +3741,10 @@
                     "origin": [ 224, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2936,6 +3754,10 @@
                   "texture": {
                     "origin": [ 224, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2947,6 +3769,10 @@
                     "origin": [ 224, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2956,6 +3782,10 @@
                   "texture": {
                     "origin": [ 224, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2967,6 +3797,10 @@
                     "origin": [ 224, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -2976,6 +3810,10 @@
                   "texture": {
                     "origin": [ 224, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -2997,6 +3835,10 @@
                     "origin": [ 0, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3006,6 +3848,10 @@
                   "texture": {
                     "origin": [ 0, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3017,6 +3863,10 @@
                     "origin": [ 0, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3026,6 +3876,10 @@
                   "texture": {
                     "origin": [ 0, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3037,6 +3891,10 @@
                     "origin": [ 0, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3046,6 +3904,10 @@
                   "texture": {
                     "origin": [ 0, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3062,6 +3924,10 @@
                     "origin": [ 32, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3071,6 +3937,10 @@
                   "texture": {
                     "origin": [ 32, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3082,6 +3952,10 @@
                     "origin": [ 32, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3091,6 +3965,10 @@
                   "texture": {
                     "origin": [ 32, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3102,6 +3980,10 @@
                     "origin": [ 32, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3111,6 +3993,10 @@
                   "texture": {
                     "origin": [ 32, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3127,6 +4013,10 @@
                     "origin": [ 64, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3136,6 +4026,10 @@
                   "texture": {
                     "origin": [ 64, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3147,6 +4041,10 @@
                     "origin": [ 64, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3156,6 +4054,10 @@
                   "texture": {
                     "origin": [ 64, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3167,6 +4069,10 @@
                     "origin": [ 64, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3176,6 +4082,10 @@
                   "texture": {
                     "origin": [ 64, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3192,6 +4102,10 @@
                     "origin": [ 96, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3201,6 +4115,10 @@
                   "texture": {
                     "origin": [ 96, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3212,6 +4130,10 @@
                     "origin": [ 96, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3221,6 +4143,10 @@
                   "texture": {
                     "origin": [ 96, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3232,6 +4158,10 @@
                     "origin": [ 96, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3241,6 +4171,10 @@
                   "texture": {
                     "origin": [ 96, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3257,6 +4191,10 @@
                     "origin": [ 128, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3266,6 +4204,10 @@
                   "texture": {
                     "origin": [ 128, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3277,6 +4219,10 @@
                     "origin": [ 128, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3286,6 +4232,10 @@
                   "texture": {
                     "origin": [ 128, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3297,6 +4247,10 @@
                     "origin": [ 128, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3306,6 +4260,10 @@
                   "texture": {
                     "origin": [ 128, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3322,6 +4280,10 @@
                     "origin": [ 160, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3331,6 +4293,10 @@
                   "texture": {
                     "origin": [ 160, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3342,6 +4308,10 @@
                     "origin": [ 160, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3351,6 +4321,10 @@
                   "texture": {
                     "origin": [ 160, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3362,6 +4336,10 @@
                     "origin": [ 160, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3371,6 +4349,10 @@
                   "texture": {
                     "origin": [ 160, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3387,6 +4369,10 @@
                     "origin": [ 192, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3396,6 +4382,10 @@
                   "texture": {
                     "origin": [ 192, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3407,6 +4397,10 @@
                     "origin": [ 192, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3416,6 +4410,10 @@
                   "texture": {
                     "origin": [ 192, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3427,6 +4425,10 @@
                     "origin": [ 192, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3436,6 +4438,10 @@
                   "texture": {
                     "origin": [ 192, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3452,6 +4458,10 @@
                     "origin": [ 224, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3461,6 +4471,10 @@
                   "texture": {
                     "origin": [ 224, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3472,6 +4486,10 @@
                     "origin": [ 224, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3481,6 +4499,10 @@
                   "texture": {
                     "origin": [ 224, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3492,6 +4514,10 @@
                     "origin": [ 224, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "green.png"
@@ -3501,6 +4527,10 @@
                   "texture": {
                     "origin": [ 224, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3528,6 +4558,10 @@
                     "origin": [ 0, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3537,6 +4571,10 @@
                   "texture": {
                     "origin": [ 0, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3548,6 +4586,10 @@
                     "origin": [ 0, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3557,6 +4599,10 @@
                   "texture": {
                     "origin": [ 0, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3568,6 +4614,10 @@
                     "origin": [ 0, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3577,6 +4627,10 @@
                   "texture": {
                     "origin": [ 0, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3593,6 +4647,10 @@
                     "origin": [ 64, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3602,6 +4660,10 @@
                   "texture": {
                     "origin": [ 64, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3613,6 +4675,10 @@
                     "origin": [ 64, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3622,6 +4688,10 @@
                   "texture": {
                     "origin": [ 64, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3633,6 +4703,10 @@
                     "origin": [ 64, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3642,6 +4716,10 @@
                   "texture": {
                     "origin": [ 64, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3658,6 +4736,10 @@
                     "origin": [ 96, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3667,6 +4749,10 @@
                   "texture": {
                     "origin": [ 96, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3678,6 +4764,10 @@
                     "origin": [ 96, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3687,6 +4777,10 @@
                   "texture": {
                     "origin": [ 96, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3698,6 +4792,10 @@
                     "origin": [ 96, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3707,6 +4805,10 @@
                   "texture": {
                     "origin": [ 96, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3723,6 +4825,10 @@
                     "origin": [ 0, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3732,6 +4838,10 @@
                   "texture": {
                     "origin": [ 0, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3743,6 +4853,10 @@
                     "origin": [ 0, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3752,6 +4866,10 @@
                   "texture": {
                     "origin": [ 0, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3763,6 +4881,10 @@
                     "origin": [ 0, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3772,6 +4894,10 @@
                   "texture": {
                     "origin": [ 0, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3788,6 +4914,10 @@
                     "origin": [ 32, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3797,6 +4927,10 @@
                   "texture": {
                     "origin": [ 32, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3808,6 +4942,10 @@
                     "origin": [ 32, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3817,6 +4955,10 @@
                   "texture": {
                     "origin": [ 32, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3828,6 +4970,10 @@
                     "origin": [ 32, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3837,6 +4983,10 @@
                   "texture": {
                     "origin": [ 32, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3858,6 +5008,10 @@
                     "origin": [ 0, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3867,6 +5021,10 @@
                   "texture": {
                     "origin": [ 0, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3878,6 +5036,10 @@
                     "origin": [ 0, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3887,6 +5049,10 @@
                   "texture": {
                     "origin": [ 0, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3898,6 +5064,10 @@
                     "origin": [ 0, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3907,6 +5077,10 @@
                   "texture": {
                     "origin": [ 0, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3923,6 +5097,10 @@
                     "origin": [ 32, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3932,6 +5110,10 @@
                   "texture": {
                     "origin": [ 32, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3943,6 +5125,10 @@
                     "origin": [ 32, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3952,6 +5138,10 @@
                   "texture": {
                     "origin": [ 32, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3963,6 +5153,10 @@
                     "origin": [ 32, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3972,6 +5166,10 @@
                   "texture": {
                     "origin": [ 32, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -3988,6 +5186,10 @@
                     "origin": [ 64, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -3997,6 +5199,10 @@
                   "texture": {
                     "origin": [ 64, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4008,6 +5214,10 @@
                     "origin": [ 64, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4017,6 +5227,10 @@
                   "texture": {
                     "origin": [ 64, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4028,6 +5242,10 @@
                     "origin": [ 64, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4037,6 +5255,10 @@
                   "texture": {
                     "origin": [ 64, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4053,6 +5275,10 @@
                     "origin": [ 96, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4062,6 +5288,10 @@
                   "texture": {
                     "origin": [ 96, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4073,6 +5303,10 @@
                     "origin": [ 96, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4082,6 +5316,10 @@
                   "texture": {
                     "origin": [ 96, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4093,6 +5331,10 @@
                     "origin": [ 96, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4102,6 +5344,10 @@
                   "texture": {
                     "origin": [ 96, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4118,6 +5364,10 @@
                     "origin": [ 128, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4127,6 +5377,10 @@
                   "texture": {
                     "origin": [ 128, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4138,6 +5392,10 @@
                     "origin": [ 128, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4147,6 +5405,10 @@
                   "texture": {
                     "origin": [ 128, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4158,6 +5420,10 @@
                     "origin": [ 128, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4167,6 +5433,10 @@
                   "texture": {
                     "origin": [ 128, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4183,6 +5453,10 @@
                     "origin": [ 160, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4192,6 +5466,10 @@
                   "texture": {
                     "origin": [ 160, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4203,6 +5481,10 @@
                     "origin": [ 160, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4212,6 +5494,10 @@
                   "texture": {
                     "origin": [ 160, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4223,6 +5509,10 @@
                     "origin": [ 160, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4232,6 +5522,10 @@
                   "texture": {
                     "origin": [ 160, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4248,6 +5542,10 @@
                     "origin": [ 192, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4257,6 +5555,10 @@
                   "texture": {
                     "origin": [ 192, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4268,6 +5570,10 @@
                     "origin": [ 192, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4277,6 +5583,10 @@
                   "texture": {
                     "origin": [ 192, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4288,6 +5598,10 @@
                     "origin": [ 192, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4297,6 +5611,10 @@
                   "texture": {
                     "origin": [ 192, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4313,6 +5631,10 @@
                     "origin": [ 224, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4322,6 +5644,10 @@
                   "texture": {
                     "origin": [ 224, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4333,6 +5659,10 @@
                     "origin": [ 224, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4342,6 +5672,10 @@
                   "texture": {
                     "origin": [ 224, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4353,6 +5687,10 @@
                     "origin": [ 224, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4362,6 +5700,10 @@
                   "texture": {
                     "origin": [ 224, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4383,6 +5725,10 @@
                     "origin": [ 0, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4392,6 +5738,10 @@
                   "texture": {
                     "origin": [ 0, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4403,6 +5753,10 @@
                     "origin": [ 0, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4412,6 +5766,10 @@
                   "texture": {
                     "origin": [ 0, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4423,6 +5781,10 @@
                     "origin": [ 0, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4432,6 +5794,10 @@
                   "texture": {
                     "origin": [ 0, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4448,6 +5814,10 @@
                     "origin": [ 32, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4457,6 +5827,10 @@
                   "texture": {
                     "origin": [ 32, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4468,6 +5842,10 @@
                     "origin": [ 32, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4477,6 +5855,10 @@
                   "texture": {
                     "origin": [ 32, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4488,6 +5870,10 @@
                     "origin": [ 32, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4497,6 +5883,10 @@
                   "texture": {
                     "origin": [ 32, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4513,6 +5903,10 @@
                     "origin": [ 64, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4522,6 +5916,10 @@
                   "texture": {
                     "origin": [ 64, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4533,6 +5931,10 @@
                     "origin": [ 64, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4542,6 +5944,10 @@
                   "texture": {
                     "origin": [ 64, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4553,6 +5959,10 @@
                     "origin": [ 64, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4562,6 +5972,10 @@
                   "texture": {
                     "origin": [ 64, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4578,6 +5992,10 @@
                     "origin": [ 96, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4587,6 +6005,10 @@
                   "texture": {
                     "origin": [ 96, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4598,6 +6020,10 @@
                     "origin": [ 96, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4607,6 +6033,10 @@
                   "texture": {
                     "origin": [ 96, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4618,6 +6048,10 @@
                     "origin": [ 96, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4627,6 +6061,10 @@
                   "texture": {
                     "origin": [ 96, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4643,6 +6081,10 @@
                     "origin": [ 128, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4652,6 +6094,10 @@
                   "texture": {
                     "origin": [ 128, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4663,6 +6109,10 @@
                     "origin": [ 128, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4672,6 +6122,10 @@
                   "texture": {
                     "origin": [ 128, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4683,6 +6137,10 @@
                     "origin": [ 128, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4692,6 +6150,10 @@
                   "texture": {
                     "origin": [ 128, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4708,6 +6170,10 @@
                     "origin": [ 160, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4717,6 +6183,10 @@
                   "texture": {
                     "origin": [ 160, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4728,6 +6198,10 @@
                     "origin": [ 160, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4737,6 +6211,10 @@
                   "texture": {
                     "origin": [ 160, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4748,6 +6226,10 @@
                     "origin": [ 160, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4757,6 +6239,10 @@
                   "texture": {
                     "origin": [ 160, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4773,6 +6259,10 @@
                     "origin": [ 192, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4782,6 +6272,10 @@
                   "texture": {
                     "origin": [ 192, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4793,6 +6287,10 @@
                     "origin": [ 192, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4802,6 +6300,10 @@
                   "texture": {
                     "origin": [ 192, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4813,6 +6315,10 @@
                     "origin": [ 192, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4822,6 +6328,10 @@
                   "texture": {
                     "origin": [ 192, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4838,6 +6348,10 @@
                     "origin": [ 224, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4847,6 +6361,10 @@
                   "texture": {
                     "origin": [ 224, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4858,6 +6376,10 @@
                     "origin": [ 224, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4867,6 +6389,10 @@
                   "texture": {
                     "origin": [ 224, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 3 ],
+                    "size": [ 8, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4878,6 +6404,10 @@
                     "origin": [ 224, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "red.png"
@@ -4887,6 +6417,10 @@
                   "texture": {
                     "origin": [ 224, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 3 ],
+                    "size": [ 7, 22 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4914,6 +6448,10 @@
                     "origin": [ 0, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -4923,6 +6461,10 @@
                   "texture": {
                     "origin": [ 0, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4934,6 +6476,10 @@
                     "origin": [ 0, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -4943,6 +6489,10 @@
                   "texture": {
                     "origin": [ 0, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4954,6 +6504,10 @@
                     "origin": [ 0, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -4963,6 +6517,10 @@
                   "texture": {
                     "origin": [ 0, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4979,6 +6537,10 @@
                     "origin": [ 64, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -4988,6 +6550,10 @@
                   "texture": {
                     "origin": [ 64, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -4999,6 +6565,10 @@
                     "origin": [ 64, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5008,6 +6578,10 @@
                   "texture": {
                     "origin": [ 64, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5019,6 +6593,10 @@
                     "origin": [ 64, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5028,6 +6606,10 @@
                   "texture": {
                     "origin": [ 64, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5044,6 +6626,10 @@
                     "origin": [ 96, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5053,6 +6639,10 @@
                   "texture": {
                     "origin": [ 96, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5064,6 +6654,10 @@
                     "origin": [ 96, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5073,6 +6667,10 @@
                   "texture": {
                     "origin": [ 96, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5084,6 +6682,10 @@
                     "origin": [ 96, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5093,6 +6695,10 @@
                   "texture": {
                     "origin": [ 96, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5109,6 +6715,10 @@
                     "origin": [ 0, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5118,6 +6728,10 @@
                   "texture": {
                     "origin": [ 0, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5129,6 +6743,10 @@
                     "origin": [ 0, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5138,6 +6756,10 @@
                   "texture": {
                     "origin": [ 0, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5149,6 +6771,10 @@
                     "origin": [ 0, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5158,6 +6784,10 @@
                   "texture": {
                     "origin": [ 0, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5174,6 +6804,10 @@
                     "origin": [ 32, 0 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5183,6 +6817,10 @@
                   "texture": {
                     "origin": [ 32, 32 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5194,6 +6832,10 @@
                     "origin": [ 32, 64 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5203,6 +6845,10 @@
                   "texture": {
                     "origin": [ 32, 96 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5214,6 +6860,10 @@
                     "origin": [ 32, 128 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5223,6 +6873,10 @@
                   "texture": {
                     "origin": [ 32, 160 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5244,6 +6898,10 @@
                     "origin": [ 0, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5253,6 +6911,10 @@
                   "texture": {
                     "origin": [ 0, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5264,6 +6926,10 @@
                     "origin": [ 0, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5273,6 +6939,10 @@
                   "texture": {
                     "origin": [ 0, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5284,6 +6954,10 @@
                     "origin": [ 0, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5293,6 +6967,10 @@
                   "texture": {
                     "origin": [ 0, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5309,6 +6987,10 @@
                     "origin": [ 32, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5318,6 +7000,10 @@
                   "texture": {
                     "origin": [ 32, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5329,6 +7015,10 @@
                     "origin": [ 32, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5338,6 +7028,10 @@
                   "texture": {
                     "origin": [ 32, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5349,6 +7043,10 @@
                     "origin": [ 32, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5358,6 +7056,10 @@
                   "texture": {
                     "origin": [ 32, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5374,6 +7076,10 @@
                     "origin": [ 64, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5383,6 +7089,10 @@
                   "texture": {
                     "origin": [ 64, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5394,6 +7104,10 @@
                     "origin": [ 64, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5403,6 +7117,10 @@
                   "texture": {
                     "origin": [ 64, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5414,6 +7132,10 @@
                     "origin": [ 64, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5423,6 +7145,10 @@
                   "texture": {
                     "origin": [ 64, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5439,6 +7165,10 @@
                     "origin": [ 96, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5448,6 +7178,10 @@
                   "texture": {
                     "origin": [ 96, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5459,6 +7193,10 @@
                     "origin": [ 96, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5468,6 +7206,10 @@
                   "texture": {
                     "origin": [ 96, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5479,6 +7221,10 @@
                     "origin": [ 96, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5488,6 +7234,10 @@
                   "texture": {
                     "origin": [ 96, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5504,6 +7254,10 @@
                     "origin": [ 128, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5513,6 +7267,10 @@
                   "texture": {
                     "origin": [ 128, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5524,6 +7282,10 @@
                     "origin": [ 128, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5533,6 +7295,10 @@
                   "texture": {
                     "origin": [ 128, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5544,6 +7310,10 @@
                     "origin": [ 128, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5553,6 +7323,10 @@
                   "texture": {
                     "origin": [ 128, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5569,6 +7343,10 @@
                     "origin": [ 160, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5578,6 +7356,10 @@
                   "texture": {
                     "origin": [ 160, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5589,6 +7371,10 @@
                     "origin": [ 160, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5598,6 +7384,10 @@
                   "texture": {
                     "origin": [ 160, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5609,6 +7399,10 @@
                     "origin": [ 160, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5618,6 +7412,10 @@
                   "texture": {
                     "origin": [ 160, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5634,6 +7432,10 @@
                     "origin": [ 192, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5643,6 +7445,10 @@
                   "texture": {
                     "origin": [ 192, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5654,6 +7460,10 @@
                     "origin": [ 192, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5663,6 +7473,10 @@
                   "texture": {
                     "origin": [ 192, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5674,6 +7488,10 @@
                     "origin": [ 192, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5683,6 +7501,10 @@
                   "texture": {
                     "origin": [ 192, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5699,6 +7521,10 @@
                     "origin": [ 224, 192 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5708,6 +7534,10 @@
                   "texture": {
                     "origin": [ 224, 224 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5719,6 +7549,10 @@
                     "origin": [ 224, 256 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5728,6 +7562,10 @@
                   "texture": {
                     "origin": [ 224, 288 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5739,6 +7577,10 @@
                     "origin": [ 224, 320 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5748,6 +7590,10 @@
                   "texture": {
                     "origin": [ 224, 352 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5769,6 +7615,10 @@
                     "origin": [ 0, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5778,6 +7628,10 @@
                   "texture": {
                     "origin": [ 0, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5789,6 +7643,10 @@
                     "origin": [ 0, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5798,6 +7656,10 @@
                   "texture": {
                     "origin": [ 0, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5809,6 +7671,10 @@
                     "origin": [ 0, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5818,6 +7684,10 @@
                   "texture": {
                     "origin": [ 0, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5834,6 +7704,10 @@
                     "origin": [ 32, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5843,6 +7717,10 @@
                   "texture": {
                     "origin": [ 32, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5854,6 +7732,10 @@
                     "origin": [ 32, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5863,6 +7745,10 @@
                   "texture": {
                     "origin": [ 32, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5874,6 +7760,10 @@
                     "origin": [ 32, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5883,6 +7773,10 @@
                   "texture": {
                     "origin": [ 32, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5899,6 +7793,10 @@
                     "origin": [ 64, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5908,6 +7806,10 @@
                   "texture": {
                     "origin": [ 64, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5919,6 +7821,10 @@
                     "origin": [ 64, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5928,6 +7834,10 @@
                   "texture": {
                     "origin": [ 64, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5939,6 +7849,10 @@
                     "origin": [ 64, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5948,6 +7862,10 @@
                   "texture": {
                     "origin": [ 64, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5964,6 +7882,10 @@
                     "origin": [ 96, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5973,6 +7895,10 @@
                   "texture": {
                     "origin": [ 96, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -5984,6 +7910,10 @@
                     "origin": [ 96, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -5993,6 +7923,10 @@
                   "texture": {
                     "origin": [ 96, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -6004,6 +7938,10 @@
                     "origin": [ 96, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -6013,6 +7951,10 @@
                   "texture": {
                     "origin": [ 96, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -6029,6 +7971,10 @@
                     "origin": [ 128, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -6038,6 +7984,10 @@
                   "texture": {
                     "origin": [ 128, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -6049,6 +7999,10 @@
                     "origin": [ 128, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -6058,6 +8012,10 @@
                   "texture": {
                     "origin": [ 128, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -6069,6 +8027,10 @@
                     "origin": [ 128, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -6078,6 +8040,10 @@
                   "texture": {
                     "origin": [ 128, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -6094,6 +8060,10 @@
                     "origin": [ 160, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -6103,6 +8073,10 @@
                   "texture": {
                     "origin": [ 160, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -6114,6 +8088,10 @@
                     "origin": [ 160, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -6123,6 +8101,10 @@
                   "texture": {
                     "origin": [ 160, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -6134,6 +8116,10 @@
                     "origin": [ 160, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -6143,6 +8129,10 @@
                   "texture": {
                     "origin": [ 160, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -6159,6 +8149,10 @@
                     "origin": [ 192, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -6168,6 +8162,10 @@
                   "texture": {
                     "origin": [ 192, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -6179,6 +8177,10 @@
                     "origin": [ 192, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -6188,6 +8190,10 @@
                   "texture": {
                     "origin": [ 192, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -6199,6 +8205,10 @@
                     "origin": [ 192, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -6208,6 +8218,10 @@
                   "texture": {
                     "origin": [ 192, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -6224,6 +8238,10 @@
                     "origin": [ 224, 384 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -6233,6 +8251,10 @@
                   "texture": {
                     "origin": [ 224, 416 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -6244,6 +8266,10 @@
                     "origin": [ 224, 448 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 12, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -6253,6 +8279,10 @@
                   "texture": {
                     "origin": [ 224, 480 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
@@ -6264,6 +8294,10 @@
                     "origin": [ 224, 512 ],
                     "size": [ 32, 32 ]
                   },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 7, 16 ]
+                  },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],
                   "path": "yellow.png"
@@ -6273,6 +8307,10 @@
                   "texture": {
                     "origin": [ 224, 544 ],
                     "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 10 ],
+                    "size": [ 6, 16 ]
                   },
                   "origin": [ 16, 28 ],
                   "scale": [ 1, 1 ],

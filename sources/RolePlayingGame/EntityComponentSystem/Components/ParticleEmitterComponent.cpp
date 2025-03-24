@@ -7,7 +7,7 @@ RPG::ParticleEmitterComponent::ParticleEmitterComponent() :
   frequencyHigh(0.f),
   particleLow(),
   particleHigh(),
-  model(""),
+  animation(""),
   next(0.f),
   duration(0.f)
 {}

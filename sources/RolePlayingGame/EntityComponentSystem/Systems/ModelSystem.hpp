@@ -74,8 +74,7 @@ namespace RPG
 
     void  setModel(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::string& name);                                            // Set model of entity
     void  setAnimation(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::string& name, bool loop = false, float speed = 1.f);  // Set animation of entity
-    void  setAnimationRandom(RPG::ECS& ecs, RPG::ECS::Entity entity, bool loop, float speed = 1.f);                             // Set a random animation of entity
-
+    
     void  executeCamera(RPG::ECS& ecs, float elapsed);                              // Update camera control
     void  executeAnimation(RPG::ECS& ecs, float elapsed);                           // Update animation of every entity
     void  executeAnimation(RPG::ECS& ecs, RPG::ECS::Entity entity, float elapsed);  // Update animation of a single entity

@@ -25,7 +25,7 @@ RPG::Sprite::Sprite() :
 
 RPG::Sprite::Sprite(const Game::JSON::Object& json) :
   texture(json.contains("texture") ? RPG::Sprite::Bounds{.origin{ json.get("texture").object().get("origin").array() }, .size{ json.get("texture").object().get("size").array() } } : DefaultTexture),
-  select(json.contains("select") ? RPG::Sprite::Bounds{ .origin{ json.get("select").object().get("origin").array() }, .size{ json.get("select").object().get("size").array() } } : texture),
+  select(json.contains("select") ? RPG::Sprite::Bounds{ .origin{ json.get("select").object().get("origin").array() }, .size{ json.get("select").object().get("size").array() } } : RPG::Sprite::Bounds{ .origin = Math::Vector<2, std::int16_t>((std::int16_t)0, (std::int16_t)0), .size = texture.size }),
   origin(json.contains("origin") ? json.get("origin").array() : DefaultOrigin),
   scale(json.contains("scale") ? json.get("scale").array() : DefaultScale),
   color(json.contains("color") ? json.get("color").object() : DefaultColor),
@@ -43,10 +43,10 @@ Game::JSON::Object  RPG::Sprite::json() const
     json.get("texture").object().set("origin", texture.origin.json());
     json.get("texture").object().set("size", texture.size.json());
   }
-  if (select != texture) {
+  if (select.origin != Math::Vector<2, std::int16_t>((std::int16_t)0, (std::int16_t)0) || select.size != texture.size) {
     json.set("select", Game::JSON::Object());
-    json.get("select").object().set("origin", texture.origin.json());
-    json.get("select").object().set("size", texture.size.json());
+    json.get("select").object().set("origin", select.origin.json());
+    json.get("select").object().set("size", select.size.json());
   }
   if (origin != DefaultOrigin)
     json.set("origin", origin.json());
@@ -75,42 +75,30 @@ void  RPG::Sprite::draw(const Math::Vector<2>& position, RPG::Color color, RPG::
   sf::Sprite      sprite;
 
   // Set properties
+  sprite.setPosition(rounded.x(), rounded.y());
   sprite.setTexture(pointer->get());
   sprite.setTextureRect(sf::IntRect(texture.origin.x(), texture.origin.y(), texture.size.x(), texture.size.y()));
   sprite.setOrigin(originTrunc.x(), originTrunc.y());
   sprite.setScale((float)scale.x(), (float)scale.y());
   sprite.setColor(sf::Color((color * this->color).uint32()));
-
-  // Draw outline
-  if (outline.alpha > 0) {
-    auto shader = RPG::Sprite::OutlineShader::Get(outline);
-
-    // Draw outline
-    sprite.setPosition(rounded.x() - 1.f, rounded.y());
-    window.window().draw(sprite, shader);
-    sprite.setPosition(rounded.x() + 1.f, rounded.y());
-    window.window().draw(sprite, shader);
-    sprite.setPosition(rounded.x(), rounded.y() - 1.f);
-    window.window().draw(sprite, shader);
-    sprite.setPosition(rounded.x(), rounded.y() + 1.f);
-    window.window().draw(sprite, shader);
-  }
-
+  
   // Draw sprite
-  sprite.setPosition(rounded.x(), rounded.y());
-  window.window().draw(sprite);
+  if (outline.alpha == 0)
+    window.window().draw(sprite);
+  else
+    window.window().draw(sprite, RPG::Sprite::OutlineShader::Get(outline));
 }
 
 RPG::Bounds RPG::Sprite::bounds(const Math::Vector<2>& position) const
 {
-  sf::Sprite      sprite;
   Math::Vector<2> originTrunc;
   Math::Vector<2> rounded(std::round(position.x() - std::modf(origin.x(), &originTrunc.x())), std::round(position.y() - std::modf(origin.y(), &originTrunc.y())));
-  
+  sf::Sprite      sprite;
+
   // Set properties
   sprite.setPosition(rounded.x(), rounded.y());
-  sprite.setTextureRect(sf::IntRect(select.origin.x(), select.origin.y(), select.size.x(), select.size.y()));
-  sprite.setOrigin(originTrunc.x(), originTrunc.y());
+  sprite.setTextureRect(sf::IntRect(texture.origin.x() + select.origin.x(), texture.origin.y() + select.origin.y(), select.size.x(), select.size.y()));
+  sprite.setOrigin(originTrunc.x() - select.origin.x(), originTrunc.y() - select.origin.y());
   sprite.setScale((float)scale.x(), (float)scale.y());
   
   // Use SFML to compute sprite bounds
@@ -126,7 +114,20 @@ RPG::Sprite::OutlineShader::OutlineShader() :
   _shader()
 {
   // Failed to load shader
-  if (_shader.loadFromMemory("uniform vec4 color; uniform sampler2D texture; void main() { vec4 pixel = texture2D(texture, gl_TexCoord[0].xy); pixel.xyz = color.xyz; pixel.w = pixel.w * color.w; gl_FragColor = gl_Color * pixel; }", sf::Shader::Type::Fragment) == false)
+  if (_shader.loadFromMemory(
+    "uniform vec4 color;"
+    "uniform sampler2D texture;"
+    "void main() {"
+    "  vec2 one = vec2(1, 1) / textureSize(texture, 0);"
+    "  vec4 outline = vec4(color.r, color.g, color.b, texture2D(texture, vec2(gl_TexCoord[0].x - one.x, gl_TexCoord[0].y)).a);"
+    "  outline.a = max(outline.a, texture2D(texture, vec2(gl_TexCoord[0].x + one.x, gl_TexCoord[0].y)).a);"
+    "  outline.a = max(outline.a, texture2D(texture, vec2(gl_TexCoord[0].x, gl_TexCoord[0].y - one.y)).a);"
+    "  outline.a = max(outline.a, texture2D(texture, vec2(gl_TexCoord[0].x, gl_TexCoord[0].y + one.y)).a);"
+    "  outline.a = outline.a * color.a;"
+    "  vec4 pixel = texture2D(texture, gl_TexCoord[0].xy) * gl_Color;"
+    "  gl_FragColor.a = outline.a + (1 - outline.a) * pixel.a;"
+    "  gl_FragColor.rgb = (outline.rgb * outline.a * (1 - pixel.a) + pixel.rgb * pixel.a) / min(gl_FragColor.a, 1);"
+    "}", sf::Shader::Type::Fragment) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Bind SFML texture of drawable
