@@ -99,14 +99,12 @@ bool  RPG::ClientScene::update(float elapsed)
 
   // TODO
   auto cursorPixel = Game::Window::Instance().mouse().position();
-  auto cursorCoords = _ecs.getSystem<RPG::ClientModelSystem>().getCamera().pixelToCoords({ (float)cursorPixel.x, (float)cursorPixel.y });
+  auto cursorCoords = _ecs.getSystem<RPG::ClientModelSystem>().getCamera().pixelToCoords({ (float)cursorPixel.x(), (float)cursorPixel.y() });
   auto entity = _ecs.getSystem<RPG::ClientEntitySystem>().intersect(_ecs, cursorCoords);
   auto cell = _ecs.getSystem<RPG::ClientBoardSystem>().intersect(_ecs, cursorCoords);
 
-  if (entity != RPG::ECS::InvalidEntity) {
-    
+  if (entity != RPG::ECS::InvalidEntity)
     _ecs.getSystem<RPG::ClientBoardSystem>().setCursor(_ecs, RPG::ECS::InvalidEntity);
-  }
   else
     _ecs.getSystem<RPG::ClientBoardSystem>().setCursor(_ecs, cell);
 

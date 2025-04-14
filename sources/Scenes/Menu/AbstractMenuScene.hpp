@@ -23,7 +23,7 @@ namespace Game
 
     public:
       Item(const sf::String& string, const std::function<void(Item&)>& callback) :
-        sf::Text(string, Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf")),
+        sf::Text(Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf"), string),
         _callback(callback)
       {}
 

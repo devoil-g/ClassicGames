@@ -1,9 +1,9 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
+#include <cstring>
 #include <vector>
-
-#include <SFML/System/Time.hpp>
 
 #include "Doom/Flat/AbstractFlat.hpp"
 
@@ -13,11 +13,11 @@ namespace DOOM
   class AnimatedFlat : public virtual DOOM::AbstractFlat
   {
   private:
-    float                                   _elapsed; // Total elapsed time
-    std::vector<std::array<uint8_t, 4096>>  _flats;   // Vector of flats composing animation
+    float                                       _elapsed; // Total elapsed time
+    std::vector<std::array<std::uint8_t, 4096>> _flats;   // Vector of flats composing animation
 
   public:
-    AnimatedFlat(DOOM::Doom& doom, const std::vector<uint64_t>& frames) :
+    AnimatedFlat(DOOM::Doom& doom, const std::vector<std::uint64_t>& frames) :
       DOOM::AbstractFlat(doom),
       _elapsed(),
       _flats(frames.size())
@@ -39,13 +39,13 @@ namespace DOOM
 
     ~AnimatedFlat() override = default;
 
-    void  update(DOOM::Doom& doom, float elapsed) override        // Update animation sequence
+    void  update(DOOM::Doom& doom, float elapsed) override      // Update animation sequence
     {
       // Add elapsed time to counter
       _elapsed += elapsed;
     }
 
-    const std::array<uint8_t, 4096>& flat() const override        // Return flat to be displayed
+    const std::array<std::uint8_t, 4096>& flat() const override // Return flat to be displayed
     {
       // Return flat of current frame
       return _flats[(std::size_t)(_elapsed / (DOOM::Doom::Tic * FrameDuration)) % _flats.size()];

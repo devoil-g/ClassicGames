@@ -1,4 +1,3 @@
-#include <iostream>
 #include <unordered_map>
 
 #include "Doom/Camera.hpp"
@@ -22,21 +21,21 @@ DOOM::Camera::Camera() :
   _fuzz(0)
 {}
 
-void  DOOM::Camera::render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, int extralight, DOOM::Camera::Special special, int16_t palette)
+void  DOOM::Camera::render(const DOOM::Doom& doom, sf::Image& target, Math::Box<2, std::int16_t> rect, int extralight, DOOM::Camera::Special special, std::int16_t palette)
 {
   // Cancel if nothing to render
   if (doom.level.nodes.size() == 0)
     return;
 
   // Reset optimization structure
-  _buffer.assign(rect.width * rect.height, { .segment = -1, .height = std::numeric_limits<float>::quiet_NaN(), .colormap = -1, .color = -1 });
-  _vertical.assign(rect.width, { 0, rect.height });
-  _horizontal = { 0, rect.width };
+  _buffer.assign(rect.size.x() * rect.size.y(), {.segment = -1, .height = std::numeric_limits<float>::quiet_NaN(), .colormap = -1, .color = -1});
+  _vertical.assign(rect.size.x(), {0, rect.size.y()});
+  _horizontal = { 0, rect.size.x()};
 
   // Pre-compute values
   _fov2_tan = std::tan(fov / 2.f);
-  _horizon = (float)rect.height / 2.f + std::tan(orientation) * (float)rect.width / (2.f * _fov2_tan);
-  _factor = (float)rect.height / (2.f * _fov2_tan * ((float)rect.height / (float)rect.width));
+  _horizon = (float)rect.size.y() / 2.f + std::tan(orientation) * (float)rect.size.x() / (2.f * _fov2_tan);
+  _factor = (float)rect.size.y() / (2.f * _fov2_tan * ((float)rect.size.y() / (float)rect.size.x()));
 
   // Pre-compute screen coordinates
   _screen_start = Math::Vector<2>(std::cos(angle) - _fov2_tan * std::sin(angle), std::sin(angle) + _fov2_tan * std::cos(angle)) + position.convert<2>();
@@ -49,20 +48,20 @@ void  DOOM::Camera::render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<i
   std::set<int16_t> segments;
 
   // Simplify column of pixel segment index
-  for (int col = 0; col < (int)rect.width; col++)
+  for (int col = 0; col < (int)rect.size.x(); col++)
   {
     // Simplify ceiling
-    for (int row = std::min((int)_horizon - 1, (int)rect.height - 1); row >= 0; row--) {
-      segments.insert(_buffer[col * rect.height + row].segment);
-      if (_buffer[col * rect.height + row].height == _buffer[col * rect.height + row + 1].height)
-        _buffer[col * rect.height + row].segment = _buffer[col * rect.height + row + 1].segment;
+    for (int row = std::min((int)_horizon - 1, (int)rect.size.y() - 1); row >= 0; row--) {
+      segments.insert(_buffer[col * rect.size.y() + row].segment);
+      if (_buffer[col * rect.size.y() + row].height == _buffer[col * rect.size.y() + row + 1].height)
+        _buffer[col * rect.size.y() + row].segment = _buffer[col * rect.size.y() + row + 1].segment;
     }
 
     // Simplify floor
-    for (int row = std::max((int)_horizon + 1, 1); row < (int)rect.height; row++) {
-      segments.insert(_buffer[col * rect.height + row].segment);
-      if (_buffer[col * rect.height + row].height == _buffer[col * rect.height + row - 1].height)
-        _buffer[col * rect.height + row].segment = _buffer[col * rect.height + row - 1].segment;
+    for (int row = std::max((int)_horizon + 1, 1); row < (int)rect.size.y(); row++) {
+      segments.insert(_buffer[col * rect.size.y() + row].segment);
+      if (_buffer[col * rect.size.y() + row].height == _buffer[col * rect.size.y() + row - 1].height)
+        _buffer[col * rect.size.y() + row].segment = _buffer[col * rect.size.y() + row - 1].segment;
     }
   }
 
@@ -75,13 +74,13 @@ void  DOOM::Camera::render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<i
   renderThings(doom, rect, special);
 
   // Draw pixel in image using palette
-  for (int col = 0; col < (int)rect.width; col++)
-    for (int row = 0; row < (int)rect.height; row++)
-      if (_buffer[col * rect.height + row].color != -1)
-        target.setPixel(rect.left + col, rect.top + row, doom.resources.palettes[palette][doom.resources.colormaps[special == DOOM::Camera::Special::Invulnerability ? 32 : _buffer[col * rect.height + row].colormap][_buffer[col * rect.height + row].color]]);
+  for (int col = 0; col < (int)rect.size.x(); col++)
+    for (int row = 0; row < (int)rect.size.y(); row++)
+      if (_buffer[col * rect.size.y() + row].color != -1)
+        target.setPixel({ (unsigned int)(rect.position.x() + col), (unsigned int)(rect.position.y() + row) }, doom.resources.palettes[palette][doom.resources.colormaps[special == DOOM::Camera::Special::Invulnerability ? 32 : _buffer[col * rect.size.y() + row].colormap][_buffer[col * rect.size.y() + row].color]]);
 }
 
-bool  DOOM::Camera::renderNode(const DOOM::Doom& doom, sf::Rect<int16_t> rect, int extralight, DOOM::Camera::Special special, int16_t index)
+bool  DOOM::Camera::renderNode(const DOOM::Doom& doom, Math::Box<2, std::int16_t> rect, int extralight, DOOM::Camera::Special special, std::int16_t index)
 {
   // Draw subsector if node ID has subsector mask
   if (index & 0b1000000000000000)
@@ -98,19 +97,19 @@ bool  DOOM::Camera::renderNode(const DOOM::Doom& doom, sf::Rect<int16_t> rect, i
     ((Math::Vector<2>::determinant(node.origin - position.convert<2>(), node.direction) / Math::Vector<2>::determinant(_screen_start - position.convert<2>(), node.direction) >= 0.f || Math::Vector<2>::determinant(node.origin - position.convert<2>(), node.direction) / Math::Vector<2>::determinant(_screen_end - position.convert<2>(), node.direction) >= 0.f) && renderNode(doom, rect, extralight, special, node.leftchild) == true);
 }
 
-bool  DOOM::Camera::renderSubsector(const DOOM::Doom& doom, sf::Rect<int16_t> rect, int extralight, DOOM::Camera::Special special, int16_t index)
+bool  DOOM::Camera::renderSubsector(const DOOM::Doom& doom, Math::Box<2, std::int16_t> rect, int extralight, DOOM::Camera::Special special, std::int16_t index)
 {
   const auto& subsector(doom.level.subsectors[index]);
 
   // Render subsector segs
-  for (int16_t i = 0; i < subsector.count; i++)
+  for (std::int16_t i = 0; i < subsector.count; i++)
     if (renderSeg(doom, rect, extralight, special, subsector.index + i) == true)
       return true;
 
   return false;
 }
 
-bool  DOOM::Camera::renderSeg(const DOOM::Doom& doom, sf::Rect<int16_t> rect, int extralight, DOOM::Camera::Special special, int16_t index)
+bool  DOOM::Camera::renderSeg(const DOOM::Doom& doom, Math::Box<2, std::int16_t> rect, int extralight, DOOM::Camera::Special special, std::int16_t index)
 {
   // Get segment from level data
   const auto& seg(doom.level.segments[index]);
@@ -147,8 +146,8 @@ bool  DOOM::Camera::renderSeg(const DOOM::Doom& doom, sf::Rect<int16_t> rect, in
     std::swap(left, right);
 
   // Projection of vertexes on screen's pixels
-  int column_start = std::max((int)std::lroundf(left.screen * rect.width), _horizontal.first);
-  int column_end = std::min((int)std::lroundf(right.screen * rect.width + 0), _horizontal.second);
+  int column_start = std::max((int)std::lroundf(left.screen * rect.size.x()), _horizontal.first);
+  int column_end = std::min((int)std::lroundf(right.screen * rect.size.x() + 0), _horizontal.second);
 
   // Stop if nothing to draw
   if (column_start >= column_end)
@@ -197,7 +196,7 @@ bool  DOOM::Camera::renderSeg(const DOOM::Doom& doom, sf::Rect<int16_t> rect, in
       continue;
 
     // Projection screen offset
-    float screen_offset = (std::max((float)column / (float)rect.width, left.screen) - left.screen) / (right.screen - left.screen);
+    float screen_offset = (std::max((float)column / (float)rect.size.x(), left.screen) - left.screen) / (right.screen - left.screen);
 
     // Walls Y projection
     float upper_front = left_upper_front + (right_upper_front - left_upper_front) * screen_offset;
@@ -210,15 +209,15 @@ bool  DOOM::Camera::renderSeg(const DOOM::Doom& doom, sf::Rect<int16_t> rect, in
     float seg_offset = std::clamp(left.seg + (right.seg - left.seg) * ((std::abs(right.distance - left.distance) < 0.1f) ? screen_offset : ((((sector_front.ceiling_current - position.z()) * _factor / (_horizon - upper_front)) - left.distance) / (right.distance - left.distance))), 0.f, 1.f);
 
     // Compute light level according to distance TODO: improve this process?
-    float   distance = (position.convert<2>() - (seg_start + (seg_end - seg_start) * seg_offset)).length() / (_screen_start + _screen * ((float)column / (float)rect.width) - position.convert<2>()).length();
+    float   distance = (position.convert<2>() - (seg_start + (seg_end - seg_start) * seg_offset)).length() / (_screen_start + _screen * ((float)column / (float)rect.size.x()) - position.convert<2>()).length();
     int16_t shaded = renderLight(doom, rect, special, light, distance);
 
     // Texture X offset
     int texture_offset_x = seg.offset + (int)(sidedef_front.x + ((seg_end - seg_start).length() * (((bool)seg.direction == side) ? seg_offset : (1.f - seg_offset))));
 
     // Draw ceiling/sky
-    if (sector_front.ceiling_name == Game::Utilities::str_to_key<uint64_t>("F_SKY1")) {
-      if (linedef.back == -1 || sector_back.ceiling_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1")) {
+    if (sector_front.ceiling_name == Game::Utilities::str_to_key<std::uint64_t>("F_SKY1")) {
+      if (linedef.back == -1 || sector_back.ceiling_name != Game::Utilities::str_to_key<std::uint64_t>("F_SKY1")) {
         renderSky(doom, rect, special, column, 0, (int)std::lroundf(std::min(upper_front, upper_back)), sector_front.ceiling_current, index);
         _vertical[column].first = std::max(_vertical[column].first, (int)std::lroundf(std::min(upper_front, upper_back)));
       }
@@ -229,21 +228,21 @@ bool  DOOM::Camera::renderSeg(const DOOM::Doom& doom, sf::Rect<int16_t> rect, in
     }
 
     // Draw floor/sky
-    if (sector_front.floor_name == Game::Utilities::str_to_key<uint64_t>("F_SKY1")) {
-      if (linedef.back == -1 || sector_back.floor_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1")) {
-        renderSky(doom, rect, special, column, (int)std::lroundf(std::max(lower_front, lower_back)), rect.height, sector_front.floor_current, index);
+    if (sector_front.floor_name == Game::Utilities::str_to_key<std::uint64_t>("F_SKY1")) {
+      if (linedef.back == -1 || sector_back.floor_name != Game::Utilities::str_to_key<std::uint64_t>("F_SKY1")) {
+        renderSky(doom, rect, special, column, (int)std::lroundf(std::max(lower_front, lower_back)), rect.size.y(), sector_front.floor_current, index);
         _vertical[column].second = std::min(_vertical[column].second, (int)std::lroundf(std::max(lower_front, lower_back)));
       }
     }
     else if (position.z() > sector_front.floor_current) {
-      renderFlat(doom, rect, special, sector_front.floor_flat, column, (int)std::lroundf(lower_front), rect.height, sector_front.floor_current, light, index);
+      renderFlat(doom, rect, special, sector_front.floor_flat, column, (int)std::lroundf(lower_front), rect.size.y(), sector_front.floor_current, light, index);
       _vertical[column].second = std::min(_vertical[column].second, (int)std::lroundf(lower_front));
     }
 
     // Draw upper/lower/middle walls
-    if (upper_front < upper_back && texture_upper.height != 0 && (sector_front.ceiling_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1") || sector_back.ceiling_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1")))
+    if (upper_front < upper_back && texture_upper.height != 0 && (sector_front.ceiling_name != Game::Utilities::str_to_key<std::uint64_t>("F_SKY1") || sector_back.ceiling_name != Game::Utilities::str_to_key<std::uint64_t>("F_SKY1")))
       renderTexture(doom, rect, extralight, special, texture_upper, column, upper_front, upper_back, std::abs(sector_front.ceiling_current - sector_back.ceiling_current), texture_offset_x, upper_offset_y, shaded, index);
-    if (lower_front > lower_back && texture_lower.height != 0 && (sector_front.floor_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1") || sector_back.floor_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1")))
+    if (lower_front > lower_back && texture_lower.height != 0 && (sector_front.floor_name != Game::Utilities::str_to_key<std::uint64_t>("F_SKY1") || sector_back.floor_name != Game::Utilities::str_to_key<std::uint64_t>("F_SKY1")))
       renderTexture(doom, rect, extralight, special, texture_lower, column, lower_back, lower_front, std::abs(sector_front.floor_current - sector_back.floor_current), texture_offset_x, lower_offset_y, shaded, index);
     if (upper_front < lower_front && texture_middle.height != 0)
       renderTexture(doom, rect, extralight, special, texture_middle, column, upper_front, lower_front, std::abs(sector_front.ceiling_current - sector_front.floor_current), texture_offset_x, middle_offset_y, shaded, index);
@@ -272,7 +271,7 @@ bool  DOOM::Camera::renderSeg(const DOOM::Doom& doom, sf::Rect<int16_t> rect, in
   return _horizontal.first == _horizontal.second;
 }
 
-int16_t DOOM::Camera::renderLight(const DOOM::Doom& doom, sf::Rect<int16_t> rect, DOOM::Camera::Special special, int16_t light, float distance)
+std::int16_t DOOM::Camera::renderLight(const DOOM::Doom& doom, Math::Box<2, std::int16_t> rect, DOOM::Camera::Special special, std::int16_t light, float distance)
 {
   // Special override
   switch (special) {
@@ -281,18 +280,18 @@ int16_t DOOM::Camera::renderLight(const DOOM::Doom& doom, sf::Rect<int16_t> rect
   case DOOM::Camera::Special::Invulnerability:
     return 255;
   default:  // Magic formula found in a creepy forum on the dark side of the internet
-    return (int16_t)std::clamp((int)((int)light * 2 - 255 + 255 * DOOM::Camera::LightFade / distance), (int)0, (int)255);
+    return (std::int16_t)std::clamp((int)((int)light * 2 - 255 + 255 * DOOM::Camera::LightFade / distance), (int)0, (int)255);
   }
 }
 
-void  DOOM::Camera::renderTexture(const DOOM::Doom& doom, sf::Rect<int16_t> rect, int extralight, DOOM::Camera::Special special, const DOOM::Doom::Resources::Texture& texture, int column, float top, float bottom, float height, int offset_x, float offset_y, int16_t light, int16_t seg)
+void  DOOM::Camera::renderTexture(const DOOM::Doom& doom, Math::Box<2, std::int16_t> rect, int extralight, DOOM::Camera::Special special, const DOOM::Doom::Resources::Texture& texture, int column, float top, float bottom, float height, int offset_x, float offset_y, std::int16_t light, std::int16_t seg)
 {
   int         pixel_x(Math::Modulo(offset_x, texture.width));
   const auto& spans(texture.columns[pixel_x].spans);
 
   // Draw column of pixels
   for (int row = std::max(_vertical[column].first, (int)std::lroundf(top)); row < std::min((int)std::lroundf(bottom) + 0, _vertical[column].second); row++)
-    if (_buffer[column * rect.height + row].color == -1)
+    if (_buffer[column * rect.size.y() + row].color == -1)
     {
       int pixel_y(Math::Modulo<128>((int)(offset_y + std::max((height * (row - top) / (bottom - top)), 0.f))));
 
@@ -308,23 +307,23 @@ void  DOOM::Camera::renderTexture(const DOOM::Doom& doom, sf::Rect<int16_t> rect
           break;
 
         // Get color in column span, draw it and register segment index in seg-buffer
-        _buffer[column * rect.height + row] = { seg, std::numeric_limits<float>::quiet_NaN(), (int16_t)(31 - std::min(31, light / 8 + extralight)), span.pixels[pixel_y - span.offset] };
+        _buffer[column * rect.size.y() + row] = {seg, std::numeric_limits<float>::quiet_NaN(), (std::int16_t)(31 - std::min(31, light / 8 + extralight)), span.pixels[pixel_y - span.offset]};
 
         break;
       }
     }
 }
 
-void  DOOM::Camera::renderFlat(const DOOM::Doom& doom, sf::Rect<int16_t> rect, DOOM::Camera::Special special, const DOOM::AbstractFlat& flat, int column, int start, int end, float altitude, int16_t light, int16_t seg)
+void  DOOM::Camera::renderFlat(const DOOM::Doom& doom, Math::Box<2, std::int16_t> rect, DOOM::Camera::Special special, const DOOM::AbstractFlat& flat, int column, int start, int end, float altitude, std::int16_t light, std::int16_t seg)
 {
-  Math::Vector<2> direction(_screen_start + _screen * ((float)column / (float)rect.width) - position.convert<2>());
+  Math::Vector<2> direction(_screen_start + _screen * ((float)column / (float)rect.size.x()) - position.convert<2>());
   const auto&     texture = flat.flat();
   float           distance_distortion = direction.length();
 
   for (int row = std::max(start, _vertical[column].first); row < std::min(end, _vertical[column].second); row++)
-    if (_buffer[column * rect.height + row].color == -1)
+    if (_buffer[column * rect.size.y() + row].color == -1)
     {
-      float k = std::abs((altitude - position.z()) / (2.f * _fov2_tan * (0.5f - (row - _horizon + rect.height / 2.f) / (float)rect.height) * (rect.height / (float)rect.width)));
+      float k = std::abs((altitude - position.z()) / (2.f * _fov2_tan * (0.5f - (row - _horizon + rect.size.y() / 2.f) / (float)rect.size.y()) * (rect.size.y() / (float)rect.size.x())));
 
       // Get grid coordinates
       Math::Vector<2> coord(position.convert<2>() + direction * k);
@@ -333,20 +332,20 @@ void  DOOM::Camera::renderFlat(const DOOM::Doom& doom, sf::Rect<int16_t> rect, D
       int16_t shaded = renderLight(doom, rect, special, light, (position.convert<2>() - coord).length() / distance_distortion);
 
       // Get color in flat from coordinates and register segment index in seg-buffer
-      _buffer[column * rect.height + row] = { seg, altitude, (int16_t)(31 - shaded / 8), texture[(Math::Modulo<64>(64 - (int)coord.y())) * 64 + Math::Modulo<64>((int)coord.x() - 1)] };
+      _buffer[column * rect.size.y() + row] = {seg, altitude, (int16_t)(31 - shaded / 8), texture[(Math::Modulo<64>(64 - (int)coord.y())) * 64 + Math::Modulo<64>((int)coord.x() - 1)]};
     }
 }
 
-void  DOOM::Camera::renderSky(const DOOM::Doom& doom, sf::Rect<int16_t> rect, DOOM::Camera::Special special, int column, int start, int end, float altitude, int16_t seg)
+void  DOOM::Camera::renderSky(const DOOM::Doom& doom, Math::Box<2, std::int16_t> rect, DOOM::Camera::Special special, int column, int start, int end, float altitude, std::int16_t seg)
 {
   const auto&     sky(doom.level.sky.get());
-  Math::Vector<2> direction(_screen_start + _screen * ((float)column / (float)rect.width) - position.convert<2>());
+  Math::Vector<2> direction(_screen_start + _screen * ((float)column / (float)rect.size.x()) - position.convert<2>());
   int             pixel_x(Math::Modulo((int)(Math::Vector<2>::angle(Math::Vector<2>(1.f, 0.f), direction) * (Math::Vector<2>::determinant(Math::Vector<2>(1.f, 0.f), direction) > 0 ? +1.f : -1.f) * 4.f / (2.f * Math::Pi) * sky.width), sky.width));
   const auto&     spans(sky.columns[pixel_x].spans);
-  float           sky_factor(_screen.length() * 2.f * sky.width / (rect.width * direction.length() * Math::Pi));
+  float           sky_factor(_screen.length() * 2.f * sky.width / (rect.size.x() * direction.length() * Math::Pi));
 
   for (int row = std::max(_vertical[column].first, start); row < std::min(end, _vertical[column].second); row++)
-    if (_buffer[column * rect.height + row].color == -1)
+    if (_buffer[column * rect.size.y() + row].color == -1)
     {
       int pixel_y = std::clamp((int)std::lroundf((row - _horizon) * sky_factor * 0.75f) + sky.height / 2, 0, sky.height - 1);
       
@@ -366,17 +365,17 @@ void  DOOM::Camera::renderSky(const DOOM::Doom& doom, sf::Rect<int16_t> rect, DO
           break;
 
         // Get color in column span, draw it and register segment index in seg-buffer
-        _buffer[column * rect.height + row] = { seg, altitude, 31 - 192 / 8, span.pixels[pixel_y - span.offset] };
+        _buffer[column * rect.size.y() + row] = {seg, altitude, 31 - 192 / 8, span.pixels[pixel_y - span.offset]};
 
         break;
       }
     }
 }
 
-void  DOOM::Camera::renderThings(const DOOM::Doom& doom, sf::Rect<int16_t> rect, DOOM::Camera::Special special)
+void  DOOM::Camera::renderThings(const DOOM::Doom& doom, Math::Box<2, std::int16_t> rect, DOOM::Camera::Special special)
 {
-  std::list<std::pair<const DOOM::AbstractThing&, float>> things;                        // List of things to render and their distance to camera
-  std::unordered_map<int16_t, float>                      vertexes;                // Map of vertexes and their distance to camera
+  std::list<std::pair<const DOOM::AbstractThing&, float>> things;   // List of things to render and their distance to camera
+  std::unordered_map<std::int16_t, float>                 vertexes; // Map of vertexes and their distance to camera
 
   // Pre-calculated projection factors
   Math::Vector<2> eye_0(std::cos(angle), std::sin(angle));
@@ -400,7 +399,7 @@ void  DOOM::Camera::renderThings(const DOOM::Doom& doom, sf::Rect<int16_t> rect,
   things.sort([](const std::pair<const DOOM::AbstractThing&, float>& a, const std::pair<const DOOM::AbstractThing&, float>& b) { return a.second > b.second; });
 
   // Copy the pixel buffer for Shadow things
-  std::vector<DOOM::Camera::Pixel>  buffer_copy(rect.height);
+  std::vector<DOOM::Camera::Pixel>  buffer_copy(rect.size.y());
 
   // Render things in reverse order
   for (auto iterator = things.cbegin(); iterator != things.cend(); iterator++)
@@ -413,27 +412,27 @@ void  DOOM::Camera::renderThings(const DOOM::Doom& doom, sf::Rect<int16_t> rect,
     std::pair<int16_t, int16_t> thing_sector(doom.level.getSector(thing.position.convert<2>()));
 
     float thing_factor = _factor / ((thing.position.convert<2>() - position.convert<2>()).length() / (_screen_start + _screen * thing_projection.first - position.convert<2>()).length());
-    float first_x = thing_projection.first * rect.width + ((sprite.mirror == false ? -sprite.texture.left : -sprite.texture.width + sprite.texture.left)) * thing_factor;
+    float first_x = thing_projection.first * rect.size.x() + ((sprite.mirror == false ? -sprite.texture.left : -sprite.texture.width + sprite.texture.left)) * thing_factor;
     float first_y = _horizon - ((thing.position.z() + sprite.texture.top) - position.z()) * thing_factor;
-    float second_x = thing_projection.first * rect.width + ((sprite.mirror == false ? sprite.texture.width - sprite.texture.left : +sprite.texture.left)) * thing_factor;
+    float second_x = thing_projection.first * rect.size.x() + ((sprite.mirror == false ? sprite.texture.width - sprite.texture.left : +sprite.texture.left)) * thing_factor;
     float second_y = _horizon - ((thing.position.z() - sprite.texture.height + sprite.texture.top) - position.z()) * thing_factor;
 
     // Map of thing visibility against segments
-    std::unordered_map<int16_t, bool> visible;
+    std::unordered_map<std::int16_t, bool>  visible;
 
     // Compute light level of thing
-    int16_t shaded = sprite.full_brightness == true ? 255 : renderLight(doom, rect, special, doom.level.sectors[thing_sector.first].light_current, iterator->second);
+    std::int16_t  shaded = sprite.full_brightness == true ? 255 : renderLight(doom, rect, special, doom.level.sectors[thing_sector.first].light_current, iterator->second);
 
     // Render pixels of the sprite
-    for (int column = std::max((int)std::lroundf(first_x), 0); column < std::min((int)std::lroundf(second_x), (int)rect.width); column++)
+    for (int column = std::max((int)std::lroundf(first_x), 0); column < std::min((int)std::lroundf(second_x), (int)rect.size.x()); column++)
     {
       // Copy column of pixel (for Shadow rendering)
-      if (thing.flags & DOOM::Enum::ThingProperty::ThingProperty_Shadow && column + 1 < std::min((int)std::lroundf(second_x), (int)rect.width))
-        buffer_copy.assign(&_buffer[column * rect.height], &_buffer[(column + 1) * rect.height]);
+      if (thing.flags & DOOM::Enum::ThingProperty::ThingProperty_Shadow && column + 1 < std::min((int)std::lroundf(second_x), (int)rect.size.x()))
+        buffer_copy.assign(&_buffer[column * rect.size.y()], &_buffer[(column + 1) * rect.size.y()]);
 
-      for (int row = std::max((int)std::lroundf(first_y), 0); row < std::min((int)std::lroundf(second_y), (int)rect.height); row++)
+      for (int row = std::max((int)std::lroundf(first_y), 0); row < std::min((int)std::lroundf(second_y), (int)rect.size.y()); row++)
       {
-        int16_t segment_index = _buffer[column * rect.height + row].segment;
+        std::int16_t  segment_index = _buffer[column * rect.size.y() + row].segment;
 
         // Process segment if valid index
         if (segment_index != -1)
@@ -481,13 +480,13 @@ void  DOOM::Camera::renderThings(const DOOM::Doom& doom, sf::Rect<int16_t> rect,
           {
             // Fuzz effet if this has Shadow flag
             if (thing.flags & DOOM::Enum::ThingProperty::ThingProperty_Shadow) {
-              _buffer[column * rect.height + row].colormap = std::min(buffer_copy[std::clamp(row + _fuzztable[_fuzz], 0, (int)rect.height - 1)].colormap + 6, 31);
-              _buffer[column * rect.height + row].color = buffer_copy[std::clamp(row + _fuzztable[_fuzz], 0, (int)rect.height - 1)].color;
+              _buffer[column * rect.size.y() + row].colormap = std::min(buffer_copy[std::clamp(row + _fuzztable[_fuzz], 0, (int)rect.size.y() - 1)].colormap + 6, 31);
+              _buffer[column * rect.size.y() + row].color = buffer_copy[std::clamp(row + _fuzztable[_fuzz], 0, (int)rect.size.y() - 1)].color;
               _fuzz = (_fuzz + 1) % _fuzztable.size();
             }
             else {
-              _buffer[column * rect.height + row].colormap = 31 - shaded / 8;
-              _buffer[column * rect.height + row].color = span.pixels[pixel_y - span.offset];
+              _buffer[column * rect.size.y() + row].colormap = 31 - shaded / 8;
+              _buffer[column * rect.size.y() + row].color = span.pixels[pixel_y - span.offset];
             }
             break;
           }

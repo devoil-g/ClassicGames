@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #include "Doom/Linedef/AbstractTriggerableLinedef.hpp"
 
 namespace DOOM
@@ -23,7 +25,7 @@ namespace DOOM
     class LightTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat>
   {
   private:
-    bool  trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing, int16_t sector_index) override  // Perform light change on sector
+    bool  trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing, std::int16_t sector_index) override // Perform light change on sector
     {
       auto& sector = doom.level.sectors[sector_index];
 
@@ -31,7 +33,7 @@ namespace DOOM
       if (sector.action<DOOM::Doom::Level::Sector::Action::Lighting>().get() != nullptr)
         return false;
 
-      int16_t light;
+      std::int16_t  light;
 
       // Get new light level of sector
       switch (Light)
@@ -47,6 +49,9 @@ namespace DOOM
         break;
       case DOOM::EnumLinedef::Light::LightMaximum:
         light = sector.getNeighborHighestLight(doom);
+        break;
+      default:
+        light = 0;
         break;
       }
 

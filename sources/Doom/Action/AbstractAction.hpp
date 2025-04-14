@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cstdint>
+#include <memory>
+
 #include "Doom/Doom.hpp"
 
 namespace DOOM
@@ -27,7 +30,7 @@ namespace DOOM
   class AbstractAction
   {
   public:
-    static std::unique_ptr<DOOM::AbstractAction>  factory(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, int16_t type, int16_t model = -1); // Factory of sector action build from type
+    static std::unique_ptr<DOOM::AbstractAction>  factory(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, std::int16_t type, std::int16_t model = -1); // Factory of sector action build from type
 
   protected:
     virtual void  remove(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector) = 0;  // Remove action from sector

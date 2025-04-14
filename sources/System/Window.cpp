@@ -1,39 +1,39 @@
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Image.hpp>
 
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 
-std::string const   Game::Window::DefaultTitle = "Classical Games";
-unsigned int const  Game::Window::DefaultWidth = 960;
-unsigned int const  Game::Window::DefaultHeight = 540;
-unsigned int const  Game::Window::DefaultAntialiasing = 4;
-float const         Game::Window::FpsRefresh = 1.f;
-bool const          Game::Window::DefaultVerticalSync = false;
-float const         Game::Window::Joystick::DeadZone = 20.f;
+const Math::Vector<2, unsigned int> Game::Window::DefaultSize = { 960u, 540u };
+const std::string                   Game::Window::DefaultTitle = "Classical Games";
+const unsigned int                  Game::Window::DefaultAntialiasing = 4;
+const float                         Game::Window::FpsRefresh = 1.f;
+const bool                          Game::Window::DefaultVerticalSync = false;
+const float                         Game::Window::Joystick::DeadZone = 20.f;
 
 Game::Window& Game::Window::Instance()
 {
-  static Game::Window wwin;
+  static Game::Window window;
 
   // Return window instance
-  return wwin;
+  return window;
 }
 
 Game::Window::Window() :
-  _window(), _mouse(), _keyboard(), _joystick(), _elapsed(), _tick(), _sync(Game::Window::DefaultVerticalSync)
+  _window(), _mouse(), _keyboard(), _joystick(),
+  _elapsed(0.f),
+  _tick(0),
+  _size(Game::Window::DefaultSize),
+  _title(Game::Window::DefaultTitle),
+  _style(sf::Style::Default),
+  _antialiasing(Game::Window::DefaultAntialiasing),
+  _vsync(Game::Window::DefaultVerticalSync),
+  _fullscreen(false)
 {
   // Create window with default parameters
-  create(sf::VideoMode(Game::Window::DefaultWidth, Game::Window::DefaultHeight), sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close, sf::ContextSettings(24, 8, Game::Window::DefaultAntialiasing, 4, 4));
-
-#ifdef _WIN32
-  // Get system handle of window
-  ::CoInitialize(nullptr);
-  ::CoCreateInstance(::CLSID_TaskbarList, nullptr, ::tagCLSCTX::CLSCTX_INPROC_SERVER, ::IID_ITaskbarList3, (void **)&_taskbar);
-  if (_taskbar == nullptr)
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-#endif
+  recreateWindow();
 }
 
 bool  Game::Window::update(float elapsed)
@@ -43,8 +43,8 @@ bool  Game::Window::update(float elapsed)
   _mouse._released.fill(false);
   _keyboard._pressed.fill(false);
   _keyboard._released.fill(false);
-  _joystick._pressed.fill(std::array<bool, sf::Joystick::ButtonCount>());
-  _joystick._released.fill(std::array<bool, sf::Joystick::ButtonCount>());
+  _joystick._pressed.fill(std::array<bool, Game::Window::JoystickButtonCount>());
+  _joystick._released.fill(std::array<bool, Game::Window::JoystickButtonCount>());
 
   // Cancel down keys when no focus
   // NOTE: some joysticks are registered when no focus
@@ -59,74 +59,74 @@ bool  Game::Window::update(float elapsed)
   // Reset mouse wheel ticks
   _mouse._wheel = 0;
   
-  // Process pending events
-  sf::Event event;
-  while (_window.pollEvent(event) == true)
+  // Handle events
   {
-    // Stop if window closed
-    if (event.type == sf::Event::Closed)
-      return true;
-
-    // Update the view to the new size of the window
-    if (event.type == sf::Event::Resized)
-      _window.setView(sf::View(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height)));
-
-    // Get inputs
-    switch (event.type)
-    {
-      // Get mouse events
-    case sf::Event::MouseButtonPressed:
-      _mouse._down[event.mouseButton.button] = true;
-      _mouse._pressed[event.mouseButton.button] = true;
-      break;
-    case sf::Event::MouseButtonReleased:
-      _mouse._down[event.mouseButton.button] = false;
-      _mouse._released[event.mouseButton.button] = true;
-      break;
-    case sf::Event::MouseWheelMoved:
-      _mouse._wheel += event.mouseWheel.delta;
-      break;
-
-      // Get keyboard events
-    case sf::Event::KeyPressed:
-      if (event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount) {
-        _keyboard._down[event.key.code] = true;
-        _keyboard._pressed[event.key.code] = true;
+    const auto eventClosed = [this](const sf::Event::Closed&) {
+      _window.close();
+      };
+    const auto eventResized = [this](const sf::Event::Resized& resized) {
+      _window.setView(sf::View(sf::FloatRect({ 0.f, 0.f }, { (float)resized.size.x, (float)resized.size.y })));
+      _size = { resized.size.x, resized.size.y };
+      };
+    const auto eventKeyPressed = [this](const sf::Event::KeyPressed& key) {
+      if (key.code != Key::Unknown) {
+        _keyboard._down[(std::size_t)key.code] = true;
+        _keyboard._pressed[(std::size_t)key.code] = true;
       }
-      break;
-    case sf::Event::KeyReleased:
-      if (event.key.code >= 0 && event.key.code < sf::Keyboard::KeyCount) {
-        _keyboard._down[event.key.code] = false;
-        _keyboard._released[event.key.code] = true;
+      };
+    const auto eventKeyReleased = [this](const sf::Event::KeyReleased& key) {
+      if (key.code != Key::Unknown) {
+        _keyboard._down[(std::size_t)key.code] = false;
+        _keyboard._released[(std::size_t)key.code] = true;
       }
-      break;
-    case sf::Event::TextEntered:
-      _keyboard._text.push_back((wchar_t)event.text.unicode);
-      break;
+      };
+    const auto eventTextEntered = [this](const sf::Event::TextEntered& text) {
+      _keyboard._text.push_back((wchar_t)text.unicode);
+      };
+    const auto eventMouseButtonPressed = [this](const sf::Event::MouseButtonPressed& mouse) {
+      _mouse._down[(std::size_t)mouse.button] = true;
+      _mouse._pressed[(std::size_t)mouse.button] = true;
+      };
+    const auto eventMouseButtonReleased = [this](const sf::Event::MouseButtonReleased& mouse) {
+      _mouse._down[(std::size_t)mouse.button] = false;
+      _mouse._released[(std::size_t)mouse.button] = true;
+      };
+    const auto eventMouseWheelMoved = [this](const sf::Event::MouseWheelScrolled& wheel) {
+      _mouse._wheel += wheel.delta;
+      };
+    const auto eventJoystickButtonPressed = [this](const sf::Event::JoystickButtonPressed& joystick) {
+      _joystick._down[joystick.joystickId][joystick.button] = true;
+      _joystick._pressed[joystick.joystickId][joystick.button] = true;
+      printf("%d %d\n", joystick.joystickId, joystick.button);
+      };
+    const auto eventJoystickButtonReleased = [this](const sf::Event::JoystickButtonReleased& joystick) {
+      _joystick._down[joystick.joystickId][joystick.button] = false;
+      _joystick._released[joystick.joystickId][joystick.button] = true;
+      };
 
-      // Get joystick events
-    case sf::Event::JoystickButtonPressed:
-      _joystick._down[event.joystickButton.joystickId][event.joystickButton.button] = true;
-      _joystick._pressed[event.joystickButton.joystickId][event.joystickButton.button] = true;
-      break;
-    case sf::Event::JoystickButtonReleased:
-      _joystick._down[event.joystickButton.joystickId][event.joystickButton.button] = false;
-      _joystick._released[event.joystickButton.joystickId][event.joystickButton.button] = true;
-      break;
-
-    default:
-      break;
-    }
+    // Poll events
+    _window.handleEvents(
+      eventClosed,
+      eventResized,
+      eventKeyPressed,
+      eventKeyReleased,
+      eventTextEntered,
+      eventMouseButtonPressed,
+      eventMouseButtonReleased,
+      eventMouseWheelMoved,
+      eventJoystickButtonPressed,
+      eventJoystickButtonReleased
+      );
   }
 
   // Update mouse position
-  sf::Vector2i  position = sf::Mouse::getPosition(_window);
-  _mouse._relative = position - _mouse._position;
-  _mouse._position = position;
+  auto  position = sf::Mouse::getPosition(_window);
+  _mouse._relative = Math::Vector<2, int>(position.x, position.y) - _mouse._position;
+  _mouse._position = Math::Vector<2, int>(position.x, position.y);
   
   // Update joysticks axis positions
-  for (unsigned int joystick = 0; joystick < sf::Joystick::Count; joystick++)
-    for (unsigned int axis = 0; axis < sf::Joystick::AxisCount; axis++) {
+  for (unsigned int joystick = 0; joystick < Game::Window::JoystickCount; joystick++)
+    for (unsigned int axis = 0; axis < Game::Window::JoystickAxisCount; axis++) {
       float value = sf::Joystick::getAxisPosition(joystick, (sf::Joystick::Axis)axis);
 
       _joystick._relative[joystick][axis] = value - _joystick._position[joystick][axis];
@@ -152,7 +152,7 @@ bool  Game::Window::update(float elapsed)
   return false;
 }
 
-void  Game::Window::create(const sf::VideoMode& video, sf::Uint32 style, const sf::ContextSettings& context)
+void  Game::Window::recreateWindow()
 {
 #ifdef _WIN32
   ::COLORREF  pcrKey = RGB(0, 0, 0);
@@ -160,40 +160,62 @@ void  Game::Window::create(const sf::VideoMode& video, sf::Uint32 style, const s
   ::DWORD     pdwFlags = 0;
 
   // Save actual window transparency configuration
-  ::GetLayeredWindowAttributes(_window.getSystemHandle(), &pcrKey, &pbAlpha, &pdwFlags);
+  ::GetLayeredWindowAttributes(_window.getNativeHandle(), &pcrKey, &pbAlpha, &pdwFlags);
 #endif
 
   // Create window with parameters
-  _window.create(video, Game::Window::DefaultTitle, style, context);
+  _window.create(
+    _fullscreen == true ? sf::VideoMode::getDesktopMode() : sf::VideoMode({_size.x(), _size.y()}),
+    _title,
+    _style,
+    _fullscreen == true ? sf::State::Fullscreen : sf::State::Windowed, 
+    sf::ContextSettings{
+      .depthBits = 24,
+      .stencilBits = 8,
+      .antiAliasingLevel = (unsigned int)std::pow(2, _antialiasing),
+      .majorVersion = 4,
+      .minorVersion = 4,
+      .attributeFlags = sf::ContextSettings::Attribute::Default,
+      .sRgbCapable = false
+    });
 
   // Restore V-sync (limit fps)
   setVerticalSync(getVerticalSync());
   
   // Disabled key repeate
   _window.setKeyRepeatEnabled(false);
-  
-  // Load window icon
+
+#ifdef _WIN32
+  // Initialize window transparency
+  ::SetWindowLongPtr(_window.getNativeHandle(), GWL_EXSTYLE, ::GetWindowLongPtr(_window.getNativeHandle(), GWL_EXSTYLE) | WS_EX_LAYERED);
+
+  if (::SetLayeredWindowAttributes(_window.getNativeHandle(), pcrKey, pbAlpha, pdwFlags) == FALSE)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  ::RedrawWindow(_window.getNativeHandle(), NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+#endif
+
   sf::Image icon;
+
+  // Load window icon
   if (icon.loadFromFile((Game::Config::ExecutablePath / "assets" / "icons" / "icon128.png").string()) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Set window icon
-  _window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+  _window.setIcon(icon);
 
 #ifdef _WIN32
-  // Initialize window transparency
-  ::SetWindowLongPtr(_window.getSystemHandle(), GWL_EXSTYLE, ::GetWindowLongPtr(_window.getSystemHandle(), GWL_EXSTYLE) | WS_EX_LAYERED);
-
-  if (::SetLayeredWindowAttributes(_window.getSystemHandle(), pcrKey, pbAlpha, pdwFlags) == FALSE)
+  // Get system handle of window
+  if (::CoInitialize(nullptr) != S_OK ||
+    ::CoCreateInstance(::CLSID_TaskbarList, nullptr, ::tagCLSCTX::CLSCTX_INPROC_SERVER, ::IID_ITaskbarList3, (void**)&_taskbar) != S_OK ||
+    _taskbar == nullptr)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-  ::RedrawWindow(_window.getSystemHandle(), NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
 #endif
 }
 
 void  Game::Window::taskbar(Game::Window::WindowFlag flag)
 {
 #ifdef _WIN32
-  _taskbar->SetProgressState(_window.getSystemHandle(), (::TBPFLAG)flag);
+  _taskbar->SetProgressState(_window.getNativeHandle(), (::TBPFLAG)flag);
 #endif
 }
 
@@ -206,47 +228,183 @@ void  Game::Window::taskbar(Game::Window::WindowFlag flag, float progress)
   progress = std::clamp(progress, 0.f, 1.f);
 
 #ifdef _WIN32
-  _taskbar->SetProgressValue(_window.getSystemHandle(), (::ULONGLONG)(progress * 1000), 1000);
+  _taskbar->SetProgressValue(_window.getNativeHandle(), (::ULONGLONG)(progress * 1000), 1000);
 #endif
 }
 
-void  Game::Window::transparency(sf::Uint8 transparency)
+void  Game::Window::transparency(std::uint8_t transparency)
 {
 #ifdef _WIN32
-  if (::SetLayeredWindowAttributes(_window.getSystemHandle(), RGB(0, 0, 0), 255 - transparency, LWA_ALPHA) == FALSE)
+  if (::SetLayeredWindowAttributes(_window.getNativeHandle(), RGB(0, 0, 0), 255 - transparency, LWA_ALPHA) == FALSE)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-  ::RedrawWindow(_window.getSystemHandle(), NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+  ::RedrawWindow(_window.getNativeHandle(), NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
 #endif
 }
 
-bool  Game::Window::getVerticalSync() const
+Math::Vector<2, float>  Game::Window::pixelToCoords(Math::Vector<2, int> pixel) const
 {
-  return _sync;
+  return pixelToCoords(pixel, getView());
 }
 
-void  Game::Window::setVerticalSync(bool sync)
+Math::Vector<2, float>  Game::Window::pixelToCoords(Math::Vector<2, int> pixel, const Game::Window::View& view) const
 {
-  // Save new state
-  _sync = sync;
+  auto  coords = _window.mapPixelToCoords(
+    { pixel.x(), pixel.y() },
+    sf::View(sf::FloatRect(
+      { view.position.x(), view.position.y() },
+      { view.size.x(), view.size.y() }
+    ))
+  );
 
-  // Set vertical sync
-  window().setVerticalSyncEnabled(_sync);
+  // Transform screen coordinates to world coordinates
+  return { coords.x, coords.y };
 }
 
-void  Game::Window::draw(sf::Sprite& sprite, float ratio)
+Math::Vector<2, int>  Game::Window::coordsToPixels(Math::Vector<2, float> coords) const
 {
-  auto spriteSize = sprite.getTexture()->getSize();
-  auto windowSize = _window.getSize();
+  return coordsToPixels(coords, getView());
+}
 
+Math::Vector<2, int>  Game::Window::coordsToPixels(Math::Vector<2, float> coords, const Game::Window::View& view) const
+{
+  auto  pixel = _window.mapCoordsToPixel(
+    { coords.x(), coords.y() },
+    sf::View(sf::FloatRect(
+    { view.position.x(), view.position.y() },
+    { view.size.x(), view.size.y() }
+  )));
+
+  // Transform world coordinates to screen coordinates
+  return { pixel.x, pixel.y };
+}
+
+Game::Window::View  Game::Window::getView() const
+{
+  auto view = _window.getView();
+
+  // Compute current window view
+  return Game::Window::View(
+    { view.getCenter().x - view.getSize().x / 2.f, view.getCenter().y - view.getSize().y / 2.f },
+    { view.getSize().x, view.getSize().y }
+  );
+}
+
+void  Game::Window::setView(const Game::Window::View& view)
+{
+  // Apply new view to window
+  _window.setView(sf::View(sf::FloatRect({ view.position.x(), view.position.y() }, { view.size.x(), view.size.y() })));
+}
+
+void  Game::Window::setSize(Math::Vector<2, unsigned int> size)
+{
+  // Apply new window resolution
+  if (_size != size) {
+    _size = size;
+
+    // Change resolution only in windowed mode
+    if (_fullscreen == false)
+      recreateWindow();
+  }
+}
+
+void  Game::Window::setTitle(const std::string& title)
+{
+  // Apply new title
+  if (_title != title) {
+    _title = title;
+    _window.setTitle(_title);
+  }
+}
+
+void  Game::Window::setStyle(std::uint32_t style)
+{
+  // Apply new style
+  if (_style != style) {
+    _style = style;
+    recreateWindow();
+  }
+}
+
+void  Game::Window::setAntialiasing(unsigned int antialiasing)
+{
+  // Apply new antialiasing level
+  if (_antialiasing != antialiasing) {
+    _antialiasing = antialiasing;
+    recreateWindow();
+  }
+}
+
+void  Game::Window::setVerticalSync(bool vsync)
+{
+  // Apply new vsync
+  if (_vsync != vsync) {
+    _vsync = vsync;
+    _window.setVerticalSyncEnabled(_vsync);
+  }
+}
+
+void  Game::Window::setFullscreen(bool fullscreen)
+{
+  // Apply new fullscreen mode
+  if (_fullscreen != fullscreen) {
+    _fullscreen = fullscreen;
+    recreateWindow();
+  }
+}
+
+void  Game::Window::clear(std::uint32_t color)
+{
+  // Clear window
+  _window.clear(sf::Color(color));
+}
+
+void  Game::Window::draw(const sf::Drawable& drawable, const sf::RenderStates& states)
+{
+  // Draw to rendering target
+  _window.draw(drawable, states);
+}
+
+void  Game::Window::draw(const sf::Texture& texture, float ratio, DrawMode mode)
+{
+  sf::Sprite  sprite(texture);
+  auto        textureSize = texture.getSize();
+  auto        windowSize = _window.getSize();
+
+  float scaleX, scaleY;
+  
   // Compute sprite scale and position
-  float scale = std::min((float)windowSize.x / (float)spriteSize.x, (float)windowSize.y / ((float)spriteSize.y * ratio));
-  float pos_x = (((float)windowSize.x - ((float)spriteSize.x * scale)) / 2.f);
-  float pos_y = (((float)windowSize.y - ((float)spriteSize.y * scale * ratio)) / 2.f);
-
+  switch (mode) {
+  case DrawMode::Fill:
+    scaleX = std::max((float)windowSize.x / (float)textureSize.x, (float)windowSize.y / ((float)textureSize.y * ratio));
+    scaleY = scaleX * ratio;
+    break;
+  case DrawMode::Fit:
+    scaleX = std::min((float)windowSize.x / (float)textureSize.x, (float)windowSize.y / ((float)textureSize.y * ratio));
+    scaleY = scaleX * ratio;
+    break;
+  case DrawMode::Strech:
+    scaleX = (float)windowSize.x / (float)textureSize.x;
+    scaleY = (float)windowSize.y / (float)textureSize.y;
+    break;
+  default:
+    scaleX = 0.f;
+    scaleY = 0.f;
+    break;
+  }
+  
   // Position sprite in window
-  sprite.setScale(scale, scale * ratio);
-  sprite.setPosition(pos_x, pos_y);
+  sprite.setScale({ scaleX, scaleY * ratio });
+  sprite.setPosition({
+    ((float)windowSize.x - ((float)textureSize.x * scaleX)) / 2.f,
+    ((float)windowSize.y - ((float)textureSize.y * scaleY)) / 2.f
+    });
 
-  // Draw DOOM rendering target
-  _window.draw(sprite);
+  // Draw to rendering target
+  draw(sprite);
+}
+
+void  Game::Window::display()
+{
+  // Render drawn sprites
+  _window.display();
 }

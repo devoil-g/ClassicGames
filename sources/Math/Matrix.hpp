@@ -24,7 +24,8 @@ namespace Math
     }
 
     template<typename ... Types>
-    Matrix(Types... args)
+    Matrix(Types... args) :
+      _matrix()
     {
       Type values[]{ args... };
 
@@ -37,7 +38,8 @@ namespace Math
           (*this)(row, col) = values[col * Row + row];
     }
 
-    Matrix(const Game::JSON::Array& json)
+    Matrix(const Game::JSON::Array& json) :
+      _matrix()
     {
       // Check JSON array size (number of columns)
       if (json.size() != Col)
@@ -60,6 +62,27 @@ namespace Math
     ~Matrix() = default;
 
     Matrix<Row, Col, Type>& operator=(const Matrix<Row, Col, Type>&) = default;
+    Matrix<Row, Col, Type>& operator=(Matrix<Row, Col, Type>&&) = default;
+
+    Matrix<Row, Col, Type>& operator=(const Game::JSON::Array& json)
+    {
+      // Check JSON array size (number of columns)
+      if (json.size() != Col)
+        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+      // Extract values from JSON
+      for (unsigned int col = 0; col < Col; col++)
+      {
+        // Check JSON array size (number of rows)
+        if (json.get(col).array().size() != Row)
+          throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+        for (unsigned int row = 0; row < Row; row++)
+          (*this)(row, col) = (Type)json.get(col).array().get(row).number();
+      }
+
+      return *this;
+    }
 
     bool  operator==(Math::Matrix<Row, Col, Type> const& v) const // Matrix comparison
     {

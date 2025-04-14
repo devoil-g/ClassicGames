@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0.2)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.24.0)
 PROJECT(ClassicGames)
 
 # Set game sources
@@ -191,6 +191,8 @@ SET(GAME_QUIZ_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/BlindtestQuizScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/ControllerQuizScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/ControllerQuizScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/FastestQuizScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/FastestQuizScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/Quiz.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/Quiz.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/QuizScene.hpp
@@ -201,6 +203,8 @@ SET(GAME_QUIZ_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/ScoresQuizScene.cpp
 )
 SET(GAME_MATH_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Box.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Box.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Matrix.cpp
@@ -325,7 +329,7 @@ FIND_PACKAGE(Threads REQUIRED)
 # Import SFML library
 INCLUDE(FetchContent)
 SET(BUILD_SHARED_LIBS OFF)
-FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TAG 2.6.2)
+FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TAG 3.0.0)
 FetchContent_MakeAvailable(SFML)
 
 # Set includes directories
@@ -333,10 +337,10 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/sources/)
 
 # Generate executables
 ADD_EXECUTABLE(Game ${GAME_SRCS} ${GAME_RSRC})
-TARGET_LINK_LIBRARIES(Game Threads::Threads sfml-system sfml-window sfml-network sfml-graphics sfml-audio)
+TARGET_LINK_LIBRARIES(Game Threads::Threads SFML::System SFML::Window SFML::Network SFML::Graphics SFML::Audio)
 
-# Force C++20
-SET_PROPERTY(TARGET Game PROPERTY CXX_STANDARD 20)
+# Force C++23
+SET_PROPERTY(TARGET Game PROPERTY CXX_STANDARD 23)
 
 # Copy assets to build directory
 ADD_CUSTOM_COMMAND(TARGET Game POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets/ $<TARGET_FILE_DIR:Game>/assets/)

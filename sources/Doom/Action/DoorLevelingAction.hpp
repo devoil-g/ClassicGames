@@ -2,8 +2,6 @@
 
 #include <list>
 
-#include <SFML/System/Time.hpp>
-
 #include "Doom/Action/AbstractLevelingAction.hpp"
 
 namespace DOOM

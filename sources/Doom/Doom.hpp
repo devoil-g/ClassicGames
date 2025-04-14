@@ -1,17 +1,22 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 #include <filesystem>
+#include <functional>
 #include <list>
 #include <memory>
+#include <set>
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
 #include "Doom/Wad.hpp"
+#include "Math/Box.hpp"
 #include "Math/Vector.hpp"
 #include "System/Audio/Sound.hpp"
 #include "System/Utilities.hpp"
@@ -92,7 +97,7 @@ namespace DOOM
       ArmorMega = 200
     };
 
-    enum ThingType : int16_t
+    enum ThingType : std::int16_t
     {
       ThingType_PLAYER,         // -1
       ThingType_POSSESSED,      // Former Human Trooper
@@ -239,7 +244,7 @@ namespace DOOM
       ThingType_Number
     };
 
-    enum ThingFlag : int16_t
+    enum ThingFlag : std::int16_t
     {
       FlagNone = 0x0000,
       FlagSkillLevel12 = 0x0001,  // Active on skill level 1 & 2
@@ -249,7 +254,7 @@ namespace DOOM
       FlagMultiplayer = 0x0010,   // Only active in multiplayer mode
     };
 
-    enum ThingProperty : int32_t
+    enum ThingProperty : std::int32_t
     {
       ThingProperty_None = 0x00000000,          // Nothing
       ThingProperty_Special = 0x00000001,       // Call P_SpecialThing when touched.
@@ -293,7 +298,7 @@ namespace DOOM
   class Doom
   {
   public:
-    static float  const       Tic;              // Duration of a game tic (1/35s)
+    static float const        Tic;              // Duration of a game tic (1/35s)
     static const unsigned int RenderWidth;      // Default rendering width size
     static const unsigned int RenderHeight;     // Default rendering height size
     static unsigned int       RenderScale;      // Scaling factor of resolution
@@ -310,7 +315,7 @@ namespace DOOM
         ~Palette() = default;
       };
 
-      class Colormap : public std::array<uint8_t, 256>
+      class Colormap : public std::array<std::uint8_t, 256>
       {
       public:
         Colormap() = default;
@@ -330,24 +335,24 @@ namespace DOOM
         {
           struct Span
           {
-            uint8_t               offset; // Offset of the span of pixels in the column
-            std::vector<uint8_t>  pixels; // Pixels colors indexes
+            std::uint8_t              offset; // Offset of the span of pixels in the column
+            std::vector<std::uint8_t> pixels; // Pixels colors indexes
           };
 
           std::vector<Span> spans;  // Vector of spans of pixels in the column
         };
 
-        int16_t             width, height;  // Size of texture
-        int16_t             left, top;      // Texture offset (sprite only)
+        std::int16_t        width, height;  // Size of texture
+        std::int16_t        left, top;      // Texture offset (sprite only)
         std::vector<Column> columns;        // Pre-computed texture from patches
 
         Texture(DOOM::Doom& doom, const DOOM::Wad::RawResources::Texture& texture);
         Texture(DOOM::Doom& doom, const DOOM::Wad::RawResources::Patch& patch);
         ~Texture() = default;
 
-        sf::Image image(const DOOM::Doom& doom) const;                                                                                                          // Create an SFML image from texture
-        void      draw(const DOOM::Doom& doom, sf::Image& image, sf::Vector2i position, sf::Vector2i scale, int16_t palette = 0) const;                         // Draw texture in SFML image at given position & scale
-        void      draw(const DOOM::Doom& doom, sf::Image& image, sf::Rect<int16_t> area, sf::Vector2i position, sf::Vector2i scale, int16_t palette = 0) const; // Draw texture in SFML image at given position & scale in area
+        sf::Image image(const DOOM::Doom& doom) const;                                                                                                                                                      // Create an SFML image from texture
+        void      draw(const DOOM::Doom& doom, sf::Image& image, const Math::Vector<2, int>& position, const Math::Vector<2, int>& scale, std::int16_t palette = 0) const;                                  // Draw texture in SFML image at given position & scale
+        void      draw(const DOOM::Doom& doom, sf::Image& image, Math::Box<2, std::int16_t> area, const Math::Vector<2, int>& position, const Math::Vector<2, int>& scale, std::int16_t palette = 0) const; // Draw texture in SFML image at given position & scale in area
       };
 
       class Sound
@@ -487,7 +492,7 @@ namespace DOOM
       };
 
       template <typename Type>
-      const Type& getResource(uint64_t key, const std::unordered_map<uint64_t, Type>& container) const
+      const Type& getResource(std::uint64_t key, const std::unordered_map<std::uint64_t, Type>& container) const
       {
         const auto& iterator = container.find(key);
 
@@ -499,23 +504,23 @@ namespace DOOM
       }
 
     public:
-      std::array<DOOM::Doom::Resources::Palette, 14>                                                                                          palettes;   // Color palettes
-      std::array<DOOM::Doom::Resources::Colormap, 34>                                                                                         colormaps;  // Color brightness maps
-      std::unordered_map<uint64_t, std::unique_ptr<DOOM::AbstractFlat>>                                                                       flats;      // Map of flat (ground/ceiling texture)
-      std::unordered_map<uint64_t, DOOM::Doom::Resources::Texture>                                                                            textures;   // Map of wall textures
-      std::unordered_map<uint64_t, DOOM::Doom::Resources::Texture>                                                                            sprites;    // Map of raw sprites (not ordered, should not be used)
-      std::unordered_map<uint64_t, std::vector<std::array<std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool>, 8>>> animations; // Map of sprites sorted by animation sequence and angle
-      std::unordered_map<uint64_t, DOOM::Doom::Resources::Texture>                                                                            menus;      // Map of menu patches
-      std::unordered_map<uint64_t, DOOM::Doom::Resources::Sound>                                                                              sounds;     // Map of sounds
+      std::array<DOOM::Doom::Resources::Palette, 14>                                                                                                palettes;   // Color palettes
+      std::array<DOOM::Doom::Resources::Colormap, 34>                                                                                               colormaps;  // Color brightness maps
+      std::unordered_map<std::uint64_t, std::unique_ptr<DOOM::AbstractFlat>>                                                                        flats;      // Map of flat (ground/ceiling texture)
+      std::unordered_map<std::uint64_t, DOOM::Doom::Resources::Texture>                                                                             textures;   // Map of wall textures
+      std::unordered_map<std::uint64_t, DOOM::Doom::Resources::Texture>                                                                             sprites;    // Map of raw sprites (not ordered, should not be used)
+      std::unordered_map<std::uint64_t, std::vector<std::array<std::pair<std::reference_wrapper<const DOOM::Doom::Resources::Texture>, bool>, 8>>>  animations; // Map of sprites sorted by animation sequence and angle
+      std::unordered_map<std::uint64_t, DOOM::Doom::Resources::Texture>                                                                             menus;      // Map of menu patches
+      std::unordered_map<std::uint64_t, DOOM::Doom::Resources::Sound>                                                                               sounds;     // Map of sounds
 
       Resources() = default;
       ~Resources() = default;
 
-      const DOOM::AbstractFlat&             getFlat(uint64_t key) const { return *getResource<std::unique_ptr<DOOM::AbstractFlat>>(key, flats); };  // Get flat texture, throw an error if not found
-      const DOOM::Doom::Resources::Texture& getTexture(uint64_t key) const { return getResource<DOOM::Doom::Resources::Texture>(key, textures); };  // Get texture, throw an error if not found
-      const DOOM::Doom::Resources::Texture& getSprite(uint64_t key) const { return getResource<DOOM::Doom::Resources::Texture>(key, sprites); };    // Get sprite, throw an error if not found
-      const DOOM::Doom::Resources::Texture& getMenu(uint64_t key) const { return getResource<DOOM::Doom::Resources::Texture>(key, menus); };        // Get menu texture, throw an error if not found
-      const DOOM::Doom::Resources::Sound&   getSound(uint64_t key) const { return getResource<DOOM::Doom::Resources::Sound>(key, sounds); };        // Get sound, throw an error if not found
+      const DOOM::AbstractFlat&             getFlat(std::uint64_t key) const { return *getResource<std::unique_ptr<DOOM::AbstractFlat>>(key, flats); }; // Get flat texture, throw an error if not found
+      const DOOM::Doom::Resources::Texture& getTexture(std::uint64_t key) const { return getResource<DOOM::Doom::Resources::Texture>(key, textures); }; // Get texture, throw an error if not found
+      const DOOM::Doom::Resources::Texture& getSprite(std::uint64_t key) const { return getResource<DOOM::Doom::Resources::Texture>(key, sprites); };   // Get sprite, throw an error if not found
+      const DOOM::Doom::Resources::Texture& getMenu(std::uint64_t key) const { return getResource<DOOM::Doom::Resources::Texture>(key, menus); };       // Get menu texture, throw an error if not found
+      const DOOM::Doom::Resources::Sound&   getSound(std::uint64_t key) const { return getResource<DOOM::Doom::Resources::Sound>(key, sounds); };       // Get sound, throw an error if not found
 
       void  update(DOOM::Doom& doom, float elapsed);  // Update resources components
     };
@@ -535,23 +540,23 @@ namespace DOOM
         static const int  FrameDuration = 8;  // Tics between two frames of animation
 
       public:
-        float   x, y;   // Texture offset
-        int16_t sector; // Index of the sector it references
+        float         x, y;   // Texture offset
+        std::int16_t  sector; // Index of the sector it references
 
       private:
         float _elapsed; // Total elapsed time
         float _toggle;  // Time before switch re-toggle
 
-        uint64_t  _upper_name;  // Upper texture name
-        uint64_t  _lower_name;  // Lower texture name
-        uint64_t  _middle_name; // Middle texture name
+        std::uint64_t _upper_name;  // Upper texture name
+        std::uint64_t _lower_name;  // Lower texture name
+        std::uint64_t _middle_name; // Middle texture name
 
         std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>> _upper_textures;  // Pointer to upper textures
         std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>> _lower_textures;  // Pointer to lower textures
         std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>> _middle_textures; // Pointer to middle textures
 
-        bool                                                                      switched(DOOM::Doom& doom, std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>>& textures, uint64_t& name);  // Switch textures
-        std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>> animation(const DOOM::Doom& doom, uint64_t name) const;                                                                           // Return frames of animation
+        bool                                                                      switched(DOOM::Doom& doom, std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>>& textures, std::uint64_t& name);  // Switch textures
+        std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>> animation(const DOOM::Doom& doom, std::uint64_t name) const;                                                                           // Return frames of animation
 
       public:
         Sidedef(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Sidedef& sidedef);
@@ -568,11 +573,11 @@ namespace DOOM
       class Segment
       {
       public:
-        int16_t start, end; // Start/end vertexes indexes
-        float   angle;      // Segment angle (rad.)
-        int16_t linedef;    // Segment linedef index
-        int16_t direction;  // 0 (same as linedef) or 1 (opposite of linedef)
-        int16_t offset;     // Distance along linedef to start of seg
+        std::int16_t  start, end; // Start/end vertexes indexes
+        float         angle;      // Segment angle (rad.)
+        std::int16_t  linedef;    // Segment linedef index
+        std::int16_t  direction;  // 0 (same as linedef) or 1 (opposite of linedef)
+        std::int16_t  offset;     // Distance along linedef to start of seg
 
         Segment(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Segment& segment);
         ~Segment() = default;
@@ -581,9 +586,9 @@ namespace DOOM
       class Subsector
       {
       public:
-        int16_t count;  // Seg count
-        int16_t index;  // First seg number
-        int16_t sector; // Index of sector that this subsector is part of
+        std::int16_t  count;  // Seg count
+        std::int16_t  index;  // First seg number
+        std::int16_t  sector; // Index of sector that this subsector is part of
 
         Subsector(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Subsector& subsector);
         ~Subsector() = default;
@@ -594,13 +599,13 @@ namespace DOOM
       public:
         struct BoundingBox
         {
-          int16_t top, bottom;  // Top and bottom limits
-          int16_t left, right;  // Left and right limits
+          std::int16_t  top, bottom;  // Top and bottom limits
+          std::int16_t  left, right;  // Left and right limits
         };
 
         Math::Vector<2> origin, direction;      // Partition line of nodes
         BoundingBox     rightbound, leftbound;  // Children bounding boxes
-        int16_t         rightchild, leftchild;  // Children node index, or subsector index if bit 15 is set
+        std::int16_t    rightchild, leftchild;  // Children node index, or subsector index if bit 15 is set
 
         Node(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Node& node);
         ~Node() = default;
@@ -636,26 +641,26 @@ namespace DOOM
           Number    // Number of type of action
         };
 
-        uint64_t                                          floor_name, ceiling_name; // Textures names
+        std::uint64_t                                     floor_name, ceiling_name; // Textures names
         std::reference_wrapper<const DOOM::AbstractFlat>  floor_flat, ceiling_flat; // Textures pointers (null if sky)
 
-        int16_t light_current, light_base;      // Sector base and current light level
-        float   floor_current, floor_base;      // Sector base and current floor height
-        float   ceiling_current, ceiling_base;  // Sector base and current ceiling height
+        std::int16_t  light_current, light_base;      // Sector base and current light level
+        float         floor_current, floor_base;      // Sector base and current floor height
+        float         ceiling_current, ceiling_base;  // Sector base and current ceiling height
 
-        float   damage;   // Sector damage/sec
-        int16_t tag;      // Sector/linedef tag
-        int16_t special;  // Sector special attribute
+        float         damage;   // Sector damage/sec
+        std::int16_t  tag;      // Sector/linedef tag
+        std::int16_t  special;  // Sector special attribute
 
         DOOM::AbstractThing* sound_target;  // Last sound emitter
 
       protected:
-        std::set<int16_t> _neighbors; // List of neighbor sectors (sorted)
+        std::set<std::int16_t>  _neighbors; // List of neighbor sectors (sorted)
 
       private:
         std::array<std::unique_ptr<DOOM::AbstractAction>, DOOM::Doom::Level::Sector::Action::Number>  _actions; // Actions on sector
 
-        static std::unique_ptr<DOOM::AbstractAction>  _factory(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, int16_t type, int16_t model); // Action factory proxy function (cycling inclusion problem)
+        static std::unique_ptr<DOOM::AbstractAction>  _factory(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, std::int16_t type, std::int16_t model); // Action factory proxy function (cycling inclusion problem)
 
       public:
         Sector(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Sector& sector);
@@ -665,7 +670,7 @@ namespace DOOM
         void  update(DOOM::Doom& doom, float elapsed);  // Update sector
 
         template<DOOM::Doom::Level::Sector::Action Type>
-        inline void action(DOOM::Doom& doom, int16_t type, int16_t model = -1)  // Add action to sector if possible
+        inline void action(DOOM::Doom& doom, std::int16_t type, std::int16_t model = -1)  // Add action to sector if possible
         {
           // Check template parameter
           static_assert(Type >= 0 && Type < DOOM::Doom::Level::Sector::Action::Number, "Invalid action template parameters.");
@@ -704,22 +709,22 @@ namespace DOOM
           return _actions.at(Type);
         }
 
-        std::pair<int16_t, float> getNeighborLowestFloor(const DOOM::Doom& doom) const;                     // Get lowest neighbor floor level
-        std::pair<int16_t, float> getNeighborHighestFloor(const DOOM::Doom& doom) const;                    // Get highest neighbor floor level
-        std::pair<int16_t, float> getNeighborNextLowestFloor(const DOOM::Doom& doom, float height) const;   // Get next lowest neighbor floor level from height
-        std::pair<int16_t, float> getNeighborNextHighestFloor(const DOOM::Doom& doom, float height) const;  // Get next highest neighbor floor level from height
+        std::pair<std::int16_t, float>  getNeighborLowestFloor(const DOOM::Doom& doom) const;                     // Get lowest neighbor floor level
+        std::pair<std::int16_t, float>  getNeighborHighestFloor(const DOOM::Doom& doom) const;                    // Get highest neighbor floor level
+        std::pair<std::int16_t, float>  getNeighborNextLowestFloor(const DOOM::Doom& doom, float height) const;   // Get next lowest neighbor floor level from height
+        std::pair<std::int16_t, float>  getNeighborNextHighestFloor(const DOOM::Doom& doom, float height) const;  // Get next highest neighbor floor level from height
 
-        std::pair<int16_t, float> getNeighborLowestCeiling(const DOOM::Doom& doom) const;                     // Get lowest neighbor floor level
-        std::pair<int16_t, float> getNeighborHighestCeiling(const DOOM::Doom& doom) const;                    // Get highest neighbor floor level
-        std::pair<int16_t, float> getNeighborNextLowestCeiling(const DOOM::Doom& doom, float height) const;   // Get next lowest neighbor floor level from height
-        std::pair<int16_t, float> getNeighborNextHighestCeiling(const DOOM::Doom& doom, float height) const;  // Get next highest neighbor floor level from height
+        std::pair<std::int16_t, float>  getNeighborLowestCeiling(const DOOM::Doom& doom) const;                     // Get lowest neighbor floor level
+        std::pair<std::int16_t, float>  getNeighborHighestCeiling(const DOOM::Doom& doom) const;                    // Get highest neighbor floor level
+        std::pair<std::int16_t, float>  getNeighborNextLowestCeiling(const DOOM::Doom& doom, float height) const;   // Get next lowest neighbor floor level from height
+        std::pair<std::int16_t, float>  getNeighborNextHighestCeiling(const DOOM::Doom& doom, float height) const;  // Get next highest neighbor floor level from height
 
-        const std::set<int16_t>&  getNeighbors() const; // Get neighbors indexes
+        const std::set<std::int16_t>& getNeighbors() const; // Get neighbors indexes
 
-        int16_t getShortestLowerTexture(const DOOM::Doom& doom) const;  // Get shortest lower texture height on the boundary of the sector
+        std::int16_t  getShortestLowerTexture(const DOOM::Doom& doom) const;  // Get shortest lower texture height on the boundary of the sector
 
-        int16_t getNeighborLowestLight(const DOOM::Doom& doom) const;   // Get lowest neighbor light level
-        int16_t getNeighborHighestLight(const DOOM::Doom& doom) const;  // Get highest neighbor light level
+        std::int16_t  getNeighborLowestLight(const DOOM::Doom& doom) const;   // Get lowest neighbor light level
+        std::int16_t  getNeighborHighestLight(const DOOM::Doom& doom) const;  // Get highest neighbor light level
       };
 
       class Blockmap
@@ -727,14 +732,14 @@ namespace DOOM
       public:
         struct Block
         {
-          std::vector<int16_t>                                  linedefs; // Indexes of linedefs in block
+          std::vector<std::int16_t>                             linedefs; // Indexes of linedefs in block
           std::set<std::reference_wrapper<DOOM::AbstractThing>> things;   // Things in block
         };
 
-        int16_t x;      // Blockmap X origin
-        int16_t y;      // Blockmap Y origin
-        int16_t column; // Number of column in blockmap
-        int16_t row;    // Number of row in blockmap
+        std::int16_t  x;      // Blockmap X origin
+        std::int16_t  y;      // Blockmap Y origin
+        std::int16_t  column; // Number of column in blockmap
+        std::int16_t  row;    // Number of row in blockmap
 
         std::vector<Block>                                                  blocks;   // Blockmap
         std::unordered_map<const DOOM::Doom::Level::Sector*, std::set<int>> sectors;  // Index of blocks of each sector
@@ -772,12 +777,12 @@ namespace DOOM
       };
 
     private:
-      bool  getLinedefsNode(std::list<std::pair<float, int16_t>>& result, const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit, int16_t index) const;       // Recursively find closest subsectors
-      bool  getLinedefsSubsector(std::list<std::pair<float, int16_t>>& result, const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit, int16_t index) const;  // Iterate through seg of subsector
-      float getLinedefsSeg(std::list<std::pair<float, int16_t>>& result, const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit, int16_t index) const;        // Get intersection with sidedef
+      bool  getLinedefsNode(std::list<std::pair<float, std::int16_t>>& result, const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit, std::int16_t index) const;       // Recursively find closest subsectors
+      bool  getLinedefsSubsector(std::list<std::pair<float, std::int16_t>>& result, const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit, std::int16_t index) const;  // Iterate through seg of subsector
+      float getLinedefsSeg(std::list<std::pair<float, std::int16_t>>& result, const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit, std::int16_t index) const;        // Get intersection with sidedef
 
     public:
-      std::pair<uint8_t, uint8_t>                                   episode;    // Level episode and episode's mission number
+      std::pair<std::uint8_t, std::uint8_t>                         episode;    // Level episode and episode's mission number
       DOOM::Enum::End                                               end;
       std::reference_wrapper<const DOOM::Doom::Resources::Texture>  sky;        // Sky texture of the level
       std::vector<std::reference_wrapper<DOOM::PlayerThing>>        players;    // List of players (references to PlayerThing in things list)
@@ -793,11 +798,11 @@ namespace DOOM
       DOOM::Doom::Level::Statistics                                 statistics; // Statistics of level
       
 
-      std::set<int16_t>                                                         getSectors(const Math::Vector<2>& position, float radius) const;                                                                                // Return sector indexes at position/radius
-      std::set<int16_t>                                                         getSectors(const DOOM::AbstractThing& thing) const;                                                                                             // Return sector indexes that thing (position and radius/2) is over
-      std::pair<int16_t, int16_t>                                               getSector(const Math::Vector<2>& position, int16_t index = -1) const;                                                                           // Return sector/subsector at position
-      std::list<std::pair<float, int16_t>>                                      getLinedefs(const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit = 1.f) const;                                        // Return an ordered list of linedef index intersected by ray within distance limit
-      std::set<int16_t>                                                         getLinedefs(const Math::Vector<2>& position, float radius) const;                                                                               // Return a list of linedef index at a position/radius
+      std::set<std::int16_t>                                                    getSectors(const Math::Vector<2>& position, float radius) const;                                                                                // Return sector indexes at position/radius
+      std::set<std::int16_t>                                                    getSectors(const DOOM::AbstractThing& thing) const;                                                                                             // Return sector indexes that thing (position and radius/2) is over
+      std::pair<std::int16_t, std::int16_t>                                     getSector(const Math::Vector<2>& position, std::int16_t index = -1) const;                                                                      // Return sector/subsector at position
+      std::list<std::pair<float, std::int16_t>>                                 getLinedefs(const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit = 1.f) const;                                        // Return an ordered list of linedef index intersected by ray within distance limit
+      std::set<std::int16_t>                                                    getLinedefs(const Math::Vector<2>& position, float radius) const;                                                                               // Return a list of linedef index at a position/radius
       std::list<std::reference_wrapper<DOOM::AbstractThing>>                    getThings(const DOOM::Doom::Level::Sector& sector, DOOM::Enum::ThingProperty properties = DOOM::Enum::ThingProperty::ThingProperty_None) const; // Return things in sector with corresponding properties
       std::set<std::reference_wrapper<DOOM::AbstractThing>>                     getThings(const Math::Vector<2>& position, float radius) const;                                                                                 // Return things at given position / radius
       std::list<std::pair<float, std::reference_wrapper<DOOM::AbstractThing>>>  getThings(const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit = 1.f) const;                                          // Return an ordered list of things intersected by ray within distance limit
@@ -852,8 +857,8 @@ namespace DOOM
     void  load(const std::filesystem::path& file, DOOM::Enum::Mode mode); // Load WAD file and build resources
     void  update(float elapsed);                                          // Update current level and resources
 
-    std::list<std::pair<uint8_t, uint8_t>>  getLevels() const;                                                // Return list of available level in WAD
-    void                                    setLevel(std::pair<uint8_t, uint8_t> level, bool reset = false);  // Build specified level from WAD, use reset to hard reset players
+    std::list<std::pair<std::uint8_t, std::uint8_t>>  getLevels() const;                                                          // Return list of available level in WAD
+    void                                              setLevel(std::pair<std::uint8_t, std::uint8_t> level, bool reset = false);  // Build specified level from WAD, use reset to hard reset players
 
     void  addPlayer(int controller);  // Add player to current game
 

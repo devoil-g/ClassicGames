@@ -20,7 +20,7 @@ Game::Audio::Sound::Reference::~Reference()
   _lock--;
 
   // Error if no reference is held on a looping sound
-  if (_lock <= 0 && sound.getLoop() == true)
+  if (_lock <= 0 && sound.isLooping() == true)
     std::cout << "[Game::Sound]: Warning, no reference held on looping sound." << std::endl;
 }
 
@@ -42,12 +42,14 @@ void  Game::Audio::Sound::clear()
 
 Game::Audio::Sound::Reference Game::Audio::Sound::get()
 {
+  static const sf::SoundBuffer empty;
+
   // Check if internal limit has been reached
   if (_sounds.size() + 1 > Game::Audio::Sound::MaxSound)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Push a new sound in buffer
-  _sounds.emplace_back();
+  _sounds.push_back({ sf::Sound(empty), 0});
 
   return Game::Audio::Sound::Reference(_sounds.back().first, _sounds.back().second);
 }

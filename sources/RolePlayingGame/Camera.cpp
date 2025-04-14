@@ -15,30 +15,26 @@ RPG::Camera::Camera() :
 
 Math::Vector<2> RPG::Camera::coordsToPixel(const Math::Vector<2>& coords) const
 {
-  auto pixel = Game::Window::Instance().window().mapCoordsToPixel({ coords.x(), coords.y() }, view());
+  auto pixel = Game::Window::Instance().coordsToPixels({ coords.x(), coords.y() }, view());
 
-  return { (float)pixel.x, (float)pixel.y };
+  return { (float)pixel.x(), (float)pixel.y() };
 }
 
 Math::Vector<2> RPG::Camera::pixelToCoords(const Math::Vector<2>& pixel) const
 {
-  auto coords = Game::Window::Instance().window().mapPixelToCoords({ (int)pixel.x(), (int)pixel.y() }, view());
-
-  return { coords.x, coords.y };
+  return Game::Window::Instance().pixelToCoords({ (int)pixel.x(), (int)pixel.y() }, view());
 }
 
 Math::Vector<2> RPG::Camera::coordsToPixelTarget(const Math::Vector<2>& coords) const
 {
-  auto pixel = Game::Window::Instance().window().mapCoordsToPixel({ coords.x(), coords.y() }, viewTarget());
+  auto pixel = Game::Window::Instance().coordsToPixels({ coords.x(), coords.y() }, viewTarget());
 
-  return { (float)pixel.x, (float)pixel.y };
+  return { (float)pixel.x(), (float)pixel.y() };
 }
 
 Math::Vector<2> RPG::Camera::pixelToCoordsTarget(const Math::Vector<2>& pixel) const
 {
-  auto coords = Game::Window::Instance().window().mapPixelToCoords({ (int)pixel.x(), (int)pixel.y() }, viewTarget());
-
-  return { coords.x, coords.y };
+  return Game::Window::Instance().pixelToCoords({ (int)pixel.x(), (int)pixel.y() }, viewTarget());
 }
 
 void  RPG::Camera::setPosition(const Math::Vector<2>& position)
@@ -108,10 +104,10 @@ void  RPG::Camera::setZoomTarget(float scale)
   if (_dragZoom == 0.f)
     _currentZoom = _targetZoom;
 
-  auto  size = Game::Window::Instance().window().getSize();
+  auto  size = Game::Window::Instance().getSize();
 
   // Set zoom to center of the screen
-  _coordinatesZoom = { size.x / 2.f, size.y / 2.f };
+  _coordinatesZoom = { size.x() / 2.f, size.y() / 2.f };
 }
 
 void  RPG::Camera::setZoomTarget(float scale, const Math::Vector<2>& coordinates)
@@ -141,57 +137,51 @@ float RPG::Camera::getZoom() const { return _currentZoom; }
 float RPG::Camera::getZoomTarget() const { return _targetZoom; }
 float RPG::Camera::getZoomDrag() const { return _dragZoom; }
 
-sf::View  RPG::Camera::view() const
+Game::Window::View  RPG::Camera::view() const
 {
-  auto& window = Game::Window::Instance().window();
-  auto size = window.getSize();
-
-  float targetX = (float)ScreenWidth / _currentZoom;
-  float targetY = (float)ScreenHeight / _currentZoom;
-  float zoomX = targetX / (float)size.x;
-  float zoomY = targetY / (float)size.y;
+  auto  size = Game::Window::Instance().getSize();
+  float targetX = ScreenWidth / _currentZoom;
+  float targetY = ScreenHeight / _currentZoom;
+  float zoomX = targetX / size.x();
+  float zoomY = targetY / size.y();
   float zoom = std::max(zoomX, zoomY);
 
   // Compute current view
-  return sf::View(
-    { _currentPosition.x(), _currentPosition.y() },
-    { (float)size.x * zoom, (float)size.y * zoom }
+  return Game::Window::View(
+    { _currentPosition.x() - size.x() * zoom / 2.f, _currentPosition.y() - size.y() * zoom / 2.f },
+    { size.x() * zoom, size.y() * zoom }
   );
 }
 
-sf::View  RPG::Camera::viewTarget() const
+Game::Window::View  RPG::Camera::viewTarget() const
 {
-  auto& window = Game::Window::Instance().window();
-  auto size = window.getSize();
-
-  float targetX = (float)ScreenWidth / _targetZoom;
-  float targetY = (float)ScreenHeight / _targetZoom;
-  float zoomX = targetX / (float)size.x;
-  float zoomY = targetY / (float)size.y;
+  auto  size = Game::Window::Instance().getSize();
+  float targetX = ScreenWidth / _targetZoom;
+  float targetY = ScreenHeight / _targetZoom;
+  float zoomX = targetX / size.x();
+  float zoomY = targetY / size.y();
   float zoom = std::max(zoomX, zoomY);
 
   // Compute current view
-  return sf::View(
-    { _targetPosition.x(), _targetPosition.y() },
-    { (float)size.x * zoom, (float)size.y * zoom }
+  return Game::Window::View(
+    { _targetPosition.x() - size.x() * zoom / 2.f, _targetPosition.y() - size.y() * zoom / 2.f },
+    { size.x() * zoom, size.y() * zoom }
   );
 }
 
 void  RPG::Camera::set() const
 {
-  auto& window = Game::Window::Instance().window();
-  
   // Setup camera
-  window.setView(view());
+  Game::Window::Instance().setView(view());
 }
 
 void  RPG::Camera::reset() const
 {
-  auto& window = Game::Window::Instance().window();
-  auto size = window.getSize();
+  auto& window = Game::Window::Instance();
+  auto  size = window.getSize();
 
   // Reset window view
-  window.setView(sf::View(sf::FloatRect(0, 0, (float)size.x, (float)size.y)));
+  window.setView(Game::Window::View({ 0.f, 0.f }, { (float)size.x(), (float)size.y() }));
 }
 
 void  RPG::Camera::update(float elapsed)
@@ -203,7 +193,6 @@ void  RPG::Camera::update(float elapsed)
   // Move camera
   _currentPosition += (_targetPosition - _currentPosition) * positionCompleted;
   
-
   auto oldCursor = pixelToCoords(_coordinatesZoom);
   float zoomCompleted = (_dragZoom > 0.f) ?
     (1.f - (1.f / std::pow(2.f, elapsed / _dragZoom))) :

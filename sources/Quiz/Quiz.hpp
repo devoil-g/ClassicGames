@@ -128,9 +128,29 @@ namespace QUIZ
       bool  hover() const;         // Check if cursor is hovering entity
     };
 
+    class ProgressBar
+    {
+      float _value;   // Displayed progression value [0; 1]
+      float _height;  // Current height of bar [0; 1]
+      bool  _hidden;  // True if bar is hidden
+
+    public:
+      ProgressBar();
+      ~ProgressBar() = default;
+
+      void  set(float value); // Set new progress bar value [0; 1]
+      float get() const;      // Get current value
+      void  hide();           // Hide progress bar
+      void  show();           // Show progress bar
+      
+      void  update(float elapsed);  // Update progress bar
+      void  draw();                 // Draw progress bar
+    };
+
     std::vector<Player>           players;    // Players
     std::vector<Blindtest>        blindtests; // Audio blindtests questions
     std::map<std::string, Entity> entities;   // Entities to draw
+    ProgressBar                   progress;   // Progress bar
     std::vector<Question>         questions;  // Questions bank
 
   public:

@@ -18,79 +18,79 @@ const int DOOM::IntermissionDoomScene::SpeedPercent = 2;
 const int DOOM::IntermissionDoomScene::SpeedTime = 3;
 const int DOOM::IntermissionDoomScene::SpeedPistol = 4;
 
-const std::array<std::array<sf::Vector2i, 9>, 3> DOOM::IntermissionDoomScene::_positions =
+const std::array<std::array<Math::Vector<2, int>, 9>, 3> DOOM::IntermissionDoomScene::_positions =
 {
-  std::array<sf::Vector2i, 9>{  // KNEE-DEEP IN THE DEAD
-      sf::Vector2i(185, 164),   // HANGAR
-      sf::Vector2i(148, 143),   // NUCLEAR PLANT
-      sf::Vector2i(69, 122),    // TOXIN REFINERY
-      sf::Vector2i(209, 102),   // COMMAND CONTROL
-      sf::Vector2i(116, 89),    // PHOBOS LAB
-      sf::Vector2i(166, 55),    // CENTRAL PROCESSING
-      sf::Vector2i(71, 56),     // COMPUTER STATION
-      sf::Vector2i(135, 29),    // PHOBOS ANOMALY
-      sf::Vector2i(71, 24)      // MILITARY BASE
+  std::array<Math::Vector<2, int>, 9>{  // KNEE-DEEP IN THE DEAD
+      Math::Vector<2, int>(185, 164),   // HANGAR
+      Math::Vector<2, int>(148, 143),   // NUCLEAR PLANT
+      Math::Vector<2, int>(69, 122),    // TOXIN REFINERY
+      Math::Vector<2, int>(209, 102),   // COMMAND CONTROL
+      Math::Vector<2, int>(116, 89),    // PHOBOS LAB
+      Math::Vector<2, int>(166, 55),    // CENTRAL PROCESSING
+      Math::Vector<2, int>(71, 56),     // COMPUTER STATION
+      Math::Vector<2, int>(135, 29),    // PHOBOS ANOMALY
+      Math::Vector<2, int>(71, 24)      // MILITARY BASE
   },
-  std::array<sf::Vector2i, 9>{  // THE SHORES OF HELL
-      sf::Vector2i(254, 25),    // DEIMOS ANOMALY
-      sf::Vector2i(97, 50),     // CONTAINMENT AREA
-      sf::Vector2i(188, 64),    // REFINERY
-      sf::Vector2i(128, 78),    // DEIMOS LAB
-      sf::Vector2i(214, 92),    // COMMAND CENTER
-      sf::Vector2i(133, 130),   // HALLS OF THE DAMNED
-      sf::Vector2i(208, 136),   // SPAWNING VATS
-      sf::Vector2i(148, 140),   // TOWER OF BABEL
-      sf::Vector2i(235, 158)    // FORTRESS OF MYSTERY
+  std::array<Math::Vector<2, int>, 9>{  // THE SHORES OF HELL
+      Math::Vector<2, int>(254, 25),    // DEIMOS ANOMALY
+      Math::Vector<2, int>(97, 50),     // CONTAINMENT AREA
+      Math::Vector<2, int>(188, 64),    // REFINERY
+      Math::Vector<2, int>(128, 78),    // DEIMOS LAB
+      Math::Vector<2, int>(214, 92),    // COMMAND CENTER
+      Math::Vector<2, int>(133, 130),   // HALLS OF THE DAMNED
+      Math::Vector<2, int>(208, 136),   // SPAWNING VATS
+      Math::Vector<2, int>(148, 140),   // TOWER OF BABEL
+      Math::Vector<2, int>(235, 158)    // FORTRESS OF MYSTERY
   },
-  std::array<sf::Vector2i, 9>{  // INFERNO
-      sf::Vector2i(156, 168),   // HELL KEEP
-      sf::Vector2i(48, 154),    // SLOUGH OF DESPAIR
-      sf::Vector2i(174, 95),    // PANDEMONIUM
-      sf::Vector2i(265, 75),    // HOUSE OF PAIN
-      sf::Vector2i(130, 48),    // UNHOLY CATHEDRAL
-      sf::Vector2i(279, 23),    // MT. EREBUS
-      sf::Vector2i(198, 48),    // GATE TO LIMBO
-      sf::Vector2i(140, 25),    // DIS
-      sf::Vector2i(281, 136)    // WARRENS
+  std::array<Math::Vector<2, int>, 9>{  // INFERNO
+      Math::Vector<2, int>(156, 168),   // HELL KEEP
+      Math::Vector<2, int>(48, 154),    // SLOUGH OF DESPAIR
+      Math::Vector<2, int>(174, 95),    // PANDEMONIUM
+      Math::Vector<2, int>(265, 75),    // HOUSE OF PAIN
+      Math::Vector<2, int>(130, 48),    // UNHOLY CATHEDRAL
+      Math::Vector<2, int>(279, 23),    // MT. EREBUS
+      Math::Vector<2, int>(198, 48),    // GATE TO LIMBO
+      Math::Vector<2, int>(140, 25),    // DIS
+      Math::Vector<2, int>(281, 136)    // WARRENS
   }
 };
 
 const std::array<std::vector<DOOM::IntermissionDoomScene::Animation>, 3>  DOOM::IntermissionDoomScene::_animations =
 {
   std::vector<DOOM::IntermissionDoomScene::Animation>{
-    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA00000"), Game::Utilities::str_to_key<uint64_t>("WIA00001"), Game::Utilities::str_to_key<uint64_t>("WIA00002") }, .position = { 224, 104 }, .level = 0 },
-    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA00100"), Game::Utilities::str_to_key<uint64_t>("WIA00101"), Game::Utilities::str_to_key<uint64_t>("WIA00102") }, .position = { 184, 160 }, .level = 0 },
-    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA00200"), Game::Utilities::str_to_key<uint64_t>("WIA00201"), Game::Utilities::str_to_key<uint64_t>("WIA00202") }, .position = { 112, 136 }, .level = 0 },
-    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA00300"), Game::Utilities::str_to_key<uint64_t>("WIA00301"), Game::Utilities::str_to_key<uint64_t>("WIA00302") }, .position = { 72, 112 }, .level = 0 },
-    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA00400"), Game::Utilities::str_to_key<uint64_t>("WIA00401"), Game::Utilities::str_to_key<uint64_t>("WIA00402") }, .position = { 88, 96 }, .level = 0 },
-    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA00500"), Game::Utilities::str_to_key<uint64_t>("WIA00501"), Game::Utilities::str_to_key<uint64_t>("WIA00502") }, .position = { 64, 48 }, .level = 0 },
-    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA00600"), Game::Utilities::str_to_key<uint64_t>("WIA00601"), Game::Utilities::str_to_key<uint64_t>("WIA00602") }, .position = { 192, 40 }, .level = 0 },
-    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA00700"), Game::Utilities::str_to_key<uint64_t>("WIA00701"), Game::Utilities::str_to_key<uint64_t>("WIA00702") }, .position = { 136, 16 }, .level = 0 },
-    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA00800"), Game::Utilities::str_to_key<uint64_t>("WIA00801"), Game::Utilities::str_to_key<uint64_t>("WIA00802") }, .position = { 80, 16 }, .level = 0 },
-    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA00900"), Game::Utilities::str_to_key<uint64_t>("WIA00901"), Game::Utilities::str_to_key<uint64_t>("WIA00902") }, .position = { 64, 24 }, .level = 0 }
+    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA00000"), Game::Utilities::str_to_key<std::uint64_t>("WIA00001"), Game::Utilities::str_to_key<std::uint64_t>("WIA00002") }, .position = { 224, 104 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA00100"), Game::Utilities::str_to_key<std::uint64_t>("WIA00101"), Game::Utilities::str_to_key<std::uint64_t>("WIA00102") }, .position = { 184, 160 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA00200"), Game::Utilities::str_to_key<std::uint64_t>("WIA00201"), Game::Utilities::str_to_key<std::uint64_t>("WIA00202") }, .position = { 112, 136 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA00300"), Game::Utilities::str_to_key<std::uint64_t>("WIA00301"), Game::Utilities::str_to_key<std::uint64_t>("WIA00302") }, .position = { 72, 112 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA00400"), Game::Utilities::str_to_key<std::uint64_t>("WIA00401"), Game::Utilities::str_to_key<std::uint64_t>("WIA00402") }, .position = { 88, 96 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA00500"), Game::Utilities::str_to_key<std::uint64_t>("WIA00501"), Game::Utilities::str_to_key<std::uint64_t>("WIA00502") }, .position = { 64, 48 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA00600"), Game::Utilities::str_to_key<std::uint64_t>("WIA00601"), Game::Utilities::str_to_key<std::uint64_t>("WIA00602") }, .position = { 192, 40 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA00700"), Game::Utilities::str_to_key<std::uint64_t>("WIA00701"), Game::Utilities::str_to_key<std::uint64_t>("WIA00702") }, .position = { 136, 16 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA00800"), Game::Utilities::str_to_key<std::uint64_t>("WIA00801"), Game::Utilities::str_to_key<std::uint64_t>("WIA00802") }, .position = { 80, 16 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA00900"), Game::Utilities::str_to_key<std::uint64_t>("WIA00901"), Game::Utilities::str_to_key<std::uint64_t>("WIA00902") }, .position = { 64, 24 }, .level = 0 }
   },
   std::vector<DOOM::IntermissionDoomScene::Animation>{
-    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA10000") }, .position = { 128, 136 }, .level = 2 },
-    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA10100") }, .position = { 128, 136 }, .level = 3 },
-    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA10200") }, .position = { 128, 136 }, .level = 4 },
-    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA10300") }, .position = { 128, 136 }, .level = 5 },
-    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA10400") }, .position = { 128, 136 }, .level = 6 },
-    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA10500") }, .position = { 128, 136 }, .level = 7 },
-    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA10600") }, .position = { 128, 136 }, .level = 8 },
-    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA10700"), Game::Utilities::str_to_key<uint64_t>("WIA10701"), Game::Utilities::str_to_key<uint64_t>("WIA10702") }, .position = { 192, 144 }, .level = 9 },
-    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA10400") }, .position = { 128, 136 }, .level = 9 }
+    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA10000") }, .position = { 128, 136 }, .level = 2 },
+    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA10100") }, .position = { 128, 136 }, .level = 3 },
+    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA10200") }, .position = { 128, 136 }, .level = 4 },
+    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA10300") }, .position = { 128, 136 }, .level = 5 },
+    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA10400") }, .position = { 128, 136 }, .level = 6 },
+    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA10500") }, .position = { 128, 136 }, .level = 7 },
+    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA10600") }, .position = { 128, 136 }, .level = 8 },
+    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA10700"), Game::Utilities::str_to_key<std::uint64_t>("WIA10701"), Game::Utilities::str_to_key<std::uint64_t>("WIA10702") }, .position = { 192, 144 }, .level = 9 },
+    { .duration = 11, .offset = 0, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA10400") }, .position = { 128, 136 }, .level = 9 }
   },
   std::vector<DOOM::IntermissionDoomScene::Animation>{
-    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA20000"), Game::Utilities::str_to_key<uint64_t>("WIA20001"), Game::Utilities::str_to_key<uint64_t>("WIA20002") }, .position = { 104, 168 }, .level = 0 },
-    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA20100"), Game::Utilities::str_to_key<uint64_t>("WIA20101"), Game::Utilities::str_to_key<uint64_t>("WIA20102") }, .position = { 40, 136 }, .level = 0 },
-    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA20200"), Game::Utilities::str_to_key<uint64_t>("WIA20201"), Game::Utilities::str_to_key<uint64_t>("WIA20202") }, .position = { 160, 96 }, .level = 0 },
-    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA20300"), Game::Utilities::str_to_key<uint64_t>("WIA20301"), Game::Utilities::str_to_key<uint64_t>("WIA20302") }, .position = { 104, 80 }, .level = 0 },
-    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA20400"), Game::Utilities::str_to_key<uint64_t>("WIA20401"), Game::Utilities::str_to_key<uint64_t>("WIA20402") }, .position = { 120, 32 }, .level = 0 },
-    { .duration = 8, .offset = std::rand() % 8, .frames = { Game::Utilities::str_to_key<uint64_t>("WIA20500"), Game::Utilities::str_to_key<uint64_t>("WIA20501"), Game::Utilities::str_to_key<uint64_t>("WIA20502") }, .position = { 40, 0 }, .level = 0 }
+    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA20000"), Game::Utilities::str_to_key<std::uint64_t>("WIA20001"), Game::Utilities::str_to_key<std::uint64_t>("WIA20002") }, .position = { 104, 168 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA20100"), Game::Utilities::str_to_key<std::uint64_t>("WIA20101"), Game::Utilities::str_to_key<std::uint64_t>("WIA20102") }, .position = { 40, 136 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA20200"), Game::Utilities::str_to_key<std::uint64_t>("WIA20201"), Game::Utilities::str_to_key<std::uint64_t>("WIA20202") }, .position = { 160, 96 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA20300"), Game::Utilities::str_to_key<std::uint64_t>("WIA20301"), Game::Utilities::str_to_key<std::uint64_t>("WIA20302") }, .position = { 104, 80 }, .level = 0 },
+    { .duration = 11, .offset = std::rand() % 11, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA20400"), Game::Utilities::str_to_key<std::uint64_t>("WIA20401"), Game::Utilities::str_to_key<std::uint64_t>("WIA20402") }, .position = { 120, 32 }, .level = 0 },
+    { .duration = 8, .offset = std::rand() % 8, .frames = { Game::Utilities::str_to_key<std::uint64_t>("WIA20500"), Game::Utilities::str_to_key<std::uint64_t>("WIA20501"), Game::Utilities::str_to_key<std::uint64_t>("WIA20502") }, .position = { 40, 0 }, .level = 0 }
   }
 };
 
-DOOM::IntermissionDoomScene::IntermissionDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom, std::pair<uint8_t, uint8_t> previous, std::pair<uint8_t, uint8_t> next, const DOOM::Doom::Level::Statistics& statistics) :
+DOOM::IntermissionDoomScene::IntermissionDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom, std::pair<std::uint8_t, uint8_t> previous, std::pair<std::uint8_t, uint8_t> next, const DOOM::Doom::Level::Statistics& statistics) :
   Game::AbstractScene(machine),
   _doom(doom),
   _previous(previous),
@@ -103,44 +103,44 @@ DOOM::IntermissionDoomScene::IntermissionDoomScene(Game::SceneMachine& machine, 
   _items(),
   _secrets(),
   _times(),
-  _background(doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>(
+  _background(doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>(
     (doom.mode == DOOM::Enum::Mode::ModeCommercial || (doom.mode == DOOM::Enum::Mode::ModeRetail && _previous.first == 4))
     ? (std::string("INTERPIC"))
     : (std::string("WIMAP") + std::to_string(previous.first - 1))
   ))),
-  _playerFace(doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("STFST01"))),
+  _playerFace(doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("STFST01"))),
   _playerBackground
     {
-      doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("STPB0")),
-      doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("STPB1")),
-      doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("STPB2")),
-      doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("STPB3"))
+      doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("STPB0")),
+      doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("STPB1")),
+      doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("STPB2")),
+      doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("STPB3"))
     },
   _textNumbers
     {
-      doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WINUM0")),
-      doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WINUM1")),
-      doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WINUM2")),
-      doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WINUM3")),
-      doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WINUM4")),
-      doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WINUM5")),
-      doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WINUM6")),
-      doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WINUM7")),
-      doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WINUM8")),
-      doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WINUM9"))
+      doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WINUM0")),
+      doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WINUM1")),
+      doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WINUM2")),
+      doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WINUM3")),
+      doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WINUM4")),
+      doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WINUM5")),
+      doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WINUM6")),
+      doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WINUM7")),
+      doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WINUM8")),
+      doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WINUM9"))
     },
-  _textFinished(doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WIF"))),
-  _textEntering(doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WIENTER"))),
-  _textKills(doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WIOSTK"))),
-  _textItems(doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WIOSTI"))),
-  _textSecret(doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WISCRT2"))),
-  _textScrt(doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WIOSTS"))),
-  _textTime(doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WITIME"))),
-  _textSucks(doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WISUCKS"))),
-  _textPar(doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WIPAR"))),
-  _textMinus(doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WIMINUS"))),
-  _textPercent(doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WIPCNT"))),
-  _textColon(doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WICOLON")))
+  _textFinished(doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WIF"))),
+  _textEntering(doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WIENTER"))),
+  _textKills(doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WIOSTK"))),
+  _textItems(doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WIOSTI"))),
+  _textSecret(doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WISCRT2"))),
+  _textScrt(doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WIOSTS"))),
+  _textTime(doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WITIME"))),
+  _textSucks(doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WISUCKS"))),
+  _textPar(doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WIPAR"))),
+  _textMinus(doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WIMINUS"))),
+  _textPercent(doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WIPCNT"))),
+  _textColon(doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WICOLON")))
 {
   // Initialize counter for each player
   for (const auto& player : _doom.level.players) {
@@ -267,7 +267,7 @@ void  DOOM::IntermissionDoomScene::updateStatistics(float elapsed)
       updateStatisticsCountersComplete(_times);
     else {
       // Go to next level screen
-      if (_next != std::pair<uint8_t, uint8_t>(0, 0)) {
+      if (_next != std::pair<std::uint8_t, std::uint8_t>(0, 0)) {
         _state = DOOM::IntermissionDoomScene::State::StateNext;
         _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_sgcock);
       }
@@ -311,8 +311,8 @@ bool  DOOM::IntermissionDoomScene::updateSkip()
   for (const auto& player : _doom.level.players) {
     // Keyboard/mouse
     if (player.get().controller == 0) {
-      skip |= Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space);
-      skip |= Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Left);
+      skip |= Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Space);
+      skip |= Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Left);
     }
 
     else {
@@ -347,7 +347,7 @@ void  DOOM::IntermissionDoomScene::draw()
 {
   // Resize rendering target
   if (_doom.image.getSize() != sf::Vector2u(DOOM::Doom::RenderWidth, DOOM::Doom::RenderHeight))
-    _doom.image.create(DOOM::Doom::RenderWidth, DOOM::Doom::RenderHeight);
+    _doom.image.resize({ DOOM::Doom::RenderWidth, DOOM::Doom::RenderHeight });
 
   // Clear rendering target
   std::memset((void*)_doom.image.getPixelsPtr(), 0, _doom.image.getSize().x * _doom.image.getSize().y * sizeof(sf::Color));
@@ -386,24 +386,24 @@ void  DOOM::IntermissionDoomScene::drawBackground()
     // Draw every animations
     for (const auto& animation : _animations[_previous.first - 1]) {
       if (animation.level == 0)
-        _doom.resources.getMenu(animation.frames[((std::size_t)(_elapsed / (animation.duration * DOOM::Doom::Tic)) + animation.offset) % animation.frames.size()]).draw(_doom, _doom.image, animation.position, sf::Vector2i(1, 1));
+        _doom.resources.getMenu(animation.frames[((std::size_t)(_elapsed / (animation.duration * DOOM::Doom::Tic)) + animation.offset) % animation.frames.size()]).draw(_doom, _doom.image, animation.position, Math::Vector<2, int>(1, 1));
       else if (_next.second == animation.level)
-        _doom.resources.getMenu(animation.frames[std::min(((std::size_t)(_nextElapsed / (animation.duration * DOOM::Doom::Tic)) + animation.offset), animation.frames.size() - 1)]).draw(_doom, _doom.image, animation.position, sf::Vector2i(1, 1));
+        _doom.resources.getMenu(animation.frames[std::min(((std::size_t)(_nextElapsed / (animation.duration * DOOM::Doom::Tic)) + animation.offset), animation.frames.size() - 1)]).draw(_doom, _doom.image, animation.position, Math::Vector<2, int>(1, 1));
     }
   }
 }
 
 void  DOOM::IntermissionDoomScene::drawStatistics()
 {
-  const auto& title = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>(
+  const auto& title = _doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>(
     (_doom.mode == DOOM::Enum::Mode::ModeCommercial)
     ? (std::string("CWILV") + std::to_string((_previous.second - 1) / 10 % 10) + std::to_string((_previous.second - 1) % 10))
     : (std::string("WILV") + std::to_string(_previous.first - 1) + std::to_string(_previous.second - 1))
   ));
   
   // Draw title
-  title.draw(_doom, _doom.image, sf::Vector2i((DOOM::Doom::RenderWidth - title.width) / 2, DOOM::IntermissionDoomScene::TitleY), { 1, 1 });
-  _textFinished.draw(_doom, _doom.image, sf::Vector2i((DOOM::Doom::RenderWidth - _textFinished.width) / 2, DOOM::IntermissionDoomScene::TitleY + title.height * 5 / 4), { 1, 1 });
+  title.draw(_doom, _doom.image, Math::Vector<2, int>(((int)DOOM::Doom::RenderWidth - title.width) / 2, DOOM::IntermissionDoomScene::TitleY), { 1, 1 });
+  _textFinished.draw(_doom, _doom.image, Math::Vector<2, int>(((int)DOOM::Doom::RenderWidth - _textFinished.width) / 2, DOOM::IntermissionDoomScene::TitleY + title.height * 5 / 4), { 1, 1 });
 
   // Draw statistics
   if (_doom.level.players.size() == 1)
@@ -417,46 +417,46 @@ void  DOOM::IntermissionDoomScene::drawStatistics()
 void  DOOM::IntermissionDoomScene::drawStatisticsSolo()
 {
   // Draw solo stats titles
-  _textKills.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomScene::StatsSoloX, DOOM::IntermissionDoomScene::StatsSoloY + 0 * _textNumbers[0].get().height * 3 / 2), { 1, 1 });
-  _textItems.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomScene::StatsSoloX, DOOM::IntermissionDoomScene::StatsSoloY + 1 * _textNumbers[0].get().height * 3 / 2), { 1, 1 });
-  _textSecret.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomScene::StatsSoloX, DOOM::IntermissionDoomScene::StatsSoloY + 2 * _textNumbers[0].get().height * 3 / 2), { 1, 1 });
-  _textTime.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomScene::TimeX, DOOM::IntermissionDoomScene::TimeY), { 1, 1 });
+  _textKills.draw(_doom, _doom.image, Math::Vector<2, int>(DOOM::IntermissionDoomScene::StatsSoloX, DOOM::IntermissionDoomScene::StatsSoloY + 0 * _textNumbers[0].get().height * 3 / 2), Math::Vector<2, int>(1, 1));
+  _textItems.draw(_doom, _doom.image, Math::Vector<2, int>(DOOM::IntermissionDoomScene::StatsSoloX, DOOM::IntermissionDoomScene::StatsSoloY + 1 * _textNumbers[0].get().height * 3 / 2), Math::Vector<2, int>(1, 1));
+  _textSecret.draw(_doom, _doom.image, Math::Vector<2, int>(DOOM::IntermissionDoomScene::StatsSoloX, DOOM::IntermissionDoomScene::StatsSoloY + 2 * _textNumbers[0].get().height * 3 / 2), Math::Vector<2, int>(1, 1));
+  _textTime.draw(_doom, _doom.image, Math::Vector<2, int>(DOOM::IntermissionDoomScene::TimeX, DOOM::IntermissionDoomScene::TimeY), { 1, 1 });
   if (std::isnan(getPar(_previous)) == false)
-    _textPar.draw(_doom, _doom.image, sf::Vector2i(DOOM::Doom::RenderWidth / 2 + DOOM::IntermissionDoomScene::TimeX, DOOM::IntermissionDoomScene::TimeY), { 1, 1 });
+    _textPar.draw(_doom, _doom.image, Math::Vector<2, int>((int)(DOOM::Doom::RenderWidth / 2 + DOOM::IntermissionDoomScene::TimeX), DOOM::IntermissionDoomScene::TimeY), { 1, 1 });
 
   // Draw statistics
   if (_kills.begin()->second.value >= 0.f)
-    drawPercent(sf::Vector2i(DOOM::Doom::RenderWidth - DOOM::IntermissionDoomScene::StatsSoloX, DOOM::IntermissionDoomScene::StatsSoloY + 0 * _textNumbers[0].get().height * 3 / 2), (int)_kills.begin()->second.value);
+    drawPercent(Math::Vector<2, int>((int)DOOM::Doom::RenderWidth - DOOM::IntermissionDoomScene::StatsSoloX, DOOM::IntermissionDoomScene::StatsSoloY + 0 * _textNumbers[0].get().height * 3 / 2), (int)_kills.begin()->second.value);
   if (_items.begin()->second.value >= 0.f)
-    drawPercent(sf::Vector2i(DOOM::Doom::RenderWidth - DOOM::IntermissionDoomScene::StatsSoloX, DOOM::IntermissionDoomScene::StatsSoloY + 1 * _textNumbers[0].get().height * 3 / 2), (int)_items.begin()->second.value);
+    drawPercent(Math::Vector<2, int>((int)DOOM::Doom::RenderWidth - DOOM::IntermissionDoomScene::StatsSoloX, DOOM::IntermissionDoomScene::StatsSoloY + 1 * _textNumbers[0].get().height * 3 / 2), (int)_items.begin()->second.value);
   if (_secrets.begin()->second.value >= 0.f)
-    drawPercent(sf::Vector2i(DOOM::Doom::RenderWidth - DOOM::IntermissionDoomScene::StatsSoloX, DOOM::IntermissionDoomScene::StatsSoloY + 2 * _textNumbers[0].get().height * 3 / 2), (int)_secrets.begin()->second.value);
+    drawPercent(Math::Vector<2, int>((int)DOOM::Doom::RenderWidth - DOOM::IntermissionDoomScene::StatsSoloX, DOOM::IntermissionDoomScene::StatsSoloY + 2 * _textNumbers[0].get().height * 3 / 2), (int)_secrets.begin()->second.value);
   if (_times[0].value >= 0.f)
-    drawTime(sf::Vector2i(DOOM::Doom::RenderWidth / 2 - DOOM::IntermissionDoomScene::TimeX, DOOM::IntermissionDoomScene::TimeY), (int)_times[0].value);
+    drawTime(Math::Vector<2, int>((int)DOOM::Doom::RenderWidth / 2 - DOOM::IntermissionDoomScene::TimeX, DOOM::IntermissionDoomScene::TimeY), (int)_times[0].value);
   if (_times[1].value >= 0.f)
-    drawTime(sf::Vector2i(DOOM::Doom::RenderWidth - DOOM::IntermissionDoomScene::TimeX, DOOM::IntermissionDoomScene::TimeY), (int)_times[1].value);
+    drawTime(Math::Vector<2, int>((int)DOOM::Doom::RenderWidth - DOOM::IntermissionDoomScene::TimeX, DOOM::IntermissionDoomScene::TimeY), (int)_times[1].value);
 }
 
 void  DOOM::IntermissionDoomScene::drawStatisticsCoop()
 {
   // Stats titles
-  _textKills.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomScene::StatsCoopX + _playerFace.width / 2 + 1 * DOOM::IntermissionDoomScene::StatsCoopSpacing - _textKills.width, DOOM::IntermissionDoomScene::StatsCoopY), sf::Vector2i(1, 1));
-  _textItems.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomScene::StatsCoopX + _playerFace.width / 2 + 2 * DOOM::IntermissionDoomScene::StatsCoopSpacing - _textItems.width, DOOM::IntermissionDoomScene::StatsCoopY), sf::Vector2i(1, 1));
-  _textScrt.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomScene::StatsCoopX + _playerFace.width / 2 + 3 * DOOM::IntermissionDoomScene::StatsCoopSpacing - _textScrt.width, DOOM::IntermissionDoomScene::StatsCoopY), sf::Vector2i(1, 1));
+  _textKills.draw(_doom, _doom.image, Math::Vector<2, int>(DOOM::IntermissionDoomScene::StatsCoopX + _playerFace.width / 2 + 1 * DOOM::IntermissionDoomScene::StatsCoopSpacing - _textKills.width, DOOM::IntermissionDoomScene::StatsCoopY), Math::Vector<2, int>(1, 1));
+  _textItems.draw(_doom, _doom.image, Math::Vector<2, int>(DOOM::IntermissionDoomScene::StatsCoopX + _playerFace.width / 2 + 2 * DOOM::IntermissionDoomScene::StatsCoopSpacing - _textItems.width, DOOM::IntermissionDoomScene::StatsCoopY), Math::Vector<2, int>(1, 1));
+  _textScrt.draw(_doom, _doom.image, Math::Vector<2, int>(DOOM::IntermissionDoomScene::StatsCoopX + _playerFace.width / 2 + 3 * DOOM::IntermissionDoomScene::StatsCoopSpacing - _textScrt.width, DOOM::IntermissionDoomScene::StatsCoopY), Math::Vector<2, int>(1, 1));
   
   int y = DOOM::IntermissionDoomScene::StatsCoopY + _textKills.height;
 
   // Draw stats of each player
   for (const auto& player : _doom.level.players) {
-    _playerBackground[(player.get().id - 1) % _playerBackground.size()].get().draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomScene::StatsCoopX + _playerFace.width / 2 + 0 * DOOM::IntermissionDoomScene::StatsCoopSpacing - _playerBackground[(player.get().id - 1) % _playerBackground.size()].get().width, y), sf::Vector2i(1, 1));
-    _playerFace.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomScene::StatsCoopX + _playerFace.width / 2 + 0 * DOOM::IntermissionDoomScene::StatsCoopSpacing - _playerBackground[(player.get().id - 1) % _playerBackground.size()].get().width, y), sf::Vector2i(1, 1));
+    _playerBackground[(player.get().id - 1) % _playerBackground.size()].get().draw(_doom, _doom.image, Math::Vector<2, int>(DOOM::IntermissionDoomScene::StatsCoopX + _playerFace.width / 2 + 0 * DOOM::IntermissionDoomScene::StatsCoopSpacing - _playerBackground[(player.get().id - 1) % _playerBackground.size()].get().width, y), Math::Vector<2, int>(1, 1));
+    _playerFace.draw(_doom, _doom.image, Math::Vector<2, int>(DOOM::IntermissionDoomScene::StatsCoopX + _playerFace.width / 2 + 0 * DOOM::IntermissionDoomScene::StatsCoopSpacing - _playerBackground[(player.get().id - 1) % _playerBackground.size()].get().width, y), Math::Vector<2, int>(1, 1));
 
     if (_kills.at(player.get().id).value >= 0.f)
-      drawPercent(sf::Vector2i(DOOM::IntermissionDoomScene::StatsCoopX + _playerFace.width / 2 - _textPercent.width + 1 * DOOM::IntermissionDoomScene::StatsCoopSpacing, y + 10), (int)_kills.at(player.get().id).value);
+      drawPercent(Math::Vector<2, int>(DOOM::IntermissionDoomScene::StatsCoopX + _playerFace.width / 2 - _textPercent.width + 1 * DOOM::IntermissionDoomScene::StatsCoopSpacing, y + 10), (int)_kills.at(player.get().id).value);
     if (_items.at(player.get().id).value >= 0.f)
-      drawPercent(sf::Vector2i(DOOM::IntermissionDoomScene::StatsCoopX + _playerFace.width / 2 - _textPercent.width + 2 * DOOM::IntermissionDoomScene::StatsCoopSpacing, y + 10), (int)_items.at(player.get().id).value);
+      drawPercent(Math::Vector<2, int>(DOOM::IntermissionDoomScene::StatsCoopX + _playerFace.width / 2 - _textPercent.width + 2 * DOOM::IntermissionDoomScene::StatsCoopSpacing, y + 10), (int)_items.at(player.get().id).value);
     if (_secrets.at(player.get().id).value >= 0.f)
-      drawPercent(sf::Vector2i(DOOM::IntermissionDoomScene::StatsCoopX + _playerFace.width / 2 - _textPercent.width + 3 * DOOM::IntermissionDoomScene::StatsCoopSpacing, y + 10), (int)_secrets.at(player.get().id).value);
+      drawPercent(Math::Vector<2, int>(DOOM::IntermissionDoomScene::StatsCoopX + _playerFace.width / 2 - _textPercent.width + 3 * DOOM::IntermissionDoomScene::StatsCoopSpacing, y + 10), (int)_secrets.at(player.get().id).value);
 
     y += DOOM::IntermissionDoomScene::StatsSoloSpacing;
   }
@@ -464,117 +464,117 @@ void  DOOM::IntermissionDoomScene::drawStatisticsCoop()
   // Draw time only if available space
   if (_doom.level.players.size() <= 3) {
     // Titles
-    _textTime.draw(_doom, _doom.image, sf::Vector2i(DOOM::IntermissionDoomScene::TimeX, DOOM::IntermissionDoomScene::TimeY), { 1, 1 });
+    _textTime.draw(_doom, _doom.image, Math::Vector<2, int>(DOOM::IntermissionDoomScene::TimeX, DOOM::IntermissionDoomScene::TimeY), Math::Vector < 2, int>(1, 1));
     if (std::isnan(getPar(_previous)) == false)
-      _textPar.draw(_doom, _doom.image, sf::Vector2i(DOOM::Doom::RenderWidth / 2 + DOOM::IntermissionDoomScene::TimeX, DOOM::IntermissionDoomScene::TimeY), { 1, 1 });
+      _textPar.draw(_doom, _doom.image, Math::Vector<2, int>((int)DOOM::Doom::RenderWidth / 2 + DOOM::IntermissionDoomScene::TimeX, DOOM::IntermissionDoomScene::TimeY), Math::Vector<2, int>(1, 1));
 
     // Stats
     if (_times[0].value >= 0.f)
-      drawTime(sf::Vector2i(DOOM::Doom::RenderWidth / 2 - DOOM::IntermissionDoomScene::TimeX, DOOM::IntermissionDoomScene::TimeY), (int)_times[0].value);
+      drawTime(Math::Vector<2, int>((int)DOOM::Doom::RenderWidth / 2 - DOOM::IntermissionDoomScene::TimeX, DOOM::IntermissionDoomScene::TimeY), (int)_times[0].value);
     if (_times[1].value >= 0.f)
-      drawTime(sf::Vector2i(DOOM::Doom::RenderWidth - DOOM::IntermissionDoomScene::TimeX, DOOM::IntermissionDoomScene::TimeY), (int)_times[1].value);
+      drawTime(Math::Vector<2, int>((int)DOOM::Doom::RenderWidth - DOOM::IntermissionDoomScene::TimeX, DOOM::IntermissionDoomScene::TimeY), (int)_times[1].value);
   }
 }
 
 void  DOOM::IntermissionDoomScene::drawNext()
 {
-  const auto& title = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>(
+  const auto& title = _doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>(
     (_doom.mode == DOOM::Enum::Mode::ModeCommercial)
     ? (std::string("CWILV") + std::to_string((_next.second - 1) / 10 % 10) + std::to_string((_next.second - 1) % 10))
     : (std::string("WILV") + std::to_string(_next.first - 1) + std::to_string(_next.second - 1))
   ));
 
   // Draw title
-  _textEntering.draw(_doom, _doom.image, sf::Vector2i((DOOM::Doom::RenderWidth - _textEntering.width) / 2, DOOM::IntermissionDoomScene::TitleY), { 1, 1 });
-  title.draw(_doom, _doom.image, sf::Vector2i((DOOM::Doom::RenderWidth - title.width) / 2, DOOM::IntermissionDoomScene::TitleY + _textEntering.height * 5 / 4), { 1, 1 });
+  _textEntering.draw(_doom, _doom.image, Math::Vector<2, int>(((int)DOOM::Doom::RenderWidth - _textEntering.width) / 2, DOOM::IntermissionDoomScene::TitleY), Math::Vector<2, int>(1, 1));
+  title.draw(_doom, _doom.image, Math::Vector<2, int>(((int)DOOM::Doom::RenderWidth - title.width) / 2, DOOM::IntermissionDoomScene::TitleY + _textEntering.height * 5 / 4), Math::Vector<2, int>(1, 1));
 
   // Draw maps details only in DOOM (except eps. 4)
   if ((_doom.mode == DOOM::Enum::Mode::ModeShareware ||
     _doom.mode == DOOM::Enum::Mode::ModeRegistered ||
     _doom.mode == DOOM::Enum::Mode::ModeRetail) &&
     _next.first >= 1 && _next.first <= _positions.size()) {
-    const DOOM::Doom::Resources::Texture& splat = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WISPLAT"));
+    const DOOM::Doom::Resources::Texture& splat = _doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WISPLAT"));
 
     // Draw blood splats
     for (int index = 0; index < _positions[_next.first - 1].size(); index++) {
       if ((_next.second == 9 && _previous.second > index) ||
         (_previous.second == 9 && (_next.second - 1 > index || 9 - 1 == index)) ||
         (_next.second != 9 && _previous.second != 9 && _previous.second > index)) {
-        splat.draw(_doom, _doom.image, _positions[_next.first - 1][index], { 1, 1 });
+        splat.draw(_doom, _doom.image, _positions[_next.first - 1][index], Math::Vector<2, int>(1, 1));
       }
     }
 
     // Draw '<- You are here'
     if ((int)(_nextElapsed / DOOM::Doom::Tic) % 32 < 20 &&
       _next.second >= 1 && _next.second <= _positions[_next.first - 1].size()) {
-      const auto& here0 = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WIURH0"));
-      const auto& here1 = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("WIURH1"));
+      const auto& here0 = _doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WIURH0"));
+      const auto& here1 = _doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("WIURH1"));
 
       // Choose left of right arrow
-      if (_positions[_next.first - 1][_next.second - 1].x - here0.left >= 0 &&
-        _positions[_next.first - 1][_next.second - 1].x - here0.left + here0.width < (int)_doom.image.getSize().x &&
-        _positions[_next.first - 1][_next.second - 1].y - here0.top >= 0 &&
-        _positions[_next.first - 1][_next.second - 1].y - here0.top + here0.height < (int)_doom.image.getSize().y)
-        here0.draw(_doom, _doom.image, _positions[_next.first - 1][_next.second - 1], { 1, 1 });
+      if (_positions[_next.first - 1][_next.second - 1].x() - here0.left >= 0 &&
+        _positions[_next.first - 1][_next.second - 1].x() - here0.left + here0.width < (int)_doom.image.getSize().x &&
+        _positions[_next.first - 1][_next.second - 1].y() - here0.top >= 0 &&
+        _positions[_next.first - 1][_next.second - 1].y() - here0.top + here0.height < (int)_doom.image.getSize().y)
+        here0.draw(_doom, _doom.image, _positions[_next.first - 1][_next.second - 1], Math::Vector<2, int>(1, 1));
       else
-        here1.draw(_doom, _doom.image, _positions[_next.first - 1][_next.second - 1], { 1, 1 });
+        here1.draw(_doom, _doom.image, _positions[_next.first - 1][_next.second - 1], Math::Vector<2, int>(1, 1));
     }
   }
 }
 
-void  DOOM::IntermissionDoomScene::drawPercent(sf::Vector2i position, int value)
+void  DOOM::IntermissionDoomScene::drawPercent(Math::Vector<2, int> position, int value)
 {
   // Draw percent symbol
-  _textPercent.draw(_doom, _doom.image, position, { 1, 1 });
+  _textPercent.draw(_doom, _doom.image, position, Math::Vector<2, int>(1, 1));
 
   // Draw percentage value
   do {
-    position.x -= _textNumbers[value % 10].get().width;
-    _textNumbers[value % 10].get().draw(_doom, _doom.image, position, { 1, 1 });
+    position.x() -= _textNumbers[value % 10].get().width;
+    _textNumbers[value % 10].get().draw(_doom, _doom.image, position, Math::Vector < 2, int>(1, 1));
 
     value /= 10;
   } while (value != 0);
 }
 
-void  DOOM::IntermissionDoomScene::drawTime(sf::Vector2i position, int value)
+void  DOOM::IntermissionDoomScene::drawTime(Math::Vector<2, int> position, int value)
 {
   // Sucks if over an hour
   if (value >= 60 * 60) {
-    _textSucks.draw(_doom, _doom.image, { position.x - _textSucks.width, position.y }, { 1, 1 });
+    _textSucks.draw(_doom, _doom.image, { position.x() - _textSucks.width, position.y() }, {1, 1});
   }
 
   // Draw time
   else {
     // Seconds unit
-    position.x -= _textNumbers[value % 10].get().width;
-    _textNumbers[value % 10].get().draw(_doom, _doom.image, position, { 1, 1 });
+    position.x() -= _textNumbers[value % 10].get().width;
+    _textNumbers[value % 10].get().draw(_doom, _doom.image, position, Math::Vector<2, int>(1, 1));
     value /= 10;
 
     // Seconds decimal
-    position.x -= _textNumbers[value % 6].get().width;
-    _textNumbers[value % 6].get().draw(_doom, _doom.image, position, { 1, 1 });
+    position.x() -= _textNumbers[value % 6].get().width;
+    _textNumbers[value % 6].get().draw(_doom, _doom.image, position, Math::Vector<2, int>(1, 1));
     value /= 6;
 
     // Colon
-    position.x -= _textColon.width;
-    _textColon.draw(_doom, _doom.image, position, { 1, 1 });
+    position.x() -= _textColon.width;
+    _textColon.draw(_doom, _doom.image, position, Math::Vector<2, int>(1, 1));
 
     // Draw minutes only if superior to zero
     if (value > 0) {
       // Minutes unit
-      position.x -= _textNumbers[value % 10].get().width;
-      _textNumbers[value % 10].get().draw(_doom, _doom.image, position, { 1, 1 });
+      position.x() -= _textNumbers[value % 10].get().width;
+      _textNumbers[value % 10].get().draw(_doom, _doom.image, position, Math::Vector<2, int>(1, 1));
       value /= 10;
 
       // Minutes decimal
-      position.x -= _textNumbers[value % 6].get().width;
-      _textNumbers[value % 6].get().draw(_doom, _doom.image, position, { 1, 1 });
+      position.x() -= _textNumbers[value % 6].get().width;
+      _textNumbers[value % 6].get().draw(_doom, _doom.image, position, Math::Vector<2, int>(1, 1));
       value /= 6;
     }
   }
 }
 
-float DOOM::IntermissionDoomScene::getPar(std::pair<uint8_t, uint8_t> level) const
+float DOOM::IntermissionDoomScene::getPar(std::pair<std::uint8_t, uint8_t> level) const
 {
   // DOOM Par Times
   std::array<std::array<float, 9>, 3> doom = {

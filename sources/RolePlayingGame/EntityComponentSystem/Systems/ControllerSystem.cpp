@@ -250,19 +250,19 @@ void  RPG::ClientControllerSystem::executeUpdate(RPG::ECS& ecs, float elapsed)
   Game::Window& window = Game::Window::Instance();
 
   // Key binding to controlled entity
-  constexpr std::array<sf::Keyboard::Key, 12> shortcuts = {
-    sf::Keyboard::Key::F1,
-    sf::Keyboard::Key::F2,
-    sf::Keyboard::Key::F3,
-    sf::Keyboard::Key::F4,
-    sf::Keyboard::Key::F5,
-    sf::Keyboard::Key::F6,
-    sf::Keyboard::Key::F7,
-    sf::Keyboard::Key::F8,
-    sf::Keyboard::Key::F9,
-    sf::Keyboard::Key::F10,
-    sf::Keyboard::Key::F11,
-    sf::Keyboard::Key::F12,
+  constexpr std::array<Game::Window::Key, 12> shortcuts = {
+    Game::Window::Key::F1,
+    Game::Window::Key::F2,
+    Game::Window::Key::F3,
+    Game::Window::Key::F4,
+    Game::Window::Key::F5,
+    Game::Window::Key::F6,
+    Game::Window::Key::F7,
+    Game::Window::Key::F8,
+    Game::Window::Key::F9,
+    Game::Window::Key::F10,
+    Game::Window::Key::F11,
+    Game::Window::Key::F12,
   };
 
   // Select entity with shortcut keys

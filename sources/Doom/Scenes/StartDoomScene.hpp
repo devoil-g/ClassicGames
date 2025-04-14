@@ -1,9 +1,10 @@
 #pragma once
 
-#include <SFML/Graphics/Image.hpp>
+#include <array>
+
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
-#include <SFML/System.hpp>
+#include <SFML/Graphics/Text.hpp>
 
 #include "Doom/Doom.hpp"
 #include "Scenes/AbstractScene.hpp"
@@ -16,15 +17,13 @@ namespace DOOM
     DOOM::Doom& _doom;  // DOOM instance
 
     std::array<int, 4>      _players;       // Players controles (-1 = none, 0 = mouse/keyboard, 1+ = controller id+1)
-    sf::Texture             _textureTitle;
-    sf::Sprite              _spriteTitle;
     sf::Text                _subtitle;      // Subtitle "Player selection"
     std::array<sf::Text, 4> _controllers;   // Name of the controller of the player or "PRESS START"
     sf::Text                _ready;         // Start button, active if at least one controller is assigned
     float                   _elapsed;       // Total elapsed time
 
-    sf::Texture _textureKeyboard, _textureController;
-    sf::Sprite  _spriteKeyboard, _spriteController;
+    sf::Texture _textureTitle, _textureKeyboard, _textureController;
+    sf::Sprite  _spriteTitle, _spriteKeyboard, _spriteController;
 
     void  updateRegister(const int id);   // Register ID in player list
     void  updateUnregister(const int id); // Unregister ID in player list

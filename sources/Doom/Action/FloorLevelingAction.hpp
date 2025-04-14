@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #include "Doom/Action/AbstractLevelingAction.hpp"
 
 namespace DOOM
@@ -17,7 +19,7 @@ namespace DOOM
     const float _target;  // Floor target height
 
   public:
-    FloorLevelingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float target, int16_t model = -1) :
+    FloorLevelingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float target, std::int16_t model = -1) :
       DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>(doom, sector, model),
       _target(target)
     {

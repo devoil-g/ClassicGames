@@ -1,3 +1,4 @@
+#include <iostream>
 #include <stdexcept>
 
 #include "RolePlayingGame/Texture.hpp"
@@ -33,8 +34,6 @@ void  RPG::Texture::reload()
   if (_texture.loadFromFile((Game::Config::ExecutablePath / "assets" / "rpg" / _name).string()) == true) {
     _error = false;
     _texture.setRepeated(false);
-    _texture.setSmooth(false);
-    _texture.generateMipmap();
   }
 
   // Failed to load texture
@@ -46,9 +45,14 @@ void  RPG::Texture::reload()
 
     _error = true;
     _texture.setRepeated(true);
-    _texture.setSmooth(false);
-    _texture.generateMipmap();
   }
+
+  // Pixel art
+  _texture.setSmooth(false);
+
+  // Generate mipmap
+  if (_texture.generateMipmap() == false)
+    std::cerr << "[RPG::Texture] Warning: failed to generate mipmap for " << _name << "." << std::endl;
 }
 
 bool  RPG::Texture::error() const

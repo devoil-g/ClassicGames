@@ -18,7 +18,6 @@ namespace DOOM
     DOOM::Doom          _doom;    // Main DOOM instance
     Game::SceneMachine  _game;    // DOOM state machine
     sf::Texture         _texture; // Image in graphic memory
-    sf::Sprite          _sprite;  // Display rendered texture
     
   public:
     DoomScene(Game::SceneMachine& machine, const std::filesystem::path& wad, DOOM::Enum::Mode mode);

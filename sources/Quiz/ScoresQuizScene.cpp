@@ -21,7 +21,7 @@ QUIZ::ScoresQuizScene::ScoresQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& 
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Set music parameters
-  _music.setLoop(true);
+  _music.setLooping(true);
   _music.setVolume(25.f);
   _music.play();
 
@@ -54,19 +54,19 @@ QUIZ::ScoresQuizScene::ScoresQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& 
 bool  QUIZ::ScoresQuizScene::update(float elapsed)
 {
   // Controller selection
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::C) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::C) == true) {
     _machine.swap<QUIZ::ControllerQuizScene>(_quiz);
     return false;
   }
 
   // Free question
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Q) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Q) == true) {
     _machine.swap<QUIZ::QuestionQuizScene>(_quiz);
     return false;
   }
 
   // Start blindtest
-  if (_quiz.blindtests.empty() == false && Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::B) == true) {
+  if (_quiz.blindtests.empty() == false && Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::B) == true) {
     _machine.swap<QUIZ::BlindtestQuizScene>(_quiz);
     return false;
   }

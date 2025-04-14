@@ -18,8 +18,9 @@ GBC::PixelProcessingUnit::PixelProcessingUnit(GBC::GameBoyColor& gbc) :
   _texture()
 {
   // Allocate image memory buffers
-  _image.create(GBC::PixelProcessingUnit::ScreenWidth, GBC::PixelProcessingUnit::ScreenHeight, sf::Color::White);
-  _texture.create(_image.getSize().x, _image.getSize().y);
+  _image.resize({ GBC::PixelProcessingUnit::ScreenWidth, GBC::PixelProcessingUnit::ScreenHeight }, sf::Color::White);
+  if (_texture.resize(_image.getSize()) == false)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // White image
   _texture.update(_image);
@@ -288,7 +289,7 @@ void  GBC::PixelProcessingUnit::simulateMode3Draw()
       color.raw = 0b0111111111111111;
 
     // Set pixel color
-    _image.setPixel(_lx, getLine(), sf::Color(color.red(), color.green(), color.blue()));
+    _image.setPixel({ (unsigned int)_lx, (unsigned int)getLine() }, sf::Color(color.red(), color.green(), color.blue()));
     
     // Next pixel
     _lx += 1;

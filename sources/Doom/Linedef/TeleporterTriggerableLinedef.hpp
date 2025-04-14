@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #include "Doom/Linedef/AbstractTriggerableLinedef.hpp"
 #include "Doom/Thing/AbstractThing.hpp"
 
@@ -13,7 +15,7 @@ namespace DOOM
     class TeleporterTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat, Target>
   {
   private:
-    inline bool trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing, int16_t sector_index) // Teleport thing to sector
+    inline bool trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing, std::int16_t sector_index) // Teleport thing to sector
     {
       // Missiles doesn't teleport
       if (thing.flags & DOOM::Enum::ThingProperty::ThingProperty_Missile)

@@ -31,7 +31,7 @@ RPG::TcpClient::~TcpClient()
 std::uint32_t RPG::TcpClient::getRemoteAddress() const
 {
   // Get remote address
-  return _socket.getRemoteAddress().toInteger();
+  return _socket.getRemoteAddress().value_or(sf::IpAddress(0)).toInteger();
 }
 
 std::uint16_t RPG::TcpClient::getRemotePort() const

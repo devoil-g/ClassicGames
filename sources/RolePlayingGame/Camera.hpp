@@ -1,8 +1,7 @@
 #pragma once
 
-#include <SFML/Graphics/View.hpp>
-
 #include "Math/Vector.hpp"
+#include "System/Window.hpp"
 
 namespace RPG
 {
@@ -52,10 +51,10 @@ namespace RPG
     float getZoomTarget() const;  // Get target zoom value
     float getZoomDrag() const;    // Get zoom drag factor
 
-    void     set() const;         // Set window viewport to current camera
-    void     reset() const;       // Reset window viewport
-    sf::View view() const;        // Get current view of camera
-    sf::View viewTarget() const;  // Get target view of camera
+    void                set() const;         // Set window viewport to current camera
+    void                reset() const;       // Reset window viewport
+    Game::Window::View  view() const;        // Get current view of camera
+    Game::Window::View  viewTarget() const;  // Get target view of camera
 
     void  update(float elapsed);  // Compute new camera position
   };

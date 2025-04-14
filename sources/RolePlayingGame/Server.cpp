@@ -45,7 +45,7 @@ RPG::Server::Server(const std::filesystem::path& config, std::uint16_t port, std
   load(Game::Config::ExecutablePath / "assets" / "rpg" / "world.json");
 
   // TODO: remove this
-  std::cout << "[RPG::Server] Server started: " << sf::IpAddress::getPublicAddress() << ":" << getPort() << "." << std::endl;
+  std::cout << "[RPG::Server] Server started: " << sf::IpAddress::getPublicAddress().value_or(sf::IpAddress(0)) << ":" << getPort() << "." << std::endl;
 }
 
 RPG::Server::~Server()

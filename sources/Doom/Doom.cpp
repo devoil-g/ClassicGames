@@ -162,39 +162,41 @@ void  DOOM::Doom::update(float elapsed)
 
   // Sound centered on the player in single player
   if (level.players.size() == 1) {
-    sf::Listener::setPosition(
+    sf::Listener::setPosition({
       level.players.front().get().position.x(),
       level.players.front().get().position.y(),
-      level.players.front().get().position.z());
-    sf::Listener::setDirection(
+      level.players.front().get().position.z()
+      });
+    sf::Listener::setDirection({
       std::cos(level.players.front().get().angle),
       std::sin(level.players.front().get().angle),
-      std::tan(level.players.front().get().camera.orientation));
-    sf::Listener::setUpVector(0.f, 0.f, 1.f);
+      std::tan(level.players.front().get().camera.orientation)
+      });
+    sf::Listener::setUpVector({ 0.f, 0.f, 1.f });
     sf::Listener::setGlobalVolume(100.f);
   }
 
   // Sound zero centred in multiplayer
   else {
-    sf::Listener::setPosition(0.f, 0.f, 0.f);
-    sf::Listener::setDirection(1.f, 0.f, 0.f);
-    sf::Listener::setUpVector(0.f, 0.f, 1.f);
+    sf::Listener::setPosition({ 0.f, 0.f, 0.f });
+    sf::Listener::setDirection({ 1.f, 0.f, 0.f });
+    sf::Listener::setUpVector({ 0.f, 0.f, 1.f });
     sf::Listener::setGlobalVolume(100.f);
   }
 }
 
-std::list<std::pair<uint8_t, uint8_t>>  DOOM::Doom::getLevels() const
+std::list<std::pair<std::uint8_t, std::uint8_t>>  DOOM::Doom::getLevels() const
 {
-  std::list<std::pair<uint8_t, uint8_t>>  list;
+  std::list<std::pair<std::uint8_t, std::uint8_t>>  list;
 
   // Build list of available levels in WAD file
-  for (const std::pair<std::pair<uint8_t, uint8_t>, DOOM::Wad::RawLevel>& level : wad.levels)
+  for (const std::pair<std::pair<std::uint8_t, std::uint8_t>, DOOM::Wad::RawLevel>& level : wad.levels)
     list.emplace_back(level.first);
 
   return list;
 }
 
-void  DOOM::Doom::setLevel(std::pair<uint8_t, uint8_t> level, bool reset)
+void  DOOM::Doom::setLevel(std::pair<std::uint8_t, std::uint8_t> level, bool reset)
 {
   // Build level
   buildLevel(level);
@@ -241,7 +243,7 @@ void  DOOM::Doom::sound(Game::Audio::Sound::Reference& ref, DOOM::Doom::Resource
     return;
   }
 
-  std::unordered_map<uint64_t, DOOM::Doom::Resources::Sound>::const_iterator  iterator = resources.sounds.find(Game::Utilities::str_to_key<uint64_t>(std::string("DS") + DOOM::Doom::Resources::Sound::sound_info[sound].name));
+  std::unordered_map<std::uint64_t, DOOM::Doom::Resources::Sound>::const_iterator  iterator = resources.sounds.find(Game::Utilities::str_to_key<std::uint64_t>(std::string("DS") + DOOM::Doom::Resources::Sound::sound_info[sound].name));
 
   // Cancel if no sound found
   if (iterator == resources.sounds.cend())
@@ -251,7 +253,7 @@ void  DOOM::Doom::sound(Game::Audio::Sound::Reference& ref, DOOM::Doom::Resource
   ref.sound.setBuffer(iterator->second.buffer);
   ref.sound.setRelativeToListener(true);
   ref.sound.setVolume(sfx * 100.f);
-  ref.sound.setLoop(loop);
+  ref.sound.setLooping(loop);
   ref.sound.play();
 }
 
@@ -263,7 +265,7 @@ void  DOOM::Doom::sound(Game::Audio::Sound::Reference& ref, DOOM::Doom::Resource
     return;
   }
 
-  auto  iterator = resources.sounds.find(Game::Utilities::str_to_key<uint64_t>(std::string("DS") + DOOM::Doom::Resources::Sound::sound_info[sound].name));
+  auto  iterator = resources.sounds.find(Game::Utilities::str_to_key<std::uint64_t>(std::string("DS") + DOOM::Doom::Resources::Sound::sound_info[sound].name));
 
   // Cancel if no sound found
   if (iterator == resources.sounds.cend())
@@ -276,11 +278,11 @@ void  DOOM::Doom::sound(Game::Audio::Sound::Reference& ref, DOOM::Doom::Resource
   ref.sound.setAttenuation(3.2f);
   ref.sound.setVolume(sfx * 100.f);
   ref.sound.setMinDistance(256.f);
-  ref.sound.setLoop(loop);
+  ref.sound.setLooping(loop);
 
   // Single player
   if (level.players.size() == 1) {
-    ref.sound.setPosition(position.x(), position.y(), position.z());
+    ref.sound.setPosition({ position.x(), position.y(), position.z() });
   }
 
   // Multiplayer
@@ -291,7 +293,7 @@ void  DOOM::Doom::sound(Game::Audio::Sound::Reference& ref, DOOM::Doom::Resource
     for (const auto& player : level.players)
       distance = std::min(distance, (player.get().position - position).length());
 
-    ref.sound.setPosition(distance, 0.f, 0.f);
+    ref.sound.setPosition({ distance, 0.f, 0.f });
   }
 
   ref.sound.play();
@@ -412,8 +414,8 @@ void  DOOM::Doom::buildResourcesSprites()
     if (name.length() >= 6)
     {
       // Resize animation sequence
-      if (resources.animations[Game::Utilities::str_to_key<uint64_t>(name.substr(0, 4))].size() < name.at(4) - 'A' + 1)
-        resources.animations[Game::Utilities::str_to_key<uint64_t>(name.substr(0, 4))].resize(name.at(4) - 'A' + 1, { {
+      if (resources.animations[Game::Utilities::str_to_key<std::uint64_t>(name.substr(0, 4))].size() < name.at(4) - 'A' + 1)
+        resources.animations[Game::Utilities::str_to_key<std::uint64_t>(name.substr(0, 4))].resize(name.at(4) - 'A' + 1, { {
           { std::ref(DOOM::Doom::Resources::Texture::Null), false },
           { std::ref(DOOM::Doom::Resources::Texture::Null), false },
           { std::ref(DOOM::Doom::Resources::Texture::Null), false },
@@ -426,17 +428,17 @@ void  DOOM::Doom::buildResourcesSprites()
 
       // Push sprite in animation sequence
       if (name.at(5) == '0')
-        for (auto& frame : resources.animations[Game::Utilities::str_to_key<uint64_t>(name.substr(0, 4))][name.at(4) - 'A'])
+        for (auto& frame : resources.animations[Game::Utilities::str_to_key<std::uint64_t>(name.substr(0, 4))][name.at(4) - 'A'])
           frame = { sprite, false };
       else
-        resources.animations[Game::Utilities::str_to_key<uint64_t>(name.substr(0, 4))][name.at(4) - 'A'][name.at(5) - '1'] = { sprite, false };
+        resources.animations[Game::Utilities::str_to_key<std::uint64_t>(name.substr(0, 4))][name.at(4) - 'A'][name.at(5) - '1'] = { sprite, false };
     }
 
     if (name.length() >= 8)
     {
       // Resize animation sequence
-      if (resources.animations[Game::Utilities::str_to_key<uint64_t>(name.substr(0, 4))].size() < name.at(6) - 'A' + 1)
-        resources.animations[Game::Utilities::str_to_key<uint64_t>(name.substr(0, 4))].resize(name.at(6) - 'A' + 1, { {
+      if (resources.animations[Game::Utilities::str_to_key<std::uint64_t>(name.substr(0, 4))].size() < name.at(6) - 'A' + 1)
+        resources.animations[Game::Utilities::str_to_key<std::uint64_t>(name.substr(0, 4))].resize(name.at(6) - 'A' + 1, { {
           { std::ref(DOOM::Doom::Resources::Texture::Null), false },
           { std::ref(DOOM::Doom::Resources::Texture::Null), false },
           { std::ref(DOOM::Doom::Resources::Texture::Null), false },
@@ -449,10 +451,10 @@ void  DOOM::Doom::buildResourcesSprites()
 
       // Push sprite in animation sequence
       if (name.at(7) == '0')
-        for (auto& frame : resources.animations[Game::Utilities::str_to_key<uint64_t>(name.substr(0, 4))][name.at(6) - 'A'])
+        for (auto& frame : resources.animations[Game::Utilities::str_to_key<std::uint64_t>(name.substr(0, 4))][name.at(6) - 'A'])
           frame = { sprite, true };
       else
-        resources.animations[Game::Utilities::str_to_key<uint64_t>(name.substr(0, 4))][name.at(6) - 'A'][name.at(7) - '1'] = { sprite, true };
+        resources.animations[Game::Utilities::str_to_key<std::uint64_t>(name.substr(0, 4))][name.at(6) - 'A'][name.at(7) - '1'] = { sprite, true };
     }
   }
 }
@@ -487,7 +489,7 @@ void  DOOM::Doom::buildResourcesSounds()
     resources.sounds.emplace(std::piecewise_construct, std::forward_as_tuple(sound.first), std::forward_as_tuple(*this, sound.second));
 }
 
-void  DOOM::Doom::buildLevel(const std::pair<uint8_t, uint8_t>& level)
+void  DOOM::Doom::buildLevel(const std::pair<std::uint8_t, uint8_t>& level)
 {
   // Remove old level
   clearLevel();
@@ -502,16 +504,16 @@ void  DOOM::Doom::buildLevel(const std::pair<uint8_t, uint8_t>& level)
 
   this->level.episode = level;
   this->level.end = DOOM::Enum::End::EndNone;
-  this->level.sky = std::cref(resources.textures.find(Game::Utilities::str_to_key<uint64_t>(std::string("SKY") + std::to_string((int)level.first)))->second);
+  this->level.sky = std::cref(resources.textures.find(Game::Utilities::str_to_key<std::uint64_t>(std::string("SKY") + std::to_string((int)level.first)))->second);
 
   // DOOM 2 sky
   if (mode == DOOM::Enum::Mode::ModeCommercial) {
     if (level.second < 12)
-      this->level.sky = std::cref(resources.textures.find(Game::Utilities::str_to_key<uint64_t>("SKY1"))->second);
+      this->level.sky = std::cref(resources.textures.find(Game::Utilities::str_to_key<std::uint64_t>("SKY1"))->second);
     else if (level.second < 21)
-      this->level.sky = std::cref(resources.textures.find(Game::Utilities::str_to_key<uint64_t>("SKY2"))->second);
+      this->level.sky = std::cref(resources.textures.find(Game::Utilities::str_to_key<std::uint64_t>("SKY2"))->second);
     else
-      this->level.sky = std::cref(resources.textures.find(Game::Utilities::str_to_key<uint64_t>("SKY3"))->second);
+      this->level.sky = std::cref(resources.textures.find(Game::Utilities::str_to_key<std::uint64_t>("SKY3"))->second);
   }
 
   // Build every component of resources
@@ -692,13 +694,13 @@ void  DOOM::Doom::Level::update(DOOM::Doom& doom, float elapsed)
   statistics.update(doom, elapsed);
 }
 
-std::set<int16_t> DOOM::Doom::Level::getSectors(const Math::Vector<2>& position, float radius) const
+std::set<std::int16_t> DOOM::Doom::Level::getSectors(const Math::Vector<2>& position, float radius) const
 {
   // No sector
   if (sectors.empty() == true)
     return {};
 
-  std::set<int16_t> result;
+  std::set<std::int16_t> result;
 
   // Get sector at thing central position
   result.insert(getSector(position).first);
@@ -708,8 +710,8 @@ std::set<int16_t> DOOM::Doom::Level::getSectors(const Math::Vector<2>& position,
     return {};
 
   // Get near linedef using blockmap
-  std::set<int16_t> blocks;
-  std::set<int16_t> linedefs;
+  std::set<std::int16_t> blocks;
+  std::set<std::int16_t> linedefs;
 
   // Get blocks thing stand in
   blocks.insert(blockmap.index(Math::Vector<2>(position.x() - radius, position.y() - radius)));
@@ -745,13 +747,13 @@ std::set<int16_t> DOOM::Doom::Level::getSectors(const Math::Vector<2>& position,
   return result;
 }
 
-std::set<int16_t> DOOM::Doom::Level::getSectors(const DOOM::AbstractThing& thing) const
+std::set<std::int16_t> DOOM::Doom::Level::getSectors(const DOOM::AbstractThing& thing) const
 {
   // Only half of thing radius is considered
   return getSectors(thing.position.convert<2>(), thing.attributs.radius / 2.f);
 }
 
-std::pair<int16_t, int16_t> DOOM::Doom::Level::getSector(const Math::Vector<2>& position, int16_t index) const
+std::pair<std::int16_t, std::int16_t> DOOM::Doom::Level::getSector(const Math::Vector<2>& position, std::int16_t index) const
 {
   // No node
   if (nodes.empty() == true)
@@ -774,19 +776,19 @@ std::pair<int16_t, int16_t> DOOM::Doom::Level::getSector(const Math::Vector<2>& 
     return getSector(position, node.rightchild);
 }
 
-std::list<std::pair<float, int16_t>>  DOOM::Doom::Level::getLinedefs(const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit) const
+std::list<std::pair<float, std::int16_t>>  DOOM::Doom::Level::getLinedefs(const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit) const
 {
-  std::list<std::pair<float, int16_t>>  result;
+  std::list<std::pair<float, std::int16_t>>  result;
 
   // Start to search subsector from top node
   getLinedefsNode(result, position, direction, limit, (int16_t)nodes.size() - 1);
 
-  result.sort([](const std::pair<float, int16_t>& a, const std::pair<float, int16_t>& b) { return a.first < b.first; });
+  result.sort([](const std::pair<float, std::int16_t>& a, const std::pair<float, std::int16_t>& b) { return a.first < b.first; });
 
   return result;
 }
 
-bool  DOOM::Doom::Level::getLinedefsNode(std::list<std::pair<float, int16_t>>& result, const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit, int16_t index) const
+bool  DOOM::Doom::Level::getLinedefsNode(std::list<std::pair<float, std::int16_t>>& result, const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit, std::int16_t index) const
 {
   // Draw subsector if node ID has subsector mask
   if (index & 0b1000000000000000)
@@ -803,7 +805,7 @@ bool  DOOM::Doom::Level::getLinedefsNode(std::list<std::pair<float, int16_t>>& r
     (Math::Vector<2>::determinant(node.origin - position, node.direction) / Math::Vector<2>::determinant(direction, node.direction) >= 0.f && getLinedefsNode(result, position, direction, limit, node.leftchild) == true);
 }
 
-bool  DOOM::Doom::Level::getLinedefsSubsector(std::list<std::pair<float, int16_t>>& result, const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit, int16_t index) const
+bool  DOOM::Doom::Level::getLinedefsSubsector(std::list<std::pair<float, std::int16_t>>& result, const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit, std::int16_t index) const
 {
   const auto& subsector(subsectors[index]);
   float       distance = -1.f;
@@ -816,7 +818,7 @@ bool  DOOM::Doom::Level::getLinedefsSubsector(std::list<std::pair<float, int16_t
   return distance > limit;
 }
 
-float DOOM::Doom::Level::getLinedefsSeg(std::list<std::pair<float, int16_t>>& result, const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit, int16_t index) const
+float DOOM::Doom::Level::getLinedefsSeg(std::list<std::pair<float, std::int16_t>>& result, const Math::Vector<2>& position, const Math::Vector<2>& direction, float limit, std::int16_t index) const
 {
   // Get segment from level data
   const auto& seg(segments[index]);
@@ -841,9 +843,9 @@ float DOOM::Doom::Level::getLinedefsSeg(std::list<std::pair<float, int16_t>>& re
   return intersection.first;
 }
 
-std::set<int16_t> DOOM::Doom::Level::getLinedefs(const Math::Vector<2>& position, float radius) const
+std::set<std::int16_t> DOOM::Doom::Level::getLinedefs(const Math::Vector<2>& position, float radius) const
 {
-  std::set<int16_t> blocks;
+  std::set<std::int16_t> blocks;
 
   // Get blockmap index at position, using the four corners
   blocks.insert(blockmap.index(Math::Vector<2>(position.x() - (float)radius, position.y() - (float)radius)));
@@ -851,7 +853,7 @@ std::set<int16_t> DOOM::Doom::Level::getLinedefs(const Math::Vector<2>& position
   blocks.insert(blockmap.index(Math::Vector<2>(position.x() + (float)radius, position.y() - (float)radius)));
   blocks.insert(blockmap.index(Math::Vector<2>(position.x() + (float)radius, position.y() + (float)radius)));
 
-  std::set<int16_t> linedefs;
+  std::set<std::int16_t> linedefs;
 
   // Get index of linedefs to test against position
   for (int16_t block_index : blocks)
@@ -886,7 +888,7 @@ std::set<int16_t> DOOM::Doom::Level::getLinedefs(const Math::Vector<2>& position
 
 std::set<std::reference_wrapper<DOOM::AbstractThing>> DOOM::Doom::Level::getThings(const Math::Vector<2>& position, float radius) const
 {
-  std::set<int16_t> blocks;
+  std::set<std::int16_t> blocks;
 
   // Get blockmap index at position, using the four corners
   blocks.insert(blockmap.index(Math::Vector<2>(position.x() - (float)radius, position.y() - (float)radius)));
@@ -1010,7 +1012,7 @@ DOOM::Doom::Resources::Palette::Palette(DOOM::Doom& doom, const DOOM::Wad::RawRe
 }
 
 DOOM::Doom::Resources::Colormap::Colormap(DOOM::Doom& doom, const DOOM::Wad::RawResources::Colormap& colormap) :
-  std::array<uint8_t, 256>()
+  std::array<std::uint8_t, 256>()
 {
   // Convert color map indexes
   for (unsigned int index = 0; index < 256; index++)
@@ -1025,7 +1027,7 @@ DOOM::Doom::Resources::Texture::Texture(DOOM::Doom& doom, const DOOM::Wad::RawRe
   columns()
 {
   // Initialize full texture map (-1 for transparency)
-  std::vector<std::vector<int>>        texture_map(width, std::vector<int>(height, -1));
+  std::vector<std::vector<int>> texture_map(width, std::vector<int>(height, -1));
 
   // Build full texture map from texture patches
   for (const auto& texture_patch : texture.patches)
@@ -1098,18 +1100,18 @@ sf::Image DOOM::Doom::Resources::Texture::image(const DOOM::Doom& doom) const
   sf::Image image;
 
   // Draw texture
-  image.create(width, height);
+  image.resize({ (unsigned int)width, (unsigned int)height });
   draw(doom, image, { 0, 0 }, { 1, 1 });
 
   return image;
 }
 
-void  DOOM::Doom::Resources::Texture::draw(const DOOM::Doom& doom, sf::Image& image, sf::Vector2i position, sf::Vector2i scale, int16_t palette) const
+void  DOOM::Doom::Resources::Texture::draw(const DOOM::Doom& doom, sf::Image& image, const Math::Vector<2, int>& position, const Math::Vector<2, int>& scale, std::int16_t palette) const
 {
-  draw(doom, image, sf::Rect<int16_t>(0, 0, image.getSize().x, image.getSize().y), position, scale, palette);
+  draw(doom, image, Math::Box<2, std::int16_t>({ (std::int16_t)0, (std::int16_t)0 }, { (std::int16_t)image.getSize().x, (std::int16_t)image.getSize().y }), position, scale, palette);
 }
 
-void  DOOM::Doom::Resources::Texture::draw(const DOOM::Doom& doom, sf::Image& image, sf::Rect<int16_t> area, sf::Vector2i position, sf::Vector2i scale, int16_t palette) const
+void  DOOM::Doom::Resources::Texture::draw(const DOOM::Doom& doom, sf::Image& image, Math::Box<2, std::int16_t> area, const Math::Vector<2, int>& position, const Math::Vector<2, int>& scale, std::int16_t palette) const
 {
   // NOTE: optimize this?
 
@@ -1119,23 +1121,23 @@ void  DOOM::Doom::Resources::Texture::draw(const DOOM::Doom& doom, sf::Image& im
       for (int texture_y = 0; texture_y < span.pixels.size(); texture_y++) {
         sf::Color color = doom.resources.palettes[palette][doom.resources.colormaps[0][span.pixels[texture_y]]];
 
-        for (int image_x = std::max(std::max(0, (int)area.left), position.x + (texture_x - left + 0) * scale.x); image_x < std::min(std::min((int)image.getSize().x, area.left + area.width), position.x + (texture_x - left + 1) * scale.x); image_x++)
-          for (int image_y = std::max(std::max(0, (int)area.top), position.y + (span.offset + texture_y - top + 0) * scale.y); image_y < std::min(std::min((int)image.getSize().y, area.top + area.height), position.y + (span.offset + texture_y - top + 1) * scale.y); image_y++)
-            image.setPixel(image_x, image_y, color);
+        for (int image_x = std::max(std::max(0, (int)area.position.x()), position.x() + (texture_x - left + 0) * scale.x()); image_x < std::min(std::min((int)image.getSize().x, area.position.x() + area.size.x()), position.x() + (texture_x - left + 1) * scale.x()); image_x++)
+          for (int image_y = std::max(std::max(0, (int)area.position.y()), position.y() + (span.offset + texture_y - top + 0) * scale.y()); image_y < std::min(std::min((int)image.getSize().y, area.position.y() + area.size.y()), position.y() + (span.offset + texture_y - top + 1) * scale.y()); image_y++)
+            image.setPixel({ (unsigned int)image_x, (unsigned int)image_y }, color);
       }
 }
 
 DOOM::Doom::Resources::Sound::Sound(DOOM::Doom& doom, const DOOM::Wad::RawResources::Sound& raw) :
   buffer()
 {
-  std::vector<int16_t>  converted;
+  std::vector<std::int16_t>  converted;
 
-  // Convert uint8 format to int16
+  // Convert uint8 format to std::int16
   for (const uint8_t sample : raw.buffer)
     converted.push_back((int32_t)sample * 256 - 32768);
 
   // Load sound buffer (mono)
-  if (buffer.loadFromSamples(converted.data(), raw.samples, 1, raw.rate) == false)
+  if (buffer.loadFromSamples(converted.data(), raw.samples, 1, raw.rate, { sf::SoundChannel::Mono }) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
@@ -1175,26 +1177,26 @@ DOOM::Doom::Level::Sidedef::Sidedef(DOOM::Doom& doom, const DOOM::Wad::RawLevel:
 std::vector<std::reference_wrapper<const DOOM::Doom::Resources::Texture>> DOOM::Doom::Level::Sidedef::animation(const DOOM::Doom& doom, uint64_t name) const
 {
   // Check for null texture
-  if (name == Game::Utilities::str_to_key<uint64_t>("-"))
+  if (name == Game::Utilities::str_to_key<std::uint64_t>("-"))
     return { DOOM::Doom::Resources::Texture::Null };
 
   // List of registered animations
-  const static std::vector<std::vector<uint64_t>> animations = {
-    { Game::Utilities::str_to_key<uint64_t>("BLODGR1"), Game::Utilities::str_to_key<uint64_t>("BLODGR2"), Game::Utilities::str_to_key<uint64_t>("BLODGR3"), Game::Utilities::str_to_key<uint64_t>("BLODGR4") },
-    { Game::Utilities::str_to_key<uint64_t>("BLODRIP1"), Game::Utilities::str_to_key<uint64_t>("BLODRIP2"), Game::Utilities::str_to_key<uint64_t>("BLODRIP3"), Game::Utilities::str_to_key<uint64_t>("BLODRIP4") },
-    { Game::Utilities::str_to_key<uint64_t>("FIREBLU1"), Game::Utilities::str_to_key<uint64_t>("FIREBLU2") },
-    { Game::Utilities::str_to_key<uint64_t>("FIRLAV3"), Game::Utilities::str_to_key<uint64_t>("FIRLAVA") },
-    { Game::Utilities::str_to_key<uint64_t>("FIREWALA"), Game::Utilities::str_to_key<uint64_t>("FIREWALB"), Game::Utilities::str_to_key<uint64_t>("FIREWALL") },
-    { Game::Utilities::str_to_key<uint64_t>("GSTFONT1"), Game::Utilities::str_to_key<uint64_t>("GSTFONT2"), Game::Utilities::str_to_key<uint64_t>("GSTFONT3") },
-    { Game::Utilities::str_to_key<uint64_t>("ROCKRED1"), Game::Utilities::str_to_key<uint64_t>("ROCKRED2"), Game::Utilities::str_to_key<uint64_t>("ROCKRED3") },
-    { Game::Utilities::str_to_key<uint64_t>("SLADRIP1"), Game::Utilities::str_to_key<uint64_t>("SLADRIP2"), Game::Utilities::str_to_key<uint64_t>("SLADRIP3") },
-    { Game::Utilities::str_to_key<uint64_t>("BFALL1"), Game::Utilities::str_to_key<uint64_t>("BFALL2"), Game::Utilities::str_to_key<uint64_t>("BFALL3"), Game::Utilities::str_to_key<uint64_t>("BFALL4") },
-    { Game::Utilities::str_to_key<uint64_t>("SFALL1"), Game::Utilities::str_to_key<uint64_t>("SFALL2"), Game::Utilities::str_to_key<uint64_t>("SFALL3"), Game::Utilities::str_to_key<uint64_t>("SFALL4") },
-    { Game::Utilities::str_to_key<uint64_t>("WFALL1"), Game::Utilities::str_to_key<uint64_t>("WFALL2"), Game::Utilities::str_to_key<uint64_t>("WFALL3"), Game::Utilities::str_to_key<uint64_t>("WFALL4") },
-    { Game::Utilities::str_to_key<uint64_t>("DBRAIN1"), Game::Utilities::str_to_key<uint64_t>("DBRAIN2"), Game::Utilities::str_to_key<uint64_t>("DBRAIN3"), Game::Utilities::str_to_key<uint64_t>("DBRAIN4") }
+  const static std::vector<std::vector<std::uint64_t>> animations = {
+    { Game::Utilities::str_to_key<std::uint64_t>("BLODGR1"), Game::Utilities::str_to_key<std::uint64_t>("BLODGR2"), Game::Utilities::str_to_key<std::uint64_t>("BLODGR3"), Game::Utilities::str_to_key<std::uint64_t>("BLODGR4") },
+    { Game::Utilities::str_to_key<std::uint64_t>("BLODRIP1"), Game::Utilities::str_to_key<std::uint64_t>("BLODRIP2"), Game::Utilities::str_to_key<std::uint64_t>("BLODRIP3"), Game::Utilities::str_to_key<std::uint64_t>("BLODRIP4") },
+    { Game::Utilities::str_to_key<std::uint64_t>("FIREBLU1"), Game::Utilities::str_to_key<std::uint64_t>("FIREBLU2") },
+    { Game::Utilities::str_to_key<std::uint64_t>("FIRLAV3"), Game::Utilities::str_to_key<std::uint64_t>("FIRLAVA") },
+    { Game::Utilities::str_to_key<std::uint64_t>("FIREWALA"), Game::Utilities::str_to_key<std::uint64_t>("FIREWALB"), Game::Utilities::str_to_key<std::uint64_t>("FIREWALL") },
+    { Game::Utilities::str_to_key<std::uint64_t>("GSTFONT1"), Game::Utilities::str_to_key<std::uint64_t>("GSTFONT2"), Game::Utilities::str_to_key<std::uint64_t>("GSTFONT3") },
+    { Game::Utilities::str_to_key<std::uint64_t>("ROCKRED1"), Game::Utilities::str_to_key<std::uint64_t>("ROCKRED2"), Game::Utilities::str_to_key<std::uint64_t>("ROCKRED3") },
+    { Game::Utilities::str_to_key<std::uint64_t>("SLADRIP1"), Game::Utilities::str_to_key<std::uint64_t>("SLADRIP2"), Game::Utilities::str_to_key<std::uint64_t>("SLADRIP3") },
+    { Game::Utilities::str_to_key<std::uint64_t>("BFALL1"), Game::Utilities::str_to_key<std::uint64_t>("BFALL2"), Game::Utilities::str_to_key<std::uint64_t>("BFALL3"), Game::Utilities::str_to_key<std::uint64_t>("BFALL4") },
+    { Game::Utilities::str_to_key<std::uint64_t>("SFALL1"), Game::Utilities::str_to_key<std::uint64_t>("SFALL2"), Game::Utilities::str_to_key<std::uint64_t>("SFALL3"), Game::Utilities::str_to_key<std::uint64_t>("SFALL4") },
+    { Game::Utilities::str_to_key<std::uint64_t>("WFALL1"), Game::Utilities::str_to_key<std::uint64_t>("WFALL2"), Game::Utilities::str_to_key<std::uint64_t>("WFALL3"), Game::Utilities::str_to_key<std::uint64_t>("WFALL4") },
+    { Game::Utilities::str_to_key<std::uint64_t>("DBRAIN1"), Game::Utilities::str_to_key<std::uint64_t>("DBRAIN2"), Game::Utilities::str_to_key<std::uint64_t>("DBRAIN3"), Game::Utilities::str_to_key<std::uint64_t>("DBRAIN4") }
   };
 
-  std::vector<uint64_t> animation = { name };
+  std::vector<std::uint64_t> animation = { name };
 
   // Find if frame is part of an animation
   for (const auto& frames : animations)
@@ -1261,7 +1263,7 @@ bool  DOOM::Doom::Level::Sidedef::switched(DOOM::Doom& doom, float toggle, bool 
   else
     return false;
 
-  int16_t index = (int16_t)(((uint64_t)this - (uint64_t)doom.level.sidedefs.data()) / sizeof(*this));
+  std::int16_t index = (int16_t)(((uint64_t)this - (uint64_t)doom.level.sidedefs.data()) / sizeof(*this));
 
   // Find linedef of current sidedef
   for (const auto& linedef : doom.level.linedefs) {
@@ -1308,7 +1310,7 @@ bool  DOOM::Doom::Level::Sidedef::switched(DOOM::Doom& doom, std::vector<std::re
     return false;
 
   // Find new texture set
-  name = Game::Utilities::str_to_key<uint64_t>(name_str);
+  name = Game::Utilities::str_to_key<std::uint64_t>(name_str);
   textures = animation(doom, name);
 
   return true;
@@ -1511,13 +1513,13 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom& doom, const DOOM::Wad::RawLevel::S
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Retrieve flat textures
-  if (floor_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1"))
+  if (floor_name != Game::Utilities::str_to_key<std::uint64_t>("F_SKY1"))
     floor_flat = std::cref(doom.resources.getFlat(floor_name));
-  if (ceiling_name != Game::Utilities::str_to_key<uint64_t>("F_SKY1"))
+  if (ceiling_name != Game::Utilities::str_to_key<std::uint64_t>("F_SKY1"))
     ceiling_flat = std::cref(doom.resources.getFlat(ceiling_name));
 
   // Index of this sector
-  int16_t index = (int16_t)doom.level.sectors.size();
+  std::int16_t index = (int16_t)doom.level.sectors.size();
 
   // Compute neighbor sectors
   for (const DOOM::Wad::RawLevel::Linedef& linedef : doom.wad.levels.find(doom.level.episode)->second.linedefs) {
@@ -1599,7 +1601,7 @@ DOOM::Doom::Level::Sector::Sector(DOOM::Doom::Level::Sector&& sector) :
   _actions(std::move(sector._actions))
 {}
 
-std::unique_ptr<DOOM::AbstractAction> DOOM::Doom::Level::Sector::_factory(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, int16_t type, int16_t model)
+std::unique_ptr<DOOM::AbstractAction> DOOM::Doom::Level::Sector::_factory(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, std::int16_t type, std::int16_t model)
 {
   // Just a relay (cycling inclusion problem)
   return DOOM::AbstractAction::factory(doom, sector, type, model);
@@ -1613,9 +1615,9 @@ void  DOOM::Doom::Level::Sector::update(DOOM::Doom& doom, float elapsed)
       _actions.at(type)->update(doom, *this, elapsed);
 }
 
-std::pair<int16_t, float> DOOM::Doom::Level::Sector::getNeighborLowestFloor(const DOOM::Doom& doom) const
+std::pair<std::int16_t, float> DOOM::Doom::Level::Sector::getNeighborLowestFloor(const DOOM::Doom& doom) const
 {
-  std::pair<int16_t, float> result = { -1, std::numeric_limits<float>::quiet_NaN() };
+  std::pair<std::int16_t, float> result = { -1, std::numeric_limits<float>::quiet_NaN() };
 
   // Find lowest neighboor floor
   for (int16_t index : _neighbors)
@@ -1625,9 +1627,9 @@ std::pair<int16_t, float> DOOM::Doom::Level::Sector::getNeighborLowestFloor(cons
   return result;
 }
 
-std::pair<int16_t, float> DOOM::Doom::Level::Sector::getNeighborHighestFloor(const DOOM::Doom& doom) const
+std::pair<std::int16_t, float> DOOM::Doom::Level::Sector::getNeighborHighestFloor(const DOOM::Doom& doom) const
 {
-  std::pair<int16_t, float> result = { -1, std::numeric_limits<float>::quiet_NaN() };
+  std::pair<std::int16_t, float> result = { -1, std::numeric_limits<float>::quiet_NaN() };
 
   // Find highest neighboor floor
   for (int16_t index : _neighbors)
@@ -1637,9 +1639,9 @@ std::pair<int16_t, float> DOOM::Doom::Level::Sector::getNeighborHighestFloor(con
   return result;
 }
 
-std::pair<int16_t, float> DOOM::Doom::Level::Sector::getNeighborNextLowestFloor(const DOOM::Doom& doom, float height) const
+std::pair<std::int16_t, float> DOOM::Doom::Level::Sector::getNeighborNextLowestFloor(const DOOM::Doom& doom, float height) const
 {
-  std::pair<int16_t, float> result = { -1, std::numeric_limits<float>::quiet_NaN() };
+  std::pair<std::int16_t, float> result = { -1, std::numeric_limits<float>::quiet_NaN() };
 
   // Find next lowest neighboor floor
   for (int16_t index : _neighbors) {
@@ -1652,9 +1654,9 @@ std::pair<int16_t, float> DOOM::Doom::Level::Sector::getNeighborNextLowestFloor(
   return result;
 }
 
-std::pair<int16_t, float> DOOM::Doom::Level::Sector::getNeighborNextHighestFloor(const DOOM::Doom& doom, float height) const
+std::pair<std::int16_t, float> DOOM::Doom::Level::Sector::getNeighborNextHighestFloor(const DOOM::Doom& doom, float height) const
 {
-  std::pair<int16_t, float> result = { -1, std::numeric_limits<float>::quiet_NaN() };
+  std::pair<std::int16_t, float> result = { -1, std::numeric_limits<float>::quiet_NaN() };
 
   // Find next highest neighboor floor
   for (int16_t index : _neighbors) {
@@ -1667,9 +1669,9 @@ std::pair<int16_t, float> DOOM::Doom::Level::Sector::getNeighborNextHighestFloor
   return result;
 }
 
-std::pair<int16_t, float> DOOM::Doom::Level::Sector::getNeighborLowestCeiling(const DOOM::Doom& doom) const
+std::pair<std::int16_t, float> DOOM::Doom::Level::Sector::getNeighborLowestCeiling(const DOOM::Doom& doom) const
 {
-  std::pair<int16_t, float> result = { -1, std::numeric_limits<float>::quiet_NaN() };
+  std::pair<std::int16_t, float> result = { -1, std::numeric_limits<float>::quiet_NaN() };
 
   // Find lowest neighboor ceiling
   for (int16_t index : _neighbors)
@@ -1679,9 +1681,9 @@ std::pair<int16_t, float> DOOM::Doom::Level::Sector::getNeighborLowestCeiling(co
   return result;
 }
 
-std::pair<int16_t, float> DOOM::Doom::Level::Sector::getNeighborHighestCeiling(const DOOM::Doom& doom) const
+std::pair<std::int16_t, float> DOOM::Doom::Level::Sector::getNeighborHighestCeiling(const DOOM::Doom& doom) const
 {
-  std::pair<int16_t, float> result = { -1, std::numeric_limits<float>::quiet_NaN() };
+  std::pair<std::int16_t, float> result = { -1, std::numeric_limits<float>::quiet_NaN() };
 
   // Find lowest neighboor ceiling
   for (int16_t index : _neighbors)
@@ -1691,9 +1693,9 @@ std::pair<int16_t, float> DOOM::Doom::Level::Sector::getNeighborHighestCeiling(c
   return result;
 }
 
-std::pair<int16_t, float> DOOM::Doom::Level::Sector::getNeighborNextLowestCeiling(const DOOM::Doom& doom, float height) const
+std::pair<std::int16_t, float> DOOM::Doom::Level::Sector::getNeighborNextLowestCeiling(const DOOM::Doom& doom, float height) const
 {
-  std::pair<int16_t, float> result = { -1, std::numeric_limits<float>::quiet_NaN() };
+  std::pair<std::int16_t, float> result = { -1, std::numeric_limits<float>::quiet_NaN() };
 
   // Find next lowest neighboor ceiling
   for (int16_t index : _neighbors) {
@@ -1706,9 +1708,9 @@ std::pair<int16_t, float> DOOM::Doom::Level::Sector::getNeighborNextLowestCeilin
   return result;
 }
 
-std::pair<int16_t, float> DOOM::Doom::Level::Sector::getNeighborNextHighestCeiling(const DOOM::Doom& doom, float height) const
+std::pair<std::int16_t, float> DOOM::Doom::Level::Sector::getNeighborNextHighestCeiling(const DOOM::Doom& doom, float height) const
 {
-  std::pair<int16_t, float> result = { -1, std::numeric_limits<float>::quiet_NaN() };
+  std::pair<std::int16_t, float> result = { -1, std::numeric_limits<float>::quiet_NaN() };
 
   // Find next highest neighboor floor
   for (int16_t index : _neighbors) {
@@ -1721,15 +1723,15 @@ std::pair<int16_t, float> DOOM::Doom::Level::Sector::getNeighborNextHighestCeili
   return result;
 }
 
-const std::set<int16_t>&  DOOM::Doom::Level::Sector::getNeighbors() const
+const std::set<std::int16_t>&  DOOM::Doom::Level::Sector::getNeighbors() const
 {
   return _neighbors;
 }
 
 int16_t DOOM::Doom::Level::Sector::getShortestLowerTexture(const DOOM::Doom& doom) const
 {
-  int16_t result = 0;
-  int16_t index = (int16_t)(((uint64_t)this - (uint64_t)doom.level.sectors.data()) / sizeof(DOOM::Doom::Level::Sector));
+  std::int16_t result = 0;
+  std::int16_t index = (int16_t)(((uint64_t)this - (uint64_t)doom.level.sectors.data()) / sizeof(DOOM::Doom::Level::Sector));
 
   // Find shortest lower texture of sector
   for (const auto& linedef : doom.level.linedefs)
@@ -1745,7 +1747,7 @@ int16_t DOOM::Doom::Level::Sector::getShortestLowerTexture(const DOOM::Doom& doo
 
 int16_t DOOM::Doom::Level::Sector::getNeighborLowestLight(const DOOM::Doom& doom) const
 {
-  int16_t result = light_base;
+  std::int16_t result = light_base;
 
   // Find lowest neighboor light level
   for (int16_t index : _neighbors)
@@ -1756,7 +1758,7 @@ int16_t DOOM::Doom::Level::Sector::getNeighborLowestLight(const DOOM::Doom& doom
 
 int16_t DOOM::Doom::Level::Sector::getNeighborHighestLight(const DOOM::Doom& doom) const
 {
-  int16_t result = light_base;
+  std::int16_t result = light_base;
 
   // Find highest neighboor light level
   for (int16_t index : _neighbors)

@@ -1,10 +1,34 @@
 #pragma once
 
-#include "RolePlayingGame/Color.hpp"
-#include "RolePlayingGame/Model.hpp"
+#include <memory>
+
+#include "RolePlayingGame/EntityComponentSystem/EntityComponentSystem.hpp"
 
 namespace RPG
 {
+  class ActionComponent
+  {
+  public:
+    class IAction
+    {
+    public:
+      virtual ~IAction() = default;
+
+      void  execute(RPG::ECS& ecs, RPG::ECS::Entity self);  // Action to execute
+    };
+
+    ActionComponent();
+    ActionComponent(const ActionComponent&) = default;
+    ActionComponent(ActionComponent&&) = default;
+    ~ActionComponent() = default;
+
+    ActionComponent&  operator=(const ActionComponent&) = default;
+    ActionComponent&  operator=(ActionComponent&&) = default;
+
+    std::unique_ptr<RPG::ActionComponent::IAction>  action; // Next action to execute
+    float                                           wait;   // Wait time before action
+  };
+
   /*
   class MoveComponent
   {

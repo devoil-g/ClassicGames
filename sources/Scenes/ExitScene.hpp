@@ -30,7 +30,7 @@ namespace Game
     bool  update(float elapsed) override  // Update exit state
     {
       // Increase exit timer
-      if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::Escape) == true) {
+      if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Escape) == true) {
         _elapsed += elapsed;
 
         // Exit scene
@@ -61,8 +61,8 @@ namespace Game
       // Draw exit bar
       bar.setSize(sf::Vector2f(1.f, 1.f));
       bar.setFillColor(sf::Color::White);
-      bar.setScale(window.window().getSize().x * _elapsed / (float)ExitTimeout, 4.f);
-      window.window().draw(bar);
+      bar.setScale({ window.getSize().x() * _elapsed / (float)ExitTimeout, 4.f });
+      window.draw(bar);
     }
   };
 }

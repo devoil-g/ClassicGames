@@ -1,5 +1,6 @@
 #include "Math/Math.hpp"
 #include "Quiz/ControllerQuizScene.hpp"
+#include "Quiz/FastestQuizScene.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 #include "System/Audio/Sound.hpp"
@@ -14,11 +15,10 @@ const float QUIZ::ControllerQuizScene::TimerOver = 3.5f;
 QUIZ::ControllerQuizScene::ControllerQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz) :
   Game::AbstractScene(machine),
   _quiz(quiz),
-  _music(),
-  _bar(sf::Vector2f(1.f, 1.f))
+  _music()
 {
   // Load music
-  if (_music.openFromFile((Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "contestants.ogg").string()) == false)
+  if (_music.openFromFile((Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "controller.ogg").string()) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Check minimum duration
@@ -26,11 +26,10 @@ QUIZ::ControllerQuizScene::ControllerQuizScene(Game::SceneMachine& machine, QUIZ
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Play music
+  _music.setLoopPoints({ .offset = sf::seconds(3.262f), .length = sf::seconds(26.538f) });
+  _music.setLoopPoints({ .offset = sf::seconds(3.262f), .length = sf::seconds(24.617) });
+  _music.setLooping(true);
   _music.play();
-
-  // Initialize timer bar
-  _bar.setSize(sf::Vector2f(1.f, 1.f));
-  _bar.setFillColor(sf::Color::White);
 
   // Set player visible
   for (int index = 0; index < _quiz.players.size(); index++) {
@@ -51,9 +50,8 @@ QUIZ::ControllerQuizScene::ControllerQuizScene(Game::SceneMachine& machine, QUIZ
     << "  green and yellow to change the skin" << std::endl
     << std::endl
     << "Commands:" << std::endl
-    << "  [R]eset:  reset timer" << std::endl
-    << "  [S]kip:   skip timer to end" << std::endl
-    << "  [E]nd:    end controller selection" << std::endl
+    << "  [N]ext:       end player selection" << std::endl
+    << "  Right click:  remove a player" << std::endl
     << std::endl;
 }
 
@@ -66,21 +64,25 @@ bool  QUIZ::ControllerQuizScene::update(float elapsed)
     updateAvatar();
   }
 
-  // End scene
-  if (_music.getStatus() == sf::Music::Stopped)
-    _machine.pop();
-
   // Manage host inputs
   updateHost();
+
+  // Go to next scene
+  if (_music.getStatus() == sf::Music::Status::Stopped) {
+    _machine.swap<QUIZ::FastestQuizScene>(_quiz);
+    return false;
+  }
 
   return false;
 }
 
 void  QUIZ::ControllerQuizScene::updateRegister()
 {
+  const auto& window = Game::Window::Instance();
+
   // Check for new player
-  for (unsigned int joystick = 0; joystick < sf::Joystick::Count; joystick++) {
-    if (sf::Joystick::isConnected(joystick) == true) {
+  for (unsigned int joystick = 0; joystick < Game::Window::JoystickCount; joystick++) {
+    if (window.joystick().connected(joystick) == true) {
       for (unsigned int button = 0; button < 20; button += 5) {
         if (Game::Window::Instance().joystick().buttonPressed(joystick, button) == true)
         {
@@ -150,7 +152,7 @@ void  QUIZ::ControllerQuizScene::updateRegister()
 void  QUIZ::ControllerQuizScene::updateUnregister()
 {
   // Inspect each player
-  if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Right) == true) {
+  if (Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Right) == true) {
     for (auto iterator = _quiz.players.begin(); iterator != _quiz.players.end();)
     {
       // Remove player when sprite is clicked
@@ -227,26 +229,14 @@ void  QUIZ::ControllerQuizScene::updateAvatar()
 
 void  QUIZ::ControllerQuizScene::updateHost()
 {
-  // Restart timer
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true)
-    _music.setPlayingOffset(sf::seconds(TimerStart));
-
-  // Skip music to end
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::S) == true)
+  // End player selection
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true) {
+    _music.setLooping(false);
     _music.setPlayingOffset(sf::seconds(QUIZ::ControllerQuizScene::TimerLimit));
-
-  // End player select
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::E) == true)
-    _machine.pop();
+    // TODO: remove this
+    _music.stop();
+  }
 }
 
 void  QUIZ::ControllerQuizScene::draw()
-{
-  float completion = std::clamp(_music.getPlayingOffset().asSeconds() / TimerLimit, 0.f, 1.f);
-  float over = std::clamp((_music.getPlayingOffset().asSeconds() - TimerLimit) / TimerOver, 0.f, 1.f);
-
-  // Draw timer bar
-  _bar.setScale(Game::Window::Instance().window().getSize().x * completion, (1.f - over) * 16.f);
-  _bar.setPosition(0.f, Game::Window::Instance().window().getSize().y - _bar.getScale().y);
-  Game::Window::Instance().window().draw(_bar);
-}
+{}

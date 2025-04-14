@@ -1,14 +1,24 @@
 #pragma once
 
-#include <string>
-#include <unordered_map>
-
-#include <SFML/Graphics/RenderTexture.hpp>
-
 #include "RolePlayingGame/EntityComponentSystem/EntityComponentSystem.hpp"
 
 namespace RPG
 {
+  class ActionSystem : public RPG::ECS::System
+  {
+  public:
+
+    ActionSystem() = default;
+    ActionSystem(const ActionSystem&) = delete;
+    ActionSystem(ActionSystem&&) = delete;
+    ~ActionSystem() = default;
+
+    ActionSystem& operator=(const ActionSystem&) = delete;
+    ActionSystem& operator=(ActionSystem&&) = delete;
+
+    void  execute(RPG::ECS& ecs, float elapsed);
+  };
+
   /*
   class MovingSystem : public RPG::ECS::System
   {

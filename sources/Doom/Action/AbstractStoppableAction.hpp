@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #include "Doom/Action/AbstractTypeAction.hpp"
 
 namespace DOOM
@@ -15,7 +17,7 @@ namespace DOOM
     bool  _run; // Flag for stop
 
   public:
-    AbstractStoppableAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, int16_t model = -1) :
+    AbstractStoppableAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, std::int16_t model = -1) :
       DOOM::AbstractTypeAction<Type, ChangeType, ChangeTime>(doom, sector, model),
       _run(true)
     {}

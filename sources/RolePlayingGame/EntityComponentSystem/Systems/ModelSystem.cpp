@@ -95,15 +95,15 @@ RPG::ClientModelSystem::ClientModelSystem(RPG::ECS& ecs) :
 void  RPG::ClientModelSystem::executeCamera(RPG::ECS& ecs, float elapsed)
 {
   auto&           window = Game::Window::Instance();
-  Math::Vector<2> size((float)window.window().getSize().x, (float)window.window().getSize().y);
-  Math::Vector<2> mouse((float)window.mouse().position().x, (float)window.mouse().position().y);
+  Math::Vector<2> size((float)window.getSize().x(), (float)window.getSize().y());
+  Math::Vector<2> mouse((float)window.mouse().position().x(), (float)window.mouse().position().y());
   Math::Vector<2> offset;
   float           zoom = 1.f;
 
   // Camera position (ZQSD)
   offset += Math::Vector<2>(
-    (window.keyboard().keyDown(sf::Keyboard::Q) ? -1.f : 0.f) + (window.keyboard().keyDown(sf::Keyboard::D) ? +1.f : 0.f),
-    (window.keyboard().keyDown(sf::Keyboard::Z) ? -1.f : 0.f) + (window.keyboard().keyDown(sf::Keyboard::S) ? +1.f : 0.f)
+    (window.keyboard().keyDown(Game::Window::Key::Q) ? -1.f : 0.f) + (window.keyboard().keyDown(Game::Window::Key::D) ? +1.f : 0.f),
+    (window.keyboard().keyDown(Game::Window::Key::Z) ? -1.f : 0.f) + (window.keyboard().keyDown(Game::Window::Key::S) ? +1.f : 0.f)
   );
 
   // Mouse inside window

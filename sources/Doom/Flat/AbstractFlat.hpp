@@ -1,8 +1,8 @@
 #pragma once
 
+#include <array>
+#include <cstdint>
 #include <memory>
-
-#include <SFML/System/Time.hpp>
 
 #include "Doom/Doom.hpp"
 
@@ -27,7 +27,7 @@ namespace DOOM
     AbstractFlat(DOOM::Doom& doom);
     virtual ~AbstractFlat() = default;
 
-    virtual void                              update(DOOM::Doom& doom, float elapsed);  // Update flat
-    virtual const std::array<uint8_t, 4096>&  flat() const = 0;                         // Return flat to be displayed
+    virtual void                                  update(DOOM::Doom& doom, float elapsed);  // Update flat
+    virtual const std::array<std::uint8_t, 4096>& flat() const = 0;                         // Return flat to be displayed
   };
 }

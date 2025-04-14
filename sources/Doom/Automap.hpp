@@ -1,8 +1,12 @@
 #pragma once
 
+#include <cstdint>
+
 #include <SFML/Graphics/Image.hpp>
 
 #include "Doom/Doom.hpp"
+#include "Math/Box.hpp"
+#include "Math/Vector.hpp"
 
 namespace DOOM
 {
@@ -36,13 +40,13 @@ namespace DOOM
       ColorPlayer = 4     // Players color
     };
 
-    void            renderLine(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, Math::Vector<2> point_a, Math::Vector<2> point_b, DOOM::Automap::Color color, int16_t palette) const;
-    Math::Vector<2> renderTransform(sf::Rect<int16_t> rect, unsigned int scale, const Math::Vector<2>& point) const;  // Transform point to map point of view
+    void            renderLine(const DOOM::Doom& doom, sf::Image& target, Math::Box<2, std::int16_t> rect, Math::Vector<2> point_a, Math::Vector<2> point_b, DOOM::Automap::Color color, std::int16_t palette) const;
+    Math::Vector<2> renderTransform(Math::Box<2, std::int16_t> rect, unsigned int scale, const Math::Vector<2>& point) const;  // Transform point to map point of view
 
   public:
     Automap();
     ~Automap() = default;
 
-    void  render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette) const;  // Render automap to target image
+    void  render(const DOOM::Doom& doom, sf::Image& target, Math::Box<2, std::int16_t> rect, unsigned int scale, std::int16_t palette) const;  // Render automap to target image
   };
 }

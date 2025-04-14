@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <exception>
 
+#include <SFML/Graphics/Image.hpp>
+
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 #include "System/Library/FontLibrary.hpp"
@@ -135,7 +137,10 @@ QUIZ::Quiz::Quiz() :
     << std::endl;
 }
 
-QUIZ::Quiz::Entity::Entity()
+QUIZ::Quiz::Entity::Entity() :
+  _sprite(_texture),
+  _texture(),
+  _text(Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf"))
 {
   // Default values
   reset();
@@ -171,8 +176,9 @@ void  QUIZ::Quiz::Entity::setTexture(const std::filesystem::path& path)
     sf::Image image;
 
     // Set texture as a transparent 1x1 image
-    image.create(1, 1, sf::Color::Transparent);
-    _texture.create(1, 1);
+    image.resize({ 1u, 1u }, sf::Color::Transparent);
+    if (_texture.resize(image.getSize()) == false)
+      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
     _texture.update(image);
     return;
   }
@@ -186,20 +192,21 @@ void  QUIZ::Quiz::Entity::setTexture(const std::filesystem::path& path)
 
   // Set origin to center of sprite
   _sprite.setTexture(_texture, true);
-  _sprite.setOrigin(_texture.getSize().x / 2.f, _texture.getSize().y / 2.f);
+  _sprite.setOrigin({ _texture.getSize().x / 2.f, _texture.getSize().y / 2.f });
 }
 
 void  QUIZ::Quiz::Entity::setText(const std::string& text)
 {
   // Change text
   _text.setString(text);
-  _text.setFont(Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf"));
+  _text.setFont(Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "roboto.ttf"));
   _text.setCharacterSize(128);
 
   // Set origin to center of text
-  _text.setOrigin(
-    _text.getLocalBounds().getPosition().x + _text.getLocalBounds().getSize().x / 2.f,
-    _text.getLocalBounds().getPosition().y + _text.getLocalBounds().getSize().y / 2.f
+  _text.setOrigin({
+    _text.getLocalBounds().position.x + _text.getLocalBounds().size.x / 2.f,
+    _text.getLocalBounds().position.y + _text.getLocalBounds().size.y / 2.f
+    }
   );
 }
 
@@ -244,7 +251,7 @@ bool  QUIZ::Quiz::Entity::update(float elapsed)
 void  QUIZ::Quiz::Entity::draw()
 {
   auto&           window = Game::Window::Instance();
-  Math::Vector<2> windowSize = { (float)window.window().getSize().x, (float)window.window().getSize().y };
+  Math::Vector<2> windowSize = { (float)window.getSize().x(), (float)window.getSize().y() };
   Math::Vector<2> spriteSize = { (float)_texture.getSize().x, (float)_texture.getSize().y };
   float           spriteScale = std::min(
     windowSize.x() / spriteSize.x() * _scale.x(),
@@ -255,61 +262,110 @@ void  QUIZ::Quiz::Entity::draw()
   update(0.f);
 
   // Update sprite position
-  _sprite.setPosition(windowSize.x() * _position.x(), windowSize.y() * _position.y());
-  _sprite.setScale(spriteScale, spriteScale);
-  _sprite.setColor(sf::Color(
-    (std::uint8_t)(std::clamp(_color.get<0>(), 0.f, 255.f) * 255),
-    (std::uint8_t)(std::clamp(_color.get<1>(), 0.f, 255.f) * 255),
-    (std::uint8_t)(std::clamp(_color.get<2>(), 0.f, 255.f) * 255),
+  _sprite.setPosition({ windowSize.x() * _position.x(), windowSize.y() * _position.y() });
+  _sprite.setScale({ spriteScale, spriteScale });
+  _sprite.setColor(sf::Color(255, 255, 255,
     (std::uint8_t)(std::clamp(_color.get<3>(), 0.f, 255.f) * 255)
   ));
 
   // Draw sprite
-  window.window().draw(_sprite);
+  window.draw(_sprite);
 
-  Math::Vector<2> textSize = { _text.getLocalBounds().getSize().x, _text.getLocalBounds().getSize().y };
+  Math::Vector<2> textSize = { _text.getLocalBounds().size.x, _text.getLocalBounds().size.y };
   float           textScale = std::min(
-    windowSize.x() / textSize.x() * _scale.x(),
-    windowSize.y() / textSize.y() * _scale.y()
+    windowSize.x() / textSize.x() * _scale.x() * 0.9f,
+    windowSize.y() / textSize.y() * _scale.y() * (1.f - 1.f / (2.f + std::ranges::count(_text.getString().toAnsiString(), '\n')))
   ) * 0.9f;
 
   // Update text position
-  _text.setPosition(windowSize.x() * _position.x(), windowSize.y() * _position.y());
-  _text.setScale(textScale, textScale);
+  _text.setPosition({ windowSize.x() * _position.x(), windowSize.y() * _position.y() });
+  _text.setScale({ textScale, textScale });
   _text.setOutlineColor(sf::Color(0, 0, 0, (std::uint8_t)(std::clamp(_color.get<3>(), 0.f, 255.f) * 255)));
-  _text.setFillColor(sf::Color(
-    (std::uint8_t)(std::clamp(_color.get<0>(), 0.f, 255.f) * 255),
-    (std::uint8_t)(std::clamp(_color.get<1>(), 0.f, 255.f) * 255),
-    (std::uint8_t)(std::clamp(_color.get<2>(), 0.f, 255.f) * 255),
+  _text.setFillColor(sf::Color(255, 255, 255,
     (std::uint8_t)(std::clamp(_color.get<3>(), 0.f, 255.f) * 255)
   ));
 
   // Draw text
-  window.window().draw(_text);
+  window.draw(_text);
 
   if (_outline > 0.f) {
     sf::RectangleShape  rectangle;
 
     // Update rectangle position
-    rectangle.setPosition(windowSize.x() * _position.x(), windowSize.y() * _position.y());
-    rectangle.setSize(sf::Vector2f(windowSize.x() * _scale.x(), windowSize.y() * _scale.y()));
+    rectangle.setPosition({ windowSize.x() * _position.x(), windowSize.y() * _position.y() });
+    rectangle.setSize({ windowSize.x() * _scale.x(), windowSize.y() * _scale.y() });
     rectangle.setOrigin(rectangle.getSize() / 2.f);
     rectangle.setOutlineThickness(std::min(windowSize.x(), windowSize.y()) * _outline);
-    rectangle.setFillColor(sf::Color::Transparent);
     rectangle.setOutlineColor(sf::Color(
       (std::uint8_t)(std::clamp(_color.get<0>(), 0.f, 255.f) * 255),
       (std::uint8_t)(std::clamp(_color.get<1>(), 0.f, 255.f) * 255),
       (std::uint8_t)(std::clamp(_color.get<2>(), 0.f, 255.f) * 255),
       (std::uint8_t)(std::clamp(_color.get<3>(), 0.f, 255.f) * 255)
     ));
+    rectangle.setFillColor(sf::Color(rectangle.getOutlineColor().r, rectangle.getOutlineColor().g, rectangle.getOutlineColor().b, rectangle.getOutlineColor().a / 8));
 
     // Draw rectangle
-    window.window().draw(rectangle);
+    window.draw(rectangle);
   }
 }
 
 bool  QUIZ::Quiz::Entity::hover() const
 {
+  auto coords = Game::Window::Instance().pixelToCoords(Game::Window::Instance().mouse().position());
+
   // Check if cursor is on sprite
-  return _sprite.getGlobalBounds().contains(Game::Window::Instance().window().mapPixelToCoords(Game::Window::Instance().mouse().position()));
+  return _sprite.getGlobalBounds().contains({ coords.x(), coords.y() });
+}
+
+QUIZ::Quiz::ProgressBar::ProgressBar() :
+  _value(0.f),
+  _height(0.f),
+  _hidden(true)
+{}
+
+void  QUIZ::Quiz::ProgressBar::set(float value)
+{
+  // Limit value to [0; 1]
+  _value = std::clamp(value, 0.f, 1.f);
+}
+
+float QUIZ::Quiz::ProgressBar::get() const
+{
+  // Get current value
+  return _value;
+}
+
+void  QUIZ::Quiz::ProgressBar::hide()
+{
+  // Set hidden flag
+  _hidden = true;
+}
+
+void  QUIZ::Quiz::ProgressBar::show()
+{
+  // Unset hidden flag
+  _hidden = false;
+}
+
+void  QUIZ::Quiz::ProgressBar::update(float elapsed)
+{
+  if (_hidden == true)
+    _height = std::max(0.f, _height - elapsed * 2.f);
+  else
+    _height = std::min(1.f, _height + elapsed * 2.f);
+}
+
+void  QUIZ::Quiz::ProgressBar::draw()
+{
+  sf::RectangleShape  bar;
+  auto&               window = Game::Window::Instance();
+
+  // Setup bar
+  bar.setPosition({ 0.f, window.getSize().y() - _height * window.getSize().y() * 0.01f});
+  bar.setSize({ window.getSize().x() * _value, _height * window.getSize().y() * 0.01f });
+  bar.setFillColor(sf::Color::White);
+  bar.setOutlineThickness(0.f);
+
+  // Draw bar
+  window.draw(bar);
 }

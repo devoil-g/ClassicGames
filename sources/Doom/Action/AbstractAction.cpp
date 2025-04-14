@@ -14,7 +14,7 @@
 DOOM::AbstractAction::AbstractAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector)
 {}
 
-std::unique_ptr<DOOM::AbstractAction> DOOM::AbstractAction::factory(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, int16_t type, int16_t model)
+std::unique_ptr<DOOM::AbstractAction> DOOM::AbstractAction::factory(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, std::int16_t type, std::int16_t model)
 {
   // Generate action from type
   switch (type) {

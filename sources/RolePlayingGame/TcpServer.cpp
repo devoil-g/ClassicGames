@@ -72,7 +72,7 @@ std::uint32_t RPG::TcpServer::getAddress(std::size_t id) const
     return 0;
 
   // Get remote address
-  return it->socket.getRemoteAddress().toInteger();
+  return it->socket.getRemoteAddress().value_or(sf::IpAddress(0)).toInteger();
 }
 
 void  RPG::TcpServer::run()
@@ -145,7 +145,7 @@ void  RPG::TcpServer::loop()
         sf::Packet          packet;
         sf::Socket::Status  status = client.socket.receive(packet);
 
-        if (status == sf::Socket::Done) {
+        if (status == sf::Socket::Status::Done) {
           try {
             std::string raw;
 

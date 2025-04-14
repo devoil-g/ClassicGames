@@ -25,13 +25,8 @@ namespace Math
 
     Vector(const Game::JSON::Array& json)
     {
-      // Check JSON array size
-      if (json.size() != Size)
-        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-      // Extract values from JSON
-      for (unsigned int i = 0; i < Size; i++)
-        (*this)(i) = (Type)json.get(i).number();
+      // Copy JSON to vector
+      *this = json;
     }
 
     Vector(const Math::Vector<Size, Type>& other) = default;
@@ -43,6 +38,20 @@ namespace Math
     ~Vector() = default;
 
     Vector<Size, Type>& operator=(const Math::Vector<Size, Type>& other) = default;
+    Vector<Size, Type>& operator=(Math::Vector<Size, Type>&& other) = default;
+
+    Vector<Size, Type>& operator=(const Game::JSON::Array& json)
+    {
+      // Check JSON array size
+      if (json.size() != Size)
+        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+      // Extract values from JSON
+      for (unsigned int i = 0; i < Size; i++)
+        (*this)(i) = (Type)json.get(i).number();
+
+      return *this;
+    }
 
     template<unsigned int wSize>
     Math::Vector<wSize, Type>&  convert() // Cast current vector to a lower dimension

@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "Doom/Scenes/TextDoomScene.hpp"
 #include "Doom/Scenes/TransitionDoomScene.hpp"
 #include "Doom/Thing/PlayerThing.hpp"
@@ -12,18 +10,15 @@ DOOM::TextDoomScene::TextDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom
   _doom(doom),
   _elapsed(0.f),
   _text(),
-  _image(),
+  _image(sf::Vector2u(DOOM::Doom::RenderWidth, DOOM::Doom::RenderHeight)),
   _x(10), _y(10)
 {
   const auto& flat = doom.resources.getFlat(background).flat();
 
-  // Resize image
-  _image.create(DOOM::Doom::RenderWidth, DOOM::Doom::RenderHeight);
-
   // Draw background
   for (unsigned int y = 0; y < _image.getSize().y; y++)
     for (unsigned int x = 0; x < _image.getSize().x; x++)
-      _image.setPixel(x, y, _doom.resources.palettes[0][_doom.resources.colormaps[0][flat[(y % 64) * 64 + x % 64]]]);
+      _image.setPixel({ x, y }, _doom.resources.palettes[0][_doom.resources.colormaps[0][flat[(y % 64) * 64 + x % 64]]]);
 
   // Send text character in queue
   for (char c : text)
@@ -50,9 +45,9 @@ bool  DOOM::TextDoomScene::update(float elapsed)
 
     // Draw character
     try {
-      const auto& character = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>(std::string("STCFN") + std::to_string((int)_text.front() / 100 % 10) + std::to_string((int)_text.front() / 10 % 10) + std::to_string((int)_text.front() / 1 % 10)));
+      const auto& character = _doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>(std::string("STCFN") + std::to_string((int)_text.front() / 100 % 10) + std::to_string((int)_text.front() / 10 % 10) + std::to_string((int)_text.front() / 1 % 10)));
 
-      character.draw(_doom, _image, sf::Vector2i(_x, _y), sf::Vector2i(1, 1));
+      character.draw(_doom, _image, Math::Vector<2, int>(_x, _y), Math::Vector<2, int>(1, 1));
       _x += character.width;
     }
     catch (const std::exception&) {
@@ -92,8 +87,8 @@ bool  DOOM::TextDoomScene::updateSkip()
   for (const auto& player : _doom.level.players) {
     // Keyboard/mouse
     if (player.get().controller == 0) {
-      skip |= Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space);
-      skip |= Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Left);
+      skip |= Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Space);
+      skip |= Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Left);
     }
 
     else {

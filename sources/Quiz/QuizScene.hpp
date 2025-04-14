@@ -1,10 +1,5 @@
 #pragma once
 
-#include <filesystem>
-
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/System.hpp>
-
 #include "Quiz/Quiz.hpp"
 #include "Scenes/AbstractScene.hpp"
 #include "Scenes/SceneMachine.hpp"

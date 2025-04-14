@@ -69,8 +69,8 @@ Game::JSON::Object  RPG::Color::json() const
 std::uint32_t RPG::Color::uint32() const
 {
   // Convert to 32bits integers RGBA
-  return ((std::uint32_t)std::clamp(red * 255.f, 0.f, 255.f) << 24)
-    | ((std::uint32_t)std::clamp(green * 255.f, 0.f, 255.f) << 16)
-    | ((std::uint32_t)std::clamp(blue * 255.f, 0.f, 255.f) << 8)
-    | ((std::uint32_t)std::clamp(alpha * 255.f, 0.f, 255.f) << 0);
+  return (((std::uint32_t)std::clamp(red * 255.f, 0.f, 255.f)) << 24)
+    | (((std::uint32_t)std::clamp(green * 255.f, 0.f, 255.f)) << 16)
+    | (((std::uint32_t)std::clamp(blue * 255.f, 0.f, 255.f)) << 8)
+    | (((std::uint32_t)std::clamp(alpha * 255.f, 0.f, 255.f)) << 0);
 }

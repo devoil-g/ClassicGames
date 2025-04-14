@@ -483,14 +483,14 @@ void  GBC::GameBoyColor::simulate()
 void  GBC::GameBoyColor::simulateKeys()
 {
   std::array<bool, Key::KeyCount> keys = {
-    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) < -0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::S),  // Down
-    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) > +0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Z),  // Up
-    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovX) < -0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Q),  // Left
-    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovX) > +0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::D),  // Right
-    Game::Window::Instance().joystick().buttonDown(0, 7) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::E),                               // Start
-    Game::Window::Instance().joystick().buttonDown(0, 6) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::A),                               // Select
-    Game::Window::Instance().joystick().buttonDown(0, 1) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::L),                               // B
-    Game::Window::Instance().joystick().buttonDown(0, 0) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::P)                                // A
+    Game::Window::Instance().joystick().position(0, Game::Window::JoystickAxis::PovY) < -0.5f || Game::Window::Instance().keyboard().keyDown(Game::Window::Key::S), // Down
+    Game::Window::Instance().joystick().position(0, Game::Window::JoystickAxis::PovY) > +0.5f || Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Z), // Up
+    Game::Window::Instance().joystick().position(0, Game::Window::JoystickAxis::PovX) < -0.5f || Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Q), // Left
+    Game::Window::Instance().joystick().position(0, Game::Window::JoystickAxis::PovX) > +0.5f || Game::Window::Instance().keyboard().keyDown(Game::Window::Key::D), // Right
+    Game::Window::Instance().joystick().buttonDown(0, 7) || Game::Window::Instance().keyboard().keyDown(Game::Window::Key::E),                                            // Start
+    Game::Window::Instance().joystick().buttonDown(0, 6) || Game::Window::Instance().keyboard().keyDown(Game::Window::Key::A),                                            // Select
+    Game::Window::Instance().joystick().buttonDown(0, 1) || Game::Window::Instance().keyboard().keyDown(Game::Window::Key::L),                                            // B
+    Game::Window::Instance().joystick().buttonDown(0, 0) || Game::Window::Instance().keyboard().keyDown(Game::Window::Key::P)                                             // A
   };
 
   // Joypad interrupt when a selected key is pressed

@@ -44,7 +44,7 @@ namespace Game
     game.push<Game::ExitScene<RPG::ClientScene>>(std::move(server));
 
     // Run the game !
-    while (Game::Window::Instance().window().isOpen()) {
+    while (Game::Window::Instance().isOpen() == true) {
       float elapsed = clock.restart().asSeconds();
 
       // Stop if update return true
@@ -53,12 +53,10 @@ namespace Game
         game.update(elapsed) == true)
         return;
 
-      // Draw image
-      Game::Window::Instance().window().clear();
+      // Render game
+      Game::Window::Instance().clear();
       game.draw();
-
-      // Display image
-      Game::Window::Instance().window().display();
+      Game::Window::Instance().display();
     }
   }
 };
@@ -74,7 +72,7 @@ int main(int argc, char ** argv)
     std::cerr << "[Runtime Error]: " << e.what() << std::endl;
 
 #ifdef _WIN32
-    MessageBox(Game::Window::Instance().window().getSystemHandle(), e.what(), "Runtime error", MB_OK | MB_ICONSTOP);
+    MessageBox(Game::Window::Instance().getHandle(), e.what(), "Runtime error", MB_OK | MB_ICONSTOP);
 #endif
 
     return EXIT_FAILURE;

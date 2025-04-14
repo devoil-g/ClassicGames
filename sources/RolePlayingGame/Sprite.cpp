@@ -72,41 +72,41 @@ void  RPG::Sprite::draw(const Math::Vector<2>& position, RPG::Color color, RPG::
   auto&           window = Game::Window::Instance();
   Math::Vector<2> originTrunc;
   Math::Vector<2> rounded(std::round(position.x() - std::modf(origin.x(), &originTrunc.x())), std::round(position.y() - std::modf(origin.y(), &originTrunc.y())));
-  sf::Sprite      sprite;
+  sf::Sprite      sprite(pointer->get());
 
   // Set properties
-  sprite.setPosition(rounded.x(), rounded.y());
-  sprite.setTexture(pointer->get());
-  sprite.setTextureRect(sf::IntRect(texture.origin.x(), texture.origin.y(), texture.size.x(), texture.size.y()));
-  sprite.setOrigin(originTrunc.x(), originTrunc.y());
-  sprite.setScale((float)scale.x(), (float)scale.y());
+  sprite.setPosition({ rounded.x(), rounded.y() });
+  sprite.setTextureRect(sf::IntRect({ texture.origin.x(), texture.origin.y() }, { texture.size.x(), texture.size.y() }));
+  sprite.setOrigin({ originTrunc.x(), originTrunc.y() });
+  sprite.setScale({ (float)scale.x(), (float)scale.y() });
   sprite.setColor(sf::Color((color * this->color).uint32()));
   
   // Draw sprite
   if (outline.alpha == 0)
-    window.window().draw(sprite);
+    window.draw(sprite);
   else
-    window.window().draw(sprite, RPG::Sprite::OutlineShader::Get(outline));
+    window.draw(sprite, RPG::Sprite::OutlineShader::Get(outline));
 }
 
 RPG::Bounds RPG::Sprite::bounds(const Math::Vector<2>& position) const
 {
   Math::Vector<2> originTrunc;
   Math::Vector<2> rounded(std::round(position.x() - std::modf(origin.x(), &originTrunc.x())), std::round(position.y() - std::modf(origin.y(), &originTrunc.y())));
-  sf::Sprite      sprite;
+  sf::Texture     empty;
+  sf::Sprite      sprite(empty);
 
   // Set properties
-  sprite.setPosition(rounded.x(), rounded.y());
-  sprite.setTextureRect(sf::IntRect(texture.origin.x() + select.origin.x(), texture.origin.y() + select.origin.y(), select.size.x(), select.size.y()));
-  sprite.setOrigin(originTrunc.x() - select.origin.x(), originTrunc.y() - select.origin.y());
-  sprite.setScale((float)scale.x(), (float)scale.y());
+  sprite.setPosition({ rounded.x(), rounded.y() });
+  sprite.setTextureRect(sf::IntRect({ texture.origin.x() + select.origin.x(), texture.origin.y() + select.origin.y() }, { select.size.x(), select.size.y() }));
+  sprite.setOrigin({ originTrunc.x() - select.origin.x(), originTrunc.y() - select.origin.y() });
+  sprite.setScale({ (float)scale.x(), (float)scale.y() });
   
   // Use SFML to compute sprite bounds
   auto bounds = sprite.getGlobalBounds();
 
   return RPG::Bounds(
-    { std::round(bounds.left), std::round(bounds.top) },
-    { std::round(bounds.width), std::round(bounds.height) }
+    { std::round(bounds.position.x), std::round(bounds.position.y) },
+    { std::round(bounds.size.x), std::round(bounds.size.y) }
   );
 }
 
@@ -131,7 +131,7 @@ RPG::Sprite::OutlineShader::OutlineShader() :
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Bind SFML texture of drawable
-  _shader.setParameter("texture", sf::Shader::CurrentTexture);
+  _shader.setUniform("texture", sf::Shader::CurrentTexture);
 }
 
 const sf::Shader* RPG::Sprite::OutlineShader::Get(RPG::Color color)
@@ -139,7 +139,7 @@ const sf::Shader* RPG::Sprite::OutlineShader::Get(RPG::Color color)
   static RPG::Sprite::OutlineShader shader;
 
   // Set outline color
-  shader._shader.setParameter("color", sf::Color(color.uint32()));
+  shader._shader.setUniform("color", sf::Glsl::Vec4(sf::Color(color.uint32())));
 
   return &shader._shader;
 }
