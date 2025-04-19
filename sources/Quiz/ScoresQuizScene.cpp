@@ -1,30 +1,19 @@
-#include <SFML/Graphics/Text.hpp>
+#include <iostream>
 
 #include "Quiz/ScoresQuizScene.hpp"
 #include "Quiz/BlindtestQuizScene.hpp"
 #include "Quiz/ControllerQuizScene.hpp"
+#include "Quiz/FastestQuizScene.hpp"
 #include "Quiz/QuestionQuizScene.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 #include "System/Audio/Sound.hpp"
 #include "System/Library/FontLibrary.hpp"
 
-#include <iostream>
-
 QUIZ::ScoresQuizScene::ScoresQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz) :
   Game::AbstractScene(machine),
-  _quiz(quiz),
-  _music()
+  _quiz(quiz)
 {
-  // Load music
-  if (_music.openFromFile((Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "scores.ogg").string()) == false)
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-  // Set music parameters
-  _music.setLooping(true);
-  _music.setVolume(25.f);
-  _music.play();
-
   // Set player visible
   for (int index = 0; index < _quiz.players.size(); index++) {
     auto& player = _quiz.players[index];
@@ -36,6 +25,74 @@ QUIZ::ScoresQuizScene::ScoresQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& 
     entity.setLerp(0.0625f);
   }
 
+  static sf::Music music;
+  
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "2000_question.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "2000_answer.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(8.310f), .length = sf::seconds(22.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "4000_question.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "4000_answer.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(8.310f), .length = sf::seconds(22.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "8000_question.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "8000_answer.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(8.310f), .length = sf::seconds(22.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "16000_question.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "16000_answer.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(8.310f), .length = sf::seconds(22.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "32000_question.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "32000_answer.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(8.310f), .length = sf::seconds(22.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "64000_question.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "64000_answer.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(8.310f), .length = sf::seconds(22.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "125000_question.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "125000_answer.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "250000_question.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "250000_answer.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(6.000f), .length = sf::seconds(30.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "500000_question.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "500000_answer.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(6.000f), .length = sf::seconds(30.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "1000000_question.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "1000000_answer.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(6.000f), .length = sf::seconds(30.000f) });
+
+  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "1000_question.ogg");
+  music.setLoopPoints({ .offset = sf::seconds(13.919f), .length = sf::seconds(13.919f) });
+
+  music.setLooping(true);
+  //music.play();
+
   // Host instructions
   std::cout
     << "--- SCOREBOARD ---" << std::endl
@@ -43,6 +100,7 @@ QUIZ::ScoresQuizScene::ScoresQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& 
     << std::endl
     << "Commands:" << std::endl
     << "  [C]ontroller: controller selection" << std::endl
+    << "  [F]astest:    fastest finger" << std::endl
     << "  [Q]uestion:   free questions" << std::endl;
   if (_quiz.blindtests.empty() == false)
     std::cout
@@ -56,6 +114,12 @@ bool  QUIZ::ScoresQuizScene::update(float elapsed)
   // Controller selection
   if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::C) == true) {
     _machine.swap<QUIZ::ControllerQuizScene>(_quiz);
+    return false;
+  }
+
+  // Fastest finger
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::F) == true) {
+    _machine.swap<QUIZ::FastestQuizScene>(_quiz);
     return false;
   }
 

@@ -51,6 +51,7 @@ QUIZ::ControllerQuizScene::ControllerQuizScene(Game::SceneMachine& machine, QUIZ
     << std::endl
     << "Commands:" << std::endl
     << "  [N]ext:       end player selection" << std::endl
+    << "  [E]nd:        immediatly stop player selection" << std::endl
     << "  Right click:  remove a player" << std::endl
     << std::endl;
 }
@@ -67,9 +68,9 @@ bool  QUIZ::ControllerQuizScene::update(float elapsed)
   // Manage host inputs
   updateHost();
 
-  // Go to next scene
+  // End player selection
   if (_music.getStatus() == sf::Music::Status::Stopped) {
-    _machine.swap<QUIZ::FastestQuizScene>(_quiz);
+    _machine.pop();
     return false;
   }
 
@@ -233,7 +234,10 @@ void  QUIZ::ControllerQuizScene::updateHost()
   if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true) {
     _music.setLooping(false);
     _music.setPlayingOffset(sf::seconds(QUIZ::ControllerQuizScene::TimerLimit));
-    // TODO: remove this
+  }
+
+  // Immediatly stop player selection
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::E) == true) {
     _music.stop();
   }
 }

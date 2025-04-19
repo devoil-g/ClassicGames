@@ -37,6 +37,14 @@ namespace QUIZ
       unsigned int  id;               // Player ID
     };
 
+    struct Fastest
+    {
+      std::string               id;       // Unique ID of question
+      std::string               question; // Text of the question
+      std::vector<std::string>  answers;  // Answers to the question in correct order
+      bool                      done;     // True if question has already been answered
+    };
+
     struct Question
     {
       std::string id; // Unique ID of question
@@ -111,15 +119,16 @@ namespace QUIZ
       void  setTexture(const std::filesystem::path& path = ""); // Set texture
       void  setText(const std::string& text = "");              // Set new text to display
       
-      Math::Vector<2> getPosition() const;       // Get current position
-      Math::Vector<2> getTargetPosition() const; // Get target position
-      Math::Vector<2> getScale() const;          // Get current scaling
-      Math::Vector<2> getTargetScale() const;    // Get target scaling
-      Math::Vector<4> getColor() const;          // Get current color
-      Math::Vector<4> getTargetColor() const;    // Get current color
-      float           getOutline() const;        // Get outline thickness
-      float           getLerp() const;           // Get lerp level
-      bool            getDead() const;           // Get dead flag
+      Math::Vector<2>     getPosition() const;        // Get current position
+      Math::Vector<2>     getTargetPosition() const;  // Get target position
+      Math::Vector<2>     getScale() const;           // Get current scaling
+      Math::Vector<2>     getTargetScale() const;     // Get target scaling
+      Math::Vector<4>     getColor() const;           // Get current color
+      Math::Vector<4>     getTargetColor() const;     // Get current color
+      float               getOutline() const;         // Get outline thickness
+      float               getLerp() const;            // Get lerp level
+      bool                getDead() const;            // Get dead flag
+      const std::string&  getText() const;            // Get text
 
       const sf::Sprite& sprite() const; // Get entity sprite
 
@@ -130,6 +139,7 @@ namespace QUIZ
 
     class ProgressBar
     {
+    private:
       float _value;   // Displayed progression value [0; 1]
       float _height;  // Current height of bar [0; 1]
       bool  _hidden;  // True if bar is hidden
@@ -152,6 +162,7 @@ namespace QUIZ
     std::map<std::string, Entity> entities;   // Entities to draw
     ProgressBar                   progress;   // Progress bar
     std::vector<Question>         questions;  // Questions bank
+    std::vector<Fastest>          fastests;   // Fastest finger question bank
 
   public:
     Quiz();

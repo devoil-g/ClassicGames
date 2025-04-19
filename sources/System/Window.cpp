@@ -97,7 +97,6 @@ bool  Game::Window::update(float elapsed)
     const auto eventJoystickButtonPressed = [this](const sf::Event::JoystickButtonPressed& joystick) {
       _joystick._down[joystick.joystickId][joystick.button] = true;
       _joystick._pressed[joystick.joystickId][joystick.button] = true;
-      printf("%d %d\n", joystick.joystickId, joystick.button);
       };
     const auto eventJoystickButtonReleased = [this](const sf::Event::JoystickButtonReleased& joystick) {
       _joystick._down[joystick.joystickId][joystick.button] = false;

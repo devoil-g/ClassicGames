@@ -1,4 +1,24 @@
 {
+  "fastest": [
+    {
+      "id": "test_001",
+      "question": "Triez ces types de variable C par leur taille croissante",
+      "answers": [ "char", "short", "int", "long" ]
+    },
+
+    {
+      "id": "test_002",
+      "question": "Triez ces unités de mesure par leur taille croissante",
+      "answers": [ "Centimètre", "Décimètre", "Décamètre", "Hectomètre" ]
+    },
+
+    {
+      "id": "test_003",
+      "question": "Triez ces présidents par ordre de leurs mandats",
+      "answers": [ "Jacques Chirac", "Nicolas Sarkozy", "François Hollande", "Emmanuel Macron" ]
+    }
+  ],
+
   "quiz": [
     {
       "id": "001",

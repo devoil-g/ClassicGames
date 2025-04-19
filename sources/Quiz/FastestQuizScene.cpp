@@ -1,3 +1,8 @@
+#include <random>
+#include <iomanip>
+#include <iostream>
+#include <sstream>
+
 #include "Math/Math.hpp"
 #include "Quiz/FastestQuizScene.hpp"
 #include "System/Config.hpp"
@@ -5,19 +10,33 @@
 #include "System/Audio/Sound.hpp"
 #include "System/Library/SoundLibrary.hpp"
 
-#include <iomanip>
-#include <iostream>
-#include <sstream>
-
 QUIZ::FastestQuizScene::FastestQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz) :
   Game::AbstractScene(machine),
   _quiz(quiz),
   _music(),
   _state(State::Preparation),
-  _timer(0.f)
+  _timer(0.f),
+  _question(0)
 {
   // Start preparation
   reset();
+
+  // Need at least one fastest question
+  if (_quiz.fastests.empty() == true)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // Set first unused question
+  while (true) {
+    if (_quiz.fastests.at(_question).done == false)
+      break;
+    else if (_question == _quiz.fastests.size() - 1) {
+      _question = 0;
+      break;
+    }
+    else
+      _question += 1;
+  }
+
 }
 
 QUIZ::FastestQuizScene::~FastestQuizScene()
@@ -96,11 +115,28 @@ void  QUIZ::FastestQuizScene::reset()
     << std::endl
     << "Commands:" << std::endl
     << "  [N]ext:   start question" << std::endl
+    << "  [<]rrow   select previous question" << std::endl
+    << "  [>]rrow   select next question" << std::endl
     << std::endl;
+
+  // Display question to host
+  std::cout << "Question " << _question << ": '" << _quiz.fastests.at(_question).question << "'" << (_quiz.fastests.at(_question).done ? " (done)" : "") << "." << std::endl;
 }
 
 bool  QUIZ::FastestQuizScene::update(float elapsed)
 {
+  // Select question
+  if (_state == State::Preparation) {
+    if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Left) == true ||
+      Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Right) == true) {
+      _question = (_question
+        + (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Left) == true ? _quiz.fastests.size() - 1 : 0)
+        + (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Right) == true ? 1 : 0)
+        ) % _quiz.fastests.size();
+      std::cout << "Question " << _question << ": '" << _quiz.fastests.at(_question).question << "'" << (_quiz.fastests.at(_question).done ? " (done)" : "") << "." << std::endl;
+    }
+  }
+
   // Start question
   if (_state == State::Preparation && Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true) {
     _quiz.progress.show();
@@ -147,7 +183,7 @@ bool  QUIZ::FastestQuizScene::update(float elapsed)
     entity.setTargetColor(1.f, 1.f, 1.f, 1.f);
     entity.setOutline(0.0125f);
     entity.setLerp(0.0625f);
-    entity.setText("Trier ces types du plus petit au plus gros en mémoire");
+    entity.setText(_quiz.fastests.at(_question).question);
 
     _state = State::Beep3;
   }
@@ -197,10 +233,14 @@ bool  QUIZ::FastestQuizScene::update(float elapsed)
   }
 
   if (_state == State::Start && _music.getPlayingOffset().asSeconds() >= 2.f) {
-    _quiz.entities["answer_1"].setText("int");
-    _quiz.entities["answer_2"].setText("char");
-    _quiz.entities["answer_3"].setText("short");
-    _quiz.entities["answer_4"].setText("long");
+    auto answers = _quiz.fastests.at(_question).answers;
+
+    std::shuffle(answers.begin(), answers.end(), std::default_random_engine((unsigned int)std::chrono::system_clock::now().time_since_epoch().count()));
+
+    _quiz.entities["answer_1"].setText(answers.at(0));
+    _quiz.entities["answer_2"].setText(answers.at(1));
+    _quiz.entities["answer_3"].setText(answers.at(2));
+    _quiz.entities["answer_4"].setText(answers.at(3));
 
     _state = State::Timer;
   }
@@ -268,14 +308,30 @@ bool  QUIZ::FastestQuizScene::update(float elapsed)
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
     _music.play();
 
-    // Show correct / wring answers
+    // Show correct / wrong answers
     for (int index = 0; index < _quiz.players.size(); index++) {
       auto& player = _quiz.players[index];
       auto& entity = _quiz.entities.at("player_" + std::to_string(player.id));
       auto& chrono = _quiz.entities["chrono_" + std::to_string(player.id)];
+      
+      std::cout << "answer:" << std::endl;
+      std::cout << _quiz.entities.at("answer_" + std::to_string(*std::next(_answers[index].second.begin(), 0))).getText()
+        + _quiz.entities.at("answer_" + std::to_string(*std::next(_answers[index].second.begin(), 1))).getText()
+        + _quiz.entities.at("answer_" + std::to_string(*std::next(_answers[index].second.begin(), 2))).getText()
+        + _quiz.entities.at("answer_" + std::to_string(*std::next(_answers[index].second.begin(), 3))).getText()
+        << std::endl;
 
       if (_answers[index].first != std::numeric_limits<float>().max()) {
-        if (_answers[index].second == std::list<unsigned int>{ 3, 2, 4, 1 }) {
+        if (_answers[index].second.size() == 4 &&
+          _quiz.entities.at("answer_" + std::to_string(*std::next(_answers[index].second.begin(), 0))).getText()
+          + _quiz.entities.at("answer_" + std::to_string(*std::next(_answers[index].second.begin(), 1))).getText()
+          + _quiz.entities.at("answer_" + std::to_string(*std::next(_answers[index].second.begin(), 2))).getText()
+          + _quiz.entities.at("answer_" + std::to_string(*std::next(_answers[index].second.begin(), 3))).getText()
+          ==
+          _quiz.fastests.at(_question).answers.at(0)
+          + _quiz.fastests.at(_question).answers.at(1)
+          + _quiz.fastests.at(_question).answers.at(2)
+          + _quiz.fastests.at(_question).answers.at(3)) {
           entity.setTargetColor(1.f, 1.f, 1.f, 1.f);
           chrono.setColor(0.f, 0.f, 0.f, 1.f);
           chrono.setTargetColor(0.2f, 1.f, 0.2f, 1.f);

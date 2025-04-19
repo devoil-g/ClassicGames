@@ -16,6 +16,7 @@ namespace QUIZ
   private:
     QUIZ::Quiz& _quiz;  // Quiz instance
     sf::Music   _music; // Background music, also used as timer
+    unsigned int  _question;  // Fastest finger question index in quiz
 
     enum class State {
       Preparation,

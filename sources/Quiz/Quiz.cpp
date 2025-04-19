@@ -2,7 +2,7 @@
 #include <filesystem>
 #include <iostream>
 #include <random>
-#include <chrono>     
+#include <chrono>
 #include <algorithm>
 #include <exception>
 
@@ -19,6 +19,8 @@ QUIZ::Quiz::Quiz() :
   blindtests(),
   questions()
 {
+  auto json = Game::JSON::load(Game::Config::ExecutablePath / "assets" / "quiz" / "questions.json");
+
   const std::array<std::string, 9> textureExtensions = { "jpg", "png", "bmp", "tga", "jpeg", "gif", "psd", "hdr", "pic" };
   const std::array<std::string, 3> musicExtensions = { "ogg", "wav", "flac" };
 
@@ -97,31 +99,21 @@ QUIZ::Quiz::Quiz() :
       .done = false
       });
 
-    // Add blindtest to questions bank
-    questions.push_back({
-      .id = std::to_string(std::rand()),
+    // Verbose
+    std::cout << "Blindtest '" << music_path.stem().string() << "' loaded." << std::endl;
+  }
 
-      .questionText = "Blindtest",
-      .questionAudio = music_path,
-      .questionImage = Game::Config::ExecutablePath / "assets" / "quiz" / "images" / "audio.png",
-      .questionPoints = 1,
-      .questionInfo = "",
-
-      .answerChoices = { music_path.stem().string() },
-      .answerCorrect = 0,
-      .answerTimeout = 5.f,
-      .answerNextout = false,
-
-      .correctText = "",
-      .correctAudio = "",
-      .correctImage = cover_path,
-      .correctInfo = "",
-
+  // Load fastest finger question
+  for (const auto& entry : json.get("fastest").array()._vector) {
+    fastests.push_back(Fastest{
+      .id = entry->object().get("id").string(),
+      .question = entry->object().get("question").string(),
+      .answers = std::vector<std::string>(),
       .done = false
       });
 
-    // Verbose
-    std::cout << "Blindtest '" << music_path.stem().string() << "' loaded." << std::endl;
+    for (const auto& answer : entry->object().get("answers").array()._vector)
+      fastests.back().answers.push_back(answer->string());
   }
 
   // Shuffle blindtest
@@ -132,8 +124,9 @@ QUIZ::Quiz::Quiz() :
 
   std::cout << std::endl
     << "Quiz loaded:" << std::endl
-    << "  Avatars:    " << avatars.size() << std::endl
-    << "  Questions:  " << questions.size() << std::endl
+    << "  Avatars:        " << avatars.size() << std::endl
+    << "  Fastest finger: " << fastests.size() << std::endl
+    << "  Questions:      " << questions.size() << std::endl
     << std::endl;
 }
 
@@ -210,15 +203,16 @@ void  QUIZ::Quiz::Entity::setText(const std::string& text)
   );
 }
 
-Math::Vector<2> QUIZ::Quiz::Entity::getPosition() const { return _position; }
-Math::Vector<2> QUIZ::Quiz::Entity::getTargetPosition() const { return _targetPosition; }
-Math::Vector<2> QUIZ::Quiz::Entity::getScale() const { return _scale; }
-Math::Vector<2> QUIZ::Quiz::Entity::getTargetScale() const { return _targetScale; }
-Math::Vector<4> QUIZ::Quiz::Entity::getColor() const { return _color; }
-Math::Vector<4> QUIZ::Quiz::Entity::getTargetColor() const { return _targetColor; }
-float           QUIZ::Quiz::Entity::getOutline() const { return _outline; }
-float           QUIZ::Quiz::Entity::getLerp() const { return _lerp; }
-bool            QUIZ::Quiz::Entity::getDead() const { return _dead; }
+Math::Vector<2>     QUIZ::Quiz::Entity::getPosition() const { return _position; }
+Math::Vector<2>     QUIZ::Quiz::Entity::getTargetPosition() const { return _targetPosition; }
+Math::Vector<2>     QUIZ::Quiz::Entity::getScale() const { return _scale; }
+Math::Vector<2>     QUIZ::Quiz::Entity::getTargetScale() const { return _targetScale; }
+Math::Vector<4>     QUIZ::Quiz::Entity::getColor() const { return _color; }
+Math::Vector<4>     QUIZ::Quiz::Entity::getTargetColor() const { return _targetColor; }
+float               QUIZ::Quiz::Entity::getOutline() const { return _outline; }
+float               QUIZ::Quiz::Entity::getLerp() const { return _lerp; }
+bool                QUIZ::Quiz::Entity::getDead() const { return _dead; }
+const std::string&  QUIZ::Quiz::Entity::getText() const { return _text.getString().toAnsiString(); }
 
 const sf::Sprite& QUIZ::Quiz::Entity::sprite() const
 {

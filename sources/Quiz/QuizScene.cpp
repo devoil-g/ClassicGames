@@ -1,7 +1,6 @@
 #include <SFML/Graphics/Text.hpp>
 
 #include "Quiz/QuizScene.hpp"
-#include "Quiz/ControllerQuizScene.hpp"
 #include "Quiz/ScoresQuizScene.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
@@ -13,10 +12,7 @@ QUIZ::QuizScene::QuizScene(Game::SceneMachine& machine) :
   _quiz(),
   _game(),
   _scores(false)
-{
-  // Start with player selection
-  _game.push<QUIZ::ControllerQuizScene>(_quiz);
-}
+{}
 
 QUIZ::QuizScene::~QuizScene()
 {
