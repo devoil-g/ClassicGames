@@ -10,7 +10,7 @@ const Math::Vector<2, unsigned int> Game::Window::DefaultSize = { 960u, 540u };
 const std::string                   Game::Window::DefaultTitle = "Classical Games";
 const unsigned int                  Game::Window::DefaultAntialiasing = 4;
 const float                         Game::Window::FpsRefresh = 1.f;
-const bool                          Game::Window::DefaultVerticalSync = false;
+const bool                          Game::Window::DefaultVerticalSync = true;
 const float                         Game::Window::Joystick::DeadZone = 20.f;
 
 Game::Window& Game::Window::Instance()
@@ -57,7 +57,7 @@ bool  Game::Window::update(float elapsed)
   _keyboard._text.clear();
   
   // Reset mouse wheel ticks
-  _mouse._wheel = 0;
+  _mouse._wheel = 0.f;
   
   // Handle events
   {
@@ -336,10 +336,8 @@ void  Game::Window::setAntialiasing(unsigned int antialiasing)
 void  Game::Window::setVerticalSync(bool vsync)
 {
   // Apply new vsync
-  if (_vsync != vsync) {
-    _vsync = vsync;
-    _window.setVerticalSyncEnabled(_vsync);
-  }
+  _vsync = vsync;
+  _window.setVerticalSyncEnabled(_vsync);
 }
 
 void  Game::Window::setFullscreen(bool fullscreen)

@@ -50,5 +50,8 @@ namespace Game
         std::swap(((std::uint8_t*)&result)[index], ((std::uint8_t*)&result)[sizeof(Type) - index - 1]);
       return result;
     }
+
+    std::string   Convert(const std::wstring& string); // Convert wide string to string
+    std::wstring  Convert(const std::string& string); // Convert string to wide string
   };
 }

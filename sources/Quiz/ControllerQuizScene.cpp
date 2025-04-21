@@ -27,7 +27,7 @@ QUIZ::ControllerQuizScene::ControllerQuizScene(Game::SceneMachine& machine, QUIZ
 
   // Play music
   _music.setLoopPoints({ .offset = sf::seconds(3.262f), .length = sf::seconds(26.538f) });
-  _music.setLoopPoints({ .offset = sf::seconds(3.262f), .length = sf::seconds(24.617) });
+  _music.setLoopPoints({ .offset = sf::seconds(3.262f), .length = sf::seconds(24.617f) });
   _music.setLooping(true);
   _music.play();
 

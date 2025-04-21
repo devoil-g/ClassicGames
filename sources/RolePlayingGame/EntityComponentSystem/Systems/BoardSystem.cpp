@@ -47,7 +47,7 @@ RPG::ServerBoardSystem::ServerBoardSystem(RPG::ECS& ecs) :
 void  RPG::ServerBoardSystem::load(RPG::ECS& ecs, const Game::JSON::Array& cells)
 {
   // Create each cells of the board
-  for (const auto& element : cells._vector) {
+  for (const auto& element : cells) {
     auto entity = ecs.createEntity();
 
     ecs.addComponent<RPG::CellComponent>(entity, element->object());
@@ -60,7 +60,7 @@ Game::JSON::Array RPG::ServerBoardSystem::json(RPG::ECS& ecs) const
   Game::JSON::Array   array;
 
   // Serialize game board
-  array._vector.reserve(entities.size());
+  array.reserve(entities.size());
   for (auto entity : entities)
     array.push(ecs.getComponent<RPG::CellComponent>(entity).json());
 
@@ -184,10 +184,10 @@ void  RPG::ClientBoardSystem::executeCell(RPG::ECS& ecs, RPG::ECS::Entity entity
 
 void  RPG::ClientBoardSystem::handlePacket(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
 {
-  const auto& type = json.get("type").array().get(1).string();
+  const auto& type = json.get(L"type").array().get(1).string();
 
   // Load/reload board
-  if (type == "load")
+  if (type == L"load")
     handleLoad(ecs, client, json);
 
   // Error
@@ -197,10 +197,10 @@ void  RPG::ClientBoardSystem::handlePacket(RPG::ECS& ecs, RPG::ClientScene& clie
 
 void  RPG::ClientBoardSystem::handleLoad(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
 {
-  const auto& type = json.get("type").array().get(2).string();
+  const auto& type = json.get(L"type").array().get(2).string();
 
   // Load/reload cells
-  if (type == "cells")
+  if (type == L"cells")
     handleLoadCells(ecs, client, json);
 
   // Error
@@ -213,7 +213,7 @@ void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& c
   auto& modelSystem = ecs.getSystem<RPG::ClientModelSystem>();
 
   // Create each cells of the board
-  for (const auto& element : json.get("cells").array()._vector) {
+  for (const auto& element : json.get(L"cells").array()) {
     auto entity = ecs.createEntity();
 
     // Register component

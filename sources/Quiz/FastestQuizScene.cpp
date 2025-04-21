@@ -120,7 +120,7 @@ void  QUIZ::FastestQuizScene::reset()
     << std::endl;
 
   // Display question to host
-  std::cout << "Question " << _question << ": '" << _quiz.fastests.at(_question).question << "'" << (_quiz.fastests.at(_question).done ? " (done)" : "") << "." << std::endl;
+  std::wcout << "Question " << _question << ": '" << _quiz.fastests.at(_question).question << "'" << (_quiz.fastests.at(_question).done ? " (done)" : "") << "." << std::endl;
 }
 
 bool  QUIZ::FastestQuizScene::update(float elapsed)
@@ -132,8 +132,8 @@ bool  QUIZ::FastestQuizScene::update(float elapsed)
       _question = (_question
         + (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Left) == true ? _quiz.fastests.size() - 1 : 0)
         + (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Right) == true ? 1 : 0)
-        ) % _quiz.fastests.size();
-      std::cout << "Question " << _question << ": '" << _quiz.fastests.at(_question).question << "'" << (_quiz.fastests.at(_question).done ? " (done)" : "") << "." << std::endl;
+        ) % (unsigned int)_quiz.fastests.size();
+      std::wcout << "Question " << _question << ": '" << _quiz.fastests.at(_question).question << "'" << (_quiz.fastests.at(_question).done ? " (done)" : "") << "." << std::endl;
     }
   }
 
@@ -296,7 +296,7 @@ bool  QUIZ::FastestQuizScene::update(float elapsed)
           entity.setTargetColor(1.f, 1.f, 1.f, 0.25f);
         chrono.setLerp(0.0625f);
 
-        std::stringstream stream;
+        std::wstringstream stream;
         stream << std::setprecision(3) << std::fixed << _answers[index].first;
         chrono.setText(stream.str());
       }
@@ -315,7 +315,7 @@ bool  QUIZ::FastestQuizScene::update(float elapsed)
       auto& chrono = _quiz.entities["chrono_" + std::to_string(player.id)];
       
       std::cout << "answer:" << std::endl;
-      std::cout << _quiz.entities.at("answer_" + std::to_string(*std::next(_answers[index].second.begin(), 0))).getText()
+      std::wcout << _quiz.entities.at("answer_" + std::to_string(*std::next(_answers[index].second.begin(), 0))).getText()
         + _quiz.entities.at("answer_" + std::to_string(*std::next(_answers[index].second.begin(), 1))).getText()
         + _quiz.entities.at("answer_" + std::to_string(*std::next(_answers[index].second.begin(), 2))).getText()
         + _quiz.entities.at("answer_" + std::to_string(*std::next(_answers[index].second.begin(), 3))).getText()

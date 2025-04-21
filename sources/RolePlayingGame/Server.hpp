@@ -21,7 +21,7 @@ namespace RPG
     virtual void  onReceive(std::size_t id, const Game::JSON::Object& json) override; // Called when a packet is received from TCP client
     virtual void  onTick() override;                                                  // Called once per tick
 
-    void  header(Game::JSON::Object& json, const std::vector<std::string>& type) const; // Add type and tick to packet
+    void  header(Game::JSON::Object& json, const std::vector<std::wstring>& type) const;  // Add type and tick to packet
 
     void  load(const std::filesystem::path& path);  // Load world from JSON
 
@@ -29,8 +29,8 @@ namespace RPG
     Server(const std::filesystem::path& config, std::uint16_t port = 0, std::uint32_t address = 0);
     ~Server();
 
-    void  send(std::size_t id, const std::vector<std::string>& type, Game::JSON::Object& json); // Send JSON to client, add type and tick
-    void  broadcast(const std::vector<std::string>& type, Game::JSON::Object& json);            // Broadcast JSON to every TCP client, add type and tick
+    void  send(std::size_t id, const std::vector<std::wstring>& type, Game::JSON::Object& json); // Send JSON to client, add type and tick
+    void  broadcast(const std::vector<std::wstring>& type, Game::JSON::Object& json);            // Broadcast JSON to every TCP client, add type and tick
     void  kick(std::size_t id);                                                                 // Kick client
   };
 }

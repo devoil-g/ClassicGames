@@ -147,10 +147,10 @@ void  RPG::TcpServer::loop()
 
         if (status == sf::Socket::Status::Done) {
           try {
-            std::string raw;
+            std::wstring raw;
 
             packet >> raw;
-            onReceive(client.id, Game::JSON::load(raw));
+            onReceive(client.id, Game::JSON::Object(raw));
           }
           catch (const std::exception&) {
             client.kick = true;

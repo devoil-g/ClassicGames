@@ -1,20 +1,18 @@
 #include "RolePlayingGame/Model.hpp"
+#include "System/Utilities.hpp"
 
-const std::string RPG::Model::DefaultIcon = "";
-const RPG::Model  RPG::Model::ErrorModel;
+const RPG::Model    RPG::Model::ErrorModel;
 
 RPG::Model::Model() :
-  _animations(),
-  _icon()
+  _animations()
 {}
 
 RPG::Model::Model(const Game::JSON::Object& json) :
-  _animations(),
-  _icon(json.contains("icon") ? json.get("icon").string() : DefaultIcon)
+  _animations()
 {
   // Get animations from JSON
-  for (const auto& animation : json.get("animations").array()._vector)
-    _animations.emplace(animation->object().get("name").string(), animation->object());
+  for (const auto& animation : json.get(L"animations").array())
+    _animations.emplace(Game::Utilities::Convert(animation->object().get(L"name").string()), animation->object());
 }
 
 Game::JSON::Object  RPG::Model::json() const
@@ -22,12 +20,12 @@ Game::JSON::Object  RPG::Model::json() const
   Game::JSON::Object  json;
 
   // Serialize animations to JSON
-  json.set("animations", Game::JSON::Array());
+  json.set(L"animations", Game::JSON::Array());
   for (const auto& [name, animation] : _animations) {
     auto value = animation.json();
 
-    value.set("name", name);
-    json.get("animations").array().push(std::move(value));
+    value.set(L"name", Game::Utilities::Convert(name));
+    json.get(L"animations").array().push(std::move(value));
   }
 
   return json;
@@ -190,7 +188,7 @@ RPG::Model::Animation::Animation(const Game::JSON::Object& json) :
   duration(0.f)
 {
   // Get animation frames from JSON
-  for (const auto& frame : json.get("frames").array()._vector)
+  for (const auto& frame : json.get(L"frames").array())
     frames.emplace_back(frame->object());
 
   // No frames
@@ -207,9 +205,9 @@ Game::JSON::Object  RPG::Model::Animation::json() const
   Game::JSON::Object  json;
 
   // Serialize to JSON
-  json.set("frames", Game::JSON::Array());
+  json.set(L"frames", Game::JSON::Array());
   for (const auto& frame : frames)
-    json.get("frames").array().push(frame.json());
+    json.get(L"frames").array().push(frame.json());
 
   return json;
 }
@@ -218,11 +216,11 @@ const float RPG::Model::Animation::Frame::DefaultDuration = 1.f;
 
 RPG::Model::Animation::Frame::Frame(const Game::JSON::Object& json) :
   sprites(),
-  duration(json.contains("duration") ? (float)json.get("duration").number() : DefaultDuration)
+  duration(json.contains(L"duration") ? (float)json.get(L"duration").number() : DefaultDuration)
 {
   // Single sprite, applied to every direction
-  if (json.get("sprites").type() == Game::JSON::Type::TypeObject)
-    sprites.push_back(json.get("sprites").object());
+  if (json.get(L"sprites").type() == Game::JSON::Type::Object)
+    sprites.push_back(json.get(L"sprites").object());
 
   // Define sprite for every direction
   else {
@@ -235,9 +233,9 @@ RPG::Model::Animation::Frame::Frame(const Game::JSON::Object& json) :
     sprites.resize(RPG::Direction::DirectionCount);
 
     // Get each sprite from JSON
-    for (const auto& sprite : json.get("sprites").array()._vector) {
+    for (const auto& sprite : json.get(L"sprites").array()) {
       const auto& object = sprite->object();
-      auto direction = RPG::StringToDirection(object.get("direction").string());
+      auto direction = RPG::StringToDirection(Game::Utilities::Convert(object.get(L"direction").string()));
 
       // Already defined
       if (done[direction] == true)
@@ -260,25 +258,25 @@ Game::JSON::Object  RPG::Model::Animation::Frame::json() const
 
   // Serialize to JSON
   if (duration != DefaultDuration)
-    json.set("duration", duration);
+    json.set(L"duration", duration);
 
   // Simple frame
   if (sprites.size() == 1)
-    json.set("sprites", sprites.front().json());
+    json.set(L"sprites", sprites.front().json());
 
   // Different sprites
   else {
     auto array = Game::JSON::Array();
 
-    array._vector.reserve(RPG::Direction::DirectionCount);
+    array.reserve(RPG::Direction::DirectionCount);
     for (auto direction = 0; direction < RPG::Direction::DirectionCount; direction++) {
       auto sprite = sprites[direction].json();
 
-      sprite.set("direction", RPG::DirectionToString((RPG::Direction)direction));
+      sprite.set(L"direction", Game::Utilities::Convert(RPG::DirectionToString((RPG::Direction)direction)));
       array.push(std::move(sprite));
     }
 
-    json.set("sprites", std::move(array));
+    json.set(L"sprites", std::move(array));
   }
 
   return json;

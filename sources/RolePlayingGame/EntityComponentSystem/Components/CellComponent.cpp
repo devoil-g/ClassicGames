@@ -11,9 +11,9 @@ RPG::CellComponent::CellComponent() :
 {}
 
 RPG::CellComponent::CellComponent(const Game::JSON::Object& json) :
-  coordinates(json.contains("coordinates") ? json.get("coordinates").array() : DefaultCoordinates),
-  height(json.contains("height") ? (float)json.get("height").number() : DefaultHeight),
-  blocked(json.contains("blocked") ? json.get("blocked").boolean() : DefaultBlocked)
+  coordinates(json.contains(L"coordinates") ? json.get(L"coordinates").array() : DefaultCoordinates),
+  height(json.contains(L"height") ? (float)json.get(L"height").number() : DefaultHeight),
+  blocked(json.contains(L"blocked") ? json.get(L"blocked").boolean() : DefaultBlocked)
 {}
 
 Game::JSON::Object  RPG::CellComponent::json() const
@@ -22,11 +22,11 @@ Game::JSON::Object  RPG::CellComponent::json() const
 
   // Serialize cell
   if (coordinates != DefaultCoordinates)
-    json.set("coordinates", coordinates.json());
+    json.set(L"coordinates", coordinates.json());
   if (height != DefaultHeight)
-    json.set("height", height);
+    json.set(L"height", height);
   if (blocked != DefaultBlocked)
-    json.set("blocked", blocked);
+    json.set(L"blocked", blocked);
 
   return json;
 }

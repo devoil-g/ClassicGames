@@ -5,6 +5,7 @@
 #include "RolePlayingGame/EntityComponentSystem/Components/ControllerComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
 #include "RolePlayingGame/Server.hpp"
+#include "System/Utilities.hpp"
 #include "System/Window.hpp"
 
 const std::string                   RPG::ControllerSystem::Player::DefaultName("");
@@ -15,7 +16,7 @@ RPG::ControllerSystem::Player::Player() :
 {}
 
 RPG::ControllerSystem::Player::Player(const Game::JSON::Object& json) :
-  name(json.contains("name") ? json.get("name").string() : DefaultName)
+  name(json.contains(L"name") ? Game::Utilities::Convert(json.get(L"name").string()) : DefaultName)
 {}
 
 RPG::ControllerSystem::ControllerSystem(RPG::ECS& ecs)
@@ -39,7 +40,7 @@ Game::JSON::Object  RPG::ControllerSystem::Player::json() const
 
   // Serialize player
   if (name != DefaultName)
-    json.set("name", name);
+    json.set(L"name", Game::Utilities::Convert(name));
 
   return json;
 }
@@ -56,15 +57,15 @@ void  RPG::ServerControllerSystem::connect(RPG::ECS& ecs, RPG::Server& server, s
   Game::JSON::Object  messageConnect;
 
   // Update connect to every played
-  messageConnect.set("controller", (double)id);
-  server.broadcast({ "controller", "connect" }, messageConnect);
+  messageConnect.set(L"controller", (double)id);
+  server.broadcast({ L"controller", L"connect" }, messageConnect);
 
   // Send every player infos to new player
   for (const auto& [controller, player] : _players) {
     Game::JSON::Object  messagePlayer = player.json();
 
-    messagePlayer.set("controller", (double)controller);
-    server.send(id, { "controller", "player" }, messagePlayer);
+    messagePlayer.set(L"controller", (double)controller);
+    server.send(id, { L"controller", L"player" }, messagePlayer);
   }
 
   // Add ID to players
@@ -84,9 +85,9 @@ void  RPG::ServerControllerSystem::connect(RPG::ECS& ecs, RPG::Server& server, s
       Game::JSON::Object  messageAssign;
 
       // Update control status to every played
-      messageAssign.set("id", entityComponent.id);
-      messageAssign.set("controller", (double)id);
-      server.broadcast({ "controller", "assign" }, messageAssign);
+      messageAssign.set(L"id", Game::Utilities::Convert(entityComponent.id));
+      messageAssign.set(L"controller", (double)id);
+      server.broadcast({ L"controller", L"assign" }, messageAssign);
     }
   }
 
@@ -113,9 +114,9 @@ void  RPG::ServerControllerSystem::disconnect(RPG::ECS& ecs, RPG::Server& server
       Game::JSON::Object  messageAssign;
 
       // Update control status to every played
-      messageAssign.set("id", entityComponent.id);
-      messageAssign.set("controller", (double)RPG::ControllerComponent::NoController);
-      server.broadcast({ "controller", "assign" }, messageAssign);
+      messageAssign.set(L"id", Game::Utilities::Convert(entityComponent.id));
+      messageAssign.set(L"controller", (double)RPG::ControllerComponent::NoController);
+      server.broadcast({ L"controller", L"assign" }, messageAssign);
       break;
     }
   }
@@ -126,8 +127,8 @@ void  RPG::ServerControllerSystem::disconnect(RPG::ECS& ecs, RPG::Server& server
   Game::JSON::Object  messageDisconnect;
 
   // Update connect to every played
-  messageDisconnect.set("controller", (double)id);
-  server.broadcast({ "controller", "disconnect" }, messageDisconnect);
+  messageDisconnect.set(L"controller", (double)id);
+  server.broadcast({ L"controller", L"disconnect" }, messageDisconnect);
 
   // TODO: remove this
   std::cerr << "[DEBUG::server] Client #" << id << " disconnected." << std::endl;
@@ -142,22 +143,22 @@ RPG::ClientControllerSystem::ClientControllerSystem(RPG::ECS& ecs) :
 
 void  RPG::ClientControllerSystem::handlePacket(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
 {
-  const auto& type = json.get("type").array().get(1).string();
+  const auto& type = json.get(L"type").array().get(1).string();
 
   // Connecting players
-  if (type == "connect")
+  if (type == L"connect")
     handleConnect(ecs, client, json);
 
   // Disconnecting players
-  else if (type == "disconnect")
+  else if (type == L"disconnect")
     handleDisconnect(ecs, client, json);
 
   // Assign an entity to player
-  else if (type == "assign")
+  else if (type == L"assign")
     handleAssign(ecs, client, json);
 
   // Update player info
-  else if (type == "player")
+  else if (type == L"player")
     handlePlayer(ecs, client, json);
 
   // Error
@@ -167,7 +168,7 @@ void  RPG::ClientControllerSystem::handlePacket(RPG::ECS& ecs, RPG::ClientScene&
 
 void  RPG::ClientControllerSystem::handleConnect(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
 {
-  std::size_t controller = (std::size_t)json.get("controller").number();
+  std::size_t controller = (std::size_t)json.get(L"controller").number();
 
   // First connect is player himself
   if (_self == RPG::ControllerComponent::NoController)
@@ -183,7 +184,7 @@ void  RPG::ClientControllerSystem::handleConnect(RPG::ECS& ecs, RPG::ClientScene
 
 void  RPG::ClientControllerSystem::handleDisconnect(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
 {
-  std::size_t controller = (std::size_t)json.get("controller").number();
+  std::size_t controller = (std::size_t)json.get(L"controller").number();
 
   // Not registered player
   if (_players.contains(controller) == false)
@@ -203,7 +204,7 @@ void  RPG::ClientControllerSystem::handleDisconnect(RPG::ECS& ecs, RPG::ClientSc
 
 void  RPG::ClientControllerSystem::handleAssign(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
 {
-  auto entity = ecs.getSystem<ClientEntitySystem>().getEntity(ecs, json.get("id").string());
+  auto entity = ecs.getSystem<ClientEntitySystem>().getEntity(ecs, Game::Utilities::Convert(json.get(L"id").string()));
   
   // No entity with given ID
   if (entity == RPG::ECS::InvalidEntity)
@@ -213,7 +214,7 @@ void  RPG::ClientControllerSystem::handleAssign(RPG::ECS& ecs, RPG::ClientScene&
   if (ecs.signatureEntity(entity).test(ecs.typeComponent<RPG::ControllerComponent>()) == false)
     ecs.addComponent<RPG::ControllerComponent>(entity);
 
-  auto controller = (std::size_t)json.get("controller").number();
+  auto controller = (std::size_t)json.get(L"controller").number();
   auto controllerIterator = std::find(_assigned.begin(), _assigned.end(), entity);
 
   // Add entity to controlled entities list
@@ -235,7 +236,7 @@ void  RPG::ClientControllerSystem::handleAssign(RPG::ECS& ecs, RPG::ClientScene&
 
 void  RPG::ClientControllerSystem::handlePlayer(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
 {
-  std::size_t controller = (std::size_t)json.get("controller").number();
+  std::size_t controller = (std::size_t)json.get(L"controller").number();
 
   // Not registered player
   if (_players.contains(controller) == false)

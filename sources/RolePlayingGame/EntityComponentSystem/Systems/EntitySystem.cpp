@@ -27,7 +27,7 @@ RPG::ServerEntitySystem::ServerEntitySystem(RPG::ECS& ecs) :
 void  RPG::ServerEntitySystem::load(RPG::ECS& ecs, const Game::JSON::Array& entities)
 {
   // Create game entities
-  for (const auto& element : entities._vector) {
+  for (const auto& element : entities) {
     auto entity = ecs.createEntity();
 
     ecs.addComponent<RPG::EntityComponent>(entity, element->object());
@@ -40,7 +40,7 @@ Game::JSON::Array RPG::ServerEntitySystem::json(RPG::ECS& ecs) const
   Game::JSON::Array array;
 
   // Serialize each model
-  array._vector.reserve(entities.size());
+  array.reserve(entities.size());
   for (auto entity : entities)
     array.push(ecs.getComponent<RPG::EntityComponent>(entity).json());
 
@@ -123,10 +123,10 @@ void  RPG::ClientEntitySystem::executePosition(RPG::ECS& ecs, RPG::ECS::Entity e
 
 void  RPG::ClientEntitySystem::handlePacket(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
 {
-  const auto& type = json.get("type").array().get(1).string();
+  const auto& type = json.get(L"type").array().get(1).string();
 
   // Load resources
-  if (type == "load")
+  if (type == L"load")
     handleLoad(ecs, client, json);
 
   // Error
@@ -136,10 +136,10 @@ void  RPG::ClientEntitySystem::handlePacket(RPG::ECS& ecs, RPG::ClientScene& cli
 
 void  RPG::ClientEntitySystem::handleLoad(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
 {
-  const auto& type = json.get("type").array().get(2).string();
+  const auto& type = json.get(L"type").array().get(2).string();
 
   // Load resources
-  if (type == "entities")
+  if (type == L"entities")
     handleLoadEntities(ecs, client, json);
 
   // Error
@@ -152,7 +152,7 @@ void  RPG::ClientEntitySystem::handleLoadEntities(RPG::ECS& ecs, RPG::ClientScen
   auto& displaySystem = ecs.getSystem<RPG::ClientModelSystem>();
   
   // Load entities
-  for (const auto& element : json.get("entities").array()._vector) {
+  for (const auto& element : json.get(L"entities").array()) {
     auto entity = ecs.createEntity();
 
     ecs.addComponent<RPG::EntityComponent>(entity, element->object());

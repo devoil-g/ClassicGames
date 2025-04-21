@@ -28,10 +28,10 @@ RPG::Color::Color(float red, float green, float blue, float alpha) :
 
 RPG::Color::Color(const Game::JSON::Object& json) :
   RPG::Color(
-    json.contains("red") ? (std::uint8_t)json.get("red").number() : DefaultRed,
-    json.contains("green") ? (std::uint8_t)json.get("green").number() : DefaultGreen,
-    json.contains("blue") ? (std::uint8_t)json.get("blue").number() : DefaultBlue,
-    json.contains("alpha") ? (std::uint8_t)json.get("alpha").number() : DefaultAlpha
+    json.contains(L"red") ? (std::uint8_t)json.get(L"red").number() : DefaultRed,
+    json.contains(L"green") ? (std::uint8_t)json.get(L"green").number() : DefaultGreen,
+    json.contains(L"blue") ? (std::uint8_t)json.get(L"blue").number() : DefaultBlue,
+    json.contains(L"alpha") ? (std::uint8_t)json.get(L"alpha").number() : DefaultAlpha
   )
 {}
 
@@ -55,14 +55,14 @@ Game::JSON::Object  RPG::Color::json() const
 
   // Serialize to JSON
   if (red != DefaultRed)
-    json.set("red", (double)red);
+    json.set(L"red", (double)red);
   if (green != DefaultGreen)
-    json.set("green", (double)green);
+    json.set(L"green", (double)green);
   if (blue != DefaultBlue)
-    json.set("blue", (double)blue);
+    json.set(L"blue", (double)blue);
   if (alpha != DefaultAlpha)
-    json.set("alpha", (double)alpha);
-
+    json.set(L"alpha", (double)alpha);
+  sizeof(wchar_t);
   return json;
 }
 

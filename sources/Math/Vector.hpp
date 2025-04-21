@@ -188,7 +188,7 @@ namespace Math
       Game::JSON::Array json;
 
       // Pre-allocate array
-      json._vector.reserve(Size);
+      json.reserve(Size);
 
       // Dump vector to JSON
       for (unsigned int n = 0; n < Size; n++)

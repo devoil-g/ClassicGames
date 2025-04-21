@@ -53,7 +53,7 @@ namespace RPG
     RPG::Camera                                   _camera;    // Camera of the scene
     std::unordered_map<std::string, RPG::Texture> _textures;  // Loaded textures
 
-    const RPG::Texture& getTexture(const std::string& name);  // Get texture from cache
+    const RPG::Texture& getTexture(const std::string& name); // Get texture from cache
 
   public:
     static bool CloserEntity(RPG::ECS& ecs, RPG::ECS::Entity aEntity, RPG::ECS::Entity bEntity);  // Check if A if closer to the camera than B

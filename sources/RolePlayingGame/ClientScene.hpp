@@ -28,7 +28,7 @@ namespace RPG
     ClientScene(Game::SceneMachine& machine, std::uint16_t port, std::uint32_t address);
     ~ClientScene() = default;
 
-    void  send(const std::vector<std::string>& type, Game::JSON::Object& json); // Send JSON to server, add type field
+    void  send(const std::vector<std::wstring>& type, Game::JSON::Object& json);  // Send JSON to server, add type field
 
     bool  update(float elapsed) override; // You should override this method
     void  draw() override;                // You should override this method

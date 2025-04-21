@@ -1,5 +1,6 @@
 #include "RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
+#include "System/Utilities.hpp"
 #include "System/Window.hpp"
 
 RPG::ModelSystem::ModelSystem(RPG::ECS& ecs)
@@ -26,8 +27,9 @@ RPG::ServerModelSystem::ServerModelSystem(RPG::ECS& ecs) :
 void  RPG::ServerModelSystem::load(RPG::ECS& ecs, const Game::JSON::Array& models)
 {
   // Load each models
-  for (const auto& model : models._vector)
-    _models.emplace(model->object().get("name").string(), model->object());
+  for (const auto& model : models) {
+    _models.emplace(Game::Utilities::Convert(model->object().get(L"name").string()), model->object());
+  }
 }
 
 Game::JSON::Array RPG::ServerModelSystem::json(RPG::ECS& ecs) const
@@ -35,11 +37,11 @@ Game::JSON::Array RPG::ServerModelSystem::json(RPG::ECS& ecs) const
   Game::JSON::Array array;
 
   // Serialize each model
-  array._vector.reserve(_models.size());
+  array.reserve(_models.size());
   for (const auto& [name, model] : _models) {
     auto json = model.json();
 
-    json.set("name", name);
+    json.set(L"name", Game::Utilities::Convert(name));
     array.push(std::move(json));
   }
 
@@ -245,10 +247,10 @@ bool  RPG::ClientModelSystem::intersect(RPG::ECS& ecs, RPG::ECS::Entity entity, 
 
 void  RPG::ClientModelSystem::handlePacket(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
 {
-  const auto& type = json.get("type").array().get(1).string();
+  const auto& type = json.get(L"type").array().get(1).string();
 
   // Load resources
-  if (type == "load")
+  if (type == L"load")
     handleLoad(ecs, client, json);
 
   // Error
@@ -258,14 +260,14 @@ void  RPG::ClientModelSystem::handlePacket(RPG::ECS& ecs, RPG::ClientScene& clie
 
 void  RPG::ClientModelSystem::handleLoad(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
 {
-  const auto& type = json.get("type").array().get(2).string();
+  const auto& type = json.get(L"type").array().get(2).string();
 
   // Load/reload models
-  if (type == "models")
+  if (type == L"models")
     handleLoadModels(ecs, client, json);
 
   // Load a new texture
-  else if (type == "texture")
+  else if (type == L"texture")
     handleLoadTexture(ecs, client, json);
 
   // Error
@@ -276,8 +278,8 @@ void  RPG::ClientModelSystem::handleLoad(RPG::ECS& ecs, RPG::ClientScene& client
 void  RPG::ClientModelSystem::handleLoadModels(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
 {
   // Load/update each models
-  for (const auto& model : json.get("models").array()._vector) {
-    const auto& name = model->object().get("name").string();
+  for (const auto& model : json.get(L"models").array()) {
+    const auto& name = Game::Utilities::Convert(model->object().get(L"name").string());
 
     // Replace old model
     if (_models.contains(name) == true) {

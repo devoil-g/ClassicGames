@@ -1,4 +1,4 @@
-﻿#include <array>
+#include <array>
 #include <filesystem>
 #include <iostream>
 #include <random>
@@ -19,7 +19,7 @@ QUIZ::Quiz::Quiz() :
   blindtests(),
   questions()
 {
-  auto json = Game::JSON::load(Game::Config::ExecutablePath / "assets" / "quiz" / "questions.json");
+  auto json = Game::JSON::Object(Game::Config::ExecutablePath / "assets" / "quiz" / "questions.json");
 
   const std::array<std::string, 9> textureExtensions = { "jpg", "png", "bmp", "tga", "jpeg", "gif", "psd", "hdr", "pic" };
   const std::array<std::string, 3> musicExtensions = { "ogg", "wav", "flac" };
@@ -104,15 +104,15 @@ QUIZ::Quiz::Quiz() :
   }
 
   // Load fastest finger question
-  for (const auto& entry : json.get("fastest").array()._vector) {
+  for (const auto& entry : json.get(L"fastest").array()) {
     fastests.push_back(Fastest{
-      .id = entry->object().get("id").string(),
-      .question = entry->object().get("question").string(),
-      .answers = std::vector<std::string>(),
+      .id = entry->object().get(L"id").string(),
+      .question = entry->object().get(L"question").string(),
+      .answers = std::vector<std::wstring>(),
       .done = false
       });
 
-    for (const auto& answer : entry->object().get("answers").array()._vector)
+    for (const auto& answer : entry->object().get(L"answers").array())
       fastests.back().answers.push_back(answer->string());
   }
 
@@ -188,7 +188,7 @@ void  QUIZ::Quiz::Entity::setTexture(const std::filesystem::path& path)
   _sprite.setOrigin({ _texture.getSize().x / 2.f, _texture.getSize().y / 2.f });
 }
 
-void  QUIZ::Quiz::Entity::setText(const std::string& text)
+void  QUIZ::Quiz::Entity::setText(const std::wstring& text)
 {
   // Change text
   _text.setString(text);
@@ -212,7 +212,7 @@ Math::Vector<4>     QUIZ::Quiz::Entity::getTargetColor() const { return _targetC
 float               QUIZ::Quiz::Entity::getOutline() const { return _outline; }
 float               QUIZ::Quiz::Entity::getLerp() const { return _lerp; }
 bool                QUIZ::Quiz::Entity::getDead() const { return _dead; }
-const std::string&  QUIZ::Quiz::Entity::getText() const { return _text.getString().toAnsiString(); }
+std::wstring        QUIZ::Quiz::Entity::getText() const { return _text.getString().toWideString(); }
 
 const sf::Sprite& QUIZ::Quiz::Entity::sprite() const
 {

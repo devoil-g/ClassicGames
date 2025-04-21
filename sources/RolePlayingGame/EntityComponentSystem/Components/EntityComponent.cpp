@@ -1,4 +1,5 @@
 #include "RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp"
+#include "System/Utilities.hpp"
 
 const RPG::Coordinates  RPG::EntityComponent::DefaultCoordinates(0, 0);
 const RPG::Direction    RPG::EntityComponent::DefaultDirection(RPG::Direction::DirectionNorth);
@@ -16,11 +17,11 @@ RPG::EntityComponent::EntityComponent() :
 {}
 
 RPG::EntityComponent::EntityComponent(const Game::JSON::Object& json) :
-  id(json.get("id").string()),
-  coordinates(json.contains("coordinates") ? json.get("coordinates").array() : DefaultCoordinates),
-  direction(json.contains("direction") ? RPG::StringToDirection(json.get("direction").string()) : DefaultDirection),
-  position(json.contains("position") ? json.get("position").array() : DefaultPosition),
-  model(json.contains("model") ? json.get("model").string() : DefaultModel),
+  id(Game::Utilities::Convert(json.get(L"id").string())),
+  coordinates(json.contains(L"coordinates") ? json.get(L"coordinates").array() : DefaultCoordinates),
+  direction(json.contains(L"direction") ? RPG::StringToDirection(Game::Utilities::Convert(json.get(L"direction").string())) : DefaultDirection),
+  position(json.contains(L"position") ? json.get(L"position").array() : DefaultPosition),
+  model(json.contains(L"model") ? Game::Utilities::Convert(json.get(L"model").string()) : DefaultModel),
   attack(10),
   defense(8)
 {}
@@ -30,15 +31,15 @@ Game::JSON::Object  RPG::EntityComponent::json() const
   Game::JSON::Object  json;
 
   // Serialize entity
-  json.set("id", id);
+  json.set(L"id", Game::Utilities::Convert(id));
   if (coordinates != DefaultCoordinates)
-    json.set("coordinates", coordinates.json());
+    json.set(L"coordinates", coordinates.json());
   if (direction != DefaultDirection)
-    json.set("direction", RPG::DirectionToString(direction));
+    json.set(L"direction", Game::Utilities::Convert(RPG::DirectionToString(direction)));
   if (position != DefaultPosition)
-    json.set("position", position.json());
+    json.set(L"position", position.json());
   if (model != DefaultModel)
-    json.set("model", model);
+    json.set(L"model", Game::Utilities::Convert(model));
 
   return json;
 }

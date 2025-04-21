@@ -39,9 +39,9 @@ namespace QUIZ
 
     struct Fastest
     {
-      std::string               id;       // Unique ID of question
-      std::string               question; // Text of the question
-      std::vector<std::string>  answers;  // Answers to the question in correct order
+      std::wstring              id;       // Unique ID of question
+      std::wstring              question; // Text of the question
+      std::vector<std::wstring> answers;  // Answers to the question in correct order
       bool                      done;     // True if question has already been answered
     };
 
@@ -117,7 +117,7 @@ namespace QUIZ
       void  setLerp(float l);                                   // Set lerp speed
       void  setDead(bool v);                                    // Set dead flag
       void  setTexture(const std::filesystem::path& path = ""); // Set texture
-      void  setText(const std::string& text = "");              // Set new text to display
+      void  setText(const std::wstring& text = L"");            // Set new text to display
       
       Math::Vector<2>     getPosition() const;        // Get current position
       Math::Vector<2>     getTargetPosition() const;  // Get target position
@@ -128,7 +128,7 @@ namespace QUIZ
       float               getOutline() const;         // Get outline thickness
       float               getLerp() const;            // Get lerp level
       bool                getDead() const;            // Get dead flag
-      const std::string&  getText() const;            // Get text
+      std::wstring        getText() const;            // Get text
 
       const sf::Sprite& sprite() const; // Get entity sprite
 

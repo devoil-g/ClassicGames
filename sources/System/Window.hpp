@@ -47,7 +47,7 @@ namespace Game
 
     private:
       Math::Vector<2, int>                _position, _relative;       // Mouse position
-      int                                 _wheel;                     // Mouse wheel ticks since last update
+      float                               _wheel;                     // Mouse wheel ticks since last update
       std::array<bool, MouseButtonCount>  _down, _pressed, _released; // Maps of down/pressed/released mouse button
 
       inline Mouse() : _position(), _relative(), _wheel(), _down(), _pressed(), _released() {}
@@ -58,7 +58,7 @@ namespace Game
 
       inline const Math::Vector<2, int>&  position() const { return _position; }  // Return mouse current position
       inline const Math::Vector<2, int>&  relative() const { return _relative; }  // Return mouse movement since last update
-      inline int                          wheel() const { return  _wheel; }       // Return wheel ticks since last update
+      inline float                        wheel() const { return  _wheel; }       // Return wheel ticks since last update
 
       inline bool buttonDown(MouseButton button) const { return _down[(std::size_t)button]; }         // Check if a button is currently pressed
       inline bool buttonPressed(MouseButton button) const { return _pressed[(std::size_t)button]; }   // Check if a button has been pressed since last update

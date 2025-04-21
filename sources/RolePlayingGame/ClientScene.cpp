@@ -14,6 +14,7 @@
 #include "RolePlayingGame/EntityComponentSystem/Systems/ControllerSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/ParticleSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/ParticleEmitterSystem.hpp"
+#include "System/Utilities.hpp"
 #include "System/Window.hpp"
 
 RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::unique_ptr<RPG::Server>&& server) :
@@ -68,15 +69,15 @@ RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::uint16_t port, s
   _ecs.addSystem<RPG::ParticleEmitterSystem>(signature);
 }
 
-void  RPG::ClientScene::send(const std::vector<std::string>& type, Game::JSON::Object& json)
+void  RPG::ClientScene::send(const std::vector<std::wstring>& type, Game::JSON::Object& json)
 {
   Game::JSON::Array typeArray;
 
   // Serialize type
-  typeArray._vector.reserve(type.size());
+  typeArray.reserve(type.size());
   for (const auto& field : type)
     typeArray.push(field);
-  json.set("type", std::move(typeArray));
+  json.set(L"type", std::move(typeArray));
 
   // Send packet to server
   _client.send(json);
@@ -130,7 +131,7 @@ void  RPG::ClientScene::updateReceive(float elapsed)
     }
 
     // No more pending packets
-    if (json._map.empty() == true)
+    if (json.empty() == true)
       break;
 
     // Extract packet from client
@@ -146,18 +147,18 @@ void  RPG::ClientScene::updateReceive(float elapsed)
 void  RPG::ClientScene::updatePacket(const Game::JSON::Object& json, float elapsed)
 {
   // TODO: remove this
-  std::cout << "Client received (tick: " << (std::size_t)json.get("tick").number() << ", type: " << json.get("type").array() << ", size: " << json.stringify().length() << "): " << json << std::endl;
+  std::wcout << "Client received (tick: " << (std::size_t)json.get(L"tick").number() << ", type: " << json.get(L"type").array() << ", size: " << json.stringify().length() << "): " << json << std::endl;
 
-  const auto& type = json.get("type").array().get(0).string();
+  const auto& type = json.get(L"type").array().get(0).string();
 
   // Handle request
-  if (type == "controller")
+  if (type == L"controller")
     _ecs.getSystem<RPG::ClientControllerSystem>().handlePacket(_ecs, *this, json);
-  else if (type == "model")
+  else if (type == L"model")
     _ecs.getSystem<RPG::ClientModelSystem>().handlePacket(_ecs, *this, json);
-  else if (type == "board")
+  else if (type == L"board")
     _ecs.getSystem<RPG::ClientBoardSystem>().handlePacket(_ecs, *this, json);
-  else if (type == "entity")
+  else if (type == L"entity")
     _ecs.getSystem<RPG::ClientEntitySystem>().handlePacket(_ecs, *this, json);
   else
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());

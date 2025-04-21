@@ -3,6 +3,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 
 #include "RolePlayingGame/Sprite.hpp"
+#include "System/Utilities.hpp"
 #include "System/Window.hpp"
 
 const RPG::Sprite::Bounds           RPG::Sprite::DefaultTexture = { .origin = { (std::int16_t)0, (std::int16_t)0 }, .size = { (std::int16_t)0, (std::int16_t)0 } };
@@ -19,17 +20,17 @@ RPG::Sprite::Sprite() :
   origin(4.f, 4.f),
   scale((std::int16_t)1, (std::int16_t)1),
   color(RPG::Color::White),
-  path("error.png"),
+  path(DefaultPath),
   pointer(nullptr)
 {}
 
 RPG::Sprite::Sprite(const Game::JSON::Object& json) :
-  texture(json.contains("texture") ? RPG::Sprite::Bounds{.origin{ json.get("texture").object().get("origin").array() }, .size{ json.get("texture").object().get("size").array() } } : DefaultTexture),
-  select(json.contains("select") ? RPG::Sprite::Bounds{ .origin{ json.get("select").object().get("origin").array() }, .size{ json.get("select").object().get("size").array() } } : RPG::Sprite::Bounds{ .origin = Math::Vector<2, std::int16_t>((std::int16_t)0, (std::int16_t)0), .size = texture.size }),
-  origin(json.contains("origin") ? json.get("origin").array() : DefaultOrigin),
-  scale(json.contains("scale") ? json.get("scale").array() : DefaultScale),
-  color(json.contains("color") ? json.get("color").object() : DefaultColor),
-  path(json.contains("texture") ? json.get("path").string() : DefaultPath),
+  texture(json.contains(L"texture") ? RPG::Sprite::Bounds{.origin{ json.get(L"texture").object().get(L"origin").array() }, .size{ json.get(L"texture").object().get(L"size").array() } } : DefaultTexture),
+  select(json.contains(L"select") ? RPG::Sprite::Bounds{ .origin{ json.get(L"select").object().get(L"origin").array() }, .size{ json.get(L"select").object().get(L"size").array() } } : RPG::Sprite::Bounds{ .origin = Math::Vector<2, std::int16_t>((std::int16_t)0, (std::int16_t)0), .size = texture.size }),
+  origin(json.contains(L"origin") ? json.get(L"origin").array() : DefaultOrigin),
+  scale(json.contains(L"scale") ? json.get(L"scale").array() : DefaultScale),
+  color(json.contains(L"color") ? json.get(L"color").object() : DefaultColor),
+  path(json.contains(L"path") ? Game::Utilities::Convert(json.get(L"path").string()) : DefaultPath),
   pointer(nullptr)
 {}
 
@@ -39,23 +40,23 @@ Game::JSON::Object  RPG::Sprite::json() const
 
   // Serialize to JSON
   if (texture != DefaultTexture) {
-    json.set("texture", Game::JSON::Object());
-    json.get("texture").object().set("origin", texture.origin.json());
-    json.get("texture").object().set("size", texture.size.json());
+    json.set(L"texture", Game::JSON::Object());
+    json.get(L"texture").object().set(L"origin", texture.origin.json());
+    json.get(L"texture").object().set(L"size", texture.size.json());
   }
   if (select.origin != Math::Vector<2, std::int16_t>((std::int16_t)0, (std::int16_t)0) || select.size != texture.size) {
-    json.set("select", Game::JSON::Object());
-    json.get("select").object().set("origin", select.origin.json());
-    json.get("select").object().set("size", select.size.json());
+    json.set(L"select", Game::JSON::Object());
+    json.get(L"select").object().set(L"origin", select.origin.json());
+    json.get(L"select").object().set(L"size", select.size.json());
   }
   if (origin != DefaultOrigin)
-    json.set("origin", origin.json());
+    json.set(L"origin", origin.json());
   if (scale != DefaultScale)
-    json.set("scale", scale.json());
+    json.set(L"scale", scale.json());
   if (color != DefaultColor)
-    json.set("color", color.json());
+    json.set(L"color", color.json());
   if (path != DefaultPath)
-    json.set("path", path);
+    json.set(L"path", Game::Utilities::Convert(path));
 
   return json;
 }

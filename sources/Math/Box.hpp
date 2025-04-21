@@ -25,8 +25,8 @@ namespace Math
     {}
 
     Box(const Game::JSON::Object& json) :
-      position(json.get("position").array()),
-      size(json.get("size").array())
+      position(json.get(L"position").array()),
+      size(json.get(L"size").array())
     {}
 
     Box&  operator=(const Box&) = default;
@@ -35,8 +35,8 @@ namespace Math
     Box& operator=(const Game::JSON::Object& json)
     {
       // Deserialize JSON
-      position = json.get("position").array();
-      size = json.get("size").array();
+      position = json.get(L"position").array();
+      size = json.get(L"size").array();
     }
 
     bool  contains(const Math::Vector<Dimension, Type>& point)

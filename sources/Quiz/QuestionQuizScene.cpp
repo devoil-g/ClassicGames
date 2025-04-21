@@ -20,7 +20,7 @@ QUIZ::QuestionQuizScene::QuestionQuizScene(Game::SceneMachine& machine, QUIZ::Qu
 
   questionBox.reset();
   questionBox.setOutline(0.005f);
-  questionBox.setText("Dans l'episode TOMB RAIDER de Joueur du Grenier,\nArchibald Von Grenier est trahi par Traitropoulos,\nJafar et...");
+  questionBox.setText(L"Dans l'episode TOMB RAIDER de Joueur du Grenier,\nArchibald Von Grenier est trahi par Traitropoulos,\nJafar et...");
   questionBox.setColor(1.f, 1.f, 1.f, 0.f);
   questionBox.setTargetColor(1.f, 1.f, 1.f, 1.f);
   questionBox.setPosition(0.25f, 0.1f);
@@ -52,7 +52,7 @@ QUIZ::QuestionQuizScene::QuestionQuizScene(Game::SceneMachine& machine, QUIZ::Qu
     auto& answerText = _quiz.entities["answerText" + std::to_string(index)];
 
     answerText.reset();
-    answerText.setText("Reponse " + std::to_string(index));
+    answerText.setText(L"Reponse " + std::to_wstring(index));
     answerText.setColor(colors[index].r / 255.f, colors[index].g / 255.f, colors[index].b / 255.f, 0.f);
     answerText.setTargetColor(colors[index].r / 255.f, colors[index].g / 255.f, colors[index].b / 255.f, 1.f);
     answerText.setPosition(0.25f, 0.2f + (index + 0.5f) * 0.15f);

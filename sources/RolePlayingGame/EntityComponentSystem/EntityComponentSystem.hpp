@@ -4,6 +4,7 @@
 #include <bitset>
 #include <cassert>
 #include <cstdint>
+#include <limits>
 #include <memory>
 #include <queue>
 #include <set>
