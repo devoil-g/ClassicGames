@@ -390,7 +390,7 @@ void  Game::Window::draw(const sf::Texture& texture, float ratio, DrawMode mode)
   }
   
   // Position sprite in window
-  sprite.setScale({ scaleX, scaleY * ratio });
+  sprite.setScale({ scaleX, scaleY });
   sprite.setPosition({
     ((float)windowSize.x - ((float)textureSize.x * scaleX)) / 2.f,
     ((float)windowSize.y - ((float)textureSize.y * scaleY)) / 2.f
