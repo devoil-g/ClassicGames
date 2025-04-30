@@ -20,19 +20,29 @@ namespace QUIZ
 
     enum class State {
       Preparation,
-      Beep1,
-      Beep2,
-      Beep3,
       Start,
-      Timer,
       Answer,
+      Chrono,
+      Correct,
       Winner
     } _state;
 
     float _timer;
     std::vector<std::pair<float, std::list<unsigned int>>>  _answers;
 
-    void  reset();
+    void  setPreparation();
+    void  setStart();
+    void  setAnswer();
+    void  setChrono();
+    void  setCorrect();
+    void  setWinner();
+
+    void  updatePreparation(float elapsed);
+    void  updateStart(float elapsed);
+    void  updateAnswer(float elapsed);
+    void  updateChrono(float elapsed);
+    void  updateCorrect(float elapsed);
+    void  updateWinner(float elapsed);
 
   public:
     FastestQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz);
