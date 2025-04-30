@@ -14,11 +14,6 @@
 # include <X11/Xlib.h>
 #endif
 
-// TODO: remove this
-//#include "RolePlayingGame/ClientScene.hpp"
-//#include "RolePlayingGame/Server.hpp"
-//#include "Scenes/ExitScene.hpp"
-
 namespace Game
 {
   void  initialize(int argc, char ** argv)
@@ -36,13 +31,7 @@ namespace Game
 
     // Push initial state
     game.push<Game::SplashScene>();
-    //game.push<Game::MainMenuScene>();
 
-    // TODO: remove this
-    //auto server = std::make_unique<RPG::Server>(Game::Config::ExecutablePath / "assets" / "rpg" / "world.json");
-    //server->run();
-    //game.push<Game::ExitScene<RPG::ClientScene>>(std::move(server));
-    
     // Run the game !
     while (Game::Window::Instance().isOpen() == true) {
       float elapsed = clock.restart().asSeconds();
