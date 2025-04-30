@@ -7,8 +7,8 @@ namespace RPG
   class ActionSystem : public RPG::ECS::System
   {
   public:
-
-    ActionSystem() = default;
+    ActionSystem() = delete;
+    ActionSystem(RPG::ECS& ecs);
     ActionSystem(const ActionSystem&) = delete;
     ActionSystem(ActionSystem&&) = delete;
     ~ActionSystem() = default;

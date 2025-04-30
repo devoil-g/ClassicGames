@@ -66,9 +66,8 @@ namespace RPG
       const RPG::Model*             _model;     // Actor's model
       const RPG::Model::Animation*  _animation; // Current animation
       std::size_t                   _frame;     // Current frame index
-      float                         _duration;  // Remaining time of current frame
+      float                         _cursor;    // Time in current frame
       float                         _speed;     // Speed of animation
-      float                         _elapsed;   // Elapsed time in animation
       bool                          _loop;      // Animation looping flag
 
     public:
@@ -90,9 +89,11 @@ namespace RPG
 
       void  setModel(const RPG::Model& model);                                            // Reset actor's model
       void  setAnimation(const std::string& name, bool loop = false, float speed = 1.f);  // Start an animation
+      void  setSpeed(float speed);                                                        // Set animation speed
+      void  setLoop(bool loop);                                                           // Set animation looping
 
-      float getAnimationElapsed() const;  // Get elapsed time in current animation
-      float getAnimationDuration() const; // Get duration of current animation
+      float getSpeed() const; // Get animation speed
+      bool  getLoop() const;  // Get loop flag
     };
 
     friend  RPG::Model::Actor;

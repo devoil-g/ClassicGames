@@ -14,7 +14,12 @@ namespace RPG
     public:
       virtual ~IAction() = default;
 
-      void  execute(RPG::ECS& ecs, RPG::ECS::Entity self);  // Action to execute
+      virtual void  execute(RPG::ECS& ecs, RPG::ECS::Entity self) = 0;  // Execute action
+    };
+
+    enum class Mode {
+      Wait,   // Waiting to start action
+      Action  // Waiting to execute action
     };
 
     ActionComponent();
@@ -25,8 +30,9 @@ namespace RPG
     ActionComponent&  operator=(const ActionComponent&) = default;
     ActionComponent&  operator=(ActionComponent&&) = default;
 
-    std::unique_ptr<RPG::ActionComponent::IAction>  action; // Next action to execute
-    float                                           wait;   // Wait time before action
+    std::unique_ptr<IAction>  action; // Next action to execute, null if no action
+    Mode                      mode;   // Current mode
+    float                     wait;   // Wait time before action
   };
 
   /*

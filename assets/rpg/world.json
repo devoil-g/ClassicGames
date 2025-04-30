@@ -748,7 +748,7 @@
           "name": "simple",
           "frames": [
             {
-              "duration": 0,
+              "duration": 1,
               "sprites": {
                 "texture": {
                   "origin": [ 0, 0 ],
@@ -8330,7 +8330,7 @@
           "name": "idle",
           "frames": [
             {
-              "duration": 0,
+              "duration": 1,
               "sprites": {
                 "texture": {
                   "origin": [ 0, 128 ],
@@ -8352,7 +8352,7 @@
           "name": "idle",
           "frames": [
             {
-              "duration": 0,
+              "duration": 1,
               "sprites": {
                 "color": { "alpha": 0 }
               }
@@ -8363,7 +8363,7 @@
           "name": "cursor",
           "frames": [
             {
-              "duration": 0,
+              "duration": 1,
               "sprites": {
                 "texture": {
                   "origin": [ 0, 128 ],
@@ -8456,7 +8456,7 @@
               }
             },
             {
-              "duration": 0,
+              "duration": 0.05,
               "sprites": {
                 "texture": {
                   "origin": [ 0, 96 ],
@@ -8549,7 +8549,7 @@
               }
             },
             {
-              "duration": 0,
+              "duration": 0.05,
               "sprites": {
                 "texture": {
                   "origin": [ 224, 96 ],

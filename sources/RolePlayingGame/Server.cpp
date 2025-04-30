@@ -6,10 +6,12 @@
 #include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ControllerComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/Components.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/ControllerSystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/Systems.hpp"
 #include "RolePlayingGame/Server.hpp"
 #include "System/Config.hpp"
 #include "System/Utilities.hpp"
@@ -24,6 +26,7 @@ RPG::Server::Server(const std::filesystem::path& config, std::uint16_t port, std
   _ecs.addComponent<RPG::EntityComponent>();
   _ecs.addComponent<RPG::ModelComponent>(); // NOTE: not really used in server, only for model library
   _ecs.addComponent<RPG::ControllerComponent>();
+  _ecs.addComponent<RPG::ActionComponent>();
 
   RPG::ECS::Signature signature;
 
@@ -41,6 +44,9 @@ RPG::Server::Server(const std::filesystem::path& config, std::uint16_t port, std
   signature.reset();
   signature.set(_ecs.typeComponent<RPG::ModelComponent>());
   _ecs.addSystem<RPG::ServerModelSystem>(signature);
+  signature.reset();
+  signature.set(_ecs.typeComponent<RPG::ActionComponent>());
+  _ecs.addSystem<RPG::ActionSystem>(signature);
 
   // Load level
   load(Game::Config::ExecutablePath / "assets" / "rpg" / "world.json");
@@ -147,6 +153,9 @@ void  RPG::Server::onTick()
 {
   // New tick
   _tick += 1;
+
+  // Execute actions
+  _ecs.getSystem<RPG::ActionSystem>().execute(_ecs, 1.f / getTickrate());
 
   // Update world
   // TODO

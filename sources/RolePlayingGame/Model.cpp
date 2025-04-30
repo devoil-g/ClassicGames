@@ -49,9 +49,8 @@ RPG::Model::Actor::Actor() :
   _model(nullptr),
   _animation(nullptr),
   _frame(0),
-  _duration(0.f),
+  _cursor(0.f),
   _speed(1.f),
-  _elapsed(0.f),
   _loop(false)
 {}
 
@@ -65,31 +64,38 @@ RPG::Model::Actor::Actor(const RPG::Model& model) :
 void  RPG::Model::Actor::update(float elapsed)
 {
   // Consume animation time
-  _duration -= elapsed * _speed;
-  _elapsed += elapsed * _speed;
+  _cursor += elapsed * _speed;
 
   // Run animation
-  while (_animation != nullptr && _duration < 0.f && _animation->frames[_frame].duration > 0.f)
+  while (_animation != nullptr)
   {
-    // Get to next frame
-    _frame = (_frame + 1) % _animation->frames.size();
-
-    // Animation not looping
-    if (_frame == 0 && _loop == false) {
-      float save = _duration;
-
-      setAnimation(RPG::Model::Actor::DefaultAnimation, 1.f, true);
-      _duration = save;
-      _elapsed = -save;
+    // Previous frame
+    if (_cursor < 0.f) {
+      if (_loop == false && _frame == 0) {
+        _cursor = 0.f;
+        break;
+      }
+      else {
+        _frame = (_frame + _animation->frames.size() - 1) % _animation->frames.size();
+        _cursor += _animation->frames[_frame].duration;
+      }
     }
 
-    // Increase animation timer with new frame duration
-    else {
-      if (_animation->frames[_frame].duration > 0.f)
-        _duration += _animation->frames[_frame].duration;
-      else
-        _duration = 0.f;
+    // Next frame
+    else if (_cursor > _animation->frames[_frame].duration) {
+      if (_loop == false && _frame == _animation->frames.size() - 1) {
+        _cursor = _animation->frames[_frame].duration;
+        break;
+      }
+      else {
+        _cursor -= _animation->frames[_frame].duration;
+        _frame = (_frame + 1) % _animation->frames.size();
+      }
     }
+
+    // No frame change
+    else
+      break;
   }
 }
 
@@ -138,37 +144,52 @@ void  RPG::Model::Actor::setAnimation(const std::string& name, bool loop, float 
   if (iterator == _model->_animations.end()) {
     _animation = nullptr;
     _frame = 0;
-    _duration = 0.f;
-    _speed = 1.f;
-    _elapsed = 0.f;
+    _cursor = 0.f;
+    _speed = +1.f;
     _loop = false;
   }
 
   // Register new animation
   else {
     _animation = &iterator->second;
-    _frame = 0;
-    _duration = std::min(0.f, _duration) + _animation->frames[_frame].duration;
     _speed = speed;
-    _elapsed = 0.f;
     _loop = loop;
+
+    // Playing forward
+    if (_speed >= 0.f) {
+      _frame = 0;
+      _cursor = 0.f;
+    }
+    // Playing backward
+    else {
+      _frame = _animation->frames.size() - 1;
+      _cursor = _animation->frames[_frame].duration;
+    }
   }
 }
 
-float RPG::Model::Actor::getAnimationElapsed() const
+void  RPG::Model::Actor::setSpeed(float speed)
 {
-  // Get elapsed time in current animation
-  return _elapsed;
+  // Set animation speed
+  _speed = speed;
 }
 
-float RPG::Model::Actor::getAnimationDuration() const
+void  RPG::Model::Actor::setLoop(bool loop)
 {
-  // No animation
-  if (_animation == nullptr)
-    return 0.f;
+  // Set loop flag
+  _loop = loop;
+}
 
-  // Get duration of current animation
-  return _animation->duration;
+float RPG::Model::Actor::getSpeed() const
+{
+  // Get animation speed
+  return _speed;
+}
+
+bool  RPG::Model::Actor::getLoop() const
+{
+  // Get loop flag
+  return _loop;
 }
 
 bool  RPG::Model::Actor::operator==(const RPG::Model& model)
