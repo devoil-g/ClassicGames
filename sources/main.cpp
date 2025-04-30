@@ -1,8 +1,8 @@
-#include <stdexcept>
+#include <chrono>
 #include <iostream>
+#include <stdexcept>
 
 #include "Scenes/SplashScene.hpp"
-#include "Scenes/Menu/MainMenuScene.hpp"
 #include "Scenes/SceneMachine.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
@@ -27,19 +27,23 @@ namespace Game
   void  run()
   {
     Game::SceneMachine  game;
-    sf::Clock           clock;
+    auto                clock = std::chrono::steady_clock::now();
 
     // Push initial state
     game.push<Game::SplashScene>();
 
     // Run the game !
     while (Game::Window::Instance().isOpen() == true) {
-      float elapsed = clock.restart().asSeconds();
+      auto now = std::chrono::steady_clock::now();
+      auto elapsed = std::chrono::duration<float>(now - clock);
+
+      // Update clock
+      clock = now;
 
       // Stop if update return true
-      if (Game::Window::Instance().update(elapsed) == true ||
-        Game::Audio::Sound::Instance().update(elapsed) == true ||
-        game.update(elapsed) == true)
+      if (Game::Window::Instance().update(elapsed.count()) == true ||
+        Game::Audio::Sound::Instance().update(elapsed.count()) == true ||
+        game.update(elapsed.count()) == true)
         return;
 
       // Render game
