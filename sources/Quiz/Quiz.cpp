@@ -16,13 +16,19 @@
 QUIZ::Quiz::Quiz() :
   avatars(),
   players(),
+  entities(),
+  progress(),
   blindtests(),
-  questions()
+  questions(),
+  fastests(),
+  millionaires()
 {
   auto json = Game::JSON::Object(Game::Config::ExecutablePath / "assets" / "quiz" / "questions.json");
 
   const std::array<std::string, 9> textureExtensions = { "jpg", "png", "bmp", "tga", "jpeg", "gif", "psd", "hdr", "pic" };
   const std::array<std::string, 3> musicExtensions = { "ogg", "wav", "flac" };
+
+  std::default_random_engine  randomEngine((unsigned int)std::chrono::system_clock::now().time_since_epoch().count());
 
   // Load avatars from directory
   for (const auto& avatar : std::filesystem::directory_iterator(Game::Config::ExecutablePath / "assets" / "quiz" / "avatars")) {
@@ -105,22 +111,109 @@ QUIZ::Quiz::Quiz() :
 
   // Load fastest finger question
   for (const auto& entry : json.get(L"fastest").array()) {
-    fastests.push_back(Fastest{
-      .id = entry->object().get(L"id").string(),
-      .question = entry->object().get(L"question").string(),
-      .answers = std::vector<std::wstring>(),
-      .done = false
-      });
+    try {
+      // Load question
+      Fastest fastest{
+        .id = entry->object().get(L"id").string(),
+        .question = entry->object().get(L"question").string(),
+        .answers = {},
+        .info = entry->object().get(L"info").string(),
+        .done = false
+      };
 
-    for (const auto& answer : entry->object().get(L"answers").array())
-      fastests.back().answers.push_back(answer->string());
+      // Need 4 answers
+      if (entry->object().get(L"answers").array().size() != 4)
+        continue;
+
+      // Load answers
+      for (unsigned int index = 0; index < 4; index++)
+        fastest.answers[index] = entry->object().get(L"answers").array()[index].string();
+
+      // Add question to pool
+      fastests.push_back(std::move(fastest));
+
+      // Verbose
+      std::wcout << "Fastest finger '" << fastests.back().question << "' loaded." << std::endl;
+    }
+    catch (const std::exception&) {
+      continue;
+    }
+  }
+
+  // Load Millionaire question sets
+  for (const auto& entry : json.get(L"millionaire").array()) {
+    try {
+      Millionaire millionaire = {
+        .id = entry->object().get(L"id").string(),
+        .name = entry->object().get(L"name").string(),
+        .questions = {},
+        .done = false
+      };
+
+      // Load questions of set
+      for (const auto& entryQuestion : entry->object().get(L"questions").array()) {
+        try {
+          Millionaire::Question question = {
+            .id = entryQuestion->object().get(L"id").string(),
+            .set = {},
+            .question = entryQuestion->object().get(L"question").string(),
+            .answers = {},
+            .correct = 0,
+            .info = entryQuestion->object().get(L"info").string(),
+            .done = false
+          };
+
+          // Check number of answers and set
+          if (entryQuestion->object().get(L"set").array().empty() == true ||
+            entryQuestion->object().get(L"answers").array().size() != 4)
+            continue;
+
+          // Get set numbers
+          for (const auto& setEntry : entryQuestion->object().get(L"set").array())
+            question.set.insert((unsigned int)setEntry->object().number());
+
+          // Get answers
+          for (unsigned int index = 0; index < 4; index++)
+            question.answers[index] = entryQuestion->object().get(L"answers").array()[index].string();
+
+          // Correct answer index forced, don't shuffle
+          if (entryQuestion->object().contains(L"correct") == true)
+            question.correct = (unsigned int)entryQuestion->object().get(L"correct").number();
+
+          // No correct index, shuffle answers
+          else {
+            auto correct = question.answers.front();
+
+            std::shuffle(question.answers.begin(), question.answers.end(), randomEngine);
+            question.correct = (unsigned int)std::distance(question.answers.begin(), std::find(question.answers.begin(), question.answers.end(), correct));
+          }
+
+          // Add question to set pool
+          millionaire.questions.push_back(std::move(question));
+        }
+        catch (const std::exception&) {
+          continue;
+        }
+      }
+
+      // Not enough questions
+      // NOTE: we should check for number of question of each step
+      if (millionaire.questions.size() < 15)
+        continue;
+
+      // Add question set to pool
+      millionaires.push_back(std::move(millionaire));
+    }
+    catch (const std::exception&) {
+      continue;
+    }
   }
 
   // Shuffle blindtest
-  std::shuffle(blindtests.begin(), blindtests.end(), std::default_random_engine((unsigned int)std::chrono::system_clock::now().time_since_epoch().count()));
+  std::shuffle(blindtests.begin(), blindtests.end(), randomEngine);
 
   // Shuffle questions
-  std::shuffle(questions.begin(), questions.end(), std::default_random_engine((unsigned int)std::chrono::system_clock::now().time_since_epoch().count()));
+  std::shuffle(questions.begin(), questions.end(), randomEngine);
 
   std::cout << std::endl
     << "Quiz loaded:" << std::endl

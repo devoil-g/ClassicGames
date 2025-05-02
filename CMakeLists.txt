@@ -193,6 +193,8 @@ SET(GAME_QUIZ_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/ControllerQuizScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/FastestQuizScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/FastestQuizScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/MillionaireQuizScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/MillionaireQuizScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/Quiz.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/Quiz.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/QuizScene.hpp

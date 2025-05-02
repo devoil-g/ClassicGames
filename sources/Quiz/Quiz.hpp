@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -27,8 +28,6 @@ namespace QUIZ
       ButtonBlue
     };
 
-    std::vector<std::vector<std::filesystem::path>>  avatars; // Avatars/costumes path
-
     struct Player
     {
       unsigned int  joystick, button; // Controller ID and buttons offset
@@ -39,10 +38,30 @@ namespace QUIZ
 
     struct Fastest
     {
-      std::wstring              id;       // Unique ID of question
-      std::wstring              question; // Text of the question
-      std::vector<std::wstring> answers;  // Answers to the question in correct order
-      bool                      done;     // True if question has already been answered
+      std::wstring                id;       // Unique ID of question
+      std::wstring                question; // Text of the question
+      std::array<std::wstring, 4> answers;  // Answers to the question in correct order
+      std::wstring                info;     // Some informations about the answers
+      bool                        done;     // True if question has already been answered
+    };
+
+    struct Millionaire
+    {
+      struct Question
+      {
+        std::wstring                id;       // Unique ID of question
+        std::set<unsigned int>      set;      // Level of the question
+        std::wstring                question; // Text of the question
+        std::array<std::wstring, 4> answers;  // Answers to the question
+        unsigned int                correct;  // Index of correct answer
+        std::wstring                info;     // Some informations about the answers
+        bool                        done;     // True if question has already been answered
+      };
+
+      std::wstring          id;         // Unique ID of question set
+      std::wstring          name;       // Name of question set
+      std::vector<Question> questions;  // Questions of the set
+      bool                  done;       // True if set has already been used
     };
 
     struct Question
@@ -157,12 +176,16 @@ namespace QUIZ
       void  draw();                 // Draw progress bar
     };
 
-    std::vector<Player>           players;    // Players
-    std::vector<Blindtest>        blindtests; // Audio blindtests questions
-    std::map<std::string, Entity> entities;   // Entities to draw
-    ProgressBar                   progress;   // Progress bar
-    std::vector<Question>         questions;  // Questions bank
-    std::vector<Fastest>          fastests;   // Fastest finger question bank
+    std::vector<std::vector<std::filesystem::path>> avatars;  // Avatars/costumes path
+    std::vector<Player>                             players;  // Players
+
+    std::map<std::string, Entity> entities; // Entities to draw
+    ProgressBar                   progress; // Progress bar
+
+    std::vector<Blindtest>    blindtests;   // Audio blindtests questions
+    std::vector<Question>     questions;    // Questions bank
+    std::vector<Fastest>      fastests;     // Fastest finger question bank
+    std::vector<Millionaire>  millionaires; // Millionaire question sets
 
   public:
     Quiz();

@@ -4,6 +4,7 @@
 #include "Quiz/BlindtestQuizScene.hpp"
 #include "Quiz/ControllerQuizScene.hpp"
 #include "Quiz/FastestQuizScene.hpp"
+#include "Quiz/MillionaireQuizScene.hpp"
 #include "Quiz/QuestionQuizScene.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
@@ -23,6 +24,7 @@ QUIZ::ScoresQuizScene::ScoresQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& 
     entity.setTargetScale(0.9f / (_quiz.players.size() + 1.f), 0.75f);
     entity.setTargetColor(1.f, 1.f, 1.f, 1.f);
     entity.setLerp(0.0625f);
+    entity.setOutline(0.f);
   }
 
   static sf::Music music;
@@ -99,12 +101,14 @@ QUIZ::ScoresQuizScene::ScoresQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& 
     << "Instruction for players: nothing" << std::endl
     << std::endl
     << "Commands:" << std::endl
-    << "  [C]ontroller: controller selection" << std::endl
-    << "  [F]astest:    fastest finger" << std::endl
-    << "  [Q]uestion:   free questions" << std::endl;
+    << "  [C]ontroller:   controller selection" << std::endl
+    << "  [Q]uestion:     free questions" << std::endl;
+  if (_quiz.fastests.empty() == false)
+    std::cout << "  [F]astest:      fastest finger" << std::endl;
+  if (_quiz.fastests.empty() == false)
+    std::cout << "  [M]illionaire:  who wants to be a millionaire?" << std::endl;
   if (_quiz.blindtests.empty() == false)
-    std::cout
-    << "  [B]lintest:   play blindtest (" << std::count_if(_quiz.blindtests.begin(), _quiz.blindtests.end(), [](const auto& entry) { return entry.done == false; }) << " remaining)" << std::endl;
+    std::cout << "  [B]lintest:     play blindtest (" << std::count_if(_quiz.blindtests.begin(), _quiz.blindtests.end(), [](const auto& entry) { return entry.done == false; }) << " remaining)" << std::endl;
   std::cout
     << std::endl;
 }
@@ -120,6 +124,12 @@ bool  QUIZ::ScoresQuizScene::update(float elapsed)
   // Fastest finger
   if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::F) == true) {
     _machine.swap<QUIZ::FastestQuizScene>(_quiz);
+    return false;
+  }
+
+  // Fastest finger
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::M) == true) {
+    _machine.swap<QUIZ::MillionaireQuizScene>(_quiz);
     return false;
   }
 

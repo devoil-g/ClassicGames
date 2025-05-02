@@ -1,23 +1,277 @@
 {
   "fastest": [
     {
-      "id": "test_001",
+      "id": "fast_000",
+      "question": "Cliquez sur ces nombres dans l'ordre croissant'",
+      "answers": [ "1", "2", "3", "4" ],
+      "info": "Question d'exemple"
+    },
+    {
+      "id": "fast_001",
       "question": "Triez ces types de variable C par leur taille croissante",
-      "answers": [ "char", "short", "int", "long" ]
+      "answers": [ "char", "short", "int", "long" ],
+      "info": "char: 1o\nshort: 2o\nint: 4o\nlong: 4o"
     },
-
     {
-      "id": "test_002",
-      "question": "Triez ces unités de mesure par leur taille croissante",
-      "answers": [ "Centimètre", "Décimètre", "Décamètre", "Hectomètre" ]
+      "id": "fast_002",
+      "question": "Triez ces planètes par leur ordre de proximité par rapport au Soleil",
+      "answers": [ "Mercure", "Vénus", "Terre", "Mars" ],
+      "info": "Mercure: 58M km\nVénus: 108M km\nTerre: 150M km\nMars: 228M km"
     },
-
     {
-      "id": "test_003",
-      "question": "Triez ces présidents par ordre de leurs mandats",
-      "answers": [ "Jacques Chirac", "Nicolas Sarkozy", "François Hollande", "Emmanuel Macron" ]
+      "id": "fast_003",
+      "question": "Triez ces planètes par leur ordre de promitité par rapport au Soleil",
+      "answers": [ "Jupiter", "Saturne", "Uranus", "Neptune" ],
+      "info": "Jupiter: 778M km\nSaturne: 1427M km\nUranus: 2871M km\nNeptune: 4498M km"
+    },
+    {
+      "id": "fast_004",
+      "question": "Triez ces présidents français par ordre de leurs mandats",
+      "answers": [ "Jacques Chirac", "Nicolas Sarkozy", "François Hollande", "Emmanuel Macron" ],
+      "info": "Chirac: 1995-2007\nSarkozy: 2007-2012\nHollande: 2012-2017\nMacron: 2017-..."
+    },
+    {
+      "id": "fast_005",
+      "question": "Triez ces présidents français par ordre de leurs mandats",
+      "answers": [ "Charles de Gaulle", "Georges Pompidou", "Valéry Giscard d'Estaing", "François Mitterrand" ],
+      "info": "De Gaulle: 1959-1969\nPompidou: 1969-1974\nGiscard d'Estaing: 1974-1981\nMitterrand: 1981-1995"
+    },
+    {
+      "id": "fast_006",
+      "question": "Triez ces présidents américains par ordre de leurs mandats",
+      "answers": [ "Barack Obama", "Donald Trump", "Joe Biden", "Donald Trump" ],
+      "info": "Obama: 2009-2017\nTrump 1: 2017-2021\nBiden: 2021-2025\nTrump 2: 2025-..."
+    },
+    {
+      "id": "fast_007",
+      "question": "Triez ces présidents américains par ordre de leurs mandats",
+      "answers": [ "Ronald Reagan'", "George H. W. Bush", "Bill Clinton", "George W. Bush" ],
+      "info": "Reagan: 1981-1989\nBush Sr: 1989-1993\nClinton: 1993-2001\nBush Jr: 2001-2009"
+    },
+    {
+      "id": "fast_008",
+      "question": "Triez ces chiffres romains par leurs valeurs croissantes",
+      "answers": [ "V", "L", "D", "M" ],
+      "info": "V: 5\nL: 50\nD: 500\nM: 1000"
+    },
+    {
+      "id": "fast_009",
+      "question": "Triez ces chiffres romains par leurs valeurs croissantes",
+      "answers": [ "I", "X", "C", "M" ],
+      "info": "I: 1\nX: 10\nC: 100\nM: 1000"
+    },
+    {
+      "id": "fast_010",
+      "question": "Triez ces nombres romains par leurs valeurs croissantes",
+      "answers": [ "VIII", "IX", "XIV", "XVI" ],
+      "info": "VIII: 8\nIX: 9\nXIV: 14\nXVI: 16"
+    },
+    {
+      "id": "fast_011",
+      "question": "Triez ces nombres romains par leurs valeurs croissantes",
+      "answers": [ "XIX", "XX", "XXI", "XXX" ],
+      "info": "XIX: 19\nXX: 20\nXXI: 21\nXXX: 30"
+    },
+    {
+      "id": "fast_012",
+      "question": "Triez ces films MARVEL par ordre de leur sortie",
+      "answers": [ "The Avengers", "Avengers : l'ère d'Ultron", "Avengers : Infinity War", "Avengers : Endgame" ],
+      "info": "The Avengers: 2012\nL'ére d'Ultron: 2015\nInfinity War: 2018\nEndgame: 2019"
+    },
+    {
+      "id": "fast_013",
+      "question": "Triez ces films STAR WARS par ordre de leur sortie",
+      "answers": [ "Un nouvel espoir", "Le Retour du Jedi", "La Menace fantôme", "La Revanche des Sith" ],
+      "info": "Un nouvel espoir: 1977\nLe Retour du Jedi: 1983\nLa Menace fantôme: 1999\nLa Revanche des Sith: 2005"
+    },
+    {
+      "id": "fast_014",
+      "question": "Triez ces livres par ordre de leur sortie",
+      "answers": [ "Le Hobbit", "La Communauté de l'Anneau", "Les Deux Tours", "Le Retour du Roi" ],
+      "info": "Le Hobbit: 1937\nLa Communauté de l'Anneau: 1954\nLes Deux Tours: 1954\nLe Retour du Roi: 1955"
+    },
+    {
+      "id": "fast_015",
+      "question": "Triez ces livres par ordre de leur sortie",
+      "answers": [ "A l'école des Sorciers", "La Chambre des Secrets", "Le prisonnier d'Azkaban", "La Coupe de feu" ],
+      "info": "A l'école des Sorciers: 1997\nLa Chambre des Secrets: 1998\nLe prisonnier d'Azkaban: 1999\nLa Coupe de feu: 2000"
+    },
+    {
+      "id": "fast_016",
+      "question": "Triez ces livres par ordre de leur sortie",
+      "answers": [ "L'Ordre du Phénix", "Le Prince de Sang-Mêlé", "Les Reliques de la Mort", "L'Enfant maudit" ],
+      "info": "L'Ordre du Phénix: 2003\nLe Prince de sang-mêlé: 2005\nLes Reliques de la Mort: 2007\nL'Enfant maudit: 2016"
+    },
+    {
+      "id": "fast_017",
+      "question": "Triez ces livres par ordre de leur sortie",
+      "answers": [ "Fascination", "Tentation", "Hésitation", "Révélation" ],
+      "info": "Twilight, Chapitre I Fascination: 2005\nTwilight, Chapitre II Tentation: 2006\nTwilight, Chapitre III Hésitation: 2007\nTwilight, Chapitre IV Révélation: 2008"
     }
   ],
+
+  "millionaire": [
+    {
+      "id": "mill_001",
+      "name": "Victoire",
+      "questions": [
+        {
+          "id": "vict_001",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Lequel de ces mammifères pond des oeufs ?",
+          "answers": [ "L'ornithorynque", "Le requin", "Le dauphin", "L'homme" ],
+          "info": "Avec l'échnidné, l'ornithorynque est le seul mammifère ovipare."
+        },
+        {
+          "id": "vict_002",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Quelles cellules sont en charge du transport de l'oxygène dans le sang ?",
+          "answers": [ "Les globules blanc", "Les globules rouges", "Les globules rosés", "Les grosses bulles" ],
+          "correct": 1,
+          "info": "Les globules blanc protègent l'organisme, les rouges transportent l'oxygène."
+        },
+        {
+          "id": "vict_003",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Où poussent les carottes ?",
+          "answers": [ "Sous l'eau", "Sur les arbres", "Dans la terre", "Dans ton cul" ],
+          "correct": 2,
+          "info": "Certaines carottes poussent également dans le sable."
+        },
+        {
+          "id": "vict_004",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Quel animal peut voler ?",
+          "answers": [ "Le pingouin", "L'autruche", "Le manchot", "L'émeu" ],
+          "info": "Le pingouin est capable de voler, il est souvent confondu avec le manchot à cause de l'anglais."
+        },
+        {
+          "id": "vict_005",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Quel animal est un mammifère ?",
+          "answers": [ "Le dauphin", "Le crocodile", "Le pingouin", "Le pigeon" ],
+          "info": "Le crocodile est un reptile, le pingouin et le pigeon sont des oiseaux."
+        },
+        {
+          "id": "vict_006",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Que deviennent les chenilles ?",
+          "answers": [ "Des papillons", "Des grenouilles", "Des oiseaux", "Des poissons" ],
+          "info": "La dernière étape de son développement est appelée nymphose."
+        },
+        {
+          "id": "vict_007",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Combien de temps incube un oeuf de poule ?",
+          "answers": [ "21 heures", "21 jours", "21 semaines", "21 mois" ],
+          "correct": 1,
+          "info": "21 jours pour la poule, 17 pour le pigeon, 42 pour l'autruche."
+        },
+        {
+          "id": "vict_008",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Quel type d'organe est le coeur ?",
+          "answers": [ "Musculaire", "osseux", "Glandulaire", "Respiratoire" ],
+          "correct": 1,
+          "info": "Il bat en moyenne 2.9 milliard de fois dans une vie."
+        },
+        {
+          "id": "vict_009",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Qu'est-ce qui gravite autour de la Terre ?",
+          "answers": [ "La Lune", "Le Soleil", "Mars", "La galaxie Andromède" ],
+          "info": "Un candidat de Qui veut gagner des millions a perdu à cette question."
+        },
+        {
+          "id": "vict_010",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+
+
+        {
+          "id": "vict_011",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Quelle est la principale source d'énergie du Soleil ?",
+          "answers": [ "La fusion nucléaire", "La fission nucléaire", "La géothermie", "La combustion chimique" ],
+          "La fusion nucléaire nécessite énormément d'énergie."
+        },
+        {
+          "id": "vict_012",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "vict_012",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "vict_012",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "vict_012",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "vict_012",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "vict_012",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "vict_012",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+
+        {
+          "id": "vict_019",
+          "set": [ 10 ],
+          "question": "Quelle est le plus grand continent de la Terre ?",
+          "answers": [ "L'Asie", "L'Europe", "L'Amérique", "L'Afrique" ],
+          "info": "L'Amérique: 42 189 120 km²\nEurope: 10 180 000 km²\nL'Afrique: 30 415 873 km²\nL'Asie: 43 810 582 km²"
+        },
+        {
+          "id": "vict_020",
+          "set": [ 10 ],
+          "question": "Quelle est la plus grande planète du système solaire ?",
+          "answers": [ "Jupiter", "Saturne", "Uranus", "Neptune" ],
+          "info": "Jupiter: 71 492 km\nSaturne: 60 268 km\nUranus: 25 559 km\nNeptune: 24 764 km"
+        },
+        {
+          "id": "vict_021",
+          "set": [ 10 ],
+          "question": "Quelle est l'océan le plus profond de la Terre ?",
+          "answers": [ "L'océan Pacifique", "L'océan Atlantique", "L'océan Indien", "L'océan Austral" ],
+          "info": "Océan Pacifique: 11 034m, Fosse des Mariannes\nOcéan Atlantique: 8 376m, Fosse de Porto Rico\nOcéan Indien: 7 258m, Fosse de Java\nOcéan Austral: 7 432mn Fosse des Sandwich du Sud"
+        }
+      ]
+    }
+  ]
 
   "quiz": [
     {
