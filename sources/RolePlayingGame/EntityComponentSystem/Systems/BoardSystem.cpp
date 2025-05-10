@@ -74,7 +74,7 @@ RPG::ClientBoardSystem::ClientBoardSystem(RPG::ECS& ecs) :
 {
   // Set up cursor model
   ecs.addComponent<RPG::ModelComponent>(_cursorModel);
-  ecs.getSystem<RPG::ClientModelSystem>().setModel(ecs, _cursorModel, "cursor");
+  ecs.getSystem<RPG::ClientModelSystem>().setModel(ecs, _cursorModel, L"cursor");
   ecs.getComponent<RPG::ModelComponent>(_cursorModel).layer = RPG::ModelComponent::Layer::LayerBoard;
 
   // First update of cursor
@@ -232,10 +232,10 @@ void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& c
     // Initialize cell model
     modelComponent.layer = RPG::ModelComponent::Layer::LayerBoard;
     modelComponent.color.alpha = 0.25f;
-    modelSystem.setModel(ecs, entity, "cell");
-    modelSystem.setAnimation(ecs, entity, "select");
+    modelSystem.setModel(ecs, entity, L"cell");
+    modelSystem.setAnimation(ecs, entity, L"select");
 
-    particleComponent.animation = "simple";
+    particleComponent.animation = L"simple";
     particleComponent.frequencyLow = 16.f;
     particleComponent.frequencyHigh = 24.f;
     particleComponent.size = { 0.75f, 0.75f, 0.f };

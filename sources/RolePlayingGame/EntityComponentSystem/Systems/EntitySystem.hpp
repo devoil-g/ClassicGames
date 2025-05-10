@@ -22,7 +22,7 @@ namespace RPG
     EntitySystem& operator=(const EntitySystem&) = delete;
     EntitySystem& operator=(EntitySystem&&) = delete;
 
-    RPG::ECS::Entity  getEntity(RPG::ECS& ecs, const std::string& id) const;  // Get an entity from its ID
+    RPG::ECS::Entity  getEntity(RPG::ECS& ecs, const std::wstring& id) const; // Get an entity from its ID
   };
 
   class ServerEntitySystem : public RPG::EntitySystem

@@ -87,7 +87,7 @@ void  RPG::ServerControllerSystem::connect(RPG::ECS& ecs, RPG::Server& server, s
       Game::JSON::Object  messageAssign;
 
       // Update control status to every played
-      messageAssign.set(L"id", Game::Utilities::Convert(entityComponent.id));
+      messageAssign.set(L"id", entityComponent.id);
       messageAssign.set(L"controller", (double)id);
       server.broadcast({ L"controller", L"assign" }, messageAssign);
     }
@@ -116,7 +116,7 @@ void  RPG::ServerControllerSystem::disconnect(RPG::ECS& ecs, RPG::Server& server
       Game::JSON::Object  messageAssign;
 
       // Update control status to every played
-      messageAssign.set(L"id", Game::Utilities::Convert(entityComponent.id));
+      messageAssign.set(L"id", entityComponent.id);
       messageAssign.set(L"controller", (double)RPG::ControllerComponent::NoController);
       server.broadcast({ L"controller", L"assign" }, messageAssign);
       break;
@@ -206,7 +206,7 @@ void  RPG::ClientControllerSystem::handleDisconnect(RPG::ECS& ecs, RPG::ClientSc
 
 void  RPG::ClientControllerSystem::handleAssign(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
 {
-  auto entity = ecs.getSystem<ClientEntitySystem>().getEntity(ecs, Game::Utilities::Convert(json.get(L"id").string()));
+  auto entity = ecs.getSystem<ClientEntitySystem>().getEntity(ecs, json.get(L"id").string());
   
   // No entity with given ID
   if (entity == RPG::ECS::InvalidEntity)
@@ -304,7 +304,7 @@ void  RPG::ClientControllerSystem::select(RPG::ECS& ecs, RPG::ECS::Entity entity
   _controlled = entity;
 
   // TODO: remove this
-  std::cout << "[DEBUG::ClientControllerSystem]: taking control of entity #" << entity << " (" << (entity == RPG::ECS::InvalidEntity ? "none" : ecs.getComponent<RPG::EntityComponent>(entity).id) << ")." << std::endl;
+  std::wcout << "[DEBUG::ClientControllerSystem]: taking control of entity #" << entity << " (" << (entity == RPG::ECS::InvalidEntity ? L"none" : ecs.getComponent<RPG::EntityComponent>(entity).id) << ")." << std::endl;
 }
 
 RPG::ECS::Entity  RPG::ClientControllerSystem::selected() const

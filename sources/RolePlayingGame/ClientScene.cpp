@@ -103,11 +103,23 @@ bool  RPG::ClientScene::update(float elapsed)
   auto cursorCoords = _ecs.getSystem<RPG::ClientModelSystem>().getCamera().pixelToCoords({ (float)cursorPixel.x(), (float)cursorPixel.y() });
   auto entity = _ecs.getSystem<RPG::ClientEntitySystem>().intersect(_ecs, cursorCoords);
   auto cell = _ecs.getSystem<RPG::ClientBoardSystem>().intersect(_ecs, cursorCoords);
+  auto controlled = _ecs.getSystem<RPG::ClientControllerSystem>().selected();
 
   if (entity != RPG::ECS::InvalidEntity)
     _ecs.getSystem<RPG::ClientBoardSystem>().setCursor(_ecs, RPG::ECS::InvalidEntity);
   else
     _ecs.getSystem<RPG::ClientBoardSystem>().setCursor(_ecs, cell);
+
+  if (Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Left) == true &&
+    entity == RPG::ECS::InvalidEntity &&
+    cell != RPG::ECS::InvalidEntity &&
+    controlled != RPG::ECS::InvalidEntity) {
+    Game::JSON::Object  json;
+    
+    json.set(L"id", _ecs.getComponent<RPG::EntityComponent>(controlled).id);
+    json.set(L"coordinates", _ecs.getComponent<RPG::CellComponent>(cell).coordinates.json());
+    send({ L"action", L"move" }, json);
+  }
 
   // Send pending packets
   updateSend(elapsed);
@@ -147,7 +159,9 @@ void  RPG::ClientScene::updateReceive(float elapsed)
 void  RPG::ClientScene::updatePacket(const Game::JSON::Object& json, float elapsed)
 {
   // TODO: remove this
-  std::wcout << "Client received (tick: " << (std::size_t)json.get(L"tick").number() << ", type: " << json.get(L"type").array() << ", size: " << json.stringify().length() << "): " << json << std::endl;
+  auto jsonStr = json.stringify();
+  std::wcout << "Client received (tick: " << (std::size_t)json.get(L"tick").number() << ", type: " << json.get(L"type").array() << ", size: " << jsonStr.length() << "): ";
+  std::cout << Game::Utilities::Convert(jsonStr) << std::endl;
 
   const auto& type = json.get(L"type").array().get(0).string();
 

@@ -13,13 +13,13 @@ namespace RPG
     static const RPG::Coordinates DefaultCoordinates;
     static const RPG::Direction   DefaultDirection;
     static const RPG::Position    DefaultPosition;
-    static const std::string      DefaultModel;
+    static const std::wstring     DefaultModel;
 
-    std::string       id;           // Identifier of entity
+    std::wstring      id;           // Identifier of entity
     RPG::Coordinates  coordinates;  // Coordinates of entity's cell
     RPG::Direction    direction;    // Direction the entity is facing
     RPG::Position     position;     // Position of entity in its cell
-    std::string       model;        // Model of the entity
+    std::wstring      model;        // Model of the entity
    
     // Characteristics
     int attack;

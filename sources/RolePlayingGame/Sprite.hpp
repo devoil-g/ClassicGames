@@ -47,7 +47,7 @@ namespace RPG
     static const Math::Vector<2, float>         DefaultOrigin;
     static const Math::Vector<2, std::int16_t>  DefaultScale;
     static const RPG::Color                     DefaultColor;
-    static const std::string                    DefaultPath;
+    static const std::wstring                   DefaultPath;
 
     static const Sprite ErrorSprite;  // Error sprite
 
@@ -56,7 +56,7 @@ namespace RPG
     Math::Vector<2, float>        origin;   // Origin of the sprite from drawing position
     Math::Vector<2, std::int16_t> scale;    // Scaling of sprite
     RPG::Color                    color;    // Sprite color
-    std::string                   path;     // Path of the texture
+    std::wstring                  path;     // Path of the texture
     const RPG::Texture*           pointer;  // Pointer to texture
 
     Sprite();

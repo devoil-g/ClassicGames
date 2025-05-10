@@ -9,7 +9,7 @@
 RPG::EntitySystem::EntitySystem(RPG::ECS& ecs)
 {}
 
-RPG::ECS::Entity  RPG::EntitySystem::getEntity(RPG::ECS& ecs, const std::string& id) const
+RPG::ECS::Entity  RPG::EntitySystem::getEntity(RPG::ECS& ecs, const std::wstring& id) const
 {
   // Find entity matching ID
   for (auto entity : entities)

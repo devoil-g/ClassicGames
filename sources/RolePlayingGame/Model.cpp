@@ -1,7 +1,7 @@
 #include "RolePlayingGame/Model.hpp"
 #include "System/Utilities.hpp"
 
-const RPG::Model    RPG::Model::ErrorModel;
+const RPG::Model  RPG::Model::ErrorModel;
 
 RPG::Model::Model() :
   _animations()
@@ -12,7 +12,7 @@ RPG::Model::Model(const Game::JSON::Object& json) :
 {
   // Get animations from JSON
   for (const auto& animation : json.get(L"animations").array())
-    _animations.emplace(Game::Utilities::Convert(animation->object().get(L"name").string()), animation->object());
+    _animations.emplace(animation->object().get(L"name").string(), animation->object());
 }
 
 Game::JSON::Object  RPG::Model::json() const
@@ -24,14 +24,14 @@ Game::JSON::Object  RPG::Model::json() const
   for (const auto& [name, animation] : _animations) {
     auto value = animation.json();
 
-    value.set(L"name", Game::Utilities::Convert(name));
+    value.set(L"name", name);
     json.get(L"animations").array().push(std::move(value));
   }
 
   return json;
 }
 
-void  RPG::Model::resolve(const std::function<const RPG::Texture& (const std::string&)> library)
+void  RPG::Model::resolve(const std::function<const RPG::Texture& (const std::wstring&)> library)
 {
   // Resolve texture of each animation
   for (auto& [_, animation] : _animations)
@@ -40,10 +40,10 @@ void  RPG::Model::resolve(const std::function<const RPG::Texture& (const std::st
         sprite.pointer = &library(sprite.path);
 }
 
-const std::string RPG::Model::Actor::DefaultAnimation = "idle";
-const std::string RPG::Model::Actor::IdleAnimation = "idle";
-const std::string RPG::Model::Actor::WalkAnimation = "walk";
-const std::string RPG::Model::Actor::RunAnimation = "run";
+const std::wstring  RPG::Model::Actor::DefaultAnimation = L"idle";
+const std::wstring  RPG::Model::Actor::IdleAnimation = L"idle";
+const std::wstring  RPG::Model::Actor::WalkAnimation = L"walk";
+const std::wstring  RPG::Model::Actor::RunAnimation = L"run";
 
 RPG::Model::Actor::Actor() :
   _model(nullptr),
@@ -113,7 +113,7 @@ const RPG::Sprite& RPG::Model::Actor::sprite(RPG::Direction direction) const
   }
 }
 
-const std::string& RPG::Model::Actor::icon() const
+const std::wstring& RPG::Model::Actor::icon() const
 {
   // No model
   if (_model == nullptr)
@@ -132,7 +132,7 @@ void  RPG::Model::Actor::setModel(const RPG::Model& model)
   setAnimation(RPG::Model::Actor::DefaultAnimation, true, 1.f);
 }
 
-void  RPG::Model::Actor::setAnimation(const std::string& name, bool loop, float speed)
+void  RPG::Model::Actor::setAnimation(const std::wstring& name, bool loop, float speed)
 {
   // No model
   if (_model == nullptr)
@@ -256,7 +256,7 @@ RPG::Model::Animation::Frame::Frame(const Game::JSON::Object& json) :
     // Get each sprite from JSON
     for (const auto& sprite : json.get(L"sprites").array()) {
       const auto& object = sprite->object();
-      auto direction = RPG::StringToDirection(Game::Utilities::Convert(object.get(L"direction").string()));
+      auto direction = RPG::StringToDirection(object.get(L"direction").string());
 
       // Already defined
       if (done[direction] == true)
@@ -293,7 +293,7 @@ Game::JSON::Object  RPG::Model::Animation::Frame::json() const
     for (auto direction = 0; direction < RPG::Direction::DirectionCount; direction++) {
       auto sprite = sprites[direction].json();
 
-      sprite.set(L"direction", Game::Utilities::Convert(RPG::DirectionToString((RPG::Direction)direction)));
+      sprite.set(L"direction", RPG::DirectionToString((RPG::Direction)direction));
       array.push(std::move(sprite));
     }
 

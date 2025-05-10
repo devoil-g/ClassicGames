@@ -16,9 +16,9 @@ namespace RPG
   class ModelSystem : public RPG::ECS::System
   {
   protected:
-    std::unordered_map<std::string, RPG::Model> _models;  // Registered models
+    std::unordered_map<std::wstring, RPG::Model> _models; // Registered models
     
-    const RPG::Model& getModel(const std::string& name);
+    const RPG::Model& getModel(const std::wstring& name);
 
   public:
     ModelSystem() = delete;
@@ -50,10 +50,10 @@ namespace RPG
   class ClientModelSystem : public RPG::ModelSystem
   {
   private:
-    RPG::Camera                                   _camera;    // Camera of the scene
-    std::unordered_map<std::string, RPG::Texture> _textures;  // Loaded textures
+    RPG::Camera                                     _camera;    // Camera of the scene
+    std::unordered_map<std::wstring, RPG::Texture>  _textures;  // Loaded textures
 
-    const RPG::Texture& getTexture(const std::string& name); // Get texture from cache
+    const RPG::Texture& getTexture(const std::wstring& name); // Get texture from cache
 
   public:
     static bool CloserEntity(RPG::ECS& ecs, RPG::ECS::Entity aEntity, RPG::ECS::Entity bEntity);  // Check if A if closer to the camera than B
@@ -72,8 +72,8 @@ namespace RPG
     
     bool  intersect(RPG::ECS& ecs, RPG::ECS::Entity entity, const Math::Vector<2>& coords) const; // Check if coords is in bound of entity
 
-    void  setModel(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::string& name);                                            // Set model of entity
-    void  setAnimation(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::string& name, bool loop = false, float speed = 1.f);  // Set animation of entity
+    void  setModel(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::wstring& name);                                            // Set model of entity
+    void  setAnimation(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::wstring& name, bool loop = false, float speed = 1.f);  // Set animation of entity
     
     void  executeCamera(RPG::ECS& ecs, float elapsed);                              // Update camera control
     void  executeAnimation(RPG::ECS& ecs, float elapsed);                           // Update animation of every entity

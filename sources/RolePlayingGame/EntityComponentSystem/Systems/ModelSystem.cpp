@@ -6,7 +6,7 @@
 RPG::ModelSystem::ModelSystem(RPG::ECS& ecs)
 {}
 
-const RPG::Model& RPG::ModelSystem::getModel(const std::string& name)
+const RPG::Model& RPG::ModelSystem::getModel(const std::wstring& name)
 {
   // Get model, or error model if not loaded
   return _models.emplace(name, RPG::Model::ErrorModel).first->second;
@@ -28,7 +28,7 @@ void  RPG::ServerModelSystem::load(RPG::ECS& ecs, const Game::JSON::Array& model
 {
   // Load each models
   for (const auto& model : models) {
-    _models.emplace(Game::Utilities::Convert(model->object().get(L"name").string()), model->object());
+    _models.emplace(model->object().get(L"name").string(), model->object());
   }
 }
 
@@ -41,7 +41,7 @@ Game::JSON::Array RPG::ServerModelSystem::json(RPG::ECS& ecs) const
   for (const auto& [name, model] : _models) {
     auto json = model.json();
 
-    json.set(L"name", Game::Utilities::Convert(name));
+    json.set(L"name", name);
     array.push(std::move(json));
   }
 
@@ -205,13 +205,13 @@ void  RPG::ClientModelSystem::executeDraw(RPG::ECS& ecs, RPG::ECS::Entity entity
   model.actor.sprite(model.direction).draw(position, model.color, model.outline);
 }
 
-const RPG::Texture& RPG::ClientModelSystem::getTexture(const std::string& name)
+const RPG::Texture& RPG::ClientModelSystem::getTexture(const std::wstring& name)
 {
   // Load and get texture
   return _textures.emplace(name, name).first->second;
 }
 
-void  RPG::ClientModelSystem::setModel(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::string& name)
+void  RPG::ClientModelSystem::setModel(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::wstring& name)
 {
   auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
 
@@ -219,7 +219,7 @@ void  RPG::ClientModelSystem::setModel(RPG::ECS& ecs, RPG::ECS::Entity entity, c
   model.actor.setModel(getModel(name));
 }
 
-void  RPG::ClientModelSystem::setAnimation(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::string& name, bool loop, float speed)
+void  RPG::ClientModelSystem::setAnimation(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::wstring& name, bool loop, float speed)
 {
   auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
 
@@ -279,7 +279,7 @@ void  RPG::ClientModelSystem::handleLoadModels(RPG::ECS& ecs, RPG::ClientScene& 
 {
   // Load/update each models
   for (const auto& model : json.get(L"models").array()) {
-    const auto& name = Game::Utilities::Convert(model->object().get(L"name").string());
+    const auto& name = model->object().get(L"name").string();
 
     // Replace old model
     if (_models.contains(name) == true) {
@@ -299,7 +299,7 @@ void  RPG::ClientModelSystem::handleLoadModels(RPG::ECS& ecs, RPG::ClientScene& 
       _models.emplace(name, model->object());
 
     // Resolve texture of new model
-    _models.at(name).resolve([this](const std::string& name) { return std::ref(getTexture(name)); });
+    _models.at(name).resolve([this](const std::wstring& name) { return std::ref(getTexture(name)); });
   }
 }
 

@@ -143,7 +143,8 @@ void  RPG::Server::onDisconnect(std::size_t id)
 void  RPG::Server::onReceive(std::size_t id, const Game::JSON::Object& json)
 {
   // TODO: remove this
-  std::wcout << "[RPG::Server] Received (id: " << id << ", type: " << json.get(L"type").string() << "): " << json << std::endl;
+
+  std::wcout << "[RPG::Server] Received (id: " << id << ", type: " << json.get(L"type").array() << "): " << json << std::endl;
 
   // Handle packet
   // TODO

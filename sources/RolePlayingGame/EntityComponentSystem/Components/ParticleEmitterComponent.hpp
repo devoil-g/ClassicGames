@@ -14,7 +14,7 @@ namespace RPG
     Math::Vector<3>         position;                     // Position of the emitter
     float                   frequencyLow, frequencyHigh;  // Number of particles emitted per second, low and high frequency
     RPG::ParticleComponent  particleLow, particleHigh;    // Emitted particles properties, low and high properties
-    std::string             animation;                    // Name of the animation of particles
+    std::wstring            animation;                    // Name of the animation of particles
 
     float next;     // Time before next particle
     float duration; // Duration of the emitter

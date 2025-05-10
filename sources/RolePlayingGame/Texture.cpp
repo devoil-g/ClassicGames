@@ -4,7 +4,7 @@
 #include "RolePlayingGame/Texture.hpp"
 #include "System/Config.hpp"
 
-RPG::Texture::Texture(const std::string& name) :
+RPG::Texture::Texture(const std::wstring& name) :
   _name(name),
   _texture(),
   _error(false)
@@ -52,7 +52,7 @@ void  RPG::Texture::reload()
 
   // Generate mipmap
   if (_texture.generateMipmap() == false)
-    std::cerr << "[RPG::Texture] Warning: failed to generate mipmap for " << _name << "." << std::endl;
+    std::wcerr << "[RPG::Texture] Warning: failed to generate mipmap for " << _name << "." << std::endl;
 }
 
 bool  RPG::Texture::error() const

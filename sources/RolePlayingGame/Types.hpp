@@ -19,12 +19,12 @@ namespace RPG
     DirectionCount  // Number of directions
   };
   
-  const std::array<std::string, RPG::Direction::DirectionCount> DirectionNames = {
-    "N", "NE", "SE", "S", "SW", "NW"
+  const std::array<std::wstring, RPG::Direction::DirectionCount> DirectionNames = {
+    L"N", L"NE", L"SE", L"S", L"SW", L"NW"
   };
 
-  std::string    DirectionToString(RPG::Direction direction); // Direction to string
-  RPG::Direction StringToDirection(const std::string& name);  // String to direction
+  std::wstring   DirectionToString(RPG::Direction direction); // Direction to string
+  RPG::Direction StringToDirection(const std::wstring& name); // String to direction
 
   using Coordinates = Math::Vector<2, int>;
   using Position = Math::Vector<3, float>;
@@ -56,7 +56,7 @@ namespace RPG
     Bounds& operator=(Bounds&&) = default;
 
     bool contains(const Math::Vector<2>& position) const; // Ckeck if position is contained by bounds
-    bool contains(float x, float y) const;                       // Ckeck if position is contained by bounds
+    bool contains(float x, float y) const;                // Ckeck if position is contained by bounds
   };
 }
 

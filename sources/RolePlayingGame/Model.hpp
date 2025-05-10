@@ -57,10 +57,10 @@ namespace RPG
     class Actor
     {
     public:
-      static const std::string DefaultAnimation;
-      static const std::string IdleAnimation;
-      static const std::string WalkAnimation;
-      static const std::string RunAnimation;
+      static const std::wstring DefaultAnimation;
+      static const std::wstring IdleAnimation;
+      static const std::wstring WalkAnimation;
+      static const std::wstring RunAnimation;
 
     private:
       const RPG::Model*             _model;     // Actor's model
@@ -85,10 +85,10 @@ namespace RPG
 
       void                update(float elapsed);                  // Update actor animation
       const RPG::Sprite&  sprite(RPG::Direction direction) const; // Get current sprite
-      const std::string&  icon() const;                           // Get actor's icon name
+      const std::wstring& icon() const;                           // Get actor's icon name
 
       void  setModel(const RPG::Model& model);                                            // Reset actor's model
-      void  setAnimation(const std::string& name, bool loop = false, float speed = 1.f);  // Start an animation
+      void  setAnimation(const std::wstring& name, bool loop = false, float speed = 1.f);  // Start an animation
       void  setSpeed(float speed);                                                        // Set animation speed
       void  setLoop(bool loop);                                                           // Set animation looping
 
@@ -99,10 +99,10 @@ namespace RPG
     friend  RPG::Model::Actor;
 
   private:
-    static const std::string  DefaultIcon;
+    static const std::wstring  DefaultIcon;
 
-    std::unordered_map<std::string, RPG::Model::Animation>  _animations;  // Animations stored by direction/name
-    std::string                                             _icon;        // Name of model's icon
+    std::unordered_map<std::wstring, RPG::Model::Animation> _animations;  // Animations stored by direction/name
+    std::wstring                                            _icon;        // Name of model's icon
 
     Model();
 
@@ -119,6 +119,6 @@ namespace RPG
 
     Game::JSON::Object  json() const; // Serialize to JSON
 
-    void  resolve(const std::function<const RPG::Texture& (const std::string&)> library); // Resolve texture in sprites
+    void  resolve(const std::function<const RPG::Texture& (const std::wstring&)> library);  // Resolve texture in sprites
   };
 }

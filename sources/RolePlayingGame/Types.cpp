@@ -1,12 +1,12 @@
 #include "RolePlayingGame/Types.hpp"
 
-std::string    RPG::DirectionToString(RPG::Direction direction)
+std::wstring  RPG::DirectionToString(RPG::Direction direction)
 {
   // Get direction name
   return RPG::DirectionNames.at(direction);
 }
 
-RPG::Direction RPG::StringToDirection(const std::string& name)
+RPG::Direction  RPG::StringToDirection(const std::wstring& name)
 {
   // Find matching direction name
   for (int direction = 0; direction < RPG::Direction::DirectionCount; direction++)

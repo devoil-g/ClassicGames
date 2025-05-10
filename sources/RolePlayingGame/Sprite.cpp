@@ -10,7 +10,7 @@ const RPG::Sprite::Bounds           RPG::Sprite::DefaultTexture = { .origin = { 
 const Math::Vector<2, float>        RPG::Sprite::DefaultOrigin = { 0.f, 0.f };
 const Math::Vector<2, std::int16_t> RPG::Sprite::DefaultScale = { (std::int16_t)1, (std::int16_t)1 };
 const RPG::Color                    RPG::Sprite::DefaultColor = RPG::Color::White;
-const std::string                   RPG::Sprite::DefaultPath = "error.png";
+const std::wstring                  RPG::Sprite::DefaultPath = L"error.png";
 
 const RPG::Sprite RPG::Sprite::ErrorSprite;
 
@@ -30,7 +30,7 @@ RPG::Sprite::Sprite(const Game::JSON::Object& json) :
   origin(json.contains(L"origin") ? json.get(L"origin").array() : DefaultOrigin),
   scale(json.contains(L"scale") ? json.get(L"scale").array() : DefaultScale),
   color(json.contains(L"color") ? json.get(L"color").object() : DefaultColor),
-  path(json.contains(L"path") ? Game::Utilities::Convert(json.get(L"path").string()) : DefaultPath),
+  path(json.contains(L"path") ? json.get(L"path").string() : DefaultPath),
   pointer(nullptr)
 {}
 
@@ -56,7 +56,7 @@ Game::JSON::Object  RPG::Sprite::json() const
   if (color != DefaultColor)
     json.set(L"color", color.json());
   if (path != DefaultPath)
-    json.set(L"path", Game::Utilities::Convert(path));
+    json.set(L"path", path);
 
   return json;
 }

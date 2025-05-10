@@ -9,13 +9,13 @@ namespace RPG
   class Texture
   {
   private:
-    std::string _name;
-    sf::Texture _texture;
-    bool        _error;
+    std::wstring  _name;
+    sf::Texture   _texture;
+    bool          _error;
 
   public:
     Texture() = delete;
-    Texture(const std::string& name);
+    Texture(const std::wstring& name);
     Texture(const Texture&) = delete;
     Texture(Texture&&) = delete;
     ~Texture() = default;
