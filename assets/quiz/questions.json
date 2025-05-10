@@ -2,7 +2,7 @@
   "fastest": [
     {
       "id": "fast_000",
-      "question": "Cliquez sur ces nombres dans l'ordre croissant'",
+      "question": "Cliquez sur ces nombres dans l'ordre croissant",
       "answers": [ "1", "2", "3", "4" ],
       "info": "Question d'exemple"
     },
@@ -20,7 +20,7 @@
     },
     {
       "id": "fast_003",
-      "question": "Triez ces planètes par leur ordre de promitité par rapport au Soleil",
+      "question": "Triez ces planètes par leur ordre de proximité par rapport au Soleil",
       "answers": [ "Jupiter", "Saturne", "Uranus", "Neptune" ],
       "info": "Jupiter: 778M km\nSaturne: 1427M km\nUranus: 2871M km\nNeptune: 4498M km"
     },
@@ -45,7 +45,7 @@
     {
       "id": "fast_007",
       "question": "Triez ces présidents américains par ordre de leurs mandats",
-      "answers": [ "Ronald Reagan'", "George H. W. Bush", "Bill Clinton", "George W. Bush" ],
+      "answers": [ "Ronald Reagan", "George H. W. Bush", "Bill Clinton", "George W. Bush" ],
       "info": "Reagan: 1981-1989\nBush Sr: 1989-1993\nClinton: 1993-2001\nBush Jr: 2001-2009"
     },
     {
@@ -196,7 +196,7 @@
           "set": [ 6, 7, 8, 9 ],
           "question": "Quelle est la principale source d'énergie du Soleil ?",
           "answers": [ "La fusion nucléaire", "La fission nucléaire", "La géothermie", "La combustion chimique" ],
-          "La fusion nucléaire nécessite énormément d'énergie."
+          "info": "La fusion nucléaire nécessite énormément d'énergie."
         },
         {
           "id": "vict_012",
@@ -271,7 +271,7 @@
         }
       ]
     }
-  ]
+  ],
 
   "quiz": [
     {

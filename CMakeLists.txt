@@ -346,3 +346,8 @@ SET_PROPERTY(TARGET Game PROPERTY CXX_STANDARD 23)
 
 # Copy assets to build directory
 ADD_CUSTOM_COMMAND(TARGET Game POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets/ $<TARGET_FILE_DIR:Game>/assets/)
+
+# Multi-processor build with MSVC
+IF(MSVC)
+	TARGET_COMPILE_OPTIONS(Game PRIVATE "/MP")
+ENDIF()

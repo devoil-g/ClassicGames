@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "RolePlayingGame/EntityComponentSystem/Systems/ControllerSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.hpp"
@@ -303,4 +305,22 @@ void  RPG::ClientControllerSystem::select(RPG::ECS& ecs, RPG::ECS::Entity entity
 
   // TODO: remove this
   std::cout << "[DEBUG::ClientControllerSystem]: taking control of entity #" << entity << " (" << (entity == RPG::ECS::InvalidEntity ? "none" : ecs.getComponent<RPG::EntityComponent>(entity).id) << ")." << std::endl;
+}
+
+RPG::ECS::Entity  RPG::ClientControllerSystem::selected() const
+{
+  // Return controlled entity
+  return _controlled;
+}
+
+std::list<RPG::ECS::Entity> RPG::ClientControllerSystem::assigned() const
+{
+  // Get full list of assigned entities
+  return _assigned;
+}
+
+bool  RPG::ClientControllerSystem::assigned(RPG::ECS::Entity entity) const
+{
+  // Check that the given entity is in assigned list
+  return entity != RPG::ECS::InvalidEntity && std::find(_assigned.begin(), _assigned.end(), entity) != _assigned.end();
 }

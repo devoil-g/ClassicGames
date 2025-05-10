@@ -94,6 +94,9 @@ namespace RPG
     void  executeUpdate(RPG::ECS& ecs, float elapsed);  // Update controller bar
     void  executeDraw(RPG::ECS& ecs);                   // Draw controller bar
 
-    void  select(RPG::ECS& ecs, RPG::ECS::Entity entity); // Select an entity to be controlled
+    void                        select(RPG::ECS& ecs, RPG::ECS::Entity entity); // Select an entity to be controlled
+    RPG::ECS::Entity            selected() const;                               // Get selected entity
+    std::list<RPG::ECS::Entity> assigned() const;                               // Get every assigned entities
+    bool                        assigned(RPG::ECS::Entity entity) const;        // Check if an entity is assigned to player
   };
 }

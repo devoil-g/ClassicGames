@@ -117,10 +117,10 @@ bool  Game::AbstractMenuScene::update(float elapsed)
     if (_target == _select)
       bound.size.y /= 1.28f;
 
-    if (bound.position.y < Game::Window::Instance().getSize().y() / 3.f)
-      _scroll += elapsed * 10.f * (Game::Window::Instance().getSize().y() / 3.f - bound.position.y);
-    else if (bound.position.y + bound.size.y > Game::Window::Instance().getSize().y() * 2.f / 3.f)
-      _scroll -= elapsed * 10.f * (bound.position.y + bound.size.y - Game::Window::Instance().getSize().y() * 2.f / 3.f);
+    if (_items[_target].getPosition().y < Game::Window::Instance().getSize().y() / 3.f)
+      _scroll = _scroll + (Game::Window::Instance().getSize().y() / 3.f - _items[_target].getPosition().y) * (1.f - (1.f / std::pow(2.f, elapsed / 0.125f)));
+    else if (_items[_target].getPosition().y > Game::Window::Instance().getSize().y() * 2.f / 3.f)
+      _scroll = _scroll - (_items[_target].getPosition().y - Game::Window::Instance().getSize().y() * 2.f / 3.f) * (1.f - (1.f / std::pow(2.f, elapsed / 0.125f)));
   }
 
   // Select menu with mouse, keyboard or joystick
@@ -187,7 +187,7 @@ void  Game::AbstractMenuScene::drawTitle()
     Game::Window::Instance().getSize().x() / (2.f * _title.getLocalBounds().size.x),
     Game::Window::Instance().getSize().y() / (8.f * _title.getLocalBounds().size.y)
   );
-
+ 
   // Scale title
   _title.setScale({ scale, scale });
 

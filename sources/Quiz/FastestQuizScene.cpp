@@ -117,6 +117,7 @@ void  QUIZ::FastestQuizScene::setPreparation()
     << "Commands:" << std::endl
     << "  [N]ext:   next step" << std::endl
     << "  [S]kip:   skip answer time" << std::endl
+    << "  [E]nd:    end fastest finger" << std::endl
     << "  [R]eset:  return to preparation" << std::endl
     << "  [<]rrow   select previous question" << std::endl
     << "  [>]rrow   select next question" << std::endl
@@ -470,6 +471,12 @@ bool  QUIZ::FastestQuizScene::update(float elapsed)
   // Restart question
   if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::R) == true)
     setPreparation();
+
+  // End question
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::E) == true) {
+    _machine.pop();
+    return false;
+  }
 
   // Update quiz
   switch (_state) {
