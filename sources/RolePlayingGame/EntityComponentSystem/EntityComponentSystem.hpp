@@ -39,9 +39,11 @@ namespace RPG
     class System
     {
     public:
-      std::set<Entity>  entities; // Entities in the system
+      RPG::EntityComponentSystem& ecs;      // Reference to ECS
+      std::set<Entity>            entities; // Entities in the system
 
-      System() = default;
+      System() = delete;
+      System(RPG::EntityComponentSystem& ecs) : ecs(ecs), entities() {}
       System(const System&) = delete;
       System(System&&) = delete;
       virtual ~System() = default;
@@ -298,14 +300,14 @@ namespace RPG
       SystemManager& operator=(const SystemManager&) = delete;
       SystemManager& operator=(SystemManager&&) = delete;
 
-      template<typename NewSystem>
-      NewSystem&  add(Signature signature, EntityComponentSystem& ecs) // Add a new system to manager
+      template<typename NewSystem, typename ...Args>
+      NewSystem&  add(Signature signature, EntityComponentSystem& ecs, Args&& ...args) // Add a new system to manager
       {
         const char* name = typeid(NewSystem).name();
 
         assert(_systems.find(name) == _systems.end() && "Registering system more than once.");
 
-        auto  system = std::make_unique<NewSystem>(ecs);
+        auto  system = std::make_unique<NewSystem>(ecs, std::forward<Args>(args)...);
         auto& ref = *system;
 
         // Add new system and its signature to manager
@@ -444,11 +446,11 @@ namespace RPG
       return _components.type<Component>();
     }
 
-    template<typename NewSystem>
-    NewSystem& addSystem(Signature signature)  // Add a new system to ECS
+    template<typename NewSystem, typename ...Args>
+    NewSystem& addSystem(Signature signature, Args&& ...args)  // Add a new system to ECS
     {
       // Add new system
-      return _systems.add<NewSystem>(signature, *this);
+      return _systems.add<NewSystem>(signature, *this, std::forward<Args>(args)...);
     }
 
     template<typename GetSystem>

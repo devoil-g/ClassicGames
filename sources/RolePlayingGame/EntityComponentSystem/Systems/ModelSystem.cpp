@@ -3,7 +3,8 @@
 #include "System/Utilities.hpp"
 #include "System/Window.hpp"
 
-RPG::ModelSystem::ModelSystem(RPG::ECS& ecs)
+RPG::ModelSystem::ModelSystem(RPG::ECS& ecs) :
+  RPG::ECS::System(ecs)
 {}
 
 const RPG::Model& RPG::ModelSystem::getModel(const std::wstring& name)
@@ -24,7 +25,7 @@ RPG::ServerModelSystem::ServerModelSystem(RPG::ECS& ecs) :
   RPG::ModelSystem(ecs)
 {}
 
-void  RPG::ServerModelSystem::load(RPG::ECS& ecs, const Game::JSON::Array& models)
+void  RPG::ServerModelSystem::load(const Game::JSON::Array& models)
 {
   // Load each models
   for (const auto& model : models) {
@@ -32,7 +33,7 @@ void  RPG::ServerModelSystem::load(RPG::ECS& ecs, const Game::JSON::Array& model
   }
 }
 
-Game::JSON::Array RPG::ServerModelSystem::json(RPG::ECS& ecs) const
+Game::JSON::Array RPG::ServerModelSystem::json() const
 {
   Game::JSON::Array array;
 
@@ -94,7 +95,7 @@ RPG::ClientModelSystem::ClientModelSystem(RPG::ECS& ecs) :
   _camera.setZoomDrag(0.03125f);
 }
 
-void  RPG::ClientModelSystem::executeCamera(RPG::ECS& ecs, float elapsed)
+void  RPG::ClientModelSystem::executeCamera(float elapsed)
 {
   auto&           window = Game::Window::Instance();
   Math::Vector<2> size((float)window.getSize().x(), (float)window.getSize().y());
@@ -136,14 +137,14 @@ void  RPG::ClientModelSystem::executeCamera(RPG::ECS& ecs, float elapsed)
   _camera.update(elapsed);
 }
 
-void  RPG::ClientModelSystem::executeAnimation(RPG::ECS& ecs, float elapsed)
+void  RPG::ClientModelSystem::executeAnimation(float elapsed)
 {
   // Update animation
   for (auto entity : entities)
-    executeAnimation(ecs, entity, elapsed);
+    executeAnimation(entity, elapsed);
 }
 
-void  RPG::ClientModelSystem::executeAnimation(RPG::ECS& ecs, RPG::ECS::Entity entity, float elapsed)
+void  RPG::ClientModelSystem::executeAnimation(RPG::ECS::Entity entity, float elapsed)
 {
   auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
   
@@ -151,7 +152,7 @@ void  RPG::ClientModelSystem::executeAnimation(RPG::ECS& ecs, RPG::ECS::Entity e
   model.actor.update(elapsed);
 }
 
-void  RPG::ClientModelSystem::executeDraw(RPG::ECS& ecs)
+void  RPG::ClientModelSystem::executeDraw()
 {
   std::array<RPG::ECS::Entity, RPG::ECS::MaxEntities> drawables;
   std::size_t                                         count = 0;
@@ -163,7 +164,7 @@ void  RPG::ClientModelSystem::executeDraw(RPG::ECS& ecs)
   }
 
   // Sort drawables by depth
-  std::sort(drawables.begin(), drawables.begin() + count, [&ecs](auto aEntity, auto bEntity) {
+  std::sort(drawables.begin(), drawables.begin() + count, [this](auto aEntity, auto bEntity) {
     const auto& aModel = ecs.getComponent<RPG::ModelComponent>(aEntity);
     const auto& bModel = ecs.getComponent<RPG::ModelComponent>(bEntity);
 
@@ -187,13 +188,13 @@ void  RPG::ClientModelSystem::executeDraw(RPG::ECS& ecs)
 
   // Draw entities
   for (int index = 0; index < count; index++)
-    executeDraw(ecs, drawables[index]);
+    executeDraw(drawables[index]);
 
   // Reset camera to default
   _camera.reset();
 }
 
-void  RPG::ClientModelSystem::executeDraw(RPG::ECS& ecs, RPG::ECS::Entity entity)
+void  RPG::ClientModelSystem::executeDraw(RPG::ECS::Entity entity)
 {
   const auto&     model = ecs.getComponent<RPG::ModelComponent>(entity);
   Math::Vector<2> position = {
@@ -211,7 +212,7 @@ const RPG::Texture& RPG::ClientModelSystem::getTexture(const std::wstring& name)
   return _textures.emplace(name, name).first->second;
 }
 
-void  RPG::ClientModelSystem::setModel(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::wstring& name)
+void  RPG::ClientModelSystem::setModel(RPG::ECS::Entity entity, const std::wstring& name)
 {
   auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
 
@@ -219,7 +220,7 @@ void  RPG::ClientModelSystem::setModel(RPG::ECS& ecs, RPG::ECS::Entity entity, c
   model.actor.setModel(getModel(name));
 }
 
-void  RPG::ClientModelSystem::setAnimation(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::wstring& name, bool loop, float speed)
+void  RPG::ClientModelSystem::setAnimation(RPG::ECS::Entity entity, const std::wstring& name, bool loop, float speed)
 {
   auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
 
@@ -233,7 +234,7 @@ const RPG::Camera&  RPG::ClientModelSystem::getCamera() const
   return _camera;
 }
 
-bool  RPG::ClientModelSystem::intersect(RPG::ECS& ecs, RPG::ECS::Entity entity, const Math::Vector<2>& coords) const
+bool  RPG::ClientModelSystem::intersect(RPG::ECS::Entity entity, const Math::Vector<2>& coords) const
 {
   const auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
   Math::Vector<2> position = {
@@ -245,37 +246,37 @@ bool  RPG::ClientModelSystem::intersect(RPG::ECS& ecs, RPG::ECS::Entity entity, 
   return model.actor.sprite(model.direction).bounds(position).contains(coords);
 }
 
-void  RPG::ClientModelSystem::handlePacket(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
+void  RPG::ClientModelSystem::handlePacket(const Game::JSON::Object& json)
 {
   const auto& type = json.get(L"type").array().get(1).string();
 
   // Load resources
   if (type == L"load")
-    handleLoad(ecs, client, json);
+    handleLoad(json);
 
   // Error
   else
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-void  RPG::ClientModelSystem::handleLoad(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
+void  RPG::ClientModelSystem::handleLoad(const Game::JSON::Object& json)
 {
   const auto& type = json.get(L"type").array().get(2).string();
 
   // Load/reload models
   if (type == L"models")
-    handleLoadModels(ecs, client, json);
+    handleLoadModels(json);
 
   // Load a new texture
   else if (type == L"texture")
-    handleLoadTexture(ecs, client, json);
+    handleLoadTexture(json);
 
   // Error
   else
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-void  RPG::ClientModelSystem::handleLoadModels(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
+void  RPG::ClientModelSystem::handleLoadModels(const Game::JSON::Object& json)
 {
   // Load/update each models
   for (const auto& model : json.get(L"models").array()) {
@@ -291,7 +292,7 @@ void  RPG::ClientModelSystem::handleLoadModels(RPG::ECS& ecs, RPG::ClientScene& 
       // Reload new model to entity
       for (auto entity : entities)
         if (ecs.getComponent<RPG::ModelComponent>(entity).actor == old)
-          setModel(ecs, entity, name);
+          setModel(entity, name);
     }
 
     // New model
@@ -303,7 +304,7 @@ void  RPG::ClientModelSystem::handleLoadModels(RPG::ECS& ecs, RPG::ClientScene& 
   }
 }
 
-void  RPG::ClientModelSystem::handleLoadTexture(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
+void  RPG::ClientModelSystem::handleLoadTexture(const Game::JSON::Object& json)
 {
   // TODO
 }

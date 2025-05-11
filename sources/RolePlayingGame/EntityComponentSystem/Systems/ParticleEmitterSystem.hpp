@@ -16,7 +16,7 @@ namespace RPG
     ParticleEmitterSystem& operator=(const ParticleEmitterSystem&) = delete;
     ParticleEmitterSystem& operator=(ParticleEmitterSystem&&) = delete;
 
-    void  execute(RPG::ECS& ecs, float elapsed);                                          // Update existing particle emitters
-    void  executeParticleEmitter(RPG::ECS& ecs, RPG::ECS::Entity entity, float elapsed);  // Update a single particle emitter
+    void  execute(float elapsed);                           // Update existing particle emitters
+    void  execute(RPG::ECS::Entity entity, float elapsed);  // Update a single particle emitter
   };
 }

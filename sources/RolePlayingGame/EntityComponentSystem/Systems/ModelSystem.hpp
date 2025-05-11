@@ -43,8 +43,8 @@ namespace RPG
     ServerModelSystem&  operator=(const ServerModelSystem&) = delete;
     ServerModelSystem&  operator=(ServerModelSystem&&) = delete;
 
-    void              load(RPG::ECS& ecs, const Game::JSON::Array& models); // Deserialize models from JSON array
-    Game::JSON::Array json(RPG::ECS& ecs) const;                            // Serialize models to JSON array
+    void              load(const Game::JSON::Array& models);  // Deserialize models from JSON array
+    Game::JSON::Array json() const;                           // Serialize models to JSON array
   };
 
   class ClientModelSystem : public RPG::ModelSystem
@@ -54,6 +54,10 @@ namespace RPG
     std::unordered_map<std::wstring, RPG::Texture>  _textures;  // Loaded textures
 
     const RPG::Texture& getTexture(const std::wstring& name); // Get texture from cache
+
+    void  handleLoad(const Game::JSON::Object& json);         // Load/reload of resources
+    void  handleLoadModels(const Game::JSON::Object& json);   // Load/reload of models
+    void  handleLoadTexture(const Game::JSON::Object& json);  // Load a texture file
 
   public:
     static bool CloserEntity(RPG::ECS& ecs, RPG::ECS::Entity aEntity, RPG::ECS::Entity bEntity);  // Check if A if closer to the camera than B
@@ -68,22 +72,19 @@ namespace RPG
     ClientModelSystem&  operator=(const ClientModelSystem&) = delete;
     ClientModelSystem&  operator=(ClientModelSystem&&) = delete;
 
-    const RPG::Camera&        getCamera() const;  // Get current camera
+    const RPG::Camera&  getCamera() const;  // Get current camera
     
-    bool  intersect(RPG::ECS& ecs, RPG::ECS::Entity entity, const Math::Vector<2>& coords) const; // Check if coords is in bound of entity
+    bool  intersect(RPG::ECS::Entity entity, const Math::Vector<2>& coords) const;  // Check if coords is in bound of entity
 
-    void  setModel(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::wstring& name);                                            // Set model of entity
-    void  setAnimation(RPG::ECS& ecs, RPG::ECS::Entity entity, const std::wstring& name, bool loop = false, float speed = 1.f);  // Set animation of entity
+    void  setModel(RPG::ECS::Entity entity, const std::wstring& name);                                            // Set model of entity
+    void  setAnimation(RPG::ECS::Entity entity, const std::wstring& name, bool loop = false, float speed = 1.f);  // Set animation of entity
     
-    void  executeCamera(RPG::ECS& ecs, float elapsed);                              // Update camera control
-    void  executeAnimation(RPG::ECS& ecs, float elapsed);                           // Update animation of every entity
-    void  executeAnimation(RPG::ECS& ecs, RPG::ECS::Entity entity, float elapsed);  // Update animation of a single entity
-    void  executeDraw(RPG::ECS& ecs);                                               // Draw every entity
-    void  executeDraw(RPG::ECS& ecs, RPG::ECS::Entity entity);                      // Draw a single entity
+    void  executeCamera(float elapsed);                             // Update camera control
+    void  executeAnimation(float elapsed);                          // Update animation of every entity
+    void  executeAnimation(RPG::ECS::Entity entity, float elapsed); // Update animation of a single entity
+    void  executeDraw();                                            // Draw every entity
+    void  executeDraw(RPG::ECS::Entity entity);                     // Draw a single entity
 
-    void  handlePacket(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json);      // Handle a packet
-    void  handleLoad(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json);        // Load/reload of resources
-    void  handleLoadModels(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json);  // Load/reload of models
-    void  handleLoadTexture(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json); // Load a texture file
+    void  handlePacket(const Game::JSON::Object& json); // Handle a packet
   };
 }

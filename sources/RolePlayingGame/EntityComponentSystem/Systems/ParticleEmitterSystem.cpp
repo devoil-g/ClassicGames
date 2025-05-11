@@ -5,17 +5,18 @@
 #include "RolePlayingGame/EntityComponentSystem/Components/ParticleComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ParticleEmitterComponent.hpp"
 
-RPG::ParticleEmitterSystem::ParticleEmitterSystem(RPG::ECS& ecs)
+RPG::ParticleEmitterSystem::ParticleEmitterSystem(RPG::ECS& ecs) :
+  RPG::ECS::System(ecs)
 {}
 
-void  RPG::ParticleEmitterSystem::execute(RPG::ECS& ecs, float elapsed)
+void  RPG::ParticleEmitterSystem::execute(float elapsed)
 {
   // Update each particle emitter
   for (auto entity : entities)
-    executeParticleEmitter(ecs, entity, elapsed);
+    execute(entity, elapsed);
 }
 
-void  RPG::ParticleEmitterSystem::executeParticleEmitter(RPG::ECS& ecs, RPG::ECS::Entity entity, float elapsed)
+void  RPG::ParticleEmitterSystem::execute(RPG::ECS::Entity entity, float elapsed)
 {
   auto& emitter = ecs.getComponent<RPG::ParticleEmitterComponent>(entity);
   auto& particleSystem = ecs.getSystem<RPG::ParticleSystem>();
@@ -61,8 +62,8 @@ void  RPG::ParticleEmitterSystem::executeParticleEmitter(RPG::ECS& ecs, RPG::ECS
     particleModel.layer = RPG::ModelComponent::Layer::LayerEntity;
 
     // Set particle model
-    modelSystem.setModel(ecs, particle, L"particles");
-    modelSystem.setAnimation(ecs, particle, emitter.animation, true);
+    modelSystem.setModel(particle, L"particles");
+    modelSystem.setAnimation(particle, emitter.animation, true);
 
     // Randomize particle
     particleComponent.physicsSpeed = Math::Vector<3>(
@@ -94,7 +95,7 @@ void  RPG::ParticleEmitterSystem::executeParticleEmitter(RPG::ECS& ecs, RPG::ECS
     particleComponent.durationFadeOut = Math::Random(emitter.particleLow.durationFadeOut, emitter.particleHigh.durationFadeOut);
 
     // Update particle timer
-    modelSystem.executeAnimation(ecs, particle, elapsed);
-    particleSystem.executeParticle(ecs, particle, elapsed);
+    modelSystem.executeAnimation(particle, elapsed);
+    particleSystem.execute(particle, elapsed);
   }
 }

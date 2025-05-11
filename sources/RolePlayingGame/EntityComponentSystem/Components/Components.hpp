@@ -18,8 +18,9 @@ namespace RPG
     };
 
     enum class Mode {
-      Wait,   // Waiting to start action
-      Action  // Waiting to execute action
+      Wait,     // Waiting before taking command
+      Command,  // Casting an action
+      Execute   // Executing an action
     };
 
     ActionComponent();

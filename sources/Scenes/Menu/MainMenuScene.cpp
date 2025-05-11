@@ -96,10 +96,7 @@ void  Game::MainMenuScene::selectGameHost(Game::AbstractMenuScene::Item&)
   // Start a RPG server then a client
   std::thread([&machine]() {
     try {
-      auto server = std::make_unique<RPG::Server>(Game::Config::ExecutablePath / "assets" / "rpg" / "level_01.json");
-
-      server->run();
-      machine.swap<Game::ExitScene<RPG::ClientScene>>(std::move(server));
+      machine.swap<Game::ExitScene<RPG::ClientScene>>(std::make_unique<RPG::Server>(Game::Config::ExecutablePath / "assets" / "rpg" / "world.json"));
     }
     catch (const std::exception& e) {
       //machine.swap<Game::MessageScene>("Error: failed to start RPG.");

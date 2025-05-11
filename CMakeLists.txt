@@ -159,12 +159,12 @@ SET(GAME_RPG_ECS_COMPONENTS_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/BoardComponent.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/CellComponent.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/CellComponent.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ControllerComponent.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ControllerComponent.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ModelComponent.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/EntityComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ModelComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/NetworkComponent.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/NetworkComponent.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ParticleComponent.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ParticleComponent.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ParticleEmitterComponent.hpp
@@ -175,12 +175,12 @@ SET(GAME_RPG_ECS_SYSTEMS_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/Systems.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ControllerSystem.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ControllerSystem.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/NetworkSystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/NetworkSystem.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ParticleEmitterSystem.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ParticleEmitterSystem.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ParticleSystem.hpp

@@ -16,7 +16,7 @@ namespace RPG
     ParticleSystem& operator=(const ParticleSystem&) = delete;
     ParticleSystem& operator=(ParticleSystem&&) = delete;
 
-    void  execute(RPG::ECS& ecs, float elapsed);                                  // Update existing particles
-    void  executeParticle(RPG::ECS& ecs, RPG::ECS::Entity entity, float elapsed); // Update a single particle
+    void  execute(float elapsed);                           // Update existing particles
+    void  execute(RPG::ECS::Entity entity, float elapsed);  // Update a single particle
   };
 }

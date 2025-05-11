@@ -4,12 +4,13 @@
 #include "RolePlayingGame/EntityComponentSystem/Components/CellComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp"
-#include "RolePlayingGame/EntityComponentSystem/Components/ControllerComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/NetworkComponent.hpp"
 
-RPG::EntitySystem::EntitySystem(RPG::ECS& ecs)
+RPG::EntitySystem::EntitySystem(RPG::ECS& ecs) :
+  RPG::ECS::System(ecs)
 {}
 
-RPG::ECS::Entity  RPG::EntitySystem::getEntity(RPG::ECS& ecs, const std::wstring& id) const
+RPG::ECS::Entity  RPG::EntitySystem::getEntity(const std::wstring& id) const
 {
   // Find entity matching ID
   for (auto entity : entities)
@@ -24,18 +25,20 @@ RPG::ServerEntitySystem::ServerEntitySystem(RPG::ECS& ecs) :
   RPG::EntitySystem(ecs)
 {}
 
-void  RPG::ServerEntitySystem::load(RPG::ECS& ecs, const Game::JSON::Array& entities)
+void  RPG::ServerEntitySystem::load(const Game::JSON::Array& entities)
 {
   // Create game entities
   for (const auto& element : entities) {
     auto entity = ecs.createEntity();
 
     ecs.addComponent<RPG::EntityComponent>(entity, element->object());
-    ecs.addComponent<RPG::ControllerComponent>(entity);
+
+    // TODO: do not make every entity controllable
+    ecs.addComponent<RPG::NetworkComponent>(entity);
   }
 }
 
-Game::JSON::Array RPG::ServerEntitySystem::json(RPG::ECS& ecs) const
+Game::JSON::Array RPG::ServerEntitySystem::json() const
 {
   Game::JSON::Array array;
 
@@ -51,7 +54,7 @@ RPG::ClientEntitySystem::ClientEntitySystem(RPG::ECS& ecs) :
   RPG::EntitySystem(ecs)
 {}
 
-RPG::ECS::Entity  RPG::ClientEntitySystem::intersect(RPG::ECS& ecs, const Math::Vector<2>& coords) const
+RPG::ECS::Entity  RPG::ClientEntitySystem::intersect(const Math::Vector<2>& coords) const
 {
   const auto&                                         modelSystem = ecs.getSystem<RPG::ClientModelSystem>();
   std::array<RPG::ECS::Entity, RPG::ECS::MaxEntities> interactive;
@@ -65,7 +68,7 @@ RPG::ECS::Entity  RPG::ClientEntitySystem::intersect(RPG::ECS& ecs, const Math::
   }
 
   // Sort entities by depth
-  std::sort(interactive.begin(), interactive.begin() + count, [&ecs](auto aEntity, auto bEntity) {
+  std::sort(interactive.begin(), interactive.begin() + count, [this](auto aEntity, auto bEntity) {
     const auto& aModel = ecs.getComponent<RPG::ModelComponent>(aEntity);
     const auto& bModel = ecs.getComponent<RPG::ModelComponent>(bEntity);
 
@@ -82,27 +85,27 @@ RPG::ECS::Entity  RPG::ClientEntitySystem::intersect(RPG::ECS& ecs, const Math::
 
   // Find first matching entity
   for (size_t index = 0; index < count; index++)
-    if (modelSystem.intersect(ecs, interactive[index], coords) == true)
+    if (modelSystem.intersect(interactive[index], coords) == true)
       return interactive[index];
 
   // No match
   return RPG::ECS::InvalidEntity;
 }
 
-bool  RPG::ClientEntitySystem::intersect(RPG::ECS& ecs, RPG::ECS::Entity entity, const Math::Vector<2>& coords) const
+bool  RPG::ClientEntitySystem::intersect(RPG::ECS::Entity entity, const Math::Vector<2>& coords) const
 {
   // Check collision with model
-  return ecs.getSystem<RPG::ClientModelSystem>().intersect(ecs, entity, coords);
+  return ecs.getSystem<RPG::ClientModelSystem>().intersect(entity, coords);
 }
 
-void  RPG::ClientEntitySystem::executePosition(RPG::ECS& ecs)
+void  RPG::ClientEntitySystem::executePosition()
 {
   // Update display position of each entity
   for (auto entity : entities)
-    executePosition(ecs, entity);
+    executePosition(entity);
 }
 
-void  RPG::ClientEntitySystem::executePosition(RPG::ECS& ecs, RPG::ECS::Entity entity)
+void  RPG::ClientEntitySystem::executePosition(RPG::ECS::Entity entity)
 {
   const auto& entityComponent = ecs.getComponent<RPG::EntityComponent>(entity);
   auto& displayComponent = ecs.getComponent<RPG::ModelComponent>(entity);
@@ -121,33 +124,33 @@ void  RPG::ClientEntitySystem::executePosition(RPG::ECS& ecs, RPG::ECS::Entity e
   displayComponent.direction = entityComponent.direction;
 }
 
-void  RPG::ClientEntitySystem::handlePacket(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
+void  RPG::ClientEntitySystem::handlePacket(const Game::JSON::Object& json)
 {
   const auto& type = json.get(L"type").array().get(1).string();
 
   // Load resources
   if (type == L"load")
-    handleLoad(ecs, client, json);
+    handleLoad(json);
 
   // Error
   else
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-void  RPG::ClientEntitySystem::handleLoad(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
+void  RPG::ClientEntitySystem::handleLoad(const Game::JSON::Object& json)
 {
   const auto& type = json.get(L"type").array().get(2).string();
 
   // Load resources
   if (type == L"entities")
-    handleLoadEntities(ecs, client, json);
+    handleLoadEntities(json);
 
   // Error
   else
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-void  RPG::ClientEntitySystem::handleLoadEntities(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
+void  RPG::ClientEntitySystem::handleLoadEntities(const Game::JSON::Object& json)
 {
   auto& displaySystem = ecs.getSystem<RPG::ClientModelSystem>();
   
@@ -162,6 +165,6 @@ void  RPG::ClientEntitySystem::handleLoadEntities(RPG::ECS& ecs, RPG::ClientScen
     ecs.getComponent<RPG::ModelComponent>(entity).layer = RPG::ModelComponent::Layer::LayerEntity;
 
     // Set model of entity
-    displaySystem.setModel(ecs, entity, ecs.getComponent<RPG::EntityComponent>(entity).model);
+    displaySystem.setModel(entity, ecs.getComponent<RPG::EntityComponent>(entity).model);
   }
 }

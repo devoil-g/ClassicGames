@@ -2,14 +2,15 @@
 #include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ParticleComponent.hpp"
 
-RPG::ParticleSystem::ParticleSystem(RPG::ECS& ecs)
+RPG::ParticleSystem::ParticleSystem(RPG::ECS& ecs) :
+  RPG::ECS::System(ecs)
 {}
 
-void RPG::ParticleSystem::execute(RPG::ECS& ecs, float elapsed)
+void RPG::ParticleSystem::execute(float elapsed)
 {
   // Update each particle
   for (auto entity = entities.begin(); entity != entities.end();) {
-    executeParticle(ecs, *entity, elapsed);
+    execute(*entity, elapsed);
 
     const auto& particle = ecs.getComponent<RPG::ParticleComponent>(*entity);
 
@@ -21,7 +22,7 @@ void RPG::ParticleSystem::execute(RPG::ECS& ecs, float elapsed)
   }
 }
 
-void  RPG::ParticleSystem::executeParticle(RPG::ECS& ecs, RPG::ECS::Entity entity, float elapsed)
+void  RPG::ParticleSystem::execute(RPG::ECS::Entity entity, float elapsed)
 {
   auto& particle = ecs.getComponent<RPG::ParticleComponent>(entity);
   auto& model = ecs.getComponent<RPG::ModelComponent>(entity);

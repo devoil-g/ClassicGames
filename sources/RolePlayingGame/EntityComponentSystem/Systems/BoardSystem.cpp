@@ -5,7 +5,9 @@
 #include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ParticleEmitterComponent.hpp"
 
-RPG::BoardSystem::BoardSystem(RPG::ECS& ecs)
+RPG::BoardSystem::BoardSystem(RPG::ECS& ecs) :
+  RPG::ECS::System(ecs),
+  _map()
 {}
 
 RPG::ECS::Entity  RPG::BoardSystem::getCell(RPG::Coordinates coordinates) const
@@ -20,7 +22,7 @@ RPG::ECS::Entity  RPG::BoardSystem::getCell(RPG::Coordinates coordinates) const
   return it->second;
 }
 
-void  RPG::BoardSystem::registerCell(RPG::ECS& ecs, RPG::ECS::Entity entity)
+void  RPG::BoardSystem::registerCell(RPG::ECS::Entity entity)
 {
   auto& cell = ecs.getComponent<RPG::CellComponent>(entity);
 
@@ -30,7 +32,7 @@ void  RPG::BoardSystem::registerCell(RPG::ECS& ecs, RPG::ECS::Entity entity)
   _map.emplace(cell.coordinates, entity);
 }
 
-void  RPG::BoardSystem::unregisterCell(RPG::ECS& ecs, RPG::ECS::Entity entity)
+void  RPG::BoardSystem::unregisterCell(RPG::ECS::Entity entity)
 {
   auto& cell = ecs.getComponent<RPG::CellComponent>(entity);
 
@@ -44,18 +46,18 @@ RPG::ServerBoardSystem::ServerBoardSystem(RPG::ECS& ecs) :
   RPG::BoardSystem(ecs)
 {}
 
-void  RPG::ServerBoardSystem::load(RPG::ECS& ecs, const Game::JSON::Array& cells)
+void  RPG::ServerBoardSystem::load(const Game::JSON::Array& cells)
 {
   // Create each cells of the board
   for (const auto& element : cells) {
     auto entity = ecs.createEntity();
 
     ecs.addComponent<RPG::CellComponent>(entity, element->object());
-    registerCell(ecs, entity);
+    registerCell(entity);
   }
 }
 
-Game::JSON::Array RPG::ServerBoardSystem::json(RPG::ECS& ecs) const
+Game::JSON::Array RPG::ServerBoardSystem::json() const
 {
   Game::JSON::Array   array;
 
@@ -74,11 +76,11 @@ RPG::ClientBoardSystem::ClientBoardSystem(RPG::ECS& ecs) :
 {
   // Set up cursor model
   ecs.addComponent<RPG::ModelComponent>(_cursorModel);
-  ecs.getSystem<RPG::ClientModelSystem>().setModel(ecs, _cursorModel, L"cursor");
+  ecs.getSystem<RPG::ClientModelSystem>().setModel(_cursorModel, L"cursor");
   ecs.getComponent<RPG::ModelComponent>(_cursorModel).layer = RPG::ModelComponent::Layer::LayerBoard;
 
   // First update of cursor
-  executeCursor(ecs, 0.f);
+  executeCursor(0.f);
 }
 
 RPG::ECS::Entity  RPG::ClientBoardSystem::getCursor() const
@@ -87,7 +89,7 @@ RPG::ECS::Entity  RPG::ClientBoardSystem::getCursor() const
   return _cursorCell;
 }
 
-void  RPG::ClientBoardSystem::setCursor(RPG::ECS& ecs, RPG::ECS::Entity entity)
+void  RPG::ClientBoardSystem::setCursor(RPG::ECS::Entity entity)
 {
   assert((entity == RPG::ECS::InvalidEntity || entities.contains(entity) == true) && "Entity is not a cell");
 
@@ -103,7 +105,7 @@ void  RPG::ClientBoardSystem::setCursor(RPG::ECS& ecs, RPG::ECS::Entity entity)
     ecs.getComponent<RPG::ParticleEmitterComponent>(_cursorCell).duration = 999.f;
 }
 
-RPG::ECS::Entity  RPG::ClientBoardSystem::intersect(RPG::ECS& ecs, const Math::Vector<2>& coords) const
+RPG::ECS::Entity  RPG::ClientBoardSystem::intersect(const Math::Vector<2>& coords) const
 {
   std::array<RPG::ECS::Entity, RPG::ECS::MaxEntities> cells;
   std::size_t                                         count = 0;
@@ -122,7 +124,7 @@ RPG::ECS::Entity  RPG::ClientBoardSystem::intersect(RPG::ECS& ecs, const Math::V
   }
 
   // Sort cells by depth
-  std::sort(cells.begin(), cells.begin() + count, [&ecs](auto aEntity, auto bEntity) {
+  std::sort(cells.begin(), cells.begin() + count, [this](auto aEntity, auto bEntity) {
     const auto& aCell = ecs.getComponent<RPG::CellComponent>(aEntity);
     const auto& bCell = ecs.getComponent<RPG::CellComponent>(bEntity);
 
@@ -143,7 +145,7 @@ RPG::ECS::Entity  RPG::ClientBoardSystem::intersect(RPG::ECS& ecs, const Math::V
   return RPG::ECS::InvalidEntity;
 }
 
-void  RPG::ClientBoardSystem::executeCursor(RPG::ECS& ecs, float elapsed)
+void  RPG::ClientBoardSystem::executeCursor(float elapsed)
 {
   auto& model = ecs.getComponent<RPG::ModelComponent>(_cursorModel);
 
@@ -163,14 +165,14 @@ void  RPG::ClientBoardSystem::executeCursor(RPG::ECS& ecs, float elapsed)
   }
 }
 
-void  RPG::ClientBoardSystem::executeCell(RPG::ECS& ecs, float elapsed)
+void  RPG::ClientBoardSystem::executeCell(float elapsed)
 {
   // Update each cell of the board
   for (auto entity : entities)
-    executeCell(ecs, entity, elapsed);
+    executeCell(entity, elapsed);
 }
 
-void  RPG::ClientBoardSystem::executeCell(RPG::ECS& ecs, RPG::ECS::Entity entity, float elapsed)
+void  RPG::ClientBoardSystem::executeCell(RPG::ECS::Entity entity, float elapsed)
 {
   auto& cell = ecs.getComponent<RPG::CellComponent>(entity);
   auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
@@ -182,33 +184,33 @@ void  RPG::ClientBoardSystem::executeCell(RPG::ECS& ecs, RPG::ECS::Entity entity
   particle.position = model.position;
 }
 
-void  RPG::ClientBoardSystem::handlePacket(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
+void  RPG::ClientBoardSystem::handlePacket(const Game::JSON::Object& json)
 {
   const auto& type = json.get(L"type").array().get(1).string();
 
   // Load/reload board
   if (type == L"load")
-    handleLoad(ecs, client, json);
+    handleLoad(json);
 
   // Error
   else
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-void  RPG::ClientBoardSystem::handleLoad(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
+void  RPG::ClientBoardSystem::handleLoad(const Game::JSON::Object& json)
 {
   const auto& type = json.get(L"type").array().get(2).string();
 
   // Load/reload cells
   if (type == L"cells")
-    handleLoadCells(ecs, client, json);
+    handleLoadCells(json);
 
   // Error
   else
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json)
+void  RPG::ClientBoardSystem::handleLoadCells(const Game::JSON::Object& json)
 {
   auto& modelSystem = ecs.getSystem<RPG::ClientModelSystem>();
 
@@ -223,7 +225,7 @@ void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& c
     ecs.addComponent<RPG::ParticleEmitterComponent>(entity);
 
     // Register cell in coordinates map
-    registerCell(ecs, entity);
+    registerCell(entity);
 
     auto& modelComponent = ecs.getComponent<RPG::ModelComponent>(entity);
     auto& modelSystem = ecs.getSystem<RPG::ClientModelSystem>();
@@ -232,8 +234,8 @@ void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& c
     // Initialize cell model
     modelComponent.layer = RPG::ModelComponent::Layer::LayerBoard;
     modelComponent.color.alpha = 0.25f;
-    modelSystem.setModel(ecs, entity, L"cell");
-    modelSystem.setAnimation(ecs, entity, L"select");
+    modelSystem.setModel(entity, L"cell");
+    modelSystem.setAnimation(entity, L"select");
 
     particleComponent.animation = L"simple";
     particleComponent.frequencyLow = 16.f;
@@ -259,6 +261,6 @@ void  RPG::ClientBoardSystem::handleLoadCells(RPG::ECS& ecs, RPG::ClientScene& c
     particleComponent.particleLow.physicsSpeed = { 0.f, 0.f, +0.2f };
     particleComponent.particleHigh.physicsSpeed = { 0.f, 0.f, +0.3f };
 
-    executeCell(ecs, entity, 0.f);
+    executeCell(entity, 0.f);
   }
 }

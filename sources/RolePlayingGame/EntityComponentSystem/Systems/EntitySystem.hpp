@@ -22,7 +22,7 @@ namespace RPG
     EntitySystem& operator=(const EntitySystem&) = delete;
     EntitySystem& operator=(EntitySystem&&) = delete;
 
-    RPG::ECS::Entity  getEntity(RPG::ECS& ecs, const std::wstring& id) const; // Get an entity from its ID
+    RPG::ECS::Entity  getEntity(const std::wstring& id) const;  // Get an entity from its ID
   };
 
   class ServerEntitySystem : public RPG::EntitySystem
@@ -37,12 +37,16 @@ namespace RPG
     ServerEntitySystem& operator=(const ServerEntitySystem&) = delete;
     ServerEntitySystem& operator=(ServerEntitySystem&&) = delete;
 
-    void              load(RPG::ECS& ecs, const Game::JSON::Array& models); // Deserialize entities from JSON array
-    Game::JSON::Array json(RPG::ECS& ecs) const;                            // Serialize entities to JSON array
+    void              load(const Game::JSON::Array& models);  // Deserialize entities from JSON array
+    Game::JSON::Array json() const;                           // Serialize entities to JSON array
   };
 
   class ClientEntitySystem : public RPG::EntitySystem
   {
+  private:
+    void  handleLoad(const Game::JSON::Object& json);         // Load/reload of resources
+    void  handleLoadEntities(const Game::JSON::Object& json); // Load/reload of entities
+
   public:
     ClientEntitySystem() = delete;
     ClientEntitySystem(RPG::ECS& ecs);
@@ -53,14 +57,13 @@ namespace RPG
     ClientEntitySystem& operator=(const ClientEntitySystem&) = delete;
     ClientEntitySystem& operator=(ClientEntitySystem&&) = delete;
 
-    RPG::ECS::Entity  intersect(RPG::ECS& ecs, const Math::Vector<2>& coords) const;                          // Find entity at coords
-    bool              intersect(RPG::ECS& ecs, RPG::ECS::Entity entity, const Math::Vector<2>& coords) const; // Check entity intersect at position
+    RPG::ECS::Entity  intersect(const Math::Vector<2>& coords) const;                           // Find entity at coords
+    bool              intersect(RPG::ECS::Entity entity, const Math::Vector<2>& coords) const;  // Check entity intersect at position
 
-    void  executePosition(RPG::ECS& ecs);                           // Update WorldComponent with new position of entities
-    void  executePosition(RPG::ECS& ecs, RPG::ECS::Entity entity);  // Update WorldComponent with new position of a single entity
+    void  executePosition();                        // Update WorldComponent with new position of entities
+    void  executePosition(RPG::ECS::Entity entity); // Update WorldComponent with new position of a single entity
 
-    void  handlePacket(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json);        // Handle a packet
-    void  handleLoad(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json);          // Load/reload of resources
-    void  handleLoadEntities(RPG::ECS& ecs, RPG::ClientScene& client, const Game::JSON::Object& json);  // Load/reload of entities
+    void  handlePacket(const Game::JSON::Object& json); // Handle a packet
+    
   };
 }

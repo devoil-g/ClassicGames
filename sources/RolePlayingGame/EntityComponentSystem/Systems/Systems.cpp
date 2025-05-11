@@ -3,10 +3,11 @@
 #include "RolePlayingGame/EntityComponentSystem/Systems/Systems.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/Components.hpp"
 
-RPG::ActionSystem::ActionSystem(RPG::ECS& ecs)
+RPG::ActionSystem::ActionSystem(RPG::ECS& ecs) :
+  RPG::ECS::System(ecs)
 {}
 
-void  RPG::ActionSystem::execute(RPG::ECS& ecs, float elapsed)
+void  RPG::ActionSystem::execute(float elapsed)
 {
   // Execute actions in elapsed time
   while (elapsed > 0.f) {

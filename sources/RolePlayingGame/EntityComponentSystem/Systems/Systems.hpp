@@ -16,7 +16,7 @@ namespace RPG
     ActionSystem& operator=(const ActionSystem&) = delete;
     ActionSystem& operator=(ActionSystem&&) = delete;
 
-    void  execute(RPG::ECS& ecs, float elapsed);
+    void  execute(float elapsed);
   };
 
   /*
