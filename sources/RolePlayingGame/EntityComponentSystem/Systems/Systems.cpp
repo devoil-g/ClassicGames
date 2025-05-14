@@ -47,6 +47,23 @@ void  RPG::ActionSystem::execute(float elapsed)
   }
 }
 
+void RPG::ActionSystem::wait(RPG::ECS::Entity entity, float wait, std::unique_ptr<RPG::ActionComponent::IAction>&& action)
+{
+}
+
+void RPG::ActionSystem::command(RPG::ECS::Entity entity, float wait, std::unique_ptr<RPG::ActionComponent::IAction>&& action)
+{
+}
+
+void RPG::ActionSystem::execute(RPG::ECS::Entity entity, float wait, std::unique_ptr<RPG::ActionComponent::IAction>&& action)
+{
+}
+
+void RPG::ActionSystem::interrupt(RPG::ECS::Entity entity)
+{
+}
+
+
 /*
 void  RPG::MovingSystem::setMove(RPG::ECS& ecs, RPG::ClientWorld& world, RPG::ClientLevel& level, RPG::ECS::Entity entity, Math::Vector<3, float> position, float duration)
 {

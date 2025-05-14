@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RolePlayingGame/EntityComponentSystem/EntityComponentSystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/Components.hpp"
 
 namespace RPG
 {
@@ -16,7 +17,12 @@ namespace RPG
     ActionSystem& operator=(const ActionSystem&) = delete;
     ActionSystem& operator=(ActionSystem&&) = delete;
 
-    void  execute(float elapsed);
+    void  execute(float elapsed); // Update and execute actions
+
+    void  wait(RPG::ECS::Entity entity, float wait, std::unique_ptr<RPG::ActionComponent::IAction>&& action);
+    void  command(RPG::ECS::Entity entity, float wait, std::unique_ptr<RPG::ActionComponent::IAction>&& action);
+    void  execute(RPG::ECS::Entity entity, float wait, std::unique_ptr<RPG::ActionComponent::IAction>&& action);
+    void  interrupt(RPG::ECS::Entity entity);
   };
 
   /*
