@@ -63,7 +63,7 @@ void  RPG::ParticleEmitterSystem::execute(RPG::ECS::Entity entity, float elapsed
 
     // Set particle model
     modelSystem.setModel(particle, L"particles");
-    modelSystem.setAnimation(particle, emitter.animation, true);
+    modelSystem.setAnimation(particle, emitter.animation, RPG::Model::Actor::Mode::Loop);
 
     // Randomize particle
     particleComponent.physicsSpeed = Math::Vector<3>(

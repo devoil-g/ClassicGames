@@ -8330,14 +8330,173 @@
           "name": "idle",
           "frames": [
             {
-              "duration": 1,
+              "duration": 0.200,
               "sprites": {
                 "texture": {
-                  "origin": [ 0, 128 ],
+                  "origin": [ 0, 0 ],
                   "size": [ 32, 16 ]
                 },
                 "origin": [ 16, 8 ],
-                "path": "cursors.png"
+                "path": "cursor.png"
+              }
+            },
+            {
+              "duration": 0.100,
+              "sprites": {
+                "texture": {
+                  "origin": [ 32, 0 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cursor.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 64, 0 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cursor.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 96, 0 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cursor.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 128, 0 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cursor.png"
+              }
+            }
+          ]
+        },
+        {
+          "name": "click",
+          "frames": [
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 0, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cursor.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 32, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cursor.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 64, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cursor.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 96, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cursor.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 128, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cursor.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 160, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cursor.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 192, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cursor.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 224, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cursor.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 256, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cursor.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 288, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cursor.png"
               }
             }
           ]
@@ -8349,214 +8508,280 @@
       "name": "cell",
       "animations": [
         {
-          "name": "idle",
+          "name": "select1",
           "frames": [
             {
-              "duration": 1,
+              "duration": 0.200,
               "sprites": {
-                "color": { "alpha": 0 }
+                "texture": {
+                  "origin": [ 0, 0 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cell.png"
+              }
+            },
+            {
+              "duration": 0.100,
+              "sprites": {
+                "texture": {
+                  "origin": [ 32, 0 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cell.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 64, 0 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cell.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 96, 0 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cell.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 128, 0 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cell.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 160, 0 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cell.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 192, 0 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cell.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 224, 0 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cell.png"
               }
             }
           ]
         },
         {
-          "name": "cursor",
+          "name": "select2",
           "frames": [
             {
-              "duration": 1,
+              "duration": 0.200,
               "sprites": {
                 "texture": {
-                  "origin": [ 0, 128 ],
+                  "origin": [ 0, 16 ],
                   "size": [ 32, 16 ]
                 },
                 "origin": [ 16, 8 ],
-                "path": "cursors.png"
+                "path": "cell.png"
+              }
+            },
+            {
+              "duration": 0.100,
+              "sprites": {
+                "texture": {
+                  "origin": [ 32, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cell.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 64, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cell.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 96, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cell.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 128, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cell.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 160, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cell.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 192, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cell.png"
+              }
+            },
+            {
+              "duration": 0.050,
+              "sprites": {
+                "texture": {
+                  "origin": [ 224, 16 ],
+                  "size": [ 32, 16 ]
+                },
+                "origin": [ 16, 8 ],
+                "path": "cell.png"
               }
             }
           ]
         },
         {
-          "name": "select",
+          "name": "select3",
           "frames": [
             {
-              "duration": 0.05,
+              "duration": 0.200,
               "sprites": {
                 "texture": {
-                  "origin": [ 224, 96 ],
+                  "origin": [ 0, 32 ],
                   "size": [ 32, 16 ]
                 },
                 "origin": [ 16, 8 ],
-                "path": "cursors.png"
+                "path": "cell.png"
               }
             },
             {
-              "duration": 0.05,
+              "duration": 0.100,
               "sprites": {
                 "texture": {
-                  "origin": [ 192, 96 ],
+                  "origin": [ 32, 32 ],
                   "size": [ 32, 16 ]
                 },
                 "origin": [ 16, 8 ],
-                "path": "cursors.png"
+                "path": "cell.png"
               }
             },
             {
-              "duration": 0.05,
+              "duration": 0.050,
               "sprites": {
                 "texture": {
-                  "origin": [ 160, 96 ],
+                  "origin": [ 64, 32 ],
                   "size": [ 32, 16 ]
                 },
                 "origin": [ 16, 8 ],
-                "path": "cursors.png"
+                "path": "cell.png"
               }
             },
             {
-              "duration": 0.05,
+              "duration": 0.050,
               "sprites": {
                 "texture": {
-                  "origin": [ 128, 96 ],
+                  "origin": [ 96, 32 ],
                   "size": [ 32, 16 ]
                 },
                 "origin": [ 16, 8 ],
-                "path": "cursors.png"
+                "path": "cell.png"
               }
             },
             {
-              "duration": 0.05,
+              "duration": 0.050,
               "sprites": {
                 "texture": {
-                  "origin": [ 96, 96 ],
+                  "origin": [ 128, 32 ],
                   "size": [ 32, 16 ]
                 },
                 "origin": [ 16, 8 ],
-                "path": "cursors.png"
+                "path": "cell.png"
               }
             },
             {
-              "duration": 0.05,
+              "duration": 0.050,
               "sprites": {
                 "texture": {
-                  "origin": [ 64, 96 ],
+                  "origin": [ 160, 32 ],
                   "size": [ 32, 16 ]
                 },
                 "origin": [ 16, 8 ],
-                "path": "cursors.png"
+                "path": "cell.png"
               }
             },
             {
-              "duration": 0.05,
+              "duration": 0.050,
               "sprites": {
                 "texture": {
-                  "origin": [ 32, 96 ],
+                  "origin": [ 192, 32 ],
                   "size": [ 32, 16 ]
                 },
                 "origin": [ 16, 8 ],
-                "path": "cursors.png"
+                "path": "cell.png"
               }
             },
             {
-              "duration": 0.05,
+              "duration": 0.050,
               "sprites": {
                 "texture": {
-                  "origin": [ 0, 96 ],
+                  "origin": [ 224, 32 ],
                   "size": [ 32, 16 ]
                 },
                 "origin": [ 16, 8 ],
-                "path": "cursors.png"
-              }
-            }
-          ]
-        },
-        {
-          "name": "unselect",
-          "frames": [
-            {
-              "duration": 0.05,
-              "sprites": {
-                "texture": {
-                  "origin": [ 0, 96 ],
-                  "size": [ 32, 16 ]
-                },
-                "origin": [ 16, 8 ],
-                "path": "cursors.png"
-              }
-            },
-            {
-              "duration": 0.05,
-              "sprites": {
-                "texture": {
-                  "origin": [ 32, 96 ],
-                  "size": [ 32, 16 ]
-                },
-                "origin": [ 16, 8 ],
-                "path": "cursors.png"
-              }
-            },
-            {
-              "duration": 0.05,
-              "sprites": {
-                "texture": {
-                  "origin": [ 64, 96 ],
-                  "size": [ 32, 16 ]
-                },
-                "origin": [ 16, 8 ],
-                "path": "cursors.png"
-              }
-            },
-            {
-              "duration": 0.05,
-              "sprites": {
-                "texture": {
-                  "origin": [ 96, 96 ],
-                  "size": [ 32, 16 ]
-                },
-                "origin": [ 16, 8 ],
-                "path": "cursors.png"
-              }
-            },
-            {
-              "duration": 0.05,
-              "sprites": {
-                "texture": {
-                  "origin": [ 128, 96 ],
-                  "size": [ 32, 16 ]
-                },
-                "origin": [ 16, 8 ],
-                "path": "cursors.png"
-              }
-            },
-            {
-              "duration": 0.05,
-              "sprites": {
-                "texture": {
-                  "origin": [ 160, 96 ],
-                  "size": [ 32, 16 ]
-                },
-                "origin": [ 16, 8 ],
-                "path": "cursors.png"
-              }
-            },
-            {
-              "duration": 0.05,
-              "sprites": {
-                "texture": {
-                  "origin": [ 196, 96 ],
-                  "size": [ 32, 16 ]
-                },
-                "origin": [ 16, 8 ],
-                "path": "cursors.png"
-              }
-            },
-            {
-              "duration": 0.05,
-              "sprites": {
-                "texture": {
-                  "origin": [ 224, 96 ],
-                  "size": [ 32, 16 ]
-                },
-                "origin": [ 16, 8 ],
-                "path": "cursors.png"
+                "path": "cell.png"
               }
             }
           ]

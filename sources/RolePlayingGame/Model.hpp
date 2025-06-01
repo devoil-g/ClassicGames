@@ -42,6 +42,7 @@ namespace RPG
       std::vector<Frame>  frames;   // Frames of the animation
       float               duration; // Total duration of animation
 
+      Animation();
       Animation(const Game::JSON::Object& json);
       Animation(const Animation&) = default;
       Animation(Animation&&) = default;
@@ -50,7 +51,8 @@ namespace RPG
       Animation& operator=(const Animation&) = delete;
       Animation& operator=(Animation&&) = delete;
 
-      Game::JSON::Object  json() const; // Serialize to JSON
+      Game::JSON::Object  json() const;                         // Serialize to JSON
+      void                load(const Game::JSON::Object& json); // Load frames from JSON
     };
 
   public:
@@ -62,17 +64,24 @@ namespace RPG
       static const std::wstring WalkAnimation;
       static const std::wstring RunAnimation;
 
+      enum class Mode
+      {
+        Normal,   // Play then stop
+        Loop,     // Play then repeat
+        PingPong  // Play then reverse
+      };
+
     private:
-      const RPG::Model*             _model;     // Actor's model
-      const RPG::Model::Animation*  _animation; // Current animation
-      std::size_t                   _frame;     // Current frame index
-      float                         _cursor;    // Time in current frame
-      float                         _speed;     // Speed of animation
-      bool                          _loop;      // Animation looping flag
+      std::reference_wrapper<RPG::Model>             _model;     // Actor's model
+      std::reference_wrapper<RPG::Model::Animation>  _animation; // Current animation
+      std::size_t                                    _frame;     // Current frame index
+      float                                          _cursor;    // Time in current frame
+      float                                          _speed;     // Speed of animation
+      Mode                                           _mode;      // Animation mode
 
     public:
       Actor();
-      Actor(const RPG::Model& model);
+      Actor(RPG::Model& model);
       Actor(const Actor&) = default;
       Actor(Actor&&) = default;
       ~Actor() = default;
@@ -80,20 +89,20 @@ namespace RPG
       Actor& operator=(const Actor&) = default;
       Actor& operator=(Actor&&) = default;
 
-      bool  operator==(const RPG::Model& model);  // Check if given model is used
-      bool  operator!=(const RPG::Model& model);  // Check if given model is not used
+      bool  operator==(const RPG::Model& model) const;  // Check if given model is used
+      bool  operator!=(const RPG::Model& model) const;  // Check if given model is not used
 
       void                update(float elapsed);                  // Update actor animation
       const RPG::Sprite&  sprite(RPG::Direction direction) const; // Get current sprite
       const std::wstring& icon() const;                           // Get actor's icon name
 
-      void  setModel(const RPG::Model& model);                                            // Reset actor's model
-      void  setAnimation(const std::wstring& name, bool loop = false, float speed = 1.f);  // Start an animation
-      void  setSpeed(float speed);                                                        // Set animation speed
-      void  setLoop(bool loop);                                                           // Set animation looping
+      void  setModel(RPG::Model& model);                                                          // Reset actor's model
+      void  setAnimation(const std::wstring& name, Mode loop = Mode::Normal, float speed = 1.f);  // Start an animation
+      void  setSpeed(float speed);                                                                // Set animation speed
+      void  setMode(Mode mode);                                                                   // Set animation mode
 
       float getSpeed() const; // Get animation speed
-      bool  getLoop() const;  // Get loop flag
+      Mode  getMode() const;  // Get animation mode
     };
 
     friend  RPG::Model::Actor;
@@ -101,14 +110,13 @@ namespace RPG
   private:
     static const std::wstring  DefaultIcon;
 
-    std::unordered_map<std::wstring, RPG::Model::Animation> _animations;  // Animations stored by direction/name
+    std::unordered_map<std::wstring, RPG::Model::Animation> _animations;  // Animations stored by name
     std::wstring                                            _icon;        // Name of model's icon
 
-    Model();
-
   public:
-    static const Model  ErrorModel; // Error model
+    static Model  ErrorModel; // Error model
 
+    Model();
     Model(const Game::JSON::Object& json);
     Model(const Model&) = default;
     Model(Model&&) = default;
@@ -117,7 +125,8 @@ namespace RPG
     Model& operator=(const Model&) = default;
     Model& operator=(Model&&) = default;
 
-    Game::JSON::Object  json() const; // Serialize to JSON
+    Game::JSON::Object  json() const;                         // Serialize to JSON
+    void                load(const Game::JSON::Object& json); // Load model from JSON
 
     void  resolve(const std::function<const RPG::Texture& (const std::wstring&)> library);  // Resolve texture in sprites
   };

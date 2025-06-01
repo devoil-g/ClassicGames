@@ -49,8 +49,9 @@ namespace RPG
   class ClientBoardSystem : public BoardSystem
   {
   private:
-    RPG::ECS::Entity  _cursorModel; // Model of the cursor
-    RPG::ECS::Entity  _cursorCell;  // Cell of cursor
+    RPG::ECS::Entity  _cursorSelect;  // Selection cursor
+    RPG::ECS::Entity  _cursorClick;   // Click cursor
+    RPG::ECS::Entity  _cursorCell;    // Cell of cursor
 
     void  handleLoad(const Game::JSON::Object& json);       // Load/reload of resources
     void  handleLoadCells(const Game::JSON::Object& json);  // Load/reload of cells
@@ -60,17 +61,18 @@ namespace RPG
     ClientBoardSystem(RPG::ECS& ecs);
     ClientBoardSystem(const ClientBoardSystem&) = delete;
     ClientBoardSystem(ClientBoardSystem&&) = delete;
-    ~ClientBoardSystem() = default;
+    ~ClientBoardSystem();
 
     ClientBoardSystem& operator=(const ClientBoardSystem&) = delete;
     ClientBoardSystem& operator=(ClientBoardSystem&&) = delete;
 
     RPG::ECS::Entity  getCursor() const;                  // Get current cursor cell
     void              setCursor(RPG::ECS::Entity entity); // Change cursor cell
-    
+    void              setClick(RPG::ECS::Entity entity);  // Click cursor cell
+
     RPG::ECS::Entity  intersect(const Math::Vector<2>& coords) const; // Find cell at coords
     
-    void  executeCursor(float elapsed);                         // Update bord cursor
+    void  executeCursor(float elapsed);                         // Update boqrd cursor
     void  executeCell(float elapsed);                           // Update cells board
     void  executeCell(RPG::ECS::Entity entity, float elapsed);  // Update a single cell
 

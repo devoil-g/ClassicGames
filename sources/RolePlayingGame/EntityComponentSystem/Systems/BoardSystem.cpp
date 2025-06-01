@@ -71,16 +71,30 @@ Game::JSON::Array RPG::ServerBoardSystem::json() const
 
 RPG::ClientBoardSystem::ClientBoardSystem(RPG::ECS& ecs) :
   RPG::BoardSystem(ecs),
-  _cursorModel(ecs.createEntity()),
+  _cursorSelect(ecs.createEntity()),
+  _cursorClick(ecs.createEntity()),
   _cursorCell(RPG::ECS::InvalidEntity)
 {
-  // Set up cursor model
-  ecs.addComponent<RPG::ModelComponent>(_cursorModel);
-  ecs.getSystem<RPG::ClientModelSystem>().setModel(_cursorModel, L"cursor");
-  ecs.getComponent<RPG::ModelComponent>(_cursorModel).layer = RPG::ModelComponent::Layer::LayerBoard;
+  // Set up cursor select
+  ecs.addComponent<RPG::ModelComponent>(_cursorSelect);
+  ecs.getSystem<RPG::ClientModelSystem>().setModel(_cursorSelect, L"cursor");
+  ecs.getSystem<RPG::ClientModelSystem>().setAnimation(_cursorSelect, L"idle", RPG::Model::Actor::Mode::PingPong);
+  ecs.getComponent<RPG::ModelComponent>(_cursorSelect).layer = RPG::ModelComponent::Layer::LayerBoard;
+
+  // Set up cursor click
+  ecs.addComponent<RPG::ModelComponent>(_cursorClick);
+  ecs.getSystem<RPG::ClientModelSystem>().setModel(_cursorClick, L"cursor");
+  ecs.getComponent<RPG::ModelComponent>(_cursorClick).layer = RPG::ModelComponent::Layer::LayerBoard;
 
   // First update of cursor
   executeCursor(0.f);
+}
+
+RPG::ClientBoardSystem::~ClientBoardSystem()
+{
+  // Destroy internal entities
+  ecs.destroyEntity(_cursorSelect);
+  ecs.destroyEntity(_cursorClick);
 }
 
 RPG::ECS::Entity  RPG::ClientBoardSystem::getCursor() const
@@ -95,14 +109,28 @@ void  RPG::ClientBoardSystem::setCursor(RPG::ECS::Entity entity)
 
   // Cancel previous particle emitter
   if (_cursorCell != RPG::ECS::InvalidEntity)
-    ecs.getComponent<RPG::ParticleEmitterComponent>(_cursorCell).duration = 0.f;
+    ecs.getComponent<RPG::BoardComponent>(_cursorCell).hover = false;
 
   // Set new cell of cursor
   _cursorCell = entity;
 
   // Trigger new particle emitter
   if (_cursorCell != RPG::ECS::InvalidEntity)
-    ecs.getComponent<RPG::ParticleEmitterComponent>(_cursorCell).duration = 999.f;
+    ecs.getComponent<RPG::BoardComponent>(_cursorCell).hover = true;
+}
+
+void  RPG::ClientBoardSystem::setClick(RPG::ECS::Entity entity)
+{
+  assert((entity == RPG::ECS::InvalidEntity || entities.contains(entity) == true) && "Entity is not a cell");
+
+  // Start select animation at cell position
+  if (entity != RPG::ECS::InvalidEntity) {
+    const auto& cell = ecs.getComponent<RPG::CellComponent>(entity);
+    auto& select = ecs.getComponent<RPG::ModelComponent>(_cursorClick);
+
+    select.position = { (float)cell.coordinates.x(), (float)cell.coordinates.y(), cell.height };
+    select.actor.setAnimation(L"click");
+  }
 }
 
 RPG::ECS::Entity  RPG::ClientBoardSystem::intersect(const Math::Vector<2>& coords) const
@@ -147,7 +175,7 @@ RPG::ECS::Entity  RPG::ClientBoardSystem::intersect(const Math::Vector<2>& coord
 
 void  RPG::ClientBoardSystem::executeCursor(float elapsed)
 {
-  auto& model = ecs.getComponent<RPG::ModelComponent>(_cursorModel);
+  auto& model = ecs.getComponent<RPG::ModelComponent>(_cursorSelect);
 
   // No cell selected, transparent cursor
   if (_cursorCell == RPG::ECS::InvalidEntity) {
@@ -235,7 +263,7 @@ void  RPG::ClientBoardSystem::handleLoadCells(const Game::JSON::Object& json)
     modelComponent.layer = RPG::ModelComponent::Layer::LayerBoard;
     modelComponent.color.alpha = 0.25f;
     modelSystem.setModel(entity, L"cell");
-    modelSystem.setAnimation(entity, L"select");
+    modelSystem.setAnimation(entity, L"select3", RPG::Model::Actor::Mode::Normal, -1.f);
 
     particleComponent.animation = L"simple";
     particleComponent.frequencyLow = 16.f;

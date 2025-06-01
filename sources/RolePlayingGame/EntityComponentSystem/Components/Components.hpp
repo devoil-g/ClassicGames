@@ -14,7 +14,9 @@ namespace RPG
     public:
       virtual ~IAction() = default;
 
-      virtual void  execute(RPG::ECS& ecs, RPG::ECS::Entity self) = 0;  // Execute action
+      virtual void  atWait(RPG::ECS& ecs, RPG::ECS::Entity self) = 0;     // Take action after "Wait" time
+      virtual void  atCommand(RPG::ECS& ecs, RPG::ECS::Entity self) = 0;  // Take action after "Command" time
+      virtual void  atExecute(RPG::ECS& ecs, RPG::ECS::Entity self) = 0;  // Take action after "Execute" time
     };
 
     enum class Mode {

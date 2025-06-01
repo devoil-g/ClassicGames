@@ -295,7 +295,14 @@ namespace RPG
       SystemManager() = default;
       SystemManager(const SystemManager&) = delete;
       SystemManager(SystemManager&&) = delete;
-      ~SystemManager() = default;
+      ~SystemManager()
+      {
+        // A system should not access itself while detroying
+        for (auto iterator = _systems.begin(); iterator != _systems.end();) {
+          auto system = std::move(iterator->second.system);
+          iterator = _systems.erase(iterator);
+        }
+      }
 
       SystemManager& operator=(const SystemManager&) = delete;
       SystemManager& operator=(SystemManager&&) = delete;
@@ -351,7 +358,7 @@ namespace RPG
     EntityManager    _entities;   // Handle entities
     ComponentManager _components; // Handle entities' components
     SystemManager    _systems;    // Handle systems
-
+    
   public:
     EntityComponentSystem() = default;
     EntityComponentSystem(const EntityComponentSystem&) = default;

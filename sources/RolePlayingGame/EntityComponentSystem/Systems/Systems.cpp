@@ -1,4 +1,6 @@
+#include <exception>
 #include <limits>
+#include <string>
 
 #include "RolePlayingGame/EntityComponentSystem/Systems/Systems.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/Components.hpp"
@@ -42,8 +44,23 @@ void  RPG::ActionSystem::execute(float elapsed)
     elapsed -= timer;
 
     // Execute action
-    if (next != RPG::ECS::InvalidEntity)
-      ecs.getComponent<RPG::ActionComponent>(next).action->execute(ecs, next);
+    if (next != RPG::ECS::InvalidEntity) {
+      auto& action = ecs.getComponent<RPG::ActionComponent>(next);
+
+      switch (action.mode) {
+      case RPG::ActionComponent::Mode::Wait:
+        action.action->atWait(ecs, next);
+        break;
+      case RPG::ActionComponent::Mode::Command:
+        action.action->atCommand(ecs, next);
+        break;
+      case RPG::ActionComponent::Mode::Execute:
+        action.action->atExecute(ecs, next);
+        break;
+      default:
+        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+      }
+    }
   }
 }
 
@@ -62,7 +79,6 @@ void RPG::ActionSystem::execute(RPG::ECS::Entity entity, float wait, std::unique
 void RPG::ActionSystem::interrupt(RPG::ECS::Entity entity)
 {
 }
-
 
 /*
 void  RPG::MovingSystem::setMove(RPG::ECS& ecs, RPG::ClientWorld& world, RPG::ClientLevel& level, RPG::ECS::Entity entity, Math::Vector<3, float> position, float duration)

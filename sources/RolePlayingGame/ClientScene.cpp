@@ -104,6 +104,7 @@ bool  RPG::ClientScene::update(float elapsed)
     json.set(L"id", _ecs.getComponent<RPG::EntityComponent>(controlled).id);
     json.set(L"coordinates", _ecs.getComponent<RPG::CellComponent>(cell).coordinates.json());
     _ecs.getSystem<RPG::ClientNetworkSystem>().send({ L"action", L"move" }, json);
+    _ecs.getSystem<RPG::ClientBoardSystem>().setClick(cell);
   }
 
   // Send pending packets

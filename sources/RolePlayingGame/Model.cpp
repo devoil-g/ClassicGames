@@ -1,18 +1,17 @@
 #include "RolePlayingGame/Model.hpp"
 #include "System/Utilities.hpp"
 
-const RPG::Model  RPG::Model::ErrorModel;
+RPG::Model  RPG::Model::ErrorModel = RPG::Model();
 
 RPG::Model::Model() :
   _animations()
 {}
 
 RPG::Model::Model(const Game::JSON::Object& json) :
-  _animations()
+  Model()
 {
-  // Get animations from JSON
-  for (const auto& animation : json.get(L"animations").array())
-    _animations.emplace(animation->object().get(L"name").string(), animation->object());
+  // Load animations
+  load(json);
 }
 
 Game::JSON::Object  RPG::Model::json() const
@@ -21,7 +20,12 @@ Game::JSON::Object  RPG::Model::json() const
 
   // Serialize animations to JSON
   json.set(L"animations", Game::JSON::Array());
-  for (const auto& [name, animation] : _animations) {
+  for (const auto& [name, animation] : _animations)
+  {
+    // Ignore empty animations
+    if (animation.frames.empty() == true)
+      continue;
+
     auto value = animation.json();
 
     value.set(L"name", name);
@@ -29,6 +33,13 @@ Game::JSON::Object  RPG::Model::json() const
   }
 
   return json;
+}
+
+void  RPG::Model::load(const Game::JSON::Object& json)
+{
+  // Get animations from JSON
+  for (const auto& animation : json.get(L"animations").array())
+    _animations[animation->object().get(L"name").string()].load(animation->object());
 }
 
 void  RPG::Model::resolve(const std::function<const RPG::Texture& (const std::wstring&)> library)
@@ -46,19 +57,19 @@ const std::wstring  RPG::Model::Actor::WalkAnimation = L"walk";
 const std::wstring  RPG::Model::Actor::RunAnimation = L"run";
 
 RPG::Model::Actor::Actor() :
-  _model(nullptr),
-  _animation(nullptr),
+  _model(RPG::Model::ErrorModel),
+  _animation(RPG::Model::ErrorModel._animations[DefaultAnimation]),
   _frame(0),
   _cursor(0.f),
-  _speed(1.f),
-  _loop(false)
+  _speed(+1.f),
+  _mode(Mode::Normal)
 {}
 
-RPG::Model::Actor::Actor(const RPG::Model& model) :
+RPG::Model::Actor::Actor(RPG::Model& model) :
   Actor()
 {
-  // Start with default animation
-  setModel(model);
+  // Register model
+  setModel(model); 
 }
 
 void  RPG::Model::Actor::update(float elapsed)
@@ -66,31 +77,68 @@ void  RPG::Model::Actor::update(float elapsed)
   // Consume animation time
   _cursor += elapsed * _speed;
 
+  // Empty animation
+  if (_animation.get().frames.empty() == true)
+    return;
+
+  // Handle animation change
+  _frame = std::clamp(_frame, (size_t)0, _animation.get().frames.size() - 1);
+
   // Run animation
-  while (_animation != nullptr)
+  while (true)
   {
     // Previous frame
     if (_cursor < 0.f) {
-      if (_loop == false && _frame == 0) {
-        _cursor = 0.f;
+      switch (_mode) {
+      case Mode::Normal:
+        if (_frame == 0) {
+          _cursor = 0.f;
+          return;
+        }
         break;
+      case Mode::Loop:
+        break;
+      case Mode::PingPong:
+        if (_frame == 0) {
+          _cursor = -_cursor;
+          _speed = -_speed;
+          continue;
+        }
+        break;
+      default:
+        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
       }
-      else {
-        _frame = (_frame + _animation->frames.size() - 1) % _animation->frames.size();
-        _cursor += _animation->frames[_frame].duration;
-      }
+
+      // Get previous frame
+      _frame = (_frame + _animation.get().frames.size() - 1) % _animation.get().frames.size();
+      _cursor += _animation.get().frames[_frame].duration;
     }
 
     // Next frame
-    else if (_cursor > _animation->frames[_frame].duration) {
-      if (_loop == false && _frame == _animation->frames.size() - 1) {
-        _cursor = _animation->frames[_frame].duration;
+    else if (_cursor > _animation.get().frames[_frame].duration) {
+      switch (_mode) {
+      case Mode::Normal:
+        if (_frame == _animation.get().frames.size() - 1) {
+          _cursor = _animation.get().frames[_frame].duration;
+          return;
+        }
         break;
+      case Mode::Loop:
+        break;
+      case Mode::PingPong:
+        if (_frame == _animation.get().frames.size() - 1) {
+          _cursor = 2 * _animation.get().frames[_frame].duration - _cursor;
+          _speed = -_speed;
+          continue;
+        }
+        break;
+      default:
+        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
       }
-      else {
-        _cursor -= _animation->frames[_frame].duration;
-        _frame = (_frame + 1) % _animation->frames.size();
-      }
+      
+      // Get next frame
+      _cursor -= _animation.get().frames[_frame].duration;
+      _frame = (_frame + 1) % _animation.get().frames.size();
     }
 
     // No frame change
@@ -102,12 +150,12 @@ void  RPG::Model::Actor::update(float elapsed)
 const RPG::Sprite& RPG::Model::Actor::sprite(RPG::Direction direction) const
 {
   // No animation
-  if (_animation == nullptr)
+  if (_animation.get().frames.empty() == true)
     return RPG::Sprite::ErrorSprite;
 
   // Get current frame of animation
   else {
-    const auto& sprites = _animation->frames[_frame].sprites;
+    const auto& sprites = _animation.get().frames[std::clamp(_frame, (std::size_t)0, _animation.get().frames.size() - 1)].sprites;
 
     return sprites[direction % sprites.size()];
   }
@@ -115,46 +163,32 @@ const RPG::Sprite& RPG::Model::Actor::sprite(RPG::Direction direction) const
 
 const std::wstring& RPG::Model::Actor::icon() const
 {
-  // No model
-  if (_model == nullptr)
-    return RPG::Model::ErrorModel._icon;
-
   // Get current model icon
-  return _model->_icon;
+  return _model.get()._icon;
 }
 
-void  RPG::Model::Actor::setModel(const RPG::Model& model)
+void  RPG::Model::Actor::setModel(RPG::Model& model)
 {
   // Change model
-  _model = &model;
-
-  // Reset to default animation
-  setAnimation(RPG::Model::Actor::DefaultAnimation, true, 1.f);
+  _model = model;
 }
 
-void  RPG::Model::Actor::setAnimation(const std::wstring& name, bool loop, float speed)
+void  RPG::Model::Actor::setAnimation(const std::wstring& name, Mode mode, float speed)
 {
-  // No model
-  if (_model == nullptr)
-    return;
-
-  auto iterator = _model->_animations.find(name);
+  // Base parameters
+  _animation =_model.get()._animations[name];
+  _speed = speed;
+  _mode = mode;
 
   // Invalid animation
-  if (iterator == _model->_animations.end()) {
-    _animation = nullptr;
+  if (_animation.get().frames.empty() == true) {
     _frame = 0;
     _cursor = 0.f;
-    _speed = +1.f;
-    _loop = false;
   }
 
   // Register new animation
-  else {
-    _animation = &iterator->second;
-    _speed = speed;
-    _loop = loop;
-
+  else
+  {
     // Playing forward
     if (_speed >= 0.f) {
       _frame = 0;
@@ -162,8 +196,8 @@ void  RPG::Model::Actor::setAnimation(const std::wstring& name, bool loop, float
     }
     // Playing backward
     else {
-      _frame = _animation->frames.size() - 1;
-      _cursor = _animation->frames[_frame].duration;
+      _frame = _animation.get().frames.size() - 1;
+      _cursor = _animation.get().frames[_frame].duration;
     }
   }
 }
@@ -174,10 +208,10 @@ void  RPG::Model::Actor::setSpeed(float speed)
   _speed = speed;
 }
 
-void  RPG::Model::Actor::setLoop(bool loop)
+void  RPG::Model::Actor::setMode(Mode mode)
 {
-  // Set loop flag
-  _loop = loop;
+  // Set animation mode
+  _mode = mode;
 }
 
 float RPG::Model::Actor::getSpeed() const
@@ -186,39 +220,34 @@ float RPG::Model::Actor::getSpeed() const
   return _speed;
 }
 
-bool  RPG::Model::Actor::getLoop() const
+RPG::Model::Actor::Mode RPG::Model::Actor::getMode() const
 {
-  // Get loop flag
-  return _loop;
+  // Get animation mode
+  return _mode;
 }
 
-bool  RPG::Model::Actor::operator==(const RPG::Model& model)
+bool  RPG::Model::Actor::operator==(const RPG::Model& model) const
 {
   // Compare model pointers
-  return _model == &model;
+  return &_model.get() == &model;
 }
 
-bool  RPG::Model::Actor::operator!=(const RPG::Model& model)
+bool  RPG::Model::Actor::operator!=(const RPG::Model& model) const
 {
   // Inverse comparison
   return !(*this == model);
 }
 
-RPG::Model::Animation::Animation(const Game::JSON::Object& json) :
+RPG::Model::Animation::Animation() :
   frames(),
   duration(0.f)
+{}
+
+RPG::Model::Animation::Animation(const Game::JSON::Object& json) :
+  Animation()
 {
-  // Get animation frames from JSON
-  for (const auto& frame : json.get(L"frames").array())
-    frames.emplace_back(frame->object());
-
-  // No frames
-  if (frames.empty() == true)
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-  // Compute total duration of animation
-  for (const auto& frame : frames)
-    duration += frame.duration;
+  // Load animations from JSON
+  load(json);
 }
 
 Game::JSON::Object  RPG::Model::Animation::json() const
@@ -231,6 +260,25 @@ Game::JSON::Object  RPG::Model::Animation::json() const
     json.get(L"frames").array().push(frame.json());
 
   return json;
+}
+
+void  RPG::Model::Animation::load(const Game::JSON::Object& json)
+{
+  // Reset frames
+  frames.clear();
+  duration = 0.f;
+
+  // Get animation frames from JSON
+  for (const auto& frame : json.get(L"frames").array())
+    frames.emplace_back(frame->object());
+
+  // No frames
+  if (frames.empty() == true)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // Compute total duration of animation
+  for (const auto& frame : frames)
+    duration += frame.duration;
 }
 
 const float RPG::Model::Animation::Frame::DefaultDuration = 1.f;

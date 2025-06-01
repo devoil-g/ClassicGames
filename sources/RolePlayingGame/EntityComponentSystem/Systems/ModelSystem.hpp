@@ -16,9 +16,9 @@ namespace RPG
   class ModelSystem : public RPG::ECS::System
   {
   protected:
-    std::unordered_map<std::wstring, RPG::Model> _models; // Registered models
+    std::unordered_map<std::wstring, RPG::Model>  _models; // Registered models
     
-    const RPG::Model& getModel(const std::wstring& name);
+    RPG::Model& getModel(const std::wstring& name);
 
   public:
     ModelSystem() = delete;
@@ -76,8 +76,8 @@ namespace RPG
     
     bool  intersect(RPG::ECS::Entity entity, const Math::Vector<2>& coords) const;  // Check if coords is in bound of entity
 
-    void  setModel(RPG::ECS::Entity entity, const std::wstring& name);                                            // Set model of entity
-    void  setAnimation(RPG::ECS::Entity entity, const std::wstring& name, bool loop = false, float speed = 1.f);  // Set animation of entity
+    void  setModel(RPG::ECS::Entity entity, const std::wstring& name);                                                                                        // Set model of entity
+    void  setAnimation(RPG::ECS::Entity entity, const std::wstring& name, RPG::Model::Actor::Mode mode = RPG::Model::Actor::Mode::Normal, float speed = 1.f); // Set animation of entity
     
     void  executeCamera(float elapsed);                             // Update camera control
     void  executeAnimation(float elapsed);                          // Update animation of every entity

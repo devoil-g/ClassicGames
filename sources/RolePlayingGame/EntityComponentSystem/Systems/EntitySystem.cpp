@@ -166,5 +166,6 @@ void  RPG::ClientEntitySystem::handleLoadEntities(const Game::JSON::Object& json
 
     // Set model of entity
     displaySystem.setModel(entity, ecs.getComponent<RPG::EntityComponent>(entity).model);
+    displaySystem.setAnimation(entity, RPG::Model::Actor::DefaultAnimation);
   }
 }

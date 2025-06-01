@@ -7,18 +7,10 @@ RPG::ModelSystem::ModelSystem(RPG::ECS& ecs) :
   RPG::ECS::System(ecs)
 {}
 
-const RPG::Model& RPG::ModelSystem::getModel(const std::wstring& name)
+RPG::Model& RPG::ModelSystem::getModel(const std::wstring& name)
 {
-  // Get model, or error model if not loaded
-  return _models.emplace(name, RPG::Model::ErrorModel).first->second;
-
-  auto iterator = _models.find(name);
-
-  // Handle errors
-  if (iterator == _models.end())
-    return RPG::Model::ErrorModel;
-  else
-    return iterator->second;
+  // Return model from name
+  return _models[name];
 }
 
 RPG::ServerModelSystem::ServerModelSystem(RPG::ECS& ecs) :
@@ -29,7 +21,7 @@ void  RPG::ServerModelSystem::load(const Game::JSON::Array& models)
 {
   // Load each models
   for (const auto& model : models) {
-    _models.emplace(model->object().get(L"name").string(), model->object());
+    _models[model->object().get(L"name").string()].load(model->object());
   }
 }
 
@@ -214,18 +206,14 @@ const RPG::Texture& RPG::ClientModelSystem::getTexture(const std::wstring& name)
 
 void  RPG::ClientModelSystem::setModel(RPG::ECS::Entity entity, const std::wstring& name)
 {
-  auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
-
   // Set component's actor model
-  model.actor.setModel(getModel(name));
+  ecs.getComponent<RPG::ModelComponent>(entity).actor.setModel(getModel(name));
 }
 
-void  RPG::ClientModelSystem::setAnimation(RPG::ECS::Entity entity, const std::wstring& name, bool loop, float speed)
+void  RPG::ClientModelSystem::setAnimation(RPG::ECS::Entity entity, const std::wstring& name, RPG::Model::Actor::Mode mode, float speed)
 {
-  auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
-
   // Set component's actor animation
-  model.actor.setAnimation(name, loop, speed);
+  ecs.getComponent<RPG::ModelComponent>(entity).actor.setAnimation(name, mode, speed);
 }
 
 const RPG::Camera&  RPG::ClientModelSystem::getCamera() const
@@ -281,26 +269,13 @@ void  RPG::ClientModelSystem::handleLoadModels(const Game::JSON::Object& json)
   // Load/update each models
   for (const auto& model : json.get(L"models").array()) {
     const auto& name = model->object().get(L"name").string();
+    auto& instance = _models[name];
 
-    // Replace old model
-    if (_models.contains(name) == true) {
-      const RPG::Model& old = _models.at(name);
+    // Load new model
+    instance.load(model->object());
 
-      // Replace model
-      _models.at(name) = model->object();
-
-      // Reload new model to entity
-      for (auto entity : entities)
-        if (ecs.getComponent<RPG::ModelComponent>(entity).actor == old)
-          setModel(entity, name);
-    }
-
-    // New model
-    else
-      _models.emplace(name, model->object());
-
-    // Resolve texture of new model
-    _models.at(name).resolve([this](const std::wstring& name) { return std::ref(getTexture(name)); });
+    // Resolve texture of model
+    instance.resolve([this](const std::wstring& name) { return std::ref(getTexture(name)); });
   }
 }
 
