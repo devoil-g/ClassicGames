@@ -2,6 +2,8 @@
 
 #include "RolePlayingGame/EntityComponentSystem/EntityComponentSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/Components.hpp"
+#include "RolePlayingGame/Types.hpp"
+#include "System/JavaScriptObjectNotation.hpp"
 
 namespace RPG
 {
@@ -19,11 +21,30 @@ namespace RPG
 
     void  execute(float elapsed); // Update and execute actions
 
-    void  wait(RPG::ECS::Entity entity, float wait, std::unique_ptr<RPG::ActionComponent::IAction>&& action);
-    void  command(RPG::ECS::Entity entity, float wait, std::unique_ptr<RPG::ActionComponent::IAction>&& action);
-    void  execute(RPG::ECS::Entity entity, float wait, std::unique_ptr<RPG::ActionComponent::IAction>&& action);
-    void  interrupt(RPG::ECS::Entity entity);
+    void  handlePacket(std::size_t id, const Game::JSON::Object& json); // Handle a packet
+    void  handleMove(std::size_t id, const Game::JSON::Object& json);   // Handle a move action
   };
+
+  class MoveAction : public RPG::ActionComponent::IAction
+  {
+  private:
+    RPG::Coordinates  _coordinates; // Target of move
+
+  public:
+    MoveAction() = delete;
+    MoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, const Game::JSON::Object& json);
+    MoveAction(const MoveAction&) = delete;
+    MoveAction(MoveAction&&) = delete;
+    ~MoveAction();
+
+    MoveAction& operator=(const MoveAction&) = delete;
+    MoveAction& operator=(MoveAction&&) = delete;
+
+    virtual void  atWait(RPG::ECS& ecs, RPG::ECS::Entity self) override;    // Take action after "Wait" time
+    virtual void  atCommand(RPG::ECS& ecs, RPG::ECS::Entity self) override; // Take action after "Command" time
+    virtual void  atExecute(RPG::ECS& ecs, RPG::ECS::Entity self) override; // Take action after "Execute" time
+  };
+
 
   /*
   class MovingSystem : public RPG::ECS::System

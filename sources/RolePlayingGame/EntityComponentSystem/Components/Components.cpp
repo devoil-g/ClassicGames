@@ -2,6 +2,7 @@
 
 RPG::ActionComponent::ActionComponent() :
   action(),
+  next(),
   mode(Mode::Wait),
   wait(0.f)
 {}

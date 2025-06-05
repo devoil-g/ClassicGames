@@ -33,7 +33,8 @@ namespace RPG
     ActionComponent&  operator=(const ActionComponent&) = default;
     ActionComponent&  operator=(ActionComponent&&) = default;
 
-    std::unique_ptr<IAction>  action; // Next action to execute, null if no action
+    std::unique_ptr<IAction>  action; // Action to execute, null if no action
+    std::unique_ptr<IAction>  next;   // Next action to execute, null if no action
     Mode                      mode;   // Current mode
     float                     wait;   // Wait time before action
   };

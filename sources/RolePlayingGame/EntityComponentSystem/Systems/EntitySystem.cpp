@@ -5,6 +5,7 @@
 #include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/NetworkComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/Components.hpp"
 
 RPG::EntitySystem::EntitySystem(RPG::ECS& ecs) :
   RPG::ECS::System(ecs)
@@ -35,6 +36,7 @@ void  RPG::ServerEntitySystem::load(const Game::JSON::Array& entities)
 
     // TODO: do not make every entity controllable
     ecs.addComponent<RPG::NetworkComponent>(entity);
+    ecs.addComponent<RPG::ActionComponent>(entity);
   }
 }
 

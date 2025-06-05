@@ -16,11 +16,12 @@ namespace RPG
     DirectionSouthWest, DirSW = DirectionSouthWest, // South West
     DirectionNorthWest, DirNW = DirectionNorthWest, // North West
 
-    DirectionCount  // Number of directions
+    DirectionNone, DirNone = DirectionNone, // No directions
+    DirectionCount = DirNone                // Number of directions
   };
   
-  const std::array<std::wstring, RPG::Direction::DirectionCount> DirectionNames = {
-    L"N", L"NE", L"SE", L"S", L"SW", L"NW"
+  const std::array<std::wstring, RPG::Direction::DirectionCount + 1> DirectionNames = {
+    L"N", L"NE", L"SE", L"S", L"SW", L"NW", L"None"
   };
 
   std::wstring   DirectionToString(RPG::Direction direction); // Direction to string
@@ -29,13 +30,14 @@ namespace RPG
   using Coordinates = Math::Vector<2, int>;
   using Position = Math::Vector<3, float>;
 
-  const std::array<RPG::Coordinates, RPG::Direction::DirectionCount> DirectionCoordinates = { // Array of directions coordinates
+  const std::array<RPG::Coordinates, RPG::Direction::DirectionCount + 1> DirectionCoordinates = { // Array of directions coordinates
     RPG::Coordinates(+1, +1), // North
     RPG::Coordinates(+1, 0),  // North East
     RPG::Coordinates(0, -1),  // South East
     RPG::Coordinates(-1, -1), // South
     RPG::Coordinates(-1, 0),  // South West
-    RPG::Coordinates(0, +1)   // North West
+    RPG::Coordinates(0, +1),  // North West
+    RPG::Coordinates(0, 0)    // None
   };
 
   const Math::Vector<2> CellSize = { 18.f, 12.f };

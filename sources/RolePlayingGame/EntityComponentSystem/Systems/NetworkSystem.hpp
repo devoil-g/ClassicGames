@@ -48,7 +48,8 @@ namespace RPG
     NetworkSystem(NetworkSystem&&) = delete;
     ~NetworkSystem() = default;
 
-    const Player& getPlayer(std::size_t controller) const;  // Get player informations
+    const Player& getPlayer(std::size_t controller) const;      // Get player informations
+    std::size_t   getController(RPG::ECS::Entity entity) const; // Get controller of entity
 
     NetworkSystem&  operator=(const NetworkSystem&) = delete;
     NetworkSystem&  operator=(NetworkSystem&&) = delete;

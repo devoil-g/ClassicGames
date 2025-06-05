@@ -40,6 +40,16 @@ const RPG::NetworkSystem::Player& RPG::NetworkSystem::getPlayer(std::size_t cont
   return iterator->second;
 }
 
+std::size_t RPG::NetworkSystem::getController(RPG::ECS::Entity entity) const
+{
+  // Entity not registered
+  if (entities.contains(entity) == false)
+    return RPG::NetworkComponent::NoController;
+
+  // Get entity controller
+  return ecs.getComponent<RPG::NetworkComponent>(entity).controller;
+}
+
 Game::JSON::Object  RPG::NetworkSystem::Player::json() const
 {
   Game::JSON::Object  json;
@@ -163,6 +173,16 @@ void  RPG::ServerNetworkSystem::onReceive(std::size_t id, const Game::JSON::Obje
 {
   // TODO
   std::wcout << "[DEBUG::Server] Received (id: " << id << ", type: " << json.get(L"type").array() << ", size: " << json.stringify().size() << "): " << json << std::endl;
+
+  const auto& type = json.get(L"type").array().get(0).string();
+
+  // Player action
+  if (type == L"action")
+    ecs.getSystem<RPG::ActionSystem>().handlePacket(id, json);
+
+  // Invalid action
+  else
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
 void  RPG::ServerNetworkSystem::onTick()
