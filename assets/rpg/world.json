@@ -775,7 +775,7 @@
                 {
                   "direction": "N",
                   "texture": {
-                    "origin": [ 0, 0 ],
+                    "origin": [ 0, 288 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -789,7 +789,7 @@
                 {
                   "direction": "NE",
                   "texture": {
-                    "origin": [ 0, 32 ],
+                    "origin": [ 0, 96 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -803,7 +803,7 @@
                 {
                   "direction": "SE",
                   "texture": {
-                    "origin": [ 0, 64 ],
+                    "origin": [ 0, 0 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -817,7 +817,7 @@
                 {
                   "direction": "S",
                   "texture": {
-                    "origin": [ 0, 96 ],
+                    "origin": [ 0, 192 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -830,6 +830,1571 @@
                 },
                 {
                   "direction": "SW",
+                  "texture": {
+                    "origin": [ 0, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 0, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 1,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 32, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 32, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 32, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 32, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 64, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 64, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.125,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 0, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 0, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 0, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 0, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 0, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 0, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 1,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 64, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 64, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 64, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 64, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 32, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 32, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 5,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 0, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 0, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 0, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 0, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 0, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 0, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.5,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 96, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 96, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 96, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 96, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 96, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 96, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 5,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 0, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 0, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 0, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 0, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 0, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 0, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.15,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 128, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 128, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 128, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 128, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 128, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 128, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.15,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 160, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 160, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 160, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 160, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 160, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 160, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.15,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 128, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 128, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 128, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 128, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 128, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 128, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.15,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 160, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 160, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 160, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 160, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 160, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 160, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.15,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 128, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 128, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 128, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 128, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 128, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 128, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.15,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 160, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 160, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 160, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 160, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 160, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 160, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.15,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 128, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 128, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 128, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 128, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 128, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 128, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 5,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 0, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 0, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 0, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 0, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 0, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 0, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.128,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 192, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 192, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 192, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 192, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 192, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 192, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.128,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 224, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 224, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 224, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 224, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 224, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 224, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.128,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 192, 288 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 192, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 192, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 192, 192 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 192, 0 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 192, 96 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "walk",
+          "frames": [
+            {
+              "duration": 0.1,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 0, 320 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
                   "texture": {
                     "origin": [ 0, 128 ],
                     "size": [ 32, 32 ]
@@ -843,56 +2408,9 @@
                   "path": "blue.png"
                 },
                 {
-                  "direction": "NW",
-                  "texture": {
-                    "origin": [ 0, 160 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                }
-              ]
-            },
-            {
-              "duration": 1,
-              "sprites": [
-                {
-                  "direction": "N",
-                  "texture": {
-                    "origin": [ 64, 0 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 12, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NE",
-                  "texture": {
-                    "origin": [ 64, 32 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
                   "direction": "SE",
                   "texture": {
-                    "origin": [ 64, 64 ],
+                    "origin": [ 0, 32 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -906,7 +2424,7 @@
                 {
                   "direction": "S",
                   "texture": {
-                    "origin": [ 64, 96 ],
+                    "origin": [ 0, 224 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -919,6 +2437,142 @@
                 },
                 {
                   "direction": "SW",
+                  "texture": {
+                    "origin": [ 0, 32 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 0, 128 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.1,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 32, 320 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 32, 128 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 32, 32 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 32, 224 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 32, 32 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 32, 128 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.1,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 64, 320 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
                   "texture": {
                     "origin": [ 64, 128 ],
                     "size": [ 32, 32 ]
@@ -932,56 +2586,9 @@
                   "path": "blue.png"
                 },
                 {
-                  "direction": "NW",
-                  "texture": {
-                    "origin": [ 64, 160 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 14, 4 ],
-                    "size": [ 4, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                }
-              ]
-            },
-            {
-              "duration": 0.6,
-              "sprites": [
-                {
-                  "direction": "N",
-                  "texture": {
-                    "origin": [ 96, 0 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 12, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NE",
-                  "texture": {
-                    "origin": [ 96, 32 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
                   "direction": "SE",
                   "texture": {
-                    "origin": [ 96, 64 ],
+                    "origin": [ 64, 32 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -995,7 +2602,7 @@
                 {
                   "direction": "S",
                   "texture": {
-                    "origin": [ 96, 96 ],
+                    "origin": [ 64, 224 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1009,7 +2616,7 @@
                 {
                   "direction": "SW",
                   "texture": {
-                    "origin": [ 96, 128 ],
+                    "origin": [ 64, 32 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1017,13 +2624,13 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 },
                 {
                   "direction": "NW",
                   "texture": {
-                    "origin": [ 96, 160 ],
+                    "origin": [ 64, 128 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1031,18 +2638,18 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 }
               ]
             },
             {
-              "duration": 2,
+              "duration": 0.1,
               "sprites": [
                 {
                   "direction": "N",
                   "texture": {
-                    "origin": [ 0, 0 ],
+                    "origin": [ 96, 320 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1056,7 +2663,457 @@
                 {
                   "direction": "NE",
                   "texture": {
-                    "origin": [ 0, 32 ],
+                    "origin": [ 96, 128 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 96, 32 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 96, 224 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 96, 32 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 96, 128 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.1,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 128, 320 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 128, 128 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 128, 32 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 128, 224 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 128, 32 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 128, 128 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.1,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 160, 320 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 160, 128 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 160, 32 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 160, 224 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 160, 32 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 160, 128 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.1,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 192, 320 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 192, 128 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 192, 32 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 192, 224 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 192, 32 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 192, 128 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            },
+            {
+              "duration": 0.1,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 224, 320 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 224, 128 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SE",
+                  "texture": {
+                    "origin": [ 224, 32 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
+                  "texture": {
+                    "origin": [ 224, 224 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "SW",
+                  "texture": {
+                    "origin": [ 224, 32 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NW",
+                  "texture": {
+                    "origin": [ 224, 128 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ -1, 1 ],
+                  "path": "blue.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "run",
+          "frames": [
+            {
+              "duration": 0.1,
+              "sprites": [
+                {
+                  "direction": "N",
+                  "texture": {
+                    "origin": [ 0, 352 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 12, 4 ],
+                    "size": [ 7, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "NE",
+                  "texture": {
+                    "origin": [ 0, 160 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1084,7 +3141,7 @@
                 {
                   "direction": "S",
                   "texture": {
-                    "origin": [ 0, 96 ],
+                    "origin": [ 0, 256 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1098,7 +3155,7 @@
                 {
                   "direction": "SW",
                   "texture": {
-                    "origin": [ 0, 128 ],
+                    "origin": [ 0, 64 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1106,7 +3163,7 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 },
                 {
@@ -1120,18 +3177,18 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 }
               ]
             },
             {
-              "duration": 0.6,
+              "duration": 0.1,
               "sprites": [
                 {
                   "direction": "N",
                   "texture": {
-                    "origin": [ 32, 0 ],
+                    "origin": [ 32, 352 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1145,7 +3202,7 @@
                 {
                   "direction": "NE",
                   "texture": {
-                    "origin": [ 32, 32 ],
+                    "origin": [ 32, 160 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1173,7 +3230,7 @@
                 {
                   "direction": "S",
                   "texture": {
-                    "origin": [ 32, 96 ],
+                    "origin": [ 32, 256 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1187,7 +3244,7 @@
                 {
                   "direction": "SW",
                   "texture": {
-                    "origin": [ 32, 128 ],
+                    "origin": [ 32, 64 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1195,7 +3252,7 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 },
                 {
@@ -1209,23 +3266,18 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 }
               ]
-            }
-          ]
-        },
-        {
-          "name": "walk",
-          "frames": [
+            },
             {
               "duration": 0.1,
               "sprites": [
                 {
                   "direction": "N",
                   "texture": {
-                    "origin": [ 0, 192 ],
+                    "origin": [ 64, 352 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1239,7 +3291,7 @@
                 {
                   "direction": "NE",
                   "texture": {
-                    "origin": [ 0, 224 ],
+                    "origin": [ 64, 160 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1253,7 +3305,7 @@
                 {
                   "direction": "SE",
                   "texture": {
-                    "origin": [ 0, 256 ],
+                    "origin": [ 64, 64 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1266,190 +3318,12 @@
                 },
                 {
                   "direction": "S",
-                  "texture": {
-                    "origin": [ 0, 288 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SW",
-                  "texture": {
-                    "origin": [ 0, 320 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NW",
-                  "texture": {
-                    "origin": [ 0, 352 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                }
-              ]
-            },
-            {
-              "duration": 0.1,
-              "sprites": [
-                {
-                  "direction": "N",
-                  "texture": {
-                    "origin": [ 32, 192 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 12, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NE",
-                  "texture": {
-                    "origin": [ 32, 224 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SE",
-                  "texture": {
-                    "origin": [ 32, 256 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "S",
-                  "texture": {
-                    "origin": [ 32, 288 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SW",
-                  "texture": {
-                    "origin": [ 32, 320 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NW",
-                  "texture": {
-                    "origin": [ 32, 352 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                }
-              ]
-            },
-            {
-              "duration": 0.1,
-              "sprites": [
-                {
-                  "direction": "N",
-                  "texture": {
-                    "origin": [ 64, 192 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 12, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NE",
-                  "texture": {
-                    "origin": [ 64, 224 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SE",
                   "texture": {
                     "origin": [ 64, 256 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
                     "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "S",
-                  "texture": {
-                    "origin": [ 64, 288 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
                     "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
@@ -1459,7 +3333,7 @@
                 {
                   "direction": "SW",
                   "texture": {
-                    "origin": [ 64, 320 ],
+                    "origin": [ 64, 64 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1467,13 +3341,13 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 },
                 {
                   "direction": "NW",
                   "texture": {
-                    "origin": [ 64, 352 ],
+                    "origin": [ 64, 160 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1481,7 +3355,7 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 }
               ]
@@ -1492,7 +3366,7 @@
                 {
                   "direction": "N",
                   "texture": {
-                    "origin": [ 96, 192 ],
+                    "origin": [ 96, 352 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1506,7 +3380,7 @@
                 {
                   "direction": "NE",
                   "texture": {
-                    "origin": [ 96, 224 ],
+                    "origin": [ 96, 160 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1519,26 +3393,26 @@
                 },
                 {
                   "direction": "SE",
+                  "texture": {
+                    "origin": [ 96, 64 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
                   "texture": {
                     "origin": [ 96, 256 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
                     "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "S",
-                  "texture": {
-                    "origin": [ 96, 288 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
                     "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
@@ -1548,7 +3422,7 @@
                 {
                   "direction": "SW",
                   "texture": {
-                    "origin": [ 96, 320 ],
+                    "origin": [ 96, 64 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1556,13 +3430,13 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 },
                 {
                   "direction": "NW",
                   "texture": {
-                    "origin": [ 96, 352 ],
+                    "origin": [ 96, 160 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1570,7 +3444,7 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 }
               ]
@@ -1581,7 +3455,7 @@
                 {
                   "direction": "N",
                   "texture": {
-                    "origin": [ 128, 192 ],
+                    "origin": [ 128, 352 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1595,7 +3469,7 @@
                 {
                   "direction": "NE",
                   "texture": {
-                    "origin": [ 128, 224 ],
+                    "origin": [ 128, 160 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1608,26 +3482,26 @@
                 },
                 {
                   "direction": "SE",
+                  "texture": {
+                    "origin": [ 128, 64 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
                   "texture": {
                     "origin": [ 128, 256 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
                     "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "S",
-                  "texture": {
-                    "origin": [ 128, 288 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
                     "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
@@ -1637,7 +3511,7 @@
                 {
                   "direction": "SW",
                   "texture": {
-                    "origin": [ 128, 320 ],
+                    "origin": [ 128, 64 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1645,13 +3519,13 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 },
                 {
                   "direction": "NW",
                   "texture": {
-                    "origin": [ 128, 352 ],
+                    "origin": [ 128, 160 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1659,7 +3533,7 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 }
               ]
@@ -1670,7 +3544,7 @@
                 {
                   "direction": "N",
                   "texture": {
-                    "origin": [ 160, 192 ],
+                    "origin": [ 160, 352 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1684,7 +3558,7 @@
                 {
                   "direction": "NE",
                   "texture": {
-                    "origin": [ 160, 224 ],
+                    "origin": [ 160, 160 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1697,26 +3571,26 @@
                 },
                 {
                   "direction": "SE",
+                  "texture": {
+                    "origin": [ 160, 64 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
                   "texture": {
                     "origin": [ 160, 256 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
                     "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "S",
-                  "texture": {
-                    "origin": [ 160, 288 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
                     "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
@@ -1726,7 +3600,7 @@
                 {
                   "direction": "SW",
                   "texture": {
-                    "origin": [ 160, 320 ],
+                    "origin": [ 160, 64 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1734,13 +3608,13 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 },
                 {
                   "direction": "NW",
                   "texture": {
-                    "origin": [ 160, 352 ],
+                    "origin": [ 160, 160 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1748,7 +3622,7 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 }
               ]
@@ -1759,7 +3633,7 @@
                 {
                   "direction": "N",
                   "texture": {
-                    "origin": [ 192, 192 ],
+                    "origin": [ 192, 352 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1773,7 +3647,7 @@
                 {
                   "direction": "NE",
                   "texture": {
-                    "origin": [ 192, 224 ],
+                    "origin": [ 192, 160 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1786,26 +3660,26 @@
                 },
                 {
                   "direction": "SE",
+                  "texture": {
+                    "origin": [ 192, 64 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
                   "texture": {
                     "origin": [ 192, 256 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
                     "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "S",
-                  "texture": {
-                    "origin": [ 192, 288 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
                     "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
@@ -1815,7 +3689,7 @@
                 {
                   "direction": "SW",
                   "texture": {
-                    "origin": [ 192, 320 ],
+                    "origin": [ 192, 64 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1823,13 +3697,13 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 },
                 {
                   "direction": "NW",
                   "texture": {
-                    "origin": [ 192, 352 ],
+                    "origin": [ 192, 160 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1837,7 +3711,7 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 }
               ]
@@ -1848,7 +3722,7 @@
                 {
                   "direction": "N",
                   "texture": {
-                    "origin": [ 224, 192 ],
+                    "origin": [ 224, 352 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1862,7 +3736,7 @@
                 {
                   "direction": "NE",
                   "texture": {
-                    "origin": [ 224, 224 ],
+                    "origin": [ 224, 160 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1875,26 +3749,26 @@
                 },
                 {
                   "direction": "SE",
+                  "texture": {
+                    "origin": [ 224, 64 ],
+                    "size": [ 32, 32 ]
+                  },
+                  "select": {
+                    "origin": [ 13, 4 ],
+                    "size": [ 6, 21 ]
+                  },
+                  "origin": [ 16, 28 ],
+                  "scale": [ 1, 1 ],
+                  "path": "blue.png"
+                },
+                {
+                  "direction": "S",
                   "texture": {
                     "origin": [ 224, 256 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
                     "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "S",
-                  "texture": {
-                    "origin": [ 224, 288 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
                     "size": [ 7, 21 ]
                   },
                   "origin": [ 16, 28 ],
@@ -1904,7 +3778,7 @@
                 {
                   "direction": "SW",
                   "texture": {
-                    "origin": [ 224, 320 ],
+                    "origin": [ 224, 64 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1912,13 +3786,13 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 },
                 {
                   "direction": "NW",
                   "texture": {
-                    "origin": [ 224, 352 ],
+                    "origin": [ 224, 160 ],
                     "size": [ 32, 32 ]
                   },
                   "select": {
@@ -1926,724 +3800,7 @@
                     "size": [ 6, 21 ]
                   },
                   "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "name": "run",
-          "frames": [
-            {
-              "duration": 0.1,
-              "sprites": [
-                {
-                  "direction": "N",
-                  "texture": {
-                    "origin": [ 0, 384 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 12, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NE",
-                  "texture": {
-                    "origin": [ 0, 416 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SE",
-                  "texture": {
-                    "origin": [ 0, 448 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "S",
-                  "texture": {
-                    "origin": [ 0, 480 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SW",
-                  "texture": {
-                    "origin": [ 0, 512 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NW",
-                  "texture": {
-                    "origin": [ 0, 544 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                }
-              ]
-            },
-            {
-              "duration": 0.1,
-              "sprites": [
-                {
-                  "direction": "N",
-                  "texture": {
-                    "origin": [ 32, 384 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 12, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NE",
-                  "texture": {
-                    "origin": [ 32, 416 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SE",
-                  "texture": {
-                    "origin": [ 32, 448 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "S",
-                  "texture": {
-                    "origin": [ 32, 480 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SW",
-                  "texture": {
-                    "origin": [ 32, 512 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NW",
-                  "texture": {
-                    "origin": [ 32, 544 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                }
-              ]
-            },
-            {
-              "duration": 0.1,
-              "sprites": [
-                {
-                  "direction": "N",
-                  "texture": {
-                    "origin": [ 64, 384 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 12, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NE",
-                  "texture": {
-                    "origin": [ 64, 416 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SE",
-                  "texture": {
-                    "origin": [ 64, 448 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "S",
-                  "texture": {
-                    "origin": [ 64, 480 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SW",
-                  "texture": {
-                    "origin": [ 64, 512 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NW",
-                  "texture": {
-                    "origin": [ 64, 544 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                }
-              ]
-            },
-            {
-              "duration": 0.1,
-              "sprites": [
-                {
-                  "direction": "N",
-                  "texture": {
-                    "origin": [ 96, 384 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 12, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NE",
-                  "texture": {
-                    "origin": [ 96, 416 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SE",
-                  "texture": {
-                    "origin": [ 96, 448 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "S",
-                  "texture": {
-                    "origin": [ 96, 480 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SW",
-                  "texture": {
-                    "origin": [ 96, 512 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NW",
-                  "texture": {
-                    "origin": [ 96, 544 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                }
-              ]
-            },
-            {
-              "duration": 0.1,
-              "sprites": [
-                {
-                  "direction": "N",
-                  "texture": {
-                    "origin": [ 128, 384 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 12, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NE",
-                  "texture": {
-                    "origin": [ 128, 416 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SE",
-                  "texture": {
-                    "origin": [ 128, 448 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "S",
-                  "texture": {
-                    "origin": [ 128, 480 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SW",
-                  "texture": {
-                    "origin": [ 128, 512 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NW",
-                  "texture": {
-                    "origin": [ 128, 544 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                }
-              ]
-            },
-            {
-              "duration": 0.1,
-              "sprites": [
-                {
-                  "direction": "N",
-                  "texture": {
-                    "origin": [ 160, 384 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 12, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NE",
-                  "texture": {
-                    "origin": [ 160, 416 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SE",
-                  "texture": {
-                    "origin": [ 160, 448 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "S",
-                  "texture": {
-                    "origin": [ 160, 480 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SW",
-                  "texture": {
-                    "origin": [ 160, 512 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NW",
-                  "texture": {
-                    "origin": [ 160, 544 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                }
-              ]
-            },
-            {
-              "duration": 0.1,
-              "sprites": [
-                {
-                  "direction": "N",
-                  "texture": {
-                    "origin": [ 192, 384 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 12, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NE",
-                  "texture": {
-                    "origin": [ 192, 416 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SE",
-                  "texture": {
-                    "origin": [ 192, 448 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "S",
-                  "texture": {
-                    "origin": [ 192, 480 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SW",
-                  "texture": {
-                    "origin": [ 192, 512 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NW",
-                  "texture": {
-                    "origin": [ 192, 544 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                }
-              ]
-            },
-            {
-              "duration": 0.1,
-              "sprites": [
-                {
-                  "direction": "N",
-                  "texture": {
-                    "origin": [ 224, 384 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 12, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NE",
-                  "texture": {
-                    "origin": [ 224, 416 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SE",
-                  "texture": {
-                    "origin": [ 224, 448 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "S",
-                  "texture": {
-                    "origin": [ 224, 480 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 7, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "SW",
-                  "texture": {
-                    "origin": [ 224, 512 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
-                  "path": "blue.png"
-                },
-                {
-                  "direction": "NW",
-                  "texture": {
-                    "origin": [ 224, 544 ],
-                    "size": [ 32, 32 ]
-                  },
-                  "select": {
-                    "origin": [ 13, 4 ],
-                    "size": [ 6, 21 ]
-                  },
-                  "origin": [ 16, 28 ],
-                  "scale": [ 1, 1 ],
+                  "scale": [ -1, 1 ],
                   "path": "blue.png"
                 }
               ]
@@ -8497,6 +9654,12 @@
                 },
                 "origin": [ 16, 8 ],
                 "path": "cursor.png"
+              }
+            },
+            {
+              "duration": 0,
+              "sprites": {
+                "color": { "alpha": 0 }
               }
             }
           ]

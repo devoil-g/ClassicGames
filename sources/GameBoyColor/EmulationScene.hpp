@@ -19,9 +19,10 @@ namespace GBC
   class EmulationScene : public Game::AbstractScene
   {
   private:
-    GBC::GameBoyColor   _gbc;   // Game Boy emulator
-    float               _fps;   // Timer for FPS control
-    bool                _vsync; // Vertical sync before the scene
+    sf::Texture         _texture; // Rendering target
+    GBC::GameBoyColor   _gbc;     // Game Boy emulator
+    float               _fps;     // Timer for FPS control
+    bool                _vsync;   // Vertical sync before the scene
 
     class SoundStream : public sf::SoundStream
     {

@@ -7,6 +7,8 @@
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
+#include "Math/Vector.hpp"
+
 namespace GBC
 {
   class GameBoyColor;
@@ -186,8 +188,9 @@ namespace GBC
     std::uint8_t  _sOffset;   // Number of Sprites pixel to discard
     std::uint8_t  _sWait;     // Sprites pixels fetcher wait time
 
-    sf::Image   _image;   // Rendering target on RAM
-    sf::Texture _texture; // Rendering target in GPU
+    sf::Image                     _image;   // Rendering target on RAM
+    sf::Texture&                  _texture; // Rendering target in GPU
+    Math::Vector<2, unsigned int> _origin;  // Position in rendering target
     
     void  simulateMode0(); // Simulate an horizontal blank tick
     void  simulateMode1(); // Simulate a vertical blank tick
@@ -207,7 +210,7 @@ namespace GBC
     std::uint8_t  getLine() const;            // Get current line
 
   public:
-    PixelProcessingUnit(GBC::GameBoyColor& gbc);
+    PixelProcessingUnit(GBC::GameBoyColor& gbc, sf::Texture& texture, Math::Vector<2, unsigned int> origin);
     ~PixelProcessingUnit() = default;
 
     std::uint8_t  readRam(std::uint16_t address); // Read a byte from Video RAM

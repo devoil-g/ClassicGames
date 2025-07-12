@@ -3,16 +3,19 @@
 #include <string>
 
 #include "RolePlayingGame/EntityComponentSystem/Systems/Systems.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/NetworkSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/Components.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/CellComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp"
 
-RPG::ActionSystem::ActionSystem(RPG::ECS& ecs) :
+RPG::ServerActionSystem::ServerActionSystem(RPG::ECS& ecs) :
   RPG::ECS::System(ecs)
 {}
 
-void  RPG::ActionSystem::execute(float elapsed)
+void  RPG::ServerActionSystem::execute(float elapsed)
 {
   // Execute actions in elapsed time
   while (elapsed > 0.f) {
@@ -21,7 +24,7 @@ void  RPG::ActionSystem::execute(float elapsed)
 
     // Find next entity to execute
     for (auto entity : entities) {
-      auto& action = ecs.getComponent<RPG::ActionComponent>(entity);
+      auto& action = ecs.getComponent<RPG::ServerActionComponent>(entity);
 
       // Get next action
       if (action.action == nullptr)
@@ -45,7 +48,7 @@ void  RPG::ActionSystem::execute(float elapsed)
 
     // Reduce wait time of entities
     for (auto entity : entities) {
-      auto& action = ecs.getComponent<RPG::ActionComponent>(entity);
+      auto& action = ecs.getComponent<RPG::ServerActionComponent>(entity);
 
       action.wait = std::max(0.f, action.wait - timer);
     }
@@ -55,19 +58,19 @@ void  RPG::ActionSystem::execute(float elapsed)
 
     // Execute action
     if (next != RPG::ECS::InvalidEntity) {
-      auto& action = ecs.getComponent<RPG::ActionComponent>(next);
+      auto& action = ecs.getComponent<RPG::ServerActionComponent>(next);
       auto oldMode = action.mode;
 
       try {
         switch (action.mode) {
         case RPG::ActionComponent::Mode::Wait:
-          action.action->atWait(ecs, next);
+          action.action->atWait();
           break;
         case RPG::ActionComponent::Mode::Command:
-          action.action->atCommand(ecs, next);
+          action.action->atCommand();
           break;
         case RPG::ActionComponent::Mode::Execute:
-          action.action->atExecute(ecs, next);
+          action.action->atExecute();
           break;
         default:
           throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
@@ -98,11 +101,13 @@ void  RPG::ActionSystem::execute(float elapsed)
   }
 }
 
-void  RPG::ActionSystem::handlePacket(std::size_t id, const Game::JSON::Object& json)
+void  RPG::ServerActionSystem::handlePacket(std::size_t id, const Game::JSON::Object& json)
 {
   // Entity not controlled by this player
-  if (id != ecs.getSystem<RPG::ServerNetworkSystem>().getController(ecs.getSystem<RPG::ServerEntitySystem>().getEntity(json.get(L"id").string())))
+  if (id != ecs.getSystem<RPG::ServerNetworkSystem>().getController(ecs.getSystem<RPG::ServerEntitySystem>().getEntity(json.get(L"id").string()))) {
+    std::wcerr << "[RPG::ActionSystem]: invalid action request if client #" << id << " for entity #" << ecs.getSystem<RPG::ServerEntitySystem>().getEntity(json.get(L"id").string()) << " (id: '" << json.get(L"id").string() << "')" << std::endl;
     return;
+  }
 
   const auto& type = json.get(L"type").array().get(1).string();
 
@@ -115,48 +120,155 @@ void  RPG::ActionSystem::handlePacket(std::size_t id, const Game::JSON::Object& 
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-void  RPG::ActionSystem::handleMove(std::size_t id, const Game::JSON::Object& json)
+void  RPG::ServerActionSystem::handleMove(std::size_t id, const Game::JSON::Object& json)
 {
-  auto entity = ecs.getSystem<RPG::ServerEntitySystem>().getEntity(json.get(L"id").string());
-
-  std::cout << "Start move!" << std::endl;
+  auto  entity = ecs.getSystem<RPG::ServerEntitySystem>().getEntity(json.get(L"id").string());
+  auto& action = ecs.getComponent<RPG::ServerActionComponent>(entity);
 
   // Add move action to entity
-  ecs.getComponent<RPG::ActionComponent>(entity).next = std::make_unique<RPG::MoveAction>(ecs, entity, json);
+  action.next = std::make_unique<RPG::ServerMoveAction>(ecs, entity, json);
+
+  // Interrupt previous action
+  if (action.action != nullptr)
+    action.action->interrupt();
 }
 
-RPG::MoveAction::MoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, const Game::JSON::Object& json) :
-  _coordinates(json.get(L"coordinates").array())
+RPG::ClientActionSystem::ClientActionSystem(RPG::ECS& ecs) :
+  RPG::ECS::System(ecs),
+  _blocking()
 {}
 
-RPG::MoveAction::~MoveAction()
-{}
-
-void  RPG::MoveAction::atWait(RPG::ECS& ecs, RPG::ECS::Entity self)
+void  RPG::ClientActionSystem::execute(float elapsed)
 {
-  auto& action = ecs.getComponent<RPG::ActionComponent>(self);
+  std::array<float, RPG::ECS::MaxEntities>  remaining;
+
+  // Save remaining time for each entity
+  for (auto entity : entities)
+    remaining[entity] = elapsed;
+
+  bool blocked = true;
+
+  // Repeat as long as there is someting to update
+  while (blocked == true)
+  {
+    // Reset flag
+    blocked = false;
+
+    // Update each entity
+    for (auto entity : entities) {
+      auto& action = ecs.getComponent<RPG::ClientActionComponent>(entity);
+      auto blocking = _blocking.empty() == true ? std::numeric_limits<std::size_t>().max() : _blocking.front();
+
+      // Execute actions of entity
+      while (remaining[entity] > 0.f && action.actions.empty() == false)
+      {
+        // Stop if blocked
+        if (action.actions.front()->index > blocking) {
+          blocked = true;
+          break;
+        }
+
+        // Update action
+        remaining[entity] = action.actions.front()->update(remaining[entity]);
+
+        // Action done
+        if (remaining[entity] > 0.f)
+        {
+          // Check if action is blocking
+          if (action.actions.front()->index == blocking)
+            _blocking.pop();
+
+          // Remove action
+          action.actions.pop_front();
+        }
+      }
+
+    }
+  }
+}
+
+void  RPG::ClientActionSystem::handlePacket(const Game::JSON::Object& json)
+{
+  const auto& type = json.get(L"type").array().get(1).string();
+
+  // Move action
+  if (type == L"move")
+    handleMove(json);
+
+  // Invalid action
+  else
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+}
+
+void  RPG::ClientActionSystem::handleMove(const Game::JSON::Object& json)
+{
+  auto entity = ecs.getSystem<RPG::ClientEntitySystem>().getEntity(json.get(L"id").string());
+
+  // Check entity exist
+  if (entity == RPG::ECS::InvalidEntity) {
+    std::wcerr << "[RPG::ClientActionSystem]: unknow entity '" << json.get(L"id").string() << "'." << std::endl;
+    return;
+  }
+
+  // Add move action to entity (not blocking)
+  ecs.getComponent<RPG::ClientActionComponent>(entity).actions.push_back(std::make_unique<RPG::ClientMoveAction>(ecs, entity, json));
+}
+
+RPG::ServerMoveAction::ServerMoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, const Game::JSON::Object& json) :
+  RPG::ServerActionComponent::Action(ecs, self),
+  _target(json.get(L"target").array()),
+  _interrupted(false)
+{}
+
+void  RPG::ServerMoveAction::atWait()
+{
+  auto& action = ecs.getComponent<RPG::ServerActionComponent>(self);
 
   // Switch of execute mode
   action.mode = RPG::ActionComponent::Mode::Execute;
   action.wait = 0.f;
 
   // Immediatly execute first move
-  atExecute(ecs, self);
+  atExecute();
 }
 
-void  RPG::MoveAction::atCommand(RPG::ECS& ecs, RPG::ECS::Entity self)
+void  RPG::ServerMoveAction::atCommand()
 {
   // Never use command mode on a move action
   throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-void  RPG::MoveAction::atExecute(RPG::ECS& ecs, RPG::ECS::Entity self)
+void  RPG::ServerMoveAction::atExecute()
 {
-  auto& action = ecs.getComponent<RPG::ActionComponent>(self);
+  auto& action = ecs.getComponent<RPG::ServerActionComponent>(self);
   auto& entity = ecs.getComponent<RPG::EntityComponent>(self);
-  auto direction = _coordinates - entity.coordinates;
+  auto direction = _target - entity.coordinates;
 
   RPG::Direction    targetDirection;
+
+  // Move interrupted, stop at current position
+  if (_interrupted == true)
+    _target = entity.coordinates;
+
+  // Target reached
+  if (_target == entity.coordinates)
+  {
+    // Reset mode
+    action.mode = RPG::ActionComponent::Mode::Wait;
+    action.wait = 0.f;
+
+    Game::JSON::Object  json;
+
+    // Send wait to players
+    json.set(L"id", entity.id);
+    json.set(L"mode", "wait");
+    json.set(L"duration", (double)action.wait);
+    ecs.getSystem<RPG::ServerNetworkSystem>().broadcast({ L"action", L"none" }, json);
+
+    // End action
+    action.action.reset();
+    return;
+  }
 
   // Find direction
   if (direction.x() > 0 && direction.y() > 0)
@@ -169,40 +281,89 @@ void  RPG::MoveAction::atExecute(RPG::ECS& ecs, RPG::ECS::Entity self)
     targetDirection = RPG::Direction::DirectionNorthWest;
   else if (direction.x() < 0)
     targetDirection = RPG::Direction::DirectionSouthWest;
-  else if (direction.y() < 0)
-    targetDirection = RPG::Direction::DirectionSouthEast;
-
-  // Coordinates reached
   else
-  {
-    // End action
-    action.action.reset();
-    action.mode = RPG::ActionComponent::Mode::Wait;
-    action.wait = 0.f;
-
-    Game::JSON::Object  json;
-
-    // Send wait to players
-    json.set(L"id", entity.id);
-    json.set(L"mode", "wait");
-    json.set(L"duration", (double)action.wait);
-    ecs.getSystem<RPG::ServerNetworkSystem>().broadcast({ L"action", L"none" }, json);
-    return;
-  }
+    targetDirection = RPG::Direction::DirectionSouthEast;
 
   // Move entity
   entity.coordinates += RPG::DirectionCoordinates[targetDirection];
-  action.wait = 1.f;
+  entity.direction = targetDirection;
+  action.wait = 0.625f;
 
   Game::JSON::Object  json;
   
   // Send move to players
   json.set(L"id", entity.id);
   json.set(L"coordinates", entity.coordinates.json());
-  json.set(L"target", _coordinates.json());
+  json.set(L"direction", RPG::DirectionToString(entity.direction));
+  json.set(L"target", _target.json());
+  json.set(L"position", entity.position.json());
   json.set(L"mode", "execute");
   json.set(L"duration", (double)action.wait);
   ecs.getSystem<RPG::ServerNetworkSystem>().broadcast({ L"action", L"move" }, json);
+}
+
+void  RPG::ServerMoveAction::interrupt()
+{
+  // Stop move
+  _interrupted = true;
+}
+
+RPG::ClientMoveAction::ClientMoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, const Game::JSON::Object& json) :
+  RPG::ClientActionComponent::Action(ecs, self),
+  _targetCoordinates(json.get(L"target").array()),
+  _moveCoordinates(json.get(L"coordinates").array()),
+  _movePosition(json.get(L"position").array()),
+  _moveDirection(RPG::StringToDirection(json.get(L"direction").string())),
+  _remaining(json.get(L"duration").number())
+{}
+
+float RPG::ClientMoveAction::update(float elapsed)
+{
+  auto& entity = ecs.getComponent<RPG::EntityComponent>(self);
+
+  // Start move
+  if (entity.coordinates != _moveCoordinates)
+  {
+    // Get height of cells
+    const auto& boardSystem = ecs.getSystem<RPG::ClientBoardSystem>();
+    auto cellOrigin = boardSystem.getCell(entity.coordinates);
+    auto heightOrigin = cellOrigin == RPG::ECS::InvalidEntity ? 0.f : ecs.getComponent<RPG::CellComponent>(cellOrigin).height;
+    auto cellDestination = boardSystem.getCell(_moveCoordinates);
+    auto heightDestination = cellDestination == RPG::ECS::InvalidEntity ? 0.f : ecs.getComponent<RPG::CellComponent>(cellDestination).height;
+
+    // Register new position
+    entity.position = {
+      entity.position.x() + entity.coordinates.x() - _moveCoordinates.x(),
+      entity.position.y() + entity.coordinates.y() - _moveCoordinates.y(),
+      entity.position.z() + heightOrigin - heightDestination
+    };
+    entity.coordinates = _moveCoordinates;
+    entity.direction = _moveDirection;
+
+    // Start move animation
+    ecs.getSystem<RPG::ClientModelSystem>().setAnimation(self, RPG::Model::Actor::RunAnimation, RPG::Model::Actor::Mode::Loop, +1.f);
+  }
+
+  // End of move
+  if (elapsed > _remaining)
+  {
+    // Force entity to destination
+    entity.position = _movePosition;
+
+    // Stop run animation if at target destination
+    if (entity.coordinates == _targetCoordinates)
+      ecs.getSystem<RPG::ClientModelSystem>().setAnimation(self, RPG::Model::Actor::IdleAnimation, RPG::Model::Actor::Mode::Loop, +1.f);
+
+    return elapsed - _remaining;
+  }
+
+  // Move entity to new position
+  entity.position += (_movePosition - entity.position) * (elapsed / _remaining);
+
+  // Compute remaining time
+  _remaining -= elapsed;
+
+  return 0.f;
 }
 
 /*

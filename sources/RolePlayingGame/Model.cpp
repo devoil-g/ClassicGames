@@ -175,8 +175,16 @@ void  RPG::Model::Actor::setModel(RPG::Model& model)
 
 void  RPG::Model::Actor::setAnimation(const std::wstring& name, Mode mode, float speed)
 {
+  auto newAnimation = &_model.get()._animations[name];
+
+  // Same repeating animation, do not restart
+  if (&_animation.get() == newAnimation && _mode == mode && (_mode == Mode::Loop || _mode == Mode::PingPong)) {
+    _speed = speed;
+    return;
+  }
+
   // Base parameters
-  _animation =_model.get()._animations[name];
+  _animation = *newAnimation;
   _speed = speed;
   _mode = mode;
 

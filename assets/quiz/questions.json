@@ -127,7 +127,7 @@
           "set": [ 1, 2, 3, 4, 5 ],
           "question": "Quelles cellules sont en charge du transport de l'oxygène dans le sang ?",
           "answers": [ "Les globules blanc", "Les globules rouges", "Les globules rosés", "Les grosses bulles" ],
-          "correct": 1,
+          "correct": 2,
           "info": "Les globules blanc protègent l'organisme, les rouges transportent l'oxygène."
         },
         {
@@ -135,7 +135,7 @@
           "set": [ 1, 2, 3, 4, 5 ],
           "question": "Où poussent les carottes ?",
           "answers": [ "Sous l'eau", "Sur les arbres", "Dans la terre", "Dans ton cul" ],
-          "correct": 2,
+          "correct": 3,
           "info": "Certaines carottes poussent également dans le sable."
         },
         {
@@ -164,15 +164,14 @@
           "set": [ 1, 2, 3, 4, 5 ],
           "question": "Combien de temps incube un oeuf de poule ?",
           "answers": [ "21 heures", "21 jours", "21 semaines", "21 mois" ],
-          "correct": 1,
+          "correct": 2,
           "info": "21 jours pour la poule, 17 pour le pigeon, 42 pour l'autruche."
         },
         {
           "id": "vict_008",
           "set": [ 1, 2, 3, 4, 5 ],
           "question": "Quel type d'organe est le coeur ?",
-          "answers": [ "Musculaire", "osseux", "Glandulaire", "Respiratoire" ],
-          "correct": 1,
+          "answers": [ "Musculaire", "Osseux", "Glandulaire", "Respiratoire" ],
           "info": "Il bat en moyenne 2.9 milliard de fois dans une vie."
         },
         {

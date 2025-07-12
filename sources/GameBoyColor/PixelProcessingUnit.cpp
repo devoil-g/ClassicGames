@@ -5,7 +5,7 @@
 #include "GameBoyColor/GameBoyColor.hpp"
 #include "GameBoyColor/PixelProcessingUnit.hpp"
 
-GBC::PixelProcessingUnit::PixelProcessingUnit(GBC::GameBoyColor& gbc) :
+GBC::PixelProcessingUnit::PixelProcessingUnit(GBC::GameBoyColor& gbc, sf::Texture& texture, Math::Vector<2, unsigned int> origin) :
   _gbc(gbc),
   _ram{ 0 },
   _bgc{ 0 },
@@ -15,18 +15,18 @@ GBC::PixelProcessingUnit::PixelProcessingUnit(GBC::GameBoyColor& gbc) :
   _sprites(),
   _cycles(0),
   _image(),
-  _texture()
+  _texture(texture),
+  _origin(origin)
 {
-  // Allocate image memory buffers
+  // Allocate image memory buffer
   _image.resize({ GBC::PixelProcessingUnit::ScreenWidth, GBC::PixelProcessingUnit::ScreenHeight }, sf::Color::White);
-  if (_texture.resize(_image.getSize()) == false)
+
+  // Check texture size
+  if (ScreenWidth + origin.x() > _texture.getSize().x || ScreenHeight + origin.y() > _texture.getSize().y)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // White image
-  _texture.update(_image);
-
-  // Texture is not filtered
-  _texture.setSmooth(false);
+  _texture.update(_image, sf::Vector2u(_origin.x(), _origin.y()));
 }
 
 void  GBC::PixelProcessingUnit::simulate()
@@ -72,7 +72,7 @@ void  GBC::PixelProcessingUnit::simulateMode0()
       _gbc._io[GBC::GameBoyColor::IO::IF] |= GBC::GameBoyColor::Interrupt::InterruptVBlank;
 
       // Send texture to VRAM for display
-      _texture.update(_image);
+      _texture.update(_image, sf::Vector2u(_origin.x(), _origin.y()));
     }
   }
 }
@@ -763,7 +763,7 @@ void  GBC::PixelProcessingUnit::writeIo(std::uint16_t address, std::uint8_t valu
 
       // White image
       std::memset((std::uint8_t*)_image.getPixelsPtr(), 0xFF, _image.getSize().x * _image.getSize().y * 4);
-      _texture.update(_image);
+      _texture.update(_image, sf::Vector2u(_origin.x(), _origin.y()));
     }
 
     // Enabling PPU, start

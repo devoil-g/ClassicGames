@@ -1,6 +1,7 @@
 #include <SFML/Network/IpAddress.hpp>
 
 #include "RolePlayingGame/ClientScene.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/Components.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/BoardComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/CellComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp"
@@ -8,6 +9,7 @@
 #include "RolePlayingGame/EntityComponentSystem/Components/NetworkComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ParticleComponent.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/ParticleEmitterComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/Systems.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.hpp"
@@ -37,6 +39,7 @@ RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::uint16_t port, s
   _ecs.addComponent<RPG::NetworkComponent>();
   _ecs.addComponent<RPG::ParticleComponent>();
   _ecs.addComponent<RPG::ParticleEmitterComponent>();
+  _ecs.addComponent<RPG::ClientActionComponent>();
 
   RPG::ECS::Signature signature;
 
@@ -66,6 +69,9 @@ RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::uint16_t port, s
   signature.reset();
   signature.set(_ecs.typeComponent<RPG::ParticleEmitterComponent>());
   _ecs.addSystem<RPG::ParticleEmitterSystem>(signature);
+  signature.reset();
+  signature.set(_ecs.typeComponent<RPG::ClientActionComponent>());
+  _ecs.addSystem<RPG::ClientActionSystem>(signature);
 }
 
 bool  RPG::ClientScene::update(float elapsed)
@@ -74,6 +80,7 @@ bool  RPG::ClientScene::update(float elapsed)
   _ecs.getSystem<RPG::ClientNetworkSystem>().receive();
 
   // Update ECS
+  _ecs.getSystem<RPG::ClientActionSystem>().execute(elapsed);
   _ecs.getSystem<RPG::ClientNetworkSystem>().executeUpdate(elapsed);
   _ecs.getSystem<RPG::ClientModelSystem>().executeCamera(elapsed);
   _ecs.getSystem<RPG::ParticleSystem>().execute(elapsed);
@@ -102,7 +109,7 @@ bool  RPG::ClientScene::update(float elapsed)
     Game::JSON::Object  json;
     
     json.set(L"id", _ecs.getComponent<RPG::EntityComponent>(controlled).id);
-    json.set(L"coordinates", _ecs.getComponent<RPG::CellComponent>(cell).coordinates.json());
+    json.set(L"target", _ecs.getComponent<RPG::CellComponent>(cell).coordinates.json());
     _ecs.getSystem<RPG::ClientNetworkSystem>().send({ L"action", L"move" }, json);
     _ecs.getSystem<RPG::ClientBoardSystem>().setClick(cell);
   }

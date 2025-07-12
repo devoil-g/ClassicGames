@@ -1,5 +1,7 @@
 #pragma once
 
+#include <queue>
+
 #include "RolePlayingGame/EntityComponentSystem/EntityComponentSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/Components.hpp"
 #include "RolePlayingGame/Types.hpp"
@@ -7,44 +9,95 @@
 
 namespace RPG
 {
-  class ActionSystem : public RPG::ECS::System
+  class ServerActionSystem : public RPG::ECS::System
   {
-  public:
-    ActionSystem() = delete;
-    ActionSystem(RPG::ECS& ecs);
-    ActionSystem(const ActionSystem&) = delete;
-    ActionSystem(ActionSystem&&) = delete;
-    ~ActionSystem() = default;
+  private:
+    void  handleMove(std::size_t id, const Game::JSON::Object& json); // Handle a move action
 
-    ActionSystem& operator=(const ActionSystem&) = delete;
-    ActionSystem& operator=(ActionSystem&&) = delete;
+  public:
+    ServerActionSystem() = delete;
+    ServerActionSystem(RPG::ECS& ecs);
+    ServerActionSystem(const ServerActionSystem&) = delete;
+    ServerActionSystem(ServerActionSystem&&) = delete;
+    ~ServerActionSystem() = default;
+
+    ServerActionSystem& operator=(const ServerActionSystem&) = delete;
+    ServerActionSystem& operator=(ServerActionSystem&&) = delete;
 
     void  execute(float elapsed); // Update and execute actions
 
     void  handlePacket(std::size_t id, const Game::JSON::Object& json); // Handle a packet
-    void  handleMove(std::size_t id, const Game::JSON::Object& json);   // Handle a move action
   };
 
-  class MoveAction : public RPG::ActionComponent::IAction
+  class ClientActionSystem : public RPG::ECS::System
   {
   private:
-    RPG::Coordinates  _coordinates; // Target of move
+    std::queue<std::size_t>  _blocking;  // Indexes of blocking actions
+
+    void  handleMove(const Game::JSON::Object& json); // Handle a move action
 
   public:
-    MoveAction() = delete;
-    MoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, const Game::JSON::Object& json);
-    MoveAction(const MoveAction&) = delete;
-    MoveAction(MoveAction&&) = delete;
-    ~MoveAction();
+    ClientActionSystem() = delete;
+    ClientActionSystem(RPG::ECS& ecs);
+    ClientActionSystem(const ClientActionSystem&) = delete;
+    ClientActionSystem(ClientActionSystem&&) = delete;
+    ~ClientActionSystem() = default;
 
-    MoveAction& operator=(const MoveAction&) = delete;
-    MoveAction& operator=(MoveAction&&) = delete;
+    ClientActionSystem& operator=(const ClientActionSystem&) = delete;
+    ClientActionSystem& operator=(ClientActionSystem&&) = delete;
 
-    virtual void  atWait(RPG::ECS& ecs, RPG::ECS::Entity self) override;    // Take action after "Wait" time
-    virtual void  atCommand(RPG::ECS& ecs, RPG::ECS::Entity self) override; // Take action after "Command" time
-    virtual void  atExecute(RPG::ECS& ecs, RPG::ECS::Entity self) override; // Take action after "Execute" time
+    void  execute(float elapsed); // Update and execute actions
+
+    void  handlePacket(const Game::JSON::Object& json); // Handle a packet
   };
 
+  class ServerMoveAction : public RPG::ServerActionComponent::Action
+  {
+  private:
+    RPG::Coordinates  _target;      // Target of move
+    bool              _interrupted; // True if move should stop
+
+  public:
+    ServerMoveAction() = delete;
+    ServerMoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, const Game::JSON::Object& json);
+    ServerMoveAction(const ServerMoveAction&) = delete;
+    ServerMoveAction(ServerMoveAction&&) = delete;
+    ~ServerMoveAction() = default;
+
+    ServerMoveAction& operator=(const ServerMoveAction&) = delete;
+    ServerMoveAction& operator=(ServerMoveAction&&) = delete;
+
+    void  atWait() override;    // Start execution
+    void  atCommand() override; // Should not happen
+    void  atExecute() override; // Move one step
+
+    void  interrupt() override; // Stop move
+  };
+
+  class ClientMoveAction : public RPG::ClientActionComponent::Action
+  {
+  private:
+    RPG::Coordinates  _targetCoordinates;    // Final move target coordinates
+    RPG::Coordinates  _moveCoordinates;
+    RPG::Position     _movePosition;  // Targeted position in cell
+    RPG::Direction    _moveDirection;
+    float             _remaining; // Time before end of move
+
+  public:
+    ClientMoveAction() = delete;
+    ClientMoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, const Game::JSON::Object& json);
+    ClientMoveAction(const ClientMoveAction&) = delete;
+    ClientMoveAction(ClientMoveAction&&) = delete;
+    ~ClientMoveAction() = default;
+
+    ClientMoveAction& operator=(const ClientMoveAction&) = delete;
+    ClientMoveAction& operator=(ClientMoveAction&&) = delete;
+
+    float update(float elapsed) override; // Update move action
+
+
+
+  };
 
   /*
   class MovingSystem : public RPG::ECS::System

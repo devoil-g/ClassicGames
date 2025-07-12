@@ -24,7 +24,7 @@ RPG::Server::Server(const std::filesystem::path& config, std::uint16_t port, std
   _ecs.addComponent<RPG::EntityComponent>();
   _ecs.addComponent<RPG::ModelComponent>(); // NOTE: not really used in server, only for model library
   _ecs.addComponent<RPG::NetworkComponent>();
-  _ecs.addComponent<RPG::ActionComponent>();
+  _ecs.addComponent<RPG::ServerActionComponent>();
 
   RPG::ECS::Signature signature;
 
@@ -43,8 +43,8 @@ RPG::Server::Server(const std::filesystem::path& config, std::uint16_t port, std
   signature.set(_ecs.typeComponent<RPG::ModelComponent>());
   _ecs.addSystem<RPG::ServerModelSystem>(signature);
   signature.reset();
-  signature.set(_ecs.typeComponent<RPG::ActionComponent>());
-  _ecs.addSystem<RPG::ActionSystem>(signature);
+  signature.set(_ecs.typeComponent<RPG::ServerActionComponent>());
+  _ecs.addSystem<RPG::ServerActionSystem>(signature);
 
   // Load level
   Game::JSON::Object json(config);

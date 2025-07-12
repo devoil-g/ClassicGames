@@ -3,10 +3,6 @@
 #include "RolePlayingGame/Color.hpp"
 
 const RPG::Color  RPG::Color::Default = RPG::Color(DefaultRed, DefaultGreen, DefaultBlue, DefaultAlpha);
-const float       RPG::Color::DefaultRed = 1.f;
-const float       RPG::Color::DefaultGreen = 1.f;
-const float       RPG::Color::DefaultBlue = 1.f;
-const float       RPG::Color::DefaultAlpha = 1.f;
 
 const RPG::Color    RPG::Color::White = RPG::Color(1.f, 1.f, 1.f);
 const RPG::Color    RPG::Color::Black = RPG::Color(0.f, 0.f, 0.f);

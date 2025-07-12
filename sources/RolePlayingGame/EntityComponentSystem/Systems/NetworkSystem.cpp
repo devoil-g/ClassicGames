@@ -178,7 +178,7 @@ void  RPG::ServerNetworkSystem::onReceive(std::size_t id, const Game::JSON::Obje
 
   // Player action
   if (type == L"action")
-    ecs.getSystem<RPG::ActionSystem>().handlePacket(id, json);
+    ecs.getSystem<RPG::ServerActionSystem>().handlePacket(id, json);
 
   // Invalid action
   else
@@ -188,7 +188,7 @@ void  RPG::ServerNetworkSystem::onReceive(std::size_t id, const Game::JSON::Obje
 void  RPG::ServerNetworkSystem::onTick()
 {
   // Execute actions
-  ecs.getSystem<RPG::ActionSystem>().execute(1.f / getTickrate());
+  ecs.getSystem<RPG::ServerActionSystem>().execute(1.f / getTickrate());
 }
 
 void  RPG::ServerNetworkSystem::header(Game::JSON::Object& json, const std::vector<std::wstring>& type) const
@@ -273,6 +273,8 @@ void  RPG::ClientNetworkSystem::receive()
         ecs.getSystem<RPG::ClientBoardSystem>().handlePacket(json);
       else if (type == L"entity")
         ecs.getSystem<RPG::ClientEntitySystem>().handlePacket(json);
+      else if (type == L"action")
+        ecs.getSystem<RPG::ClientActionSystem>().handlePacket(json);
       else
         throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
     }

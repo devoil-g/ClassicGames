@@ -170,7 +170,7 @@ QUIZ::Quiz::Quiz() :
 
           // Get set numbers
           for (const auto& setEntry : entryQuestion->object().get(L"set").array())
-            question.set.insert((unsigned int)setEntry->object().number());
+            question.set.insert((unsigned int)std::clamp((int)setEntry->number(), 1, 15) - 1);
 
           // Get answers
           for (unsigned int index = 0; index < 4; index++)
@@ -178,7 +178,7 @@ QUIZ::Quiz::Quiz() :
 
           // Correct answer index forced, don't shuffle
           if (entryQuestion->object().contains(L"correct") == true)
-            question.correct = (unsigned int)entryQuestion->object().get(L"correct").number();
+            question.correct = (unsigned int)std::clamp((int)entryQuestion->object().get(L"correct").number(), 1, 4) - 1;
 
           // No correct index, shuffle answers
           else {
@@ -187,6 +187,8 @@ QUIZ::Quiz::Quiz() :
             std::shuffle(question.answers.begin(), question.answers.end(), randomEngine);
             question.correct = (unsigned int)std::distance(question.answers.begin(), std::find(question.answers.begin(), question.answers.end(), correct));
           }
+
+          std::wcout << "Add question: " << question.question << std::endl;
 
           // Add question to set pool
           millionaire.questions.push_back(std::move(question));

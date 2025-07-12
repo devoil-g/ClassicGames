@@ -7,11 +7,15 @@
 
 GBC::EmulationScene::EmulationScene(Game::SceneMachine& machine, const std::filesystem::path& filename) :
   Game::AbstractScene(machine),
-  _gbc(filename),
+  _texture(sf::Vector2u(GBC::PixelProcessingUnit::ScreenWidth, GBC::PixelProcessingUnit::ScreenHeight)),
+  _gbc(filename, _texture, Math::Vector<2, unsigned int>((unsigned int)0, (unsigned int)0)),
   _fps(-0.42f),
   _stream(),
   _vsync(Game::Window::Instance().getVerticalSync())
 {
+  // Texture is not filtered
+  _texture.setSmooth(false);
+
   // Start sound stream
   _stream.setVolume(30.f);
   _stream.play();
@@ -32,7 +36,7 @@ GBC::EmulationScene::~EmulationScene()
 bool  GBC::EmulationScene::update(float elapsed)
 {
   // Update timers
-  _fps = std::min(_fps + elapsed, 2.f * (GBC::PixelProcessingUnit::ScreenHeight + GBC::PixelProcessingUnit::ScreenBlank) * GBC::PixelProcessingUnit::ScanlineDuration / Math::Pow<22>(2));
+  _fps = std::min(_fps + elapsed, 2.f * (float)GBC::PixelProcessingUnit::FrameDuration / (float)GBC::CentralProcessingUnit::Frequency);
 
   // Sound volume control
   if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Subtract) == true)
@@ -59,11 +63,11 @@ bool  GBC::EmulationScene::update(float elapsed)
 
   // Simulate frames at 59.72 fps
   // NOTE: simulate at most one frame per call to avoid exponential delay
-  if (_fps >= 70224.f / Math::Pow<22>(2) ||
+  if (_fps >= (float)GBC::PixelProcessingUnit::FrameDuration / (float)GBC::CentralProcessingUnit::Frequency ||
     Game::Window::Instance().keyboard().keyDown(Game::Window::Key::LControl) == true ||
     Game::Window::Instance().joystick().position(0, Game::Window::JoystickAxis::Z) < -64.f) {
     _gbc.simulate();
-    _fps = std::max(_fps - 70224.f / Math::Pow<22>(2), 0.f);
+    _fps = std::max(_fps - (float)GBC::PixelProcessingUnit::FrameDuration / (float)GBC::CentralProcessingUnit::Frequency, 0.f);
 
     // Push sound buffer to sound stream queue
     _stream.push(_gbc.sound());

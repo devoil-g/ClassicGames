@@ -9,11 +9,11 @@ namespace RPG
   class Color // RGBA color
   {
   public:
-    static const Color  Default;      // Default color
-    static const float  DefaultRed;   // Default red value
-    static const float  DefaultGreen; // Default green value
-    static const float  DefaultBlue;  // Default blue value
-    static const float  DefaultAlpha; // Default alpha value
+    static const Color      Default;            // Default color
+    static constexpr float  DefaultRed = 1.f;   // Default red value
+    static constexpr float  DefaultGreen = 1.f; // Default green value
+    static constexpr float  DefaultBlue = 1.f;  // Default blue value
+    static constexpr float  DefaultAlpha = 1.f; // Default alpha value
 
     static const Color  White, Black, Red, Green, Blue, Yellow, Magenta, Cyan, Transparent; // Default color template
 

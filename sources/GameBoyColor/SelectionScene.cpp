@@ -19,6 +19,8 @@ GBC::SelectionScene::SelectionScene(Game::SceneMachine& machine) :
   // Set menu title
   title("GameBoy");
 
+  sf::Texture texture(sf::Vector2u(GBC::PixelProcessingUnit::ScreenWidth, GBC::PixelProcessingUnit::ScreenHeight));
+
   // List games in game directory
   try {
     for (const auto& entry : std::filesystem::directory_iterator(Game::Config::ExecutablePath / "assets" / "gbc")) {
@@ -27,7 +29,7 @@ GBC::SelectionScene::SelectionScene(Game::SceneMachine& machine) :
         continue;
 
       try {
-        GBC::GameBoyColor gbc(entry);
+        GBC::GameBoyColor gbc(entry, texture, Math::Vector<2, unsigned int>((unsigned int)0, (unsigned int)0));
 
         // Add game to menu list
         if (gbc.header().header_checksum && gbc.header().global_checksum)

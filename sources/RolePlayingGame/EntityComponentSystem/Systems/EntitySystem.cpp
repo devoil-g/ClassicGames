@@ -36,7 +36,7 @@ void  RPG::ServerEntitySystem::load(const Game::JSON::Array& entities)
 
     // TODO: do not make every entity controllable
     ecs.addComponent<RPG::NetworkComponent>(entity);
-    ecs.addComponent<RPG::ActionComponent>(entity);
+    ecs.addComponent<RPG::ServerActionComponent>(entity);
   }
 }
 
@@ -162,6 +162,7 @@ void  RPG::ClientEntitySystem::handleLoadEntities(const Game::JSON::Object& json
 
     ecs.addComponent<RPG::EntityComponent>(entity, element->object());
     ecs.addComponent<RPG::ModelComponent>(entity);
+    ecs.addComponent<RPG::ClientActionComponent>(entity);
 
     // Set layer of entity
     ecs.getComponent<RPG::ModelComponent>(entity).layer = RPG::ModelComponent::Layer::LayerEntity;

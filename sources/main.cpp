@@ -38,7 +38,7 @@ namespace Game
     // Push initial state
     //game.push<Game::SplashScene>();
     game.push<Game::MainMenuScene>();
-    game.push<Game::ExitScene<RPG::ClientScene>>(std::make_unique<RPG::Server>(Game::Config::ExecutablePath / "assets" / "rpg" / "world.json"));
+    //game.push<Game::ExitScene<RPG::ClientScene>>(std::make_unique<RPG::Server>(Game::Config::ExecutablePath / "assets" / "rpg" / "world.json"));
 
     // Run the game !
     while (Game::Window::Instance().isOpen() == true) {

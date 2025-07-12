@@ -27,74 +27,6 @@ QUIZ::ScoresQuizScene::ScoresQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& 
     entity.setOutline(0.f);
   }
 
-  static sf::Music music;
-  
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "2000_question.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "2000_answer.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(8.310f), .length = sf::seconds(22.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "4000_question.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "4000_answer.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(8.310f), .length = sf::seconds(22.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "8000_question.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "8000_answer.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(8.310f), .length = sf::seconds(22.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "16000_question.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "16000_answer.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(8.310f), .length = sf::seconds(22.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "32000_question.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "32000_answer.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(8.310f), .length = sf::seconds(22.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "64000_question.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "64000_answer.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(8.310f), .length = sf::seconds(22.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "125000_question.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "125000_answer.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "250000_question.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "250000_answer.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(6.000f), .length = sf::seconds(30.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "500000_question.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "500000_answer.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(6.000f), .length = sf::seconds(30.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "1000000_question.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(4.000f), .length = sf::seconds(32.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "1000000_answer.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(6.000f), .length = sf::seconds(30.000f) });
-
-  music.openFromFile(Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "1000_question.ogg");
-  music.setLoopPoints({ .offset = sf::seconds(13.919f), .length = sf::seconds(13.919f) });
-
-  music.setLooping(true);
-  //music.play();
-
   // Host instructions
   std::cout
     << "--- SCOREBOARD ---" << std::endl
@@ -103,9 +35,9 @@ QUIZ::ScoresQuizScene::ScoresQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& 
     << "Commands:" << std::endl
     << "  [C]ontroller:   controller selection" << std::endl
     << "  [Q]uestion:     free questions" << std::endl;
-  if (_quiz.fastests.empty() == false)
+  if (_quiz.fastests.empty() == false && _quiz.players.empty() == false)
     std::cout << "  [F]astest:      fastest finger" << std::endl;
-  if (_quiz.fastests.empty() == false)
+  if (_quiz.millionaires.empty() == false && _quiz.players.empty() == false)
     std::cout << "  [M]illionaire:  who wants to be a millionaire?" << std::endl;
   if (_quiz.blindtests.empty() == false)
     std::cout << "  [B]lintest:     play blindtest (" << std::count_if(_quiz.blindtests.begin(), _quiz.blindtests.end(), [](const auto& entry) { return entry.done == false; }) << " remaining)" << std::endl;
@@ -122,13 +54,13 @@ bool  QUIZ::ScoresQuizScene::update(float elapsed)
   }
 
   // Fastest finger
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::F) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::F) == true && _quiz.fastests.empty() == false && _quiz.players.empty() == false) {
     _machine.swap<QUIZ::FastestQuizScene>(_quiz);
     return false;
   }
 
-  // Fastest finger
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::M) == true) {
+  // Millionaire
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::M) == true && _quiz.millionaires.empty() == false && _quiz.players.empty() == false) {
     _machine.swap<QUIZ::MillionaireQuizScene>(_quiz);
     return false;
   }
