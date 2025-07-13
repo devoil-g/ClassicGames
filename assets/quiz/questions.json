@@ -112,6 +112,168 @@
 
   "millionaire": [
     {
+      "id": "mill_002",
+      "name": "Lucas B",
+      "questions": [
+        {
+          "id": "luca_001",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Quel est le plus petit score obtenable en lançant\n1D4 + 2D6 + 3D8 + 4D10 + 5D12 + 6D20 + 7D100 ?",
+          "answers": [ "0", "1", "28", "100" ],
+          "correct": 3,
+          "info": "Il suffit d'additionner le score minimum de chaque dé."
+        },
+        {
+          "id": "luca_001",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "luca_001",
+          "set": [ 10 ],
+          "question": "Quel est le nom de la giganteste créature extraterrestre endormie\ndepuis des millénaires dans la cité de R'lyeh ?",
+          "answers": [ "Cthulhu", "Chtulhu", "Cthuluh", "Chtuluh" ],
+          "info": "La véritable sonorité, si les organes humains peuvent l'imiter, ressemble à : khlûl'-hloo."
+        },
+        {
+          "id": "luca_002",
+          "set": [ 10 ],
+          "question": "Qui est l'auteur de L'Appel de Cthulhu ?",
+          "answers": [ "Howard Phillips Lovecraft", "Henry Peter Lovecraft", "Harold Phineas Lovecraft", "Hector Prescott Lovecraft" ],
+          "info": "Né à Providence en 1890, et mort en 1937 dans cette même ville."
+        },
+        {
+          "id": "luca_003",
+          "set": [ 10 ],
+          "question": "Dans quel état américain se situe la ville fictive d'Arkham,\nissue de l'oeuvre de H. P. Lovecraft ?",
+          "answers": [ "Massachusetts", "Maine", "Pennsylvanie", "Louisiane" ],
+          "info": "La véritable sonorité, si les organes humains peuvent l'imiter, ressemble à : khlûl'-hloo."
+        },
+        {
+          "id": "luca_004",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Quelle est la somme des nombres réprésentés sur un set de dés standard ?",
+          "answers": [ "860", "877", "891", "902" ],
+          "correct": 1,
+          "info": "D4: 10, D6: 21, D8: 36, D10: 55, D12: 78, D20: 210, D100: 450"
+        }
+      ]
+    },
+    {
       "id": "mill_001",
       "name": "Victoire",
       "questions": [

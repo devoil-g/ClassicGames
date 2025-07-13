@@ -25,8 +25,8 @@ QUIZ::Quiz::Quiz() :
 {
   auto json = Game::JSON::Object(Game::Config::ExecutablePath / "assets" / "quiz" / "questions.json");
 
-  const std::array<std::string, 9> textureExtensions = { "jpg", "png", "bmp", "tga", "jpeg", "gif", "psd", "hdr", "pic" };
-  const std::array<std::string, 3> musicExtensions = { "ogg", "wav", "flac" };
+  constexpr std::array<std::string, 9> textureExtensions = { "jpg", "png", "bmp", "tga", "jpeg", "gif", "psd", "hdr", "pic" };
+  constexpr std::array<std::string, 3> musicExtensions = { "ogg", "wav", "flac" };
 
   std::default_random_engine  randomEngine((unsigned int)std::chrono::system_clock::now().time_since_epoch().count());
 
