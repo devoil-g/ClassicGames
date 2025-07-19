@@ -48,7 +48,8 @@ namespace QUIZ
     bool  _jokerHost;
     bool  _jokerSwitch;
 
-    std::vector<int>  _answers; // Answers of players
+    std::vector<int>  _answers;   // Answers of players
+    std::vector<int>  _audience;  // Answers of audience
 
     enum class State
     {
@@ -57,7 +58,12 @@ namespace QUIZ
       Question,
       Answer,
       Result,
-      Score
+      Score,
+
+      JokerPhone,
+      JokerAudience,
+      JokerHost,
+      JokerSwitch
     } _state;
 
 
@@ -71,6 +77,10 @@ namespace QUIZ
     void  setAnswer();
     void  setResult();
     void  setScore();
+    void  setJokerPhone();
+    void  setJokerAudience();
+    void  setJokerHost();
+    void  setJokerSwitch();
 
     void  updateSelect(float elapsed);
     void  updateLight(float elapsed);
@@ -78,6 +88,10 @@ namespace QUIZ
     void  updateAnswer(float elapsed);
     void  updateResult(float elapsed);
     void  updateScore(float elapsed);
+    void  updateJokerPhone(float elapsed);
+    void  updateJokerAudience(float elapsed);
+    void  updateJokerHost(float elapsed);
+    void  updateJokerSwitch(float elapsed);
 
     bool  update(float elapsed) override; // Update state
     void  draw() override;                // Draw state

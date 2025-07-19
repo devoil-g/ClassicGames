@@ -53,5 +53,7 @@ namespace Game
 
     std::string   Convert(const std::wstring& string); // Convert wide string to string
     std::wstring  Convert(const std::string& string); // Convert string to wide string
+
+    void Clear(); // Clear terminal
   };
 }

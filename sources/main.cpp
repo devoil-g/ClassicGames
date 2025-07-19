@@ -36,8 +36,8 @@ namespace Game
     auto                clock = std::chrono::steady_clock::now();
 
     // Push initial state
-    //game.push<Game::SplashScene>();
-    game.push<Game::MainMenuScene>();
+    game.push<Game::SplashScene>();
+    //game.push<Game::MainMenuScene>();
     //game.push<Game::ExitScene<RPG::ClientScene>>(std::make_unique<RPG::Server>(Game::Config::ExecutablePath / "assets" / "rpg" / "world.json"));
 
     // Run the game !
