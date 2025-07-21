@@ -135,6 +135,7 @@ void  RPG::ServerActionSystem::handleMove(std::size_t id, const Game::JSON::Obje
 
 RPG::ClientActionSystem::ClientActionSystem(RPG::ECS& ecs) :
   RPG::ECS::System(ecs),
+  _index(0),
   _blocking()
 {}
 
@@ -159,27 +160,39 @@ void  RPG::ClientActionSystem::execute(float elapsed)
       auto& action = ecs.getComponent<RPG::ClientActionComponent>(entity);
       auto blocking = _blocking.empty() == true ? std::numeric_limits<std::size_t>().max() : _blocking.front();
 
+      // Force load of an action
+      if (action.action == nullptr && action.next.empty() == false) {
+        action.action = action.next.front()();
+        action.next.pop();
+      }
+
       // Execute actions of entity
-      while (remaining[entity] > 0.f && action.actions.empty() == false)
+      while (remaining[entity] > 0.f && action.action != nullptr)
       {
         // Stop if blocked
-        if (action.actions.front()->index > blocking) {
+        if (action.action->index > blocking) {
           blocked = true;
           break;
         }
 
         // Update action
-        remaining[entity] = action.actions.front()->update(remaining[entity]);
+        remaining[entity] = action.action->update(remaining[entity]);
 
         // Action done
         if (remaining[entity] > 0.f)
         {
           // Check if action is blocking
-          if (action.actions.front()->index == blocking)
+          if (action.action->index == blocking)
             _blocking.pop();
 
           // Remove action
-          action.actions.pop_front();
+          action.action.reset();
+
+          // Get next action
+          if (action.next.empty() == false) {
+            action.action = action.next.front()();
+            action.next.pop();
+          }
         }
       }
 
@@ -202,16 +215,14 @@ void  RPG::ClientActionSystem::handlePacket(const Game::JSON::Object& json)
 
 void  RPG::ClientActionSystem::handleMove(const Game::JSON::Object& json)
 {
-  auto entity = ecs.getSystem<RPG::ClientEntitySystem>().getEntity(json.get(L"id").string());
-
-  // Check entity exist
-  if (entity == RPG::ECS::InvalidEntity) {
-    std::wcerr << "[RPG::ClientActionSystem]: unknow entity '" << json.get(L"id").string() << "'." << std::endl;
-    return;
-  }
-
-  // Add move action to entity (not blocking)
-  ecs.getComponent<RPG::ClientActionComponent>(entity).actions.push_back(std::make_unique<RPG::ClientMoveAction>(ecs, entity, json));
+  // Add move action to entity
+  action<RPG::ClientMoveAction>(json,
+    RPG::Coordinates(json.get(L"target").array()),
+    RPG::Coordinates(json.get(L"coordinates").array()),
+    RPG::Position(json.get(L"position").array()),
+    RPG::StringToDirection(json.get(L"direction").string()),
+    (float)json.get(L"duration").number()
+  );
 }
 
 RPG::ServerMoveAction::ServerMoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, const Game::JSON::Object& json) :
@@ -308,13 +319,13 @@ void  RPG::ServerMoveAction::interrupt()
   _interrupted = true;
 }
 
-RPG::ClientMoveAction::ClientMoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, const Game::JSON::Object& json) :
-  RPG::ClientActionComponent::Action(ecs, self),
-  _targetCoordinates(json.get(L"target").array()),
-  _moveCoordinates(json.get(L"coordinates").array()),
-  _movePosition(json.get(L"position").array()),
-  _moveDirection(RPG::StringToDirection(json.get(L"direction").string())),
-  _remaining(json.get(L"duration").number())
+RPG::ClientMoveAction::ClientMoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, std::size_t index, RPG::Coordinates target, RPG::Coordinates coordinates, RPG::Position position, RPG::Direction direction, float duration) :
+  RPG::ClientActionComponent::Action(ecs, self, index),
+  _targetCoordinates(target),
+  _moveCoordinates(coordinates),
+  _movePosition(position),
+  _moveDirection(direction),
+  _remaining(duration)
 {}
 
 float RPG::ClientMoveAction::update(float elapsed)

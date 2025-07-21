@@ -20,7 +20,7 @@ namespace Math
 
     template<typename ... Types>
     Vector(Types... args) :
-      Math::Matrix<Size, 1, Type>(std::forward<Types>(args)...)
+      Math::Matrix<Size, 1, Type>(args...)
     {}
 
     Vector(const Game::JSON::Array& json)

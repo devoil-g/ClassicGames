@@ -17,12 +17,12 @@ namespace Game
 
   public:
     template <typename ...Args>
-    ExitScene(Game::SceneMachine& machine, Args && ...args) :
+    ExitScene(Game::SceneMachine& machine, Args&& ...args) :
       AbstractScene(machine),
       _elapsed(0.f),
       _submachine()
     {
-      _submachine.push<Scene>(std::forward<Args>(args)...);
+      _submachine.push<Scene>(args...);
     }
 
     ~ExitScene() = default;
@@ -45,7 +45,10 @@ namespace Game
         _elapsed = 0.f;
 
       // Update sub-scene
-      _submachine.update(elapsed);
+      if (_submachine.update(elapsed) == true) {
+        _machine.pop();
+        return false;
+      }
 
       return false;
     }

@@ -314,7 +314,7 @@ namespace RPG
 
         assert(_systems.find(name) == _systems.end() && "Registering system more than once.");
 
-        auto  system = std::make_unique<NewSystem>(ecs, std::forward<Args>(args)...);
+        auto  system = std::make_unique<NewSystem>(ecs, args...);
         auto& ref = *system;
 
         // Add new system and its signature to manager
@@ -457,7 +457,7 @@ namespace RPG
     NewSystem& addSystem(Signature signature, Args&& ...args)  // Add a new system to ECS
     {
       // Add new system
-      return _systems.add<NewSystem>(signature, *this, std::forward<Args>(args)...);
+      return _systems.add<NewSystem>(signature, *this, args...);
     }
 
     template<typename GetSystem>

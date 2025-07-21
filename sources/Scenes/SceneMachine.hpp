@@ -24,7 +24,7 @@ namespace Game
     void  push(Args&& ...args)  // Push a new state at the to top of the machine
     {
       // Build state before locking the machine
-      auto              state = std::make_unique<Scene>(*this, std::forward<Args>(args)...);
+      auto              state = std::make_unique<Scene>(*this, args...);
       std::unique_lock  lock(_lock);
 
       // Push state in stack
@@ -35,7 +35,7 @@ namespace Game
     void  swap(Args&& ...args) // Change current state to another
     {
       // Build state before locking the machine
-      auto              state = std::make_unique<Scene>(*this, std::forward<Args>(args)...);
+      auto              state = std::make_unique<Scene>(*this, args...);
       std::unique_lock  lock(_lock);
 
       // Check that the machine isn't empty

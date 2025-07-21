@@ -17,13 +17,12 @@ RPG::ServerActionComponent::Action::Action(RPG::ECS& ecs, RPG::ECS::Entity self)
 {}
 
 RPG::ClientActionComponent::ClientActionComponent() :
-  actions()
+  action(),
+  next()
 {}
 
-std::size_t RPG::ClientActionComponent::Action::IndexGenerator = 0;
-
-RPG::ClientActionComponent::Action::Action(RPG::ECS& ecs, RPG::ECS::Entity self) :
-  index(++IndexGenerator),
+RPG::ClientActionComponent::Action::Action(RPG::ECS& ecs, RPG::ECS::Entity self, std::size_t index) :
   ecs(ecs),
-  self(self)
+  self(self),
+  index(index)
 {}

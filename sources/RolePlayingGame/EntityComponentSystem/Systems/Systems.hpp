@@ -1,9 +1,11 @@
 #pragma once
 
+#include <iostream>
 #include <queue>
 
 #include "RolePlayingGame/EntityComponentSystem/EntityComponentSystem.hpp"
 #include "RolePlayingGame/EntityComponentSystem/Components/Components.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.hpp"
 #include "RolePlayingGame/Types.hpp"
 #include "System/JavaScriptObjectNotation.hpp"
 
@@ -32,7 +34,32 @@ namespace RPG
   class ClientActionSystem : public RPG::ECS::System
   {
   private:
-    std::queue<std::size_t>  _blocking;  // Indexes of blocking actions
+    std::size_t             _index;     // Action index generator
+    std::queue<std::size_t> _blocking;  // Indexes of blocking actions
+
+    template<typename Action, typename ... Args>
+    void  action(const Game::JSON::Object& json, Args&& ... args)  // Push a new action to entity
+    {
+      auto entity = ecs.getSystem<RPG::ClientEntitySystem>().getEntity(json.get(L"id").string());
+
+      // Check entity exist
+      if (entity == RPG::ECS::InvalidEntity) {
+        std::wcerr << "[RPG::ClientActionSystem]: unknow entity '" << json.get(L"id").string() << "'." << std::endl;
+        return;
+      }
+
+      auto& action = ecs.getComponent<RPG::ClientActionComponent>(entity);
+      auto index = ++_index;
+
+      // Register blocking action
+      if (json.contains(L"blocking") == true && json.get(L"blocking").boolean() == true)
+        _blocking.push(_index);
+
+      // Add action to entity
+      action.next.push([this, entity, index, ... args = std::forward<Args>(args)]() {
+        return std::make_unique<Action>(ecs, entity, index, args...);
+        });
+    }
 
     void  handleMove(const Game::JSON::Object& json); // Handle a move action
 
@@ -77,15 +104,15 @@ namespace RPG
   class ClientMoveAction : public RPG::ClientActionComponent::Action
   {
   private:
-    RPG::Coordinates  _targetCoordinates;    // Final move target coordinates
-    RPG::Coordinates  _moveCoordinates;
-    RPG::Position     _movePosition;  // Targeted position in cell
-    RPG::Direction    _moveDirection;
-    float             _remaining; // Time before end of move
+    RPG::Coordinates  _targetCoordinates; // Final move target coordinates
+    RPG::Coordinates  _moveCoordinates;   // Move destination coordinates
+    RPG::Position     _movePosition;      // Move destination position in cell
+    RPG::Direction    _moveDirection;     // Move direction
+    float             _remaining;         // Duration of move
 
   public:
     ClientMoveAction() = delete;
-    ClientMoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, const Game::JSON::Object& json);
+    ClientMoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, std::size_t index, RPG::Coordinates target, RPG::Coordinates coordinates, RPG::Position position, RPG::Direction direction, float duration);
     ClientMoveAction(const ClientMoveAction&) = delete;
     ClientMoveAction(ClientMoveAction&&) = delete;
     ~ClientMoveAction() = default;
@@ -94,9 +121,6 @@ namespace RPG
     ClientMoveAction& operator=(ClientMoveAction&&) = delete;
 
     float update(float elapsed) override; // Update move action
-
-
-
   };
 
   /*

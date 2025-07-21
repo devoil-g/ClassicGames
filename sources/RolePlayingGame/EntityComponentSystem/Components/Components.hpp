@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <queue>
 
@@ -67,16 +68,13 @@ namespace RPG
   public:
     class Action
     {
-    private:
-      static std::size_t  IndexGenerator; // Generator of action index
-
     public:
       RPG::ECS&               ecs;    // Current entity component system
       const RPG::ECS::Entity  self;   // Entity of action
       const std::size_t       index;  // Index of action
 
       Action() = delete;
-      Action(RPG::ECS& ecs, RPG::ECS::Entity self);
+      Action(RPG::ECS& ecs, RPG::ECS::Entity self, std::size_t index);
       Action(const Action&) = delete;
       Action(Action&&) = delete;
       virtual ~Action() = default;
@@ -92,7 +90,8 @@ namespace RPG
     ClientActionComponent& operator=(const ClientActionComponent&) = default;
     ClientActionComponent& operator=(ClientActionComponent&&) = default;
 
-    std::list<std::unique_ptr<Action>>  actions;  // Actions to perform
+    std::unique_ptr<Action>                               action; // Current action
+    std::queue<std::function<std::unique_ptr<Action>()>>  next;   // Builders of next actions
   };
 
   /*
