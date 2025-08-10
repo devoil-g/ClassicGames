@@ -59,6 +59,8 @@ namespace RPG
       action.next.push([this, entity, index, ... args = std::forward<Args>(args)]() {
         return std::make_unique<Action>(ecs, entity, index, args...);
         });
+
+      // TODO: handle action mode and duration
     }
 
     void  handleMove(const Game::JSON::Object& json); // Handle a move action
@@ -68,7 +70,7 @@ namespace RPG
     ClientActionSystem(RPG::ECS& ecs);
     ClientActionSystem(const ClientActionSystem&) = delete;
     ClientActionSystem(ClientActionSystem&&) = delete;
-    ~ClientActionSystem() = default;
+    ~ClientActionSystem();
 
     ClientActionSystem& operator=(const ClientActionSystem&) = delete;
     ClientActionSystem& operator=(ClientActionSystem&&) = delete;
@@ -81,8 +83,7 @@ namespace RPG
   class ServerMoveAction : public RPG::ServerActionComponent::Action
   {
   private:
-    RPG::Coordinates  _target;      // Target of move
-    bool              _interrupted; // True if move should stop
+    RPG::Coordinates  _target;  // Target of move
 
   public:
     ServerMoveAction() = delete;
@@ -104,10 +105,10 @@ namespace RPG
   class ClientMoveAction : public RPG::ClientActionComponent::Action
   {
   private:
-    RPG::Coordinates  _targetCoordinates; // Final move target coordinates
-    RPG::Coordinates  _moveCoordinates;   // Move destination coordinates
-    RPG::Position     _movePosition;      // Move destination position in cell
-    RPG::Direction    _moveDirection;     // Move direction
+    RPG::Coordinates  _target;        // Final move target coordinates
+    RPG::Coordinates  _coordinates;   // Move destination coordinates
+    RPG::Position     _position;      // Move destination position in cell
+    RPG::Direction    _direction;     // Move direction
     float             _remaining;         // Duration of move
 
   public:
@@ -115,7 +116,7 @@ namespace RPG
     ClientMoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, std::size_t index, RPG::Coordinates target, RPG::Coordinates coordinates, RPG::Position position, RPG::Direction direction, float duration);
     ClientMoveAction(const ClientMoveAction&) = delete;
     ClientMoveAction(ClientMoveAction&&) = delete;
-    ~ClientMoveAction() = default;
+    ~ClientMoveAction();
 
     ClientMoveAction& operator=(const ClientMoveAction&) = delete;
     ClientMoveAction& operator=(ClientMoveAction&&) = delete;

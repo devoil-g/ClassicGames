@@ -21,7 +21,7 @@ namespace RPG
   public:
     ClientScene(Game::SceneMachine& machine, std::unique_ptr<RPG::Server>&& server);
     ClientScene(Game::SceneMachine& machine, std::uint16_t port, std::uint32_t address);
-    ~ClientScene() = default;
+    ~ClientScene();
 
     bool  update(float elapsed) override; // You should override this method
     void  draw() override;                // You should override this method

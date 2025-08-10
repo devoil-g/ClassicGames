@@ -69,7 +69,7 @@ void  QUIZ::QuizScene::draw()
   _quiz.progress.draw();
 
   // Draw scores
-  if (_scores == true && false) {
+  if (_scores == true) {
     for (int index = 0; index < _quiz.players.size(); index++) {
       auto& player = _quiz.players[index];
       auto& entity = _quiz.entities.at("player_" + std::to_string(player.id));
@@ -81,12 +81,12 @@ void  QUIZ::QuizScene::draw()
       score.setOutlineThickness(5.f);
 
       // Set size of the score
-      float scale = (Game::Window::Instance().getSize().y() * 0.1f) / score.getLocalBounds().size.y;
+      float scale = std::min(sprite.getGlobalBounds().size.x / score.getLocalBounds().size.x * 0.75f, sprite.getGlobalBounds().size.y / score.getLocalBounds().size.y * 0.25f);
       score.setScale({ scale, scale });
 
       // Set score position
       score.setOrigin({ (score.getLocalBounds().size.x + score.getLocalBounds().position.x) / 2.f, (score.getLocalBounds().size.y + score.getLocalBounds().position.y) / 2.f });
-      score.setPosition({ sprite.getPosition().x, sprite.getGlobalBounds().position.y + sprite.getGlobalBounds().size.y });
+      score.setPosition({ sprite.getPosition().x, sprite.getGlobalBounds().position.y + sprite.getGlobalBounds().size.y * 3.f / 4.f });
 
       // Set transparency
       score.setFillColor(sprite.getColor());

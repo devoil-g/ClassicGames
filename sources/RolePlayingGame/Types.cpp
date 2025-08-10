@@ -3,7 +3,7 @@
 std::wstring  RPG::DirectionToString(RPG::Direction direction)
 {
   // Get direction name
-  return RPG::DirectionNames.at(direction);
+  return std::wstring(RPG::DirectionNames.at(direction));
 }
 
 RPG::Direction  RPG::StringToDirection(const std::wstring& name)

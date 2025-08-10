@@ -74,6 +74,13 @@ RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::uint16_t port, s
   _ecs.addSystem<RPG::ClientActionSystem>(signature);
 }
 
+RPG::ClientScene::~ClientScene()
+{
+  // Erase action system first
+  // NOTE: Actions destructors could call other systems
+  _ecs.destroySystem<RPG::ClientActionSystem>();
+}
+
 bool  RPG::ClientScene::update(float elapsed)
 {
   // Receive pending packets

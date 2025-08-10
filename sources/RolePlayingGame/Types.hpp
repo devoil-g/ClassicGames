@@ -20,7 +20,7 @@ namespace RPG
     DirectionCount = DirNone                // Number of directions
   };
   
-  const std::array<std::wstring, RPG::Direction::DirectionCount + 1> DirectionNames = {
+  constexpr std::array<std::wstring_view, RPG::Direction::DirectionCount + 1> DirectionNames = {
     L"N", L"NE", L"SE", L"S", L"SW", L"NW", L"None"
   };
 

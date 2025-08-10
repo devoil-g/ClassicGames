@@ -5,6 +5,7 @@
 #include "System/Audio/Sound.hpp"
 #include "System/Library/SoundLibrary.hpp"
 #include "System/Library/FontLibrary.hpp"
+#include "System/Utilities.hpp"
 
 #include <iostream>
 
@@ -104,6 +105,7 @@ void  QUIZ::BlindtestQuizScene::start()
 
   auto count = std::count_if(_quiz.blindtests.begin(), _quiz.blindtests.end(), [](const auto& entry) { return entry.done == false; });
 
+  Game::Utilities::Clear();
   std::cout << std::endl
     << "--- BLINDTEST ---" << std::endl
     << "Instruction for players: use the red buzzer to answer" << std::endl

@@ -139,6 +139,14 @@ RPG::ClientActionSystem::ClientActionSystem(RPG::ECS& ecs) :
   _blocking()
 {}
 
+RPG::ClientActionSystem::~ClientActionSystem()
+{
+  // Unregister system's actions
+  // NOTE: actions destructors could call other destroyed system
+  for (auto entity : entities)
+    ecs.getComponent<RPG::ClientActionComponent>(entity).action.reset();
+}
+
 void  RPG::ClientActionSystem::execute(float elapsed)
 {
   std::array<float, RPG::ECS::MaxEntities>  remaining;
@@ -227,8 +235,7 @@ void  RPG::ClientActionSystem::handleMove(const Game::JSON::Object& json)
 
 RPG::ServerMoveAction::ServerMoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, const Game::JSON::Object& json) :
   RPG::ServerActionComponent::Action(ecs, self),
-  _target(json.get(L"target").array()),
-  _interrupted(false)
+  _target(json.get(L"target").array())
 {}
 
 void  RPG::ServerMoveAction::atWait()
@@ -253,123 +260,120 @@ void  RPG::ServerMoveAction::atExecute()
 {
   auto& action = ecs.getComponent<RPG::ServerActionComponent>(self);
   auto& entity = ecs.getComponent<RPG::EntityComponent>(self);
-  auto direction = _target - entity.coordinates;
-
-  RPG::Direction    targetDirection;
-
-  // Move interrupted, stop at current position
-  if (_interrupted == true)
-    _target = entity.coordinates;
-
+  
   // Target reached
   if (_target == entity.coordinates)
   {
-    // Reset mode
     action.mode = RPG::ActionComponent::Mode::Wait;
     action.wait = 0.f;
-
-    Game::JSON::Object  json;
-
-    // Send wait to players
-    json.set(L"id", entity.id);
-    json.set(L"mode", "wait");
-    json.set(L"duration", (double)action.wait);
-    ecs.getSystem<RPG::ServerNetworkSystem>().broadcast({ L"action", L"none" }, json);
-
-    // End action
-    action.action.reset();
-    return;
   }
 
-  // Find direction
-  if (direction.x() > 0 && direction.y() > 0)
-    targetDirection = RPG::Direction::DirectionNorth;
-  else if (direction.x() < 0 && direction.y() < 0)
-    targetDirection = RPG::Direction::DirectionSouth;
-  else if (direction.x() > 0)
-    targetDirection = RPG::Direction::DirectionNorthEast;
-  else if (direction.y() > 0)
-    targetDirection = RPG::Direction::DirectionNorthWest;
-  else if (direction.x() < 0)
-    targetDirection = RPG::Direction::DirectionSouthWest;
-  else
-    targetDirection = RPG::Direction::DirectionSouthEast;
+  else {
+    auto            direction = _target - entity.coordinates;
+    RPG::Direction  targetDirection;
 
-  // Move entity
-  entity.coordinates += RPG::DirectionCoordinates[targetDirection];
-  entity.direction = targetDirection;
-  action.wait = 0.625f;
+    // Find direction
+    if (direction.x() > 0 && direction.y() > 0)
+      targetDirection = RPG::Direction::DirectionNorth;
+    else if (direction.x() < 0 && direction.y() < 0)
+      targetDirection = RPG::Direction::DirectionSouth;
+    else if (direction.x() > 0)
+      targetDirection = RPG::Direction::DirectionNorthEast;
+    else if (direction.y() > 0)
+      targetDirection = RPG::Direction::DirectionNorthWest;
+    else if (direction.x() < 0)
+      targetDirection = RPG::Direction::DirectionSouthWest;
+    else if (direction.y() < 0)
+      targetDirection = RPG::Direction::DirectionSouthEast;
+    else
+      targetDirection = entity.direction;
+
+    // Move entity
+    entity.coordinates += RPG::DirectionCoordinates[targetDirection];
+    entity.direction = targetDirection;
+    action.mode = RPG::ActionComponent::Mode::Execute;
+    action.wait = 0.625f;
+  }
 
   Game::JSON::Object  json;
   
   // Send move to players
   json.set(L"id", entity.id);
-  json.set(L"coordinates", entity.coordinates.json());
-  json.set(L"direction", RPG::DirectionToString(entity.direction));
   json.set(L"target", _target.json());
+  json.set(L"coordinates", entity.coordinates.json());
   json.set(L"position", entity.position.json());
-  json.set(L"mode", "execute");
+  json.set(L"direction", RPG::DirectionToString(entity.direction));
+  json.set(L"mode", RPG::ActionComponent::ModeToString(action.mode));
   json.set(L"duration", (double)action.wait);
   ecs.getSystem<RPG::ServerNetworkSystem>().broadcast({ L"action", L"move" }, json);
+
+  // End action
+  if (_target == entity.coordinates) {
+    action.action.reset();
+    return;
+  }
 }
 
 void  RPG::ServerMoveAction::interrupt()
 {
-  // Stop move
-  _interrupted = true;
+  auto& entity = ecs.getComponent<RPG::EntityComponent>(self);
+
+  // Move interrupted, stop at current position
+  _target = entity.coordinates;
 }
 
 RPG::ClientMoveAction::ClientMoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, std::size_t index, RPG::Coordinates target, RPG::Coordinates coordinates, RPG::Position position, RPG::Direction direction, float duration) :
   RPG::ClientActionComponent::Action(ecs, self, index),
-  _targetCoordinates(target),
-  _moveCoordinates(coordinates),
-  _movePosition(position),
-  _moveDirection(direction),
+  _target(target),
+  _coordinates(coordinates),
+  _position(position),
+  _direction(direction),
   _remaining(duration)
-{}
-
-float RPG::ClientMoveAction::update(float elapsed)
 {
   auto& entity = ecs.getComponent<RPG::EntityComponent>(self);
 
-  // Start move
-  if (entity.coordinates != _moveCoordinates)
-  {
-    // Get height of cells
-    const auto& boardSystem = ecs.getSystem<RPG::ClientBoardSystem>();
-    auto cellOrigin = boardSystem.getCell(entity.coordinates);
-    auto heightOrigin = cellOrigin == RPG::ECS::InvalidEntity ? 0.f : ecs.getComponent<RPG::CellComponent>(cellOrigin).height;
-    auto cellDestination = boardSystem.getCell(_moveCoordinates);
-    auto heightDestination = cellDestination == RPG::ECS::InvalidEntity ? 0.f : ecs.getComponent<RPG::CellComponent>(cellDestination).height;
+  // Get height of cells
+  const auto& boardSystem = ecs.getSystem<RPG::ClientBoardSystem>();
+  auto cellOrigin = boardSystem.getCell(entity.coordinates);
+  auto heightOrigin = cellOrigin == RPG::ECS::InvalidEntity ? 0.f : ecs.getComponent<RPG::CellComponent>(cellOrigin).height;
+  auto cellDestination = boardSystem.getCell(_coordinates);
+  auto heightDestination = cellDestination == RPG::ECS::InvalidEntity ? 0.f : ecs.getComponent<RPG::CellComponent>(cellDestination).height;
 
-    // Register new position
-    entity.position = {
-      entity.position.x() + entity.coordinates.x() - _moveCoordinates.x(),
-      entity.position.y() + entity.coordinates.y() - _moveCoordinates.y(),
-      entity.position.z() + heightOrigin - heightDestination
-    };
-    entity.coordinates = _moveCoordinates;
-    entity.direction = _moveDirection;
+  // Register new position
+  entity.position = {
+    entity.position.x() + entity.coordinates.x() - _coordinates.x(),
+    entity.position.y() + entity.coordinates.y() - _coordinates.y(),
+    entity.position.z() + heightOrigin - heightDestination
+  };
+  entity.coordinates = _coordinates;
+  entity.direction = _direction;
 
-    // Start move animation
-    ecs.getSystem<RPG::ClientModelSystem>().setAnimation(self, RPG::Model::Actor::RunAnimation, RPG::Model::Actor::Mode::Loop, +1.f);
-  }
+  // Start move animation
+  ecs.getSystem<RPG::ClientModelSystem>().setAnimation(self, RPG::Model::Actor::RunAnimation, RPG::Model::Actor::Mode::Loop, +1.f);
+}
 
+RPG::ClientMoveAction::~ClientMoveAction()
+{
+  auto& entity = ecs.getComponent<RPG::EntityComponent>(self);
+
+  // Force entity to destination
+  entity.position = _position;
+
+  // Stop run animation if at target destination
+  if (entity.coordinates == _target)
+    ecs.getSystem<RPG::ClientModelSystem>().setAnimation(self, RPG::Model::Actor::IdleAnimation, RPG::Model::Actor::Mode::Loop, +1.f);
+}
+
+float RPG::ClientMoveAction::update(float elapsed)
+{
   // End of move
   if (elapsed > _remaining)
-  {
-    // Force entity to destination
-    entity.position = _movePosition;
-
-    // Stop run animation if at target destination
-    if (entity.coordinates == _targetCoordinates)
-      ecs.getSystem<RPG::ClientModelSystem>().setAnimation(self, RPG::Model::Actor::IdleAnimation, RPG::Model::Actor::Mode::Loop, +1.f);
-
     return elapsed - _remaining;
-  }
+
+  auto& entity = ecs.getComponent<RPG::EntityComponent>(self);
 
   // Move entity to new position
-  entity.position += (_movePosition - entity.position) * (elapsed / _remaining);
+  entity.position += (_position - entity.position) * (elapsed / _remaining);
 
   // Compute remaining time
   _remaining -= elapsed;

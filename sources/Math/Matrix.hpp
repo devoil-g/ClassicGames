@@ -238,7 +238,7 @@ namespace Math
     static Math::Matrix<Row, Col, Type> translation(Types... args) // Generate translation matrix
     {
       Math::Matrix<Row, Col, Type>  matrix = Math::Matrix<Row, Col, Type>::identite();
-      Type                          transformation[]{ args... };
+      Type                          transformation[]{ std::forward<Types>(args)... };
 
       static_assert(Col == Row && Row > 1, "Invalid translation matrix.");
       static_assert(sizeof(transformation) / sizeof(Type) == Row - 1, "Invalid translation matrix parameters.");
@@ -252,7 +252,7 @@ namespace Math
     static Math::Matrix<Row, Col, Type> scale(Types... args) // Generate scaling matrix
     {
       Math::Matrix<Row, Col, Type>  matrix = Math::Matrix<Row, Col, Type>::identite();
-      Type                          transformation[]{ args... };
+      Type                          transformation[]{ std::forward<Types>(args)... };
 
       static_assert(Col == Row && Row > 1, "Invalid scale matrix.");
       static_assert((sizeof(transformation) / sizeof(Type) == Row - 1) || (sizeof(transformation) / sizeof(Type) == 1), "Invalid scale matrix parameters.");

@@ -1,8 +1,10 @@
 #pragma once
 
+#include <array>
 #include <functional>
 #include <memory>
 #include <queue>
+#include <string>
 
 #include "RolePlayingGame/EntityComponentSystem/EntityComponentSystem.hpp"
 
@@ -17,6 +19,15 @@ namespace RPG
       Execute   // Executing an action
     };
 
+    static constexpr std::array<std::wstring_view, 3> ModeNames = {
+      L"wait",
+      L"command",
+      L"execute"
+    };
+
+    static Mode         StringToMode(const std::wstring& string);
+    static std::wstring ModeToString(Mode mode);
+
     ActionComponent();
     ActionComponent(const ActionComponent&) = default;
     ActionComponent(ActionComponent&&) = default;
@@ -25,8 +36,8 @@ namespace RPG
     ActionComponent&  operator=(const ActionComponent&) = default;
     ActionComponent&  operator=(ActionComponent&&) = default;
 
-    Mode                      mode;   // Current mode
-    float                     wait;   // Wait time before action
+    Mode  mode;   // Current mode
+    float wait;   // Wait time before action
   };
 
   class ServerActionComponent : public ActionComponent

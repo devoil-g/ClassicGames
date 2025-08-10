@@ -22,7 +22,7 @@ namespace Game
       _elapsed(0.f),
       _submachine()
     {
-      _submachine.push<Scene>(args...);
+      _submachine.push<Scene>(std::forward<Args>(args)...);
     }
 
     ~ExitScene() = default;

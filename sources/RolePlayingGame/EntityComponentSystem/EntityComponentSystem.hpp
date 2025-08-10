@@ -215,7 +215,7 @@ namespace RPG
       {
         const char* name = typeid(Component).name();
 
-        assert(_types.find(name) == _types.end() && "Registering component type more than once.");
+        assert(_types.contains(name) == false && "Registering component type more than once.");
 
         // Add component type to component type map
         _types.insert({ name, static_cast<ComponentType>(_types.size()) });
@@ -229,7 +229,7 @@ namespace RPG
       {
         const char* name = typeid(Component).name();
 
-        assert(_types.find(name) != _types.end() && "Component not registered before use.");
+        assert(_types.contains(name) == true && "Component not registered before use.");
 
         // Return component's type
         return _types[name];
@@ -266,7 +266,7 @@ namespace RPG
       {
         const char* name = typeid(Component).name();
 
-        assert(_types.find(name) != _types.end() && "Component not registered before use.");
+        assert(_types.contains(name) == true && "Component not registered before use.");
 
         return *static_cast<ComponentArray<Component>*>(_arrays[name].get());
       }
@@ -312,9 +312,9 @@ namespace RPG
       {
         const char* name = typeid(NewSystem).name();
 
-        assert(_systems.find(name) == _systems.end() && "Registering system more than once.");
+        assert(_systems.contains(name) == false && "Registering system more than once.");
 
-        auto  system = std::make_unique<NewSystem>(ecs, args...);
+        auto  system = std::make_unique<NewSystem>(ecs, std::forward<Args>(args)...);
         auto& ref = *system;
 
         // Add new system and its signature to manager
@@ -329,7 +329,7 @@ namespace RPG
       {
         const char* name = typeid(GetSystem).name();
 
-        assert(_systems.find(name) != _systems.end() && "System not registered.");
+        assert(_systems.contains(name) == true && "System not registered.");
 
         // Get system from map
         return *static_cast<GetSystem*>(_systems[name].system.get());
@@ -352,6 +352,17 @@ namespace RPG
         // Remove entity from each system
         for (auto& [_, pair] : _systems)
           pair.system->entities.erase(entity);
+      }
+
+      template<typename DestroySystem>
+      void  destroy() // Destroy a system
+      {
+        const char* name = typeid(DestroySystem).name();
+
+        assert(_systems.contains(name) == true && "System not registered.");
+
+        // Remove system from map
+        _systems.erase(name);
       }
     };
 
@@ -457,7 +468,7 @@ namespace RPG
     NewSystem& addSystem(Signature signature, Args&& ...args)  // Add a new system to ECS
     {
       // Add new system
-      return _systems.add<NewSystem>(signature, *this, args...);
+      return _systems.add<NewSystem>(signature, *this, std::forward<Args>(args)...);
     }
 
     template<typename GetSystem>
@@ -465,6 +476,13 @@ namespace RPG
     {
       // Get system
       return _systems.get<GetSystem>();
+    }
+
+    template<typename DestroySystem>
+    void  destroySystem()
+    {
+      // Remove system
+      _systems.destroy<DestroySystem>();
     }
   };
 

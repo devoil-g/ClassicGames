@@ -3,6 +3,7 @@
 #include "Quiz/FastestQuizScene.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
+#include "System/Utilities.hpp"
 #include "System/Audio/Sound.hpp"
 #include "System/Library/SoundLibrary.hpp"
 
@@ -43,6 +44,7 @@ QUIZ::ControllerQuizScene::ControllerQuizScene(Game::SceneMachine& machine, QUIZ
   }
 
   // Host instructions
+  Game::Utilities::Clear();
   std::cout
     << "--- PLAYER SELECTION ---" << std::endl
     << "Instruction for players: use the red buzzer to join the game," << std::endl

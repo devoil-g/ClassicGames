@@ -118,10 +118,10 @@
         {
           "id": "lucb_001",
           "set": [ 1, 2, 3, 4, 5 ],
-          "question": "Quel est le plus petit score obtenable en lançant\n1D4 + 2D6 + 3D8 + 4D10 + 5D12 + 6D20 + 7D100 ?",
-          "answers": [ "0", "1", "28", "100" ],
-          "correct": 3,
-          "info": "Il suffit d'additionner le score minimum de chaque dé."
+          "question": "Dans Baldur's Gate 3,\ncombien le prisme astral a-t-il de faces ? ?",
+          "answers": [ "1", "10", "12", "20" ],
+          "correct": 4,
+          "info": "Il a la forme d'un D20, utilisé dans DnD."
         },
         {
           "id": "lucb_002",
@@ -189,10 +189,10 @@
         {
           "id": "lucb_010",
           "set": [ 6, 7, 8, 9 ],
-          "question": "",
-          "answers": [ "", "", "", "" ],
+          "question": "Quel est le pluriel du mot tire-bouchon ?",
+          "answers": [ "Tire-bouchons", "Tire-bouchon", "Tires-bouchon", "Tires-bouchons" ],
           "correct": 1,
-          "info": ""
+          "info": "Lorsque le nom composé est un verbe+nom, alors généralement sur le nom prend la marque du pluriel."
         },
         {
           "id": "lucb_011",
@@ -212,9 +212,9 @@
         {
           "id": "lucb_013",
           "set": [ 6, 7, 8, 9 ],
-          "question": "",
-          "answers": [ "", "", "", "" ],
-          "info": ""
+          "question": "Comment s'appelle le personnage joué\npar Charlize Theron dans Mon Ami Joe ?",
+          "answers": [ "Jill Young", "Natalie Cook", "Dylan Sanders", "Alexandra Munday" ],
+          "info": "Les autres propositions sont des Drôles de dames."
         },
 
         {
@@ -272,16 +272,16 @@
         {
           "id": "lucb_021",
           "set": [ 11, 12, 13, 14 ],
-          "question": "",
-          "answers": [ "", "", "", "" ],
-          "info": ""
+          "question": "Combien y a-t-il d'étoiles à collecter\ndans Super Mario 64",
+          "answers": [ "120", "121", "240", "242" ],
+          "info": "C'est Super Mario Galaxy qui contient 2x 121 étoiles"
         },
         {
           "id": "lucb_022",
           "set": [ 11, 12, 13, 14 ],
-          "question": "",
-          "answers": [ "", "", "", "" ],
-          "info": ""
+          "question": "Comment est surnommé le coeur du réacteur\nde la centrale nucléaire de Tchernobyl ?",
+          "answers": [ "Le pied d'éléphant", "Le Demon core", "Trinity", "The End" ],
+          "info": "Il est composé de corium, mélange du réacteur fondu et de débris."
         },
 
         {
@@ -345,7 +345,7 @@
         {
           "id": "lucc_005",
           "set": [ 1, 2, 3, 4, 5 ],
-          "question": "Quelle espèce de plantes à fleurs herbacées bisannuelles de la famille des Amaryllidaceae\nest Roi dans Overcooked ?",
+          "question": "Quelle espèce de plantes à fleurs herbacées bisannuelles de la famille\ndes Amaryllidaceae est Roi dans Overcooked ?",
           "answers": [ "Oignon", "Melon", "Cornichon", "Marron" ],
           "info": "C'est le Roi Oignon, ou l'Onion King en VO.'"
         },
@@ -414,9 +414,9 @@
         {
           "id": "lucc_014",
           "set": [ 10 ],
-          "question": "",
-          "answers": [ "", "", "", "" ],
-          "info": ""
+          "question": "Qui a présenté le plug longtemps\nle Journal de 20h de TF1 ?",
+          "answers": [ "Claire Chazal", "Patrick Poivre d'Arvor", "Gilles Bouleau", "Anne-Claire Coudray" ],
+          "info": "CC: 24 ans (WE), PPDA: 21 ans (semaine), GB: 13+ ans (semaine), ACC: 10+ ans (WE)"
         },
         {
           "id": "lucc_015",
@@ -428,17 +428,17 @@
         {
           "id": "lucc_016",
           "set": [ 10 ],
-          "question": "",
-          "answers": [ "", "", "", "" ],
-          "info": ""
+          "question": "Quelle voiture conduit le Lieutenant Columbo ?",
+          "answers": [ "Peugeot 403 Cabriolet", "Cadillac Series 62", "Chevrolet Bel Air", "Ford Thunderbird" ],
+          "info": "Il gardera la même voiture tout au long de la série."
         },
 
         {
           "id": "lucc_017",
           "set": [ 11, 12, 13, 14 ],
-          "question": "Quelle voiture conduit le Lieutenant Columbo ?",
-          "answers": [ "Peugeot 403 Cabriolet", "Cadillac Series 62", "Chevrolet Bel Air", "Ford Thunderbird" ],
-          "info": "Il gardera la même voiture tout au long de la série."
+          "question": "Qui a tiré sur Mr Burns ?",
+          "answers": [ "Maggie Simpson", "Homer Simpson", "Waylon Smithers", "Barney Gumble" ],
+          "info": "Ce cliffhanger inter-saison a été un des secrets les mieux gardés de la série."
         },
         {
           "id": "lucc_018",
@@ -480,9 +480,9 @@
         {
           "id": "lucc_023",
           "set": [ 15 ],
-          "question": "Qui a été président de la Présipauté du Groland\nde 1992 à 2018 ?",
-          "answers": [ "Christophe Salengro", "Mamie Quéquette", "Christian Pugnasset", "Robert Palembier" ],
-          "info": "Groland, je mourrirai pour toi."
+          "question": "Dans Les Misérables de Victor Hugo,\nquel est le vrai nom de Cosette ?",
+          "answers": [ "Euphrasie", "Fantine", "Azelma", "Eponine" ],
+          "info": "Fantine est sa mère, Azelma et Eponine les filles des Thénardier."
         },
         {
           "id": "lucc_024",
@@ -495,9 +495,9 @@
         {
           "id": "lucc_025",
           "set": [ 15 ],
-          "question": "Qui a tiré sur Mr Burns ?",
-          "answers": [ "Maggie Simpson", "Homer Simpson", "Waylon Smithers", "Barney Gumble" ],
-          "info": "Ce cliffhanger inter-saison a été un des secrets les mieux gardés de la série."
+          "question": "A qui doit-on les paroles\nde La Marseillaise ?",
+          "answers": [ "Chaude Joseph Rouget de Lisle", "Louis Antoine Bougainville", "Pierre Samuel Dupont de Nemours", "Marc René Montalembert" ],
+          "info": ""
         }
       ]
     },
@@ -584,10 +584,9 @@
         {
           "id": "vict_011",
           "set": [ 6, 7, 8, 9 ],
-          "question": "De quand date le droit de vote des femmes en France ?",
-          "answers": [ "1789", "1912", "1918", "1945" ],
-          "correct": 4,
-          "info": "Sans commentaires."
+          "question": "Quel est le pseudonyme de l'ingénieur du son\ntravaillant avec le Joueur du Grenier",
+          "answers": [ "6coups6mouches", "NikosAliagos", "L'électricien", "Bernard Minou" ],
+          "info": "De son vrai nom Nicolas Sénac."
         },
         {
           "id": "vict_012",
@@ -665,9 +664,9 @@
         {
           "id": "vict_022",
           "set": [ 11, 12, 13, 14 ],
-          "question": "",
-          "answers": [ "", "", "", "" ],
-          "info": ""
+          "question": "Quel personnage n'a pas été créé\npar Stan Lee ?",
+          "answers": [ "Captain America", "Spider-Man", "Thor", "Iron-Man" ],
+          "info": "Captain America a été créé par Joe Simon et Jack Kirby."
         },
 
         {
@@ -680,9 +679,9 @@
         {
           "id": "vict_024",
           "set": [ 15 ],
-          "question": "",
-          "answers": [ "", "", "", "" ],
-          "info": ""
+          "question": "Grâce à quel minerai obtient-on\nl'aluminium ?'",
+          "answers": [ "La bauxite", "La sphalérite", "La galène", "La malachite" ],
+          "info": "Ce minerai composite contient 40 à 60% d'oxyde d'aluminium."
         },
         {
           "id": "vict_025",
@@ -747,7 +746,7 @@
           "set": [ 1, 2, 3, 4, 5 ],
           "question": "Qui a présenté Qui veut Gagner des Millions\npendant près de 20 ans ?",
           "answers": [ "Jean-Pierre Foucault", "Arthur", "Laurence Boccolini", "Camille Combal" ],
-          "info": ""
+          "info": "Arthur est le présentateur actuel de l'émission ?"
         },
 
         {
@@ -842,31 +841,31 @@
         {
           "id": "flor_020",
           "set": [ 11, 12, 13, 14 ],
-          "question": "",
-          "answers": [ "", "", "", "" ],
-          "info": ""
+          "question": "Quels sont les noms des jeux Pokémon\nsortis en 2022 sur Nintendo Switch ?",
+          "answers": [ "Ecarlate et Violet", "Epée et Bouclier", "Soleil et Lune", "X et Y" ],
+          "info": "Ecarlate et Violet est la 9e génération de Pokémon."
         },
         {
           "id": "flor_021",
           "set": [ 11, 12, 13, 14 ],
-          "question": "",
-          "answers": [ "", "", "", "" ],
-          "info": ""
+          "question": "Dans la série Yu-Gi-Oh!, combien de fois\nYugi a-t-il invoqué Exodia le Maudit ?",
+          "answers": [ "Aucune", "1", "2", "3" ],
+          "info": "Uniquement dans l'épisode 1 contre Kaiba."
         },
         {
           "id": "flor_022",
           "set": [ 11, 12, 13, 14 ],
-          "question": "",
-          "answers": [ "", "", "", "" ],
+          "question": "Qui a écrit la pièce de théâtre\nCyrano de Bergerac ?",
+          "answers": [ "Edmond Rostand", "Victor Hugo", "Molière", "Alfred de Musset" ],
           "info": ""
         },
 
         {
           "id": "flor_023",
           "set": [ 15 ],
-          "question": "",
-          "answers": [ "", "", "", "" ],
-          "info": ""
+          "question": "Lequel de ces plats est le plus calorique ?",
+          "answers": [ "20 McNuggets", "Mc Flurry M&M's caramel", "Double Maple BBQ Quarter Pounder", "280 Original" ],
+          "info": "McNuggets: 870 kcal ; DMBBQQP: 825 kcal ; McFlurry: 457 kcal ; 280 Original: 772 kcal"
         },
         {
           "id": "flor_024",

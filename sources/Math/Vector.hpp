@@ -20,7 +20,7 @@ namespace Math
 
     template<typename ... Types>
     Vector(Types... args) :
-      Math::Matrix<Size, 1, Type>(args...)
+      Math::Matrix<Size, 1, Type>(std::forward<Types>(args)...)
     {}
 
     Vector(const Game::JSON::Array& json)
@@ -254,7 +254,7 @@ namespace Math
     template<typename RetType = Type, typename ... Vectors>
     static RetType  determinant(Vectors... args) // Calcultate vector determinant
     {
-      Math::Vector<Size, Type>  vec[]{ args... };
+      Math::Vector<Size, Type>  vec[]{ std::forward<Vectors>(args)... };
 
       static_assert(sizeof(vec) / sizeof(Math::Vector<Size, Type>) == Size, "Invalid vector determinant parameters.");
 

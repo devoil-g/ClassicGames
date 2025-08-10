@@ -520,7 +520,7 @@ void  QUIZ::MillionaireQuizScene::setQuestion()
     << "  B: " << question.answers.at(1) << std::endl
     << "  C: " << question.answers.at(2) << std::endl
     << "  D: " << question.answers.at(3) << std::endl
-    << std::endl;
+    << std::endl << std::flush;
 
   // Commands
   std::cout
@@ -765,7 +765,7 @@ void  QUIZ::MillionaireQuizScene::setAnswer()
     << "  D: " << question.answers.at(3) << std::endl
     << std::endl
     << "Correct:  " << (char)('A' + question.correct) << ", " << question.answers.at(question.correct) << std::endl
-    << "Info:" << std::endl << question.info << std::endl;
+    << "Info:" << std::endl << question.info << std::endl << std::flush;
 
   // Commands
   std::cout << std::endl
@@ -814,12 +814,12 @@ void  QUIZ::MillionaireQuizScene::setResult()
     << std::endl
     << "Correct:  " << (char)('A' + question.correct) << ", " << question.answers.at(question.correct) << std::endl
     << "Info:     " << question.info << std::endl
-    << std::endl;
+    << std::endl << std::flush;
   
   // Give score to each player
   std::cout << "Correct players win " << ScoreAll.at(_step) << " points." << std::endl;
   for (unsigned int index = 0; index < _quiz.players.size(); index++)
-    if (_answers.at(index) == question.correct && index != _player)
+    if (_answers.at(index) == question.correct && (index != _player || _lose == true))
       _quiz.players.at(index).score += ScoreAll.at(_step);
 
   // Main player still in game

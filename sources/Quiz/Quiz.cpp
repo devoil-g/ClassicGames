@@ -25,8 +25,8 @@ QUIZ::Quiz::Quiz() :
 {
   auto json = Game::JSON::Object(Game::Config::ExecutablePath / "assets" / "quiz" / "questions.json");
 
-  constexpr std::array<std::string, 9> textureExtensions = { "jpg", "png", "bmp", "tga", "jpeg", "gif", "psd", "hdr", "pic" };
-  constexpr std::array<std::string, 3> musicExtensions = { "ogg", "wav", "flac" };
+  constexpr std::array<std::string_view, 9> textureExtensions = { "jpg", "png", "bmp", "tga", "jpeg", "gif", "psd", "hdr", "pic" };
+  constexpr std::array<std::string_view, 3> musicExtensions = { "ogg", "wav", "flac" };
 
   std::default_random_engine  randomEngine((unsigned int)std::chrono::system_clock::now().time_since_epoch().count());
 
@@ -133,7 +133,7 @@ QUIZ::Quiz::Quiz() :
       fastests.push_back(std::move(fastest));
 
       // Verbose
-      std::wcout << "Fastest finger '" << fastests.back().question << "' loaded." << std::endl;
+      std::wcout << "Fastest finger '" << fastests.back().id << "' loaded." << std::endl;
     }
     catch (const std::exception&) {
       continue;
@@ -188,8 +188,6 @@ QUIZ::Quiz::Quiz() :
             question.correct = (unsigned int)std::distance(question.answers.begin(), std::find(question.answers.begin(), question.answers.end(), correct));
           }
 
-          std::wcout << "Add question: " << question.question << std::endl;
-
           // Add question to set pool
           millionaire.questions.push_back(std::move(question));
         }
@@ -205,6 +203,9 @@ QUIZ::Quiz::Quiz() :
 
       // Add question set to pool
       millionaires.push_back(std::move(millionaire));
+
+      // Verbose
+      std::wcout << "Millionaire '" << millionaires.back().name << "' loaded." << std::endl;
     }
     catch (const std::exception&) {
       continue;
@@ -220,7 +221,9 @@ QUIZ::Quiz::Quiz() :
   std::cout << std::endl
     << "Quiz loaded:" << std::endl
     << "  Avatars:        " << avatars.size() << std::endl
+    << "  Blindtests:     " << blindtests.size() << std::endl
     << "  Fastest finger: " << fastests.size() << std::endl
+    << "  Millionaire:    " << millionaires.size() << std::endl
     << "  Questions:      " << questions.size() << std::endl
     << std::endl;
 }
