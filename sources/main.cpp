@@ -1,8 +1,8 @@
-#include <stdexcept>
+#include <chrono>
 #include <iostream>
+#include <stdexcept>
 
 #include "Scenes/SplashScene.hpp"
-#include "Scenes/Menu/MainMenuScene.hpp"
 #include "Scenes/SceneMachine.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
@@ -13,6 +13,12 @@
 #else
 # include <X11/Xlib.h>
 #endif
+
+// TODO: remove this
+#include "RolePlayingGame/ClientScene.hpp"
+#include "RolePlayingGame/Server.hpp"
+#include "Scenes/ExitScene.hpp"
+#include "Scenes/Menu/MainMenuScene.hpp"
 
 namespace Game
 {
@@ -27,27 +33,31 @@ namespace Game
   void  run()
   {
     Game::SceneMachine  game;
-    sf::Clock           clock;
+    auto                clock = std::chrono::steady_clock::now();
 
     // Push initial state
     game.push<Game::SplashScene>();
+    //game.push<Game::MainMenuScene>();
+    //game.push<Game::ExitScene<RPG::ClientScene>>(std::make_unique<RPG::Server>(Game::Config::ExecutablePath / "assets" / "rpg" / "world.json"));
 
     // Run the game !
-    while (Game::Window::Instance().window().isOpen()) {
-      float elapsed = clock.restart().asSeconds();
+    while (Game::Window::Instance().isOpen() == true) {
+      auto now = std::chrono::steady_clock::now();
+      auto elapsed = std::chrono::duration<float>(now - clock);
+
+      // Update clock
+      clock = now;
 
       // Stop if update return true
-      if (Game::Window::Instance().update(elapsed) == true ||
-        Game::Audio::Sound::Instance().update(elapsed) == true ||
-        game.update(elapsed) == true)
+      if (Game::Window::Instance().update(elapsed.count()) == true ||
+        Game::Audio::Sound::Instance().update(elapsed.count()) == true ||
+        game.update(elapsed.count()) == true)
         return;
 
-      // Draw image
-      Game::Window::Instance().window().clear();
+      // Render game
+      Game::Window::Instance().clear();
       game.draw();
-
-      // Display image
-      Game::Window::Instance().window().display();
+      Game::Window::Instance().display();
     }
   }
 };
@@ -63,7 +73,7 @@ int main(int argc, char ** argv)
     std::cerr << "[Runtime Error]: " << e.what() << std::endl;
 
 #ifdef _WIN32
-    MessageBox(Game::Window::Instance().window().getSystemHandle(), e.what(), "Runtime error", MB_OK | MB_ICONSTOP);
+    MessageBox(Game::Window::Instance().getHandle(), e.what(), "Runtime error", MB_OK | MB_ICONSTOP);
 #endif
 
     return EXIT_FAILURE;

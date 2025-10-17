@@ -12,7 +12,7 @@ namespace GBC
   class CentralProcessingUnit
   {
   public:
-    static const std::size_t  Frequency = 4 * 1024 * 1024;  // Number of CPU ticks per second
+    static constexpr  std::size_t  Frequency = 4 * 1024 * 1024; // Number of CPU ticks per second
 
   private:
     union Register

@@ -7,7 +7,7 @@
 
 Game::AbstractMenuScene::AbstractMenuScene(Game::SceneMachine& machine) :
   Game::AbstractScene(machine),
-  _title("", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf")),
+  _title(Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf")),
   _items(),
   _footer("", [](Item&) {}),
   _select(-1),
@@ -59,8 +59,8 @@ bool  Game::AbstractMenuScene::empty() const
 bool  Game::AbstractMenuScene::update(float elapsed)
 {
   // Return to previous menu
-  if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Right) == true ||
-    Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Escape) == true ||
+  if (Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Right) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Escape) == true ||
     Game::Window::Instance().joystick().buttonPressed(0, 1) == true)
   {
     _machine.pop();
@@ -68,10 +68,10 @@ bool  Game::AbstractMenuScene::update(float elapsed)
   }
 
   // Move down in menu with keyboard or joystick
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Down) == true ||
-    Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::S) == true ||
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Down) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::S) == true ||
     Game::Window::Instance().mouse().wheel() < 0 ||
-    (Game::Window::Instance().joystick().relative(0, sf::Joystick::Axis::PovY) < -0.9f && Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) < -0.1f)) {
+    (Game::Window::Instance().joystick().relative(0, Game::Window::JoystickAxis::PovY) < -0.9f && Game::Window::Instance().joystick().position(0, Game::Window::JoystickAxis::PovY) < -0.1f)) {
     if (_select == -1)
       _target = _select = _target % _items.size();
     else
@@ -79,10 +79,10 @@ bool  Game::AbstractMenuScene::update(float elapsed)
   }
 
   // Move up in menu with keyboard or joystick
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Up) == true ||
-    Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Z) == true ||
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Up) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Z) == true ||
     Game::Window::Instance().mouse().wheel() > 0 ||
-    (Game::Window::Instance().joystick().relative(0, sf::Joystick::Axis::PovY) > +0.9f && Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) > +0.1f)) {
+    (Game::Window::Instance().joystick().relative(0, Game::Window::JoystickAxis::PovY) > +0.9f && Game::Window::Instance().joystick().position(0, Game::Window::JoystickAxis::PovY) > +0.1f)) {
     if (_select == -1)
       _target = _select = _target % _items.size();
     else
@@ -90,14 +90,14 @@ bool  Game::AbstractMenuScene::update(float elapsed)
   }
 
   // Select menu if mouse cursor is over when moving
-  if ((Game::Window::Instance().mouse().relative().x != 0 || Game::Window::Instance().mouse().relative().y != 0))
+  if ((Game::Window::Instance().mouse().relative().x() != 0 || Game::Window::Instance().mouse().relative().y() != 0))
   {
     // Default to unselected
     _select = -1;
 
     sf::Vector2f  mouse = {
-      (float)Game::Window::Instance().mouse().position().x,
-      (float)Game::Window::Instance().mouse().position().y
+      (float)Game::Window::Instance().mouse().position().x(),
+      (float)Game::Window::Instance().mouse().position().y()
     };
 
     // Menu items
@@ -115,18 +115,18 @@ bool  Game::AbstractMenuScene::update(float elapsed)
     sf::FloatRect bound = _items[_target].getGlobalBounds();
 
     if (_target == _select)
-      bound.height /= 1.28f;
+      bound.size.y /= 1.28f;
 
-    if (bound.top < Game::Window::Instance().window().getSize().y / 3.f)
-      _scroll += elapsed * 10.f * (Game::Window::Instance().window().getSize().y / 3.f - bound.top);
-    else if (bound.top + bound.height > Game::Window::Instance().window().getSize().y * 2.f / 3.f)
-      _scroll -= elapsed * 10.f * (bound.top + bound.height - Game::Window::Instance().window().getSize().y * 2.f / 3.f);
+    if (_items[_target].getPosition().y < Game::Window::Instance().getSize().y() / 3.f)
+      _scroll = _scroll + (Game::Window::Instance().getSize().y() / 3.f - _items[_target].getPosition().y) * (1.f - (1.f / std::pow(2.f, elapsed / 0.125f)));
+    else if (_items[_target].getPosition().y > Game::Window::Instance().getSize().y() * 2.f / 3.f)
+      _scroll = _scroll - (_items[_target].getPosition().y - Game::Window::Instance().getSize().y() * 2.f / 3.f) * (1.f - (1.f / std::pow(2.f, elapsed / 0.125f)));
   }
 
   // Select menu with mouse, keyboard or joystick
-  if ((Game::Window::Instance().mouse().buttonReleased(sf::Mouse::Button::Left) == true ||
-    Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space) == true ||
-    Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Return) == true ||
+  if ((Game::Window::Instance().mouse().buttonReleased(Game::Window::MouseButton::Left) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Space) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Enter) == true ||
     Game::Window::Instance().joystick().buttonPressed(0, 0) == true)
     && _select != -1)
   {
@@ -150,31 +150,32 @@ void  Game::AbstractMenuScene::draw()
 {
   drawItems();
 
-  sf::Image   image;
+  sf::Image   image(sf::Vector2u(1, 12));
   sf::Texture texture;
-  sf::Sprite  sprite;
-
-  image.create(1, 12);
-  image.setPixel(0, 0, sf::Color(0, 0, 0, 255));
-  image.setPixel(0, 1, sf::Color(0, 0, 0, 255));
-  image.setPixel(0, 2, sf::Color(0, 0, 0, 255));
-  image.setPixel(0, 3, sf::Color(0, 0, 0, 0));
-  image.setPixel(0, 4, sf::Color(0, 0, 0, 0));
-  image.setPixel(0, 5, sf::Color(0, 0, 0, 0));
-  image.setPixel(0, 6, sf::Color(0, 0, 0, 0));
-  image.setPixel(0, 7, sf::Color(0, 0, 0, 0));
-  image.setPixel(0, 8, sf::Color(0, 0, 0, 0));
-  image.setPixel(0, 9, sf::Color(0, 0, 0, 255));
-  image.setPixel(0, 10, sf::Color(0, 0, 0, 255));
-  image.setPixel(0, 11, sf::Color(0, 0, 0, 255));
-  texture.loadFromImage(image);
+  
+  image.setPixel({ 0, 0 }, sf::Color(0, 0, 0, 255));
+  image.setPixel({ 0, 1 }, sf::Color(0, 0, 0, 255));
+  image.setPixel({ 0, 2 }, sf::Color(0, 0, 0, 255));
+  image.setPixel({ 0, 3 }, sf::Color(0, 0, 0, 0));
+  image.setPixel({ 0, 4 }, sf::Color(0, 0, 0, 0));
+  image.setPixel({ 0, 5 }, sf::Color(0, 0, 0, 0));
+  image.setPixel({ 0, 6 }, sf::Color(0, 0, 0, 0));
+  image.setPixel({ 0, 7 }, sf::Color(0, 0, 0, 0));
+  image.setPixel({ 0, 8 }, sf::Color(0, 0, 0, 0));
+  image.setPixel({ 0, 9 }, sf::Color(0, 0, 0, 255));
+  image.setPixel({ 0, 10 }, sf::Color(0, 0, 0, 255));
+  image.setPixel({ 0, 11 }, sf::Color(0, 0, 0, 255));
+  if (texture.loadFromImage(image) == false)
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
   texture.setSmooth(true);
-  sprite.setTexture(texture);
-  sprite.setScale(
-    (float)Game::Window::Instance().window().getSize().x / (float)image.getSize().x,
-    (float)Game::Window::Instance().window().getSize().y / (float)image.getSize().y
-  );
-  Game::Window::Instance().window().draw(sprite);
+
+  sf::Sprite  sprite(texture);
+
+  sprite.setScale({
+    (float)Game::Window::Instance().getSize().x() / (float)image.getSize().x,
+    (float)Game::Window::Instance().getSize().y() / (float)image.getSize().y
+    });
+  Game::Window::Instance().draw(sprite);
 
   drawTitle();
   drawFooter();
@@ -183,21 +184,26 @@ void  Game::AbstractMenuScene::draw()
 void  Game::AbstractMenuScene::drawTitle()
 {
   float scale = std::min(
-    Game::Window::Instance().window().getSize().x / (2.f * _title.getLocalBounds().width),
-    Game::Window::Instance().window().getSize().y / (8.f * _title.getLocalBounds().height)
+    Game::Window::Instance().getSize().x() / (2.f * _title.getLocalBounds().size.x),
+    Game::Window::Instance().getSize().y() / (8.f * _title.getLocalBounds().size.y)
   );
-
+ 
   // Scale title
   _title.setScale({ scale, scale });
 
+  _title.setOrigin({
+    _title.getLocalBounds().size.x / 2.f,
+    _title.getLocalBounds().size.y / 2.f
+    });
+
   // Position title
-  _title.setPosition(
-    Game::Window::Instance().window().getSize().x / 2.f - _title.getGlobalBounds().width / 2.f,
-    Game::Window::Instance().window().getSize().y / 8.f - _title.getGlobalBounds().height / 2.f
-  );
+  _title.setPosition({
+    Game::Window::Instance().getSize().x() / 2.f,
+    Game::Window::Instance().getSize().y() * 1.f / 8.f
+    });
 
   // Draw title
-  Game::Window::Instance().window().draw(_title);
+  Game::Window::Instance().draw(_title);
 }
 
 void  Game::AbstractMenuScene::drawItems()
@@ -207,14 +213,14 @@ void  Game::AbstractMenuScene::drawItems()
 
   // Get biggest item
   for (const auto& item : _items) {
-    width = std::max(width, item.getLocalBounds().width);
-    height = std::max(height, item.getLocalBounds().height);
+    width = std::max(width, item.getLocalBounds().size.x);
+    height = std::max(height, item.getLocalBounds().size.y);
   }
 
   // Scale of items
   float scale = std::min(
-    Game::Window::Instance().window().getSize().x * 2.f / (3.f * width),
-    Game::Window::Instance().window().getSize().y / (16.f * height)
+    Game::Window::Instance().getSize().x() * 2.f / (3.f * width),
+    Game::Window::Instance().getSize().y() / (16.f * height)
   );
 
   // Set position and draw menu items
@@ -228,26 +234,24 @@ void  Game::AbstractMenuScene::drawItems()
       _items[index].scale({ 1.28f, 1.28f });
 
     // Center origin
-    _items[index].setOrigin(_items[index].getLocalBounds().width / 2.f, _items[index].getLocalBounds().height);
+    _items[index].setOrigin({ _items[index].getLocalBounds().size.x / 2.f, _items[index].getLocalBounds().size.y });
 
     // Position item
-    _items[index].setPosition(
-      Game::Window::Instance().window().getSize().x / 2.f,
-      Game::Window::Instance().window().getSize().y / 3.f
-      + _scroll
-      + height * scale * 2.f * index
-    );
+    _items[index].setPosition({
+      Game::Window::Instance().getSize().x() / 2.f,
+      Game::Window::Instance().getSize().y() / 3.f + _scroll + height * scale * 2.f * index
+      });
 
     // Draw item
-    Game::Window::Instance().window().draw(_items[index]);
+    Game::Window::Instance().draw(_items[index]);
   }
 }
 
 void  Game::AbstractMenuScene::drawFooter()
 {
   float scale = std::min(
-    Game::Window::Instance().window().getSize().x * 2.f / (3.f * _footer.getLocalBounds().width),
-    Game::Window::Instance().window().getSize().y / (16.f * _footer.getLocalBounds().height)
+    Game::Window::Instance().getSize().x() * 2.f / (3.f * _footer.getLocalBounds().size.x),
+    Game::Window::Instance().getSize().y() / (16.f * _footer.getLocalBounds().size.y)
   );
 
   // Set footer scale
@@ -256,14 +260,17 @@ void  Game::AbstractMenuScene::drawFooter()
     _footer.scale({ 1.28f, 1.28f });
 
   // Center origin
-  _footer.setOrigin(_footer.getLocalBounds().width / 2.f, _footer.getLocalBounds().height);
+  _footer.setOrigin({
+    _footer.getLocalBounds().size.x / 2.f,
+    _footer.getLocalBounds().size.y / 2.f
+    });
 
   // Position footer
-  _footer.setPosition(
-    Game::Window::Instance().window().getSize().x / 2.f,
-    Game::Window::Instance().window().getSize().y * 7.f / 8.f
-  );
+  _footer.setPosition({
+    Game::Window::Instance().getSize().x() / 2.f,
+    Game::Window::Instance().getSize().y() * 7.f / 8.f
+    });
 
   // Draw item
-  Game::Window::Instance().window().draw(_footer);
+  Game::Window::Instance().draw(_footer);
 }

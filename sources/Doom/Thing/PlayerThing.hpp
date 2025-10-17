@@ -1,8 +1,13 @@
 #pragma once
 
+#include <array>
+#include <cstdint>
+#include <unordered_map>
+
 #include "Doom/Automap.hpp"
 #include "Doom/Camera.hpp"
 #include "Doom/Statusbar.hpp"
+#include "Math/Vector.hpp"
 
 namespace DOOM
 {
@@ -129,10 +134,10 @@ namespace DOOM
     bool  pickupComputerMap();
 
     void  damage(DOOM::Doom& doom, DOOM::AbstractThing& attacker, DOOM::AbstractThing& origin, float damage) override;  // Damage player, taking shield into account
-    void  damageSector(DOOM::Doom& doom, float elapsed, float damage, bool end = false);                             // Receive damage from damaging sector
+    void  damageSector(DOOM::Doom& doom, float elapsed, float damage, bool end = false);                                // Receive damage from damaging sector
 
     DOOM::Camera::Special cameraMode() const;     // Return current camera mode
-    int16_t               cameraPalette() const;  // Return current color palette
+    std::int16_t          cameraPalette() const;  // Return current color palette
 
     void  A_WeaponReady(DOOM::Doom& doom);    // The player can fire the weapon or change to another weapon at this time. Follows after getting weapon up, or after previous attack/fire sequence.
     void  A_Lower(DOOM::Doom& doom);          // Lowers current weapon, and changes weapon at bottom.
@@ -182,10 +187,10 @@ namespace DOOM
 
     bool  control(DOOM::PlayerThing::Control action, bool pressed = false);
 
-    void  drawCamera(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette);     // Render player camera
-    void  drawWeapon(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette);     // Render player weapon and muzzle flash
-    void  drawStatusbar(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette);  // Render player statusbar
-    void  drawAutomap(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette);    // Render player automap
+    void  drawCamera(DOOM::Doom& doom, sf::Image& target, Math::Box<2, std::int16_t> rect, unsigned int scale, std::int16_t palette);     // Render player camera
+    void  drawWeapon(DOOM::Doom& doom, sf::Image& target, Math::Box<2, std::int16_t> rect, unsigned int scale, std::int16_t palette);     // Render player weapon and muzzle flash
+    void  drawStatusbar(DOOM::Doom& doom, sf::Image& target, Math::Box<2, std::int16_t> rect, unsigned int scale, std::int16_t palette);  // Render player statusbar
+    void  drawAutomap(DOOM::Doom& doom, sf::Image& target, Math::Box<2, std::int16_t> rect, unsigned int scale, std::int16_t palette);    // Render player automap
 
   public:
     const int         id;         // Player ID
@@ -202,6 +207,6 @@ namespace DOOM
     bool  update(DOOM::Doom& doom, float elapsed) override; // Update player using controller, alway return false as a player thing is never deleted
     bool  key(DOOM::Enum::KeyColor color) const override;   // Return true if player has the key
 
-    void  draw(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale);  // Render player on target
+    void  draw(DOOM::Doom& doom, sf::Image& target, Math::Box<2, std::int16_t> rect, unsigned int scale); // Render player on target
   };
 }

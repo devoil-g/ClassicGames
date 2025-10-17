@@ -1,5 +1,10 @@
 #pragma once
 
+#include <array>
+#include <cstdint>
+#include <set>
+#include <utility>
+
 #include "Doom/Doom.hpp"
 #include "Doom/Statusbar.hpp"
 
@@ -340,23 +345,23 @@ namespace DOOM
 
     virtual bool  pickup(DOOM::Doom& doom, DOOM::AbstractThing& item); // Try to pick-up item, return true if item shall be deleted
 
-    void                                                                                updateState(DOOM::Doom& doom, float elapsed);                                                                                                           // Update state of thing
-    void                                                                                updatePhysics(DOOM::Doom& doom, float elapsed);                                                                                                         // Update physics of thing
-    void                                                                                updatePhysicsThrust(DOOM::Doom& doom, float elapsed, int depth = 0, int16_t linedef_ignored = -1, const DOOM::AbstractThing* thing_ignored = nullptr);  // Update thrust component of thing
-    bool                                                                                updatePhysicsThrustSidedefs(DOOM::Doom& doom, int16_t sidedef_front_index, int16_t sidedef_back_index);                                                 // Return true if thing can move through sidedefs
-    std::pair<float, Math::Vector<2>>                                                   updatePhysicsThrustVertex(DOOM::Doom& doom, const Math::Vector<2>& movement, int16_t vertex_index, int16_t ignored_index);                              // Return intersection of movement with vertex (coef. along movement / normal vector)
-    std::pair<float, Math::Vector<2>>                                                   updatePhysicsThrustLinedef(DOOM::Doom& doom, const Math::Vector<2>& movement, int16_t linedef_index, int16_t ignored_index);                            // Return intersection of movement with linedef (coef. along movement / normal vector)
-    std::pair<float, Math::Vector<2>>                                                   updatePhysicsThrustThing(DOOM::Doom& doom, const Math::Vector<2>& movement, const DOOM::AbstractThing& thing, const DOOM::AbstractThing* ignored);      // Return intersection of movement with thing (coef. along movement / normal vector)
-    std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing>>> updatePhysicsThrustLinedefsThings(DOOM::Doom& doom, const Math::Vector<2>& movement);                                                                   // Return set of intersectable linedef indexes
-    void                                                                                updatePhysicsGravity(DOOM::Doom& doom, float elapsed);                                                                                                  // Update gravity component of thing
+    void                                                                                updateState(DOOM::Doom& doom, float elapsed);                                                                                                               // Update state of thing
+    void                                                                                updatePhysics(DOOM::Doom& doom, float elapsed);                                                                                                             // Update physics of thing
+    void                                                                                updatePhysicsThrust(DOOM::Doom& doom, float elapsed, int depth = 0, std::int16_t linedef_ignored = -1, const DOOM::AbstractThing* thing_ignored = nullptr); // Update thrust component of thing
+    bool                                                                                updatePhysicsThrustSidedefs(DOOM::Doom& doom, std::int16_t sidedef_front_index, std::int16_t sidedef_back_index);                                           // Return true if thing can move through sidedefs
+    std::pair<float, Math::Vector<2>>                                                   updatePhysicsThrustVertex(DOOM::Doom& doom, const Math::Vector<2>& movement, std::int16_t vertex_index, std::int16_t ignored_index);                        // Return intersection of movement with vertex (coef. along movement / normal vector)
+    std::pair<float, Math::Vector<2>>                                                   updatePhysicsThrustLinedef(DOOM::Doom& doom, const Math::Vector<2>& movement, std::int16_t linedef_index, std::int16_t ignored_index);                      // Return intersection of movement with linedef (coef. along movement / normal vector)
+    std::pair<float, Math::Vector<2>>                                                   updatePhysicsThrustThing(DOOM::Doom& doom, const Math::Vector<2>& movement, const DOOM::AbstractThing& thing, const DOOM::AbstractThing* ignored);          // Return intersection of movement with thing (coef. along movement / normal vector)
+    std::pair<std::set<int16_t>, std::set<std::reference_wrapper<DOOM::AbstractThing>>> updatePhysicsThrustLinedefsThings(DOOM::Doom& doom, const Math::Vector<2>& movement);                                                                       // Return set of intersectable linedef indexes
+    void                                                                                updatePhysicsGravity(DOOM::Doom& doom, float elapsed);                                                                                                      // Update gravity component of thing
 
   public:
     AbstractThing(DOOM::Doom& doom, const DOOM::Wad::RawLevel::Thing& thing);
     AbstractThing(DOOM::Doom& doom, DOOM::Enum::ThingType type, DOOM::Enum::ThingFlag flags, float x, float y, float angle);
     virtual ~AbstractThing() = default;
 
-    static DOOM::Enum::ThingType  id_to_type(int16_t id);                 // Convert WAD id to DOOM type
-    static int16_t                type_to_id(DOOM::Enum::ThingType type); // Convert DOOM type to WAD id
+    static DOOM::Enum::ThingType  id_to_type(std::int16_t id);            // Convert WAD id to DOOM type
+    static std::int16_t           type_to_id(DOOM::Enum::ThingType type); // Convert DOOM type to WAD id
 
     bool  teleport(DOOM::Doom& doom, const Math::Vector<2>& destination, float angle, bool telefrag, bool silent = false);  // Teleport thing to position (reset physics)
     void  thrust(const Math::Vector<3>& acceleration);                                                                      // Apply acceleration to thing

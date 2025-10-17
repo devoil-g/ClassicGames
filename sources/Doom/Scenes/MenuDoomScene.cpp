@@ -1,4 +1,4 @@
-#include <iostream>
+#include <cstring>
 
 #include "Doom/Scenes/MenuDoomScene.hpp"
 #include "Doom/Scenes/GameDoomScene.hpp"
@@ -20,52 +20,52 @@ DOOM::MenuDoomScene::MenuDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom
   _menuDesc({
     Menu{ // MenuMain
       .items = {
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_DOOM"), .selectable = false, .x = 94, .y = 2, .hotkey = sf::Keyboard::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_NGAME"), .selectable = true, .x = 97, .y = 64, .hotkey = sf::Keyboard::N, .select = [this]() { if (_doom.mode == DOOM::Enum::Mode::ModeCommercial) { _episode = 1; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; } else { _menuIndex = MenuEpisode; _menuCursor = 1; } _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_OPTION"), .selectable = true, .x = 97, .y = 80, .hotkey = sf::Keyboard::O, .select = [this]() { _menuIndex = MenuOptions; _menuCursor = 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_LOADG"), .selectable = false, .x = 97, .y = 96, .hotkey = sf::Keyboard::L, .select = []() {}, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_SAVEG"), .selectable = false, .x = 97, .y = 112, .hotkey = sf::Keyboard::S, .select = []() {}, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_RDTHIS"), .selectable = true, .x = 97, .y = 128, .hotkey = sf::Keyboard::R, .select = [this]() { _menuIndex = MenuRead1; _menuCursor = 0; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_QUITG"), .selectable = true, .x = 97, .y = 144, .hotkey = sf::Keyboard::Q, .select = [this]() { _machine.clear(); }, .left = []() {}, .right = []() {} }
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_DOOM"), .selectable = false, .x = 94, .y = 2, .hotkey = Game::Window::Key::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_NGAME"), .selectable = true, .x = 97, .y = 64, .hotkey = Game::Window::Key::N, .select = [this]() { if (_doom.mode == DOOM::Enum::Mode::ModeCommercial) { _episode = 1; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; } else { _menuIndex = MenuEpisode; _menuCursor = 1; } _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_OPTION"), .selectable = true, .x = 97, .y = 80, .hotkey = Game::Window::Key::O, .select = [this]() { _menuIndex = MenuOptions; _menuCursor = 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_LOADG"), .selectable = false, .x = 97, .y = 96, .hotkey = Game::Window::Key::L, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_SAVEG"), .selectable = false, .x = 97, .y = 112, .hotkey = Game::Window::Key::S, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_RDTHIS"), .selectable = true, .x = 97, .y = 128, .hotkey = Game::Window::Key::R, .select = [this]() { _menuIndex = MenuRead1; _menuCursor = 0; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_QUITG"), .selectable = true, .x = 97, .y = 144, .hotkey = Game::Window::Key::Q, .select = [this]() { _machine.clear(); }, .left = []() {}, .right = []() {} }
       },
       .sliders = {},
       .escape = [this]() { _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchx); _machine.pop(); }
     },
     Menu{ // MenuEpisode
       .items = {
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_EPISOD"), .selectable = false, .x = 54, .y = 38, .hotkey = sf::Keyboard::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_EPI1"), .selectable = true, .x = 48, .y = 63, .hotkey = sf::Keyboard::K, .select = [this]() { _episode = 1; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_EPI2"), .selectable = true, .x = 48, .y = 79, .hotkey = sf::Keyboard::T, .select = [this]() { _episode = 2; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_EPI3"), .selectable = true, .x = 48, .y = 95, .hotkey = sf::Keyboard::I, .select = [this]() { _episode = 3; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_EPI4"), .selectable = true, .x = 48, .y = 111, .hotkey = sf::Keyboard::T, .select = [this]() { _episode = 4; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} }
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_EPISOD"), .selectable = false, .x = 54, .y = 38, .hotkey = Game::Window::Key::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_EPI1"), .selectable = true, .x = 48, .y = 63, .hotkey = Game::Window::Key::K, .select = [this]() { _episode = 1; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_EPI2"), .selectable = true, .x = 48, .y = 79, .hotkey = Game::Window::Key::T, .select = [this]() { _episode = 2; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_EPI3"), .selectable = true, .x = 48, .y = 95, .hotkey = Game::Window::Key::I, .select = [this]() { _episode = 3; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_EPI4"), .selectable = true, .x = 48, .y = 111, .hotkey = Game::Window::Key::T, .select = [this]() { _episode = 4; _menuIndex = MenuSkill; _menuCursor = _doom.skill + 2; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} }
       },
       .sliders = {},
       .escape = [this]() { _menuIndex = MenuMain; _menuCursor = 1; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
     },
     Menu{ // MenuSkill
       .items = {
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_NEWG"), .selectable = false, .x = 96, .y = 14, .hotkey = sf::Keyboard::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_SKILL"), .selectable = false, .x = 54, .y = 38, .hotkey = sf::Keyboard::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_JKILL"), .selectable = true, .x = 48, .y = 63, .hotkey = sf::Keyboard::I, .select = [this]() { _doom.skill = DOOM::Enum::Skill::SkillBaby; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_ROUGH"), .selectable = true, .x = 48, .y = 79, .hotkey = sf::Keyboard::H, .select = [this]() { _doom.skill = DOOM::Enum::Skill::SkillEasy; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_HURT"), .selectable = true, .x = 48, .y = 95, .hotkey = sf::Keyboard::H, .select = [this]() { _doom.skill = DOOM::Enum::Skill::SkillMedium; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_ULTRA"), .selectable = true, .x = 48, .y = 111, .hotkey = sf::Keyboard::U, .select = [this]() { _doom.skill = DOOM::Enum::Skill::SkillHard; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_NMARE"), .selectable = true, .x = 48, .y = 127, .hotkey = sf::Keyboard::N, .select = [this]() { _doom.skill = DOOM::Enum::Skill::SkillNightmare; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, .left = []() {}, .right = []() {} }
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_NEWG"), .selectable = false, .x = 96, .y = 14, .hotkey = Game::Window::Key::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_SKILL"), .selectable = false, .x = 54, .y = 38, .hotkey = Game::Window::Key::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_JKILL"), .selectable = true, .x = 48, .y = 63, .hotkey = Game::Window::Key::I, .select = [this]() { _doom.skill = DOOM::Enum::Skill::SkillBaby; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_ROUGH"), .selectable = true, .x = 48, .y = 79, .hotkey = Game::Window::Key::H, .select = [this]() { _doom.skill = DOOM::Enum::Skill::SkillEasy; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_HURT"), .selectable = true, .x = 48, .y = 95, .hotkey = Game::Window::Key::H, .select = [this]() { _doom.skill = DOOM::Enum::Skill::SkillMedium; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_ULTRA"), .selectable = true, .x = 48, .y = 111, .hotkey = Game::Window::Key::U, .select = [this]() { _doom.skill = DOOM::Enum::Skill::SkillHard; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_NMARE"), .selectable = true, .x = 48, .y = 127, .hotkey = Game::Window::Key::N, .select = [this]() { _doom.skill = DOOM::Enum::Skill::SkillNightmare; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); start(); }, .left = []() {}, .right = []() {} }
       },
       .sliders = {},
       .escape = [this]() { _menuIndex = MenuEpisode; _menuCursor = _episode; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
     },
     Menu{ // MenuOptions
       .items = {
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_OPTTTL"), .selectable = false, .x = 108, .y = 15, .hotkey = sf::Keyboard::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_ENDGAM"), .selectable = false, .x = 60, .y = 37, .hotkey = sf::Keyboard::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_MESSG"), .selectable = true, .x = 60, .y = 53, .hotkey = sf::Keyboard::M, .select = [this]() { _doom.message = !_doom.message; std::next(_menuDesc[MenuOptions].items.begin(), 3)->texture = Game::Utilities::str_to_key<uint64_t>(_doom.message == true ? "M_MSGON" : "M_MSGOFF"); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>(_doom.message == true ? "M_MSGON" : "M_MSGOFF"), .selectable = false, .x = 180, .y = 53, .hotkey = sf::Keyboard::Unknown, .select = [this]() {}, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_DETAIL"), .selectable = true, .x = 60, .y = 69, .hotkey = sf::Keyboard::G, .select = [this]() { DOOM::Doom::RenderScale = DOOM::Doom::RenderScale % 2 + 1; std::next(_menuDesc[MenuOptions].items.begin(), 5)->texture = Game::Utilities::str_to_key<uint64_t>(DOOM::Doom::RenderScale == 1 ? "M_GDLOW" : "M_GDHIGH"); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>(DOOM::Doom::RenderScale == 1 ? "M_GDLOW" : "M_GDHIGH"), .selectable = false, .x = 235, .y = 69, .hotkey = sf::Keyboard::Unknown, .select = [this]() {}, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_SCRNSZ"), .selectable = false, .x = 60, .y = 85, .hotkey = sf::Keyboard::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_MSENS"), .selectable = true, .x = 60, .y = 117, .hotkey = sf::Keyboard::M, .select = [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .left = [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) - 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .right = [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); } },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_SVOL"), .selectable = true, .x = 60, .y = 149, .hotkey = sf::Keyboard::S, .select = [this]() { _menuIndex = MenuVolume; _menuCursor = 1; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} }
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_OPTTTL"), .selectable = false, .x = 108, .y = 15, .hotkey = Game::Window::Key::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_ENDGAM"), .selectable = false, .x = 60, .y = 37, .hotkey = Game::Window::Key::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_MESSG"), .selectable = true, .x = 60, .y = 53, .hotkey = Game::Window::Key::M, .select = [this]() { _doom.message = !_doom.message; std::next(_menuDesc[MenuOptions].items.begin(), 3)->texture = Game::Utilities::str_to_key<std::uint64_t>(_doom.message == true ? "M_MSGON" : "M_MSGOFF"); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>(_doom.message == true ? "M_MSGON" : "M_MSGOFF"), .selectable = false, .x = 180, .y = 53, .hotkey = Game::Window::Key::Unknown, .select = [this]() {}, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_DETAIL"), .selectable = true, .x = 60, .y = 69, .hotkey = Game::Window::Key::G, .select = [this]() { DOOM::Doom::RenderScale = DOOM::Doom::RenderScale % 2 + 1; std::next(_menuDesc[MenuOptions].items.begin(), 5)->texture = Game::Utilities::str_to_key<std::uint64_t>(DOOM::Doom::RenderScale == 1 ? "M_GDLOW" : "M_GDHIGH"); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>(DOOM::Doom::RenderScale == 1 ? "M_GDLOW" : "M_GDHIGH"), .selectable = false, .x = 235, .y = 69, .hotkey = Game::Window::Key::Unknown, .select = [this]() {}, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_SCRNSZ"), .selectable = false, .x = 60, .y = 85, .hotkey = Game::Window::Key::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_MSENS"), .selectable = true, .x = 60, .y = 117, .hotkey = Game::Window::Key::M, .select = [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .left = [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) - 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .right = [this]() { _doom.sensivity = std::clamp(((int)(_doom.sensivity * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); } },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_SVOL"), .selectable = true, .x = 60, .y = 149, .hotkey = Game::Window::Key::S, .select = [this]() { _menuIndex = MenuVolume; _menuCursor = 1; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} }
       },
       .sliders = {
         { .x = 60, .y = 101, .get = [this]() { return 8; } },
@@ -75,9 +75,9 @@ DOOM::MenuDoomScene::MenuDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom
     },
     Menu{ // MenuVolume
       .items = {
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_SVOL"), .selectable = false, .x = 60, .y = 38, .hotkey = sf::Keyboard::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_SFXVOL"), .selectable = true, .x = 80, .y = 64, .hotkey = sf::Keyboard::S, .select = [this]() { _doom.sfx = std::clamp(((int)(_doom.sfx * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .left = [this]() { _doom.sfx = std::clamp(((int)(_doom.sfx * 8) - 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .right = [this]() { _doom.sfx = std::clamp(((int)(_doom.sfx * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); } },
-        { .texture = Game::Utilities::str_to_key<uint64_t>("M_MUSVOL"), .selectable = true, .x = 80, .y = 96, .hotkey = sf::Keyboard::M, .select = [this]() { _doom.music = std::clamp(((int)(_doom.music * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .left = [this]() { _doom.music = std::clamp(((int)(_doom.music * 8) - 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .right = [this]() { _doom.music = std::clamp(((int)(_doom.music * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); } }
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_SVOL"), .selectable = false, .x = 60, .y = 38, .hotkey = Game::Window::Key::Unknown, .select = []() {}, .left = []() {}, .right = []() {} },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_SFXVOL"), .selectable = true, .x = 80, .y = 64, .hotkey = Game::Window::Key::S, .select = [this]() { _doom.sfx = std::clamp(((int)(_doom.sfx * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .left = [this]() { _doom.sfx = std::clamp(((int)(_doom.sfx * 8) - 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .right = [this]() { _doom.sfx = std::clamp(((int)(_doom.sfx * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); } },
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("M_MUSVOL"), .selectable = true, .x = 80, .y = 96, .hotkey = Game::Window::Key::M, .select = [this]() { _doom.music = std::clamp(((int)(_doom.music * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .left = [this]() { _doom.music = std::clamp(((int)(_doom.music * 8) - 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); }, .right = [this]() { _doom.music = std::clamp(((int)(_doom.music * 8) + 1) / 8.f, 0.f, 1.f); _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_stnmov); } }
       },
       .sliders = {
         { .x = 80, .y = 80, .get = [this]() { return (int)(_doom.sfx * 8); } },
@@ -87,14 +87,14 @@ DOOM::MenuDoomScene::MenuDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom
     },
     Menu{ // MenuRead1
       .items = {
-        { .texture = Game::Utilities::str_to_key<uint64_t>("HELP1"), .selectable = true, .x = 0, .y = 0, .hotkey = sf::Keyboard::Unknown, .select = [this]() { _menuIndex = MenuRead2; _menuCursor = 0; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} }
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("HELP1"), .selectable = true, .x = 0, .y = 0, .hotkey = Game::Window::Key::Unknown, .select = [this]() { _menuIndex = MenuRead2; _menuCursor = 0; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} }
       },
       .sliders = {},
       .escape = [this]() { _menuIndex = MenuMain; _menuCursor = 5; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
     },
     Menu{ // MenuRead2
       .items = {
-        { .texture = Game::Utilities::str_to_key<uint64_t>("HELP2"), .selectable = true, .x = 0, .y = 0, .hotkey = sf::Keyboard::Unknown, .select = [this]() { _menuIndex = MenuMain; _menuCursor = 5; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} }
+        { .texture = Game::Utilities::str_to_key<std::uint64_t>("HELP2"), .selectable = true, .x = 0, .y = 0, .hotkey = Game::Window::Key::Unknown, .select = [this]() { _menuIndex = MenuMain; _menuCursor = 5; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_pistol); }, .left = []() {}, .right = []() {} }
       },
       .sliders = {},
       .escape = [this]() { _menuIndex = MenuMain; _menuCursor = 5; _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn); }
@@ -160,12 +160,12 @@ DOOM::MenuDoomScene::MenuDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom
 
   // Additional check for help screen
   if (_doom.resources.menus.find(_menuDesc[MenuRead1].items.front().texture) == _doom.resources.menus.end())
-    _menuDesc[MenuRead1].items.front().texture = Game::Utilities::str_to_key<uint64_t>("HELP");
+    _menuDesc[MenuRead1].items.front().texture = Game::Utilities::str_to_key<std::uint64_t>("HELP");
   if (_doom.resources.menus.find(_menuDesc[MenuRead2].items.front().texture) == _doom.resources.menus.end())
-    _menuDesc[MenuRead2].items.front().texture = Game::Utilities::str_to_key<uint64_t>("CREDIT");
+    _menuDesc[MenuRead2].items.front().texture = Game::Utilities::str_to_key<std::uint64_t>("CREDIT");
 
   // Initialize pre-rendering target of menu
-  _menuImage.create(DOOM::Doom::RenderWidth, DOOM::Doom::RenderHeight);
+  _menuImage.resize({ DOOM::Doom::RenderWidth, DOOM::Doom::RenderHeight });
 }
 
 void  DOOM::MenuDoomScene::start()
@@ -271,20 +271,20 @@ bool  DOOM::MenuDoomScene::update(float elapsed)
   const std::list<std::pair<bool, std::function<void()>>> actions =
     controller == 0 ?
     std::list<std::pair<bool, std::function<void()>>>{
-      { Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space) == true || Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Return) == true, [this]() { updateSelect(); } },
-      { Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Up) == true || Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Z) == true, [this]() { updateUp(); } },
-      { Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Down) == true || Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::S) == true, [this]() { updateDown(); } },
-      { Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Left) == true || Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Q) == true, [this]() { updateLeft(); } },
-      { Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Right) == true || Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::D) == true, [this]() { updateRight(); } },
-      { Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Escape) == true, [this]() { updateEscape(); } },
+      { Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Space) == true || Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Enter) == true, [this]() { updateSelect(); } },
+      { Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Up) == true || Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Z) == true, [this]() { updateUp(); } },
+      { Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Down) == true || Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::S) == true, [this]() { updateDown(); } },
+      { Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Left) == true || Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Q) == true, [this]() { updateLeft(); } },
+      { Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Right) == true || Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::D) == true, [this]() { updateRight(); } },
+      { Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Escape) == true, [this]() { updateEscape(); } },
     }
     :
     std::list<std::pair<bool, std::function<void()>>>{
       { Game::Window::Instance().joystick().buttonPressed(controller - 1, 0) == true, [this]() { updateSelect(); } },
-      { Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovY) > +0.9f && Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovY) != 0.f, [this]() { updateUp(); } },
-      { Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovY) < -0.9f && Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovY) != 0.f, [this]() { updateDown(); } },
-      { Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovX) < -0.9f && Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovX) != 0.f, [this]() { updateLeft(); } },
-      { Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovX) > +0.9f && Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovX) != 0.f, [this]() { updateRight(); } },
+      { Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::PovY) > +0.9f && Game::Window::Instance().joystick().relative(controller - 1, Game::Window::JoystickAxis::PovY) != 0.f, [this]() { updateUp(); } },
+      { Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::PovY) < -0.9f && Game::Window::Instance().joystick().relative(controller - 1, Game::Window::JoystickAxis::PovY) != 0.f, [this]() { updateDown(); } },
+      { Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::PovX) < -0.9f && Game::Window::Instance().joystick().relative(controller - 1, Game::Window::JoystickAxis::PovX) != 0.f, [this]() { updateLeft(); } },
+      { Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::PovX) > +0.9f && Game::Window::Instance().joystick().relative(controller - 1, Game::Window::JoystickAxis::PovX) != 0.f, [this]() { updateRight(); } },
       { Game::Window::Instance().joystick().buttonPressed(controller - 1, 1) == true, [this]() { updateEscape(); } },
     };
 
@@ -301,25 +301,25 @@ bool  DOOM::MenuDoomScene::update(float elapsed)
 
 void  DOOM::MenuDoomScene::draw()
 {
-  sf::Vector2u  size = { DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale };
+  Math::Vector<2, unsigned int> size = { DOOM::Doom::RenderWidth * DOOM::Doom::RenderScale, DOOM::Doom::RenderHeight * DOOM::Doom::RenderScale };
 
   // Update rendering target size
-  if (_doom.image.getSize() != size)
-    _doom.image.create(size.x, size.y);
+  if (_doom.image.getSize() != sf::Vector2u(size.x(), size.y()))
+    _doom.image.resize({ size.x(), size.y() });
 
   // Clear rendering targets
   std::memset((void*)_doom.image.getPixelsPtr(), 0, _doom.image.getSize().x * _doom.image.getSize().y * sizeof(sf::Color));
 
   // Render background
-  _camera.render(_doom, _doom.image, sf::Rect<int16_t>(0, 0, size.x, size.y));
+  _camera.render(_doom, _doom.image, Math::Box<2, std::int16_t>({ (std::int16_t)0, (std::int16_t)0 }, { (std::int16_t)size.x(), (std::int16_t)size.y() }));
 
   // Greyscale background
-  for (unsigned int y = 0; y < size.y; y++)
-    for (unsigned int x = 0; x < size.x; x++) {
-      sf::Color color = _doom.image.getPixel(x, y);
-      sf::Uint8 grey = (sf::Uint8)(((int)color.r + (int)color.g + (int)color.b) / 3);
+  for (unsigned int y = 0; y < size.y(); y++)
+    for (unsigned int x = 0; x < size.x(); x++) {
+      sf::Color     color = _doom.image.getPixel({ x, y });
+      std::uint8_t  grey = (std::uint8_t)(((int)color.r + (int)color.g + (int)color.b) / 3);
 
-      _doom.image.setPixel(x, y, sf::Color(grey, grey, grey));
+      _doom.image.setPixel({ x, y }, sf::Color(grey, grey, grey));
     }
 
   // Clear menu rendering target
@@ -334,10 +334,10 @@ void  DOOM::MenuDoomScene::draw()
     _doom.resources.getMenu(item.texture).draw(_doom, _menuImage, { item.x, item.y + offset_y }, { 1, 1 });
   }
 
-  const auto& sliderLeft = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("M_THERML"));
-  const auto& sliderMiddle = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("M_THERMM"));
-  const auto& sliderRight = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("M_THERMR"));
-  const auto& sliderCursor = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("M_THERMO"));
+  const auto& sliderLeft = _doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("M_THERML"));
+  const auto& sliderMiddle = _doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("M_THERMM"));
+  const auto& sliderRight = _doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("M_THERMR"));
+  const auto& sliderCursor = _doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("M_THERMO"));
 
   // Draw menus sliders
   for (const auto& slider : _menuDesc[_menuIndex].sliders) {
@@ -349,30 +349,30 @@ void  DOOM::MenuDoomScene::draw()
   }
 
   // Draw menu skull
-  _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>((unsigned int)(_menuElapsed / DOOM::Doom::Tic) < SkullDuration ? "M_SKULL1" : "M_SKULL2")).draw(_doom, _menuImage,
+  _doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>((unsigned int)(_menuElapsed / DOOM::Doom::Tic) < SkullDuration ? "M_SKULL1" : "M_SKULL2")).draw(_doom, _menuImage,
     {
       std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor)->x - 32,
       std::next(_menuDesc[_menuIndex].items.begin(), _menuCursor)->y - 5 + offset_y
     }, { 1, 1 });
 
   // Draw menu over background
-  for (unsigned int y = 0; y < size.y; y++)
-    for (unsigned int x = 0; x < size.x; x++) {
-      sf::Color color = _menuImage.getPixel(x / DOOM::Doom::RenderScale, y / DOOM::Doom::RenderScale);
+  for (unsigned int y = 0; y < size.y(); y++)
+    for (unsigned int x = 0; x < size.x(); x++) {
+      sf::Color color = _menuImage.getPixel({ x / DOOM::Doom::RenderScale, y / DOOM::Doom::RenderScale });
       
       // Draw only visible pixels
       if (color != sf::Color(0, 0, 0, 0)) {
-        _doom.image.setPixel(x, y, color);
+        _doom.image.setPixel({ x, y }, color);
 
         // Drop shadow
         if (x + DOOM::Doom::RenderScale < _doom.image.getSize().x && y + DOOM::Doom::RenderScale < _doom.image.getSize().y) {
-          sf::Color shadow = _doom.image.getPixel(x + DOOM::Doom::RenderScale, y + DOOM::Doom::RenderScale);
+          sf::Color shadow = _doom.image.getPixel({ x + DOOM::Doom::RenderScale, y + DOOM::Doom::RenderScale });
 
           shadow.r /= 2;
           shadow.g /= 2;
           shadow.b /= 2;
 
-          _doom.image.setPixel(x + DOOM::Doom::RenderScale, y + DOOM::Doom::RenderScale, shadow);
+          _doom.image.setPixel({ x + DOOM::Doom::RenderScale, y + DOOM::Doom::RenderScale }, shadow);
         }
       }
     }

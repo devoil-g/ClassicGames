@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <list>
@@ -21,9 +22,9 @@ namespace DOOM
   private:
     struct Lump
     {
-      uint32_t  position; // Lump position in file
-      uint32_t  size;     // Lump size in bytes
-      uint64_t  name;     // Lump name
+      std::uint32_t position; // Lump position in file
+      std::uint32_t size;     // Lump size in bytes
+      std::uint64_t name;     // Lump name
 
       Lump() : position(0), size(0), name(0) {};
     };
@@ -36,7 +37,7 @@ namespace DOOM
       {
         struct Color
         {
-          uint8_t r, g, b;  // Color components
+          std::uint8_t  r, g, b;  // Color components
         };
 
         DOOM::Wad::RawResources::Palette::Color colors[256];  // Color palette
@@ -44,26 +45,26 @@ namespace DOOM
 
       struct Colormap
       {
-        uint8_t index[256]; // Index of color in palette
+        std::uint8_t  index[256]; // Index of color in palette
       };
 
       struct Endoom
       {
-        uint16_t  message[80 * 25]; // Text displayed when the game exit, characters in 16-bit color format
+        std::uint16_t message[80 * 25]; // Text displayed when the game exit, characters in 16-bit color format
       };
 
       struct Texture
       {
         struct Patch
         {
-          int16_t x, y;     // Offset of patch in texture
-          int16_t pname;    // Index of patch's name in pnames table
-          int16_t stepdir;  // Always 1, is for something called "stepdir"
-          int16_t colormap; // Always 0, is for "colormap"
+          std::int16_t  x, y;     // Offset of patch in texture
+          std::int16_t  pname;    // Index of patch's name in pnames table
+          std::int16_t  stepdir;  // Always 1, is for something called "stepdir"
+          std::int16_t  colormap; // Always 0, is for "colormap"
         };
 
-        int16_t             width;    // Total width of texture
-        int16_t             height;   // Total height of texture
+        std::int16_t        width;    // Total width of texture
+        std::int16_t        height;   // Total height of texture
         std::vector<Patch>  patches;  // Patches that compose texture
       };
 
@@ -73,42 +74,42 @@ namespace DOOM
         {
           struct Span
           {
-            uint8_t               offset; // Offset of the span of pixels in the column
-            std::vector<uint8_t>  pixels; // Pixels colors indexes
+            std::uint8_t              offset; // Offset of the span of pixels in the column
+            std::vector<std::uint8_t> pixels; // Pixels colors indexes
           };
 
           std::vector<Span> spans;  // Vector of span of pixels in the column
         };
 
-        int16_t             width, height;  // Sprite size
-        int16_t             left, top;      // Sprite offset
+        std::int16_t        width, height;  // Sprite size
+        std::int16_t        left, top;      // Sprite offset
         std::vector<Column> columns;        // Sprite texture map
       };
 
       struct Flat
       {
-        uint8_t texture[64 * 64]; // Flat texture map of index in palette (64x64)
+        std::uint8_t  texture[64 * 64]; // Flat texture map of index in palette (64x64)
       };
 
       struct Genmidi
       {
         struct Voice
         {
-          int8_t  modulator0; // Modulator Tremolo / vibrato / sustain / KSR / multi
-          int8_t  modulator1; // Modulator Attack rate / decay rate
-          int8_t  modulator2; // Modulator Sustain level / release rate
-          int8_t  modulator3; // Modulator Waveform select
-          int8_t  modulator4; // Modulator Key scale level
-          int8_t  modulator5; // Modulator Output level
-          int8_t  feedback;   // Feedback
-          int8_t  carrier0;   // Carrier Tremolo / vibrato / sustain / KSR / multi
-          int8_t  carrier1;   // Carrier Attack rate / decay rate
-          int8_t  carrier2;   // Carrier Sustain level / release rate
-          int8_t  carrier3;   // Carrier Waveform select
-          int8_t  carrier4;   // Carrier Key scale level
-          int8_t  carrier5;   // Carrier Output level
-          int8_t  unused;     // Unused
-          int16_t offset;     // Base note offset. This is used to offset the MIDI note values. Several of the GENMIDI instruments have a base note offset of - 12, causing all notes to be offset down by one octave.
+          std::int8_t   modulator0; // Modulator Tremolo / vibrato / sustain / KSR / multi
+          std::int8_t   modulator1; // Modulator Attack rate / decay rate
+          std::int8_t   modulator2; // Modulator Sustain level / release rate
+          std::int8_t   modulator3; // Modulator Waveform select
+          std::int8_t   modulator4; // Modulator Key scale level
+          std::int8_t   modulator5; // Modulator Output level
+          std::int8_t   feedback;   // Feedback
+          std::int8_t   carrier0;   // Carrier Tremolo / vibrato / sustain / KSR / multi
+          std::int8_t   carrier1;   // Carrier Attack rate / decay rate
+          std::int8_t   carrier2;   // Carrier Sustain level / release rate
+          std::int8_t   carrier3;   // Carrier Waveform select
+          std::int8_t   carrier4;   // Carrier Key scale level
+          std::int8_t   carrier5;   // Carrier Output level
+          std::int8_t   unused;     // Unused
+          std::int16_t  offset;     // Base note offset. This is used to offset the MIDI note values. Several of the GENMIDI instruments have a base note offset of - 12, causing all notes to be offset down by one octave.
         };
 
         enum Flag
@@ -118,28 +119,28 @@ namespace DOOM
           DoubleVoice = 0x04
         };
 
-        uint16_t  flag;     // Record flags
-        uint8_t   tuning;   // Fine tuning
-        uint8_t   note;     // Note number used for fixed pitch instruments
-        Voice     voice0;   // First OPL voice data
-        Voice     voice1;   // Second OPL voice data
-        int8_t    name[32]; // Instrument name
+        std::uint16_t flag;     // Record flags
+        std::uint8_t  tuning;   // Fine tuning
+        std::uint8_t  note;     // Note number used for fixed pitch instruments
+        Voice         voice0;   // First OPL voice data
+        Voice         voice1;   // Second OPL voice data
+        std::int8_t   name[32]; // Instrument name
       };
 
       struct Music
       {
-        int16_t               primary;    // Number of primary channels
-        int16_t               secondary;  // Number of secondary channels
-        int16_t               instrument; // Number of instrument patches
-        int16_t               patch;      // Instrument patch number
-        std::vector<uint8_t>  data;       // Music data
+        std::int16_t              primary;    // Number of primary channels
+        std::int16_t              secondary;  // Number of secondary channels
+        std::int16_t              instrument; // Number of instrument patches
+        std::int16_t              patch;      // Instrument patch number
+        std::vector<std::uint8_t> data;       // Music data
       };
 
       struct Sound
       {
-        uint16_t              rate;     // Sound rate
-        uint16_t              samples;  // Number of samples in buffer
-        std::vector<uint8_t>  buffer;   // Sound buffer (unsigned 8bit format)
+        std::uint16_t             rate;     // Sound rate
+        std::uint16_t             samples;  // Number of samples in buffer
+        std::vector<std::uint8_t> buffer;   // Sound buffer (unsigned 8bit format)
       };
 
       struct Demo
@@ -179,41 +180,41 @@ namespace DOOM
             Special = 0b10000000                // Special actions (see manual)
           };
 
-          int8_t  front;  // Forward/Backward movement
-          int8_t  strafe; // Strafe right/left movement
-          int8_t  turn;   // Turn left/right
-          int8_t  other;  // Other actions
+          std::int8_t front;  // Forward/Backward movement
+          std::int8_t strafe; // Strafe right/left movement
+          std::int8_t turn;   // Turn left/right
+          std::int8_t other;  // Other actions
         };
 
-        int8_t              skill;      // Skill level
-        int8_t              episode;    // Episode to be played
-        int8_t              mission;    // Mission to be played
-        int8_t              mode;       // Game mode
-        int8_t              respawn;    // Respawn mode (0 = no respawn)
-        int8_t              fast;       // Fast mode (0 = not fast)
-        int8_t              nomonster;  // No monster moode (0 = monsters exist)
-        int8_t              viewpoint;  // Point of view
-        int8_t              player1;    // Player 1 is present if this is 1.
-        int8_t              player2;    // Player 2 is present if this is 1.
-        int8_t              player3;    // Player 3 is present if this is 1.
-        int8_t              player4;    // Player 4 is present if this is 1.
+        std::int8_t         skill;      // Skill level
+        std::int8_t         episode;    // Episode to be played
+        std::int8_t         mission;    // Mission to be played
+        std::int8_t         mode;       // Game mode
+        std::int8_t         respawn;    // Respawn mode (0 = no respawn)
+        std::int8_t         fast;       // Fast mode (0 = not fast)
+        std::int8_t         nomonster;  // No monster moode (0 = monsters exist)
+        std::int8_t         viewpoint;  // Point of view
+        std::int8_t         player1;    // Player 1 is present if this is 1.
+        std::int8_t         player2;    // Player 2 is present if this is 1.
+        std::int8_t         player3;    // Player 3 is present if this is 1.
+        std::int8_t         player4;    // Player 4 is present if this is 1.
         std::vector<Record> records;    // Players movements records
       };
 #pragma pack(pop)
 
-      std::vector<DOOM::Wad::RawResources::Palette>                   palettes;   // Color palettes
-      std::vector<DOOM::Wad::RawResources::Colormap>                  colormaps;  // Color brightness maps
-      std::vector<DOOM::Wad::RawResources::Genmidi>                   genmidis;   // Vector of General MIDI instruments records
-      std::vector<DOOM::Wad::RawResources::Demo>                      demos;      // Vector of demos to be played
-      std::vector<uint64_t>                                           pnames;     // Vector of patch name
-      std::unordered_map<uint64_t, DOOM::Wad::RawResources::Texture>  textures;   // Map of wall textures
-      std::unordered_map<uint64_t, DOOM::Wad::RawResources::Patch>    patches;    // Map of texture patches
-      std::unordered_map<uint64_t, DOOM::Wad::RawResources::Patch>    sprites;    // Map of sprites
-      std::unordered_map<uint64_t, DOOM::Wad::RawResources::Patch>    menus;      // Map of menu patches
-      std::unordered_map<uint64_t, DOOM::Wad::RawResources::Flat>     flats;      // Map of flat (ground/ceiling texture)
-      std::unordered_map<uint64_t, DOOM::Wad::RawResources::Music>    musics;     // Map of musics (MUS format)
-      std::unordered_map<uint64_t, DOOM::Wad::RawResources::Sound>    sounds;     // Map of sounds
-      DOOM::Wad::RawResources::Endoom                                 endoom;     // End message displayed in console
+      std::vector<DOOM::Wad::RawResources::Palette>                       palettes;   // Color palettes
+      std::vector<DOOM::Wad::RawResources::Colormap>                      colormaps;  // Color brightness maps
+      std::vector<DOOM::Wad::RawResources::Genmidi>                       genmidis;   // Vector of General MIDI instruments records
+      std::vector<DOOM::Wad::RawResources::Demo>                          demos;      // Vector of demos to be played
+      std::vector<std::uint64_t>                                          pnames;     // Vector of patch name
+      std::unordered_map<std::uint64_t, DOOM::Wad::RawResources::Texture> textures;   // Map of wall textures
+      std::unordered_map<std::uint64_t, DOOM::Wad::RawResources::Patch>   patches;    // Map of texture patches
+      std::unordered_map<std::uint64_t, DOOM::Wad::RawResources::Patch>   sprites;    // Map of sprites
+      std::unordered_map<std::uint64_t, DOOM::Wad::RawResources::Patch>   menus;      // Map of menu patches
+      std::unordered_map<std::uint64_t, DOOM::Wad::RawResources::Flat>    flats;      // Map of flat (ground/ceiling texture)
+      std::unordered_map<std::uint64_t, DOOM::Wad::RawResources::Music>   musics;     // Map of musics (MUS format)
+      std::unordered_map<std::uint64_t, DOOM::Wad::RawResources::Sound>   sounds;     // Map of sounds
+      DOOM::Wad::RawResources::Endoom                                     endoom;     // End message displayed in console
     };
 
     struct RawLevel
@@ -221,82 +222,82 @@ namespace DOOM
 #pragma pack(push, 1)
       struct Thing
       {
-        int16_t x, y;   // Thing position
-        int16_t angle;  // Angle facing [-32768 (-Pi/2): +32767 (+Pi/2)]
-        int16_t type;   // Thing type ID
-        int16_t flag;   // Thing options
+        std::int16_t  x, y;   // Thing position
+        std::int16_t  angle;  // Angle facing [-32768 (-Pi/2): +32767 (+Pi/2)]
+        std::int16_t  type;   // Thing type ID
+        std::int16_t  flag;   // Thing options
       };
 
       struct Linedef
       {
-        int16_t start, end;   // Start and end vertexes indexes
-        int16_t flag;         // Linedef flag (see enum)
-        int16_t type;         // Linedef type (see enum)
-        int16_t tag;          // Linedef/sector tag
-        int16_t front, back;  // Front (right) and back (left) sidedefs indexes (-1 if no sidedef)
+        std::int16_t  start, end;   // Start and end vertexes indexes
+        std::int16_t  flag;         // Linedef flag (see enum)
+        std::int16_t  type;         // Linedef type (see enum)
+        std::int16_t  tag;          // Linedef/sector tag
+        std::int16_t  front, back;  // Front (right) and back (left) sidedefs indexes (-1 if no sidedef)
       };
 
       struct Sidedef
       {
-        int16_t   x, y;                 // Texture offest
-        uint64_t  upper, lower, middle; // Name of upper/lower/middle textures
-        int16_t   sector;               // Index of the sector it references
+        std::int16_t  x, y;                 // Texture offest
+        std::uint64_t upper, lower, middle; // Name of upper/lower/middle textures
+        std::int16_t  sector;               // Index of the sector it references
       };
 
       struct Vertex
       {
-        int16_t x, y; // Vertex coordinates
+        std::int16_t  x, y; // Vertex coordinates
       };
 
       struct Segment
       {
-        int16_t start, end; // Start/end segment vertexes indexes
-        int16_t angle;      // Segment angle [-32768 (-Pi/2): +32767 (+Pi/2)]
-        int16_t linedef;    // Segment linedef index
-        int16_t direction;  // 0 (same as linedef) or 1 (opposite of linedef)
-        int16_t offset;     // Distance along linedef to start of seg
+        std::int16_t  start, end; // Start/end segment vertexes indexes
+        std::int16_t  angle;      // Segment angle [-32768 (-Pi/2): +32767 (+Pi/2)]
+        std::int16_t  linedef;    // Segment linedef index
+        std::int16_t  direction;  // 0 (same as linedef) or 1 (opposite of linedef)
+        std::int16_t  offset;     // Distance along linedef to start of seg
       };
 
       struct Subsector
       {
-        int16_t count;  // Segment count
-        int16_t index;  // First segment index
+        std::int16_t  count;  // Segment count
+        std::int16_t  index;  // First segment index
       };
 
       struct Node
       {
         struct WadNodeBB
         {
-          int16_t top, bottom;  // Top and bottom limits
-          int16_t left, right;  // Left and right limits
+          std::int16_t  top, bottom;  // Top and bottom limits
+          std::int16_t  left, right;  // Left and right limits
         };
 
-        int16_t   origin_x, origin_y;       // Partition line origin
-        int16_t   direction_x, direction_y; // Partition line direction
-        WadNodeBB right_bb, left_bb;        // Children bounding boxes
-        int16_t   right_ss, left_ss;        // Children node index, or subsector index if bit 15 is set
+        std::int16_t  origin_x, origin_y;       // Partition line origin
+        std::int16_t  direction_x, direction_y; // Partition line direction
+        WadNodeBB     right_bb, left_bb;        // Children bounding boxes
+        std::int16_t  right_ss, left_ss;        // Children node index, or subsector index if bit 15 is set
       };
 
       struct Sector
       {
-        int16_t   floor_height, ceiling_height;   // Floor and ceiling height
-        uint64_t  floor_texture, ceiling_texture; // Name of floor and ceiling texture
-        int16_t   light;                          // Light level
-        int16_t   special;                        // Sector special type
-        int16_t   tag;                            // Sector/linedef tag
+        std::int16_t  floor_height, ceiling_height;   // Floor and ceiling height
+        std::uint64_t floor_texture, ceiling_texture; // Name of floor and ceiling texture
+        std::int16_t  light;                          // Light level
+        std::int16_t  special;                        // Sector special type
+        std::int16_t  tag;                            // Sector/linedef tag
       };
 
       struct Blockmap
       {
-        int16_t               x, y;         // Coordinates of block-grid origin
-        int16_t               column, row;  // Number of columns and rows
-        std::vector<uint16_t> offset;
-        std::vector<int16_t>  blocklist;
+        std::int16_t                x, y;         // Coordinates of block-grid origin
+        std::int16_t                column, row;  // Number of columns and rows
+        std::vector<std::uint16_t>  offset;
+        std::vector<std::int16_t>   blocklist;
       };
 
       struct Reject
       {
-        std::vector<uint8_t>  rejects;  // Map of visibility for monsters
+        std::vector<std::uint8_t> rejects;  // Map of visibility for monsters
       };
 #pragma pack(pop)
 
@@ -313,11 +314,11 @@ namespace DOOM
     };
 
   private:
-    void  loadLumps(std::ifstream& file, const int32_t numlumps, const int32_t infotableofs); // Load lumps from file
+    void  loadLumps(std::ifstream& file, const std::int32_t numlumps, const std::int32_t infotableofs); // Load lumps from file
 
-    void  loadResourceFlats(std::ifstream& file, const int32_t numlumps, const int32_t infotableofs, int32_t& iterator);    // Load flats from F_START to F_END scope
-    void  loadResourceSprites(std::ifstream& file, const int32_t numlumps, const int32_t infotableofs, int32_t& iterator);  // Load sprites from S_START to S_END scope
-    void  loadResourcePatches(std::ifstream& file, const int32_t numlumps, const int32_t infotableofs, int32_t& iterator);  // Load patches from P_START to P_END scope
+    void  loadResourceFlats(std::ifstream& file, const std::int32_t numlumps, const std::int32_t infotableofs, std::int32_t& iterator);   // Load flats from F_START to F_END scope
+    void  loadResourceSprites(std::ifstream& file, const std::int32_t numlumps, const std::int32_t infotableofs, std::int32_t& iterator); // Load sprites from S_START to S_END scope
+    void  loadResourcePatches(std::ifstream& file, const std::int32_t numlumps, const std::int32_t infotableofs, std::int32_t& iterator); // Load patches from P_START to P_END scope
 
     void  loadResourceFlat(std::ifstream& file, const DOOM::Wad::Lump& lump);     // Load lumps in F_START & F_END scopes
     void  loadResourceSprite(std::ifstream& file, const DOOM::Wad::Lump& lump);   // Load lumps in S_START & S_END scopes
@@ -333,20 +334,20 @@ namespace DOOM
     void  loadResourcePnames(std::ifstream& file, const DOOM::Wad::Lump& lump);   // Load PNAMES lump
     void  loadResourceEndoom(std::ifstream& file, const DOOM::Wad::Lump& lump);   // Load ENDOOM lump
 
-    void  loadResourcePatch(std::ifstream& file, const DOOM::Wad::Lump& lump, std::unordered_map<uint64_t, DOOM::Wad::RawResources::Patch>& target);  // Load image from file
+    void  loadResourcePatch(std::ifstream& file, const DOOM::Wad::Lump& lump, std::unordered_map<std::uint64_t, DOOM::Wad::RawResources::Patch>& target); // Load image from file
 
-    void  loadLevelExmy(const DOOM::Wad::Lump& lump, std::pair<uint8_t, uint8_t>& level);                         // Change current loaded level
-    void  loadLevelMapxy(const DOOM::Wad::Lump& lump, std::pair<uint8_t, uint8_t>& level);                        // Change current loaded level
-    void  loadLevelThings(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<uint8_t, uint8_t> level);   // Load THINGS lump
-    void  loadLevelLinedefs(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<uint8_t, uint8_t> level); // Load LINEDEFS lump
-    void  loadLevelSidedefs(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<uint8_t, uint8_t> level); // Load SIDEDEFS lump
-    void  loadLevelVertexes(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<uint8_t, uint8_t> level); // Load VERTEXES lump
-    void  loadLevelSegs(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<uint8_t, uint8_t> level);     // Load SEGS lump
-    void  loadLevelSsectors(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<uint8_t, uint8_t> level); // Load SSECTORS lump
-    void  loadLevelNodes(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<uint8_t, uint8_t> level);    // Load NODES lump
-    void  loadLevelSectors(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<uint8_t, uint8_t> level);  // Load SECTORS lump
-    void  loadLevelReject(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<uint8_t, uint8_t> level);   // Load REJECT lump
-    void  loadLevelBlockmap(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<uint8_t, uint8_t> level); // Load BLOCKMAP lump
+    void  loadLevelExmy(const DOOM::Wad::Lump& lump, std::pair<std::uint8_t, std::uint8_t>& level);                         // Change current loaded level
+    void  loadLevelMapxy(const DOOM::Wad::Lump& lump, std::pair<std::uint8_t, std::uint8_t>& level);                        // Change current loaded level
+    void  loadLevelThings(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<std::uint8_t, std::uint8_t> level);   // Load THINGS lump
+    void  loadLevelLinedefs(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<std::uint8_t, std::uint8_t> level); // Load LINEDEFS lump
+    void  loadLevelSidedefs(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<std::uint8_t, std::uint8_t> level); // Load SIDEDEFS lump
+    void  loadLevelVertexes(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<std::uint8_t, std::uint8_t> level); // Load VERTEXES lump
+    void  loadLevelSegs(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<std::uint8_t, std::uint8_t> level);     // Load SEGS lump
+    void  loadLevelSsectors(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<std::uint8_t, std::uint8_t> level); // Load SSECTORS lump
+    void  loadLevelNodes(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<std::uint8_t, std::uint8_t> level);    // Load NODES lump
+    void  loadLevelSectors(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<std::uint8_t, std::uint8_t> level);  // Load SECTORS lump
+    void  loadLevelReject(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<std::uint8_t, std::uint8_t> level);   // Load REJECT lump
+    void  loadLevelBlockmap(std::ifstream& file, const DOOM::Wad::Lump& lump, std::pair<std::uint8_t, std::uint8_t> level); // Load BLOCKMAP lump
 
     void  loadIgnore(); // Ignore lump
 
@@ -365,7 +366,7 @@ namespace DOOM
       file.read((char*)datas.data(), lump.size);
     };
 
-    static inline uint64_t& uppercase(uint64_t& key)  // Force uppercase in WAD name
+    static inline std::uint64_t&  uppercase(std::uint64_t& key) // Force uppercase in WAD name
     {
       std::transform((char*)&key, (char*)&key + sizeof(key), (char*)&key, ::toupper);
 #pragma warning(suppress:4996; suppress:6053)
@@ -374,8 +375,8 @@ namespace DOOM
     }
 
   public:
-    std::map<std::pair<uint8_t, uint8_t>, DOOM::Wad::RawLevel>  levels;     // Levels definition (key is [Ex, My])
-    DOOM::Wad::RawResources                                     resources;  // File resources
+    std::map<std::pair<std::uint8_t, std::uint8_t>, DOOM::Wad::RawLevel>  levels;     // Levels definition (key is [Ex, My])
+    DOOM::Wad::RawResources                                               resources;  // File resources
 
     Wad() = default;
     ~Wad() = default;

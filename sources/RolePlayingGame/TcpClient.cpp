@@ -31,7 +31,7 @@ RPG::TcpClient::~TcpClient()
 std::uint32_t RPG::TcpClient::getRemoteAddress() const
 {
   // Get remote address
-  return _socket.getRemoteAddress().toInteger();
+  return _socket.getRemoteAddress().value_or(sf::IpAddress(0)).toInteger();
 }
 
 std::uint16_t RPG::TcpClient::getRemotePort() const
@@ -50,7 +50,7 @@ Game::JSON::Object  RPG::TcpClient::receive()
 {
   Game::JSON::Object  json;
   sf::Packet          packet;
-  std::string         raw;
+  std::wstring        raw;
 
   // Receive a packet
   sf::Socket::Status  status = _socket.receive(packet);
@@ -60,7 +60,7 @@ Game::JSON::Object  RPG::TcpClient::receive()
   case sf::Socket::Status::Done:  // Complete packet
     try {
       packet >> raw;
-      return Game::JSON::load(raw);
+      return Game::JSON::Object(raw);
     }
     catch (const std::exception&) {
       return Game::JSON::Object();

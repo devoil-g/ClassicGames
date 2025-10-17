@@ -19,14 +19,10 @@ namespace GBC
   class EmulationScene : public Game::AbstractScene
   {
   private:
-    static const float  ForcedExit; // Forced exit time limit
-
+    sf::Texture         _texture; // Rendering target
     GBC::GameBoyColor   _gbc;     // Game Boy emulator
-    sf::Sprite          _sprite;  // Display rendered texture
     float               _fps;     // Timer for FPS control
-    float               _exit;    // Timer of forced exit
-    sf::RectangleShape  _bar;     // Forced exit bar
-    bool                _sync;    // Vertical sync before the scene
+    bool                _vsync;   // Vertical sync before the scene
 
     class SoundStream : public sf::SoundStream
     {

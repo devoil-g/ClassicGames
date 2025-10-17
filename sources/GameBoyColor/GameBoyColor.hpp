@@ -12,10 +12,15 @@
 #include <fstream>
 #include <iostream>
 
+#include <SFML/Graphics/Texture.hpp>
+
 #include "GameBoyColor/AudioProcessingUnit.hpp"
 #include "GameBoyColor/CentralProcessingUnit.hpp"
 #include "GameBoyColor/MemoryBankController.hpp"
 #include "GameBoyColor/PixelProcessingUnit.hpp"
+#include "Math/Vector.hpp"
+#include "System/JavaScriptObjectNotation.hpp"
+#include "System/Window.hpp"
 
 namespace GBC
 {
@@ -30,6 +35,21 @@ namespace GBC
     friend GBC::MemoryBankController1;
     friend GBC::MemoryBankController3;
     friend GBC::PixelProcessingUnit;
+
+  public:
+    enum Key
+    {
+      KeyDown,
+      KeyUp,
+      KeyLeft,
+      KeyRight,
+      KeyStart,
+      KeySelect,
+      KeyB,
+      KeyA,
+
+      KeyCount
+    };
 
   private:
     static const std::string_view SaveStateBase;
@@ -133,34 +153,21 @@ namespace GBC
       IMEScheduled  // Enable interrupt after next instruction
     };
 
-    GBC::GameBoyColor::Header                   _header;  // Main info of the ROM
-    std::filesystem::path                       _path;    // Path of the ROM
-    std::vector<std::uint8_t>                   _boot;    // Bootstrap sequence memory
-    std::size_t                                 _cycles;  // Number of CPU cycle since boot
-    GBC::CentralProcessingUnit                  _cpu;     // Central Processing Unit
-    GBC::PixelProcessingUnit                    _ppu;     // Pixel Processing Unit
-    GBC::AudioProcessingUnit                    _apu;     // Audio Processing Unit
-    std::unique_ptr<GBC::MemoryBankController>  _mbc;     // Cartridge's Memory Bank Controller
-    std::array<std::uint8_t, 32 * 1024>         _wRam;    // Raw Work RAM memory
-    std::array<std::uint8_t, 128>               _io;      // IO registers
-    std::array<std::uint8_t, 127>               _hRam;    // Raw High RAM memory
-    std::uint8_t                                _ie;      // Interrupt Enable register
+    GBC::GameBoyColor::Header                   _header;    // Main info of the ROM
+    std::filesystem::path                       _path;      // Path of the ROM
+    std::vector<std::uint8_t>                   _boot;      // Bootstrap sequence memory
+    std::size_t                                 _cycles;    // Number of CPU cycle since boot
+    GBC::CentralProcessingUnit                  _cpu;       // Central Processing Unit
+    GBC::PixelProcessingUnit                    _ppu;       // Pixel Processing Unit
+    GBC::AudioProcessingUnit                    _apu;       // Audio Processing Unit
+    std::unique_ptr<GBC::MemoryBankController>  _mbc;       // Cartridge's Memory Bank Controller
+    std::array<std::uint8_t, 32 * 1024>         _wRam;      // Raw Work RAM memory
+    std::array<std::uint8_t, 128>               _io;        // IO registers
+    std::array<std::uint8_t, 127>               _hRam;      // Raw High RAM memory
+    std::uint8_t                                _ie;        // Interrupt Enable register
     
-    enum Key
-    {
-      KeyDown,
-      KeyUp,
-      KeyLeft,
-      KeyRight,
-      KeyStart,
-      KeySelect,
-      KeyB,
-      KeyA,
-
-      KeyCount
-    };
-
-    std::array<bool, Key::KeyCount> _keys;  // Currently pressed keys
+    std::array<bool, Key::KeyCount>               _keys;      // Currently pressed keys
+    std::array<Game::Window::Key, Key::KeyCount>  _bindings;  // Keys bindings
 
     enum Transfer
     {
@@ -233,14 +240,25 @@ namespace GBC
       loadValue(value, (void*)&data, sizeof(data));
     }
 
-  public:
-    GameBoyColor(const std::filesystem::path& filename);
-    ~GameBoyColor() = default;
+    void  loadBindings(); // Load bindings from JSON
+    void  saveBindings(); // Save bindings to JSON
 
-    void                                                                  simulate();     // Simulate a frame
+  public:
+    GameBoyColor(const std::filesystem::path& filename, sf::Texture& texture, Math::Vector<2, unsigned int> origin);
+    ~GameBoyColor();
+
+    void  simulate();       // Simulate a frame
+    void  simulatePre();    // Simulate a CPU tick
+    void  simulateCycle();  // Simulate a CPU tick
+    void  simulatePost();   // Simulate a CPU tick
+
+    std::size_t                                                           cycles() const; // Get cycle count
     const sf::Texture&                                                    lcd() const;    // Get rendering target
     const std::array<std::int16_t, GBC::AudioProcessingUnit::BufferSize>& sound() const;  // Get current sound frame
     const GBC::GameBoyColor::Header&                                      header() const; // Get game header
+
+    Game::Window::Key bind(GBC::GameBoyColor::Key key) const;                   // Get button binding
+    void              bind(GBC::GameBoyColor::Key key, Game::Window::Key bind); // Set button binding
 
     void  load(std::size_t id);       // Load saved state
     void  save(std::size_t id) const; // Save state

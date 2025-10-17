@@ -17,7 +17,6 @@ namespace QUIZ
 
     QUIZ::Quiz&         _quiz;  // Quiz instance
     sf::Music           _music; // Background music, also used as timer
-    sf::RectangleShape  _bar;   // Timer bar
 
     void  updateRegister();   // Register new player
     void  updateUnregister(); // Remove a player

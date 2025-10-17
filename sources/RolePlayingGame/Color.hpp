@@ -9,34 +9,46 @@ namespace RPG
   class Color // RGBA color
   {
   public:
-    static const Color         Default;      // Default color
-    static const std::uint8_t  DefaultRed;   // Default red value
-    static const std::uint8_t  DefaultGreen; // Default green value
-    static const std::uint8_t  DefaultBlue;  // Default blue value
-    static const std::uint8_t  DefaultAlpha; // Default alpha value
+    static const Color      Default;            // Default color
+    static constexpr float  DefaultRed = 1.f;   // Default red value
+    static constexpr float  DefaultGreen = 1.f; // Default green value
+    static constexpr float  DefaultBlue = 1.f;  // Default blue value
+    static constexpr float  DefaultAlpha = 1.f; // Default alpha value
 
-    union {
-      struct {
-        std::uint8_t alpha;
-        std::uint8_t blue;
-        std::uint8_t green;
-        std::uint8_t red;
-      };                  // Color components
-      std::uint32_t raw;  // Raw color
-    };
-    
-    Color(std::uint8_t red, std::uint8_t green, std::uint8_t blue, std::uint8_t alpha = DefaultAlpha);
-    Color(std::uint32_t raw = Default.raw);
+    static const Color  White, Black, Red, Green, Blue, Yellow, Magenta, Cyan, Transparent; // Default color template
+
+    float red, green, blue, alpha;  // Color components
+
+    Color();
+    Color(float red, float green, float blue, float alpha = DefaultAlpha);
     Color(const Game::JSON::Object& json);
     Color(const Color&) = default;
     Color(Color&&) = default;
     ~Color() = default;
 
-    Color& operator=(const Color&) = default;
-    Color& operator=(Color&&) = default;
-    bool operator==(const Color& other) const;
-    bool operator!=(const Color& other) const;
+    // Comparison operators
+    Color&  operator=(const Color&) = default;
+    Color&  operator=(Color&&) = default;
+    bool    operator==(const Color& other) const = default;
+    bool    operator!=(const Color& other) const = default;
+
+    // Arithmetic operators
+    Color operator+(const Color& other) const;
+    Color operator-(const Color& other) const;
+    Color operator*(const Color& other) const;
+    Color operator*(float factor) const;
+    Color operator/(const Color& other) const;
+    Color operator/(float factor) const;
+    
+    // Assignment/arithmetic operators
+    Color&  operator+=(const Color& other);
+    Color&  operator-=(const Color& other);
+    Color&  operator*=(const Color& other);
+    Color&  operator*=(float factor);
+    Color&  operator/=(const Color& other);
+    Color&  operator/=(float factor);
 
     Game::JSON::Object  json() const; // Serialize to JSON
+    std::uint32_t       uint32() const;
   };
 }

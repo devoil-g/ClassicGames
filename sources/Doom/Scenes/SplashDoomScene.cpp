@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "Doom/Scenes/SplashDoomScene.hpp"
 #include "Doom/Scenes/MenuDoomScene.hpp"
 #include "System/Window.hpp"
@@ -14,9 +12,9 @@ DOOM::SplashDoomScene::SplashDoomScene(Game::SceneMachine& machine, DOOM::Doom& 
 bool  DOOM::SplashDoomScene::update(float elapsed)
 {
   // Push to main menu
-  if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Left) == true ||
-    Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Return) == true ||
-    Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Space) == true ||
+  if (Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Left) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Enter) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Space) == true ||
     Game::Window::Instance().joystick().buttonPressed(0, 0) == true ||
     Game::Window::Instance().joystick().buttonPressed(0, 7) == true) {
     _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn);
@@ -29,5 +27,5 @@ bool  DOOM::SplashDoomScene::update(float elapsed)
 void  DOOM::SplashDoomScene::draw()
 {
   // Draw splash screen
-  _doom.image = _doom.resources.getMenu(Game::Utilities::str_to_key<uint64_t>("TITLEPIC")).image(_doom);
+  _doom.image = _doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("TITLEPIC")).image(_doom);
 }

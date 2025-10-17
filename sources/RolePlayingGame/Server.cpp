@@ -2,89 +2,95 @@
 
 #include <SFML/Network/IpAddress.hpp>
 
+#include "RolePlayingGame/EntityComponentSystem/Components/CellComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/NetworkComponent.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Components/Components.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/NetworkSystem.hpp"
+#include "RolePlayingGame/EntityComponentSystem/Systems/Systems.hpp"
 #include "RolePlayingGame/Server.hpp"
+#include "System/Config.hpp"
+#include "System/Utilities.hpp"
 
 RPG::Server::Server(const std::filesystem::path& config, std::uint16_t port, std::uint32_t address) :
-  RPG::TcpServer(port, address),
-  _tick(0),
-  _world(Game::JSON::load(config))
+  _ecs()
 {
+  // Register ECS components
+  _ecs.addComponent<RPG::CellComponent>();
+  _ecs.addComponent<RPG::EntityComponent>();
+  _ecs.addComponent<RPG::ModelComponent>(); // NOTE: not really used in server, only for model library
+  _ecs.addComponent<RPG::NetworkComponent>();
+  _ecs.addComponent<RPG::ServerActionComponent>();
+
+  RPG::ECS::Signature signature;
+
+  // Register ECS systems
+  signature.reset();
+  signature.set(_ecs.typeComponent<RPG::CellComponent>());
+  _ecs.addSystem<RPG::ServerBoardSystem>(signature);
+  signature.reset();
+  signature.set(_ecs.typeComponent<RPG::EntityComponent>());
+  _ecs.addSystem<RPG::ServerEntitySystem>(signature);
+  signature.reset();
+  signature.set(_ecs.typeComponent<RPG::EntityComponent>());
+  signature.set(_ecs.typeComponent<RPG::NetworkComponent>());
+  _ecs.addSystem<RPG::ServerNetworkSystem>(signature, port, address);
+  signature.reset();
+  signature.set(_ecs.typeComponent<RPG::ModelComponent>());
+  _ecs.addSystem<RPG::ServerModelSystem>(signature);
+  signature.reset();
+  signature.set(_ecs.typeComponent<RPG::ServerActionComponent>());
+  _ecs.addSystem<RPG::ServerActionSystem>(signature);
+
+  // Load level
+  Game::JSON::Object json(config);
+
+  // Load models
+  _ecs.getSystem<RPG::ServerModelSystem>().load(json.get(L"models").array());
+
+  // Create board cells
+  _ecs.getSystem<RPG::ServerBoardSystem>().load(json.get(L"cells").array());
+
+  // Create game entities
+  _ecs.getSystem<RPG::ServerEntitySystem>().load(json.get(L"entities").array());
+
   // TODO: remove this
-  std::cout << "[RPG::Server] Server started: " << sf::IpAddress::getPublicAddress() << ":" << getPort() << "." << std::endl;
+  sf::IpAddress net_address(0);
+
+  try {
+    net_address = sf::IpAddress::getPublicAddress().value_or(sf::IpAddress(0));
+  }
+  catch (const std::exception&) {}
+  std::cout << "[RPG::Server] Server started: " << net_address << ":" << _ecs.getSystem<RPG::ServerNetworkSystem>().getPort() << "." << std::endl;
+
+  // Run server
+  _ecs.getSystem<RPG::ServerNetworkSystem>().run();
 }
 
 RPG::Server::~Server()
 {
-  // TODO: remove this
-  std::cout << "[RPG::Server] Server stopped." << std::endl;
+  // Manually stop server
+  _ecs.getSystem<RPG::ServerNetworkSystem>().stop();
+  _ecs.getSystem<RPG::ServerNetworkSystem>().wait();
 
   // TODO: save
-}
 
-void  RPG::Server::send(std::size_t id, const std::vector<std::string>& type, Game::JSON::Object& json)
-{
-  // Add mandatory data to JSON
-  header(json, type);
-
-  // Send to client
-  RPG::TcpServer::send(id, json);
-}
-
-void  RPG::Server::broadcast(const std::vector<std::string>& type, Game::JSON::Object& json)
-{
-  // Add mandatory data to JSON
-  header(json, type);
-
-  // Broadcast to clients
-  RPG::TcpServer::broadcast(json);
-}
-
-void  RPG::Server::header(Game::JSON::Object& json, const std::vector<std::string>& type) const
-{
-  Game::JSON::Array typeArray;
-
-  // Serialize type
-  typeArray._vector.reserve(type.size());
-  for (const auto& field : type)
-    typeArray.push(field);
-  json.set("type", std::move(typeArray));
-
-  // Serialize tick
-  json.set("tick", (double)_tick);
-}
-
-void  RPG::Server::kick(std::size_t id)
-{
-  // Remove client
-  RPG::TcpServer::kick(id);
-}
-
-void  RPG::Server::onConnect(std::size_t id)
-{
-  // Add new player
-  _world.connect(*this, id);
-}
-
-void  RPG::Server::onDisconnect(std::size_t id)
-{
-  // Remove player
-  _world.disconnect(*this, id);
-}
-
-void  RPG::Server::onReceive(std::size_t id, const Game::JSON::Object& json)
-{
   // TODO: remove this
-  std::cout << "[RPG::Server] Received (id: " << id << ", type: " << json.get("type").string() << "): " << json << std::endl;
-
-  // Handle packet
-  _world.receive(*this, id, json);
+  std::cout << "[RPG::Server] Server stopped." << std::endl;
 }
 
-void  RPG::Server::onTick()
+std::uint16_t RPG::Server::getPort()
 {
-  // New tick
-  _tick += 1;
+  // Get port of server
+  return _ecs.getSystem<RPG::ServerNetworkSystem>().getPort();
+}
 
-  // Update world
-  _world.update(*this, 1.f / getTickrate());
+std::uint32_t RPG::Server::getAddress()
+{
+  // Get address of server
+  return _ecs.getSystem<RPG::ServerNetworkSystem>().getAddress();
 }

@@ -2,6 +2,9 @@
 
 #include <vector>
 
+#include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/Texture.hpp>
+
 #include "Doom/Doom.hpp"
 #include "Scenes/AbstractScene.hpp"
   
@@ -14,10 +17,8 @@ namespace DOOM
 
     sf::Image   _startImage;        // Start image
     sf::Texture _endTexture;        // End (background) texture
-    sf::Sprite  _endSprite;         // End (background) sprite
     sf::Image   _transitionImage;   // Transition (animation) image
     sf::Texture _transitionTexture; // Transition (animation) texture
-    sf::Sprite  _transitionSprite;  // Transition (animation) sprite
     
     std::vector<float>  _offsets; // Temporal offset of pixel columns
 

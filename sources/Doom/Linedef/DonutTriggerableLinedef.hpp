@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <iostream>
 
 #include "Doom/Linedef/AbstractTriggerableLinedef.hpp"
@@ -15,10 +16,10 @@ namespace DOOM
     class DonutTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat>
   {
   private:
-    inline bool trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing, int16_t pillar_index) // Perform donut action
+    inline bool trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing, std::int16_t pillar_index) // Perform donut action
     {
       // Find pool sector
-      int16_t pool_index = -1;
+      std::int16_t  pool_index = -1;
 
       for (const auto& linedef : doom.level.linedefs) {
         if (linedef->front != -1 && doom.level.sidedefs[linedef->front].sector == pillar_index &&

@@ -1,6 +1,7 @@
 #include <filesystem>
 
 #include "System/Library/FontLibrary.hpp"
+#include "Scenes/ExitScene.hpp"
 #include "Scenes/MessageScene.hpp"
 #include "GameBoyColor/EmulationScene.hpp"
 #include "GameBoyColor/GameBoyColor.hpp"
@@ -18,6 +19,8 @@ GBC::SelectionScene::SelectionScene(Game::SceneMachine& machine) :
   // Set menu title
   title("GameBoy");
 
+  sf::Texture texture(sf::Vector2u(GBC::PixelProcessingUnit::ScreenWidth, GBC::PixelProcessingUnit::ScreenHeight));
+
   // List games in game directory
   try {
     for (const auto& entry : std::filesystem::directory_iterator(Game::Config::ExecutablePath / "assets" / "gbc")) {
@@ -26,7 +29,7 @@ GBC::SelectionScene::SelectionScene(Game::SceneMachine& machine) :
         continue;
 
       try {
-        GBC::GameBoyColor gbc(entry);
+        GBC::GameBoyColor gbc(entry, texture, Math::Vector<2, unsigned int>((unsigned int)0, (unsigned int)0));
 
         // Add game to menu list
         if (gbc.header().header_checksum && gbc.header().global_checksum)
@@ -56,7 +59,7 @@ bool  GBC::SelectionScene::update(float elapsed)
     Game::SceneMachine& machine = _machine;
 
     try {
-      machine.swap<GBC::EmulationScene>(_selected);
+      machine.swap<Game::ExitScene<GBC::EmulationScene>>(_selected);
     }
     catch (const std::exception&) {
       machine.swap<Game::MessageScene>("Error: failed to run game\n" + _selected.string());

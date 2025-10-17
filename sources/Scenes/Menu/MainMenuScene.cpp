@@ -7,6 +7,7 @@
 #include "RolePlayingGame/Server.hpp"
 #include "Scenes/Menu/MainMenuScene.hpp"
 #include "Scenes/Menu/OptionsMenuScene.hpp"
+#include "Scenes/ExitScene.hpp"
 #include "Scenes/LoadingScene.hpp"
 #include "Scenes/MessageScene.hpp"
 #include "Scenes/SceneMachine.hpp"
@@ -18,14 +19,14 @@ Game::MainMenuScene::MainMenuScene(Game::SceneMachine& machine) :
 {
   // Set menu items/handlers
   title("ClassicGames");
-  add("DOOM", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath / "assets" / "levels" / "doom.wad", DOOM::Enum::Mode::ModeRetail)));
-  add("DOOM II", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectDoom, this, std::placeholders::_1, Game::Config::ExecutablePath / "assets" / "levels" / "doom2.wad", DOOM::Enum::Mode::ModeCommercial)));
-  add("Game Boy", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectGameBoy, this, std::placeholders::_1)));
-  add("Quiz", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectQuiz, this, std::placeholders::_1)));
-  add("RPG Host", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectGameHost, this, std::placeholders::_1)));
-  add("RPG Join", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectGameJoin, this, std::placeholders::_1)));
-  add("Options", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectOptions, this, std::placeholders::_1)));
-  footer("Exit", std::function<void(Game::AbstractMenuScene::Item&)>(std::bind(&Game::MainMenuScene::selectExit, this, std::placeholders::_1)));
+  add("DOOM", [this](auto& item) { selectDoom(item, Game::Config::ExecutablePath / "assets" / "levels" / "doom.wad", DOOM::Enum::Mode::ModeRetail); });
+  add("DOOM II", [this](auto& item) { selectDoom(item, Game::Config::ExecutablePath / "assets" / "levels" / "doom2.wad", DOOM::Enum::Mode::ModeCommercial); });
+  add("Game Boy", [this](auto& item) { selectGameBoy(item); });
+  add("Quiz", [this](auto& item) { selectQuiz(item); });
+  add("RPG Host", [this](auto& item) { selectGameHost(item); });
+  add("RPG Join", [this](auto& item) { selectGameJoin(item); });
+  add("Options", [this](auto& item) { selectOptions(item); });
+  footer("Exit", [this](auto& item) { selectExit(item); });
 }
 
 bool  Game::MainMenuScene::update(float elapsed)
@@ -44,7 +45,7 @@ void  Game::MainMenuScene::selectDoom(Game::AbstractMenuScene::Item&, const std:
   // Start to load DOOM game
   std::thread([&machine, wad, mode]() {
     try {
-      machine.swap<DOOM::DoomScene>(wad, mode);
+      machine.swap<Game::ExitScene<DOOM::DoomScene>>(wad, mode);
     }
     catch (const std::exception&) {
       machine.swap<Game::MessageScene>("Error: failed to run DOOM.");
@@ -75,7 +76,7 @@ void  Game::MainMenuScene::selectQuiz(Game::AbstractMenuScene::Item&)
   std::thread([&machine]() {
     // Go to quiz scene
     try {
-    machine.swap<QUIZ::QuizScene>();
+    machine.swap<Game::ExitScene<QUIZ::QuizScene>>();
   }
 
   // Error message when quiz loading failed
@@ -95,10 +96,7 @@ void  Game::MainMenuScene::selectGameHost(Game::AbstractMenuScene::Item&)
   // Start a RPG server then a client
   std::thread([&machine]() {
     try {
-      auto server = std::make_unique<RPG::Server>(Game::Config::ExecutablePath / "assets" / "rpg" / "level_01.json");
-
-      server->run();
-      machine.push<RPG::ClientScene>(std::move(server));
+      machine.swap<Game::ExitScene<RPG::ClientScene>>(std::make_unique<RPG::Server>(Game::Config::ExecutablePath / "assets" / "rpg" / "world.json"));
     }
     catch (const std::exception& e) {
       //machine.swap<Game::MessageScene>("Error: failed to start RPG.");

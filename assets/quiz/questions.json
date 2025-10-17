@@ -1,0 +1,913 @@
+{
+  "fastest": [
+    {
+      "id": "fast_000",
+      "question": "Cliquez sur ces nombres dans l'ordre croissant",
+      "answers": [ "1", "2", "3", "4" ],
+      "info": "Question d'exemple"
+    },
+    {
+      "id": "fast_001",
+      "question": "Triez ces types de variable C par leur taille croissante",
+      "answers": [ "char", "short", "int", "long" ],
+      "info": "char: 1o\nshort: 2o\nint: 4o\nlong: 4o"
+    },
+    {
+      "id": "fast_002",
+      "question": "Triez ces planètes par leur ordre de proximité par rapport au Soleil",
+      "answers": [ "Mercure", "Vénus", "Terre", "Mars" ],
+      "info": "Mercure: 58M km\nVénus: 108M km\nTerre: 150M km\nMars: 228M km"
+    },
+    {
+      "id": "fast_003",
+      "question": "Triez ces planètes par leur ordre de proximité par rapport au Soleil",
+      "answers": [ "Jupiter", "Saturne", "Uranus", "Neptune" ],
+      "info": "Jupiter: 778M km\nSaturne: 1427M km\nUranus: 2871M km\nNeptune: 4498M km"
+    },
+    {
+      "id": "fast_004",
+      "question": "Triez ces présidents français par ordre de leurs mandats",
+      "answers": [ "Jacques Chirac", "Nicolas Sarkozy", "François Hollande", "Emmanuel Macron" ],
+      "info": "Chirac: 1995-2007\nSarkozy: 2007-2012\nHollande: 2012-2017\nMacron: 2017-..."
+    },
+    {
+      "id": "fast_005",
+      "question": "Triez ces présidents français par ordre de leurs mandats",
+      "answers": [ "Charles de Gaulle", "Georges Pompidou", "Valéry Giscard d'Estaing", "François Mitterrand" ],
+      "info": "De Gaulle: 1959-1969\nPompidou: 1969-1974\nGiscard d'Estaing: 1974-1981\nMitterrand: 1981-1995"
+    },
+    {
+      "id": "fast_006",
+      "question": "Triez ces présidents américains par ordre de leurs mandats",
+      "answers": [ "Barack Obama", "Donald J. Trump", "Joe Biden", "Donald J. Trump" ],
+      "info": "Obama: 2009-2017\nTrump 1: 2017-2021\nBiden: 2021-2025\nTrump 2: 2025-..."
+    },
+    {
+      "id": "fast_007",
+      "question": "Triez ces présidents américains par ordre de leurs mandats",
+      "answers": [ "Ronald Reagan", "George H. W. Bush", "Bill Clinton", "George W. Bush" ],
+      "info": "Reagan: 1981-1989\nBush Sr: 1989-1993\nClinton: 1993-2001\nBush Jr: 2001-2009"
+    },
+    {
+      "id": "fast_008",
+      "question": "Triez ces chiffres romains par leurs valeurs croissantes",
+      "answers": [ "V", "L", "D", "M" ],
+      "info": "V: 5\nL: 50\nD: 500\nM: 1000"
+    },
+    {
+      "id": "fast_009",
+      "question": "Triez ces chiffres romains par leurs valeurs croissantes",
+      "answers": [ "I", "X", "C", "M" ],
+      "info": "I: 1\nX: 10\nC: 100\nM: 1000"
+    },
+    {
+      "id": "fast_010",
+      "question": "Triez ces nombres romains par leurs valeurs croissantes",
+      "answers": [ "VIII", "IX", "XIV", "XVI" ],
+      "info": "VIII: 8\nIX: 9\nXIV: 14\nXVI: 16"
+    },
+    {
+      "id": "fast_011",
+      "question": "Triez ces nombres romains par leurs valeurs croissantes",
+      "answers": [ "XIX", "XX", "XXI", "XXX" ],
+      "info": "XIX: 19\nXX: 20\nXXI: 21\nXXX: 30"
+    },
+    {
+      "id": "fast_012",
+      "question": "Triez ces films MARVEL par ordre de leur sortie",
+      "answers": [ "The Avengers", "Avengers : l'ère d'Ultron", "Avengers : Infinity War", "Avengers : Endgame" ],
+      "info": "The Avengers: 2012\nL'ére d'Ultron: 2015\nInfinity War: 2018\nEndgame: 2019"
+    },
+    {
+      "id": "fast_013",
+      "question": "Triez ces films STAR WARS par ordre de leur sortie",
+      "answers": [ "Un nouvel espoir", "Le Retour du Jedi", "La Menace fantôme", "La Revanche des Sith" ],
+      "info": "Un nouvel espoir: 1977\nLe Retour du Jedi: 1983\nLa Menace fantôme: 1999\nLa Revanche des Sith: 2005"
+    },
+    {
+      "id": "fast_014",
+      "question": "Triez ces livres par ordre de leur sortie",
+      "answers": [ "Le Hobbit", "La Communauté de l'Anneau", "Les Deux Tours", "Le Retour du Roi" ],
+      "info": "Le Hobbit: 1937\nLa Communauté de l'Anneau: 1954\nLes Deux Tours: 1954\nLe Retour du Roi: 1955"
+    },
+    {
+      "id": "fast_015",
+      "question": "Triez ces livres par ordre de leur sortie",
+      "answers": [ "A l'école des Sorciers", "La Chambre des Secrets", "Le prisonnier d'Azkaban", "La Coupe de feu" ],
+      "info": "A l'école des Sorciers: 1997\nLa Chambre des Secrets: 1998\nLe prisonnier d'Azkaban: 1999\nLa Coupe de feu: 2000"
+    },
+    {
+      "id": "fast_016",
+      "question": "Triez ces livres par ordre de leur sortie",
+      "answers": [ "L'Ordre du Phénix", "Le Prince de Sang-Mêlé", "Les Reliques de la Mort", "L'Enfant maudit" ],
+      "info": "L'Ordre du Phénix: 2003\nLe Prince de sang-mêlé: 2005\nLes Reliques de la Mort: 2007\nL'Enfant maudit: 2016"
+    },
+    {
+      "id": "fast_017",
+      "question": "Triez ces livres par ordre de leur sortie",
+      "answers": [ "Fascination", "Tentation", "Hésitation", "Révélation" ],
+      "info": "Twilight, Chapitre I Fascination: 2005\nTwilight, Chapitre II Tentation: 2006\nTwilight, Chapitre III Hésitation: 2007\nTwilight, Chapitre IV Révélation: 2008"
+    }
+  ],
+
+  "millionaire": [
+    {
+      "id": "mill_001",
+      "name": "Lucas B. 1",
+      "questions": [
+        {
+          "id": "lucb_001",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Dans Baldur's Gate 3,\ncombien le prisme astral a-t-il de faces ? ?",
+          "answers": [ "1", "10", "12", "20" ],
+          "correct": 4,
+          "info": "Il a la forme d'un D20, utilisé dans DnD."
+        },
+        {
+          "id": "lucb_002",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Combien de dents a un adulte ?",
+          "answers": [ "28", "30", "32", "34" ],
+          "correct": 3,
+          "info": "Moi j'en ai 30."
+        },
+        {
+          "id": "lucb_003",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Quelle est la taille moyenne du pénis humain ?",
+          "answers": [ "13 cm", "15 cm", "17 cm", "19 cm" ],
+          "correct": 1,
+          "info": "Contrairement à la croyance populaire, il n'y a pas de lien avec l'éthnie."
+        },
+        {
+          "id": "lucb_004",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Combien de Francs valent 1 Euro ?",
+          "answers": [ "1 Francs", "2 Francs", "5 Francs", "6,55957 Francs" ],
+          "correct": 4,
+          "info": "On est passé à l'Euro en 2002."
+        },
+        {
+          "id": "lucb_005",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Quelle console de jeu s'est le mieux vendue ?",
+          "answers": [ "Playstation", "Playstation 2", "Playstation 3", "Playstation 4" ],
+          "correct": 2,
+          "info": "PS1: 102,4M, PS2: 160,0M, PS3: 87,4M, PS4: 117,2M"
+        },
+        {
+          "id": "lucb_006",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Quel personnage n'est pas jouable dans les jeux Trine ?",
+          "answers": [ "Le Prêtre", "La Voleuse", "Le Chevalier", "Le Magicien" ],
+          "info": "Sans commentaires."
+        },
+        {
+          "id": "lucb_007",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Lequel de ces aliments n'est pas une noix ?",
+          "answers": [ "Noix de coco", "Noisette", "Châtaigne", "Gland" ],
+          "info": "La noix de coco est une drupe fibreuse à trois couches : exocarpe, mésocarpe et endocarpe."
+        },
+
+        {
+          "id": "lucb_008",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Dans PlateUp!, combien de variations de recette de poisson y a-t-il ?",
+          "answers": [ "4", "6", "8", "10" ],
+          "correct": 1,
+          "info": "Filet de poisson, Gâteau de crabe, Huitres, Poisson sans arrêtes."
+        },
+        {
+          "id": "lucb_009",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Dans PAYDAY 2, à combien de bipeurs\npeut-on répondre sans être détecté ?",
+          "answers": [ "2", "3", "4", "6" ],
+          "correct": 3,
+          "info": "Ce nombre peut être réduit par des Modificateurs."
+        },
+        {
+          "id": "lucb_010",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Quel est le pluriel du mot tire-bouchon ?",
+          "answers": [ "Tire-bouchons", "Tire-bouchon", "Tires-bouchon", "Tires-bouchons" ],
+          "correct": 1,
+          "info": "Lorsque le nom composé est un verbe+nom, alors généralement sur le nom prend la marque du pluriel."
+        },
+        {
+          "id": "lucb_011",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "En quelle année a été annoncé le jeu\nThe Elder Scrolls VI ?",
+          "answers": [ "2018", "2020", "2021", "2022" ],
+          "correct": 1,
+          "info": "Sortie prévue en 2028."
+        },
+        {
+          "id": "lucb_012",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Dans quel état américain se situe la ville fictive d'Arkham,\nissue de l'oeuvre de H. P. Lovecraft ?",
+          "answers": [ "Massachusetts", "Maine", "Pennsylvanie", "Louisiane" ],
+          "info": "Sans commentaires."
+        },
+        {
+          "id": "lucb_013",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Comment s'appelle le personnage joué\npar Charlize Theron dans Mon Ami Joe ?",
+          "answers": [ "Jill Young", "Natalie Cook", "Dylan Sanders", "Alexandra Munday" ],
+          "info": "Les autres propositions sont des Drôles de dames."
+        },
+
+        {
+          "id": "lucb_014",
+          "set": [ 10 ],
+          "question": "Quel est le nom de la giganteste créature extraterrestre endormie\ndepuis des millénaires dans la cité de R'lyeh ?",
+          "answers": [ "Cthulhu", "Chtulhu", "Cthuluh", "Chtuluh" ],
+          "info": "La véritable sonorité, si les organes humains peuvent l'imiter, ressemble à : khlûl'-hloo."
+        },
+        {
+          "id": "lucb_015",
+          "set": [ 10 ],
+          "question": "Qui a remporté le 21e Tenkaichi Budokai ?",
+          "answers": [ "Jackie Chun", "Son Goku", "Krilin", "Ten Shin Han" ],
+          "info": "Jackie Chun est en fait Kamé Sennin (Tortue Géniale) déguisé. TSH a remporté le 22e tournoi."
+        },
+        {
+          "id": "lucb_016",
+          "set": [ 10 ],
+          "question": "Dans les Ombres d'Esteren,\nquel type de flux est le moins puissant ?",
+          "answers": [ "Le flux minéral", "Le flux organique", "Le flux végétal", "Le flux fossile" ],
+          "correct": 1,
+          "info": "Le flux minéral est bleu, organique est rouge, végétal est vert, fossile est ambré."
+        },
+
+        {
+          "id": "lucb_017",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Quelle est la somme des nombres réprésentés\nsur un set de dés standard ?",
+          "answers": [ "860", "877", "891", "902" ],
+          "correct": 1,
+          "info": "D4: 10, D6: 21, D8: 36, D10: 55, D12: 78, D20: 210, D100: 450"
+        },
+        {
+          "id": "lucb_018",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Quel est ton jeu au temps de jeu total\nle plus élevé de ta bibliothèque Steam ?",
+          "answers": [ "Pathfinder: Wrath of the Righteous", "PAYDAY 2", "Divinity: Original Sin 2", "Final Fantasy XV" ],
+          "info": "Pathfinder: Wrath of the Righteous -> 384,2 h\nPAYDAY 2 -> 367,5 h\nDivinity: Original Sin 2 -> 301,1 h\nFinal Fantasy XV -> 297,6 h"
+        },
+        {
+          "id": "lucb_019",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Lequel de ces films a fait le plus d'entrées en France ?",
+          "answers": [ "Bienvenue chez les Ch'tis", "Intouchables", "La Grande Vadrouille", "Astérix & Obélix: Mission Cléopâtre" ],
+          "info": "BCLC: 20.489M, Intouchables: 19.691M, LGV: 17.318M, ABMC: 14.967M"
+        },
+        {
+          "id": "lucb_020",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Quel est le dernier film de Louis de Funes ?",
+          "answers": [ "Le Gendarme et les Gendarmettes", "La Soupe aux Choux", "L'Avare", "L'Aile ou la Cuisse" ],
+          "info": "LGELG: 1982, LSAC: 1981, L'Avare: 1980, LAOLC: 1976"
+        },
+        {
+          "id": "lucb_021",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Combien y a-t-il d'étoiles à collecter\ndans Super Mario 64",
+          "answers": [ "120", "121", "240", "242" ],
+          "info": "C'est Super Mario Galaxy qui contient 2x 121 étoiles"
+        },
+        {
+          "id": "lucb_022",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Comment est surnommé le coeur du réacteur\nde la centrale nucléaire de Tchernobyl ?",
+          "answers": [ "Le pied d'éléphant", "Le Demon core", "Trinity", "The End" ],
+          "info": "Il est composé de corium, mélange du réacteur fondu et de débris."
+        },
+
+        {
+          "id": "lucb_023",
+          "set": [ 15 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "lucb_024",
+          "set": [ 15 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "lucb_025",
+          "set": [ 15 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        }
+      ]
+    },
+
+    {
+      "id": "mill_002",
+      "name": "Lucas C. 1",
+      "questions": [
+        {
+          "id": "lucc_001",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Quelle console Nintendo s'est la moins vendue ?",
+          "answers": [ "Nintendo 64", "Nintendo 3DS", "Nintendo Game Cube", "Virtual Boy" ],
+          "correct": 4,
+          "info": "Le Virtual Boy s'est vendu à 800 000 exemplaires."
+        },
+        {
+          "id": "lucc_002",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Qui indique son chemin à Kévin\ndans Maman j'ai encore raté l'avion ?",
+          "answers": [ "Donald J. Trump", "Ronald Reagan", "Arnold Schwarzenegger", "Macaulay Culkin" ],
+          "info": "Macaulay Culkin interprète le personnage de Kévin."
+        },
+        {
+          "id": "lucc_003",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "En quelle année a débuté\nla Révolution Française ?",
+          "answers": [ "1776", "1779", "1786", "1789" ],
+          "correct": 4,
+          "info": "C'est la base."
+        },
+        {
+          "id": "lucc_004",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "De quelle marque de bière\nJacques Chirac était-il friand ?",
+          "answers": [ "La Corona", "La 8.6", "La Kronenbourg", "La 1664" ],
+          "info": "La Corona est une bière mexicaine"
+        },
+        {
+          "id": "lucc_005",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Quelle espèce de plantes à fleurs herbacées bisannuelles de la famille\ndes Amaryllidaceae est Roi dans Overcooked ?",
+          "answers": [ "Oignon", "Melon", "Cornichon", "Marron" ],
+          "info": "C'est le Roi Oignon, ou l'Onion King en VO.'"
+        },
+        {
+          "id": "lucc_006",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Qui était Smitty Werbenjägermanjensen ?",
+          "answers": [ "Numéro 1", "Numéro 2", "Numéro 3", "Numéro 4" ],
+          "correct": 1,
+          "info": "Bob l'éponge, saison 3, épisode 46b."
+        },
+        {
+          "id": "lucc_007",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Quel président français est mort\nlors de son mandat ?",
+          "answers": [ "George Pompidou", "Emmanuel Macron", "Charles de Gaulle", "François Mitterrand" ],
+          "info": "Il était atteint de la maladie de Waldenström, une forme de cancer."
+        },
+
+        {
+          "id": "lucc_008",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Dans PlateUp!, quelle est la durée\nde fonctionnement du Lave Vaisselle ?",
+          "answers": [ "8s", "10s", "15s", "20s" ],
+          "correct": 2,
+          "info": "En comparaison, le Grand Evier ne prend que 5s."
+        },
+        {
+          "id": "lucc_009",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Dans PAYDAY 2,\nquel est le nom du Capitaine de la Police ?",
+          "answers": [ "Captain Winters", "Captain Summers", "Captain Springs", "Captain Autumns" ],
+          "info": "Il a 3000 de vie et apparaît avec 10 minions."
+        },
+        {
+          "id": "lucc_010",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "En quelle année a été publié\nle Manifeste du Parti Communiste ?",
+          "answers": [ "1848", "1888", "1918", "1938" ],
+          "correct": 1,
+          "info": "Ecrit par Karl MARX et Friedrich ENGELS."
+        },
+        {
+          "id": "lucc_011",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Qui était le Ministre de la Propagande d'Adolf Hitler ?",
+          "answers": [ "Joseph Goebbels", "Heinrich Himmler", "Hermann Göring", "Oskar Schindler" ],
+          "info": "Himmler: Chef de la SS, de la Gestapo, des camps de concentration, et organisateur principal de la Shoah.\nGöring: Chef de la Luftwaffe (armée de l'air), ministre de l’Économie, président du Reichstag, créateur de la Gestapo.\nGoebbels: Contrôle total des médias, de la culture, et de la propagande nazie.\nSchindler: industriel allemand."
+        },
+        {
+          "id": "lucc_012",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "En quelle année a eu lieu le dernier incendie\ndu Château de Lunéville ?",
+          "answers": [ "1983", "1993", "2003", "2013" ],
+          "correct": 3,
+          "info": "Au total, 13 incendies au cours de son histoire."
+        },
+        {
+          "id": "lucc_013",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Lequel de ces personnages de Kaamelott\nest apparu le plus de fois dans la série ?",
+          "answers": [ "Léodagan", "Perceval", "Karadoc", "Lancelot" ],
+          "info": "Léodagan: 228, Perceval: 195, Karadoc: 172, Lancelot: 157"
+        },
+
+        {
+          "id": "lucc_014",
+          "set": [ 10 ],
+          "question": "Qui a présenté le plug longtemps\nle Journal de 20h de TF1 ?",
+          "answers": [ "Claire Chazal", "Patrick Poivre d'Arvor", "Gilles Bouleau", "Anne-Claire Coudray" ],
+          "info": "CC: 24 ans (WE), PPDA: 21 ans (semaine), GB: 13+ ans (semaine), ACC: 10+ ans (WE)"
+        },
+        {
+          "id": "lucc_015",
+          "set": [ 10 ],
+          "question": "Laquelle de ces marionnettes des Guignols de l'Info\nest pas apparue dans le premier épisode ?",
+          "answers": [ "Monsieur Sylvestre", "Johnny Hallyday", "Jacques Chirac", "Michel Rocard" ],
+          "info": "Il incarne le cynisme de l'impérialisme américain."
+        },
+        {
+          "id": "lucc_016",
+          "set": [ 10 ],
+          "question": "Quelle voiture conduit le Lieutenant Columbo ?",
+          "answers": [ "Peugeot 403 Cabriolet", "Cadillac Series 62", "Chevrolet Bel Air", "Ford Thunderbird" ],
+          "info": "Il gardera la même voiture tout au long de la série."
+        },
+
+        {
+          "id": "lucc_017",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Qui a tiré sur Mr Burns ?",
+          "answers": [ "Maggie Simpson", "Homer Simpson", "Waylon Smithers", "Barney Gumble" ],
+          "info": "Ce cliffhanger inter-saison a été un des secrets les mieux gardés de la série."
+        },
+        {
+          "id": "lucc_018",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Quel est ton jeu au temps de jeu total\nle plus élevé de ta bibliothèque Steam ?",
+          "answers": [ "Hearts of Iron IV", "Football Manager 2021", "Europa Universalis IV", "PAYDAY 2" ],
+          "info": "Hearts of Iron IV -> 1626,0 h\nFootball Manager 2021 -> 818,3 h\nEuropa Universalis IV -> 650,4 h\nPAYDAY 2 -> 611,4 h"
+        },
+        {
+          "id": "lucc_019",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Quelle série Star Trek contient le plus d'épisodes ?",
+          "answers": [ "Star Trek", "The Next Generation", "Deep Space Nine", "Voyager" ],
+          "correct": 2,
+          "info": "Original: 79, NG: 178, DSN: 176, Voyager: 172"
+        },
+        {
+          "id": "lucc_020",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Quel est le premier épisode diffusé\nsur la chaîne du Joueur du Grenier ?",
+          "answers": [ "Les chevaliers du zodiaque", "Tintin au Tibet", "Astérix and the great rescue", "Last Battle" ],
+          "info": "C'est leur deuxième court métrage, Astérix étant le premier, mais le premier diffusé."
+        },
+        {
+          "id": "lucc_021",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Quel est le nom réel du Visiteur\ndans Le Visiteur du Futur ?",
+          "answers": [ "Renard", "Fouine", "Belette", "Castor" ],
+          "info": ""
+        },
+        {
+          "id": "lucc_022",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Qui est le père d'Eric Cartman ?",
+          "answers": [ "Jack Tenorman", "Randy Marsh", "Liane Cartman", "George W. Bush" ],
+          "info": "Son identité est secrète pour protéger les Broncos de Denvers."
+        },
+
+        {
+          "id": "lucc_023",
+          "set": [ 15 ],
+          "question": "Dans Les Misérables de Victor Hugo,\nquel est le vrai nom de Cosette ?",
+          "answers": [ "Euphrasie", "Fantine", "Azelma", "Eponine" ],
+          "info": "Fantine est sa mère, Azelma et Eponine les filles des Thénardier."
+        },
+        {
+          "id": "lucc_024",
+          "set": [ 15 ],
+          "question": "Dans Caméra Café, quel est le produit phare de l'entreprise ?",
+          "answers": [ "La C12", "La C14", "La C17", "La C27" ],
+          "correct": 2,
+          "info": "Dans la série, probablement des photocopieurs. Dans le film, des appareils d'électro-stimulation."
+        },
+        {
+          "id": "lucc_025",
+          "set": [ 15 ],
+          "question": "A qui doit-on les paroles\nde La Marseillaise ?",
+          "answers": [ "Chaude Joseph Rouget de Lisle", "Louis Antoine Bougainville", "Pierre Samuel Dupont de Nemours", "Marc René Montalembert" ],
+          "info": ""
+        }
+      ]
+    },
+
+    {
+      "id": "mill_003",
+      "name": "Victoire L. 1",
+      "questions": [
+        {
+          "id": "vict_001",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Lequel de ces mammifères pond des oeufs ?",
+          "answers": [ "L'échidné", "Le requin", "Le dauphin", "L'homme" ],
+          "info": "Avec l'échnidné, l'ornithorynque est le seul mammifère ovipare."
+        },
+        {
+          "id": "vict_002",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Quelles cellules sont en charge du\ntransport de l'oxygène dans le sang ?",
+          "answers": [ "Les globules blanc", "Les globules rouges", "Les globules rosés", "Les grosses bulles" ],
+          "correct": 2,
+          "info": "Les globules blanc protègent l'organisme, les rouges transportent l'oxygène."
+        },
+        {
+          "id": "vict_003",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Où poussent les carottes ?",
+          "answers": [ "Sous l'eau", "Sur les arbres", "Dans la terre", "Dans ton cul" ],
+          "correct": 3,
+          "info": "Certaines carottes poussent également dans le sable."
+        },
+        {
+          "id": "vict_004",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Quel animal peut voler ?",
+          "answers": [ "Le pingouin", "L'autruche", "Le manchot", "L'émeu" ],
+          "info": "Le pingouin est capable de voler, il est souvent confondu avec le manchot à cause de l'anglais."
+        },
+        {
+          "id": "vict_005",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Quel animal est un mammifère ?",
+          "answers": [ "Le dauphin", "Le crocodile", "Le pingouin", "Le pigeon" ],
+          "info": "Le crocodile est un reptile, le pingouin et le pigeon sont des oiseaux."
+        },
+        {
+          "id": "vict_006",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Combien de temps incube un oeuf de poule ?",
+          "answers": [ "21 heures", "21 jours", "21 semaines", "21 mois" ],
+          "correct": 2,
+          "info": "21 jours pour la poule, 17 pour le pigeon, 42 pour l'autruche."
+        },
+        {
+          "id": "vict_007",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Qu'est-ce qui gravite autour de la Terre ?",
+          "answers": [ "La Lune", "Le Soleil", "Mars", "La galaxie Andromède" ],
+          "info": "Un candidat de Qui veut gagner des millions a perdu à cette question."
+        },
+
+        {
+          "id": "vict_008",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Quelle est la principale source d'énergie du Soleil ?",
+          "answers": [ "La fusion nucléaire", "La fission nucléaire", "La géothermie", "La combustion chimique" ],
+          "info": "La fusion nucléaire nécessite énormément d'énergie."
+        },
+        {
+          "id": "vict_009",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Dans PlateUp!,\nquelle est l'évolution de la Table de bar ?",
+          "answers": [ "Table nappe simple", "Table nappe chic", "Table en métal", "Table d'attente" ],
+          "info": "Table nappe simple -> Table en métal -> Table nappe chic - > Table de bar -> ..."
+        },
+        {
+          "id": "vict_010",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Dans la mission Bank Heist de PAYDAY 2,\nà combien d'endroits différents peut se trouver le coffre-fort ?",
+          "answers": [ "2", "3", "4", "5" ],
+          "correct": 1,
+          "info": "Soit derrière les gichets, soit à l'arrière des bureaux."
+        },
+        {
+          "id": "vict_011",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Quel est le pseudonyme de l'ingénieur du son\ntravaillant avec le Joueur du Grenier",
+          "answers": [ "6coups6mouches", "NikosAliagos", "L'électricien", "Bernard Minou" ],
+          "info": "De son vrai nom Nicolas Sénac."
+        },
+        {
+          "id": "vict_012",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "De quelle maladie est atteint Arthur Morgan ?",
+          "answers": [ "La tuberculose", "La syphilis", "La poliomyélite", "La lèpre" ],
+          "info": "Arthur Morgan est le personnage principal de Red Dead Redemption 2."
+        },
+        {
+          "id": "vict_013",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Laquelle de ces séries d'animation américaines\ncontient le plus d'épisodes ?",
+          "answers": [ "Les Simpson", "Les Griffin", "South Park", "American Dad!" ],
+          "info": "Les Simpson: 790, Les Griffin: 443, South Park: 328, American Dad!: 383"
+        },
+
+        {
+          "id": "vict_014",
+          "set": [ 10 ],
+          "question": "Quelle est le plus grand continent de la Terre ?",
+          "answers": [ "L'Asie", "L'Europe", "L'Amérique", "L'Afrique" ],
+          "info": "L'Amérique: 42 189 120 km²\nEurope: 10 180 000 km²\nL'Afrique: 30 415 873 km²\nL'Asie: 43 810 582 km²"
+        },
+        {
+          "id": "vict_015",
+          "set": [ 10 ],
+          "question": "Quelle est la plus grande planète du système solaire ?",
+          "answers": [ "Jupiter", "Saturne", "Uranus", "Neptune" ],
+          "info": "Rayons équatoriaux:\nJupiter: 71 492 km\nSaturne: 60 268 km\nUranus: 25 559 km\nNeptune: 24 764 km"
+        },
+        {
+          "id": "vict_016",
+          "set": [ 10 ],
+          "question": "Quelle est l'océan le plus profond de la Terre ?",
+          "answers": [ "L'océan Pacifique", "L'océan Atlantique", "L'océan Indien", "L'océan Austral" ],
+          "info": "Océan Pacifique: 11 034m, Fosse des Mariannes\nOcéan Atlantique: 8 376m, Fosse de Porto Rico\nOcéan Indien: 7 258m, Fosse de Java\nOcéan Austral: 7 432mn Fosse des Sandwich du Sud"
+        },
+
+        {
+          "id": "vict_017",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Quel est ton jeu au temps de jeu total\nle plus élevé de ta bibliothèque Steam ?",
+          "answers": [ "Black Desert", "House Flipper", "Ghost Recon Wildlands", "PAYDAY 2" ],
+          "info": "Black Desert -> 386,6 h\nHouse Flipper -> 229,8 h\nGhost Recon Wildlands -> 164,4 h\nPAYDAY 2 -> 124,5 h"
+        },
+        {
+          "id": "vict_018",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "En includant les Hors-série et Papy Grenier,\ncombien d'épisodes de Joueur du Grenier sont sortis à ce jour ?",
+          "answers": [ "99", "146", "179", "212" ],
+          "correct": 2,
+          "info": "99 classiques, 19 Papy Grenier et 28 Hors-série"
+        },
+        {
+          "id": "vict_019",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Quel film est le plus gros succès au box-office de l'histoire ?",
+          "answers": [ "Avatar", "Avengers: Endgame", "Titanic", "Star Wars VII: Le Réveil de la Force" ],
+          "info": "Avatar: 2.924 Md, Endgame: 2.799 Md, Titanic: 2.265 Md, SW7: 2.071 Md"
+        },
+        {
+          "id": "vict_020",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Où Thanos récupère-t-il la Pierre du Pouvoir ?",
+          "answers": [ "Sur Xandar", "Sur Vormir", "Sur Terre", "Sur Asgard" ],
+          "info": "Il la dérobe aux Cohortes Nova sur Xandar après que Ronan ait échoué dans sa mission."
+        },
+        {
+          "id": "vict_021",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Dans le film Cendrillon (1950),\ncomment s'appelle le prince ?",
+          "answers": [ "Prince Charmant", "Prince Philippe", "Prince Éric", "Prince Naveen" ],
+          "info": "Charmant: Cendrillon, Philippe: La Belle au bois Dormant, Eric: La Petite Sirène, Naveen: La Princesse et la Grenouille"
+        },
+        {
+          "id": "vict_022",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Quel personnage n'a pas été créé\npar Stan Lee ?",
+          "answers": [ "Captain America", "Spider-Man", "Thor", "Iron-Man" ],
+          "info": "Captain America a été créé par Joe Simon et Jack Kirby."
+        },
+
+        {
+          "id": "vict_023",
+          "set": [ 15 ],
+          "question": "Quel film n'a pas reçu l'Oscar\nde la Meilleure Chanson Originale ?",
+          "answers": [ "Hercule", "La Petite Sirène", "Aladdin", "Pocahontas" ],
+          "info": "La Petite Sirène: Sous l'océan, Aladdin: Ce rêve bleu, Pocahontas: L'air du vent, Hercule: Le monde qui est le mien (nomination)"
+        },
+        {
+          "id": "vict_024",
+          "set": [ 15 ],
+          "question": "Grâce à quel minerai obtient-on\nl'aluminium ?'",
+          "answers": [ "La bauxite", "La sphalérite", "La galène", "La malachite" ],
+          "info": "Ce minerai composite contient 40 à 60% d'oxyde d'aluminium."
+        },
+        {
+          "id": "vict_025",
+          "set": [ 15 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        }
+      ]
+    },
+
+
+    {
+      "id": "mill_004",
+      "name": "Florent Z. 1",
+      "questions": [
+        {
+          "id": "flor_001",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Comment s'appelle le groupe de cambrioleurs\ndans Maman j'ai raté l'avion ?",
+          "answers": [ "Les Casseurs Flotteurs", "Les Musclés", "Les Goonies", "Les Avengers" ],
+          "info": "Ils ont inspiré le nom du groupe Casseurs Flowters."
+        },
+        {
+          "id": "flor_002",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Qui est le père de Boruto ?",
+          "answers": [ "Naruto", "Mario", "Casper", "Vegeta" ],
+          "info": "Sans commentaires."
+        },
+        {
+          "id": "flor_003",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "En combien de temps meurt une personne dont on inscrit\nle nom dans un Death Note ?",
+          "answers": [ "40 secondes", "40 minutes", "40 jours", "40 ans" ],
+          "info": "Si on écrit la cause de la mort, on obtient un délai supplémentaire de 6m40s."
+        },
+        {
+          "id": "flor_004",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Dans Full Metal Alchemist,\ndans quoi est enfermé l'âme d'Alphonse ?",
+          "answers": [ "Une armure", "Un cendrier", "Une table pliante", "Dans ton cul" ],
+          "correct": 1,
+          "info": ""
+        },
+        {
+          "id": "flor_005",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Lequel de ces jeux s'est le plus vendu ?",
+          "answers": [ "Minecraft", "Terraria", "Stardew Valley", "Animal Crossing: New Horizon" ],
+          "info": "Minecraft: 300M, Terraria: 60,7M, ACNH: 47,8M, Stardew Valley: 41M"
+        },
+        {
+          "id": "flor_006",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Quel aliment donne sa force à Popeye ?",
+          "answers": [ "Les épinards", "Les fayots", "Le lard", "Les patates" ],
+          "info": "Le mythe de leur richesse en fer provient d'une faute de frappe."
+        },
+        {
+          "id": "flor_007",
+          "set": [ 1, 2, 3, 4, 5 ],
+          "question": "Qui a présenté Qui veut Gagner des Millions\npendant près de 20 ans ?",
+          "answers": [ "Jean-Pierre Foucault", "Arthur", "Laurence Boccolini", "Camille Combal" ],
+          "info": "Arthur est le présentateur actuel de l'émission ?"
+        },
+
+        {
+          "id": "flor_008",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Dans PlateUp!, en combien de temps\nle micro-onde cuit-il un aliment ?",
+          "answers": [ "1s", "3s", "5s", "8s" ],
+          "correct": 3,
+          "info": "Il fonctionne avec n'importe quel aliment."
+        },
+        {
+          "id": "flor_009",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Dans PAYDAY 2, le gang original est composé de\nHoxton, Chains, Wolf et...",
+          "answers": [ "Dallas", "Chicago", "Seattle", "Houston" ],
+          "info": "Houston est le frère de Dallas mais ne compte pas dans l'équipe originale."
+        },
+        {
+          "id": "flor_010",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Quelle est la console de jeu la plus vendue parmi les suivantes ?",
+          "answers": [ "Nintendo DS", "Nintendo Switch", "Game Boy & Game Boy Color", "Wii" ],
+          "correct": 2,
+          "info": "DS: 154,0M, Switch: 152,1M, GB: 118,7M, Wii: 101,6M"
+        },
+        {
+          "id": "flor_011",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Dans Détective Conan, quel est l'âge réel de Shinichi Kugo ?",
+          "answers": [ "17 ans", "22 ans", "27 ans", "32 ans" ],
+          "correct": 1,
+          "info": "Il rajeunit à l'âge de 6-7 ans à cause d'un effet secondaire du poison APTX 4869."
+        },
+        {
+          "id": "flor_012",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Lequel de ces ennemis de Batman est apparu en premier ?",
+          "answers": [ "Le Joker", "Le Pingouin", "L'Homme-Mystère", "Le Chapelier Fou" ],
+          "info": "Joker: #1, Pingouin: #58, Homme-Mystère: #140, Chapelier-Fou: #49"
+        },
+        {
+          "id": "flor_013",
+          "set": [ 6, 7, 8, 9 ],
+          "question": "Dans quel livre Tom Jedusor n'apparaît-il pas ?",
+          "answers": [ "Le Prisonnier D'Azkaban", "L'Ordre du Phénix", "La Chambre des Secrets", "La Coupe de feu" ],
+          "info": "Voldemort n'est qu'évoqué mais n'apparaît jamais."
+        },
+
+        {
+          "id": "flor_014",
+          "set": [ 10 ],
+          "question": "Laquelle de ces séries contient le plus d'épisodes ?",
+          "answers": [ "Détective Conan", "One Piece", "Naruto & Naruto Shippûden", "Fullmetal Alchemist: Brotherhood" ],
+          "info": "Détective Conan: 1167, One Piece: 1135, Naruto: 220+500, FMAB: 64"
+        },
+        {
+          "id": "flor_015",
+          "set": [ 10 ],
+          "question": "Qui est l'auteur de Batman: The Killing Joke ?",
+          "answers": [ "Alan Moore", "Paul Dini", "Frank Miller", "Stan Lee" ],
+          "info": "Frank Miller a écrit The Dark Knight Returns, Batman: Year One. Paul Dini est co-créateur d'Harley Quinn. Stan Lee a officié chez Marvel."
+        },
+        {
+          "id": "flor_016",
+          "set": [ 10 ],
+          "question": "Dans Goblin Slayer, quel est le matériau représentant\nle 8e rang de la Guilde des Aventuriers ?",
+          "answers": [ "Acier", "Rubis", "Saphir", "Emeraude" ],
+          "info": "Du plus élevé au plus bas: Platine, Or, Argent, Bronze, Rubis, Emeraude, Saphir, Acier, Obsidienne, Porcelaine."
+        },
+
+        {
+          "id": "flor_017",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Quel jeu Mario 3D s'est le mieux vendu ?",
+          "answers": [ "Super Mario 64", "Super Mario Sunshine", "Super Mario Galaxy", "Super Mario Odyssey" ],
+          "info": "SM64: 11,9M, SMS: 6,9M, SMG: 12,8M, SMO: 20,8M"
+        },
+        {
+          "id": "flor_018",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Quel est le jeu au temps de jeu total\nle plus élevé de ma bibliothèque Steam ?",
+          "answers": [ "Baldur's Gate 3", "PAYDAY 2", "Divinity: Original Sin 2", "Batman: Arkham Knight" ],
+          "info": "Baldur's Gate 3 -> 444,3 h\nPAYDAY 2 -> 332,1 h\nDivinity: Original Sin 2 -> 320,1 h\nBatman: Arkham Knight -> 276,0 h"
+        },
+        {
+          "id": "flor_019",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "De quel avion est inspiré le X-Jet des X-Men ?",
+          "answers": [ "Lockheed SR-71 Blackbird", "Boeing E-3 Sentry", "Reims-Cessna F406 Caravan II", "Breguet Atlantic" ],
+          "info": "Sans commentaires."
+        },
+        {
+          "id": "flor_020",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Quels sont les noms des jeux Pokémon\nsortis en 2022 sur Nintendo Switch ?",
+          "answers": [ "Ecarlate et Violet", "Epée et Bouclier", "Soleil et Lune", "X et Y" ],
+          "info": "Ecarlate et Violet est la 9e génération de Pokémon."
+        },
+        {
+          "id": "flor_021",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Dans la série Yu-Gi-Oh!, combien de fois\nYugi a-t-il invoqué Exodia le Maudit ?",
+          "answers": [ "Aucune", "1", "2", "3" ],
+          "info": "Uniquement dans l'épisode 1 contre Kaiba."
+        },
+        {
+          "id": "flor_022",
+          "set": [ 11, 12, 13, 14 ],
+          "question": "Qui a écrit la pièce de théâtre\nCyrano de Bergerac ?",
+          "answers": [ "Edmond Rostand", "Victor Hugo", "Molière", "Alfred de Musset" ],
+          "info": ""
+        },
+
+        {
+          "id": "flor_023",
+          "set": [ 15 ],
+          "question": "Lequel de ces plats est le plus calorique ?",
+          "answers": [ "20 McNuggets", "Mc Flurry M&M's caramel", "Double Maple BBQ Quarter Pounder", "280 Original" ],
+          "info": "McNuggets: 870 kcal ; DMBBQQP: 825 kcal ; McFlurry: 457 kcal ; 280 Original: 772 kcal"
+        },
+        {
+          "id": "flor_024",
+          "set": [ 15 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        },
+        {
+          "id": "flor_025",
+          "set": [ 15 ],
+          "question": "",
+          "answers": [ "", "", "", "" ],
+          "info": ""
+        }
+      ]
+    }
+  ],
+
+  "quiz": [
+    {
+      "id": "001",
+
+      "question": {
+        "text": "Dans l'épisode TOMB RAIDER de Joueur du Grenier,\nArchibald Von Grenier est trahi par Traitropoulos,\nJafar et...",
+        "audio": "/assets/quiz/blindtest/music.ogg",
+        "image": "/assets/quiz/image/image.png",
+        "info": "Mais comment avez vous pu..."
+      },
+
+      "points": {
+        "correct": 3,
+        "wrong": -1
+      },
+
+      "answer": {
+        "type": "mcq",
+        "choices": [ "Pierre-Henri Judas", "Jean Sarkory", "Seb", "Archibald Von Grenier" ],
+        "shuffle": true,
+        "timelimit": 20,
+        "info": "'Pierre-Henri Judas, mon fidele ami d'enfance qui m'accompagne partout dans mes aventure depuis pres de 15 ans ! Mais comment avez vous pu...''"
+      }
+    }
+  ]
+}

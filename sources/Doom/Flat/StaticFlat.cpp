@@ -8,7 +8,7 @@ DOOM::StaticFlat::StaticFlat(DOOM::Doom& doom, const DOOM::Wad::RawResources::Fl
   std::memcpy(_flat.data(), flat.texture, sizeof(_flat));
 }
 
-const std::array<uint8_t, 4096>& DOOM::StaticFlat::flat() const
+const std::array<std::uint8_t, 4096>& DOOM::StaticFlat::flat() const
 {
   // Return flat
   return _flat;

@@ -9,11 +9,11 @@ DOOM::Automap::Automap() :
   reveal(false)
 {}
 
-void  DOOM::Automap::render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette) const
+void  DOOM::Automap::render(const DOOM::Doom& doom, sf::Image& target, Math::Box<2, std::int16_t> rect, unsigned int scale, std::int16_t palette) const
 {
   // Draw grid
   if (grid == true) {
-    float radius = std::sqrt(Math::Pow<2>(rect.width) + Math::Pow<2>(rect.height)) / 2.f / zoom + 128.f;
+    float radius = std::sqrt(Math::Pow<2>(rect.size.x()) + Math::Pow<2>(rect.size.y())) / 2.f / zoom + 128.f;
 
     for (float x = (int)((position.x() - radius) / 128.f) * 128.f; x < (int)((position.x() + radius) / 128.f) * 128.f + 128.f; x += 128.f)
       renderLine(doom, target, rect,
@@ -88,24 +88,24 @@ void  DOOM::Automap::render(const DOOM::Doom& doom, sf::Image& target, sf::Rect<
   }
 }
 
-Math::Vector<2> DOOM::Automap::renderTransform(sf::Rect<int16_t> rect, unsigned int scale, const Math::Vector<2>& point) const
+Math::Vector<2> DOOM::Automap::renderTransform(Math::Box<2, std::int16_t> rect, unsigned int scale, const Math::Vector<2>& point) const
 {
   Math::Vector<2> pos(point - position);
   Math::Vector<2> rot(pos.x() * std::cos(-angle + Math::Pi / 2.f) - pos.y() * std::sin(-angle + Math::Pi / 2.f), pos.x() * std::sin(-angle + Math::Pi / 2.f) + pos.y() * std::cos(-angle + Math::Pi / 2.f));
   Math::Vector<2> sca(rot * zoom * (float)scale);
   Math::Vector<2> ratio(sca.x(), sca.y() / DOOM::Doom::RenderStretching);
-  Math::Vector<2> screen(ratio.x() + (float)rect.width / 2.f, ratio.y() + (float)rect.height / 2.f);
+  Math::Vector<2> screen(ratio.x() + (float)rect.size.x() / 2.f, ratio.y() + (float)rect.size.y() / 2.f);
 
   return screen;
 }
 
-void  DOOM::Automap::renderLine(const DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, Math::Vector<2> point_a, Math::Vector<2> point_b, DOOM::Automap::Color color, int16_t palette) const
+void  DOOM::Automap::renderLine(const DOOM::Doom& doom, sf::Image& target, Math::Box<2, std::int16_t> rect, Math::Vector<2> point_a, Math::Vector<2> point_b, DOOM::Automap::Color color, int16_t palette) const
 {
   // Skip line outside of render area
   if ((point_a.x() < 0 && point_b.x() < 0) ||
-    (point_a.x() >= rect.width && point_b.x() >= rect.width) ||
+    (point_a.x() >= rect.size.x() && point_b.x() >= rect.size.x()) ||
     (point_a.y() < 0 && point_b.y() < 0) ||
-    (point_a.y() >= rect.height && point_b.y() >= rect.height))
+    (point_a.y() >= rect.size.y() && point_b.y() >= rect.size.y()))
     return;
 
   // Render horizontal
@@ -115,11 +115,11 @@ void  DOOM::Automap::renderLine(const DOOM::Doom& doom, sf::Image& target, sf::R
     if (point_a.x() > point_b.x())
       std::swap(point_a, point_b);
 
-    for (int x = std::max(0, (int)point_a.x()); x <= std::min((int)rect.width - 1, (int)point_b.x()); x++) {
+    for (int x = std::max(0, (int)point_a.x()); x <= std::min((int)rect.size.x() - 1, (int)point_b.x()); x++) {
       int y = (int)(point_a.y() + ((point_a.x() != point_b.x()) ? ((point_b.y() - point_a.y()) * std::max((float)x - point_a.x(), 0.f) / (point_b.x() - point_a.x())) : 0.f));
 
-      if (y >= 0 && y < rect.height)
-        target.setPixel(x + rect.left, rect.height - y - 1 + rect.top, doom.resources.palettes[palette][doom.resources.colormaps[0][color]]);
+      if (y >= 0 && y < rect.size.y())
+        target.setPixel({ (unsigned int)(x + rect.position.x()), (unsigned int)(rect.size.y() - y - 1 + rect.position.y())}, doom.resources.palettes[palette][doom.resources.colormaps[0][color]]);
     }
   }
 
@@ -130,11 +130,11 @@ void  DOOM::Automap::renderLine(const DOOM::Doom& doom, sf::Image& target, sf::R
     if (point_a.y() > point_b.y())
       std::swap(point_a, point_b);
 
-    for (int y = std::max(0, (int)point_a.y()); y <= std::min((int)rect.height - 1, (int)point_b.y()); y++) {
+    for (int y = std::max(0, (int)point_a.y()); y <= std::min((int)rect.size.y() - 1, (int)point_b.y()); y++) {
       int x = (int)(point_a.x() + ((point_a.y() != point_b.y()) ? ((point_b.x() - point_a.x()) * std::max((float)y - point_a.y(), 0.f) / (point_b.y() - point_a.y())) : 0.f));
 
-      if (x >= 0 && x < rect.width)
-        target.setPixel(x + rect.left, rect.height - y - 1 + rect.top, doom.resources.palettes[0][doom.resources.colormaps[0][color]]);
+      if (x >= 0 && x < rect.size.x())
+        target.setPixel({ (unsigned int)(x + rect.position.x()), (unsigned int)(rect.size.y() - y - 1 + rect.position.y())}, doom.resources.palettes[0][doom.resources.colormaps[0][color]]);
     }
   }
 }

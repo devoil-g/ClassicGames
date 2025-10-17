@@ -1,7 +1,5 @@
 #pragma once
 
-#include <SFML/System/Time.hpp>
-
 #include "Doom/Action/AbstractTypeAction.hpp"
 
 namespace DOOM

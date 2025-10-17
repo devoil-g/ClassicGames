@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #include "Doom/Action/AbstractLevelingAction.hpp"
 
 namespace DOOM
@@ -22,7 +24,7 @@ namespace DOOM
     State _state;   // Platform current state
     
   public:
-    PlatformLevelingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float target, int16_t model = -1) :
+    PlatformLevelingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, float target, std::int16_t model = -1) :
       DOOM::AbstractLevelingAction<false, ChangeType, ChangeTime>(doom, sector, model),
       _target(target),
       _state(State::Raise)

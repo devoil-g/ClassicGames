@@ -1,11 +1,13 @@
+#include <iostream>
 #include <stdexcept>
 
 #include "RolePlayingGame/Texture.hpp"
 #include "System/Config.hpp"
 
-RPG::Texture::Texture(const std::string& name) :
+RPG::Texture::Texture(const std::wstring& name) :
   _name(name),
-  _texture()
+  _texture(),
+  _error(false)
 {
   // First load of texture
   reload();
@@ -25,20 +27,36 @@ const sf::Texture&  RPG::Texture::get() const
 
 void  RPG::Texture::reload()
 {
+  // Reset error flag
+  _error = false;
+
   // Load texture
-  if (_texture.loadFromFile((Game::Config::ExecutablePath / "assets" / "rpg" / _name).string()) == false) {
-    sf::Image image;
+  if (_texture.loadFromFile((Game::Config::ExecutablePath / "assets" / "rpg" / _name).string()) == true) {
+    _error = false;
+    _texture.setRepeated(false);
+  }
 
-    // Create white/red checkboard
-    image.create(2, 2, sf::Color::White);
-    image.setPixel(0, 0, sf::Color::Red);
-    image.setPixel(1, 1, sf::Color::Red);
-
+  // Failed to load texture
+  else
+  {
     // Load error texture
-    if (_texture.loadFromImage(image) == false)
+    if (_texture.loadFromFile((Game::Config::ExecutablePath / "assets" / "rpg" / "error.png").string()) == false)
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
-    // Repeat error texture
+    _error = true;
     _texture.setRepeated(true);
   }
+
+  // Pixel art
+  _texture.setSmooth(false);
+
+  // Generate mipmap
+  if (_texture.generateMipmap() == false)
+    std::wcerr << "[RPG::Texture] Warning: failed to generate mipmap for " << _name << "." << std::endl;
+}
+
+bool  RPG::Texture::error() const
+{
+  // Get error flag
+  return _error;
 }

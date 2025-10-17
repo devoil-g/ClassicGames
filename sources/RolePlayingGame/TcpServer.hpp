@@ -34,6 +34,8 @@ namespace RPG
     void  loop(); // Server main loop
 
   public:
+    static constexpr std::size_t InvalidId = 0;
+
     TcpServer(std::uint16_t port = 0, std::uint32_t address = 0);
     ~TcpServer();
 

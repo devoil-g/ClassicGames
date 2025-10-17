@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <iostream>
 
 #include "Doom/Action/AbstractAction.hpp"
@@ -35,7 +36,7 @@ namespace DOOM
     class AbstractTypeAction : public DOOM::AbstractAction
   {
   private:
-    int16_t                 _model; // Model for properties copy
+    std::int16_t  _model; // Model for properties copy
 
   protected:
     Game::Audio::Sound::Reference _sound; // Sound reference of sector action
@@ -125,7 +126,7 @@ namespace DOOM
     }
 
   public:
-    AbstractTypeAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, int16_t model = -1) :
+    AbstractTypeAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, std::int16_t model = -1) :
       DOOM::AbstractAction(doom, sector),
       _model(model),
       _sound(Game::Audio::Sound::Instance().get())
@@ -142,7 +143,7 @@ namespace DOOM
     virtual ~AbstractTypeAction()
     {
       // Stop looping sounds
-      _sound.sound.setLoop(false);
+      _sound.sound.setLooping(false);
     }
   };
 }

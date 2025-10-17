@@ -1,6 +1,7 @@
 #pragma once
 
-#include <iostream>
+#include <cstdint>
+#include <memory>
 
 #include "Doom/Linedef/AbstractTriggerableLinedef.hpp"
 
@@ -16,7 +17,7 @@ namespace DOOM
     class StopTriggerableLinedef : public DOOM::AbstractTriggerableLinedef<Trigger, Repeat, Target, Key>
   {
   private:
-    bool  trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing, int16_t sector_index) override  // Action of the linedef
+    bool  trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing, std::int16_t sector_index) override  // Action of the linedef
     {
       std::unique_ptr<DOOM::AbstractAction>& action = doom.level.sectors[sector_index].action<Type>();
 

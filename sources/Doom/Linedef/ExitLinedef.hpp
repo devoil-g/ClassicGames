@@ -1,9 +1,10 @@
 #pragma once
 
+#include <cstdint>
+#include <type_traits>
+
 #include "Doom/Linedef/AbstractLinedef.hpp"
 #include "Doom/Linedef/AbstractTriggerableLinedef.hpp"
-
-#include <iostream>
 
 namespace DOOM
 {
@@ -38,7 +39,7 @@ namespace DOOM
         return false;
 
       // Find which sidedef textures should be switched
-      int16_t sidedef = ((Math::Vector<2>::determinant(doom.level.vertexes[start] - thing.position.convert<2>(), doom.level.vertexes[end] - doom.level.vertexes[start]) < 0.f) ? front : back);
+      std::int16_t sidedef = ((Math::Vector<2>::determinant(doom.level.vertexes[start] - thing.position.convert<2>(), doom.level.vertexes[end] - doom.level.vertexes[start]) < 0.f) ? front : back);
 
       // Switch sidedef if trigger pushed or switched, definitively if not repeatable
       if (_Trigger == DOOM::EnumLinedef::Trigger::TriggerPushed || _Trigger == DOOM::EnumLinedef::Trigger::TriggerSwitched && sidedef != -1)

@@ -1,10 +1,14 @@
 #pragma once
 
-#include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Sprite.hpp>
+#include <array>
+#include <cstdint>
+#include <functional>
+#include <map>
+#include <utility>
+#include <vector>
 
 #include "Doom/Doom.hpp"
+#include "Math/Vector.hpp"
 #include "Scenes/AbstractScene.hpp"
 
 namespace DOOM
@@ -17,7 +21,7 @@ namespace DOOM
       int                   duration; // Frame duration (tics)
       int                   offset;   // Time offset of animation (tics)
       std::vector<uint64_t> frames;   // Keys to frame textures
-      sf::Vector2i          position; // Position of animation
+      Math::Vector<2, int>  position; // Position of animation
       int                   level;    // Level this animation has to be displayed (0 for all)
     };
 
@@ -36,13 +40,13 @@ namespace DOOM
     static const int  SpeedTime;                                // Time increase per tic
     static const int  SpeedPistol;                              // Tic between two pistol shoot sound
 
-    static const std::array<std::array<sf::Vector2i, 9>, 3>                         _positions;   // Position of level on the map per episode/level (ignore this in DOOM II & Episode 4)
+    static const std::array<std::array<Math::Vector<2, int>, 9>, 3>                 _positions;   // Position of level on the map per episode/level (ignore this in DOOM II & Episode 4)
     static const std::array<std::vector<DOOM::IntermissionDoomScene::Animation>, 3> _animations;  // Animations for DOOM I background
 
-    DOOM::Doom&                       _doom;        // DOOM instance
-    const std::pair<uint8_t, uint8_t> _previous;    // Previous level
-    const std::pair<uint8_t, uint8_t> _next;        // Next level
-    DOOM::Doom::Level::Statistics     _statistics;  // Previous level statistics
+    DOOM::Doom&                                 _doom;        // DOOM instance
+    const std::pair<std::uint8_t, std::uint8_t> _previous;    // Previous level
+    const std::pair<std::uint8_t, std::uint8_t> _next;        // Next level
+    DOOM::Doom::Level::Statistics               _statistics;  // Previous level statistics
 
     DOOM::IntermissionDoomScene::State  _state;         // Current state
     float                               _elapsed;       // Elapsed time
@@ -76,15 +80,15 @@ namespace DOOM
     const DOOM::Doom::Resources::Texture&                                               _textPercent;       // Character '%'
     const DOOM::Doom::Resources::Texture&                                               _textColon;         // Character ':'
     
-    float getPar(std::pair<uint8_t, uint8_t> level) const;  // Return par time of current level, NaN if none registered
+    float getPar(std::pair<std::uint8_t, std::uint8_t> level) const;  // Return par time of current level, NaN if none registered
 
     void  updateStatistics(float elapsed);
     void  updateStatisticsCounters(float& elapsed, std::map<int, DOOM::IntermissionDoomScene::Counter>& counters, int speed);
-    bool  updateStatisticsCountersCheck(const std::map<int, DOOM::IntermissionDoomScene::Counter>& counters);    // Return true if all counters are completed
-    void  updateStatisticsCountersComplete(std::map<int, DOOM::IntermissionDoomScene::Counter>& counters);    // Force complete counters
+    bool  updateStatisticsCountersCheck(const std::map<int, DOOM::IntermissionDoomScene::Counter>& counters);                 // Return true if all counters are completed
+    void  updateStatisticsCountersComplete(std::map<int, DOOM::IntermissionDoomScene::Counter>& counters);                    // Force complete counters
     void  updateNext(float elapsed);
-    bool  updateSkip(); // Return true if skip button has been pressed
-    void  updateEnd();  // Go to next screen/level
+    bool  updateSkip();                                                                                                       // Return true if skip button has been pressed
+    void  updateEnd();                                                                                                        // Go to next screen/level
 
     void  drawBackground();
     void  drawStatistics();
@@ -92,11 +96,11 @@ namespace DOOM
     void  drawStatisticsCoop();
     void  drawNext();
 
-    void  drawPercent(sf::Vector2i position, int value);
-    void  drawTime(sf::Vector2i position, int value);
+    void  drawPercent(Math::Vector<2, int> position, int value);
+    void  drawTime(Math::Vector<2, int> position, int value);
 
   public:
-    IntermissionDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom, std::pair<uint8_t, uint8_t> previous, std::pair<uint8_t, uint8_t> next, const DOOM::Doom::Level::Statistics& statistics);
+    IntermissionDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom, std::pair<std::uint8_t, std::uint8_t> previous, std::pair<std::uint8_t, std::uint8_t> next, const DOOM::Doom::Level::Statistics& statistics);
     ~IntermissionDoomScene() override = default;
 
     bool  update(float elapsed) override; // Update state

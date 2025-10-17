@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/System/Time.hpp>
+#include <cstdint>
 
 #include "Doom/Action/AbstractTypeAction.hpp"
 
@@ -25,7 +25,7 @@ namespace DOOM
       // Update elapsed time
       _elapsed += elapsed;
 
-      int16_t darkest = sector.getNeighborLowestLight(doom);
+      std::int16_t  darkest = sector.getNeighborLowestLight(doom);
 
       // Not glow if all connected sectors have the same or higher brightness
       if (darkest >= sector.light_base)
@@ -33,7 +33,7 @@ namespace DOOM
 
       // Return glowing light level
       else
-        sector.light_current = (int16_t)((std::cos(_elapsed / (DOOM::Doom::Tic * Period / 2) * Math::Pi) + 1.f) / 2.f * (sector.light_base - darkest) + darkest);
+        sector.light_current = (std::int16_t)((std::cos(_elapsed / (DOOM::Doom::Tic * Period / 2) * Math::Pi) + 1.f) / 2.f * (sector.light_base - darkest) + darkest);
     }
   };
 }

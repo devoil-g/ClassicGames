@@ -28,6 +28,6 @@ void  Game::FontLibrary::load(const std::filesystem::path& path)
     return;
 
   // Load font from path
-  if (_library[path].loadFromFile(path.string()) == false)
+  if (_library[path].openFromFile(path.string()) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }

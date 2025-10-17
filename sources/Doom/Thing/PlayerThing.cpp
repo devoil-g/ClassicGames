@@ -14,96 +14,96 @@ const unsigned int  DOOM::PlayerThing::SectorSpeed = 32;                      //
 
 const std::array<DOOM::PlayerThing::State, DOOM::PlayerThing::WeaponState::State_Number>  DOOM::PlayerThing::_states =
 {
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = WeaponState::State_None },			// State_None
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 4, .brightness = false, .duration = 0, .action = &DOOM::PlayerThing::A_Light0, .next = WeaponState::State_None },			// State_LIGHTDONE
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PUNG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_PUNCH },		// State_PUNCH
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PUNG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_PUNCHDOWN },		// State_PUNCHDOWN
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PUNG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_PUNCHUP },		// State_PUNCHUP
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PUNG, .frame = 1, .brightness = false, .duration = 4, .action = nullptr, .next = WeaponState::State_PUNCH2 },			// State_PUNCH1
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PUNG, .frame = 2, .brightness = false, .duration = 4, .action = &DOOM::PlayerThing::A_Punch, .next = WeaponState::State_PUNCH3 },			// State_PUNCH2
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PUNG, .frame = 3, .brightness = false, .duration = 5, .action = nullptr, .next = WeaponState::State_PUNCH4 },			// State_PUNCH3
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PUNG, .frame = 2, .brightness = false, .duration = 4, .action = nullptr, .next = WeaponState::State_PUNCH5 },			// State_PUNCH4
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PUNG, .frame = 1, .brightness = false, .duration = 5, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_PUNCH },			// State_PUNCH5
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PISG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_PISTOL },		// State_PISTOL
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PISG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_PISTOLDOWN },		// State_PISTOLDOWN
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PISG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_PISTOLUP },		// State_PISTOLUP
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PISG, .frame = 0, .brightness = false, .duration = 4, .action = nullptr, .next = WeaponState::State_PISTOL2 },			// State_PISTOL1
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PISG, .frame = 1, .brightness = false, .duration = 6, .action = &DOOM::PlayerThing::A_FirePistol, .next = WeaponState::State_PISTOL3 },		// State_PISTOL2
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PISG, .frame = 2, .brightness = false, .duration = 4, .action = nullptr, .next = WeaponState::State_PISTOL4 },			// State_PISTOL3
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PISG, .frame = 1, .brightness = false, .duration = 5, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_PISTOL },		// State_PISTOL4
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PISF, .frame = 0, .brightness = true, .duration = 7, .action = &DOOM::PlayerThing::A_Light1, .next = WeaponState::State_LIGHTDONE },		// State_PISTOLFLASH
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_SGUN },		// State_SGUN
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_SGUNDOWN },		// State_SGUNDOWN
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_SGUNUP },			// State_SGUNUP
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 0, .brightness = false, .duration = 3, .action = nullptr, .next = WeaponState::State_SGUN2 },			// State_SGUN1
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 0, .brightness = false, .duration = 7, .action = &DOOM::PlayerThing::A_FireShotgun, .next = WeaponState::State_SGUN3 },		// State_SGUN2
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 1, .brightness = false, .duration = 5, .action = nullptr, .next = WeaponState::State_SGUN4 },			// State_SGUN3
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 2, .brightness = false, .duration = 5, .action = nullptr, .next = WeaponState::State_SGUN5 },			// State_SGUN4
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 3, .brightness = false, .duration = 4, .action = nullptr, .next = WeaponState::State_SGUN6 },			// State_SGUN5
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 2, .brightness = false, .duration = 5, .action = nullptr, .next = WeaponState::State_SGUN7 },			// State_SGUN6
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 1, .brightness = false, .duration = 5, .action = nullptr, .next = WeaponState::State_SGUN8 },			// State_SGUN7
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 0, .brightness = false, .duration = 3, .action = nullptr, .next = WeaponState::State_SGUN9 },			// State_SGUN8
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 0, .brightness = false, .duration = 7, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_SGUN },			// State_SGUN9
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTF, .frame = 0, .brightness = true, .duration = 4, .action = &DOOM::PlayerThing::A_Light1, .next = WeaponState::State_SGUNFLASH2 },		// State_SGUNFLASH1
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTF, .frame = 1, .brightness = true, .duration = 3, .action = &DOOM::PlayerThing::A_Light2, .next = WeaponState::State_LIGHTDONE },		// State_SGUNFLASH2
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_DSGUN },		// State_DSGUN
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_DSGUNDOWN },		// State_DSGUNDOWN
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_DSGUNUP },		// State_DSGUNUP
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 0, .brightness = false, .duration = 3, .action = nullptr, .next = WeaponState::State_DSGUN2 },			// State_DSGUN1
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 0, .brightness = false, .duration = 7, .action = &DOOM::PlayerThing::A_FireShotgun2, .next = WeaponState::State_DSGUN3 },		// State_DSGUN2
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 1, .brightness = false, .duration = 7, .action = nullptr, .next = WeaponState::State_DSGUN4 },			// State_DSGUN3
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 2, .brightness = false, .duration = 7, .action = &DOOM::PlayerThing::A_CheckReload, .next = WeaponState::State_DSGUN5 },		// State_DSGUN4
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 3, .brightness = false, .duration = 7, .action = &DOOM::PlayerThing::A_OpenShotgun2, .next = WeaponState::State_DSGUN6 },		// State_DSGUN5
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 4, .brightness = false, .duration = 7, .action = nullptr, .next = WeaponState::State_DSGUN7 },			// State_DSGUN6
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 5, .brightness = false, .duration = 7, .action = &DOOM::PlayerThing::A_LoadShotgun2, .next = WeaponState::State_DSGUN8 },		// State_DSGUN7
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 6, .brightness = false, .duration = 6, .action = nullptr, .next = WeaponState::State_DSGUN9 },			// State_DSGUN8
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 7, .brightness = false, .duration = 6, .action = &DOOM::PlayerThing::A_CloseShotgun2, .next = WeaponState::State_DSGUN10 },	// State_DSGUN9
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 0, .brightness = false, .duration = 5, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_DSGUN },			// State_DSGUN10
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 1, .brightness = false, .duration = 7, .action = nullptr, .next = WeaponState::State_DSNR2 },			// State_DSNR1
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 0, .brightness = false, .duration = 3, .action = nullptr, .next = WeaponState::State_DSGUNDOWN },		// State_DSNR2
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 8, .brightness = true, .duration = 5, .action = &DOOM::PlayerThing::A_Light1, .next = WeaponState::State_DSGUNFLASH2 },		// State_DSGUNFLASH1
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 9, .brightness = true, .duration = 4, .action = &DOOM::PlayerThing::A_Light2, .next = WeaponState::State_LIGHTDONE },		// State_DSGUNFLASH2
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_CHGG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_CHAIN },		// State_CHAIN
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_CHGG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_CHAINDOWN },		// State_CHAINDOWN
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_CHGG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_CHAINUP },		// State_CHAINUP
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_CHGG, .frame = 0, .brightness = false, .duration = 4, .action = &DOOM::PlayerThing::A_FireCGun, .next = WeaponState::State_CHAIN2 },		// State_CHAIN1
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_CHGG, .frame = 1, .brightness = false, .duration = 4, .action = &DOOM::PlayerThing::A_FireCGun, .next = WeaponState::State_CHAIN3 },		// State_CHAIN2
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_CHGG, .frame = 1, .brightness = false, .duration = 0, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_CHAIN },			// State_CHAIN3
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_CHGF, .frame = 0, .brightness = true, .duration = 5, .action = &DOOM::PlayerThing::A_Light1, .next = WeaponState::State_LIGHTDONE },		// State_CHAINFLASH1
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_CHGF, .frame = 1, .brightness = true, .duration = 5, .action = &DOOM::PlayerThing::A_Light2, .next = WeaponState::State_LIGHTDONE },		// State_CHAINFLASH2
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_MISSILE },		// State_MISSILE
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_MISSILEDOWN },		// State_MISSILEDOWN
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_MISSILEUP },		// State_MISSILEUP
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISG, .frame = 1, .brightness = false, .duration = 8, .action = &DOOM::PlayerThing::A_GunFlash, .next = WeaponState::State_MISSILE2 },		// State_MISSILE1
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISG, .frame = 1, .brightness = false, .duration = 12, .action = &DOOM::PlayerThing::A_FireMissile, .next = WeaponState::State_MISSILE3 },	// State_MISSILE2
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISG, .frame = 1, .brightness = false, .duration = 0, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_MISSILE },		// State_MISSILE3
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISF, .frame = 0, .brightness = true, .duration = 3, .action = &DOOM::PlayerThing::A_Light1, .next = WeaponState::State_MISSILEFLASH2 },		// State_MISSILEFLASH1
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISF, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = WeaponState::State_MISSILEFLASH3 },		// State_MISSILEFLASH2
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISF, .frame = 2, .brightness = true, .duration = 4, .action = &DOOM::PlayerThing::A_Light2, .next = WeaponState::State_MISSILEFLASH4 },		// State_MISSILEFLASH3
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISF, .frame = 3, .brightness = true, .duration = 4, .action = &DOOM::PlayerThing::A_Light2, .next = WeaponState::State_LIGHTDONE },		// State_MISSILEFLASH4
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SAWG, .frame = 2, .brightness = false, .duration = 4, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_SAWB },		// State_SAW
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SAWG, .frame = 3, .brightness = false, .duration = 4, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_SAW },		// State_SAWB
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SAWG, .frame = 2, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_SAWDOWN },		// State_SAWDOWN
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SAWG, .frame = 2, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_SAWUP },			// State_SAWUP
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SAWG, .frame = 0, .brightness = false, .duration = 4, .action = &DOOM::PlayerThing::A_Saw, .next = WeaponState::State_SAW2 },			// State_SAW1
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SAWG, .frame = 1, .brightness = false, .duration = 4, .action = &DOOM::PlayerThing::A_Saw, .next = WeaponState::State_SAW3 },			// State_SAW2
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SAWG, .frame = 1, .brightness = false, .duration = 0, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_SAW },			// State_SAW3
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PLSG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_PLASMA },		// State_PLASMA
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PLSG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_PLASMADOWN },		// State_PLASMADOWN
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PLSG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_PLASMAUP },		// State_PLASMAUP
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PLSG, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::PlayerThing::A_FirePlasma, .next = WeaponState::State_PLASMA2 },		// State_PLASMA1
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PLSG, .frame = 1, .brightness = false, .duration = 20, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_PLASMA },		// State_PLASMA2
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PLSF, .frame = 0, .brightness = true, .duration = 4, .action = &DOOM::PlayerThing::A_Light1, .next = WeaponState::State_LIGHTDONE },		// State_PLASMAFLASH1
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PLSF, .frame = 1, .brightness = true, .duration = 4, .action = &DOOM::PlayerThing::A_Light1, .next = WeaponState::State_LIGHTDONE },		// State_PLASMAFLASH2
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_BFG },		// State_BFG
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_BFGDOWN },		// State_BFGDOWN
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_BFGUP },			// State_BFGUP
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGG, .frame = 0, .brightness = false, .duration = 20, .action = &DOOM::PlayerThing::A_BFGsound, .next = WeaponState::State_BFG2 },		// State_BFG1
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGG, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::PlayerThing::A_GunFlash, .next = WeaponState::State_BFG3 },		// State_BFG2
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGG, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::PlayerThing::A_FireBFG, .next = WeaponState::State_BFG4 },		// State_BFG3
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGG, .frame = 1, .brightness = false, .duration = 20, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_BFG },			// State_BFG4
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGF, .frame = 0, .brightness = true, .duration = 11, .action = &DOOM::PlayerThing::A_Light1, .next = WeaponState::State_BFGFLASH2 },		// State_BFGFLASH1
-  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGF, .frame = 1, .brightness = true, .duration = 6, .action = &DOOM::PlayerThing::A_Light2, .next = WeaponState::State_LIGHTDONE }		// State_BFGFLASH2
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_TROO, .frame = 0, .brightness = false, .duration = -1, .action = nullptr, .next = WeaponState::State_None },                                // State_None
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 4, .brightness = false, .duration = 0, .action = &DOOM::PlayerThing::A_Light0, .next = WeaponState::State_None },            // State_LIGHTDONE
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PUNG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_PUNCH },      // State_PUNCH
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PUNG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_PUNCHDOWN },        // State_PUNCHDOWN
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PUNG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_PUNCHUP },          // State_PUNCHUP
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PUNG, .frame = 1, .brightness = false, .duration = 4, .action = nullptr, .next = WeaponState::State_PUNCH2 },                               // State_PUNCH1
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PUNG, .frame = 2, .brightness = false, .duration = 4, .action = &DOOM::PlayerThing::A_Punch, .next = WeaponState::State_PUNCH3 },           // State_PUNCH2
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PUNG, .frame = 3, .brightness = false, .duration = 5, .action = nullptr, .next = WeaponState::State_PUNCH4 },                               // State_PUNCH3
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PUNG, .frame = 2, .brightness = false, .duration = 4, .action = nullptr, .next = WeaponState::State_PUNCH5 },                               // State_PUNCH4
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PUNG, .frame = 1, .brightness = false, .duration = 5, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_PUNCH },           // State_PUNCH5
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PISG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_PISTOL },     // State_PISTOL
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PISG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_PISTOLDOWN },       // State_PISTOLDOWN
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PISG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_PISTOLUP },         // State_PISTOLUP
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PISG, .frame = 0, .brightness = false, .duration = 4, .action = nullptr, .next = WeaponState::State_PISTOL2 },                              // State_PISTOL1
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PISG, .frame = 1, .brightness = false, .duration = 6, .action = &DOOM::PlayerThing::A_FirePistol, .next = WeaponState::State_PISTOL3 },     // State_PISTOL2
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PISG, .frame = 2, .brightness = false, .duration = 4, .action = nullptr, .next = WeaponState::State_PISTOL4 },                              // State_PISTOL3
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PISG, .frame = 1, .brightness = false, .duration = 5, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_PISTOL },          // State_PISTOL4
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PISF, .frame = 0, .brightness = true, .duration = 7, .action = &DOOM::PlayerThing::A_Light1, .next = WeaponState::State_LIGHTDONE },        // State_PISTOLFLASH
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_SGUN },       // State_SGUN
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_SGUNDOWN },         // State_SGUNDOWN
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_SGUNUP },           // State_SGUNUP
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 0, .brightness = false, .duration = 3, .action = nullptr, .next = WeaponState::State_SGUN2 },                                // State_SGUN1
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 0, .brightness = false, .duration = 7, .action = &DOOM::PlayerThing::A_FireShotgun, .next = WeaponState::State_SGUN3 },      // State_SGUN2
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 1, .brightness = false, .duration = 5, .action = nullptr, .next = WeaponState::State_SGUN4 },                                // State_SGUN3
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 2, .brightness = false, .duration = 5, .action = nullptr, .next = WeaponState::State_SGUN5 },                                // State_SGUN4
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 3, .brightness = false, .duration = 4, .action = nullptr, .next = WeaponState::State_SGUN6 },                                // State_SGUN5
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 2, .brightness = false, .duration = 5, .action = nullptr, .next = WeaponState::State_SGUN7 },                                // State_SGUN6
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 1, .brightness = false, .duration = 5, .action = nullptr, .next = WeaponState::State_SGUN8 },                                // State_SGUN7
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 0, .brightness = false, .duration = 3, .action = nullptr, .next = WeaponState::State_SGUN9 },                                // State_SGUN8
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTG, .frame = 0, .brightness = false, .duration = 7, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_SGUN },            // State_SGUN9
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTF, .frame = 0, .brightness = true, .duration = 4, .action = &DOOM::PlayerThing::A_Light1, .next = WeaponState::State_SGUNFLASH2 },       // State_SGUNFLASH1
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHTF, .frame = 1, .brightness = true, .duration = 3, .action = &DOOM::PlayerThing::A_Light2, .next = WeaponState::State_LIGHTDONE },        // State_SGUNFLASH2
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_DSGUN },      // State_DSGUN
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_DSGUNDOWN },        // State_DSGUNDOWN
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_DSGUNUP },          // State_DSGUNUP
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 0, .brightness = false, .duration = 3, .action = nullptr, .next = WeaponState::State_DSGUN2 },                               // State_DSGUN1
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 0, .brightness = false, .duration = 7, .action = &DOOM::PlayerThing::A_FireShotgun2, .next = WeaponState::State_DSGUN3 },    // State_DSGUN2
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 1, .brightness = false, .duration = 7, .action = nullptr, .next = WeaponState::State_DSGUN4 },                               // State_DSGUN3
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 2, .brightness = false, .duration = 7, .action = &DOOM::PlayerThing::A_CheckReload, .next = WeaponState::State_DSGUN5 },     // State_DSGUN4
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 3, .brightness = false, .duration = 7, .action = &DOOM::PlayerThing::A_OpenShotgun2, .next = WeaponState::State_DSGUN6 },    // State_DSGUN5
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 4, .brightness = false, .duration = 7, .action = nullptr, .next = WeaponState::State_DSGUN7 },                               // State_DSGUN6
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 5, .brightness = false, .duration = 7, .action = &DOOM::PlayerThing::A_LoadShotgun2, .next = WeaponState::State_DSGUN8 },    // State_DSGUN7
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 6, .brightness = false, .duration = 6, .action = nullptr, .next = WeaponState::State_DSGUN9 },                               // State_DSGUN8
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 7, .brightness = false, .duration = 6, .action = &DOOM::PlayerThing::A_CloseShotgun2, .next = WeaponState::State_DSGUN10 },  // State_DSGUN9
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 0, .brightness = false, .duration = 5, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_DSGUN },           // State_DSGUN10
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 1, .brightness = false, .duration = 7, .action = nullptr, .next = WeaponState::State_DSNR2 },                                // State_DSNR1
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 0, .brightness = false, .duration = 3, .action = nullptr, .next = WeaponState::State_DSGUNDOWN },                            // State_DSNR2
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 8, .brightness = true, .duration = 5, .action = &DOOM::PlayerThing::A_Light1, .next = WeaponState::State_DSGUNFLASH2 },      // State_DSGUNFLASH1
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SHT2, .frame = 9, .brightness = true, .duration = 4, .action = &DOOM::PlayerThing::A_Light2, .next = WeaponState::State_LIGHTDONE },        // State_DSGUNFLASH2
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_CHGG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_CHAIN },      // State_CHAIN
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_CHGG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_CHAINDOWN },        // State_CHAINDOWN
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_CHGG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_CHAINUP },          // State_CHAINUP
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_CHGG, .frame = 0, .brightness = false, .duration = 4, .action = &DOOM::PlayerThing::A_FireCGun, .next = WeaponState::State_CHAIN2 },        // State_CHAIN1
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_CHGG, .frame = 1, .brightness = false, .duration = 4, .action = &DOOM::PlayerThing::A_FireCGun, .next = WeaponState::State_CHAIN3 },        // State_CHAIN2
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_CHGG, .frame = 1, .brightness = false, .duration = 0, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_CHAIN },           // State_CHAIN3
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_CHGF, .frame = 0, .brightness = true, .duration = 5, .action = &DOOM::PlayerThing::A_Light1, .next = WeaponState::State_LIGHTDONE },        // State_CHAINFLASH1
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_CHGF, .frame = 1, .brightness = true, .duration = 5, .action = &DOOM::PlayerThing::A_Light2, .next = WeaponState::State_LIGHTDONE },        // State_CHAINFLASH2
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_MISSILE },    // State_MISSILE
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_MISSILEDOWN },      // State_MISSILEDOWN
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_MISSILEUP },        // State_MISSILEUP
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISG, .frame = 1, .brightness = false, .duration = 8, .action = &DOOM::PlayerThing::A_GunFlash, .next = WeaponState::State_MISSILE2 },      // State_MISSILE1
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISG, .frame = 1, .brightness = false, .duration = 12, .action = &DOOM::PlayerThing::A_FireMissile, .next = WeaponState::State_MISSILE3 },  // State_MISSILE2
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISG, .frame = 1, .brightness = false, .duration = 0, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_MISSILE },         // State_MISSILE3
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISF, .frame = 0, .brightness = true, .duration = 3, .action = &DOOM::PlayerThing::A_Light1, .next = WeaponState::State_MISSILEFLASH2 },    // State_MISSILEFLASH1
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISF, .frame = 1, .brightness = true, .duration = 4, .action = nullptr, .next = WeaponState::State_MISSILEFLASH3 },                         // State_MISSILEFLASH2
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISF, .frame = 2, .brightness = true, .duration = 4, .action = &DOOM::PlayerThing::A_Light2, .next = WeaponState::State_MISSILEFLASH4 },    // State_MISSILEFLASH3
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_MISF, .frame = 3, .brightness = true, .duration = 4, .action = &DOOM::PlayerThing::A_Light2, .next = WeaponState::State_LIGHTDONE },        // State_MISSILEFLASH4
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SAWG, .frame = 2, .brightness = false, .duration = 4, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_SAWB },       // State_SAW
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SAWG, .frame = 3, .brightness = false, .duration = 4, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_SAW },        // State_SAWB
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SAWG, .frame = 2, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_SAWDOWN },          // State_SAWDOWN
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SAWG, .frame = 2, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_SAWUP },            // State_SAWUP
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SAWG, .frame = 0, .brightness = false, .duration = 4, .action = &DOOM::PlayerThing::A_Saw, .next = WeaponState::State_SAW2 },               // State_SAW1
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SAWG, .frame = 1, .brightness = false, .duration = 4, .action = &DOOM::PlayerThing::A_Saw, .next = WeaponState::State_SAW3 },               // State_SAW2
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_SAWG, .frame = 1, .brightness = false, .duration = 0, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_SAW },             // State_SAW3
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PLSG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_PLASMA },     // State_PLASMA
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PLSG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_PLASMADOWN },       // State_PLASMADOWN
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PLSG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_PLASMAUP },         // State_PLASMAUP
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PLSG, .frame = 0, .brightness = false, .duration = 3, .action = &DOOM::PlayerThing::A_FirePlasma, .next = WeaponState::State_PLASMA2 },     // State_PLASMA1
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PLSG, .frame = 1, .brightness = false, .duration = 20, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_PLASMA },         // State_PLASMA2
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PLSF, .frame = 0, .brightness = true, .duration = 4, .action = &DOOM::PlayerThing::A_Light1, .next = WeaponState::State_LIGHTDONE },        // State_PLASMAFLASH1
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_PLSF, .frame = 1, .brightness = true, .duration = 4, .action = &DOOM::PlayerThing::A_Light1, .next = WeaponState::State_LIGHTDONE },        // State_PLASMAFLASH2
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_WeaponReady, .next = WeaponState::State_BFG },        // State_BFG
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Lower, .next = WeaponState::State_BFGDOWN },          // State_BFGDOWN
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGG, .frame = 0, .brightness = false, .duration = 1, .action = &DOOM::PlayerThing::A_Raise, .next = WeaponState::State_BFGUP },            // State_BFGUP
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGG, .frame = 0, .brightness = false, .duration = 20, .action = &DOOM::PlayerThing::A_BFGsound, .next = WeaponState::State_BFG2 },         // State_BFG1
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGG, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::PlayerThing::A_GunFlash, .next = WeaponState::State_BFG3 },         // State_BFG2
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGG, .frame = 1, .brightness = false, .duration = 10, .action = &DOOM::PlayerThing::A_FireBFG, .next = WeaponState::State_BFG4 },          // State_BFG3
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGG, .frame = 1, .brightness = false, .duration = 20, .action = &DOOM::PlayerThing::A_ReFire, .next = WeaponState::State_BFG },            // State_BFG4
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGF, .frame = 0, .brightness = true, .duration = 11, .action = &DOOM::PlayerThing::A_Light1, .next = WeaponState::State_BFGFLASH2 },       // State_BFGFLASH1
+  DOOM::PlayerThing::State{ .sprite = ThingSprite::Sprite_BFGF, .frame = 1, .brightness = true, .duration = 6, .action = &DOOM::PlayerThing::A_Light2, .next = WeaponState::State_LIGHTDONE }         // State_BFGFLASH2
 };
 
 const std::array<DOOM::PlayerThing::Attributs, DOOM::Enum::Weapon::WeaponCount> DOOM::PlayerThing::_attributs = {
@@ -482,14 +482,14 @@ void  DOOM::PlayerThing::updateKeyboardTurn(DOOM::Doom& doom, float elapsed)
   float horizontal = 0.f;
   float vertical = 0.f;
 
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Left) == true)  // Turn left
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Left) == true)  // Turn left
     horizontal += 1.f;
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Right) == true) // Turn right
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Right) == true) // Turn right
     horizontal -= 1.f;
 
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Up) == true)    // Turn up
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Up) == true)    // Turn up
     vertical += 1.f;
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Down) == true)  // Turn down
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Down) == true)  // Turn down
     vertical -= 1.f;
 
   // Apply rotation to player
@@ -501,17 +501,17 @@ void  DOOM::PlayerThing::updateKeyboardMove(DOOM::Doom & doom, float elapsed)
   // Move player
   Math::Vector<2> movement(0.f, 0.f);
 
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Z) == true) // Move forward
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Z) == true) // Move forward
     movement += Math::Vector<2>(+1.f, 0.f);
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::S) == true) // Move backward
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::S) == true) // Move backward
     movement += Math::Vector<2>(-1.f, 0.f);
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Q) == true) // Strafe left
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Q) == true) // Strafe left
     movement += Math::Vector<2>(0.f, -1.f);
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::D) == true) // Strafe right
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::D) == true) // Strafe right
     movement += Math::Vector<2>(0.f, +1.f);
 
   // Handle running
-  _running = Game::Window::Instance().keyboard().keyDown(sf::Keyboard::LShift);
+  _running = Game::Window::Instance().keyboard().keyDown(Game::Window::Key::LShift);
 
   // Apply movement to player position
   updateMove(doom, elapsed, movement);
@@ -520,14 +520,14 @@ void  DOOM::PlayerThing::updateKeyboardMove(DOOM::Doom & doom, float elapsed)
 void  DOOM::PlayerThing::updateKeyboardWeapon(DOOM::Doom& doom, float elapsed)
 {
   // Weapon binding
-  static const std::list<std::pair<sf::Keyboard::Key, std::list<DOOM::Enum::Weapon>>> bindings = {
-    { sf::Keyboard::Num1, { DOOM::Enum::Weapon::WeaponChainsaw, DOOM::Enum::Weapon::WeaponFist } },
-    { sf::Keyboard::Num2, { DOOM::Enum::Weapon::WeaponPistol } },
-    { sf::Keyboard::Num3, { DOOM::Enum::Weapon::WeaponSuperShotgun, DOOM::Enum::Weapon::WeaponShotgun } },
-    { sf::Keyboard::Num4, { DOOM::Enum::Weapon::WeaponChaingun } },
-    { sf::Keyboard::Num5, { DOOM::Enum::Weapon::WeaponRocketLauncher } },
-    { sf::Keyboard::Num6, { DOOM::Enum::Weapon::WeaponPlasmaGun } },
-    { sf::Keyboard::Num7, { DOOM::Enum::Weapon::WeaponBFG9000 } },
+  static const std::list<std::pair<Game::Window::Key, std::list<DOOM::Enum::Weapon>>> bindings = {
+    { Game::Window::Key::Num1, { DOOM::Enum::Weapon::WeaponChainsaw, DOOM::Enum::Weapon::WeaponFist } },
+    { Game::Window::Key::Num2, { DOOM::Enum::Weapon::WeaponPistol } },
+    { Game::Window::Key::Num3, { DOOM::Enum::Weapon::WeaponSuperShotgun, DOOM::Enum::Weapon::WeaponShotgun } },
+    { Game::Window::Key::Num4, { DOOM::Enum::Weapon::WeaponChaingun } },
+    { Game::Window::Key::Num5, { DOOM::Enum::Weapon::WeaponRocketLauncher } },
+    { Game::Window::Key::Num6, { DOOM::Enum::Weapon::WeaponPlasmaGun } },
+    { Game::Window::Key::Num7, { DOOM::Enum::Weapon::WeaponBFG9000 } },
   };
 
   // Attempt every bind
@@ -551,8 +551,8 @@ void  DOOM::PlayerThing::updateControllerTurn(DOOM::Doom & doom, float elapsed)
 {
   // Apply rotation to player
   updateTurn(doom, elapsed,
-    std::abs(Game::Window::Instance().joystick().position(controller - 1, 4)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, 4) / 100.f : 0.f,
-    std::abs(Game::Window::Instance().joystick().position(controller - 1, 5)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, 5) / 100.f : 0.f
+    std::abs(Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::U)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::U) / 100.f : 0.f,
+    std::abs(Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::V)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::V) / 100.f : 0.f
   );
 }
 
@@ -560,8 +560,8 @@ void  DOOM::PlayerThing::updateControllerMove(DOOM::Doom & doom, float elapsed)
 {
   // Move player
   Math::Vector<2> movement(
-    std::abs(Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::Y)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::Y) / 100.f : 0.f,
-    std::abs(Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::X)) / 100.f > 0.2f ? +Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::X) / 100.f : 0.f
+    std::abs(Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::Y)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::Y) / 100.f : 0.f,
+    std::abs(Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::X)) / 100.f > 0.2f ? +Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::X) / 100.f : 0.f
   );
   
   // Handle running (left stick click)
@@ -680,7 +680,7 @@ void  DOOM::PlayerThing::updateWeapon(DOOM::Doom& doom, float elapsed, int inc)
       return;
 }
 
-void  DOOM::PlayerThing::draw(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale)
+void  DOOM::PlayerThing::draw(DOOM::Doom& doom, sf::Image& target, Math::Box<2, std::int16_t> rect, unsigned int scale)
 {
   int16_t palette = cameraPalette();
 
@@ -698,7 +698,7 @@ void  DOOM::PlayerThing::draw(DOOM::Doom& doom, sf::Image& target, sf::Rect<int1
   drawStatusbar(doom, target, rect, scale, palette);  
 }
 
-void  DOOM::PlayerThing::drawCamera(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette)
+void  DOOM::PlayerThing::drawCamera(DOOM::Doom& doom, sf::Image& target, Math::Box<2, std::int16_t> rect, unsigned int scale, std::int16_t palette)
 {
   // Compute head bobing
   float bob = std::min(8.f, (Math::Pow<2>(_thrust.x()) + Math::Pow<2>(_thrust.y())) / 8.f)
@@ -710,10 +710,10 @@ void  DOOM::PlayerThing::drawCamera(DOOM::Doom& doom, sf::Image& target, sf::Rec
   camera.position.z() = position.z() + 41.f + bob;
 
   // Render 3D view
-  camera.render(doom, target, sf::Rect<int16_t>(rect.left, rect.top, rect.width, rect.height - 32 * scale), _flash, cameraMode(), palette);
+  camera.render(doom, target, Math::Box<2, std::int16_t>(rect.position, { rect.size.x(), (std::int16_t)(rect.size.y() - 32 * scale) }), _flash, cameraMode(), palette);
 }
 
-void  DOOM::PlayerThing::drawWeapon(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette)
+void  DOOM::PlayerThing::drawWeapon(DOOM::Doom& doom, sf::Image& target, Math::Box<2, std::int16_t> rect, unsigned int scale, int16_t palette)
 {
   // Simulate bobing of weapon
   int angle_x = (int)(doom.level.statistics.time / DOOM::Doom::Tic * 128) % 8192;
@@ -730,12 +730,12 @@ void  DOOM::PlayerThing::drawWeapon(DOOM::Doom& doom, sf::Image& target, sf::Rec
       iterator->second[_states[_flashState].frame][0].first.get().draw(
         doom,
         target,
-        sf::Rect<int16_t>(rect.left, rect.top, rect.width, rect.height - 32 * scale),
-        sf::Vector2i(
-          rect.left + (int)((_weaponPosition.x() + bob * std::cos(angle_x / 8192.f * Math::Pi * 2.f)) * scale),
-          rect.top + (int)((_weaponPosition.y() - 16 + bob * std::sin(angle_y / 8192.f * Math::Pi * 2.f)) * scale)
+        Math::Box<2, std::int16_t>(rect.position, { rect.size.x(), (std::int16_t)(rect.size.y() - 32 * scale) }),
+        Math::Vector<2, int>(
+          rect.position.x() + (int)((_weaponPosition.x() + bob * std::cos(angle_x / 8192.f * Math::Pi * 2.f)) * scale),
+          rect.position.y() + (int)((_weaponPosition.y() - 16 + bob * std::sin(angle_y / 8192.f * Math::Pi * 2.f)) * scale)
         ),
-        sf::Vector2i(scale, scale),
+        Math::Vector<2, int>((int)scale, (int)scale),
         palette);
     }
   }
@@ -748,26 +748,26 @@ void  DOOM::PlayerThing::drawWeapon(DOOM::Doom& doom, sf::Image& target, sf::Rec
       iterator->second[_states[_weaponState].frame][0].first.get().draw(
         doom,
         target,
-        sf::Rect<int16_t>(rect.left, rect.top, rect.width, rect.height - 32 * scale),
-        sf::Vector2i(
-          rect.left + (int)((_weaponPosition.x() + bob * std::cos(angle_x / 8192.f * Math::Pi * 2.f)) * scale),
-          rect.top + (int)((_weaponPosition.y() - 16 + bob * std::sin(angle_y / 8192.f * Math::Pi * 2.f)) * scale)
+        Math::Box<2, std::int16_t>(rect.position, { rect.size.x(), (std::int16_t)(rect.size.y() - 32 * scale) }),
+        Math::Vector<2, int>(
+          rect.position.x() + (int)((_weaponPosition.x() + bob * std::cos(angle_x / 8192.f * Math::Pi * 2.f)) * scale),
+          rect.position.y() + (int)((_weaponPosition.y() - 16 + bob * std::sin(angle_y / 8192.f * Math::Pi * 2.f)) * scale)
         ),
-        sf::Vector2i(scale, scale),
+        Math::Vector<2, int>((int)scale, (int)scale),
         palette);
     }
   }
 }
 
-void  DOOM::PlayerThing::drawStatusbar(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette)
+void  DOOM::PlayerThing::drawStatusbar(DOOM::Doom& doom, sf::Image& target, Math::Box<2, std::int16_t> rect, unsigned int scale, std::int16_t palette)
 {
-  statusbar.render(doom, target, sf::Rect<int16_t>(rect.left, rect.top + (DOOM::Doom::RenderHeight - 32) * scale, rect.width, 32 * scale), palette);
+  statusbar.render(doom, target, Math::Box<2, std::int16_t>({ rect.position.x(), (std::int16_t)(rect.position.y() + (DOOM::Doom::RenderHeight - 32) * scale) }, { rect.size.x(), (std::int16_t)(32 * scale) }), palette);
 }
 
-void  DOOM::PlayerThing::drawAutomap(DOOM::Doom& doom, sf::Image& target, sf::Rect<int16_t> rect, unsigned int scale, int16_t palette)
+void  DOOM::PlayerThing::drawAutomap(DOOM::Doom& doom, sf::Image& target, Math::Box<2, std::int16_t> rect, unsigned int scale, int16_t palette)
 {
   // Render automap
-  automap.render(doom, target, sf::Rect<int16_t>(rect.left, rect.top, rect.width, rect.height - 32 * scale), scale, palette);
+  automap.render(doom, target, Math::Box<2, std::int16_t>(rect.position, { rect.size.x(), (std::int16_t)(rect.size.y() - 32 * scale) }), scale, palette);
 }
 
 bool  DOOM::PlayerThing::pickup(DOOM::Doom& doom, DOOM::AbstractThing& item)
@@ -1245,7 +1245,7 @@ void  DOOM::PlayerThing::updateWeapon(DOOM::Doom& doom, float elapsed)
   // Update internal timer
   _weaponElapsed += elapsed;
 
-  while (_weaponElapsed >= DOOM::Doom::Tic * (sf::Int64)_states[_weaponState].duration)
+  while (_weaponElapsed >= DOOM::Doom::Tic * _states[_weaponState].duration)
   {
     // Stop when no duration
     if (_states[_weaponState].duration == -1) {
@@ -1254,7 +1254,7 @@ void  DOOM::PlayerThing::updateWeapon(DOOM::Doom& doom, float elapsed)
     }
 
     // Skip to next state
-    _weaponElapsed -= DOOM::Doom::Tic * (sf::Int64)_states[_weaponState].duration;
+    _weaponElapsed -= DOOM::Doom::Tic * _states[_weaponState].duration;
     setWeaponState(doom, _states[_weaponState].next);
   }
 
@@ -1297,7 +1297,7 @@ void  DOOM::PlayerThing::updateFlash(DOOM::Doom& doom, float elapsed)
   // Update internal timer
   _flashElapsed += elapsed;
 
-  while (_flashElapsed >= DOOM::Doom::Tic * (sf::Int64)_states[_flashState].duration)
+  while (_flashElapsed >= DOOM::Doom::Tic * _states[_flashState].duration)
   {
     // Stop when no duration
     if (_states[_flashState].duration == -1) {
@@ -1306,7 +1306,7 @@ void  DOOM::PlayerThing::updateFlash(DOOM::Doom& doom, float elapsed)
     }
 
     // Skip to next state
-    _flashElapsed -= DOOM::Doom::Tic * (sf::Int64)_states[_flashState].duration;
+    _flashElapsed -= DOOM::Doom::Tic * _states[_flashState].duration;
     setFlashState(doom, _states[_flashState].next);
   }
 }
@@ -1316,25 +1316,25 @@ bool  DOOM::PlayerThing::control(DOOM::PlayerThing::Control action, bool pressed
   // Keyboard
   if (controller == 0) {
     if (action == DOOM::PlayerThing::Control::ControlAttack)
-      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Key::Space) : Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::Space);
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Space) : Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Space);
     else if (action == DOOM::PlayerThing::Control::ControlUse)
-      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Key::E) : Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::E);
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::E) : Game::Window::Instance().keyboard().keyDown(Game::Window::Key::E);
     else if (action == DOOM::PlayerThing::Control::ControlRun)
-      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Key::LShift) : Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::LShift);
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::LShift) : Game::Window::Instance().keyboard().keyDown(Game::Window::Key::LShift);
     else if (action == DOOM::PlayerThing::Control::ControlNext)
       return false;
     else if (action == DOOM::PlayerThing::Control::ControlPrevious)
       return false;
     else if (action == DOOM::PlayerThing::Control::ControlAutomap)
-      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Key::Tab) : Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::Tab);
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Tab) : Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Tab);
     else if (action == DOOM::PlayerThing::Control::ControlMode)
-      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Key::F) : Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::F);
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::F) : Game::Window::Instance().keyboard().keyDown(Game::Window::Key::F);
     else if (action == DOOM::PlayerThing::Control::ControlGrid)
-      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Key::G) : Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::G);
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::G) : Game::Window::Instance().keyboard().keyDown(Game::Window::Key::G);
     else if (action == DOOM::PlayerThing::Control::ControlZoom)
-      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Key::Add) : Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::Add);
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Add) : Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Add);
     else if (action == DOOM::PlayerThing::Control::ControlUnzoom)
-      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Key::Subtract) : Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Key::Subtract);
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Subtract) : Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Subtract);
     else
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
   }
@@ -1356,11 +1356,11 @@ bool  DOOM::PlayerThing::control(DOOM::PlayerThing::Control action, bool pressed
     else if (action == DOOM::PlayerThing::Control::ControlMode)
       return (pressed == true) ? Game::Window::Instance().joystick().buttonPressed(controller - 1, 3) : Game::Window::Instance().joystick().buttonDown(controller - 1, 3);
     else if (action == DOOM::PlayerThing::Control::ControlGrid)
-      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovX) > +0.1f : Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovX) != 0.f;
+      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, Game::Window::JoystickAxis::PovX) > +0.1f : Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::PovX) != 0.f;
     else if (action == DOOM::PlayerThing::Control::ControlZoom)
-      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovY) > +0.1f : Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovY) > +0.1f;
+      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, Game::Window::JoystickAxis::PovY) > +0.1f : Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::PovY) > +0.1f;
     else if (action == DOOM::PlayerThing::Control::ControlUnzoom)
-      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, sf::Joystick::Axis::PovY) < -0.1f : Game::Window::Instance().joystick().position(controller - 1, sf::Joystick::Axis::PovY) < -0.1f;
+      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, Game::Window::JoystickAxis::PovY) < -0.1f : Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::PovY) < -0.1f;
     else
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
   }

@@ -19,7 +19,7 @@ namespace Game
       private:
         int& _lock;  // Reference to lock of sound
 
-        Reference(sf::Sound& sound, int& lock);
+        Reference(sf::Sound& sound, sf::SoundBuffer& buffer, int& lock);
         Reference(const Reference& ref);
 
         Reference(Reference&& ref) = delete;
@@ -27,14 +27,27 @@ namespace Game
         Reference& operator=(Reference&& ref) = delete;
 
       public:
-        sf::Sound& sound;  // Reference to sound to be played
+        sf::SoundBuffer&  buffer; // Optional sound buffer
+        sf::Sound&        sound;  // Reference to sound to be played
 
         ~Reference();
       };
 
       static const int  MaxSound = 256; // Maximum number of soundss
 
-      std::list<std::pair<sf::Sound, int>>  _sounds;  // Sound instances
+      struct Element
+      {
+        sf::SoundBuffer buffer;
+        sf::Sound       sound;
+        int             lock;
+
+        Element();
+        Element(const Element&) = delete;
+        Element(Element&&) = delete;
+        ~Element() = default;
+      };
+
+      std::list<Element>  _sounds;  // Sound instances
 
       Sound() = default;
       ~Sound() = default;

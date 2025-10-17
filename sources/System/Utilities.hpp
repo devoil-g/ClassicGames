@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <cstring>
 #include <string>
 #include <istream>
@@ -46,8 +47,13 @@ namespace Game
 
       // Swap bytes of value
       for (int index = 0; index < sizeof(Type) / 2; index++)
-        std::swap(((uint8_t*)&result)[index], ((uint8_t*)&result)[sizeof(Type) - index - 1]);
+        std::swap(((std::uint8_t*)&result)[index], ((std::uint8_t*)&result)[sizeof(Type) - index - 1]);
       return result;
     }
+
+    std::string   Convert(const std::wstring& string); // Convert wide string to string
+    std::wstring  Convert(const std::string& string); // Convert string to wide string
+
+    void Clear(); // Clear terminal
   };
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "Doom/Linedef/AbstractTriggerableLinedef.hpp"
 
 namespace DOOM

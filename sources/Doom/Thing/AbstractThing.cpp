@@ -1,4 +1,6 @@
+#include <functional>
 #include <iostream>
+#include <set>
 
 #include "Doom/Doom.hpp"
 #include "Doom/Thing/AbstractThing.hpp"
@@ -4853,7 +4855,7 @@ void  DOOM::AbstractThing::updateState(DOOM::Doom& doom, float elapsed)
   // Update internal timer
   _elapsed += elapsed;
 
-  while (_elapsed >= DOOM::Doom::Tic * (sf::Int64)_states[_state].duration)
+  while (_elapsed >= DOOM::Doom::Tic * _states[_state].duration)
   {
     // Stop when no duration
     if (_states[_state].duration == -1) {
@@ -4862,7 +4864,7 @@ void  DOOM::AbstractThing::updateState(DOOM::Doom& doom, float elapsed)
     }
 
     // Skip to next state
-    _elapsed -= DOOM::Doom::Tic * (sf::Int64)_states[_state].duration;
+    _elapsed -= DOOM::Doom::Tic * _states[_state].duration;
     setState(doom, _states[_state].next);
   }
 }

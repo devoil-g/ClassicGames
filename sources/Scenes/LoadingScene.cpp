@@ -6,7 +6,7 @@
 
 Game::LoadingScene::LoadingScene(Game::SceneMachine& machine) :
   Game::AbstractScene(machine),
-  _text("", Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf"), 1),
+  _text(Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf"), "", 1),
   _elapsed(0.f)
 {
   // Set taskbar status to flickering
@@ -39,15 +39,14 @@ bool  Game::LoadingScene::update(float elapsed)
 void  Game::LoadingScene::draw()
 {
   // Set text size according to window size
-  _text.setCharacterSize(std::min(Game::Window::Instance().window().getSize().x, Game::Window::Instance().window().getSize().y) / 16);
+  _text.setCharacterSize(std::min(Game::Window::Instance().getSize().x(), Game::Window::Instance().getSize().y()) / 16);
   
   // Position text into screen space
-  _text.setPosition(
-    Game::Window::Instance().window().getSize().x * 1 / 16 - _text.getLocalBounds().left,
-    Game::Window::Instance().window().getSize().y * 15 / 16 - _text.getLocalBounds().top - _text.getLocalBounds().height
-  );
+  _text.setPosition({
+    Game::Window::Instance().getSize().x() * 1 / 16 - _text.getLocalBounds().position.x,
+    Game::Window::Instance().getSize().y() * 15 / 16 - _text.getLocalBounds().position.y - _text.getLocalBounds().size.y
+    });
 
   // Draw loading text to window
-  Game::Window::Instance().window().clear();
-  Game::Window::Instance().window().draw(_text);
+  Game::Window::Instance().draw(_text);
 }

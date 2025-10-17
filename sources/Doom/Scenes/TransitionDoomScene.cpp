@@ -6,7 +6,6 @@ DOOM::TransitionDoomScene::TransitionDoomScene(Game::SceneMachine& machine, DOOM
   _doom(doom),
   _startImage(start),
   _endTexture(),
-  _endSprite(),
   _transitionImage(),
   _transitionTexture(),
   _offsets(DOOM::Doom::RenderWidth / 2)
@@ -16,18 +15,18 @@ DOOM::TransitionDoomScene::TransitionDoomScene(Game::SceneMachine& machine, DOOM
   for (unsigned int i = 1; i < _offsets.size(); i++)
     _offsets[i] = std::clamp(_offsets[i - 1] + (DOOM::Doom::Tic * (float)(std::rand() % 3 - 1)), DOOM::Doom::Tic * -15.f, 0.f);
   
-  float scale_x = (float)_startImage.getSize().x / (float)Game::Window::Instance().window().getSize().x;
-  float scale_y = (float)_startImage.getSize().y / (float)Game::Window::Instance().window().getSize().y * DOOM::Doom::RenderStretching;
+  float scale_x = (float)_startImage.getSize().x / (float)Game::Window::Instance().getSize().x();
+  float scale_y = (float)_startImage.getSize().y / (float)Game::Window::Instance().getSize().y() * DOOM::Doom::RenderStretching;
 
   // Scale transition image
   if (scale_x < scale_y)
-    _transitionImage.create((unsigned int)(_startImage.getSize().x / scale_x * scale_y), _startImage.getSize().y);
+    _transitionImage.resize({ (unsigned int)(_startImage.getSize().x / scale_x * scale_y), _startImage.getSize().y });
   else
-    _transitionImage.create(_startImage.getSize().x, (unsigned int)(_startImage.getSize().y / scale_y * scale_x));
+    _transitionImage.resize({ _startImage.getSize().x, (unsigned int)(_startImage.getSize().y / scale_y * scale_x) });
 
   // Create textures
-  if (_endTexture.create(end.getSize().x, end.getSize().y) == false ||
-    _transitionTexture.create(_transitionImage.getSize().x, _transitionImage.getSize().y) == false)
+  if (_endTexture.resize({ end.getSize().x, end.getSize().y }) == false ||
+    _transitionTexture.resize({ _transitionImage.getSize().x, _transitionImage.getSize().y }) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Set texture parameters
@@ -37,12 +36,8 @@ DOOM::TransitionDoomScene::TransitionDoomScene(Game::SceneMachine& machine, DOOM
   // Update end image
   _endTexture.update(end);
 
-  // Set sprites
-  _endSprite.setTexture(_endTexture, true);
-  _transitionSprite.setTexture(_transitionTexture, true);
-
   // Remove DOOM base rendering target
-  _doom.image.create(0, 0);
+  _doom.image.resize({ 0, 0 });
 }
 
 bool  DOOM::TransitionDoomScene::update(float elapsed)
@@ -83,15 +78,15 @@ void  DOOM::TransitionDoomScene::draw()
 
     // Draw transparent column
     for (unsigned int y = 0; y < std::min(offset_y, _transitionImage.getSize().y); y++)
-      _transitionImage.setPixel(x, y, sf::Color(0, 0, 0, 0));
+      _transitionImage.setPixel({ x, y }, sf::Color(0, 0, 0, 0));
 
     // Draw start image column
     for (unsigned int y = offset_y; y < _transitionImage.getSize().y; y++) {
       if (x < (_transitionImage.getSize().x - _startImage.getSize().x) / 2 || x >= _startImage.getSize().x + (_transitionImage.getSize().x - _startImage.getSize().x) / 2 ||
         y - offset_y < (_transitionImage.getSize().y - _startImage.getSize().y) / 2 || y - offset_y >= _startImage.getSize().y + (_transitionImage.getSize().y - _startImage.getSize().y) / 2)
-        _transitionImage.setPixel(x, y, sf::Color::Black);
+        _transitionImage.setPixel({ x, y }, sf::Color::Black);
       else
-        _transitionImage.setPixel(x, y, _startImage.getPixel(x - (_transitionImage.getSize().x - _startImage.getSize().x) / 2, (y - offset_y) - (_transitionImage.getSize().y - _startImage.getSize().y) / 2));
+        _transitionImage.setPixel({ x, y }, _startImage.getPixel({ x - (_transitionImage.getSize().x - _startImage.getSize().x) / 2, (y - offset_y) - (_transitionImage.getSize().y - _startImage.getSize().y) / 2 }));
     }
   }
 
@@ -99,6 +94,6 @@ void  DOOM::TransitionDoomScene::draw()
   _transitionTexture.update(_transitionImage);
 
   // Draw sprites
-  Game::Window::Instance().draw(_endSprite, DOOM::Doom::RenderStretching);
-  Game::Window::Instance().draw(_transitionSprite, DOOM::Doom::RenderStretching);
+  Game::Window::Instance().draw(_endTexture, DOOM::Doom::RenderStretching);
+  Game::Window::Instance().draw(_transitionTexture, DOOM::Doom::RenderStretching);
 }

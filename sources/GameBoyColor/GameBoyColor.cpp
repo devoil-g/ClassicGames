@@ -17,13 +17,13 @@
 
 const std::string_view GBC::GameBoyColor::SaveStateBase = "0123456789ABCDEF";
 
-GBC::GameBoyColor::GameBoyColor(const std::filesystem::path& filename) :
+GBC::GameBoyColor::GameBoyColor(const std::filesystem::path& filename, sf::Texture& texture, Math::Vector<2, unsigned int> origin) :
   _header(),
   _path(filename),
   _boot(),
   _cycles(0),
   _cpu(*this),
-  _ppu(*this),
+  _ppu(*this, texture, origin),
   _apu(*this),
   _mbc(),
   _wRam(),
@@ -31,8 +31,12 @@ GBC::GameBoyColor::GameBoyColor(const std::filesystem::path& filename) :
   _hRam(),
   _ie(0),
   _keys{0},
+  _bindings(),
   _transferMode(Transfer::TransferNone)
 {
+  // Initialize bindings
+  loadBindings();
+
   // Load ROM
   load(filename);
 
@@ -44,6 +48,12 @@ GBC::GameBoyColor::GameBoyColor(const std::filesystem::path& filename) :
   // Initialize registers
   _io[IO::JOYP] = 0b11111111;
   _io[IO::HDMA5] = 0b11111111;
+}
+
+GBC::GameBoyColor::~GameBoyColor()
+{
+  // Save key bindings to file
+  saveBindings();
 }
 
 void  GBC::GameBoyColor::load(const std::filesystem::path& filename)
@@ -308,48 +318,168 @@ void  GBC::GameBoyColor::loadHeader(const std::vector<uint8_t>& rom)
   _header.global_checksum = (global_checksum == rom[0x014E] * 256 + rom[0x014F]);
 }
 
+void  GBC::GameBoyColor::loadBindings()
+{
+  // Load binding from JSON
+  try {
+    Game::JSON::Object json(Game::Config::ExecutablePath / "assets" / "gbc" / "config.json");
+
+    _bindings[GBC::GameBoyColor::Key::KeyDown] = (Game::Window::Key)json.get(L"bindings").object().get(L"down").number();
+    _bindings[GBC::GameBoyColor::Key::KeyUp] = (Game::Window::Key)json.get(L"bindings").object().get(L"up").number();
+    _bindings[GBC::GameBoyColor::Key::KeyLeft] = (Game::Window::Key)json.get(L"bindings").object().get(L"left").number();
+    _bindings[GBC::GameBoyColor::Key::KeyRight] = (Game::Window::Key)json.get(L"bindings").object().get(L"right").number();
+    _bindings[GBC::GameBoyColor::Key::KeyStart] = (Game::Window::Key)json.get(L"bindings").object().get(L"start").number();
+    _bindings[GBC::GameBoyColor::Key::KeySelect] = (Game::Window::Key)json.get(L"bindings").object().get(L"select").number();
+    _bindings[GBC::GameBoyColor::Key::KeyB] = (Game::Window::Key)json.get(L"bindings").object().get(L"b").number();
+    _bindings[GBC::GameBoyColor::Key::KeyA] = (Game::Window::Key)json.get(L"bindings").object().get(L"a").number();
+  }
+
+  // Error, load default binding
+  catch (const std::exception&) {
+    _bindings[GBC::GameBoyColor::Key::KeyDown] = Game::Window::Key::S;
+    _bindings[GBC::GameBoyColor::Key::KeyUp] = Game::Window::Key::Z;
+    _bindings[GBC::GameBoyColor::Key::KeyLeft] = Game::Window::Key::Q;
+    _bindings[GBC::GameBoyColor::Key::KeyRight] = Game::Window::Key::D;
+    _bindings[GBC::GameBoyColor::Key::KeyStart] = Game::Window::Key::E;
+    _bindings[GBC::GameBoyColor::Key::KeySelect] = Game::Window::Key::A;
+    _bindings[GBC::GameBoyColor::Key::KeyB] = Game::Window::Key::F;
+    _bindings[GBC::GameBoyColor::Key::KeyA] = Game::Window::Key::T;
+  }
+}
+
+void  GBC::GameBoyColor::saveBindings()
+{
+  Game::JSON::Object  json;
+
+  json.set(L"bindings", Game::JSON::Object());
+  json.get(L"bindings").object().set(L"down", (double)_bindings[GBC::GameBoyColor::Key::KeyDown]);
+  json.get(L"bindings").object().set(L"up", (double)_bindings[GBC::GameBoyColor::Key::KeyUp]);
+  json.get(L"bindings").object().set(L"left", (double)_bindings[GBC::GameBoyColor::Key::KeyLeft]);
+  json.get(L"bindings").object().set(L"right", (double)_bindings[GBC::GameBoyColor::Key::KeyRight]);
+  json.get(L"bindings").object().set(L"start", (double)_bindings[GBC::GameBoyColor::Key::KeyStart]);
+  json.get(L"bindings").object().set(L"select", (double)_bindings[GBC::GameBoyColor::Key::KeySelect]);
+  json.get(L"bindings").object().set(L"b", (double)_bindings[GBC::GameBoyColor::Key::KeyB]);
+  json.get(L"bindings").object().set(L"a", (double)_bindings[GBC::GameBoyColor::Key::KeyA]);
+
+  std::wofstream file(Game::Config::ExecutablePath / "assets" / "gbc" / "config.json");
+
+  // Send JSON to file
+  file << json;
+}
+
 void  GBC::GameBoyColor::simulate()
 {
   std::uint64_t frame = _cycles / GBC::PixelProcessingUnit::FrameDuration;
-  std::uint64_t cycles = _cycles;
 
-  // Simulate Joypad
-  simulateKeys();
+  // Pre-simulation
+  simulatePre();
 
   // Execution loop
   while (frame == _cycles / GBC::PixelProcessingUnit::FrameDuration)
+    simulateCycle();
+
+  // Post-simulation
+  simulatePost();
+}
+
+void  GBC::GameBoyColor::simulatePre()
+{
+  // Simulate Joypad
+  simulateKeys();
+}
+
+void  GBC::GameBoyColor::simulateCycle()
+{
+  std::uint64_t cycles = _cycles;
+
+  // Simulate CPU
+  switch (_transferMode)
   {
-    switch (_transferMode)
+    // Simulate a tick of the CPU
+  case Transfer::TransferNone:
+    _cpu.simulate();
+    _cycles += (_io[IO::KEY1] & 0b10000000) ? 2 : 4;
+    break;
+
+    // DMA transfer
+  case Transfer::TransferDma:
+    // Transfer 4 bytes to OAM
+    for (std::uint16_t index = 0; index < 4; index++)
+      _ppu.writeDma((std::uint16_t)_transferIndex + index, read(((std::uint16_t)_io[IO::DMA] << 8) + (std::uint16_t)_transferIndex + index));
+    _transferIndex += 4;
+
+    // Simulate a tick of the CPU
+    _cpu.simulate();
+    _cycles += (_io[IO::KEY1] & 0b10000000) ? 2 : 4;
+
+    // End of DMA transfer
+    if (_transferIndex == 160)
+      _transferMode = Transfer::TransferNone;
+
+    // TODO: restrict memory access to HRAM during DMA transfer
+    break;
+
+    // General purpose DMA
+  case Transfer::TransferHdma0:
+  {
+    std::uint16_t source = ((((std::uint16_t)_io[IO::HDMA1] << 8) + (std::uint16_t)_io[IO::HDMA2]) & 0b1111111111110000) + (std::uint16_t)_transferIndex;
+    std::uint16_t destination = (((((std::uint16_t)_io[IO::HDMA3] << 8) + (std::uint16_t)_io[IO::HDMA4]) & 0b0001111111110000) | 0b1000000000000000) + (std::uint16_t)_transferIndex;
+    bool          end = false;
+
+    // Transfer 8 bytes per tick
+    for (std::size_t index = 0; index < 8 && end == false; index++)
     {
-      // Simulate a tick of the CPU
-    case Transfer::TransferNone:
-      _cpu.simulate();
-      _cycles += (_io[IO::KEY1] & 0b10000000) ? 2 : 4;
-      break;
+      // Check transfer adress
+      if (((source >= 0x0000 && source < 0x8000) ||
+        (source >= 0xA000 && source < 0xC000) ||
+        (source >= 0xC000 && source < 0xE000)) &&
+        (destination >= 0x8000 && destination < 0xA000))
+        _ppu.writeRam(destination - 0x8000, read(source));
+      else {
+        end = true;
+        break;
+      }
 
-      // DMA transfer
-    case Transfer::TransferDma:
-      // Transfer 4 bytes to OAM
-      for (std::uint16_t index = 0; index < 4; index++)
-        _ppu.writeDma((std::uint16_t)_transferIndex + index, read(((std::uint16_t)_io[IO::DMA] << 8) + (std::uint16_t)_transferIndex + index));
-      _transferIndex += 4;
+      source += 1;
+      destination += 1;
+    }
 
-      // Simulate a tick of the CPU
-      _cpu.simulate();
-      _cycles += (_io[IO::KEY1] & 0b10000000) ? 2 : 4;
+    // Increment transfer index
+    _transferIndex += 8;
 
-      // End of DMA transfer
-      if (_transferIndex == 160)
-        _transferMode = Transfer::TransferNone;
+    // End of HDMA transfer
+    if (_transferIndex == ((std::size_t)_io[IO::HDMA5] + 1) * 0x10 || end == true) {
+      _transferMode = Transfer::TransferNone;
+      _io[IO::HDMA5] = 0xFF;
 
-      // TODO: restrict memory access to HRAM during DMA transfer
-      break;
+      // Increment source and destination
+      _io[IO::HDMA1] = (source >> 8) & 0b11111111;
+      _io[IO::HDMA2] = (source >> 0) & 0b11111111;
+      _io[IO::HDMA3] = (destination >> 8) & 0b11111111;
+      _io[IO::HDMA4] = (destination >> 0) & 0b11111111;
+    }
 
-      // General purpose DMA
-    case Transfer::TransferHdma0:
+    // CPU is not executed
+    _cycles += 4;
+    break;
+  }
+
+  case Transfer::TransferHdma1:
+  {
+    bool trigger = (_io[GBC::PixelProcessingUnit::IO::STAT] & GBC::PixelProcessingUnit::LcdStatus::LcdStatusModeMask) == GBC::PixelProcessingUnit::LcdMode::LcdMode0;
+
+    // Trigger when entering mode 0
+    if (_transferTrigger == false && trigger == true)
+      _transferIndex = 16;
+
+    // Save current mode
+    _transferTrigger = trigger;
+
+    // HDMA Transfer at start of HBlank
+    if (_transferIndex > 0)
     {
-      std::uint16_t source = ((((std::uint16_t)_io[IO::HDMA1] << 8) + (std::uint16_t)_io[IO::HDMA2]) & 0b1111111111110000) + (std::uint16_t)_transferIndex;
-      std::uint16_t destination = (((((std::uint16_t)_io[IO::HDMA3] << 8) + (std::uint16_t)_io[IO::HDMA4]) & 0b0001111111110000) | 0b1000000000000000) + (std::uint16_t)_transferIndex;
+      std::uint16_t source = ((((std::uint16_t)_io[IO::HDMA1] << 8) + (std::uint16_t)_io[IO::HDMA2]) & 0b1111111111110000) + (std::uint16_t)(16 - _transferIndex);
+      std::uint16_t destination = (((((std::uint16_t)_io[IO::HDMA3] << 8) + (std::uint16_t)_io[IO::HDMA4]) & 0b00011111111110000) | 0b1000000000000000) + (std::uint16_t)(16 - _transferIndex);
       bool          end = false;
 
       // Transfer 8 bytes per tick
@@ -361,22 +491,19 @@ void  GBC::GameBoyColor::simulate()
           (source >= 0xC000 && source < 0xE000)) &&
           (destination >= 0x8000 && destination < 0xA000))
           _ppu.writeRam(destination - 0x8000, read(source));
-        else {
+        else
           end = true;
-          break;
-        }
 
         source += 1;
         destination += 1;
       }
 
-      // Increment transfer index
-      _transferIndex += 8;
+      // Update transfer index
+      _transferIndex -= 8;
 
-      // End of HDMA transfer
-      if (_transferIndex == ((std::size_t)_io[IO::HDMA5] + 1) * 0x10 || end == true) {
-        _transferMode = Transfer::TransferNone;
-        _io[IO::HDMA5] = 0xFF;
+      // End of data chunk transfer
+      if (_transferIndex == 0) {
+        _io[IO::HDMA5] -= 1;
 
         // Increment source and destination
         _io[IO::HDMA1] = (source >> 8) & 0b11111111;
@@ -385,90 +512,39 @@ void  GBC::GameBoyColor::simulate()
         _io[IO::HDMA4] = (destination >> 0) & 0b11111111;
       }
 
+      // End of HDMA transfer
+      if (_io[IO::HDMA5] == 0xFF || end == true) {
+        _transferMode = Transfer::TransferNone;
+        _io[IO::HDMA5] = 0xFF;
+      }
+
       // CPU is not executed
       _cycles += 4;
-      break;
-    }
-    
-    case Transfer::TransferHdma1:
-    {
-      bool trigger = (_io[GBC::PixelProcessingUnit::IO::STAT] & GBC::PixelProcessingUnit::LcdStatus::LcdStatusModeMask) == GBC::PixelProcessingUnit::LcdMode::LcdMode0;
-
-      // Trigger when entering mode 0
-      if (_transferTrigger == false && trigger == true)
-        _transferIndex = 16;
-
-      // Save current mode
-      _transferTrigger = trigger;
-
-      // HDMA Transfer at start of HBlank
-      if (_transferIndex > 0)
-      {
-        std::uint16_t source = ((((std::uint16_t)_io[IO::HDMA1] << 8) + (std::uint16_t)_io[IO::HDMA2]) & 0b1111111111110000) + (std::uint16_t)(16 - _transferIndex);
-        std::uint16_t destination = (((((std::uint16_t)_io[IO::HDMA3] << 8) + (std::uint16_t)_io[IO::HDMA4]) & 0b00011111111110000) | 0b1000000000000000) + (std::uint16_t)(16 - _transferIndex);
-        bool          end = false;
-
-        // Transfer 8 bytes per tick
-        for (std::size_t index = 0; index < 8 && end == false; index++)
-        {
-          // Check transfer adress
-          if (((source >= 0x0000 && source < 0x8000) ||
-            (source >= 0xA000 && source < 0xC000) ||
-            (source >= 0xC000 && source < 0xE000)) &&
-            (destination >= 0x8000 && destination < 0xA000))
-            _ppu.writeRam(destination - 0x8000, read(source));
-          else
-            end = true;
-
-          source += 1;
-          destination += 1;
-        }
-
-        // Update transfer index
-        _transferIndex -= 8;
-        
-        // End of data chunk transfer
-        if (_transferIndex == 0) {
-          _io[IO::HDMA5] -= 1;
-
-          // Increment source and destination
-          _io[IO::HDMA1] = (source >> 8) & 0b11111111;
-          _io[IO::HDMA2] = (source >> 0) & 0b11111111;
-          _io[IO::HDMA3] = (destination >> 8) & 0b11111111;
-          _io[IO::HDMA4] = (destination >> 0) & 0b11111111;
-        }
-
-        // End of HDMA transfer
-        if (_io[IO::HDMA5] == 0xFF || end == true) {
-          _transferMode = Transfer::TransferNone;
-          _io[IO::HDMA5] = 0xFF;
-        }
-
-        // CPU is not executed
-        _cycles += 4;
-      }
-
-      // Simulate CPU when no transfer
-      else {
-        _cpu.simulate();
-        _cycles += (_io[IO::KEY1] & 0b10000000) ? 2 : 4;
-      }
-
-      break;
     }
 
-    default:
-      throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+    // Simulate CPU when no transfer
+    else {
+      _cpu.simulate();
+      _cycles += (_io[IO::KEY1] & 0b10000000) ? 2 : 4;
     }
 
-    // Update timer
-    simulateTimer();
-
-    // Update Pixel Processing Unit
-    for (; cycles < _cycles; cycles += 1)
-      _ppu.simulate();
+    break;
   }
 
+  default:
+    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+  }
+
+  // Update timer
+  simulateTimer();
+
+  // Update Pixel Processing Unit
+  for (; cycles < _cycles; cycles += 1)
+    _ppu.simulate();
+}
+
+void  GBC::GameBoyColor::simulatePost()
+{
   // Update audio for one frame
   // NOTE: we could do this every CPU cycles,
   // but we don't need that much precision
@@ -482,15 +558,16 @@ void  GBC::GameBoyColor::simulate()
 
 void  GBC::GameBoyColor::simulateKeys()
 {
+  const auto& keyboard = Game::Window::Instance().keyboard();
   std::array<bool, Key::KeyCount> keys = {
-    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) < -0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::S),  // Down
-    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovY) > +0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Z),  // Up
-    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovX) < -0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Q),  // Left
-    Game::Window::Instance().joystick().position(0, sf::Joystick::Axis::PovX) > +0.5f || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::D),  // Right
-    Game::Window::Instance().joystick().buttonDown(0, 7) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::E),                               // Start
-    Game::Window::Instance().joystick().buttonDown(0, 6) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::A),                               // Select
-    Game::Window::Instance().joystick().buttonDown(0, 1) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::L),                               // B
-    Game::Window::Instance().joystick().buttonDown(0, 0) || Game::Window::Instance().keyboard().keyDown(sf::Keyboard::P)                                // A
+    keyboard.keyDown(_bindings[GBC::GameBoyColor::Key::KeyDown]),
+    keyboard.keyDown(_bindings[GBC::GameBoyColor::Key::KeyUp]),
+    keyboard.keyDown(_bindings[GBC::GameBoyColor::Key::KeyLeft]),
+    keyboard.keyDown(_bindings[GBC::GameBoyColor::Key::KeyRight]),
+    keyboard.keyDown(_bindings[GBC::GameBoyColor::Key::KeyStart]),
+    keyboard.keyDown(_bindings[GBC::GameBoyColor::Key::KeySelect]),
+    keyboard.keyDown(_bindings[GBC::GameBoyColor::Key::KeyB]),
+    keyboard.keyDown(_bindings[GBC::GameBoyColor::Key::KeyA])
   };
 
   // Joypad interrupt when a selected key is pressed
@@ -539,6 +616,12 @@ void  GBC::GameBoyColor::simulateTimer()
   }
 }
 
+std::size_t GBC::GameBoyColor::cycles() const
+{
+  // Get cycle count
+  return _cycles;
+}
+
 const sf::Texture& GBC::GameBoyColor::lcd() const
 {
   // Get rendering target from PPU
@@ -555,6 +638,18 @@ const GBC::GameBoyColor::Header& GBC::GameBoyColor::header() const
 {
   // Get cartridge header
   return _header;
+}
+
+Game::Window::Key GBC::GameBoyColor::bind(GBC::GameBoyColor::Key key) const
+{
+  // Get key binding
+  return _bindings.at(key);
+}
+
+void  GBC::GameBoyColor::bind(GBC::GameBoyColor::Key key, Game::Window::Key bind)
+{
+  // Bind a new key
+  _bindings.at(key) = bind;
 }
 
 void  GBC::GameBoyColor::load(std::size_t id)
@@ -607,7 +702,6 @@ void  GBC::GameBoyColor::save(std::size_t id) const
   save(file, "GBC_TRANSFERMODE", _transferMode);
   save(file, "GBC_TRANSFERINDEX", _transferIndex);
   save(file, "GBC_TRANSFERTRIGGER", _transferTrigger);
-
 
   // Save hardware state
   _cpu.save(file);

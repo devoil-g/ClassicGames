@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SFML/System/Time.hpp>
+#include <cstdint>
 
 #include "Doom/Action/AbstractTypeAction.hpp"
 
@@ -13,9 +13,9 @@ namespace DOOM
     class RandomLightingAction : public DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Lighting>
   {
   private:
-    int16_t _cycle;   // Cycle duration
-    int16_t _flash;   // Flicker duration
-    float   _elapsed; // Elapsed time
+    std::int16_t  _cycle;   // Cycle duration
+    std::int16_t  _flash;   // Flicker duration
+    float         _elapsed; // Elapsed time
 
   public:
     RandomLightingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector) :
@@ -37,8 +37,8 @@ namespace DOOM
       // Regenerate random parameter
       while (_elapsed > DOOM::Doom::Tic* (float)_cycle) {
         _elapsed -= DOOM::Doom::Tic * (float)_cycle;
-        _cycle = (int16_t)(Math::Random() * CycleDuration) + (FlashDuration * 4) + 1;
-        _flash = (int16_t)(Math::Random() * FlashDuration) + 1;
+        _cycle = (std::int16_t)(Math::Random() * CycleDuration) + (FlashDuration * 4) + 1;
+        _flash = (std::int16_t)(Math::Random() * FlashDuration) + 1;
       }
 
       // Compute light value from elapsed time

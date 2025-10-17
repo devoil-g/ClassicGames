@@ -1,7 +1,9 @@
 #include "Math/Math.hpp"
 #include "Quiz/ControllerQuizScene.hpp"
+#include "Quiz/FastestQuizScene.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
+#include "System/Utilities.hpp"
 #include "System/Audio/Sound.hpp"
 #include "System/Library/SoundLibrary.hpp"
 
@@ -14,11 +16,10 @@ const float QUIZ::ControllerQuizScene::TimerOver = 3.5f;
 QUIZ::ControllerQuizScene::ControllerQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& quiz) :
   Game::AbstractScene(machine),
   _quiz(quiz),
-  _music(),
-  _bar(sf::Vector2f(1.f, 1.f))
+  _music()
 {
   // Load music
-  if (_music.openFromFile((Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "contestants.ogg").string()) == false)
+  if (_music.openFromFile((Game::Config::ExecutablePath / "assets" / "quiz" / "musics" / "controller.ogg").string()) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Check minimum duration
@@ -26,11 +27,10 @@ QUIZ::ControllerQuizScene::ControllerQuizScene(Game::SceneMachine& machine, QUIZ
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Play music
+  _music.setLoopPoints({ .offset = sf::seconds(3.262f), .length = sf::seconds(26.538f) });
+  _music.setLoopPoints({ .offset = sf::seconds(3.262f), .length = sf::seconds(24.617f) });
+  _music.setLooping(true);
   _music.play();
-
-  // Initialize timer bar
-  _bar.setSize(sf::Vector2f(1.f, 1.f));
-  _bar.setFillColor(sf::Color::White);
 
   // Set player visible
   for (int index = 0; index < _quiz.players.size(); index++) {
@@ -44,6 +44,7 @@ QUIZ::ControllerQuizScene::ControllerQuizScene(Game::SceneMachine& machine, QUIZ
   }
 
   // Host instructions
+  Game::Utilities::Clear();
   std::cout
     << "--- PLAYER SELECTION ---" << std::endl
     << "Instruction for players: use the red buzzer to join the game," << std::endl
@@ -51,9 +52,9 @@ QUIZ::ControllerQuizScene::ControllerQuizScene(Game::SceneMachine& machine, QUIZ
     << "  green and yellow to change the skin" << std::endl
     << std::endl
     << "Commands:" << std::endl
-    << "  [R]eset:  reset timer" << std::endl
-    << "  [S]kip:   skip timer to end" << std::endl
-    << "  [E]nd:    end controller selection" << std::endl
+    << "  [N]ext:       end player selection" << std::endl
+    << "  [E]nd:        immediatly stop player selection" << std::endl
+    << "  Right click:  remove a player" << std::endl
     << std::endl;
 }
 
@@ -66,21 +67,25 @@ bool  QUIZ::ControllerQuizScene::update(float elapsed)
     updateAvatar();
   }
 
-  // End scene
-  if (_music.getStatus() == sf::Music::Stopped)
-    _machine.pop();
-
   // Manage host inputs
   updateHost();
+
+  // End player selection
+  if (_music.getStatus() == sf::Music::Status::Stopped) {
+    _machine.pop();
+    return false;
+  }
 
   return false;
 }
 
 void  QUIZ::ControllerQuizScene::updateRegister()
 {
+  const auto& window = Game::Window::Instance();
+
   // Check for new player
-  for (unsigned int joystick = 0; joystick < sf::Joystick::Count; joystick++) {
-    if (sf::Joystick::isConnected(joystick) == true) {
+  for (unsigned int joystick = 0; joystick < Game::Window::JoystickCount; joystick++) {
+    if (window.joystick().connected(joystick) == true) {
       for (unsigned int button = 0; button < 20; button += 5) {
         if (Game::Window::Instance().joystick().buttonPressed(joystick, button) == true)
         {
@@ -117,11 +122,14 @@ void  QUIZ::ControllerQuizScene::updateRegister()
             });
 
           // Add player entity
-          auto& player = _quiz.entities.emplace(std::make_pair("player_" + std::to_string(_quiz.players.back().id), _quiz.avatars[_quiz.players.back().avatar][_quiz.players.back().skin])).first->second;
+          auto& player = _quiz.entities["player_" + std::to_string(_quiz.players.back().id)];
+
+          player.reset();
           player.setPosition((float)_quiz.players.size() / (_quiz.players.size() + 1.f), 0.5f);
           player.setScale(0.f, 0.f);
           player.setColor(0.f, 0.f, 0.f, 0.f);
           player.setLerp(0.0625f);
+          player.setTexture(_quiz.avatars[_quiz.players.back().avatar][_quiz.players.back().skin]);
 
           // Move every player to fit new player
           for (int index = 0; index < _quiz.players.size(); index++) {
@@ -147,12 +155,17 @@ void  QUIZ::ControllerQuizScene::updateRegister()
 void  QUIZ::ControllerQuizScene::updateUnregister()
 {
   // Inspect each player
-  if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Button::Right) == true) {
+  if (Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Right) == true) {
     for (auto iterator = _quiz.players.begin(); iterator != _quiz.players.end();)
     {
       // Remove player when sprite is clicked
-      if (_quiz.entities.at("player_" + std::to_string(iterator->id)).hover() == true) {
-        _quiz.entities.erase("player_" + std::to_string(iterator->id));
+      if (_quiz.entities.at("player_" + std::to_string(iterator->id)).hover() == true)
+      {
+        // Kill entity
+        _quiz.entities.at("player_" + std::to_string(iterator->id)).setTargetScale(0.f, 0.f);
+        _quiz.entities.at("player_" + std::to_string(iterator->id)).setTargetColor(1.f, 1.f, 1.f, 0.f);
+        _quiz.entities.at("player_" + std::to_string(iterator->id)).setDead(true);
+
         iterator = _quiz.players.erase(iterator);
 
         // Move every player to fit screen
@@ -219,26 +232,17 @@ void  QUIZ::ControllerQuizScene::updateAvatar()
 
 void  QUIZ::ControllerQuizScene::updateHost()
 {
-  // Restart timer
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::R) == true)
-    _music.setPlayingOffset(sf::seconds(TimerStart));
-
-  // Skip music to end
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::S) == true)
+  // End player selection
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true) {
+    _music.setLooping(false);
     _music.setPlayingOffset(sf::seconds(QUIZ::ControllerQuizScene::TimerLimit));
+  }
 
-  // End player select
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::E) == true)
-    _machine.pop();
+  // Immediatly stop player selection
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::E) == true) {
+    _music.stop();
+  }
 }
 
 void  QUIZ::ControllerQuizScene::draw()
-{
-  float completion = std::clamp(_music.getPlayingOffset().asSeconds() / TimerLimit, 0.f, 1.f);
-  float over = std::clamp((_music.getPlayingOffset().asSeconds() - TimerLimit) / TimerOver, 0.f, 1.f);
-
-  // Draw timer bar
-  _bar.setScale(Game::Window::Instance().window().getSize().x * completion, (1.f - over) * 16.f);
-  _bar.setPosition(0.f, Game::Window::Instance().window().getSize().y - _bar.getScale().y);
-  Game::Window::Instance().window().draw(_bar);
-}
+{}

@@ -1,15 +1,16 @@
 #pragma once
 
+#include <array>
+#include <cstdint>
 #include <functional>
+#include <list>
 
 #include <SFML/Graphics/Image.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/System.hpp>
 
 #include "Doom/Doom.hpp"
 #include "Doom/Camera.hpp"
 #include "Scenes/AbstractScene.hpp"
+#include "System/Window.hpp"
   
 namespace DOOM
 {
@@ -34,10 +35,10 @@ namespace DOOM
     {
       struct Item
       {
-        uint64_t          texture;    // Texture of item
+        std::uint64_t     texture;    // Texture of item
         bool              selectable; // True if item can be selected
         int               x, y;       // Position of item on screen
-        sf::Keyboard::Key hotkey;     // Shortcut to item selection
+        Game::Window::Key hotkey;     // Shortcut to item selection
 
         std::function<void()> select; // Callback when selected
         std::function<void()> left;   // Callback when left arrow is used
@@ -56,8 +57,8 @@ namespace DOOM
       std::function<void()> escape; // Callback when ESC is pressed
     };
 
-    DOOM::Doom& _doom;    // DOOM instance
-    uint8_t     _episode; // Selected episode
+    DOOM::Doom&   _doom;    // DOOM instance
+    std::uint8_t  _episode; // Selected episode
 
     DOOM::Camera  _camera;  // Background camera
 

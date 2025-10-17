@@ -1,6 +1,10 @@
 #pragma once
 
+#include <cstdint>
 #include <queue>
+#include <string>
+
+#include <SFML/Graphics/Image.hpp>
 
 #include "Doom/Doom.hpp"
 #include "Scenes/AbstractScene.hpp"
@@ -21,7 +25,7 @@ namespace DOOM
     bool  updateSkip(); // Return true if skip button has been pressed
 
   public:
-    TextDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom, const std::string& text, uint64_t background);
+    TextDoomScene(Game::SceneMachine& machine, DOOM::Doom& doom, const std::string& text, std::uint64_t background);
     ~TextDoomScene() override = default;
 
     bool  update(float elapsed) override; // Update state

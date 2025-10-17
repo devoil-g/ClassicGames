@@ -1,7 +1,5 @@
 #pragma once
 
-#include <list>
-
 #include "Doom/Action/AbstractLevelingAction.hpp"
 
 namespace DOOM

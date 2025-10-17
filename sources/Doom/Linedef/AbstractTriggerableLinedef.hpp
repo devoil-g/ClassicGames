@@ -1,6 +1,8 @@
 #pragma once
 
+#include <cstdint>
 #include <iostream>
+#include <type_traits>
 
 #include "Doom/Linedef/AbstractLinedef.hpp"
 #include "Doom/Linedef/NullLinedef.hpp"
@@ -36,7 +38,7 @@ namespace DOOM
     class AbstractTriggerableLinedef : public DOOM::AbstractLinedef
   {
   private:
-    virtual bool  trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing, int16_t sector_index) = 0;  // Action of the linedef
+    virtual bool  trigger(DOOM::Doom& doom, DOOM::AbstractThing& thing, std::int16_t sector_index) = 0;  // Action of the linedef
 
     template<DOOM::Enum::KeyColor _Key = DOOM::Enum::KeyColor::KeyColorNone>
     inline std::enable_if_t<Key == _Key, bool>  triggerKey(DOOM::Doom& doom, DOOM::AbstractThing& thing)  // No check for key
@@ -100,7 +102,7 @@ namespace DOOM
       bool  result = false;
 
       // Trigger tagged sectors
-      for (int16_t index = 0; index < doom.level.sectors.size(); index++)
+      for (std::int16_t index = 0; index < doom.level.sectors.size(); index++)
         if (doom.level.sectors[index].tag == tag)
           result |= trigger(doom, thing, index);
 
@@ -130,7 +132,7 @@ namespace DOOM
         return false;
 
       // Find which sidedef textures should be switched
-      int16_t sidedef = ((Math::Vector<2>::determinant(doom.level.vertexes[start] - thing.position.convert<2>(), doom.level.vertexes[end] - doom.level.vertexes[start]) < 0.f) ? front : back);
+      std::int16_t  sidedef = ((Math::Vector<2>::determinant(doom.level.vertexes[start] - thing.position.convert<2>(), doom.level.vertexes[end] - doom.level.vertexes[start]) < 0.f) ? front : back);
 
       // Switch sidedef if trigger pushed or switched, definitively if not repeatable
       if (_Trigger == DOOM::EnumLinedef::Trigger::TriggerPushed || _Trigger == DOOM::EnumLinedef::Trigger::TriggerSwitched && sidedef != -1)

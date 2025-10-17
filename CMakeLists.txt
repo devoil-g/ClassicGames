@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0.2)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.24.0)
 PROJECT(ClassicGames)
 
 # Set game sources
@@ -121,18 +121,14 @@ SET(GAME_GBC_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/MemoryBankController3.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/MemoryBankController5.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/MemoryBankController5.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/MenuScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/MenuScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/PixelProcessingUnit.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/PixelProcessingUnit.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/SelectionScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/SelectionScene.cpp
 )
 SET(GAME_RPG_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Components.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Components.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Systems.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Systems.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/ClientScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/ClientScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Server.hpp
@@ -143,28 +139,66 @@ SET(GAME_RPG_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/TcpClient.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Camera.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Camera.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Cell.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Cell.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Color.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Color.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Entity.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Entity.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Level.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Level.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Model.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Model.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Sprite.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Sprite.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Texture.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Texture.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Types.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Types.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/World.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/World.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/WindowsManager.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/WindowsManager.cpp
+)
+SET(GAME_RPG_ECS_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/EntityComponentSystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/EntityComponentSystem.cpp
+)
+SET(GAME_RPG_ECS_COMPONENTS_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/Components.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/Components.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/BoardComponent.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/BoardComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/CellComponent.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/CellComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/EntityComponent.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/EntityComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ModelComponent.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ModelComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/NetworkComponent.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/NetworkComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ParticleComponent.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ParticleComponent.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ParticleEmitterComponent.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Components/ParticleEmitterComponent.cpp
+)
+SET(GAME_RPG_ECS_SYSTEMS_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/Systems.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/Systems.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/BoardSystem.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/EntitySystem.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ModelSystem.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/NetworkSystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/NetworkSystem.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ParticleEmitterSystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ParticleEmitterSystem.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ParticleSystem.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/Systems/ParticleSystem.cpp
 )
 SET(GAME_QUIZ_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/BlindtestQuizScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/BlindtestQuizScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/ControllerQuizScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/ControllerQuizScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/FastestQuizScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/FastestQuizScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/MillionaireQuizScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/MillionaireQuizScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/Quiz.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/Quiz.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/QuizScene.hpp
@@ -175,10 +209,14 @@ SET(GAME_QUIZ_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Quiz/ScoresQuizScene.cpp
 )
 SET(GAME_MATH_SRCS
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Box.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Box.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Matrix.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Matrix.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Transformable2D.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Transformable2D.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Vector.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Vector.hpp
 )
@@ -187,6 +225,8 @@ SET(GAME_STATES_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/SceneMachine.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/AbstractScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/AbstractScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/ExitScene.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/ExitScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/LoadingScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/LoadingScene.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Scenes/MessageScene.cpp
@@ -247,6 +287,9 @@ SET(GAME_SRCS
 	${GAME_DOOM_STATES_SRCS}
 	${GAME_GBC_SRCS}
 	${GAME_RPG_SRCS}
+	${GAME_RPG_ECS_SRCS}
+	${GAME_RPG_ECS_COMPONENTS_SRCS}
+	${GAME_RPG_ECS_SYSTEMS_SRCS}
 	${GAME_QUIZ_SRCS}
 	${GAME_MATH_SRCS}
 	${GAME_STATES_SRCS}
@@ -262,7 +305,8 @@ SET(GAME_RSRC
 	${CMAKE_CURRENT_SOURCE_DIR}/assets/icons/Icons.rc
 	${CMAKE_CURRENT_SOURCE_DIR}/assets/levels/dmsp1666.txt
 	${CMAKE_CURRENT_SOURCE_DIR}/assets/levels/MUSform.txt
-	${CMAKE_CURRENT_SOURCE_DIR}/assets/rpg/level_01.json
+	${CMAKE_CURRENT_SOURCE_DIR}/assets/quiz/questions.json
+	${CMAKE_CURRENT_SOURCE_DIR}/assets/rpg/world.json
 )
 
 # Set game source groups
@@ -275,6 +319,9 @@ SOURCE_GROUP("\\Doom\\Thing\\" FILES ${GAME_DOOM_THING_SRCS})
 SOURCE_GROUP("\\Doom\\Scenes\\" FILES ${GAME_DOOM_STATES_SRCS})
 SOURCE_GROUP("\\GameBoyColor\\" FILES ${GAME_GBC_SRCS})
 SOURCE_GROUP("\\RolePlayingGame\\" FILES ${GAME_RPG_SRCS})
+SOURCE_GROUP("\\RolePlayingGame\\EntityComponentSystem\\" FILES ${GAME_RPG_ECS_SRCS})
+SOURCE_GROUP("\\RolePlayingGame\\EntityComponentSystem\\Components\\" FILES ${GAME_RPG_ECS_COMPONENTS_SRCS})
+SOURCE_GROUP("\\RolePlayingGame\\EntityComponentSystem\\Systems\\" FILES ${GAME_RPG_ECS_SYSTEMS_SRCS})
 SOURCE_GROUP("\\Quiz\\" FILES ${GAME_QUIZ_SRCS})
 SOURCE_GROUP("\\Math\\" FILES ${GAME_MATH_SRCS})
 SOURCE_GROUP("\\Scenes\\" FILES ${GAME_STATES_SRCS})
@@ -290,7 +337,7 @@ FIND_PACKAGE(Threads REQUIRED)
 # Import SFML library
 INCLUDE(FetchContent)
 SET(BUILD_SHARED_LIBS OFF)
-FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TAG 2.6.1)
+FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TAG 3.0.2)
 FetchContent_MakeAvailable(SFML)
 
 # Set includes directories
@@ -298,10 +345,15 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/sources/)
 
 # Generate executables
 ADD_EXECUTABLE(Game ${GAME_SRCS} ${GAME_RSRC})
-TARGET_LINK_LIBRARIES(Game Threads::Threads sfml-system sfml-window sfml-network sfml-graphics sfml-audio)
+TARGET_LINK_LIBRARIES(Game Threads::Threads SFML::System SFML::Window SFML::Network SFML::Graphics SFML::Audio)
 
-# Force C++20
-SET_PROPERTY(TARGET Game PROPERTY CXX_STANDARD 20)
+# Force C++23
+SET_PROPERTY(TARGET Game PROPERTY CXX_STANDARD 23)
 
 # Copy assets to build directory
 ADD_CUSTOM_COMMAND(TARGET Game POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets/ $<TARGET_FILE_DIR:Game>/assets/)
+
+# Multi-processor build with MSVC
+IF(MSVC)
+	TARGET_COMPILE_OPTIONS(Game PRIVATE "/MP")
+ENDIF()

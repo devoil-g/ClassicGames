@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <type_traits>
 #include <iostream>
 
@@ -265,7 +266,7 @@ namespace DOOM
     }
 
   public:
-    AbstractLevelingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, int16_t model = -1) :
+    AbstractLevelingAction(DOOM::Doom& doom, DOOM::Doom::Level::Sector& sector, std::int16_t model = -1) :
       std::conditional<Stoppable,
         DOOM::AbstractStoppableAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>,
         DOOM::AbstractTypeAction<DOOM::Doom::Level::Sector::Action::Leveling, ChangeType, ChangeTime>

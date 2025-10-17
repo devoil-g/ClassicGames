@@ -1,29 +1,18 @@
-#include <iostream>
-
 #include <SFML/Graphics/Text.hpp>
 
 #include "Quiz/QuizScene.hpp"
-#include "Quiz/ControllerQuizScene.hpp"
 #include "Quiz/ScoresQuizScene.hpp"
 #include "System/Config.hpp"
 #include "System/Window.hpp"
 #include "System/Audio/Sound.hpp"
 #include "System/Library/FontLibrary.hpp"
 
-const float QUIZ::QuizScene::ForcedExit = 1.f;
-
 QUIZ::QuizScene::QuizScene(Game::SceneMachine& machine) :
   Game::AbstractScene(machine),
   _quiz(),
   _game(),
-  _scores(false),
-  _elapsed(0.f),
-  _bar(sf::Vector2f(1.f, 1.f))
-{
-  // Initialize force exit bar
-  _bar.setSize(sf::Vector2f(1.f, 1.f));
-  _bar.setFillColor(sf::Color::White);
-}
+  _scores(false)
+{}
 
 QUIZ::QuizScene::~QuizScene()
 {
@@ -33,30 +22,17 @@ QUIZ::QuizScene::~QuizScene()
 
 bool  QUIZ::QuizScene::update(float elapsed)
 {
-  // Update exit timer
-  _elapsed += elapsed;
-
-  // Reset timer when ESC is not pressed
-  if (Game::Window::Instance().keyboard().keyDown(sf::Keyboard::Escape) == false)
-    _elapsed = 0.f;
-
   // Toogle score display
-  if (Game::Window::Instance().keyboard().keyPressed(sf::Keyboard::Tab) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Tab) == true)
     _scores = !_scores;
 
-  // Exit if limit reached
-  if (_elapsed > QUIZ::QuizScene::ForcedExit) {
-    _machine.pop();
-    return false;
-  }
-
   // Change scores
-  if (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Left) == true || Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Right) == true) {
+  if (Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Left) == true || Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Right) == true) {
     for (auto& player : _quiz.players) {
       if (_quiz.entities.at("player_" + std::to_string(player.id)).hover() == true)
         player.score = player.score
-        + (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Left) == true ? +1 : 0)
-        + (Game::Window::Instance().mouse().buttonPressed(sf::Mouse::Right) == true ? -1 : 0);
+        + (Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Left) == true ? +1 : 0)
+        + (Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Right) == true ? -1 : 0);
     }
   }
 
@@ -66,9 +42,19 @@ bool  QUIZ::QuizScene::update(float elapsed)
     return false;
   }
 
+  std::list<std::string> toDelete;
+
   // Update entities
-  for (auto& [_, entity] : _quiz.entities)
-    entity.update(elapsed);
+  for (auto& [name, entity] : _quiz.entities)
+    if (entity.update(elapsed) == true)
+      toDelete.emplace_front(name);
+
+  // Remove dead entities
+  for (const auto& name : toDelete)
+    _quiz.entities.erase(name);
+  
+  // Update progress bar
+  _quiz.progress.update(elapsed);
 
   return false;
 }
@@ -79,6 +65,9 @@ void  QUIZ::QuizScene::draw()
   for (auto& [_, entity] : _quiz.entities)
     entity.draw();
 
+  // Draw progress bar
+  _quiz.progress.draw();
+
   // Draw scores
   if (_scores == true) {
     for (int index = 0; index < _quiz.players.size(); index++) {
@@ -86,32 +75,28 @@ void  QUIZ::QuizScene::draw()
       auto& entity = _quiz.entities.at("player_" + std::to_string(player.id));
       auto& sprite = entity.sprite();
 
-      sf::Text  score(std::to_string(player.score), Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf"), 128);
+      sf::Text  score(Game::FontLibrary::Instance().get(Game::Config::ExecutablePath / "assets" / "fonts" / "04b03.ttf"), std::to_string(player.score), 128);
 
       // Set score outline thickness
       score.setOutlineThickness(5.f);
 
       // Set size of the score
-      float scale = (Game::Window::Instance().window().getSize().y * 0.1f) / score.getLocalBounds().height;
-      score.setScale(scale, scale);
+      float scale = std::min(sprite.getGlobalBounds().size.x / score.getLocalBounds().size.x * 0.75f, sprite.getGlobalBounds().size.y / score.getLocalBounds().size.y * 0.25f);
+      score.setScale({ scale, scale });
 
       // Set score position
-      score.setOrigin((score.getLocalBounds().width + score.getLocalBounds().left) / 2.f, (score.getLocalBounds().height + score.getLocalBounds().top) / 2.f);
-      score.setPosition(sprite.getPosition().x, sprite.getGlobalBounds().top + sprite.getGlobalBounds().height);
+      score.setOrigin({ (score.getLocalBounds().size.x + score.getLocalBounds().position.x) / 2.f, (score.getLocalBounds().size.y + score.getLocalBounds().position.y) / 2.f });
+      score.setPosition({ sprite.getPosition().x, sprite.getGlobalBounds().position.y + sprite.getGlobalBounds().size.y * 3.f / 4.f });
 
       // Set transparency
       score.setFillColor(sprite.getColor());
       score.setOutlineColor(sf::Color(0, 0, 0, sprite.getColor().a));
 
       // Draw score
-      Game::Window::Instance().window().draw(score);
+      Game::Window::Instance().draw(score);
     }
   }
   
   // Draw quiz
   _game.draw();
-  
-  // Draw forced exit bar
-  _bar.setScale(Game::Window::Instance().window().getSize().x * _elapsed / QUIZ::QuizScene::ForcedExit, 4.f);
-  Game::Window::Instance().window().draw(_bar);
 }
