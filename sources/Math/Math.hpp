@@ -25,6 +25,8 @@ namespace std
 
 namespace Math
 {
+  using DefaultType = float;  // Default type in math
+
   constexpr float const Pi = (float)M_PI; // Use this instead of M_PI
 
   template<int Mod>

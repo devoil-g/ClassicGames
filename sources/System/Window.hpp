@@ -60,9 +60,9 @@ namespace Game
       inline const Math::Vector<2, int>&  relative() const { return _relative; }  // Return mouse movement since last update
       inline float                        wheel() const { return  _wheel; }       // Return wheel ticks since last update
 
-      inline bool buttonDown(MouseButton button) const { return _down[(std::size_t)button]; }         // Check if a button is currently pressed
-      inline bool buttonPressed(MouseButton button) const { return _pressed[(std::size_t)button]; }   // Check if a button has been pressed since last update
-      inline bool buttonReleased(MouseButton button) const { return _released[(std::size_t)button]; } // Check if a button has been released since last update
+      constexpr bool  buttonDown(MouseButton button) const { return _down[(std::size_t)button]; }         // Check if a button is currently pressed
+      constexpr bool  buttonPressed(MouseButton button) const { return _pressed[(std::size_t)button]; }   // Check if a button has been pressed since last update
+      constexpr bool  buttonReleased(MouseButton button) const { return _released[(std::size_t)button]; } // Check if a button has been released since last update
     };
 
     class Keyboard
@@ -77,10 +77,10 @@ namespace Game
       inline ~Keyboard() = default;
 
     public:
-      inline bool                 keyDown(Key key) const { return _down[(std::size_t)key]; }          // Check if a key is currently pressed
-      inline bool                 keyPressed(Key key) const { return _pressed[(std::size_t)key]; }    // Check if a key has been pressed since last update
-      inline bool                 keyReleased(Key key) const { return _released[(std::size_t)key]; }  // Check if a key has been released since last update
-      inline const std::wstring&  text() const { return _text; }                                      // Return text entered since last frame
+      constexpr bool              keyDown(Key key) const { return key == Key::Unknown ? false : _down[(std::size_t)key]; }          // Check if a key is currently pressed
+      constexpr bool              keyPressed(Key key) const { return key == Key::Unknown ? false : _pressed[(std::size_t)key]; }    // Check if a key has been pressed since last update
+      constexpr bool              keyReleased(Key key) const { return key == Key::Unknown ? false : _released[(std::size_t)key]; }  // Check if a key has been released since last update
+      inline const std::wstring&  text() const { return _text; }                                                                    // Return text entered since last frame
     };
 
     class Joystick
@@ -99,12 +99,12 @@ namespace Game
     public:
       inline bool connected(unsigned int joystick) const { return sf::Joystick::isConnected(joystick); }  // Check if a joystick is connected
 
-      inline float  position(unsigned int joystick, JoystickAxis axis) const { return _position[joystick][(std::size_t)axis]; } // Return joystick axis current position
-      inline float  relative(unsigned int joystick, JoystickAxis axis) const { return _relative[joystick][(std::size_t)axis]; } // Return joystick axis movement since last update
+      constexpr float position(unsigned int joystick, JoystickAxis axis) const { return _position[joystick][(std::size_t)axis]; } // Return joystick axis current position
+      constexpr float relative(unsigned int joystick, JoystickAxis axis) const { return _relative[joystick][(std::size_t)axis]; } // Return joystick axis movement since last update
 
-      inline bool buttonDown(unsigned int joystick, unsigned int button) const { return _down[joystick][button]; }          // Check if a button is currently pressed
-      inline bool buttonPressed(unsigned int joystick, unsigned int button) const { return _pressed[joystick][button]; }    // Check if a button has been pressed since last update
-      inline bool buttonReleased(unsigned int joystick, unsigned int button) const { return _released[joystick][button]; }  // Check if a button has been released since last update
+      constexpr bool  buttonDown(unsigned int joystick, unsigned int button) const { return _down[joystick][button]; }          // Check if a button is currently pressed
+      constexpr bool  buttonPressed(unsigned int joystick, unsigned int button) const { return _pressed[joystick][button]; }    // Check if a button has been pressed since last update
+      constexpr bool  buttonReleased(unsigned int joystick, unsigned int button) const { return _released[joystick][button]; }  // Check if a button has been released since last update
     };
 
     sf::RenderWindow              _window;        // SFML window
@@ -166,7 +166,8 @@ namespace Game
     void  taskbar(WindowFlag flag, float value);    // Set taskbar progress (Windows 7+ only)
     void  transparency(std::uint8_t transparency);  // Set window transparency
 
-    View                          getView() const;
+    View                          getView() const;                                        // Get current window view
+    View                          getDefaultView() const;                                 // Get default window view, origin on top left
     Math::Vector<2, unsigned int> getSize() const { return _size; }                       // Get current resolution
     const std::string&            getTitle() const { return _title; }                     // Get window title
     std::uint32_t                 getStyle() const { return _style; }                     // Get current window style
@@ -182,6 +183,7 @@ namespace Game
     Math::Vector<2, int>    coordsToPixels(Math::Vector<2, float> coords, const View& view) const;  // Transform world coordinates to screen coordinates
 
     void  setView(const View& view);                    // Change window view
+    void  setDefaultView();                             // Reset window view, origin on top left
     void  setSize(Math::Vector<2, unsigned int> size);  // Change resolution
     void  setTitle(const std::string& title);           // Set window title
     void  setStyle(std::uint32_t style);                // Set window style

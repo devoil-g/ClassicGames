@@ -329,11 +329,11 @@ bool  QUIZ::Quiz::Entity::update(float elapsed)
   if (_dead == true)
   {
     // Will never die, instant deletion
-    if (_targetColor.get<3>() != 0.f && _targetScale.get<0>() != 0.f && _targetScale.get<1>() != 0.f)
+    if (_targetColor(3) != 0.f && _targetScale(0) != 0.f && _targetScale(1) != 0.f)
       return true;
 
     // Dead condition met
-    if (_color.get<3>() == 0.f || _scale.get<0>() == 0.f || _scale.get<1>() == 0.f)
+    if (_color(3) == 0.f || _scale(0) == 0.f || _scale(1) == 0.f)
       return true;
   }
 
@@ -357,7 +357,7 @@ void  QUIZ::Quiz::Entity::draw()
   _sprite.setPosition({ windowSize.x() * _position.x(), windowSize.y() * _position.y() });
   _sprite.setScale({ spriteScale, spriteScale });
   _sprite.setColor(sf::Color(255, 255, 255,
-    (std::uint8_t)(std::clamp(_color.get<3>(), 0.f, 255.f) * 255)
+    (std::uint8_t)(std::clamp(_color(3), 0.f, 255.f) * 255)
   ));
 
   // Draw sprite
@@ -372,9 +372,9 @@ void  QUIZ::Quiz::Entity::draw()
   // Update text position
   _text.setPosition({ windowSize.x() * _position.x(), windowSize.y() * _position.y() });
   _text.setScale({ textScale, textScale });
-  _text.setOutlineColor(sf::Color(0, 0, 0, (std::uint8_t)(std::clamp(_color.get<3>(), 0.f, 255.f) * 255)));
+  _text.setOutlineColor(sf::Color(0, 0, 0, (std::uint8_t)(std::clamp(_color(3), 0.f, 255.f) * 255)));
   _text.setFillColor(sf::Color(255, 255, 255,
-    (std::uint8_t)(std::clamp(_color.get<3>(), 0.f, 255.f) * 255)
+    (std::uint8_t)(std::clamp(_color(3), 0.f, 255.f) * 255)
   ));
 
   // Draw text
@@ -389,10 +389,10 @@ void  QUIZ::Quiz::Entity::draw()
     rectangle.setOrigin(rectangle.getSize() / 2.f);
     rectangle.setOutlineThickness(std::min(windowSize.x(), windowSize.y()) * _outline);
     rectangle.setOutlineColor(sf::Color(
-      (std::uint8_t)(std::clamp(_color.get<0>(), 0.f, 255.f) * 255),
-      (std::uint8_t)(std::clamp(_color.get<1>(), 0.f, 255.f) * 255),
-      (std::uint8_t)(std::clamp(_color.get<2>(), 0.f, 255.f) * 255),
-      (std::uint8_t)(std::clamp(_color.get<3>(), 0.f, 255.f) * 255)
+      (std::uint8_t)(std::clamp(_color(0), 0.f, 255.f) * 255),
+      (std::uint8_t)(std::clamp(_color(1), 0.f, 255.f) * 255),
+      (std::uint8_t)(std::clamp(_color(2), 0.f, 255.f) * 255),
+      (std::uint8_t)(std::clamp(_color(3), 0.f, 255.f) * 255)
     ));
     rectangle.setFillColor(sf::Color(rectangle.getOutlineColor().r, rectangle.getOutlineColor().g, rectangle.getOutlineColor().b, rectangle.getOutlineColor().a / 8));
 

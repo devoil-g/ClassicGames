@@ -65,8 +65,8 @@ bool  Game::Window::update(float elapsed)
       _window.close();
       };
     const auto eventResized = [this](const sf::Event::Resized& resized) {
-      _window.setView(sf::View(sf::FloatRect({ 0.f, 0.f }, { (float)resized.size.x, (float)resized.size.y })));
       _size = { resized.size.x, resized.size.y };
+      setView(getDefaultView());
       };
     const auto eventKeyPressed = [this](const sf::Event::KeyPressed& key) {
       if (key.code != Key::Unknown) {
@@ -288,10 +288,25 @@ Game::Window::View  Game::Window::getView() const
   );
 }
 
+Game::Window::View  Game::Window::getDefaultView() const
+{
+  // Compute default view
+  return Game::Window::View(
+    { 0.f, 0.f },
+    { (float)_size.x(), (float)_size.y() }
+  );
+}
+
 void  Game::Window::setView(const Game::Window::View& view)
 {
   // Apply new view to window
   _window.setView(sf::View(sf::FloatRect({ view.position.x(), view.position.y() }, { view.size.x(), view.size.y() })));
+}
+
+void  Game::Window::setDefaultView()
+{
+  // Reset window view
+  setView(getDefaultView());
 }
 
 void  Game::Window::setSize(Math::Vector<2, unsigned int> size)

@@ -421,7 +421,7 @@ void  QUIZ::FastestQuizScene::setWinner()
     auto& player = _quiz.players[index];
     auto& entity = _quiz.entities.at("player_" + std::to_string(player.id));
 
-    if (_answers[index].first < best && entity.getTargetColor().get<3>() == 1.f) {
+    if (_answers[index].first < best && entity.getTargetColor()(3) == 1.f) {
       best = _answers[index].first;
       number = 1;
       winner = index;

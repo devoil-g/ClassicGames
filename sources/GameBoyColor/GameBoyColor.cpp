@@ -17,7 +17,7 @@
 
 const std::string_view GBC::GameBoyColor::SaveStateBase = "0123456789ABCDEF";
 
-GBC::GameBoyColor::GameBoyColor(const std::filesystem::path& filename, sf::Texture& texture, Math::Vector<2, unsigned int> origin, GBC::GameBoyColor::Control control) :
+GBC::GameBoyColor::GameBoyColor(const std::filesystem::path& filename, sf::Texture& texture, Math::Vector<2, unsigned int> origin) :
   _header(),
   _path(filename),
   _boot(),
@@ -31,9 +31,12 @@ GBC::GameBoyColor::GameBoyColor(const std::filesystem::path& filename, sf::Textu
   _hRam(),
   _ie(0),
   _keys{0},
-  _control(control),
+  _bindings(),
   _transferMode(Transfer::TransferNone)
 {
+  // Initialize bindings
+  loadBindings();
+
   // Load ROM
   load(filename);
 
@@ -45,6 +48,12 @@ GBC::GameBoyColor::GameBoyColor(const std::filesystem::path& filename, sf::Textu
   // Initialize registers
   _io[IO::JOYP] = 0b11111111;
   _io[IO::HDMA5] = 0b11111111;
+}
+
+GBC::GameBoyColor::~GameBoyColor()
+{
+  // Save key bindings to file
+  saveBindings();
 }
 
 void  GBC::GameBoyColor::load(const std::filesystem::path& filename)
@@ -309,6 +318,55 @@ void  GBC::GameBoyColor::loadHeader(const std::vector<uint8_t>& rom)
   _header.global_checksum = (global_checksum == rom[0x014E] * 256 + rom[0x014F]);
 }
 
+void  GBC::GameBoyColor::loadBindings()
+{
+  // Load binding from JSON
+  try {
+    Game::JSON::Object json(Game::Config::ExecutablePath / "assets" / "gbc" / "config.json");
+
+    _bindings[GBC::GameBoyColor::Key::KeyDown] = (Game::Window::Key)json.get(L"bindings").object().get(L"down").number();
+    _bindings[GBC::GameBoyColor::Key::KeyUp] = (Game::Window::Key)json.get(L"bindings").object().get(L"up").number();
+    _bindings[GBC::GameBoyColor::Key::KeyLeft] = (Game::Window::Key)json.get(L"bindings").object().get(L"left").number();
+    _bindings[GBC::GameBoyColor::Key::KeyRight] = (Game::Window::Key)json.get(L"bindings").object().get(L"right").number();
+    _bindings[GBC::GameBoyColor::Key::KeyStart] = (Game::Window::Key)json.get(L"bindings").object().get(L"start").number();
+    _bindings[GBC::GameBoyColor::Key::KeySelect] = (Game::Window::Key)json.get(L"bindings").object().get(L"select").number();
+    _bindings[GBC::GameBoyColor::Key::KeyB] = (Game::Window::Key)json.get(L"bindings").object().get(L"b").number();
+    _bindings[GBC::GameBoyColor::Key::KeyA] = (Game::Window::Key)json.get(L"bindings").object().get(L"a").number();
+  }
+
+  // Error, load default binding
+  catch (const std::exception&) {
+    _bindings[GBC::GameBoyColor::Key::KeyDown] = Game::Window::Key::S;
+    _bindings[GBC::GameBoyColor::Key::KeyUp] = Game::Window::Key::Z;
+    _bindings[GBC::GameBoyColor::Key::KeyLeft] = Game::Window::Key::Q;
+    _bindings[GBC::GameBoyColor::Key::KeyRight] = Game::Window::Key::D;
+    _bindings[GBC::GameBoyColor::Key::KeyStart] = Game::Window::Key::E;
+    _bindings[GBC::GameBoyColor::Key::KeySelect] = Game::Window::Key::A;
+    _bindings[GBC::GameBoyColor::Key::KeyB] = Game::Window::Key::F;
+    _bindings[GBC::GameBoyColor::Key::KeyA] = Game::Window::Key::T;
+  }
+}
+
+void  GBC::GameBoyColor::saveBindings()
+{
+  Game::JSON::Object  json;
+
+  json.set(L"bindings", Game::JSON::Object());
+  json.get(L"bindings").object().set(L"down", (double)_bindings[GBC::GameBoyColor::Key::KeyDown]);
+  json.get(L"bindings").object().set(L"up", (double)_bindings[GBC::GameBoyColor::Key::KeyUp]);
+  json.get(L"bindings").object().set(L"left", (double)_bindings[GBC::GameBoyColor::Key::KeyLeft]);
+  json.get(L"bindings").object().set(L"right", (double)_bindings[GBC::GameBoyColor::Key::KeyRight]);
+  json.get(L"bindings").object().set(L"start", (double)_bindings[GBC::GameBoyColor::Key::KeyStart]);
+  json.get(L"bindings").object().set(L"select", (double)_bindings[GBC::GameBoyColor::Key::KeySelect]);
+  json.get(L"bindings").object().set(L"b", (double)_bindings[GBC::GameBoyColor::Key::KeyB]);
+  json.get(L"bindings").object().set(L"a", (double)_bindings[GBC::GameBoyColor::Key::KeyA]);
+
+  std::wofstream file(Game::Config::ExecutablePath / "assets" / "gbc" / "config.json");
+
+  // Send JSON to file
+  file << json;
+}
+
 void  GBC::GameBoyColor::simulate()
 {
   std::uint64_t frame = _cycles / GBC::PixelProcessingUnit::FrameDuration;
@@ -500,38 +558,16 @@ void  GBC::GameBoyColor::simulatePost()
 
 void  GBC::GameBoyColor::simulateKeys()
 {
-  constexpr std::array<std::array<Game::Window::Key, GBC::GameBoyColor::Key::KeyCount>, GBC::GameBoyColor::Control::ControlsCount> bindings = {
-    std::array<Game::Window::Key, GBC::GameBoyColor::Key::KeyCount>{
-      Game::Window::Key::S, // Control 1 Down
-      Game::Window::Key::Z, // Control 1 Up
-      Game::Window::Key::Q, // Control 1 Left
-      Game::Window::Key::D, // Control 1 Right
-      Game::Window::Key::E, // Control 1 Start
-      Game::Window::Key::A, // Control 1 Select
-      Game::Window::Key::F, // Control 1 B
-      Game::Window::Key::T  // Control 1 A
-    },
-    std::array<Game::Window::Key, GBC::GameBoyColor::Key::KeyCount>{
-      Game::Window::Key::J, // Control 2 Down
-      Game::Window::Key::U, // Control 2 Up
-      Game::Window::Key::H, // Control 2 Left
-      Game::Window::Key::K, // Control 2 Right
-      Game::Window::Key::I, // Control 2 Start
-      Game::Window::Key::Y, // Control 2 Select
-      Game::Window::Key::L, // Control 2 B
-      Game::Window::Key::P  // Control 2 A
-    }
-  };
-
+  const auto& keyboard = Game::Window::Instance().keyboard();
   std::array<bool, Key::KeyCount> keys = {
-    Game::Window::Instance().joystick().position(_control, Game::Window::JoystickAxis::PovY) < -0.5f || Game::Window::Instance().keyboard().keyDown(bindings[_control][Key::KeyDown]),  // Down
-    Game::Window::Instance().joystick().position(_control, Game::Window::JoystickAxis::PovY) > +0.5f || Game::Window::Instance().keyboard().keyDown(bindings[_control][Key::KeyUp]),    // Up
-    Game::Window::Instance().joystick().position(_control, Game::Window::JoystickAxis::PovX) < -0.5f || Game::Window::Instance().keyboard().keyDown(bindings[_control][Key::KeyLeft]),  // Left
-    Game::Window::Instance().joystick().position(_control, Game::Window::JoystickAxis::PovX) > +0.5f || Game::Window::Instance().keyboard().keyDown(bindings[_control][Key::KeyRight]), // Right
-    Game::Window::Instance().joystick().buttonDown(_control, 7) || Game::Window::Instance().keyboard().keyDown(bindings[_control][Key::KeyStart]),                                      // Start
-    Game::Window::Instance().joystick().buttonDown(_control, 6) || Game::Window::Instance().keyboard().keyDown(bindings[_control][Key::KeySelect]),                                     // Select
-    Game::Window::Instance().joystick().buttonDown(_control, 1) || Game::Window::Instance().keyboard().keyDown(bindings[_control][Key::KeyB]),                                          // B
-    Game::Window::Instance().joystick().buttonDown(_control, 0) || Game::Window::Instance().keyboard().keyDown(bindings[_control][Key::KeyA])                                           // A
+    keyboard.keyDown(_bindings[GBC::GameBoyColor::Key::KeyDown]),
+    keyboard.keyDown(_bindings[GBC::GameBoyColor::Key::KeyUp]),
+    keyboard.keyDown(_bindings[GBC::GameBoyColor::Key::KeyLeft]),
+    keyboard.keyDown(_bindings[GBC::GameBoyColor::Key::KeyRight]),
+    keyboard.keyDown(_bindings[GBC::GameBoyColor::Key::KeyStart]),
+    keyboard.keyDown(_bindings[GBC::GameBoyColor::Key::KeySelect]),
+    keyboard.keyDown(_bindings[GBC::GameBoyColor::Key::KeyB]),
+    keyboard.keyDown(_bindings[GBC::GameBoyColor::Key::KeyA])
   };
 
   // Joypad interrupt when a selected key is pressed
@@ -604,6 +640,18 @@ const GBC::GameBoyColor::Header& GBC::GameBoyColor::header() const
   return _header;
 }
 
+Game::Window::Key GBC::GameBoyColor::bind(GBC::GameBoyColor::Key key) const
+{
+  // Get key binding
+  return _bindings.at(key);
+}
+
+void  GBC::GameBoyColor::bind(GBC::GameBoyColor::Key key, Game::Window::Key bind)
+{
+  // Bind a new key
+  _bindings.at(key) = bind;
+}
+
 void  GBC::GameBoyColor::load(std::size_t id)
 {
   std::filesystem::path path(std::filesystem::path(_path).replace_extension(".gbs").concat("." + std::to_string(id)));
@@ -654,7 +702,6 @@ void  GBC::GameBoyColor::save(std::size_t id) const
   save(file, "GBC_TRANSFERMODE", _transferMode);
   save(file, "GBC_TRANSFERINDEX", _transferIndex);
   save(file, "GBC_TRANSFERTRIGGER", _transferTrigger);
-
 
   // Save hardware state
   _cpu.save(file);

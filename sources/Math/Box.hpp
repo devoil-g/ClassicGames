@@ -58,8 +58,8 @@ namespace Math
       Game::JSON::Object json;
 
       // Serialize to JSON
-      json.set("position", position.json());
-      json.set("size", size.json());
+      json.set(L"position", position.json());
+      json.set(L"size", size.json());
 
       return json;
     }

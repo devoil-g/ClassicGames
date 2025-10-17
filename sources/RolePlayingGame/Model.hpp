@@ -95,7 +95,7 @@ namespace RPG
       void                update(float elapsed);                  // Update actor animation
       const RPG::Sprite&  sprite(RPG::Direction direction) const; // Get current sprite
       const std::wstring& icon() const;                           // Get actor's icon name
-
+      
       void  setModel(RPG::Model& model);                                                          // Reset actor's model
       void  setAnimation(const std::wstring& name, Mode loop = Mode::Normal, float speed = 1.f);  // Start an animation
       void  setSpeed(float speed);                                                                // Set animation speed

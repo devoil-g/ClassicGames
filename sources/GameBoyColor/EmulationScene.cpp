@@ -2,6 +2,7 @@
 #include <filesystem>
 
 #include "GameBoyColor/EmulationScene.hpp"
+#include "GameBoyColor/MenuScene.hpp"
 #include "Math/Math.hpp"
 #include "System/Window.hpp"
 
@@ -35,13 +36,15 @@ GBC::EmulationScene::~EmulationScene()
 
 bool  GBC::EmulationScene::update(float elapsed)
 {
+  auto& window = Game::Window::Instance();
+
   // Update timers
   _fps = std::min(_fps + elapsed, 2.f * (float)GBC::PixelProcessingUnit::FrameDuration / (float)GBC::CentralProcessingUnit::Frequency);
 
   // Sound volume control
-  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Subtract) == true)
+  if (window.keyboard().keyDown(Game::Window::Key::Subtract) == true)
     _stream.setVolume(std::clamp(_stream.getVolume() - elapsed * 64.f, 0.f, 100.f));
-  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Add) == true)
+  if (window.keyboard().keyDown(Game::Window::Key::Add) == true)
     _stream.setVolume(std::clamp(_stream.getVolume() + elapsed * 64.f, 0.f, 100.f));
 
   const std::array<Game::Window::Key, 12> save_slots = {
@@ -52,9 +55,9 @@ bool  GBC::EmulationScene::update(float elapsed)
   
   // Save/load states
   for (std::size_t index = 0; index < save_slots.size(); index++) {
-    if (Game::Window::Instance().keyboard().keyPressed(save_slots[index]) == true) {
-      if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::LShift) == true ||
-        Game::Window::Instance().keyboard().keyDown(Game::Window::Key::RShift) == true)
+    if (window.keyboard().keyPressed(save_slots[index]) == true) {
+      if (window.keyboard().keyDown(Game::Window::Key::LShift) == true ||
+        window.keyboard().keyDown(Game::Window::Key::RShift) == true)
         _gbc.save(index + 1);
       else
         _gbc.load(index + 1);
@@ -64,13 +67,18 @@ bool  GBC::EmulationScene::update(float elapsed)
   // Simulate frames at 59.72 fps
   // NOTE: simulate at most one frame per call to avoid exponential delay
   if (_fps >= (float)GBC::PixelProcessingUnit::FrameDuration / (float)GBC::CentralProcessingUnit::Frequency ||
-    Game::Window::Instance().keyboard().keyDown(Game::Window::Key::LControl) == true ||
-    Game::Window::Instance().joystick().position(0, Game::Window::JoystickAxis::Z) < -64.f) {
+    window.keyboard().keyDown(Game::Window::Key::LControl) == true ||
+    window.joystick().position(0, Game::Window::JoystickAxis::Z) < -64.f) {
     _gbc.simulate();
     _fps = std::max(_fps - (float)GBC::PixelProcessingUnit::FrameDuration / (float)GBC::CentralProcessingUnit::Frequency, 0.f);
 
     // Push sound buffer to sound stream queue
     _stream.push(_gbc.sound());
+  }
+
+  // Go to menu
+  if (window.keyboard().keyPressed(Game::Window::Key::Escape) == true) {
+    _machine.push<GBC::MenuScene>(_gbc);
   }
 
   return false;

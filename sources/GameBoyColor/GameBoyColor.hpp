@@ -19,6 +19,8 @@
 #include "GameBoyColor/MemoryBankController.hpp"
 #include "GameBoyColor/PixelProcessingUnit.hpp"
 #include "Math/Vector.hpp"
+#include "System/JavaScriptObjectNotation.hpp"
+#include "System/Window.hpp"
 
 namespace GBC
 {
@@ -35,12 +37,18 @@ namespace GBC
     friend GBC::PixelProcessingUnit;
 
   public:
-    enum Control
+    enum Key
     {
-      Control1, // First controller, or ZQSD + TFEA
-      Control2, // Second controller, or UHJK + PLIY
+      KeyDown,
+      KeyUp,
+      KeyLeft,
+      KeyRight,
+      KeyStart,
+      KeySelect,
+      KeyB,
+      KeyA,
 
-      ControlsCount
+      KeyCount
     };
 
   private:
@@ -158,22 +166,8 @@ namespace GBC
     std::array<std::uint8_t, 127>               _hRam;      // Raw High RAM memory
     std::uint8_t                                _ie;        // Interrupt Enable register
     
-    enum Key
-    {
-      KeyDown,
-      KeyUp,
-      KeyLeft,
-      KeyRight,
-      KeyStart,
-      KeySelect,
-      KeyB,
-      KeyA,
-
-      KeyCount
-    };
-
-    std::array<bool, Key::KeyCount> _keys;    // Currently pressed keys
-    GBC::GameBoyColor::Control      _control; // Controller used
+    std::array<bool, Key::KeyCount>               _keys;      // Currently pressed keys
+    std::array<Game::Window::Key, Key::KeyCount>  _bindings;  // Keys bindings
 
     enum Transfer
     {
@@ -246,9 +240,12 @@ namespace GBC
       loadValue(value, (void*)&data, sizeof(data));
     }
 
+    void  loadBindings(); // Load bindings from JSON
+    void  saveBindings(); // Save bindings to JSON
+
   public:
-    GameBoyColor(const std::filesystem::path& filename, sf::Texture& texture, Math::Vector<2, unsigned int> origin, GBC::GameBoyColor::Control control = GBC::GameBoyColor::Control::Control1);
-    ~GameBoyColor() = default;
+    GameBoyColor(const std::filesystem::path& filename, sf::Texture& texture, Math::Vector<2, unsigned int> origin);
+    ~GameBoyColor();
 
     void  simulate();       // Simulate a frame
     void  simulatePre();    // Simulate a CPU tick
@@ -259,6 +256,9 @@ namespace GBC
     const sf::Texture&                                                    lcd() const;    // Get rendering target
     const std::array<std::int16_t, GBC::AudioProcessingUnit::BufferSize>& sound() const;  // Get current sound frame
     const GBC::GameBoyColor::Header&                                      header() const; // Get game header
+
+    Game::Window::Key bind(GBC::GameBoyColor::Key key) const;                   // Get button binding
+    void              bind(GBC::GameBoyColor::Key key, Game::Window::Key bind); // Set button binding
 
     void  load(std::size_t id);       // Load saved state
     void  save(std::size_t id) const; // Save state

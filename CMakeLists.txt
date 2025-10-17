@@ -121,6 +121,8 @@ SET(GAME_GBC_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/MemoryBankController3.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/MemoryBankController5.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/MemoryBankController5.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/MenuScene.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/MenuScene.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/PixelProcessingUnit.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/PixelProcessingUnit.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/GameBoyColor/SelectionScene.hpp
@@ -147,6 +149,8 @@ SET(GAME_RPG_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Texture.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Types.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/Types.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/WindowsManager.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/WindowsManager.cpp
 )
 SET(GAME_RPG_ECS_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/RolePlayingGame/EntityComponentSystem/EntityComponentSystem.hpp
@@ -211,6 +215,8 @@ SET(GAME_MATH_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Matrix.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Matrix.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Transformable2D.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Transformable2D.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Vector.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Vector.hpp
 )
@@ -331,7 +337,7 @@ FIND_PACKAGE(Threads REQUIRED)
 # Import SFML library
 INCLUDE(FetchContent)
 SET(BUILD_SHARED_LIBS OFF)
-FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TAG 3.0.0)
+FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TAG 3.0.2)
 FetchContent_MakeAvailable(SFML)
 
 # Set includes directories
