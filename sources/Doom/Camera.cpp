@@ -286,14 +286,14 @@ std::int16_t DOOM::Camera::renderLight(const DOOM::Doom& doom, Math::Box<2, std:
 
 void  DOOM::Camera::renderTexture(const DOOM::Doom& doom, Math::Box<2, std::int16_t> rect, int extralight, DOOM::Camera::Special special, const DOOM::Doom::Resources::Texture& texture, int column, float top, float bottom, float height, int offset_x, float offset_y, std::int16_t light, std::int16_t seg)
 {
-  int         pixel_x(Math::Modulo(offset_x, texture.width));
-  const auto& spans(texture.columns[pixel_x].spans);
+  int         pixel_x = Math::Modulo(offset_x, (int)texture.width);
+  const auto& spans = texture.columns[pixel_x].spans;
 
   // Draw column of pixels
   for (int row = std::max(_vertical[column].first, (int)std::lroundf(top)); row < std::min((int)std::lroundf(bottom) + 0, _vertical[column].second); row++)
     if (_buffer[column * rect.size.y() + row].color == -1)
     {
-      int pixel_y(Math::Modulo<128>((int)(offset_y + std::max((height * (row - top) / (bottom - top)), 0.f))));
+      int pixel_y = Math::Modulo((int)(offset_y + std::max((height * (row - top) / (bottom - top)), 0.f)), 128);
 
       // Find pixel in column span
       for (const auto& span : spans)
@@ -316,7 +316,7 @@ void  DOOM::Camera::renderTexture(const DOOM::Doom& doom, Math::Box<2, std::int1
 
 void  DOOM::Camera::renderFlat(const DOOM::Doom& doom, Math::Box<2, std::int16_t> rect, DOOM::Camera::Special special, const DOOM::AbstractFlat& flat, int column, int start, int end, float altitude, std::int16_t light, std::int16_t seg)
 {
-  Math::Vector<2> direction(_screen_start + _screen * ((float)column / (float)rect.size.x()) - position.convert<2>());
+  Math::Vector<2> direction = _screen_start + _screen * ((float)column / (float)rect.size.x()) - position.convert<2>();
   const auto&     texture = flat.flat();
   float           distance_distortion = direction.length();
 
@@ -332,7 +332,7 @@ void  DOOM::Camera::renderFlat(const DOOM::Doom& doom, Math::Box<2, std::int16_t
       int16_t shaded = renderLight(doom, rect, special, light, (position.convert<2>() - coord).length() / distance_distortion);
 
       // Get color in flat from coordinates and register segment index in seg-buffer
-      _buffer[column * rect.size.y() + row] = {seg, altitude, (int16_t)(31 - shaded / 8), texture[(Math::Modulo<64>(64 - (int)coord.y())) * 64 + Math::Modulo<64>((int)coord.x() - 1)]};
+      _buffer[column * rect.size.y() + row] = {seg, altitude, (int16_t)(31 - shaded / 8), texture[(Math::Modulo(64 - (int)coord.y(), 64)) * 64 + Math::Modulo((int)coord.x() - 1, 64)]};
     }
 }
 
@@ -340,7 +340,7 @@ void  DOOM::Camera::renderSky(const DOOM::Doom& doom, Math::Box<2, std::int16_t>
 {
   const auto&     sky(doom.level.sky.get());
   Math::Vector<2> direction(_screen_start + _screen * ((float)column / (float)rect.size.x()) - position.convert<2>());
-  int             pixel_x(Math::Modulo((int)(Math::Vector<2>::angle(Math::Vector<2>(1.f, 0.f), direction) * (Math::Vector<2>::determinant(Math::Vector<2>(1.f, 0.f), direction) > 0 ? +1.f : -1.f) * 4.f / (2.f * Math::Pi) * sky.width), sky.width));
+  int             pixel_x(Math::Modulo((int)(Math::Vector<2>::angle(Math::Vector<2>(1.f, 0.f), direction) * (Math::Vector<2>::determinant(Math::Vector<2>(1.f, 0.f), direction) > 0 ? +1.f : -1.f) * 4.f / (2.f * Math::Pi) * sky.width), (int)sky.width));
   const auto&     spans(sky.columns[pixel_x].spans);
   float           sky_factor(_screen.length() * 2.f * sky.width / (rect.size.x() * direction.length() * Math::Pi));
 

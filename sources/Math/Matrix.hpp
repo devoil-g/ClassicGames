@@ -5,6 +5,7 @@
 #include <string>
 #include <array>
 
+#include "Math/Math.hpp"
 #include "System/JavaScriptObjectNotation.hpp"
 
 namespace Math

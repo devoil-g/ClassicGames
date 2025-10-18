@@ -4944,7 +4944,7 @@ DOOM::AbstractThing::Sprite DOOM::AbstractThing::sprite(const DOOM::Doom & doom,
   if (iterator == doom.resources.animations.cend() || iterator->second.size() <= _states[_state].frame)
     return { DOOM::Doom::Resources::Texture::Null, false, false };
 
-  const auto& texture = iterator->second[_states[_state].frame][Math::Modulo<8>((int)((std::fmod(angle, Math::Pi * 2.f) + Math::Pi * 2.f) * 4.f / Math::Pi + 16.5f))];
+  const auto& texture = iterator->second[_states[_state].frame][Math::Modulo((int)((std::fmod(angle, Math::Pi * 2.f) + Math::Pi * 2.f) * 4.f / Math::Pi + 16.5f), 8)];
 
   return { texture.first.get(), texture.second, _states[_state].brightness };
 }
@@ -5641,10 +5641,10 @@ void  DOOM::AbstractThing::A_Chase(DOOM::Doom& doom)
     if (_move_direction != Direction::DirectionNone) {
       angle = Math::Modulo(angle, 2.f * Math::Pi);
 
-      int thing_direction = Math::Modulo<Direction::DirectionNumber>((int)(0.5f + angle / (2.f * Math::Pi / (float)Direction::DirectionNumber)));
+      int thing_direction = Math::Modulo((int)(0.5f + angle / (2.f * Math::Pi / (float)Direction::DirectionNumber)), (int)Direction::DirectionNumber);
 
       if (thing_direction != _move_direction) {
-        if (Math::Modulo<Direction::DirectionNumber>(thing_direction - _move_direction) < Direction::DirectionNumber / 2)
+        if (Math::Modulo(thing_direction - _move_direction, (int)Direction::DirectionNumber) < Direction::DirectionNumber / 2)
           angle -= Math::Pi / 4.f;
         else
           angle += Math::Pi / 4.f;

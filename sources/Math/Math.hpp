@@ -27,39 +27,60 @@ namespace Math
 {
   using DefaultType = float;  // Default type in math
 
-  constexpr float const Pi = (float)M_PI; // Use this instead of M_PI
-
-  template<int Mod>
-  inline int  Modulo(int i) // Return the positive modulo Mod of i
+  template<typename Type = DefaultType>
+  constexpr Type  PiValue()
   {
-    int r = i % Mod;
-
-    return r < 0 ? r + Mod : r;
+    return static_cast<Type>(M_PI);
   }
 
-  inline int  Modulo(int i, int n)  // Return the positive modulo n of i
+  constexpr DefaultType Pi = PiValue<DefaultType>(); // Use this instead of M_PI
+
+  template<typename Type>
+  constexpr Type  Modulo(Type i, Type n) // Return the positive modulo n of i
   {
-    int r = i % n;
+    Type r;
+      
+    if constexpr (std::is_floating_point<Type>::value)
+      r = i - (std::intmax_t)(i / n) * n;
+    else
+      r = i % n;
 
     return r < 0 ? r + n : r;
   };
+  
+  template<std::uintmax_t Power>
+  constexpr DefaultType Pow(const DefaultType value) // Compute value^power
+  { 
+    if constexpr (Power == 0)
+      return 1;
+    else
+      return value * Math::Pow<Power - 1>(value);
+  }
 
-  inline float  Modulo(float i, float n)  // Return the positive modulo i of n
+  template<typename Type = DefaultType>
+  constexpr Type  RadToDeg(Type r)  // Convert radian (* accuracy) to degree
   {
-    float r = i - (int)(i / n) * n;
+    return (r * 180) / Math::PiValue<Type>();
+  }
 
-    return r < 0.f ? r + n : r;
-  };
+  template<typename Type = DefaultType>
+  constexpr Type  DegToRad(Type r)  // Convert degree to radian (* accuracy)
+  {
+    return (r * Math::PiValue<Type>()) / 180;
+  }
 
-  template<unsigned int Power>
-  inline float Pow(const float value) { return value * Math::Pow<Power - 1>(value); } // Compute value^Power
+  template<typename Type = DefaultType>
+  inline Type Random(Type range = std::is_floating_point<Type>::value ? 1 : std::numeric_limits<Type>::max()) // Return random value [0; 1]
+  {
+    if constexpr (std::is_floating_point<Type>::value)
+      return static_cast<Type>(std::rand()) / static_cast<Type>(RAND_MAX) * range;
+    else
+      return static_cast<Type>(std::rand()) % range;
+  }
 
-  template<>
-  inline float Pow<0>(const float) { return 1.f; }                                    // Compute value^Power
-
-  inline float  RadToDeg(float r) { return (r * 180.f) / Math::Pi; }; // Convert radian (* accuracy) to degree
-  inline float  DegToRad(float r) { return (r * Math::Pi) / 180.f; }; // Convert degree to radian (* accuracy)
-
-  inline float  Random(float range = 1.f) { return (float)std::rand() / (float)RAND_MAX * range; }; // Return random value [0; 1]
-  inline float  Random(float min, float max) { return min + Random(max - min); };                   // Return random value [min; max]
+  template<typename Type = DefaultType>
+  inline DefaultType  Random(Type min, Type max)  // Return random value [min; max]
+  {
+    return min + Random(max - min);
+  }
 }
