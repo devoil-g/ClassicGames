@@ -7,7 +7,7 @@
 
 namespace Math
 {
-  template<unsigned int Dimension, typename Type = float>
+  template<unsigned int Dimension, typename Type = Math::DefaultType>
   class Box
   {
   public:
