@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "Math/Math.hpp"
 #include "Math/Vector.hpp"
 #include "System/JavaScriptObjectNotation.hpp"
 

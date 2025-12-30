@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Math/Math.hpp"
 #include "Math/Matrix.hpp"
 #include "Math/Vector.hpp"
 #include "System/JavaScriptObjectNotation.hpp"

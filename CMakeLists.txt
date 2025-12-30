@@ -215,8 +215,8 @@ SET(GAME_MATH_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Math.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Matrix.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Matrix.hpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Transformable2D.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Transformable2D.hpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Transformable.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Transformable.hpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Vector.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sources/Math/Vector.hpp
 )

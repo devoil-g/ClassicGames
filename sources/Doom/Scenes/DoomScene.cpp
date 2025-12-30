@@ -28,6 +28,12 @@ DOOM::DoomScene::~DoomScene()
 {
   // Interrupt playing DOOM sounds to avoid reading deleted buffers
   Game::Audio::Sound::Instance().clear();
+
+  // Reset listener
+  sf::Listener::setPosition({ 0.f, 0.f, 0.f });
+  sf::Listener::setDirection({ 1.f, 0.f, 0.f });
+  sf::Listener::setUpVector({ 0.f, 0.f, 1.f });
+  sf::Listener::setGlobalVolume(100.f);
 }
 
 bool  DOOM::DoomScene::update(float elapsed)

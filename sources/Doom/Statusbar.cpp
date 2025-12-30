@@ -145,7 +145,7 @@ void  DOOM::Statusbar::renderBackground(const DOOM::Doom& doom, sf::Image& targe
   // Draw statusbar background
   renderTexture(doom, target, rect, doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("STBAR")), 0, 0, palette);
   renderTexture(doom, target, rect, doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>("STARMS")), 104, 0, palette);
-  renderTexture(doom, target, rect, doom.level.players.size() == 1 ? DOOM::Doom::Resources::Texture::Null : doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>(std::string("STFB") + (char)('0' + Math::Modulo<4>(id - 1)))), 143, 1, palette);
+  renderTexture(doom, target, rect, doom.level.players.size() == 1 ? DOOM::Doom::Resources::Texture::Null : doom.resources.getMenu(Game::Utilities::str_to_key<std::uint64_t>(std::string("STFB") + (char)('0' + Math::Modulo(id - 1, 4)))), 143, 1, palette);
 }
 
 void  DOOM::Statusbar::renderAmmo(const DOOM::Doom& doom, sf::Image& target, Math::Box<2, std::int16_t> rect, std::int16_t palette) const
