@@ -62,8 +62,8 @@ Game::JSON::Array RPG::ServerBoardSystem::json() const
   Game::JSON::Array   array;
 
   // Serialize game board
-  array.reserve(entities.size());
-  for (auto entity : entities)
+  array.reserve(entities().size());
+  for (auto entity : entities())
     array.push(ecs.getComponent<RPG::CellComponent>(entity).json());
 
   return array;
@@ -105,7 +105,7 @@ RPG::ECS::Entity  RPG::ClientBoardSystem::getCursor() const
 
 void  RPG::ClientBoardSystem::setCursor(RPG::ECS::Entity entity)
 {
-  assert((entity == RPG::ECS::InvalidEntity || entities.contains(entity) == true) && "Entity is not a cell");
+  assert((entity == RPG::ECS::InvalidEntity || entities().contains(entity) == true) && "Entity is not a cell");
 
   // Cancel previous particle emitter
   if (_cursorCell != RPG::ECS::InvalidEntity)
@@ -121,7 +121,7 @@ void  RPG::ClientBoardSystem::setCursor(RPG::ECS::Entity entity)
 
 void  RPG::ClientBoardSystem::setClick(RPG::ECS::Entity entity)
 {
-  assert((entity == RPG::ECS::InvalidEntity || entities.contains(entity) == true) && "Entity is not a cell");
+  assert((entity == RPG::ECS::InvalidEntity || entities().contains(entity) == true) && "Entity is not a cell");
 
   // Start select animation at cell position
   if (entity != RPG::ECS::InvalidEntity) {
@@ -141,7 +141,7 @@ RPG::ECS::Entity  RPG::ClientBoardSystem::intersect(const Math::Vector<2>& coord
   int column = (long)std::round(coords.x() / RPG::CellOffset.x());
 
   // Get cells in column
-  for (auto entity : entities) {
+  for (auto entity : entities()) {
     const auto& cell = ecs.getComponent<RPG::CellComponent>(entity);
 
     // Select only cells in column
@@ -196,7 +196,7 @@ void  RPG::ClientBoardSystem::executeCursor(float elapsed)
 void  RPG::ClientBoardSystem::executeCell(float elapsed)
 {
   // Update each cell of the board
-  for (auto entity : entities)
+  for (auto entity : entities())
     executeCell(entity, elapsed);
 }
 

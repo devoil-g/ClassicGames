@@ -12,7 +12,7 @@ RPG::ParticleEmitterSystem::ParticleEmitterSystem(RPG::ECS& ecs) :
 void  RPG::ParticleEmitterSystem::execute(float elapsed)
 {
   // Update each particle emitter
-  for (auto entity : entities)
+  for (auto entity : entities())
     execute(entity, elapsed);
 }
 

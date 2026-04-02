@@ -41,37 +41,14 @@ RPG::ClientScene::ClientScene(Game::SceneMachine& machine, std::uint16_t port, s
   _ecs.addComponent<RPG::ParticleEmitterComponent>();
   _ecs.addComponent<RPG::ClientActionComponent>();
 
-  RPG::ECS::Signature signature;
-
   // Register ECS systems
-  signature.reset();
-  signature.set(_ecs.typeComponent<RPG::EntityComponent>());
-  signature.set(_ecs.typeComponent<RPG::ModelComponent>());
-  _ecs.addSystem<RPG::ClientEntitySystem>(signature);
-  signature.reset();
-  signature.set(_ecs.typeComponent<RPG::EntityComponent>());
-  signature.set(_ecs.typeComponent<RPG::NetworkComponent>());
-  signature.set(_ecs.typeComponent<RPG::ModelComponent>());
-  _ecs.addSystem<RPG::ClientNetworkSystem>(signature, port, address);
-  signature.reset();
-  signature.set(_ecs.typeComponent<RPG::ModelComponent>());
-  _ecs.addSystem<RPG::ClientModelSystem>(signature);
-  signature.reset();
-  signature.set(_ecs.typeComponent<RPG::BoardComponent>());
-  signature.set(_ecs.typeComponent<RPG::CellComponent>());
-  signature.set(_ecs.typeComponent<RPG::ModelComponent>());
-  signature.set(_ecs.typeComponent<RPG::ParticleEmitterComponent>());
-  _ecs.addSystem<RPG::ClientBoardSystem>(signature);
-  signature.reset();
-  signature.set(_ecs.typeComponent<RPG::ParticleComponent>());
-  signature.set(_ecs.typeComponent<RPG::ModelComponent>());
-  _ecs.addSystem<RPG::ParticleSystem>(signature);
-  signature.reset();
-  signature.set(_ecs.typeComponent<RPG::ParticleEmitterComponent>());
-  _ecs.addSystem<RPG::ParticleEmitterSystem>(signature);
-  signature.reset();
-  signature.set(_ecs.typeComponent<RPG::ClientActionComponent>());
-  _ecs.addSystem<RPG::ClientActionSystem>(signature);
+  _ecs.addSystem<RPG::ClientEntitySystem>(_ecs.signature<RPG::EntityComponent, RPG::ModelComponent>());
+  _ecs.addSystem<RPG::ClientNetworkSystem>(_ecs.signature<RPG::EntityComponent, RPG::NetworkComponent, RPG::ModelComponent>(), port, address);
+  _ecs.addSystem<RPG::ClientModelSystem>(_ecs.signature<RPG::ModelComponent>());
+  _ecs.addSystem<RPG::ClientBoardSystem>(_ecs.signature<RPG::BoardComponent, RPG::CellComponent, RPG::ModelComponent, RPG::ParticleEmitterComponent>());
+  _ecs.addSystem<RPG::ParticleSystem>(_ecs.signature<RPG::ParticleComponent, RPG::ModelComponent>());
+  _ecs.addSystem<RPG::ParticleEmitterSystem>(_ecs.signature<RPG::ParticleEmitterComponent>());
+  _ecs.addSystem<RPG::ClientActionSystem>(_ecs.signature<RPG::ClientActionComponent>());
 }
 
 RPG::ClientScene::~ClientScene()

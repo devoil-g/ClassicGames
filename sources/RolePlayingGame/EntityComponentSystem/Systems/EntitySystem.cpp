@@ -14,7 +14,7 @@ RPG::EntitySystem::EntitySystem(RPG::ECS& ecs) :
 RPG::ECS::Entity  RPG::EntitySystem::getEntity(const std::wstring& id) const
 {
   // Find entity matching ID
-  for (auto entity : entities)
+  for (auto entity : entities())
     if (ecs.getComponent<RPG::EntityComponent>(entity).id == id)
       return entity;
 
@@ -45,8 +45,8 @@ Game::JSON::Array RPG::ServerEntitySystem::json() const
   Game::JSON::Array array;
 
   // Serialize each model
-  array.reserve(entities.size());
-  for (auto entity : entities)
+  array.reserve(entities().size());
+  for (auto entity : entities())
     array.push(ecs.getComponent<RPG::EntityComponent>(entity).json());
 
   return array;
@@ -63,7 +63,7 @@ RPG::ECS::Entity  RPG::ClientEntitySystem::intersect(const Math::Vector<2>& coor
   std::size_t                                         count = 0;
 
   // Get every interactive entities in an array
-  for (auto entity : entities) {
+  for (auto entity : entities()) {
     // TODO: sort non interactive entity
     interactive[count] = entity;
     count += 1;
@@ -103,7 +103,7 @@ bool  RPG::ClientEntitySystem::intersect(RPG::ECS::Entity entity, const Math::Ve
 void  RPG::ClientEntitySystem::executePosition()
 {
   // Update display position of each entity
-  for (auto entity : entities)
+  for (auto entity : entities())
     executePosition(entity);
 }
 

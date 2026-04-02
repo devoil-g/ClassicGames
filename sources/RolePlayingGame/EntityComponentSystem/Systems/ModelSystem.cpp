@@ -132,7 +132,7 @@ void  RPG::ClientModelSystem::executeCamera(float elapsed)
 void  RPG::ClientModelSystem::executeAnimation(float elapsed)
 {
   // Update animation
-  for (auto entity : entities)
+  for (auto entity : entities())
     executeAnimation(entity, elapsed);
 }
 
@@ -150,7 +150,7 @@ void  RPG::ClientModelSystem::executeDraw()
   std::size_t                                         count = 0;
 
   // Get every drawables in an array
-  for (auto entity : entities) {
+  for (auto entity : entities()) {
     drawables[count] = entity;
     count += 1;
   }

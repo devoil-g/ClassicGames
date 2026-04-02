@@ -43,7 +43,7 @@ const RPG::NetworkSystem::Player& RPG::NetworkSystem::getPlayer(std::size_t cont
 std::size_t RPG::NetworkSystem::getController(RPG::ECS::Entity entity) const
 {
   // Entity not registered
-  if (entities.contains(entity) == false)
+  if (entities().contains(entity) == false)
     return RPG::NetworkComponent::NoController;
 
   // Get entity controller
@@ -107,7 +107,7 @@ void  RPG::ServerNetworkSystem::onConnect(std::size_t id)
   _players.emplace(id, Player());
 
   // Assign every unused entity to new player
-  for (auto entity : entities) {
+  for (auto entity : entities()) {
     auto& networkComponent = ecs.getComponent<RPG::NetworkComponent>(entity);
 
     // Entity not used
@@ -136,7 +136,7 @@ void  RPG::ServerNetworkSystem::onDisconnect(std::size_t id)
   assert(_players.contains(id) == true && "ID not registered in RPG::ServerNetworkSystem::onDisconnect.");
 
   // Find used entity of player
-  for (auto entity : entities) {
+  for (auto entity : entities()) {
     auto& networkComponent = ecs.getComponent<RPG::NetworkComponent>(entity);
 
     // Entity of player
@@ -354,7 +354,7 @@ void  RPG::ClientNetworkSystem::handleDisconnect(const Game::JSON::Object& json)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Remove control of entity of player
-  for (auto entity : entities) {
+  for (auto entity : entities()) {
     auto& network = ecs.getComponent<RPG::NetworkComponent>(entity);
 
     if (network.controller == controller)
@@ -374,7 +374,7 @@ void  RPG::ClientNetworkSystem::handleAssign(const Game::JSON::Object& json)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 
   // Make entity controllable
-  if (ecs.signatureEntity(entity).test(ecs.typeComponent<RPG::NetworkComponent>()) == false)
+  if (ecs.hasComponent<RPG::NetworkComponent>(entity) == false)
     ecs.addComponent<RPG::NetworkComponent>(entity);
 
   auto controller = (std::size_t)json.get(L"controller").number();
@@ -437,7 +437,7 @@ void  RPG::ClientNetworkSystem::executeUpdate(float elapsed)
 
 void  RPG::ClientNetworkSystem::executeDraw()
 {
-  for (auto entity : entities)
+  for (auto entity : entities())
   {
     auto& model = ecs.getComponent<RPG::ModelComponent>(entity);
 

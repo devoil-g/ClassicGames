@@ -23,7 +23,7 @@ void  RPG::ServerActionSystem::execute(float elapsed)
     float             timer = elapsed;
 
     // Find next entity to execute
-    for (auto entity : entities) {
+    for (auto entity : entities()) {
       auto& action = ecs.getComponent<RPG::ServerActionComponent>(entity);
 
       // Get next action
@@ -47,7 +47,7 @@ void  RPG::ServerActionSystem::execute(float elapsed)
     }
 
     // Reduce wait time of entities
-    for (auto entity : entities) {
+    for (auto entity : entities()) {
       auto& action = ecs.getComponent<RPG::ServerActionComponent>(entity);
 
       action.wait = std::max(0.f, action.wait - timer);
@@ -143,7 +143,7 @@ RPG::ClientActionSystem::~ClientActionSystem()
 {
   // Unregister system's actions
   // NOTE: actions destructors could call other destroyed system
-  for (auto entity : entities)
+  for (auto entity : entities())
     ecs.getComponent<RPG::ClientActionComponent>(entity).action.reset();
 }
 
@@ -152,7 +152,7 @@ void  RPG::ClientActionSystem::execute(float elapsed)
   std::array<float, RPG::ECS::MaxEntities>  remaining;
 
   // Save remaining time for each entity
-  for (auto entity : entities)
+  for (auto entity : entities())
     remaining[entity] = elapsed;
 
   bool blocked = true;
@@ -164,7 +164,7 @@ void  RPG::ClientActionSystem::execute(float elapsed)
     blocked = false;
 
     // Update each entity
-    for (auto entity : entities) {
+    for (auto entity : entities()) {
       auto& action = ecs.getComponent<RPG::ClientActionComponent>(entity);
       auto blocking = _blocking.empty() == true ? std::numeric_limits<std::size_t>().max() : _blocking.front();
 

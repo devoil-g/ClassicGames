@@ -29,22 +29,11 @@ RPG::Server::Server(const std::filesystem::path& config, std::uint16_t port, std
   RPG::ECS::Signature signature;
 
   // Register ECS systems
-  signature.reset();
-  signature.set(_ecs.typeComponent<RPG::CellComponent>());
-  _ecs.addSystem<RPG::ServerBoardSystem>(signature);
-  signature.reset();
-  signature.set(_ecs.typeComponent<RPG::EntityComponent>());
-  _ecs.addSystem<RPG::ServerEntitySystem>(signature);
-  signature.reset();
-  signature.set(_ecs.typeComponent<RPG::EntityComponent>());
-  signature.set(_ecs.typeComponent<RPG::NetworkComponent>());
-  _ecs.addSystem<RPG::ServerNetworkSystem>(signature, port, address);
-  signature.reset();
-  signature.set(_ecs.typeComponent<RPG::ModelComponent>());
-  _ecs.addSystem<RPG::ServerModelSystem>(signature);
-  signature.reset();
-  signature.set(_ecs.typeComponent<RPG::ServerActionComponent>());
-  _ecs.addSystem<RPG::ServerActionSystem>(signature);
+  _ecs.addSystem<RPG::ServerBoardSystem>(_ecs.signature<RPG::CellComponent>());
+  _ecs.addSystem<RPG::ServerEntitySystem>(_ecs.signature<RPG::EntityComponent>());
+  _ecs.addSystem<RPG::ServerNetworkSystem>(_ecs.signature<RPG::EntityComponent, RPG::NetworkComponent>(), port, address);
+  _ecs.addSystem<RPG::ServerModelSystem>(_ecs.signature<RPG::ModelComponent>());
+  _ecs.addSystem<RPG::ServerActionSystem>(_ecs.signature<RPG::ServerActionComponent>());
 
   // Load level
   Game::JSON::Object json(config);

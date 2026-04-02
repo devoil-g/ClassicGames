@@ -9,7 +9,7 @@ RPG::ParticleSystem::ParticleSystem(RPG::ECS& ecs) :
 void RPG::ParticleSystem::execute(float elapsed)
 {
   // Update each particle
-  for (auto entity = entities.begin(); entity != entities.end();) {
+  for (auto entity = entities().begin(); entity != entities().end();) {
     execute(*entity, elapsed);
 
     const auto& particle = ecs.getComponent<RPG::ParticleComponent>(*entity);
