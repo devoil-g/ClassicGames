@@ -1,12 +1,10 @@
 #include <stdexcept>
+#include <SFML/Graphics/Sprite.hpp>
 
 #include "RolePlayingGame/WindowsManager.hpp"
 
-/*
-bool  RPG::Windows::MainWindow::update(float elapsed, const Math::Matrix<3, 3, float>& transform)
+void  RPG::WindowsManager::update(float elapsed)
 {
-
-
   auto& screen = Game::Window::Instance();
   auto  screenView = screen.getView();
   auto  screenMouse = screen.pixelToCoords(screen.mouse().position());
@@ -62,63 +60,37 @@ bool  RPG::Windows::MainWindow::update(float elapsed, const Math::Matrix<3, 3, f
     else
       iterator++;
   }
-
-  return false;
 }
 
-void  RPG::Windows::render()
+void  RPG::WindowsManager::render()
 {
-  auto& screen = Game::Window::Instance();
-  auto  screenSize = screen.getSize();
-
   // Draw each window back to front
   for (auto iterator = _windows.rbegin(); iterator != _windows.rend(); iterator++)
   {
-    auto& window = *iterator->get();
-    auto windowSize = window.getSize();
-    auto windowPosition = window.getPosition();
-    
-    // Window can't be bigger than screen
-    if (windowSize.x() > screenSize.x() || windowSize.y() > screenSize.y())
-      window.setSize({ 
-        std::min(windowSize.x(), screenSize.x()),
-        std::min(windowSize.y(), screenSize.y())
-        });
+    // Render window to target
+    (*iterator)->render();
+    (*iterator)->_texture.display();
 
-    // Window can't be outside of the screen
-    window.setPosition({
-      std::clamp(windowPosition.x(), 0.f, (float)screenSize.x()),
-      std::clamp(windowPosition.y(), 0.f, (float)screenSize.y())
-      });
+    sf::Sprite  sprite((*iterator)->_texture.getTexture());
 
-    // TODO: handle window scale
-    
-    // Render window to screen
-    window.render();
+    // Set window position
+    sprite.setPosition({ (*iterator)->getPosition().x(), (*iterator)->getPosition().y() });
+    sprite.setOrigin({ (*iterator)->getOrigin().x(), (*iterator)->getOrigin().y() });
+    sprite.setScale({ (*iterator)->getScale().x(), (*iterator)->getScale().y() });
+    sprite.setRotation(sf::radians((*iterator)->getRotation().x()));
+
+    // Draw texture to screen
+    Game::Window::Instance().draw(sprite);
   }
 }
 
-sf::RenderTarget& RPG::Windows::AbstractWindow::getTarget()
+sf::RenderTarget& RPG::WindowsManager::AbstractWindow::getTarget()
 {
   // Return window render target
   return _texture;
 }
 
-const sf::Sprite& RPG::Windows::AbstractWindow::getSprite() const
-{
-  // Get window sprite
-  return _sprite;
-}
-
-Math::Vector<2, float>  RPG::Windows::AbstractWindow::getPosition() const
-{
-  auto position = _sprite.getPosition();
-
-  // Return window position
-  return { position.x, position.y };
-}
-
-Math::Vector<2, unsigned int> RPG::Windows::AbstractWindow::getSize() const
+Math::Vector<2, unsigned int> RPG::WindowsManager::AbstractWindow::getSize() const
 {
   auto size = _texture.getSize();
 
@@ -126,24 +98,45 @@ Math::Vector<2, unsigned int> RPG::Windows::AbstractWindow::getSize() const
   return { size.x, size.y };
 }
 
-void  RPG::Windows::AbstractWindow::setSize(const Math::Vector<2, unsigned int>& size)
+void  RPG::WindowsManager::AbstractWindow::setSize(const Math::Vector<2, unsigned int>& size)
 {
   // Update render texture size
   if (_texture.resize({ size.x(), size.y() }) == false)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-  // Bind texture to sprite
-  _sprite.setTexture(_texture.getTexture(), true);
 }
 
-void  RPG::Windows::AbstractWindow::render()
+Math::Box<2>  RPG::WindowsManager::AbstractWindow::getBounds() const
 {
-  // Reset window content
-  clear();
+  auto transformation = getTransform();
 
-
-
-  // Draw content to render texture
-  display();
+  // Get position and size from transformation matrix
+  // NOTE: does not support rotation
+  return {
+    { transformation(2, 0), transformation(2, 1) },
+    { transformation(0, 0) * getSize().x(), transformation(1, 1) * getSize().x() }
+  };
 }
-*/
+
+void  RPG::WindowsManager::AbstractWindow::setFocus(bool focus)
+{
+  // Set focus flag
+  _focus = focus;
+}
+
+void  RPG::WindowsManager::AbstractWindow::setHover(bool hover)
+{
+  // Set hover flag
+  _hover = hover;
+}
+
+bool  RPG::WindowsManager::AbstractWindow::getFocus() const
+{
+  // Get focus flag
+  return _focus;
+}
+
+bool  RPG::WindowsManager::AbstractWindow::getHover() const
+{
+  // Get hover flag
+  return _hover;
+}

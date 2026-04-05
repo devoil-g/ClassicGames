@@ -5,6 +5,7 @@
 
 #include <SFML/Graphics/Shader.hpp>
 
+#include "Math/Box.hpp"
 #include "Math/Vector.hpp"
 #include "RolePlayingGame/Color.hpp"
 #include "RolePlayingGame/Texture.hpp"
@@ -34,26 +35,16 @@ namespace RPG
     };
 
   public:
-    struct Bounds
-    {
-      Math::Vector<2, std::int16_t> origin; // Left and top position
-      Math::Vector<2, std::int16_t> size;   // Width and height of bounds
-      
-      bool  operator==(const Bounds&) const = default;
-      bool  operator!=(const Bounds&) const = default;
-    };
-
-    static const Bounds                         DefaultTexture;
-    static const Math::Vector<2, float>         DefaultOrigin;
+    static const Math::Box<2, std::int16_t>     DefaultTexture;
     static const Math::Vector<2, std::int16_t>  DefaultScale;
     static const RPG::Color                     DefaultColor;
     static const std::wstring                   DefaultPath;
 
     static const Sprite ErrorSprite;  // Error sprite
 
-    Bounds                        texture;  // Bounds of texture
-    Bounds                        select;   // Bounds for selection
-    Math::Vector<2, float>        origin;   // Origin of the sprite from drawing position
+    Math::Box<2, std::int16_t>    texture;  // Bounds of texture
+    Math::Box<2, std::int16_t>    select;   // Bounds for selection, relative to texture rect
+    Math::Vector<2, float>        origin;   // Origin of the sprite from drawing position, relative to texture rect
     Math::Vector<2, std::int16_t> scale;    // Scaling of sprite
     RPG::Color                    color;    // Sprite color
     std::wstring                  path;     // Path of the texture
@@ -71,7 +62,7 @@ namespace RPG
 
     Game::JSON::Object  json() const; // Serialize to JSON
 
-    void        draw(const Math::Vector<2>& position = { 0.f, 0.f }, RPG::Color color = RPG::Color::White, RPG::Color outline = RPG::Color::Transparent) const; // Draw frame at position
-    RPG::Bounds bounds(const Math::Vector<2>& position = { 0.f, 0.f }) const;                                                                                   // Get bounds of frame
+    void          draw(const Math::Vector<2>& position = { 0.f, 0.f }, RPG::Color color = RPG::Color::White, RPG::Color outline = RPG::Color::Transparent) const; // Draw frame at position
+    Math::Box<2>  bounds(const Math::Vector<2>& position = { 0.f, 0.f }) const;                                                                                   // Get bounds of frame
   };
 }

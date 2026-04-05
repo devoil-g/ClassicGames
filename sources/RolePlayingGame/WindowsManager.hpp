@@ -5,30 +5,30 @@
 
 #include <SFML/Graphics/RenderTexture.hpp>
 
+#include "Math/Box.hpp"
+#include "Math/Transformable.hpp"
 #include "Math/Vector.hpp"
 #include "System/Window.hpp"
 
 namespace RPG
 {
-  class Windows
+  class WindowsManager
   {
   public:
-    class AbstractWindow
+    class AbstractWindow : public Math::Transformable<2>
     {
     private:
-      sf::RenderTexture     _texture;   // Render target of the window
+      friend RPG::WindowsManager;
 
-    protected:
-      const AbstractWindow& _parent;
+      sf::RenderTexture _texture; // Render target of the window
+      bool              _focus;   // True if window is selected
+      bool              _hover;   // True if cursor is above window
 
+      void  setFocus(bool focus); // Focus flag setter
+      void  setHover(bool hover); // Hover flag setter
 
-      
-
-      
     protected:
       sf::RenderTarget& getTarget();  // Get render target of window
-
-      virtual void  draw() = 0; // Draw window content to target
 
     public:
       AbstractWindow() = delete;
@@ -42,39 +42,26 @@ namespace RPG
       Math::Vector<2, unsigned int> getSize() const;                                    // Get window size
       void                          setSize(const Math::Vector<2, unsigned int>& size); // Set window size
       
-      void  render(); // Draw window content and update target
-      
-      virtual bool  update(float elapsed, const Math::Matrix<3, 3, float>& transform) = 0;  // Update window, return true when window should be removed
-      
+      Math::Box<2>  getBounds() const;  // Get bounds of window (do not support rotations)
+
+      bool  getFocus() const; // Check if window is selected
+      bool  getHover() const; // Check if cursor is above the window
+
+      virtual bool  update(float elapsed) = 0;  // Update window, return true when window should be removed
+      virtual void  render() = 0;               // Draw window content and render target to screen
     };
 
   private:
-    class WindowsManager : public AbstractWindow
-    {
-    private:
-      std::list<std::unique_ptr<AbstractWindow>>  _windows; // Windows sorted by depth (foreground on front)
-
-      void draw() override;
-
-    public:
-      WindowsManager();
-      WindowsManager(const WindowsManager&) = delete;
-      WindowsManager(WindowsManager&&) = delete;
-      ~WindowsManager() override = default;
-
-      bool  update(float elapsed, const Math::Matrix<3, 3, float>& transform) override;
-    };
-
     std::list<std::unique_ptr<AbstractWindow>>  _windows; // Windows sorted by depth (foreground on front)
 
   public:
-    Windows() = default;
-    Windows(const Windows&) = delete;
-    Windows(Windows&&) = delete;
-    ~Windows() = default;
+    WindowsManager() = default;
+    WindowsManager(const WindowsManager&) = delete;
+    WindowsManager(WindowsManager&&) = delete;
+    ~WindowsManager() = default;
 
-    Windows& operator=(const Windows&) = delete;
-    WindowsManager& operator=(Windows&&) = delete;
+    WindowsManager& operator=(const WindowsManager&) = delete;
+    WindowsManager& operator=(WindowsManager&&) = delete;
 
     void  update(float elapsed);  // Update windows
     void  render();               // Render windows to screen
