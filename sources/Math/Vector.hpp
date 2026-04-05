@@ -23,39 +23,16 @@ namespace Math
     Vector() = default;
 
     template<typename ... Types>
-    Vector(Types... args) :
-      Base(std::forward<Types>(args)...)
+    Vector(Type value, Types... args) :
+      Base(value, std::forward<Types>(args)...)
     {}
 
     Vector(const Type* values) :
       Base(values)
     {}
 
-    Vector(const Game::JSON::Array& json)
-    {
-      // Copy JSON to vector
-      *this = json;
-    }
-
-    Vector(const Self& other) = default;
-    Vector(Self&& other) = default;
-
-    Vector(const Base& other) :
-      Base(other)
-    {
-    }
-
-    Vector(const Base&& other) :
-      Base(other)
-    {
-    }
-
-    ~Vector() = default;
-
-    Self& operator=(const Self& other) = default;
-    Self& operator=(Self&& other) = default;
-
-    auto& operator=(const Game::JSON::Array& json)
+    Vector(const Game::JSON::Array& json) :
+      Base()
     {
       // Check JSON array size
       if (json.size() != Size)
@@ -64,9 +41,26 @@ namespace Math
       // Extract values from JSON
       for (auto i = 0; i < Size; i++)
         (*this)(i) = static_cast<Type>(json.get(i).number());
-
-      return *this;
     }
+
+    Vector(const Self& other) = default;
+    Vector(Self&& other) = default;
+
+    Vector(const Base& other) :
+      Base(other)
+    {}
+
+    Vector(const Base&& other) :
+      Base(other)
+    {}
+
+    ~Vector() = default;
+
+    Self& operator=(const Self& other) = default;
+    Self& operator=(Self&& other) = default;
+
+    bool  operator==(const Self& v) const = default;
+    bool  operator!=(const Self& v) const = default;
 
     template<unsigned int wSize>
     auto& convert() // Cast current vector to a lower dimension
@@ -86,28 +80,30 @@ namespace Math
       return *reinterpret_cast<const Math::Vector<wSize, Type>*>(this);
     }
 
-    auto& operator()(unsigned int c) { return Base::operator()(0, c); }       // Get nth component of vector
-    auto  operator()(unsigned int c) const { return Base::operator()(0, c); } // Get nth component of vector
-
-    auto& x() { return (*this)(0); } // Get first component of vector
-    auto& y() { return (*this)(1); } // Get second component of vector
-    auto& z() { return (*this)(2); } // Get third component of vector
-    auto& w() { return (*this)(3); } // Get fourth component of vector
-
-    auto  x() const { return (*this)(0); } // Get first component of vector
-    auto  y() const { return (*this)(1); } // Get second component of vector
-    auto  z() const { return (*this)(2); } // Get third component of vector
-    auto  w() const { return (*this)(3); } // Get fourth component of vector
-
-    auto  operator==(const Self& v) const // Vector comparison
+    template<typename NewType>
+    auto  convert() const // Convert type of vector
     {
-      return Base::operator==(v);
+      Math::Vector<Size, NewType> converted;
+
+      // Convert each value of the vector
+      for (auto i = 0; i < Size; i++)
+        converted(i) = static_cast<NewType>((*this)(i));
+
+      return converted;
     }
 
-    auto  operator!=(const Self& v) const // Vector comparison
-    {
-      return Base::operator!=(v);
-    }
+    constexpr auto& operator()(unsigned int c) { return Base::operator()(0, c); }       // Get nth component of vector
+    constexpr auto  operator()(unsigned int c) const { return Base::operator()(0, c); } // Get nth component of vector
+
+    constexpr auto& x() { return (*this)(0); } // Get first component of vector
+    constexpr auto& y() { return (*this)(1); } // Get second component of vector
+    constexpr auto& z() { return (*this)(2); } // Get third component of vector
+    constexpr auto& w() { return (*this)(3); } // Get fourth component of vector
+
+    constexpr auto  x() const { return (*this)(0); } // Get first component of vector
+    constexpr auto  y() const { return (*this)(1); } // Get second component of vector
+    constexpr auto  z() const { return (*this)(2); } // Get third component of vector
+    constexpr auto  w() const { return (*this)(3); } // Get fourth component of vector
 
     auto& operator*=(const Self& v) // Vector multiplication
     {
@@ -192,7 +188,7 @@ namespace Math
       return Self(*this) -= v;
     }
 
-    Game::JSON::Array json() const
+    auto  json() const
     {
       Game::JSON::Array json;
 

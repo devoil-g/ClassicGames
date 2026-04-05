@@ -33,19 +33,15 @@ namespace Math
     Box&  operator=(const Box&) = default;
     Box&  operator=(Box&&) = default;
 
-    Box& operator=(const Game::JSON::Object& json)
-    {
-      // Deserialize JSON
-      position = json.get(L"position").array();
-      size = json.get(L"size").array();
-    }
+    bool  operator==(const Math::Box<Dimension, Type>& other) const = default;
+    bool  operator!=(const Math::Box<Dimension, Type>& other) const = default;
 
-    bool  contains(const Math::Vector<Dimension, Type>& point)
+    auto  contains(const Math::Vector<Dimension, Type>& point) const
     {
       // Check every dimensions
-      for (unsigned int dim = 0; dim < Dimension; dim++) {
-        if (point(dim) < std::min(position(dim), position(dim) + size(dim)) ||
-          point(dim) >= std::max(position(dim), position(dim) + size(dim))) {
+      for (auto dim = 0; dim < Dimension; dim++) {
+        if (point(dim) < std::min(position(dim), (Type)(position(dim) + size(dim))) ||
+          point(dim) >= std::max(position(dim), (Type)(position(dim) + size(dim)))) {
           return false;
         }
       }
@@ -54,7 +50,7 @@ namespace Math
       return true;
     }
 
-    Game::JSON::Object json() const
+    auto  json() const  // Serialize box to JSON
     {
       Game::JSON::Object json;
 

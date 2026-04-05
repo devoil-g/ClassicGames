@@ -42,24 +42,6 @@ namespace RPG
 
   const Math::Vector<2> CellSize = { 18.f, 12.f };
   const Math::Vector<3> CellOffset = { 18.f, 6.f, 12.f };
-
-  class Bounds // Bounding box
-  {
-  public:
-    Math::Vector<2> origin; // Left and top position
-    Math::Vector<2> size;   // Width and height of bounds
-
-    Bounds(const Math::Vector<2>& origin, const Math::Vector<2>& size);
-    Bounds(const Bounds&) = default;
-    Bounds(Bounds&&) = default;
-    ~Bounds() = default;
-
-    Bounds& operator=(const Bounds&) = default;
-    Bounds& operator=(Bounds&&) = default;
-
-    bool contains(const Math::Vector<2>& position) const; // Ckeck if position is contained by bounds
-    bool contains(float x, float y) const;                // Ckeck if position is contained by bounds
-  };
 }
 
 namespace std

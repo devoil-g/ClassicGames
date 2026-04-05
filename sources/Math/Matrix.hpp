@@ -80,48 +80,15 @@ namespace Math
     Self& operator=(const Self&) = default;
     Self& operator=(Self&&) = default;
 
-    Self& operator=(const Game::JSON::Array& json)
-    {
-      // Check JSON array size (number of columns)
-      if (json.size() != Col)
-        throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-      // Extract values from JSON
-      for (auto row = 0; row < Row; row++)
-      {
-        const auto& array = json.get(row).array();
-
-        // Check JSON array size (number of columns)
-        if (array.size() != Row)
-          throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-
-        for (auto col = 0; col < Col; col++)
-          (*this)(row, col) = (Type)array.get(col).number();
-      }
-
-      return *this;
-    }
-
-    auto  operator==(const Self& v) const // Matrix comparison
-    {
-      for (auto row = 0; row < Row; row++)
-        for (auto col = 0; col < Col; col++)
-          if ((*this)(col, row) != v(col, row))
-            return false;
-      return true;
-    }
-
-    auto  operator!=(const Self& v) const // Matrix comparison
-    {
-      return !(*this == v);
-    }
-
-    constexpr Type& operator()(unsigned int col, unsigned int row) // Get matrix value
+    bool  operator==(const Self& v) const = default;
+    bool  operator!=(const Self& v) const = default;
+    
+    constexpr auto& operator()(unsigned int col, unsigned int row) // Get matrix value
     {
       return _matrix[row][col];
     }
     
-    constexpr Type  operator()(unsigned int col, unsigned int row) const // Get matrix value
+    constexpr auto  operator()(unsigned int col, unsigned int row) const // Get matrix value
     {
       return _matrix[row][col];
     }
@@ -200,7 +167,19 @@ namespace Math
       return matrix;
     }
     
-    Game::JSON::Array json() const
+    template<typename NewType>
+    auto  convert() const // Convert matrix to new type
+    {
+      Math::Matrix<Col, Row, NewType> converted;
+
+      for (auto row = 0; row < Row; row++)
+        for (auto col = 0; col < Col; col++)
+          converted(col, row) = static_cast<NewType>((*this)(col, row));
+
+      return converted;
+    }
+
+    auto  json() const
     {
       Game::JSON::Array json;
 
@@ -216,7 +195,7 @@ namespace Math
         json.reserve(Col);
 
         for (auto col = 0; col < Col; col++)
-          line.push((double)(*this)(col, row));
+          line.push(static_cast<double>((*this)(col, row)));
 
         json.push(std::move(line));
       }
@@ -247,10 +226,10 @@ namespace Math
     }
 
     template<typename ... Types>
-    static auto translation(Types... args) // Generate translation matrix
+    static auto translation(Type value, Types... args) // Generate translation matrix
     {
       auto  matrix = identite();
-      Type  transformation[]{ std::forward<Types>(args)... };
+      Type  transformation[]{ value, std::forward<Types>(args)... };
 
       // Compilation time error if not square matrix
       static_assert(Row == Col && Col > 1, "Invalid translation matrix.");
@@ -261,7 +240,6 @@ namespace Math
       return matrix;
     }
 
-    template<typename ... Types>
     static auto translation(const Math::Matrix<1, Col - 1, Type>& args) // Generate translation matrix
     {
       auto matrix = identite();
@@ -275,10 +253,10 @@ namespace Math
     }
 
     template<typename ... Types>
-    static auto scale(Types... args) // Generate scaling matrix
+    static auto scale(Type value, Types... args) // Generate scaling matrix
     {
       auto  matrix = identite();
-      Type  transformation[]{ std::forward<Types>(args)... };
+      Type  transformation[]{ value, std::forward<Types>(args)... };
 
       static_assert(Row == Col && Col > 1, "Invalid scale matrix.");
       static_assert((sizeof(transformation) / sizeof(Type) == Col - 1) || (sizeof(transformation) / sizeof(Type) == 1), "Invalid scale matrix parameters.");
@@ -288,7 +266,6 @@ namespace Math
       return matrix;
     }
 
-    template<typename ... Types>
     static auto scale(const Math::Matrix<1, Col - 1, Type>& args) // Generate translation matrix
     {
       auto matrix = identite();

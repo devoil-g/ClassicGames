@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Math/Box.hpp"
 #include "Math/Math.hpp"
 #include "Math/Matrix.hpp"
 #include "Math/Vector.hpp"
@@ -14,12 +15,12 @@ namespace Math
     constexpr static unsigned int RotationAxis = (Dimension * (Dimension - 1)) / 2;
 
   private:
-    Math::Vector<Dimension, Type>                     _origin;
-    Math::Vector<Dimension, Type>                     _position;
-    Math::Vector<Dimension, Type>                     _scale;
-    Math::Vector<RotationAxis, Type>                  _rotation;
-    Math::Matrix<Dimension + 1, Dimension + 1, Type>  _matrix;
-    bool                                              _updated;
+    Math::Vector<Dimension, Type>                             _origin;
+    Math::Vector<Dimension, Type>                             _position;
+    Math::Vector<Dimension, Type>                             _scale;
+    Math::Vector<RotationAxis, Type>                          _rotation;
+    mutable Math::Matrix<Dimension + 1, Dimension + 1, Type>  _matrix;
+    mutable bool                                              _updated;
 
   public:
     Transformable(const Math::Vector<Dimension, Type>& origin = { static_cast<Type>(0.0) }, const Math::Vector<Dimension, Type>& position = { static_cast<Type>(0.0) }, const Math::Vector<Dimension, Type>& scale = { static_cast<Type>(1.0) }, const Math::Vector<RotationAxis, Type>& rotation = { static_cast<Type>(0.0) }) :
@@ -58,15 +59,14 @@ namespace Math
     {
       // Recompute transformation matrix
       if (_updated == false) {
-        auto  origin = Math::Matrix<Dimension + 1, Dimension + 1, Type>::translation(_origin);
-        auto  translation = Math::Matrix<Dimension + 1, Dimension + 1, Type>::translation(_position);
+        auto  translation = Math::Matrix<Dimension + 1, Dimension + 1, Type>::translation(_position - _origin);
         auto  scale = Math::Matrix<Dimension + 1, Dimension + 1, Type>::scale(_scale);
         auto  rotation = (Dimension == 2) ?
           Math::Matrix<Dimension + 1, Dimension + 1, Type>::rotation(_rotation.x()) :
           Math::Matrix<Dimension + 1, Dimension + 1, Type>::rotation(_rotation.x(), _rotation.y(), _rotation.z());
         
         // Update matrix
-        _matrix = translation * rotation * scale * origin;
+        _matrix = translation * rotation * scale;
         _updated = true;
       }
 
