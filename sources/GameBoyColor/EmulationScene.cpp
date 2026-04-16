@@ -42,22 +42,22 @@ bool  GBC::EmulationScene::update(float elapsed)
   _fps = std::min(_fps + elapsed, 2.f * (float)GBC::PixelProcessingUnit::FrameDuration / (float)GBC::CentralProcessingUnit::Frequency);
 
   // Sound volume control
-  if (window.keyboard().keyDown(Game::Window::Key::Subtract) == true)
+  if (window.keyboard().keyDown(Game::Window::Keyboard::Key::Subtract) == true)
     _stream.setVolume(std::clamp(_stream.getVolume() - elapsed * 64.f, 0.f, 100.f));
-  if (window.keyboard().keyDown(Game::Window::Key::Add) == true)
+  if (window.keyboard().keyDown(Game::Window::Keyboard::Key::Add) == true)
     _stream.setVolume(std::clamp(_stream.getVolume() + elapsed * 64.f, 0.f, 100.f));
 
-  const std::array<Game::Window::Key, 12> save_slots = {
-    Game::Window::Key::F1, Game::Window::Key::F2, Game::Window::Key::F3, Game::Window::Key::F4,
-    Game::Window::Key::F5, Game::Window::Key::F6, Game::Window::Key::F7, Game::Window::Key::F8,
-    Game::Window::Key::F9, Game::Window::Key::F10, Game::Window::Key::F11, Game::Window::Key::F12
+  const std::array<Game::Window::Keyboard::Key, 12> save_slots = {
+    Game::Window::Keyboard::Key::F1, Game::Window::Keyboard::Key::F2, Game::Window::Keyboard::Key::F3, Game::Window::Keyboard::Key::F4,
+    Game::Window::Keyboard::Key::F5, Game::Window::Keyboard::Key::F6, Game::Window::Keyboard::Key::F7, Game::Window::Keyboard::Key::F8,
+    Game::Window::Keyboard::Key::F9, Game::Window::Keyboard::Key::F10, Game::Window::Keyboard::Key::F11, Game::Window::Keyboard::Key::F12
   };
   
   // Save/load states
   for (std::size_t index = 0; index < save_slots.size(); index++) {
     if (window.keyboard().keyPressed(save_slots[index]) == true) {
-      if (window.keyboard().keyDown(Game::Window::Key::LShift) == true ||
-        window.keyboard().keyDown(Game::Window::Key::RShift) == true)
+      if (window.keyboard().keyDown(Game::Window::Keyboard::Key::LShift) == true ||
+        window.keyboard().keyDown(Game::Window::Keyboard::Key::RShift) == true)
         _gbc.save(index + 1);
       else
         _gbc.load(index + 1);
@@ -67,8 +67,8 @@ bool  GBC::EmulationScene::update(float elapsed)
   // Simulate frames at 59.72 fps
   // NOTE: simulate at most one frame per call to avoid exponential delay
   if (_fps >= (float)GBC::PixelProcessingUnit::FrameDuration / (float)GBC::CentralProcessingUnit::Frequency ||
-    window.keyboard().keyDown(Game::Window::Key::LControl) == true ||
-    window.joystick().position(0, Game::Window::JoystickAxis::Z) < -64.f) {
+    window.keyboard().keyDown(Game::Window::Keyboard::Key::LControl) == true ||
+    window.joystick().position(0, Game::Window::Joystick::Axis::Z) < -64.f) {
     _gbc.simulate();
     _fps = std::max(_fps - (float)GBC::PixelProcessingUnit::FrameDuration / (float)GBC::CentralProcessingUnit::Frequency, 0.f);
 
@@ -77,7 +77,7 @@ bool  GBC::EmulationScene::update(float elapsed)
   }
 
   // Go to menu
-  if (window.keyboard().keyPressed(Game::Window::Key::Escape) == true) {
+  if (window.keyboard().keyPressed(Game::Window::Keyboard::Key::Escape) == true) {
     _machine.push<GBC::MenuScene>(_gbc);
   }
 

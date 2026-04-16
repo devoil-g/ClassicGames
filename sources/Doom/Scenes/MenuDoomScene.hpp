@@ -35,10 +35,10 @@ namespace DOOM
     {
       struct Item
       {
-        std::uint64_t     texture;    // Texture of item
-        bool              selectable; // True if item can be selected
-        int               x, y;       // Position of item on screen
-        Game::Window::Key hotkey;     // Shortcut to item selection
+        std::uint64_t               texture;    // Texture of item
+        bool                        selectable; // True if item can be selected
+        int                         x, y;       // Position of item on screen
+        Game::Window::Keyboard::Key hotkey;     // Shortcut to item selection
 
         std::function<void()> select; // Callback when selected
         std::function<void()> left;   // Callback when left arrow is used

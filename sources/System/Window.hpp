@@ -30,81 +30,100 @@ namespace Game
     static const float                          FpsRefresh;           // Time between FPS refresh
 
     using View = Math::Box<2, float>;
-    using MouseButton = sf::Mouse::Button;
-    static const unsigned int MouseButtonCount = sf::Mouse::ButtonCount;
-    using Key = sf::Keyboard::Key;
-    static const unsigned int KeyCount = sf::Keyboard::KeyCount;
-    using JoystickAxis = sf::Joystick::Axis;
-    static const unsigned int JoystickCount = sf::Joystick::Count;
-    static const unsigned int JoystickButtonCount = sf::Joystick::ButtonCount;
-    static const unsigned int JoystickAxisCount = sf::Joystick::AxisCount;
     using Handle = sf::WindowHandle;
 
-  private:
+  public:
     class Mouse
     {
       friend class Game::Window;
 
-    private:
-      Math::Vector<2, int>                _position, _relative;       // Mouse position
-      float                               _wheel;                     // Mouse wheel ticks since last update
-      std::array<bool, MouseButtonCount>  _down, _pressed, _released; // Maps of down/pressed/released mouse button
+    public:
+      using Button = sf::Mouse::Button;
+      static constexpr unsigned int ButtonCount = sf::Mouse::ButtonCount;
 
-      inline Mouse() : _position(), _relative(), _wheel(), _down(), _pressed(), _released() {}
-      inline ~Mouse() = default;
+    private:
+      Math::Vector<2, int>          _position, _relative;       // Mouse position
+      float                         _wheel;                     // Mouse wheel ticks since last update
+      std::array<bool, ButtonCount> _down, _pressed, _released; // Maps of down/pressed/released mouse button
+
+      Mouse() = default;
+      Mouse(const Mouse&) = delete;
+      Mouse(Mouse&&) = delete;
+      ~Mouse() = default;
+
+      Mouse& operator=(const Mouse&) = delete;
+      Mouse& operator=(Mouse&&) = delete;
 
     public:
-      
+      const Math::Vector<2, int>&  position() const { return _position; }  // Return mouse current position
+      const Math::Vector<2, int>&  relative() const { return _relative; }  // Return mouse movement since last update
+      float                        wheel() const { return  _wheel; }       // Return wheel ticks since last update
 
-      inline const Math::Vector<2, int>&  position() const { return _position; }  // Return mouse current position
-      inline const Math::Vector<2, int>&  relative() const { return _relative; }  // Return mouse movement since last update
-      inline float                        wheel() const { return  _wheel; }       // Return wheel ticks since last update
-
-      constexpr bool  buttonDown(MouseButton button) const { return _down[(std::size_t)button]; }         // Check if a button is currently pressed
-      constexpr bool  buttonPressed(MouseButton button) const { return _pressed[(std::size_t)button]; }   // Check if a button has been pressed since last update
-      constexpr bool  buttonReleased(MouseButton button) const { return _released[(std::size_t)button]; } // Check if a button has been released since last update
+      bool  buttonDown(Button button) const { return _down[(std::size_t)button]; }         // Check if a button is currently pressed
+      bool  buttonPressed(Button button) const { return _pressed[(std::size_t)button]; }   // Check if a button has been pressed since last update
+      bool  buttonReleased(Button button) const { return _released[(std::size_t)button]; } // Check if a button has been released since last update
     };
 
     class Keyboard
     {
       friend class Game::Window;
 
+    public:
+      using Key = sf::Keyboard::Key;
+      static const unsigned int KeyCount = sf::Keyboard::KeyCount;
+
     private:
       std::wstring                _text;                      // Buffer of text typed
       std::array<bool, KeyCount>  _down, _pressed, _released; // Maps of down/pressed/released keyboard key
 
-      inline Keyboard() : _text(), _down(), _pressed(), _released() {}
-      inline ~Keyboard() = default;
+      Keyboard() = default;
+      Keyboard(const Keyboard&) = delete;
+      Keyboard(Keyboard&&) = delete;
+      ~Keyboard() = default;
+
+      Keyboard& operator=(const Keyboard&) = delete;
+      Keyboard& operator=(Keyboard&&) = delete;
 
     public:
-      constexpr bool              keyDown(Key key) const { return key == Key::Unknown ? false : _down[(std::size_t)key]; }          // Check if a key is currently pressed
-      constexpr bool              keyPressed(Key key) const { return key == Key::Unknown ? false : _pressed[(std::size_t)key]; }    // Check if a key has been pressed since last update
-      constexpr bool              keyReleased(Key key) const { return key == Key::Unknown ? false : _released[(std::size_t)key]; }  // Check if a key has been released since last update
-      inline const std::wstring&  text() const { return _text; }                                                                    // Return text entered since last frame
+      bool                keyDown(Key key) const { return key == Key::Unknown ? false : _down[(std::size_t)key]; }          // Check if a key is currently pressed
+      bool                keyPressed(Key key) const { return key == Key::Unknown ? false : _pressed[(std::size_t)key]; }    // Check if a key has been pressed since last update
+      bool                keyReleased(Key key) const { return key == Key::Unknown ? false : _released[(std::size_t)key]; }  // Check if a key has been released since last update
+      const std::wstring& text() const { return _text; }                                                                    // Return text entered since last frame
     };
 
     class Joystick
     {
       friend class Game::Window;
 
+    public:
+      using Axis = sf::Joystick::Axis;
+      static const unsigned int JoystickCount = sf::Joystick::Count;
+      static const unsigned int ButtonCount = sf::Joystick::ButtonCount;
+      static const unsigned int AxisCount = sf::Joystick::AxisCount;
+
     private:
       static float const  DeadZone; // Dead zone of joysticks
 
-      std::array<std::array<float, JoystickAxisCount>, JoystickCount>   _position, _relative;       // Joystick position
-      std::array<std::array<bool, JoystickButtonCount>, JoystickCount>  _down, _pressed, _released; // Maps of down/pressed/released joystick key
+      std::array<std::array<float, AxisCount>, JoystickCount>   _position, _relative;       // Joystick position
+      std::array<std::array<bool, ButtonCount>, JoystickCount>  _down, _pressed, _released; // Maps of down/pressed/released joystick key
 
-      inline Joystick() : _position(), _relative(), _down(), _pressed(), _released() {}
-      inline ~Joystick() = default;
+	  Joystick() = default;
+      Joystick(const Joystick&) = delete;
+      Joystick(Joystick&&) = delete;
+      ~Joystick() = default;
+
+      Joystick& operator=(const Joystick&) = delete;
+      Joystick& operator=(Joystick&&) = delete;
 
     public:
-      inline bool connected(unsigned int joystick) const { return sf::Joystick::isConnected(joystick); }  // Check if a joystick is connected
+      bool connected(unsigned int joystick) const { return sf::Joystick::isConnected(joystick); }  // Check if a joystick is connected
 
-      constexpr float position(unsigned int joystick, JoystickAxis axis) const { return _position[joystick][(std::size_t)axis]; } // Return joystick axis current position
-      constexpr float relative(unsigned int joystick, JoystickAxis axis) const { return _relative[joystick][(std::size_t)axis]; } // Return joystick axis movement since last update
+      float position(unsigned int joystick, Axis axis) const { return _position[joystick][(std::size_t)axis]; } // Return joystick axis current position
+      float relative(unsigned int joystick, Axis axis) const { return _relative[joystick][(std::size_t)axis]; } // Return joystick axis movement since last update
 
-      constexpr bool  buttonDown(unsigned int joystick, unsigned int button) const { return _down[joystick][button]; }          // Check if a button is currently pressed
-      constexpr bool  buttonPressed(unsigned int joystick, unsigned int button) const { return _pressed[joystick][button]; }    // Check if a button has been pressed since last update
-      constexpr bool  buttonReleased(unsigned int joystick, unsigned int button) const { return _released[joystick][button]; }  // Check if a button has been released since last update
+      bool  buttonDown(unsigned int joystick, unsigned int button) const { return _down[joystick][button]; }          // Check if a button is currently pressed
+      bool  buttonPressed(unsigned int joystick, unsigned int button) const { return _pressed[joystick][button]; }    // Check if a button has been pressed since last update
+      bool  buttonReleased(unsigned int joystick, unsigned int button) const { return _released[joystick][button]; }  // Check if a button has been released since last update
     };
 
     sf::RenderWindow              _window;        // SFML window

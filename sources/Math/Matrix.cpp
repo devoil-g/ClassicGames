@@ -21,7 +21,7 @@ Math::Matrix<Col, Row, Type>  Math::Matrix<Col, Row, Type>::inverse() const
 
 #ifdef _DEBUG
   // Not supposed to happen
-  if (det == 0.0)
+  if (det == Type(0))
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 #endif
 
@@ -201,7 +201,7 @@ Math::Matrix<Col, Row, Type>  Math::Matrix<Col, Row, Type>::rotation(Type a, Typ
 
 #ifdef _DEBUG
   // Should not happen
-  if (l == 0)
+  if (l == Type(0))
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 #endif
 

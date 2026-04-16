@@ -48,31 +48,31 @@ QUIZ::ScoresQuizScene::ScoresQuizScene(Game::SceneMachine& machine, QUIZ::Quiz& 
 bool  QUIZ::ScoresQuizScene::update(float elapsed)
 {
   // Controller selection
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::C) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::C) == true) {
     _machine.swap<QUIZ::ControllerQuizScene>(_quiz);
     return false;
   }
 
   // Fastest finger
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::F) == true && _quiz.fastests.empty() == false && _quiz.players.empty() == false) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::F) == true && _quiz.fastests.empty() == false && _quiz.players.empty() == false) {
     _machine.swap<QUIZ::FastestQuizScene>(_quiz);
     return false;
   }
 
   // Millionaire
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::M) == true && _quiz.millionaires.empty() == false && _quiz.players.empty() == false) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::M) == true && _quiz.millionaires.empty() == false && _quiz.players.empty() == false) {
     _machine.swap<QUIZ::MillionaireQuizScene>(_quiz);
     return false;
   }
 
   // Free question
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Q) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Q) == true) {
     _machine.swap<QUIZ::QuestionQuizScene>(_quiz);
     return false;
   }
 
   // Start blindtest
-  if (_quiz.blindtests.empty() == false && Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::B) == true) {
+  if (_quiz.blindtests.empty() == false && Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::B) == true) {
     _machine.swap<QUIZ::BlindtestQuizScene>(_quiz);
     return false;
   }

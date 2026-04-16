@@ -62,7 +62,7 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
   // Host control
   {
     // Player is correct
-    if (_buzz != -1 && Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::C) == true) {
+    if (_buzz != -1 && Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::C) == true) {
       auto  ref = Game::Audio::Sound::Instance().get();
 
       // Play correct answer sound
@@ -81,7 +81,7 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
     }
 
     // Player is wrong
-    if (_buzz != -1 && Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::W) == true) {
+    if (_buzz != -1 && Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::W) == true) {
       auto  ref = Game::Audio::Sound::Instance().get();
 
       // Play wrong answer sound
@@ -109,11 +109,11 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
     }
 
     // No answer, reset
-    if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::R) == true)
+    if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::R) == true)
     {
       // Shift for quiet mode
-      if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::LShift) == false &&
-        Game::Window::Instance().keyboard().keyDown(Game::Window::Key::RShift) == false) {
+      if (Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::LShift) == false &&
+        Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::RShift) == false) {
         auto  ref = Game::Audio::Sound::Instance().get();
 
         // Play correct answer sound
@@ -131,18 +131,18 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
     }
 
     // Change cooldown
-    auto up = Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Up);
-    auto down = Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Down);
+    auto up = Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Up);
+    auto down = Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Down);
 
     if (up == true || down == true) {
-      auto shift = Game::Window::Instance().keyboard().keyDown(Game::Window::Key::LShift) || Game::Window::Instance().keyboard().keyDown(Game::Window::Key::RShift);
+      auto shift = Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::LShift) || Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::RShift);
 
       _cooldown = std::max(0.f, _cooldown + ((up == true ? +0.5f : 0.f) + (down == true ? -0.5f : 0.f)) * (shift == true ? 6.f : 1.f));
       std::cout << "Cooldown set to " << _cooldown << "s.                \r" << std::flush;
     }
 
     // Lock player buzzers
-    if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::L) == true)
+    if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::L) == true)
     {
       _buzz = -1;
       for (int index = 0; index < _quiz.players.size(); index++) {
@@ -151,7 +151,7 @@ bool  QUIZ::QuestionQuizScene::update(float elapsed)
     }
     
     // End questions
-    if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::E) == true) {
+    if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::E) == true) {
       _machine.pop();
       return false;
     }

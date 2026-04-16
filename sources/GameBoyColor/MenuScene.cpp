@@ -1240,93 +1240,93 @@ const std::unordered_map<char, GBC::MenuScene::Character>  GBC::MenuScene::Chara
 
 };
 
-const std::unordered_map<Game::Window::Key, std::string>  GBC::MenuScene::Keys = {
-  { Game::Window::Key::A, "A" },
-  { Game::Window::Key::B, "B" },
-  { Game::Window::Key::C, "C" },
-  { Game::Window::Key::D, "D" },
-  { Game::Window::Key::E, "E" },
-  { Game::Window::Key::F, "F" },
-  { Game::Window::Key::G, "G" },
-  { Game::Window::Key::H, "H" },
-  { Game::Window::Key::I, "I" },
-  { Game::Window::Key::J, "J" },
-  { Game::Window::Key::K, "K" },
-  { Game::Window::Key::L, "L" },
-  { Game::Window::Key::M, "M" },
-  { Game::Window::Key::N, "N" },
-  { Game::Window::Key::O, "O" },
-  { Game::Window::Key::P, "P" },
-  { Game::Window::Key::Q, "Q" },
-  { Game::Window::Key::R, "R" },
-  { Game::Window::Key::S, "S" },
-  { Game::Window::Key::T, "T" },
-  { Game::Window::Key::U, "U" },
-  { Game::Window::Key::V, "V" },
-  { Game::Window::Key::W, "W" },
-  { Game::Window::Key::X, "X" },
-  { Game::Window::Key::Y, "Y" },
-  { Game::Window::Key::Z, "Z" },
+const std::unordered_map<Game::Window::Keyboard::Key, std::string>  GBC::MenuScene::Keys = {
+  { Game::Window::Keyboard::Key::A, "A" },
+  { Game::Window::Keyboard::Key::B, "B" },
+  { Game::Window::Keyboard::Key::C, "C" },
+  { Game::Window::Keyboard::Key::D, "D" },
+  { Game::Window::Keyboard::Key::E, "E" },
+  { Game::Window::Keyboard::Key::F, "F" },
+  { Game::Window::Keyboard::Key::G, "G" },
+  { Game::Window::Keyboard::Key::H, "H" },
+  { Game::Window::Keyboard::Key::I, "I" },
+  { Game::Window::Keyboard::Key::J, "J" },
+  { Game::Window::Keyboard::Key::K, "K" },
+  { Game::Window::Keyboard::Key::L, "L" },
+  { Game::Window::Keyboard::Key::M, "M" },
+  { Game::Window::Keyboard::Key::N, "N" },
+  { Game::Window::Keyboard::Key::O, "O" },
+  { Game::Window::Keyboard::Key::P, "P" },
+  { Game::Window::Keyboard::Key::Q, "Q" },
+  { Game::Window::Keyboard::Key::R, "R" },
+  { Game::Window::Keyboard::Key::S, "S" },
+  { Game::Window::Keyboard::Key::T, "T" },
+  { Game::Window::Keyboard::Key::U, "U" },
+  { Game::Window::Keyboard::Key::V, "V" },
+  { Game::Window::Keyboard::Key::W, "W" },
+  { Game::Window::Keyboard::Key::X, "X" },
+  { Game::Window::Keyboard::Key::Y, "Y" },
+  { Game::Window::Keyboard::Key::Z, "Z" },
 
-  { Game::Window::Key::Num0, "Num0" },
-  { Game::Window::Key::Num1, "Num1" },
-  { Game::Window::Key::Num2, "Num2" },
-  { Game::Window::Key::Num3, "Num3" },
-  { Game::Window::Key::Num4, "Num4" },
-  { Game::Window::Key::Num5, "Num5" },
-  { Game::Window::Key::Num6, "Num6" },
-  { Game::Window::Key::Num7, "Num7" },
-  { Game::Window::Key::Num8, "Num8" },
-  { Game::Window::Key::Num9, "Num9" },
+  { Game::Window::Keyboard::Key::Num0, "Num0" },
+  { Game::Window::Keyboard::Key::Num1, "Num1" },
+  { Game::Window::Keyboard::Key::Num2, "Num2" },
+  { Game::Window::Keyboard::Key::Num3, "Num3" },
+  { Game::Window::Keyboard::Key::Num4, "Num4" },
+  { Game::Window::Keyboard::Key::Num5, "Num5" },
+  { Game::Window::Keyboard::Key::Num6, "Num6" },
+  { Game::Window::Keyboard::Key::Num7, "Num7" },
+  { Game::Window::Keyboard::Key::Num8, "Num8" },
+  { Game::Window::Keyboard::Key::Num9, "Num9" },
 
-  { Game::Window::Key::LControl, "LCtrl" },
-  { Game::Window::Key::LShift, "LShift" },
-  { Game::Window::Key::LAlt, "LAlt" },
-  { Game::Window::Key::RControl, "RCtrl" },
-  { Game::Window::Key::RShift, "RShift" },
-  { Game::Window::Key::RAlt, "RAlt" },
+  { Game::Window::Keyboard::Key::LControl, "LCtrl" },
+  { Game::Window::Keyboard::Key::LShift, "LShift" },
+  { Game::Window::Keyboard::Key::LAlt, "LAlt" },
+  { Game::Window::Keyboard::Key::RControl, "RCtrl" },
+  { Game::Window::Keyboard::Key::RShift, "RShift" },
+  { Game::Window::Keyboard::Key::RAlt, "RAlt" },
 
-  { Game::Window::Key::LBracket, "[" },
-  { Game::Window::Key::RBracket, "]" },
-  { Game::Window::Key::Semicolon, ";" },
-  { Game::Window::Key::Comma, "," },
-  { Game::Window::Key::Period, "." },
-  { Game::Window::Key::Apostrophe, "'" },
-  { Game::Window::Key::Slash, "/" },
-  { Game::Window::Key::Backslash, "\\" },
-  { Game::Window::Key::Grave, "`" },
-  { Game::Window::Key::Equal, "=" },
-  { Game::Window::Key::Hyphen, "-" },
-  { Game::Window::Key::Space, "Space" },
-  { Game::Window::Key::Enter, "Enter" },
-  { Game::Window::Key::Backspace, "Backspace" },
-  { Game::Window::Key::Tab, "Tab" },
-  { Game::Window::Key::PageUp, "PageUp" },
-  { Game::Window::Key::PageDown, "PageDown" },
-  { Game::Window::Key::End, "End" },
-  { Game::Window::Key::Home, "Home" },
-  { Game::Window::Key::Insert, "Insert" },
-  { Game::Window::Key::Delete, "Delete" },
-  { Game::Window::Key::Add, "+" },
-  { Game::Window::Key::Subtract, "Num-" },
-  { Game::Window::Key::Multiply, "*" },
-  { Game::Window::Key::Divide, "Num/" },
+  { Game::Window::Keyboard::Key::LBracket, "[" },
+  { Game::Window::Keyboard::Key::RBracket, "]" },
+  { Game::Window::Keyboard::Key::Semicolon, ";" },
+  { Game::Window::Keyboard::Key::Comma, "," },
+  { Game::Window::Keyboard::Key::Period, "." },
+  { Game::Window::Keyboard::Key::Apostrophe, "'" },
+  { Game::Window::Keyboard::Key::Slash, "/" },
+  { Game::Window::Keyboard::Key::Backslash, "\\" },
+  { Game::Window::Keyboard::Key::Grave, "`" },
+  { Game::Window::Keyboard::Key::Equal, "=" },
+  { Game::Window::Keyboard::Key::Hyphen, "-" },
+  { Game::Window::Keyboard::Key::Space, "Space" },
+  { Game::Window::Keyboard::Key::Enter, "Enter" },
+  { Game::Window::Keyboard::Key::Backspace, "Backspace" },
+  { Game::Window::Keyboard::Key::Tab, "Tab" },
+  { Game::Window::Keyboard::Key::PageUp, "PageUp" },
+  { Game::Window::Keyboard::Key::PageDown, "PageDown" },
+  { Game::Window::Keyboard::Key::End, "End" },
+  { Game::Window::Keyboard::Key::Home, "Home" },
+  { Game::Window::Keyboard::Key::Insert, "Insert" },
+  { Game::Window::Keyboard::Key::Delete, "Delete" },
+  { Game::Window::Keyboard::Key::Add, "+" },
+  { Game::Window::Keyboard::Key::Subtract, "Num-" },
+  { Game::Window::Keyboard::Key::Multiply, "*" },
+  { Game::Window::Keyboard::Key::Divide, "Num/" },
 
-  { Game::Window::Key::Left, "Left" },
-  { Game::Window::Key::Right, "Right" },
-  { Game::Window::Key::Up, "Up" },
-  { Game::Window::Key::Down, "Down" },
+  { Game::Window::Keyboard::Key::Left, "Left" },
+  { Game::Window::Keyboard::Key::Right, "Right" },
+  { Game::Window::Keyboard::Key::Up, "Up" },
+  { Game::Window::Keyboard::Key::Down, "Down" },
 
-  { Game::Window::Key::Numpad0, "Num0" },
-  { Game::Window::Key::Numpad1, "Num1" },
-  { Game::Window::Key::Numpad2, "Num2" },
-  { Game::Window::Key::Numpad3, "Num3" },
-  { Game::Window::Key::Numpad4, "Num4" },
-  { Game::Window::Key::Numpad5, "Num5" },
-  { Game::Window::Key::Numpad6, "Num6" },
-  { Game::Window::Key::Numpad7, "Num7" },
-  { Game::Window::Key::Numpad8, "Num8" },
-  { Game::Window::Key::Numpad9, "Num9" }
+  { Game::Window::Keyboard::Key::Numpad0, "Num0" },
+  { Game::Window::Keyboard::Key::Numpad1, "Num1" },
+  { Game::Window::Keyboard::Key::Numpad2, "Num2" },
+  { Game::Window::Keyboard::Key::Numpad3, "Num3" },
+  { Game::Window::Keyboard::Key::Numpad4, "Num4" },
+  { Game::Window::Keyboard::Key::Numpad5, "Num5" },
+  { Game::Window::Keyboard::Key::Numpad6, "Num6" },
+  { Game::Window::Keyboard::Key::Numpad7, "Num7" },
+  { Game::Window::Keyboard::Key::Numpad8, "Num8" },
+  { Game::Window::Keyboard::Key::Numpad9, "Num9" }
 };
 
 GBC::MenuScene::MenuScene(Game::SceneMachine& machine, GBC::GameBoyColor& gbc) :
@@ -1336,7 +1336,7 @@ GBC::MenuScene::MenuScene(Game::SceneMachine& machine, GBC::GameBoyColor& gbc) :
   _gbc(gbc),
   _items({
     Item{.x = 16, .y = 8, .text = "Save state" },
-    Item{.x = (int)_image.getSize().x - 16 - (int)width("Load state"), .y = 6, .text = "Load state" },
+    Item{.x = (int)_image.getSize().x - 16 - (int)width("Load state"), .y = 8, .text = "Load state" },
     Item{.x = 16, .y = 24, .text = "Up" },
     Item{.x = 16, .y = 36, .text = "Down" },
     Item{.x = 16, .y = 48, .text = "Left" },
@@ -1372,23 +1372,23 @@ bool  GBC::MenuScene::update(float elapsed)
   auto& window = Game::Window::Instance();
 
   // Return to GameBoy
-  if (window.keyboard().keyPressed(Game::Window::Key::Escape) == true) {
+  if (window.keyboard().keyPressed(Game::Window::Keyboard::Key::Escape) == true) {
     _machine.pop();
     return false;
   }
 
   // Move in menu
   if (_press == false) {
-    if (window.keyboard().keyPressed(Game::Window::Key::Down) == true)
+    if (window.keyboard().keyPressed(Game::Window::Keyboard::Key::Down) == true)
       move((_index == 0) ? +2 : +1);
-    else if (window.keyboard().keyPressed(Game::Window::Key::Right) == true && _index == 0)
+    else if (window.keyboard().keyPressed(Game::Window::Keyboard::Key::Right) == true && _index == 0)
       move(+1);
-    else if (window.keyboard().keyPressed(Game::Window::Key::Up) == true)
+    else if (window.keyboard().keyPressed(Game::Window::Keyboard::Key::Up) == true)
       move((_index == 2) ? -2 : -1);
-    else if (window.keyboard().keyPressed(Game::Window::Key::Left) == true && _index == 1)
+    else if (window.keyboard().keyPressed(Game::Window::Keyboard::Key::Left) == true && _index == 1)
       move(-1);
-    else if (window.keyboard().keyPressed(Game::Window::Key::Enter) == true ||
-      window.keyboard().keyPressed(Game::Window::Key::Space) == true)
+    else if (window.keyboard().keyPressed(Game::Window::Keyboard::Key::Enter) == true ||
+      window.keyboard().keyPressed(Game::Window::Keyboard::Key::Space) == true)
       select();
   }
 
@@ -1459,7 +1459,7 @@ void  GBC::MenuScene::select()
   }
 }
 
-void  GBC::MenuScene::bind(Game::Window::Key key)
+void  GBC::MenuScene::bind(Game::Window::Keyboard::Key key)
 {
   std::string name;
   std::string keyname = Keys.contains(key) == true ? Keys.at(key) : "???";

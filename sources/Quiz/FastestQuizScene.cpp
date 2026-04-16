@@ -130,17 +130,17 @@ void  QUIZ::FastestQuizScene::setPreparation()
 void  QUIZ::FastestQuizScene::updatePreparation(float elapsed)
 {
   // Select question
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Left) == true ||
-    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Right) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Left) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Right) == true) {
     _question = (_question
-      + (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Left) == true ? _quiz.fastests.size() - 1 : 0)
-      + (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Right) == true ? 1 : 0)
+      + (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Left) == true ? _quiz.fastests.size() - 1 : 0)
+      + (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Right) == true ? 1 : 0)
       ) % (unsigned int)_quiz.fastests.size();
     std::wcout << "Question " << _question << ": '" << _quiz.fastests.at(_question).question << "'" << (_quiz.fastests.at(_question).done ? " (done)" : "") << "." << std::endl;
   }
 
   // Start question
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::N) == true)
     setStart();
 }
 
@@ -297,7 +297,7 @@ void  QUIZ::FastestQuizScene::updateAnswer(float elapsed)
   }
 
   // Skip timer
-  if (_music.getPlayingOffset().asSeconds() < 22.f && Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::S) == true)
+  if (_music.getPlayingOffset().asSeconds() < 22.f && Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::S) == true)
     _music.setPlayingOffset(sf::seconds(22.f));
 
   // Show player chronos
@@ -338,7 +338,7 @@ void  QUIZ::FastestQuizScene::setChrono()
 void  QUIZ::FastestQuizScene::updateChrono(float elapsed)
 {
   // Show player chronos
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::N) == true)
     setCorrect();
 }
 
@@ -403,7 +403,7 @@ void  QUIZ::FastestQuizScene::setCorrect()
 void  QUIZ::FastestQuizScene::updateCorrect(float elapsed)
 {
   // Show winner
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::N) == true)
     setWinner();
 }
 
@@ -465,18 +465,18 @@ void  QUIZ::FastestQuizScene::setWinner()
 void  QUIZ::FastestQuizScene::updateWinner(float elapsed)
 {
   // End fastest finger
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::N) == true)
     _machine.pop();
 }
 
 bool  QUIZ::FastestQuizScene::update(float elapsed)
 {
   // Restart question
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::R) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::R) == true)
     setPreparation();
 
   // End question
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::E) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::E) == true) {
     _machine.pop();
     return false;
   }

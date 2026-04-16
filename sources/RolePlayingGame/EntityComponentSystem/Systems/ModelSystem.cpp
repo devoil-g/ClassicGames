@@ -97,8 +97,8 @@ void  RPG::ClientModelSystem::executeCamera(float elapsed)
 
   // Camera position (ZQSD)
   offset += Math::Vector<2>(
-    (window.keyboard().keyDown(Game::Window::Key::Q) ? -1.f : 0.f) + (window.keyboard().keyDown(Game::Window::Key::D) ? +1.f : 0.f),
-    (window.keyboard().keyDown(Game::Window::Key::Z) ? -1.f : 0.f) + (window.keyboard().keyDown(Game::Window::Key::S) ? +1.f : 0.f)
+    (window.keyboard().keyDown(Game::Window::Keyboard::Key::Q) ? -1.f : 0.f) + (window.keyboard().keyDown(Game::Window::Keyboard::Key::D) ? +1.f : 0.f),
+    (window.keyboard().keyDown(Game::Window::Keyboard::Key::Z) ? -1.f : 0.f) + (window.keyboard().keyDown(Game::Window::Keyboard::Key::S) ? +1.f : 0.f)
   );
 
   // Mouse inside window

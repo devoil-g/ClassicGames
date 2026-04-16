@@ -30,7 +30,7 @@ namespace Game
     bool  update(float elapsed) override  // Update exit state
     {
       // Increase exit timer
-      if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Escape) == true) {
+      if (Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::Escape) == true) {
         _elapsed += elapsed;
 
         // Exit scene

@@ -23,16 +23,16 @@ QUIZ::QuizScene::~QuizScene()
 bool  QUIZ::QuizScene::update(float elapsed)
 {
   // Toogle score display
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Tab) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Tab) == true)
     _scores = !_scores;
 
   // Change scores
-  if (Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Left) == true || Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Right) == true) {
+  if (Game::Window::Instance().mouse().buttonPressed(Game::Window::Mouse::Button::Left) == true || Game::Window::Instance().mouse().buttonPressed(Game::Window::Mouse::Button::Right) == true) {
     for (auto& player : _quiz.players) {
       if (_quiz.entities.at("player_" + std::to_string(player.id)).hover() == true)
         player.score = player.score
-        + (Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Left) == true ? +1 : 0)
-        + (Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Right) == true ? -1 : 0);
+        + (Game::Window::Instance().mouse().buttonPressed(Game::Window::Mouse::Button::Left) == true ? +1 : 0)
+        + (Game::Window::Instance().mouse().buttonPressed(Game::Window::Mouse::Button::Right) == true ? -1 : 0);
     }
   }
 

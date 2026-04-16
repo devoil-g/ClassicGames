@@ -12,9 +12,9 @@ DOOM::SplashDoomScene::SplashDoomScene(Game::SceneMachine& machine, DOOM::Doom& 
 bool  DOOM::SplashDoomScene::update(float elapsed)
 {
   // Push to main menu
-  if (Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Left) == true ||
-    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Enter) == true ||
-    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Space) == true ||
+  if (Game::Window::Instance().mouse().buttonPressed(Game::Window::Mouse::Button::Left) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Enter) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Space) == true ||
     Game::Window::Instance().joystick().buttonPressed(0, 0) == true ||
     Game::Window::Instance().joystick().buttonPressed(0, 7) == true) {
     _doom.sound(DOOM::Doom::Resources::Sound::EnumSound::Sound_swtchn);

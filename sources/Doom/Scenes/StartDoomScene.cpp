@@ -55,18 +55,18 @@ bool  DOOM::StartDoomScene::update(float elapsed)
   _elapsed += elapsed;
 
   // Keyboard start
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Space) == true ||
-    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Enter) == true ||
-    Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Left) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Space) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Enter) == true ||
+    Game::Window::Instance().mouse().buttonPressed(Game::Window::Mouse::Button::Left) == true)
     updateRegister(0);
 
   // Keyboard/mouse cancel
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Escape) == true ||
-    Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Right) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Escape) == true ||
+    Game::Window::Instance().mouse().buttonPressed(Game::Window::Mouse::Button::Right) == true)
     updateUnregister(0);
 
   // Joysticks handle
-  for (unsigned int id = 0; id < Game::Window::JoystickCount; id++)
+  for (unsigned int id = 0; id < Game::Window::Joystick::JoystickCount; id++)
   {
     // Joystick start
     if (Game::Window::Instance().joystick().buttonPressed(id, 7) == true ||

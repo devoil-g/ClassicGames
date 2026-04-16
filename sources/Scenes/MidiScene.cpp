@@ -27,18 +27,18 @@ Game::MidiScene::MidiScene(Game::SceneMachine& machine) :
 
 bool  Game::MidiScene::update(float elapsed)
 {
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Enter) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Enter) == true) {
     Game::Audio::Synthesizer  midi(Game::Config::ExecutablePath / "assets" / "levels" / "beethoven.mid", Game::Config::ExecutablePath / "assets" / "levels" / "gzdoom.sf2");
     midi.generate(0);
   }
 
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Escape) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Escape) == true)
     _machine.pop();
 
   // Octave control
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Subtract) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Subtract) == true)
     _octave += -1;
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Add) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Add) == true)
     _octave += +1;
 
   return false;
@@ -53,19 +53,19 @@ bool  Game::MidiScene::onGetData(sf::SoundStream::Chunk& data)
   // Piano!
   float C = MiddleCFrequency * (float)std::pow(2, _octave);
 
-  static const std::array<std::pair<Game::Window::Key, Game::MidiScene::Note>, Game::MidiScene::Note::NoteCount> binding = {
-    std::pair<Game::Window::Key, Game::MidiScene::Note>(Game::Window::Key::Q, Game::MidiScene::Note::Do),
-    std::pair<Game::Window::Key, Game::MidiScene::Note>(Game::Window::Key::Z, Game::MidiScene::Note::DoD),
-    std::pair<Game::Window::Key, Game::MidiScene::Note>(Game::Window::Key::S, Game::MidiScene::Note::Re),
-    std::pair<Game::Window::Key, Game::MidiScene::Note>(Game::Window::Key::E, Game::MidiScene::Note::ReD),
-    std::pair<Game::Window::Key, Game::MidiScene::Note>(Game::Window::Key::D, Game::MidiScene::Note::Mi),
-    std::pair<Game::Window::Key, Game::MidiScene::Note>(Game::Window::Key::F, Game::MidiScene::Note::Fa),
-    std::pair<Game::Window::Key, Game::MidiScene::Note>(Game::Window::Key::T, Game::MidiScene::Note::FaD),
-    std::pair<Game::Window::Key, Game::MidiScene::Note>(Game::Window::Key::G, Game::MidiScene::Note::Sol),
-    std::pair<Game::Window::Key, Game::MidiScene::Note>(Game::Window::Key::Y, Game::MidiScene::Note::SolD),
-    std::pair<Game::Window::Key, Game::MidiScene::Note>(Game::Window::Key::H, Game::MidiScene::Note::La),
-    std::pair<Game::Window::Key, Game::MidiScene::Note>(Game::Window::Key::U, Game::MidiScene::Note::LaD),
-    std::pair<Game::Window::Key, Game::MidiScene::Note>(Game::Window::Key::J, Game::MidiScene::Note::Si)
+  static const std::array<std::pair<Game::Window::Keyboard::Key, Game::MidiScene::Note>, Game::MidiScene::Note::NoteCount> binding = {
+    std::pair<Game::Window::Keyboard::Key, Game::MidiScene::Note>(Game::Window::Keyboard::Key::Q, Game::MidiScene::Note::Do),
+    std::pair<Game::Window::Keyboard::Key, Game::MidiScene::Note>(Game::Window::Keyboard::Key::Z, Game::MidiScene::Note::DoD),
+    std::pair<Game::Window::Keyboard::Key, Game::MidiScene::Note>(Game::Window::Keyboard::Key::S, Game::MidiScene::Note::Re),
+    std::pair<Game::Window::Keyboard::Key, Game::MidiScene::Note>(Game::Window::Keyboard::Key::E, Game::MidiScene::Note::ReD),
+    std::pair<Game::Window::Keyboard::Key, Game::MidiScene::Note>(Game::Window::Keyboard::Key::D, Game::MidiScene::Note::Mi),
+    std::pair<Game::Window::Keyboard::Key, Game::MidiScene::Note>(Game::Window::Keyboard::Key::F, Game::MidiScene::Note::Fa),
+    std::pair<Game::Window::Keyboard::Key, Game::MidiScene::Note>(Game::Window::Keyboard::Key::T, Game::MidiScene::Note::FaD),
+    std::pair<Game::Window::Keyboard::Key, Game::MidiScene::Note>(Game::Window::Keyboard::Key::G, Game::MidiScene::Note::Sol),
+    std::pair<Game::Window::Keyboard::Key, Game::MidiScene::Note>(Game::Window::Keyboard::Key::Y, Game::MidiScene::Note::SolD),
+    std::pair<Game::Window::Keyboard::Key, Game::MidiScene::Note>(Game::Window::Keyboard::Key::H, Game::MidiScene::Note::La),
+    std::pair<Game::Window::Keyboard::Key, Game::MidiScene::Note>(Game::Window::Keyboard::Key::U, Game::MidiScene::Note::LaD),
+    std::pair<Game::Window::Keyboard::Key, Game::MidiScene::Note>(Game::Window::Keyboard::Key::J, Game::MidiScene::Note::Si)
   };
 
   _buffer.fill(0);

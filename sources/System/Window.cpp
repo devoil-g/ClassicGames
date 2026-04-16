@@ -43,8 +43,8 @@ bool  Game::Window::update(float elapsed)
   _mouse._released.fill(false);
   _keyboard._pressed.fill(false);
   _keyboard._released.fill(false);
-  _joystick._pressed.fill(std::array<bool, Game::Window::JoystickButtonCount>());
-  _joystick._released.fill(std::array<bool, Game::Window::JoystickButtonCount>());
+  _joystick._pressed.fill(std::array<bool, Game::Window::Joystick::ButtonCount>());
+  _joystick._released.fill(std::array<bool, Game::Window::Joystick::ButtonCount>());
 
   // Cancel down keys when no focus
   // NOTE: some joysticks are registered when no focus
@@ -69,13 +69,13 @@ bool  Game::Window::update(float elapsed)
       setView(getDefaultView());
       };
     const auto eventKeyPressed = [this](const sf::Event::KeyPressed& key) {
-      if (key.code != Key::Unknown) {
+      if (key.code != Keyboard::Key::Unknown) {
         _keyboard._down[(std::size_t)key.code] = true;
         _keyboard._pressed[(std::size_t)key.code] = true;
       }
       };
     const auto eventKeyReleased = [this](const sf::Event::KeyReleased& key) {
-      if (key.code != Key::Unknown) {
+      if (key.code != Keyboard::Key::Unknown) {
         _keyboard._down[(std::size_t)key.code] = false;
         _keyboard._released[(std::size_t)key.code] = true;
       }
@@ -124,8 +124,8 @@ bool  Game::Window::update(float elapsed)
   _mouse._position = Math::Vector<2, int>(position.x, position.y);
   
   // Update joysticks axis positions
-  for (unsigned int joystick = 0; joystick < Game::Window::JoystickCount; joystick++)
-    for (unsigned int axis = 0; axis < Game::Window::JoystickAxisCount; axis++) {
+  for (unsigned int joystick = 0; joystick < Game::Window::Joystick::JoystickCount; joystick++)
+    for (unsigned int axis = 0; axis < Game::Window::Joystick::AxisCount; axis++) {
       float value = sf::Joystick::getAxisPosition(joystick, (sf::Joystick::Axis)axis);
 
       _joystick._relative[joystick][axis] = value - _joystick._position[joystick][axis];

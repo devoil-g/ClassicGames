@@ -331,11 +331,11 @@ void  QUIZ::MillionaireQuizScene::setSelect()
 void  QUIZ::MillionaireQuizScene::updateSelect(float elapsed)
 {
   // Select player
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Left) == true ||
-    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Right) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Left) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Right) == true) {
     _player = (_player + _quiz.players.size()
-      + (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Left) == true ? -1 : 0)
-      + (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Right) == true ? +1 : 0))
+      + (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Left) == true ? -1 : 0)
+      + (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Right) == true ? +1 : 0))
       % _quiz.players.size();
   }
 
@@ -348,18 +348,18 @@ void  QUIZ::MillionaireQuizScene::updateSelect(float elapsed)
   }
 
   // Select question set
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Up) == true ||
-    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Down) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Up) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Down) == true) {
     _questions = (_questions + _quiz.millionaires.size()
-      + (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Up) == true ? -1 : 0)
-      + (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Down) == true ? +1 : 0))
+      + (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Up) == true ? -1 : 0)
+      + (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Down) == true ? +1 : 0))
       % _quiz.millionaires.size();
 
     std::wcout << "Question set " << _questions << ": '" << _quiz.millionaires.at(_questions).name << "'" << (_quiz.millionaires.at(_questions).done ? " (done)" : "") << ".                \r" << std::flush;
   }
 
   // Start quiz
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::N) == true)
     setLight();
 }
 
@@ -463,7 +463,7 @@ void  QUIZ::MillionaireQuizScene::setLight(unsigned int step)
 void  QUIZ::MillionaireQuizScene::updateLight(float elapsed)
 {
   // Start question
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::N) == true)
     setQuestion();
 }
 
@@ -545,7 +545,7 @@ void  QUIZ::MillionaireQuizScene::setQuestion()
 void  QUIZ::MillionaireQuizScene::updateQuestion(float elapsed)
 {
   // Next display
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::N) == true) {
     switch (_display) {
     case 0: // Display question
       _display++;
@@ -608,8 +608,8 @@ void  QUIZ::MillionaireQuizScene::updateQuestion(float elapsed)
   if (_display == 5)
   {
     // 50 50
-    if (window.keyboard().keyPressed(Game::Window::Key::Num1) == true &&
-      (window.keyboard().keyDown(Game::Window::Key::LShift) == true || _joker5050 == true)) {
+    if (window.keyboard().keyPressed(Game::Window::Keyboard::Key::Num1) == true &&
+      (window.keyboard().keyDown(Game::Window::Keyboard::Key::LShift) == true || _joker5050 == true)) {
       _joker5050 = false;
 
       std::vector<unsigned int> answers = { 0, 1, 2, 3 };
@@ -642,8 +642,8 @@ void  QUIZ::MillionaireQuizScene::updateQuestion(float elapsed)
     }
 
     // Audience
-    if (window.keyboard().keyPressed(Game::Window::Key::Num2) == true &&
-      (window.keyboard().keyDown(Game::Window::Key::LShift) == true || _jokerAudience == true)) {
+    if (window.keyboard().keyPressed(Game::Window::Keyboard::Key::Num2) == true &&
+      (window.keyboard().keyDown(Game::Window::Keyboard::Key::LShift) == true || _jokerAudience == true)) {
       _jokerAudience = false;
 
       // Grey out joker
@@ -655,8 +655,8 @@ void  QUIZ::MillionaireQuizScene::updateQuestion(float elapsed)
     }
 
     // Phone
-    if (window.keyboard().keyPressed(Game::Window::Key::Num3) == true &&
-      (window.keyboard().keyDown(Game::Window::Key::LShift) == true || _jokerPhone == true)) {
+    if (window.keyboard().keyPressed(Game::Window::Keyboard::Key::Num3) == true &&
+      (window.keyboard().keyDown(Game::Window::Keyboard::Key::LShift) == true || _jokerPhone == true)) {
       _jokerPhone = false;
 
       // Grey out joker
@@ -668,8 +668,8 @@ void  QUIZ::MillionaireQuizScene::updateQuestion(float elapsed)
     }
 
     // Phone
-    if (window.keyboard().keyPressed(Game::Window::Key::Num4) == true &&
-      (window.keyboard().keyDown(Game::Window::Key::LShift) == true || _jokerHost == true)) {
+    if (window.keyboard().keyPressed(Game::Window::Keyboard::Key::Num4) == true &&
+      (window.keyboard().keyDown(Game::Window::Keyboard::Key::LShift) == true || _jokerHost == true)) {
       _jokerHost = false;
 
       // Grey out joker
@@ -681,8 +681,8 @@ void  QUIZ::MillionaireQuizScene::updateQuestion(float elapsed)
     }
 
     // Switch
-    if (window.keyboard().keyPressed(Game::Window::Key::Num5) == true &&
-      (window.keyboard().keyDown(Game::Window::Key::LShift) == true || _jokerSwitch == true)) {
+    if (window.keyboard().keyPressed(Game::Window::Keyboard::Key::Num5) == true &&
+      (window.keyboard().keyDown(Game::Window::Keyboard::Key::LShift) == true || _jokerSwitch == true)) {
       _jokerSwitch = false;
 
       // Grey out joker
@@ -776,7 +776,7 @@ void  QUIZ::MillionaireQuizScene::setAnswer()
 void  QUIZ::MillionaireQuizScene::updateAnswer(float elapsed)
 {
   // Display results
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::N) == true)
     setResult();
 }
 
@@ -871,14 +871,14 @@ void  QUIZ::MillionaireQuizScene::setResult()
 void  QUIZ::MillionaireQuizScene::updateResult(float elapsed)
 {
   // Go to next question
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::N) == true)
     if (_step < QuestionNumber - 1)
       setLight(_step + 1);
     else
       setScore();
 
   // End game
-  else if (_step < QuestionNumber - 1 && Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::S) == true)
+  else if (_step < QuestionNumber - 1 && Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::S) == true)
     setScore();
 }
 
@@ -925,11 +925,11 @@ void  QUIZ::MillionaireQuizScene::setScore()
 void  QUIZ::MillionaireQuizScene::updateScore(float elapsed)
 {
   // Go to next question
-  if (_step < QuestionNumber - 1 && Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true)
+  if (_step < QuestionNumber - 1 && Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::N) == true)
     setLight(_step + 1);
 
   // Return to main menu
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::E) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::E) == true)
   {
     // Give main player its points
     _quiz.players.at(_player).score += _score;
@@ -959,7 +959,7 @@ void  QUIZ::MillionaireQuizScene::setJokerPhone()
 
 void  QUIZ::MillionaireQuizScene::updateJokerPhone(float elapsed)
 {
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::N) == true)
   {
     // Start phone time
     if (_music.getStatus() == sf::Music::Status::Playing && _music.getPlayingOffset().asSeconds() < 28.05f) {
@@ -1031,7 +1031,7 @@ void  QUIZ::MillionaireQuizScene::setJokerAudience()
 void  QUIZ::MillionaireQuizScene::updateJokerAudience(float elapsed)
 {
   // Start answers
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true && _music.getStatus() == sf::Music::Status::Playing) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::N) == true && _music.getStatus() == sf::Music::Status::Playing) {
     if (_music.getPlayingOffset().asSeconds() < 29.f) {
       _music.setLooping(false);
       _music.setPlayingOffset(sf::seconds(29.f));
@@ -1121,7 +1121,7 @@ void  QUIZ::MillionaireQuizScene::setJokerHost()
 void  QUIZ::MillionaireQuizScene::updateJokerHost(float elapsed)
 {
   // Start phone time
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true && _music.getStatus() == sf::Music::Status::Playing && _music.getPlayingOffset().asSeconds() < 91.463f) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::N) == true && _music.getStatus() == sf::Music::Status::Playing && _music.getPlayingOffset().asSeconds() < 91.463f) {
     _music.setLooping(false);
     _music.setPlayingOffset(sf::seconds(91.463f));
   }
@@ -1171,7 +1171,7 @@ void  QUIZ::MillionaireQuizScene::setJokerSwitch()
 void  QUIZ::MillionaireQuizScene::updateJokerSwitch(float elapsed)
 {
   // Wait to switch question
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::N) == true)
     setQuestion();
 }
 

@@ -84,7 +84,7 @@ void  QUIZ::ControllerQuizScene::updateRegister()
   const auto& window = Game::Window::Instance();
 
   // Check for new player
-  for (unsigned int joystick = 0; joystick < Game::Window::JoystickCount; joystick++) {
+  for (unsigned int joystick = 0; joystick < Game::Window::Joystick::JoystickCount; joystick++) {
     if (window.joystick().connected(joystick) == true) {
       for (unsigned int button = 0; button < 20; button += 5) {
         if (Game::Window::Instance().joystick().buttonPressed(joystick, button) == true)
@@ -155,7 +155,7 @@ void  QUIZ::ControllerQuizScene::updateRegister()
 void  QUIZ::ControllerQuizScene::updateUnregister()
 {
   // Inspect each player
-  if (Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Right) == true) {
+  if (Game::Window::Instance().mouse().buttonPressed(Game::Window::Mouse::Button::Right) == true) {
     for (auto iterator = _quiz.players.begin(); iterator != _quiz.players.end();)
     {
       // Remove player when sprite is clicked
@@ -233,13 +233,13 @@ void  QUIZ::ControllerQuizScene::updateAvatar()
 void  QUIZ::ControllerQuizScene::updateHost()
 {
   // End player selection
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::N) == true) {
     _music.setLooping(false);
     _music.setPlayingOffset(sf::seconds(QUIZ::ControllerQuizScene::TimerLimit));
   }
 
   // Immediatly stop player selection
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::E) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::E) == true) {
     _music.stop();
   }
 }

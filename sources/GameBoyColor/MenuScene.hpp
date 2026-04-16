@@ -25,8 +25,8 @@ namespace GBC
       std::array<std::uint16_t, 10> bitmap; // Bitmap of the character
     };
 
-    static const std::unordered_map<char, Character>                Characters; // Characters bitmap
-    static const std::unordered_map<Game::Window::Key, std::string> Keys;       // Bindable keys names
+    static const std::unordered_map<char, Character>                          Characters; // Characters bitmap
+    static const std::unordered_map<Game::Window::Keyboard::Key, std::string> Keys;       // Bindable keys names
 
     struct Item
     {
@@ -38,9 +38,9 @@ namespace GBC
     unsigned int          _index; // Index of current element selected
     bool                  _press; // True when binding if pending
 
-    void  move(int offset);             // Move select in menu
-    void  select();                     // Select current item
-    void  bind(Game::Window::Key key);  // Bind the key
+    void  move(int offset);                       // Move select in menu
+    void  select();                               // Select current item
+    void  bind(Game::Window::Keyboard::Key key);  // Bind the key
 
     void  renderMenu();   // Render menu
     void  renderPress();  // Render press key screen

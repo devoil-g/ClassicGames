@@ -165,45 +165,45 @@ void  QUIZ::BlindtestQuizScene::previous()
 bool  QUIZ::BlindtestQuizScene::update(float elapsed)
 {
   // Return to main menu
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::E) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::E) == true) {
     _machine.pop();
     return false;
   }
 
   // Forward
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Right) == true && _music.getStatus() != sf::SoundSource::Status::Stopped)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Right) == true && _music.getStatus() != sf::SoundSource::Status::Stopped)
     _music.setPlayingOffset(_music.getPlayingOffset() + sf::seconds(3.f));
 
   // Backward
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Left) == true && _music.getStatus() != sf::SoundSource::Status::Stopped)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Left) == true && _music.getStatus() != sf::SoundSource::Status::Stopped)
     _music.setPlayingOffset(_music.getPlayingOffset() - sf::seconds(3.f));
 
   // Increase cooldown
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::PageUp) == true) {
-    _cooldown = std::max(0.f, _cooldown + 0.25f * (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::LShift) == true ? 10.f : 1.f));
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::PageUp) == true) {
+    _cooldown = std::max(0.f, _cooldown + 0.25f * (Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::LShift) == true ? 10.f : 1.f));
     std::cout << "\rCooldown set to " << _cooldown << " seconds.        " << std::flush;
   }
 
   // Decrease cooldown
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::PageDown) == true) {
-    _cooldown = std::max(0.f, _cooldown - 0.25f * (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::LShift) == true ? 10.f : 1.f));
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::PageDown) == true) {
+    _cooldown = std::max(0.f, _cooldown - 0.25f * (Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::LShift) == true ? 10.f : 1.f));
     std::cout << "\rCooldown set to " << _cooldown << " seconds.        " << std::flush;
   }
 
   // Increase volume
-  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Up) == true)
-    _music.setVolume(std::min(100.f, _music.getVolume() + elapsed * 100.f * (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::LShift) == true ? 2.f : 1.f)));
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::Up) == true)
+    _music.setVolume(std::min(100.f, _music.getVolume() + elapsed * 100.f * (Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::LShift) == true ? 2.f : 1.f)));
 
   // Decrease volume
-  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Down) == true)
-    _music.setVolume(std::max(0.f, _music.getVolume() - elapsed * 100.f * (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::LShift) == true ? 2.f : 1.f)));
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::Down) == true)
+    _music.setVolume(std::max(0.f, _music.getVolume() - elapsed * 100.f * (Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::LShift) == true ? 2.f : 1.f)));
 
   // Next blindtest
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::N) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::N) == true)
     next();
 
   // Previous blindtest
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::B) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::B) == true)
     previous();
 
   switch (_state)
@@ -250,7 +250,7 @@ bool  QUIZ::BlindtestQuizScene::update(float elapsed)
 void  QUIZ::BlindtestQuizScene::updatePlaying(float elapsed)
 {
   // Pause/resume music
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Enter) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Enter) == true) {
     if (_music.getStatus() == sf::Sound::Status::Playing)
       _music.pause();
     else if (_music.getStatus() == sf::Sound::Status::Stopped) {
@@ -262,19 +262,19 @@ void  QUIZ::BlindtestQuizScene::updatePlaying(float elapsed)
   }
 
   // Reset music
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Backspace) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Backspace) == true)
     _music.setPlayingOffset(sf::Time::Zero);
 
   // Lock buzzers
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::L) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::L) == true)
     std::fill(_cooldowns.begin(), _cooldowns.end(), std::numeric_limits<float>::infinity());
 
   // Release buzzers
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::R) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::R) == true)
     std::fill(_cooldowns.begin(), _cooldowns.end(), 0.f);
 
   // Skip to answer
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::A) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::A) == true) {
     auto  ref = Game::Audio::Sound::Instance().get();
 
     // Play correct answer sound
@@ -327,19 +327,19 @@ void  QUIZ::BlindtestQuizScene::updatePlaying(float elapsed)
 void  QUIZ::BlindtestQuizScene::updatePending(float elapsed)
 {
   // Lock buzzers
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::L) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::L) == true) {
     std::fill(_cooldowns.begin(), _cooldowns.end(), std::numeric_limits<float>::infinity());
     setPlaying();
   }
 
   // Release buzzers
-  else if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::R) == true) {
+  else if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::R) == true) {
     std::fill(_cooldowns.begin(), _cooldowns.end(), 0.f);
     setPlaying();
   }
 
   // Correct answer
-  else if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::C) == true) {
+  else if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::C) == true) {
     auto  ref = Game::Audio::Sound::Instance().get();
 
     // Play correct answer sound
@@ -365,7 +365,7 @@ void  QUIZ::BlindtestQuizScene::updatePending(float elapsed)
   }
 
   // Wrong answer
-  else if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::W) == true) {
+  else if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::W) == true) {
     auto  ref = Game::Audio::Sound::Instance().get();
 
     // Play wrong answer sound
@@ -386,7 +386,7 @@ void  QUIZ::BlindtestQuizScene::updatePending(float elapsed)
 void  QUIZ::BlindtestQuizScene::updateAnswer(float elapsed)
 {
   // Pause/resume music
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Enter) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Enter) == true) {
     if (_music.getStatus() == sf::Sound::Status::Playing)
       _music.pause();
     else if (_music.getStatus() == sf::Sound::Status::Stopped) {
@@ -398,7 +398,7 @@ void  QUIZ::BlindtestQuizScene::updateAnswer(float elapsed)
   }
 
   // Reset music
-  else if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Backspace) == true)
+  else if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Backspace) == true)
     _music.setPlayingOffset(sf::Time::Zero);
 }
 

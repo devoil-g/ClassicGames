@@ -36,7 +36,7 @@ bool  DOOM::GameDoomScene::update(float elapsed)
   // Restart level when no player alive
   if (alive == 0) {
     for (const auto& player : _doom.level.players) {
-      if ((player.get().controller == 0 && Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Space) == true) ||
+      if ((player.get().controller == 0 && Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Space) == true) ||
         (player.get().controller > 0 && Game::Window::Instance().joystick().buttonPressed(player.get().controller - 1, 0) == true)) {
         auto start = _doom.image;
 
@@ -54,7 +54,7 @@ bool  DOOM::GameDoomScene::update(float elapsed)
 
   // Pause menu
   for (const auto& player : _doom.level.players) {
-    if ((player.get().controller == 0 && Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Escape) == true) ||
+    if ((player.get().controller == 0 && Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Escape) == true) ||
       (player.get().controller > 0 && Game::Window::Instance().joystick().buttonPressed(player.get().controller - 1, 7) == true)) {
       _machine.push<DOOM::MenuDoomScene>(_doom);
       return false;
@@ -62,11 +62,11 @@ bool  DOOM::GameDoomScene::update(float elapsed)
   }
 
   // Add new players (keyboard)
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Space) == true)
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Space) == true)
     _doom.addPlayer(0);
 
   // Add new players (joystick)
-  for (unsigned int id = 0; id < Game::Window::JoystickCount; id++)
+  for (unsigned int id = 0; id < Game::Window::Joystick::JoystickCount; id++)
     if (Game::Window::Instance().joystick().buttonPressed(id, 0) == true)
       _doom.addPlayer(id + 1);
 
@@ -74,7 +74,7 @@ bool  DOOM::GameDoomScene::update(float elapsed)
   _doom.update(elapsed);
 
   // TODO: remove this
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::F4) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::F4) == true) {
     for (const auto& player : _doom.level.players) {
       // Toogle clip
       player.get().flags = (DOOM::Enum::ThingProperty)((int32_t)player.get().flags ^ (int32_t)DOOM::Enum::ThingProperty::ThingProperty_NoClip);
@@ -117,7 +117,7 @@ bool  DOOM::GameDoomScene::update(float elapsed)
 
   // TODO: remove this
   // Change level
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::F3) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::F3) == true) {
     auto  levels = _doom.getLevels();
     auto  next = std::find(levels.begin(), levels.end(), _doom.level.episode);
 
@@ -131,7 +131,7 @@ bool  DOOM::GameDoomScene::update(float elapsed)
 
   // TODO: remove this
   // Change level
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::F1) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::F1) == true) {
     auto  levels = _doom.getLevels();
     auto  next = std::find(levels.rbegin(), levels.rend(), _doom.level.episode);
 
@@ -145,7 +145,7 @@ bool  DOOM::GameDoomScene::update(float elapsed)
 
   // TODO: remove this
   // End level
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::F2) == true) {
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::F2) == true) {
     _doom.level.end = DOOM::Enum::End::EndNormal;
   }
 

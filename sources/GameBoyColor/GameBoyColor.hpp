@@ -166,8 +166,8 @@ namespace GBC
     std::array<std::uint8_t, 127>               _hRam;      // Raw High RAM memory
     std::uint8_t                                _ie;        // Interrupt Enable register
     
-    std::array<bool, Key::KeyCount>               _keys;      // Currently pressed keys
-    std::array<Game::Window::Key, Key::KeyCount>  _bindings;  // Keys bindings
+    std::array<bool, Key::KeyCount>                         _keys;      // Currently pressed keys
+    std::array<Game::Window::Keyboard::Key, Key::KeyCount>  _bindings;  // Keys bindings
 
     enum Transfer
     {
@@ -257,8 +257,8 @@ namespace GBC
     const std::array<std::int16_t, GBC::AudioProcessingUnit::BufferSize>& sound() const;  // Get current sound frame
     const GBC::GameBoyColor::Header&                                      header() const; // Get game header
 
-    Game::Window::Key bind(GBC::GameBoyColor::Key key) const;                   // Get button binding
-    void              bind(GBC::GameBoyColor::Key key, Game::Window::Key bind); // Set button binding
+    Game::Window::Keyboard::Key bind(GBC::GameBoyColor::Key key) const;                             // Get button binding
+    void                        bind(GBC::GameBoyColor::Key key, Game::Window::Keyboard::Key bind); // Set button binding
 
     void  load(std::size_t id);       // Load saved state
     void  save(std::size_t id) const; // Save state

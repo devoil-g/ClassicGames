@@ -59,8 +59,8 @@ bool  Game::AbstractMenuScene::empty() const
 bool  Game::AbstractMenuScene::update(float elapsed)
 {
   // Return to previous menu
-  if (Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Right) == true ||
-    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Escape) == true ||
+  if (Game::Window::Instance().mouse().buttonPressed(Game::Window::Mouse::Button::Right) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Escape) == true ||
     Game::Window::Instance().joystick().buttonPressed(0, 1) == true)
   {
     _machine.pop();
@@ -68,10 +68,10 @@ bool  Game::AbstractMenuScene::update(float elapsed)
   }
 
   // Move down in menu with keyboard or joystick
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Down) == true ||
-    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::S) == true ||
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Down) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::S) == true ||
     Game::Window::Instance().mouse().wheel() < 0 ||
-    (Game::Window::Instance().joystick().relative(0, Game::Window::JoystickAxis::PovY) < -0.9f && Game::Window::Instance().joystick().position(0, Game::Window::JoystickAxis::PovY) < -0.1f)) {
+    (Game::Window::Instance().joystick().relative(0, Game::Window::Joystick::Axis::PovY) < -0.9f && Game::Window::Instance().joystick().position(0, Game::Window::Joystick::Axis::PovY) < -0.1f)) {
     if (_select == -1)
       _target = _select = _target % _items.size();
     else
@@ -79,10 +79,10 @@ bool  Game::AbstractMenuScene::update(float elapsed)
   }
 
   // Move up in menu with keyboard or joystick
-  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Up) == true ||
-    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Z) == true ||
+  if (Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Up) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Z) == true ||
     Game::Window::Instance().mouse().wheel() > 0 ||
-    (Game::Window::Instance().joystick().relative(0, Game::Window::JoystickAxis::PovY) > +0.9f && Game::Window::Instance().joystick().position(0, Game::Window::JoystickAxis::PovY) > +0.1f)) {
+    (Game::Window::Instance().joystick().relative(0, Game::Window::Joystick::Axis::PovY) > +0.9f && Game::Window::Instance().joystick().position(0, Game::Window::Joystick::Axis::PovY) > +0.1f)) {
     if (_select == -1)
       _target = _select = _target % _items.size();
     else
@@ -124,9 +124,9 @@ bool  Game::AbstractMenuScene::update(float elapsed)
   }
 
   // Select menu with mouse, keyboard or joystick
-  if ((Game::Window::Instance().mouse().buttonReleased(Game::Window::MouseButton::Left) == true ||
-    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Space) == true ||
-    Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Enter) == true ||
+  if ((Game::Window::Instance().mouse().buttonReleased(Game::Window::Mouse::Button::Left) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Space) == true ||
+    Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Enter) == true ||
     Game::Window::Instance().joystick().buttonPressed(0, 0) == true)
     && _select != -1)
   {

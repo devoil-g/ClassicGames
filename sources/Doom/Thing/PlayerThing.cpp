@@ -482,14 +482,14 @@ void  DOOM::PlayerThing::updateKeyboardTurn(DOOM::Doom& doom, float elapsed)
   float horizontal = 0.f;
   float vertical = 0.f;
 
-  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Left) == true)  // Turn left
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::Left) == true)  // Turn left
     horizontal += 1.f;
-  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Right) == true) // Turn right
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::Right) == true) // Turn right
     horizontal -= 1.f;
 
-  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Up) == true)    // Turn up
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::Up) == true)    // Turn up
     vertical += 1.f;
-  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Down) == true)  // Turn down
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::Down) == true)  // Turn down
     vertical -= 1.f;
 
   // Apply rotation to player
@@ -501,17 +501,17 @@ void  DOOM::PlayerThing::updateKeyboardMove(DOOM::Doom & doom, float elapsed)
   // Move player
   Math::Vector<2> movement(0.f, 0.f);
 
-  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Z) == true) // Move forward
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::Z) == true) // Move forward
     movement += Math::Vector<2>(+1.f, 0.f);
-  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::S) == true) // Move backward
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::S) == true) // Move backward
     movement += Math::Vector<2>(-1.f, 0.f);
-  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Q) == true) // Strafe left
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::Q) == true) // Strafe left
     movement += Math::Vector<2>(0.f, -1.f);
-  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Key::D) == true) // Strafe right
+  if (Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::D) == true) // Strafe right
     movement += Math::Vector<2>(0.f, +1.f);
 
   // Handle running
-  _running = Game::Window::Instance().keyboard().keyDown(Game::Window::Key::LShift);
+  _running = Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::LShift);
 
   // Apply movement to player position
   updateMove(doom, elapsed, movement);
@@ -520,14 +520,14 @@ void  DOOM::PlayerThing::updateKeyboardMove(DOOM::Doom & doom, float elapsed)
 void  DOOM::PlayerThing::updateKeyboardWeapon(DOOM::Doom& doom, float elapsed)
 {
   // Weapon binding
-  static const std::list<std::pair<Game::Window::Key, std::list<DOOM::Enum::Weapon>>> bindings = {
-    { Game::Window::Key::Num1, { DOOM::Enum::Weapon::WeaponChainsaw, DOOM::Enum::Weapon::WeaponFist } },
-    { Game::Window::Key::Num2, { DOOM::Enum::Weapon::WeaponPistol } },
-    { Game::Window::Key::Num3, { DOOM::Enum::Weapon::WeaponSuperShotgun, DOOM::Enum::Weapon::WeaponShotgun } },
-    { Game::Window::Key::Num4, { DOOM::Enum::Weapon::WeaponChaingun } },
-    { Game::Window::Key::Num5, { DOOM::Enum::Weapon::WeaponRocketLauncher } },
-    { Game::Window::Key::Num6, { DOOM::Enum::Weapon::WeaponPlasmaGun } },
-    { Game::Window::Key::Num7, { DOOM::Enum::Weapon::WeaponBFG9000 } },
+  static const std::list<std::pair<Game::Window::Keyboard::Key, std::list<DOOM::Enum::Weapon>>> bindings = {
+    { Game::Window::Keyboard::Key::Num1, { DOOM::Enum::Weapon::WeaponChainsaw, DOOM::Enum::Weapon::WeaponFist } },
+    { Game::Window::Keyboard::Key::Num2, { DOOM::Enum::Weapon::WeaponPistol } },
+    { Game::Window::Keyboard::Key::Num3, { DOOM::Enum::Weapon::WeaponSuperShotgun, DOOM::Enum::Weapon::WeaponShotgun } },
+    { Game::Window::Keyboard::Key::Num4, { DOOM::Enum::Weapon::WeaponChaingun } },
+    { Game::Window::Keyboard::Key::Num5, { DOOM::Enum::Weapon::WeaponRocketLauncher } },
+    { Game::Window::Keyboard::Key::Num6, { DOOM::Enum::Weapon::WeaponPlasmaGun } },
+    { Game::Window::Keyboard::Key::Num7, { DOOM::Enum::Weapon::WeaponBFG9000 } },
   };
 
   // Attempt every bind
@@ -551,8 +551,8 @@ void  DOOM::PlayerThing::updateControllerTurn(DOOM::Doom & doom, float elapsed)
 {
   // Apply rotation to player
   updateTurn(doom, elapsed,
-    std::abs(Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::U)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::U) / 100.f : 0.f,
-    std::abs(Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::V)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::V) / 100.f : 0.f
+    std::abs(Game::Window::Instance().joystick().position(controller - 1, Game::Window::Joystick::Axis::U)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, Game::Window::Joystick::Axis::U) / 100.f : 0.f,
+    std::abs(Game::Window::Instance().joystick().position(controller - 1, Game::Window::Joystick::Axis::V)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, Game::Window::Joystick::Axis::V) / 100.f : 0.f
   );
 }
 
@@ -560,8 +560,8 @@ void  DOOM::PlayerThing::updateControllerMove(DOOM::Doom & doom, float elapsed)
 {
   // Move player
   Math::Vector<2> movement(
-    std::abs(Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::Y)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::Y) / 100.f : 0.f,
-    std::abs(Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::X)) / 100.f > 0.2f ? +Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::X) / 100.f : 0.f
+    std::abs(Game::Window::Instance().joystick().position(controller - 1, Game::Window::Joystick::Axis::Y)) / 100.f > 0.2f ? -Game::Window::Instance().joystick().position(controller - 1, Game::Window::Joystick::Axis::Y) / 100.f : 0.f,
+    std::abs(Game::Window::Instance().joystick().position(controller - 1, Game::Window::Joystick::Axis::X)) / 100.f > 0.2f ? +Game::Window::Instance().joystick().position(controller - 1, Game::Window::Joystick::Axis::X) / 100.f : 0.f
   );
   
   // Handle running (left stick click)
@@ -1316,25 +1316,25 @@ bool  DOOM::PlayerThing::control(DOOM::PlayerThing::Control action, bool pressed
   // Keyboard
   if (controller == 0) {
     if (action == DOOM::PlayerThing::Control::ControlAttack)
-      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Space) : Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Space);
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Space) : Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::Space);
     else if (action == DOOM::PlayerThing::Control::ControlUse)
-      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::E) : Game::Window::Instance().keyboard().keyDown(Game::Window::Key::E);
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::E) : Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::E);
     else if (action == DOOM::PlayerThing::Control::ControlRun)
-      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::LShift) : Game::Window::Instance().keyboard().keyDown(Game::Window::Key::LShift);
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::LShift) : Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::LShift);
     else if (action == DOOM::PlayerThing::Control::ControlNext)
       return false;
     else if (action == DOOM::PlayerThing::Control::ControlPrevious)
       return false;
     else if (action == DOOM::PlayerThing::Control::ControlAutomap)
-      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Tab) : Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Tab);
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Tab) : Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::Tab);
     else if (action == DOOM::PlayerThing::Control::ControlMode)
-      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::F) : Game::Window::Instance().keyboard().keyDown(Game::Window::Key::F);
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::F) : Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::F);
     else if (action == DOOM::PlayerThing::Control::ControlGrid)
-      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::G) : Game::Window::Instance().keyboard().keyDown(Game::Window::Key::G);
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::G) : Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::G);
     else if (action == DOOM::PlayerThing::Control::ControlZoom)
-      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Add) : Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Add);
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Add) : Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::Add);
     else if (action == DOOM::PlayerThing::Control::ControlUnzoom)
-      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Subtract) : Game::Window::Instance().keyboard().keyDown(Game::Window::Key::Subtract);
+      return (pressed == true) ? Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Subtract) : Game::Window::Instance().keyboard().keyDown(Game::Window::Keyboard::Key::Subtract);
     else
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
   }
@@ -1356,11 +1356,11 @@ bool  DOOM::PlayerThing::control(DOOM::PlayerThing::Control action, bool pressed
     else if (action == DOOM::PlayerThing::Control::ControlMode)
       return (pressed == true) ? Game::Window::Instance().joystick().buttonPressed(controller - 1, 3) : Game::Window::Instance().joystick().buttonDown(controller - 1, 3);
     else if (action == DOOM::PlayerThing::Control::ControlGrid)
-      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, Game::Window::JoystickAxis::PovX) > +0.1f : Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::PovX) != 0.f;
+      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, Game::Window::Joystick::Axis::PovX) > +0.1f : Game::Window::Instance().joystick().position(controller - 1, Game::Window::Joystick::Axis::PovX) != 0.f;
     else if (action == DOOM::PlayerThing::Control::ControlZoom)
-      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, Game::Window::JoystickAxis::PovY) > +0.1f : Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::PovY) > +0.1f;
+      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, Game::Window::Joystick::Axis::PovY) > +0.1f : Game::Window::Instance().joystick().position(controller - 1, Game::Window::Joystick::Axis::PovY) > +0.1f;
     else if (action == DOOM::PlayerThing::Control::ControlUnzoom)
-      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, Game::Window::JoystickAxis::PovY) < -0.1f : Game::Window::Instance().joystick().position(controller - 1, Game::Window::JoystickAxis::PovY) < -0.1f;
+      return (pressed == true) ? Game::Window::Instance().joystick().relative(controller - 1, Game::Window::Joystick::Axis::PovY) < -0.1f : Game::Window::Instance().joystick().position(controller - 1, Game::Window::Joystick::Axis::PovY) < -0.1f;
     else
       throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
   }

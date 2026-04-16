@@ -324,26 +324,26 @@ void  GBC::GameBoyColor::loadBindings()
   try {
     Game::JSON::Object json(Game::Config::ExecutablePath / "assets" / "gbc" / "config.json");
 
-    _bindings[GBC::GameBoyColor::Key::KeyDown] = (Game::Window::Key)json.get(L"bindings").object().get(L"down").number();
-    _bindings[GBC::GameBoyColor::Key::KeyUp] = (Game::Window::Key)json.get(L"bindings").object().get(L"up").number();
-    _bindings[GBC::GameBoyColor::Key::KeyLeft] = (Game::Window::Key)json.get(L"bindings").object().get(L"left").number();
-    _bindings[GBC::GameBoyColor::Key::KeyRight] = (Game::Window::Key)json.get(L"bindings").object().get(L"right").number();
-    _bindings[GBC::GameBoyColor::Key::KeyStart] = (Game::Window::Key)json.get(L"bindings").object().get(L"start").number();
-    _bindings[GBC::GameBoyColor::Key::KeySelect] = (Game::Window::Key)json.get(L"bindings").object().get(L"select").number();
-    _bindings[GBC::GameBoyColor::Key::KeyB] = (Game::Window::Key)json.get(L"bindings").object().get(L"b").number();
-    _bindings[GBC::GameBoyColor::Key::KeyA] = (Game::Window::Key)json.get(L"bindings").object().get(L"a").number();
+    _bindings[GBC::GameBoyColor::Key::KeyDown] = (Game::Window::Keyboard::Key)json.get(L"bindings").object().get(L"down").number();
+    _bindings[GBC::GameBoyColor::Key::KeyUp] = (Game::Window::Keyboard::Key)json.get(L"bindings").object().get(L"up").number();
+    _bindings[GBC::GameBoyColor::Key::KeyLeft] = (Game::Window::Keyboard::Key)json.get(L"bindings").object().get(L"left").number();
+    _bindings[GBC::GameBoyColor::Key::KeyRight] = (Game::Window::Keyboard::Key)json.get(L"bindings").object().get(L"right").number();
+    _bindings[GBC::GameBoyColor::Key::KeyStart] = (Game::Window::Keyboard::Key)json.get(L"bindings").object().get(L"start").number();
+    _bindings[GBC::GameBoyColor::Key::KeySelect] = (Game::Window::Keyboard::Key)json.get(L"bindings").object().get(L"select").number();
+    _bindings[GBC::GameBoyColor::Key::KeyB] = (Game::Window::Keyboard::Key)json.get(L"bindings").object().get(L"b").number();
+    _bindings[GBC::GameBoyColor::Key::KeyA] = (Game::Window::Keyboard::Key)json.get(L"bindings").object().get(L"a").number();
   }
 
   // Error, load default binding
   catch (const std::exception&) {
-    _bindings[GBC::GameBoyColor::Key::KeyDown] = Game::Window::Key::S;
-    _bindings[GBC::GameBoyColor::Key::KeyUp] = Game::Window::Key::Z;
-    _bindings[GBC::GameBoyColor::Key::KeyLeft] = Game::Window::Key::Q;
-    _bindings[GBC::GameBoyColor::Key::KeyRight] = Game::Window::Key::D;
-    _bindings[GBC::GameBoyColor::Key::KeyStart] = Game::Window::Key::E;
-    _bindings[GBC::GameBoyColor::Key::KeySelect] = Game::Window::Key::A;
-    _bindings[GBC::GameBoyColor::Key::KeyB] = Game::Window::Key::F;
-    _bindings[GBC::GameBoyColor::Key::KeyA] = Game::Window::Key::T;
+    _bindings[GBC::GameBoyColor::Key::KeyDown] = Game::Window::Keyboard::Key::S;
+    _bindings[GBC::GameBoyColor::Key::KeyUp] = Game::Window::Keyboard::Key::Z;
+    _bindings[GBC::GameBoyColor::Key::KeyLeft] = Game::Window::Keyboard::Key::Q;
+    _bindings[GBC::GameBoyColor::Key::KeyRight] = Game::Window::Keyboard::Key::D;
+    _bindings[GBC::GameBoyColor::Key::KeyStart] = Game::Window::Keyboard::Key::E;
+    _bindings[GBC::GameBoyColor::Key::KeySelect] = Game::Window::Keyboard::Key::A;
+    _bindings[GBC::GameBoyColor::Key::KeyB] = Game::Window::Keyboard::Key::F;
+    _bindings[GBC::GameBoyColor::Key::KeyA] = Game::Window::Keyboard::Key::T;
   }
 }
 
@@ -640,13 +640,13 @@ const GBC::GameBoyColor::Header& GBC::GameBoyColor::header() const
   return _header;
 }
 
-Game::Window::Key GBC::GameBoyColor::bind(GBC::GameBoyColor::Key key) const
+Game::Window::Keyboard::Key GBC::GameBoyColor::bind(GBC::GameBoyColor::Key key) const
 {
   // Get key binding
   return _bindings.at(key);
 }
 
-void  GBC::GameBoyColor::bind(GBC::GameBoyColor::Key key, Game::Window::Key bind)
+void  GBC::GameBoyColor::bind(GBC::GameBoyColor::Key key, Game::Window::Keyboard::Key bind)
 {
   // Bind a new key
   _bindings.at(key) = bind;

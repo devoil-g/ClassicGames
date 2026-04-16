@@ -86,7 +86,7 @@ bool  RPG::ClientScene::update(float elapsed)
   else
     _ecs.getSystem<RPG::ClientBoardSystem>().setCursor(cell);
 
-  if (Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Left) == true &&
+  if (Game::Window::Instance().mouse().buttonPressed(Game::Window::Mouse::Button::Left) == true &&
     entity == RPG::ECS::InvalidEntity &&
     cell != RPG::ECS::InvalidEntity &&
     controlled != RPG::ECS::InvalidEntity) {

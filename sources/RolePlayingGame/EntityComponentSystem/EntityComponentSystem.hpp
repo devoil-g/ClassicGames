@@ -42,16 +42,16 @@ namespace RPG
     using Entity = std::uint16_t;
 
     /** @brief Maximum number of entities that can exist simultaneously. */
-    static const Entity MaxEntities = std::numeric_limits<Entity>::max();
+    static constexpr Entity MaxEntities = std::numeric_limits<Entity>::max();
 
     /** @brief Sentinel value representing an invalid or null entity. */
-    static const Entity InvalidEntity = MaxEntities;
+    static constexpr Entity InvalidEntity = MaxEntities;
 
     /** @brief Unique identifier for a component type. */
     using ComponentType = std::uint8_t;
 
     /** @brief Maximum number of distinct component types supported. */
-    static const ComponentType MaxComponents = 32;
+    static constexpr ComponentType MaxComponents = 32;
 
     /**
      * @brief Bitmask representing which component types are attached to an entity.
@@ -80,9 +80,10 @@ namespace RPG
 
       std::set<Entity> _entities; ///< Entities currently tracked by this system.
 
-    public:
+    protected:
       RPG::EntityComponentSystem& ecs; ///< Reference to the owning ECS instance.
 
+    public:
       System() = delete;
 
       /**
@@ -178,7 +179,7 @@ namespace RPG
        * @param signature The new signature to assign.
        * @pre @p entity must be less than @c MaxEntities.
        */
-      void set(Entity entity, Signature signature)
+      void set(Entity entity, const Signature& signature)
       {
         assert(entity < MaxEntities && "Entity out of range.");
 
@@ -372,7 +373,7 @@ namespace RPG
         assert(_types.contains(index) == false && "Registering component type more than once.");
         assert(_types.size() < MaxComponents && "Too many component types.");
 
-		// Insert new type and array into manager
+        // Insert new type and array into manager
         _types.insert({ index, static_cast<ComponentType>(_types.size()) });
         _arrays.insert({ index, std::make_unique<ComponentArray<Component>>() });
       }
@@ -390,7 +391,7 @@ namespace RPG
 
         assert(_types.contains(index) == true && "Component not registered before use.");
 
-		// Return component type
+        // Return component type
         return _types.find(index)->second;
       }
 
@@ -402,9 +403,9 @@ namespace RPG
       template<typename Component>
       bool  has() const
       {
-		// Return whether type is registered
+        // Return whether type is registered
         return _types.contains(typeid(Component));
-	  }
+      }
 
       /**
        * @brief Adds a component to an entity by copy.
@@ -440,7 +441,7 @@ namespace RPG
       template<typename Component>
       void remove(Entity entity)
       {
-		// Remove entity from component's array
+        // Remove entity from component's array
         get<Component>().remove(entity);
       }
 
@@ -453,7 +454,7 @@ namespace RPG
       template<typename Component>
       Component& get(Entity entity)
       {
-		// Get component of entity
+        // Get component of entity
         return get<Component>().get(entity);
       }
 
@@ -483,7 +484,7 @@ namespace RPG
 
         assert(_types.contains(index) == true && "Component not registered before use.");
 
-		// Return component array of type
+        // Return component array of type
         return *static_cast<ComponentArray<Component>*>(_arrays.find(index)->second.get());
       }
 
@@ -569,7 +570,7 @@ namespace RPG
        * @pre The system type must not have been registered before.
        */
       template<typename NewSystem, typename ...Args>
-      NewSystem& add(Signature signature, EntityComponentSystem& ecs, Args&& ...args)
+      NewSystem& add(const Signature& signature, EntityComponentSystem& ecs, Args&& ...args)
       {
         std::type_index index = typeid(NewSystem);
 
@@ -598,7 +599,7 @@ namespace RPG
 
         assert(_systems.contains(index) == true && "System not registered.");
 
-		// Return system of type
+        // Return system of type
         return *static_cast<GetSystem*>(_systems.find(index)->second.system.get());
       }
 
@@ -628,7 +629,7 @@ namespace RPG
        * @param entity    The entity whose signature has changed.
        * @param signature The entity's new component signature.
        */
-      void  update(Entity entity, Signature signature)
+      void  update(Entity entity, const Signature& signature)
       {
         // Update entity signature in each system
         for (auto& [_, pair] : _systems)
@@ -663,7 +664,7 @@ namespace RPG
 
         assert(_systems.contains(index) == true && "System not registered.");
 
-		// Remove system from manager (automatically destroyed by unique_ptr)
+        // Remove system from manager (automatically destroyed by unique_ptr)
         _systems.erase(index);
       }
       
@@ -728,7 +729,7 @@ namespace RPG
     template<typename Component>
     void addComponent()
     {
-	  // Register new component type
+      // Register new component type
       _components.add<Component>();
     }
 
@@ -842,7 +843,7 @@ namespace RPG
      * @return A reference to the newly created system.
      */
     template<typename NewSystem, typename ...Args>
-    NewSystem& addSystem(Signature signature, Args&& ...args)
+    NewSystem& addSystem(const Signature& signature, Args&& ...args)
     {
       // Add new system
       return _systems.add<NewSystem>(signature, *this, std::forward<Args>(args)...);
@@ -900,7 +901,7 @@ namespace RPG
      * @return A @c Signature with one bit set per specified component type.
      */
     template<typename... Components>
-    Signature signature()
+    Signature signature() const
     {
       Signature signature;
 

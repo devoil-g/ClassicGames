@@ -87,8 +87,8 @@ bool  DOOM::TextDoomScene::updateSkip()
   for (const auto& player : _doom.level.players) {
     // Keyboard/mouse
     if (player.get().controller == 0) {
-      skip |= Game::Window::Instance().keyboard().keyPressed(Game::Window::Key::Space);
-      skip |= Game::Window::Instance().mouse().buttonPressed(Game::Window::MouseButton::Left);
+      skip |= Game::Window::Instance().keyboard().keyPressed(Game::Window::Keyboard::Key::Space);
+      skip |= Game::Window::Instance().mouse().buttonPressed(Game::Window::Mouse::Button::Left);
     }
 
     else {

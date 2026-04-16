@@ -10,8 +10,8 @@ void  RPG::WindowsManager::update(float elapsed)
   auto  screenMouse = screen.pixelToCoords(screen.mouse().position());
   bool  hover = true;
   bool  focus =
-    screen.mouse().buttonPressed(Game::Window::MouseButton::Left) == true ||
-    screen.mouse().buttonPressed(Game::Window::MouseButton::Right) == true;
+    screen.mouse().buttonPressed(Game::Window::Mouse::Button::Left) == true ||
+    screen.mouse().buttonPressed(Game::Window::Mouse::Button::Right) == true;
 
   // Unfocus every window
   if (focus == true) {
