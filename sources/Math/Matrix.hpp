@@ -44,8 +44,7 @@ namespace Math
     /** @brief Default constructor – zero-initializes every element. */
     Matrix() :
       _matrix()
-    {
-    }
+    {}
 
     /**
      * @brief Variadic constructor.

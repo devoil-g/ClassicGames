@@ -176,6 +176,12 @@ Game::JSON::Object::const_iterator  Game::JSON::Object::begin() const
   return _map.begin();
 }
 
+Game::JSON::Object::const_iterator  Game::JSON::Object::cbegin() const
+{
+  // Returns const begin iterator
+  return _map.begin();
+}
+
 Game::JSON::Object::iterator  Game::JSON::Object::end()
 {
   // Returns end iterator
@@ -183,6 +189,12 @@ Game::JSON::Object::iterator  Game::JSON::Object::end()
 }
 
 Game::JSON::Object::const_iterator  Game::JSON::Object::end() const
+{
+  // Returns const end iterator
+  return _map.end();
+}
+
+Game::JSON::Object::const_iterator  Game::JSON::Object::cend() const
 {
   // Returns const end iterator
   return _map.end();

@@ -394,7 +394,7 @@ void  Game::Window::draw(const sf::Texture& texture, float ratio, DrawMode mode)
     scaleX = std::min((float)windowSize.x / (float)textureSize.x, (float)windowSize.y / ((float)textureSize.y * ratio));
     scaleY = scaleX * ratio;
     break;
-  case DrawMode::Strech:
+  case DrawMode::Stretch:
     scaleX = (float)windowSize.x / (float)textureSize.x;
     scaleY = (float)windowSize.y / (float)textureSize.y;
     break;

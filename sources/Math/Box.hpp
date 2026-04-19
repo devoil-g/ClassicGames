@@ -57,8 +57,7 @@ namespace Math
     Box(const Math::Vector<Dimension, Type>& position, const Math::Vector<Dimension, Type>& size) :
       position(position),
       size(size)
-    {
-    }
+    {}
 
     /**
      * @brief Constructs a box from a JSON object.
@@ -70,8 +69,7 @@ namespace Math
     Box(const Game::JSON::Object& json) :
       position(json.get(L"position").array()),
       size(json.get(L"size").array())
-    {
-    }
+    {}
 
     /** @brief Copy-assignment operator (defaulted). */
     Box& operator=(const Box&) = default;
