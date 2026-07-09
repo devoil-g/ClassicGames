@@ -337,7 +337,7 @@ FIND_PACKAGE(Threads REQUIRED)
 # Import SFML library
 INCLUDE(FetchContent)
 SET(BUILD_SHARED_LIBS OFF)
-FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TAG 3.0.2)
+FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TAG 3.1.0)
 FetchContent_MakeAvailable(SFML)
 
 # Set includes directories
