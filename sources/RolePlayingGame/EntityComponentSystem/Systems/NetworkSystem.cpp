@@ -187,6 +187,8 @@ void  RPG::ServerNetworkSystem::onReceive(std::size_t id, const Game::JSON::Obje
 
 void  RPG::ServerNetworkSystem::onTick()
 {
+  assert(getTickrate() > 0 && "Unexpected tickrate.");
+
   // Execute actions
   ecs.getSystem<RPG::ServerActionSystem>().execute(1.f / getTickrate());
 }
