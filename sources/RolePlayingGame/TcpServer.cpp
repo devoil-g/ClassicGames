@@ -111,13 +111,17 @@ void  RPG::TcpServer::loop()
   // Add TCP listener and UDP socket to selector
   selector.add(_listener);
 
+  // TODO: add TLS support
+
+  // Run server loop
   while (_running == true)
   {
     // Handle game tick
-    if (_tickrate != 0)
-      for (elapsed += clock.restart().asSeconds(); elapsed >= 1.f / RPG::TcpServer::DefaultTickrate; elapsed -= 1.f / RPG::TcpServer::DefaultTickrate)
-        onTick();
-    else
+    for (elapsed += clock.restart().asSeconds(); _tickrate > 0 && elapsed >= 1.f / _tickrate; elapsed -= 1.f / _tickrate)
+      onTick();
+
+    // Reset elapsed time when not tick is waited
+    if (_tickrate == 0)
       elapsed = 0.f;
 
     // Monitor sockets before next tick
