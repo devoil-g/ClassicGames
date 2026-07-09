@@ -3,6 +3,7 @@
 #include <array>
 #include <functional>
 #include <memory>
+#include <optional>
 #include <queue>
 #include <string>
 
@@ -14,15 +15,13 @@ namespace RPG
   {
   public:
     enum class Mode {
-      Wait,     // Waiting before taking command
-      Command,  // Casting an action
+      Command,  // Start an action
       Execute   // Executing an action
     };
 
     static constexpr std::array<std::wstring_view, 3> ModeNames = {
-      L"wait",
       L"command",
-      L"execute"
+      L"action"
     };
 
     static Mode         StringToMode(const std::wstring& string);
@@ -36,8 +35,9 @@ namespace RPG
     ActionComponent&  operator=(const ActionComponent&) = default;
     ActionComponent&  operator=(ActionComponent&&) = default;
 
-    Mode  mode;   // Current mode
-    float wait;   // Wait time before action
+    Mode  mode;     // Current mode
+    float active;   // Wait time (shown in action bar, decrease last)
+    float passive;  // Wait time (not shown in action bar, decrease first)
   };
 
   class ServerActionComponent : public ActionComponent
@@ -46,7 +46,7 @@ namespace RPG
     class Action
     {
     public:
-      RPG::ECS&               ecs;  // Current entity component system
+      RPG::ECS& ecs;  // Current entity component system
       const RPG::ECS::Entity  self; // Entity of action
 
       Action() = delete;
@@ -55,9 +55,8 @@ namespace RPG
       Action(Action&&) = delete;
       virtual ~Action() = default;
 
-      virtual void  atWait() = 0;     // Take action after "Wait" time
       virtual void  atCommand() = 0;  // Take action after "Command" time
-      virtual void  atExecute() = 0;  // Take action after "Execute" time
+      virtual void  atAction() = 0;   // Take action after "Action" time
 
       virtual void  interrupt() = 0;  // Request action to stop
     };
@@ -70,8 +69,8 @@ namespace RPG
     ServerActionComponent& operator=(const ServerActionComponent&) = default;
     ServerActionComponent& operator=(ServerActionComponent&&) = default;
 
-    std::unique_ptr<Action> action; // Action to execute, null if no action
-    std::unique_ptr<Action> next;   // Next action to execute, null if no action
+    std::unique_ptr<Action>                                 action; // Action to execute, null if no action
+    std::optional<std::function<std::unique_ptr<Action>()>> next;   // Builder of next action
   };
 
   class ClientActionComponent : public ActionComponent
@@ -104,35 +103,4 @@ namespace RPG
     std::unique_ptr<Action>                               action; // Current action
     std::queue<std::function<std::unique_ptr<Action>()>>  next;   // Builders of next actions
   };
-
-  /*
-  class MoveComponent
-  {
-  public:
-    Math::Vector<3, float>  position;   // Target position
-    float                   remaining;  // Remaining time
-
-    MoveComponent();
-    MoveComponent(const MoveComponent&) = default;
-    MoveComponent(MoveComponent&&) = default;
-    ~MoveComponent() = default;
-
-    MoveComponent&  operator=(const MoveComponent&) = default;
-    MoveComponent&  operator=(MoveComponent&&) = default;
-  };
-
-  class CoordinatesComponent
-  {
-  public:
-    Math::Vector<2, int>  coordinates;  // Coordinates of entity in level
-
-    CoordinatesComponent();
-    CoordinatesComponent(const CoordinatesComponent&) = default;
-    CoordinatesComponent(CoordinatesComponent&&) = default;
-    ~CoordinatesComponent() = default;
-
-    CoordinatesComponent& operator=(const CoordinatesComponent&) = default;
-    CoordinatesComponent& operator=(CoordinatesComponent&&) = default;
-  };
-  */
 }

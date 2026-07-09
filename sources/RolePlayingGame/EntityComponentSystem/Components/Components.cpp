@@ -21,8 +21,9 @@ std::wstring  RPG::ActionComponent::ModeToString(RPG::ActionComponent::Mode mode
 }
 
 RPG::ActionComponent::ActionComponent() :
-  mode(Mode::Wait),
-  wait(0.f)
+  mode(Mode::Command),
+  active(0.f),
+  passive(0.f)
 {}
 
 RPG::ServerActionComponent::ServerActionComponent() :
