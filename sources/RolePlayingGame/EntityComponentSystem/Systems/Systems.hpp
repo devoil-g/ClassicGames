@@ -60,7 +60,7 @@ namespace RPG
   public:
     static constexpr float  DefaultTimeout = RPG::TcpServer::DefaultTimeout;
     static constexpr float  DefaultBufferingMin = 2.f;
-    static constexpr float  DefaultBufferingMax = 3.f + 10.f;
+    static constexpr float  DefaultBufferingMax = 3.f;
 
   private:
     float _clock;         // Current local clock of actions
