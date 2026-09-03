@@ -96,6 +96,11 @@ void  RPG::ServerNetworkSystem::onConnect(std::size_t id, float elapsed)
   json.set(L"actions", ecs.getSystem<RPG::ServerActionSystem>().jsonActions());
   send(id, { L"action", L"load", L"entities" }, json);
 
+  // Send network timeout
+  json.clear();
+  json.set(L"timeout", (double)getTimeout());
+  send(id, { L"action", L"timeout" }, json);
+
   Game::JSON::Object  messageConnect;
 
   // Update connect to every played

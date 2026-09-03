@@ -105,6 +105,7 @@ namespace RPG
         });
     }
 
+    void  handleTimeout(const Game::JSON::Object& json); // Handle a move action
     void  handleClock(const Game::JSON::Object& json); // Handle a move action
     void  handleEntity(const Game::JSON::Object& json); // Handle a move action
     void  handleLoad(const Game::JSON::Object& json); // Handle a move action

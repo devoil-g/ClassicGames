@@ -276,8 +276,12 @@ void  RPG::ClientActionSystem::handlePacket(const Game::JSON::Object& json)
 {
   const auto& type = json.get(L"type").array().get(1).string();
 
+  // Timeout update
+  if (type == L"timeout")
+    handleTimeout(json);
+
   // Clock update
-  if (type == L"clock")
+  else if (type == L"clock")
     handleClock(json);
 
   // New entity action
@@ -291,6 +295,12 @@ void  RPG::ClientActionSystem::handlePacket(const Game::JSON::Object& json)
   // Invalid action
   else
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+}
+
+void  RPG::ClientActionSystem::handleTimeout(const Game::JSON::Object& json)
+{
+  // Update local timeout
+  _timeout = (float)json.get(L"timeout").number();
 }
 
 void  RPG::ClientActionSystem::handleClock(const Game::JSON::Object& json)
