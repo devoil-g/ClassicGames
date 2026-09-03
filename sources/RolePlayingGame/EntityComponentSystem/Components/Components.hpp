@@ -8,45 +8,17 @@
 #include <string>
 
 #include "RolePlayingGame/EntityComponentSystem/EntityComponentSystem.hpp"
+#include "RolePlayingGame/Types.hpp"
 
 namespace RPG
 {
-  class ActionComponent
-  {
-  public:
-    enum class Mode {
-      Command,  // Start an action
-      Execute   // Executing an action
-    };
-
-    static constexpr std::array<std::wstring_view, 3> ModeNames = {
-      L"command",
-      L"action"
-    };
-
-    static Mode         StringToMode(const std::wstring& string);
-    static std::wstring ModeToString(Mode mode);
-
-    ActionComponent();
-    ActionComponent(const ActionComponent&) = default;
-    ActionComponent(ActionComponent&&) = default;
-    ~ActionComponent() = default;
-
-    ActionComponent&  operator=(const ActionComponent&) = default;
-    ActionComponent&  operator=(ActionComponent&&) = default;
-
-    Mode  mode;     // Current mode
-    float active;   // Wait time (shown in action bar, decrease last)
-    float passive;  // Wait time (not shown in action bar, decrease first)
-  };
-
-  class ServerActionComponent : public ActionComponent
+  class ServerActionComponent
   {
   public:
     class Action
     {
     public:
-      RPG::ECS& ecs;  // Current entity component system
+      RPG::ECS&               ecs;  // Current entity component system
       const RPG::ECS::Entity  self; // Entity of action
 
       Action() = delete;
@@ -55,9 +27,13 @@ namespace RPG
       Action(Action&&) = delete;
       virtual ~Action() = default;
 
-      virtual void  atCommand() = 0;  // Take action after "Command" time
-      virtual void  atAction() = 0;   // Take action after "Action" time
+      Action& operator=(const Action&) = delete;
+      Action& operator=(Action&&) = delete;
 
+      virtual Game::JSON::Object  json() const = 0; // Serialize action to JSON
+
+      virtual void  execute() = 0;    // Execute action
+      virtual void  refresh() = 0;    // Refresh action properties (ex: recompute speed)
       virtual void  interrupt() = 0;  // Request action to stop
     };
 
@@ -69,11 +45,16 @@ namespace RPG
     ServerActionComponent& operator=(const ServerActionComponent&) = default;
     ServerActionComponent& operator=(ServerActionComponent&&) = default;
 
+    RPG::ActionMode mode;       // Action mode
+    float           start, end; // Position in action bar at start/end of the action [0; +1]
+    float           progress;   // Progress of current action [0; +1]
+    float           speed;      // Progress speed
+
     std::unique_ptr<Action>                                 action; // Action to execute, null if no action
     std::optional<std::function<std::unique_ptr<Action>()>> next;   // Builder of next action
   };
 
-  class ClientActionComponent : public ActionComponent
+  class ClientActionComponent
   {
   public:
     class Action
@@ -81,15 +62,14 @@ namespace RPG
     public:
       RPG::ECS&               ecs;    // Current entity component system
       const RPG::ECS::Entity  self;   // Entity of action
-      const std::size_t       index;  // Index of action
 
       Action() = delete;
-      Action(RPG::ECS& ecs, RPG::ECS::Entity self, std::size_t index);
+      Action(RPG::ECS& ecs, RPG::ECS::Entity self);
       Action(const Action&) = delete;
       Action(Action&&) = delete;
       virtual ~Action() = default;
 
-      virtual float update(float elapsed) = 0;  // Update action, return not consummed elapsed time
+      virtual void  update(float elapsed) = 0;  // Update action
     };
 
     ClientActionComponent();
@@ -100,7 +80,28 @@ namespace RPG
     ClientActionComponent& operator=(const ClientActionComponent&) = default;
     ClientActionComponent& operator=(ClientActionComponent&&) = default;
 
-    std::unique_ptr<Action>                               action; // Current action
-    std::queue<std::function<std::unique_ptr<Action>()>>  next;   // Builders of next actions
+    RPG::ActionMode mode;       // Action mode
+    float           start, end; // Position in action bar at start/end of the action [0; +1]
+    float           progress;   // Progress of current action [0; +1]
+    float           speed;
+
+    struct NextAction
+    {
+    public:
+      float                                     clock;     // Time at which the action begin
+      std::function<std::unique_ptr<Action>()>  builder;  // Action builder
+
+      NextAction() = delete;
+      NextAction(float clock, std::function<std::unique_ptr<Action>()>&& builder);
+      NextAction(const NextAction&) = delete;
+      NextAction(NextAction&&) = delete;
+      ~NextAction() = default;
+
+      NextAction& operator=(const NextAction&) = delete;
+      NextAction& operator=(NextAction&&) = delete;
+    };
+
+    std::unique_ptr<Action> action; // Current action
+    std::queue<NextAction>  next;   // Next actions
   };
 }

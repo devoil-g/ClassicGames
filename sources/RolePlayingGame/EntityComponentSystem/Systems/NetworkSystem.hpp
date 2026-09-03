@@ -58,12 +58,10 @@ namespace RPG
   class ServerNetworkSystem : public RPG::NetworkSystem, public RPG::TcpServer
   {
   private:
-    std::size_t _tick;  // Tick count
-
-    virtual void  onConnect(std::size_t id) override;                                 // Called when a new TCP client connect
-    virtual void  onDisconnect(std::size_t id) override;                              // Called when a TCP client disconnect
-    virtual void  onReceive(std::size_t id, const Game::JSON::Object& json) override; // Called when a packet is received from TCP client 
-    virtual void  onTick() override;                                                  // Called once per tick
+    virtual void  onConnect(std::size_t id, float elapsed) override;                                  // Called when a new TCP client connect
+    virtual void  onDisconnect(std::size_t id, float elapsed) override;                               // Called when a TCP client disconnect
+    virtual void  onReceive(std::size_t id, float elapsed, const Game::JSON::Object& json) override;  // Called when a packet is received from TCP client 
+    virtual void  onTimeout(float elapsed) override;                                                  // Called once per tick
 
     void  header(Game::JSON::Object& json, const std::vector<std::wstring>& type) const;  // Add type and tick to packet
 

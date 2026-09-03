@@ -7,6 +7,19 @@
 
 namespace RPG
 {
+  enum class ActionMode {
+    Command,  // Start an action
+    Execute   // Executing an action
+  };
+
+  static constexpr std::array<std::wstring_view, 3> ActionModeNames = {
+    L"command",
+    L"action"
+  };
+
+  std::wstring    ActionModeToString(RPG::ActionMode actionMode); // Action mode to string
+  RPG::ActionMode StringToActionMode(const std::wstring& name);   // String to Action mode
+
   enum Direction : std::uint8_t
   {
     DirectionNorth, DirN = DirectionNorth,          // North

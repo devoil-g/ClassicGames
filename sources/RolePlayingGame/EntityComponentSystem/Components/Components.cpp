@@ -3,31 +3,12 @@
 
 #include "RolePlayingGame/EntityComponentSystem/Components/Components.hpp"
 
-RPG::ActionComponent::Mode  RPG::ActionComponent::StringToMode(const std::wstring& string)
-{
-  auto pos = std::distance(ModeNames.begin(), std::find(ModeNames.begin(), ModeNames.end(), string));
-
-  // Check range
-  if (pos >= ModeNames.size())
-    throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
-  else
-    return static_cast<Mode>(pos);
-}
-
-std::wstring  RPG::ActionComponent::ModeToString(RPG::ActionComponent::Mode mode)
-{
-  // Check range
-  return std::wstring(ModeNames.at(static_cast<unsigned int>(mode)));
-}
-
-RPG::ActionComponent::ActionComponent() :
-  mode(Mode::Command),
-  active(0.f),
-  passive(0.f)
-{}
-
 RPG::ServerActionComponent::ServerActionComponent() :
-  ActionComponent(),
+  mode(RPG::ActionMode::Command),
+  start(1.f),
+  end(1.f),
+  progress(1.f),
+  speed(0.f),
   action(),
   next()
 {}
@@ -38,12 +19,21 @@ RPG::ServerActionComponent::Action::Action(RPG::ECS& ecs, RPG::ECS::Entity self)
 {}
 
 RPG::ClientActionComponent::ClientActionComponent() :
+  mode(RPG::ActionMode::Command),
+  start(1.f),
+  end(1.f),
+  progress(1.f),
+  speed(0.f),
   action(),
   next()
 {}
 
-RPG::ClientActionComponent::Action::Action(RPG::ECS& ecs, RPG::ECS::Entity self, std::size_t index) :
+RPG::ClientActionComponent::Action::Action(RPG::ECS& ecs, RPG::ECS::Entity self) :
   ecs(ecs),
-  self(self),
-  index(index)
+  self(self)
+{}
+
+RPG::ClientActionComponent::NextAction::NextAction(float clock, std::function<std::unique_ptr<Action>()>&& builder) :
+  clock(clock),
+  builder(std::move(builder))
 {}

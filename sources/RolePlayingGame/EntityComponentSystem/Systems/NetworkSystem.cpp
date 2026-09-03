@@ -63,12 +63,14 @@ Game::JSON::Object  RPG::NetworkSystem::Player::json() const
 
 RPG::ServerNetworkSystem::ServerNetworkSystem(RPG::ECS& ecs, std::uint16_t port, std::uint32_t address) :
   RPG::NetworkSystem(ecs),
-  RPG::TcpServer(port, address),
-  _tick(0)
+  RPG::TcpServer(port, address)
 {}
 
-void  RPG::ServerNetworkSystem::onConnect(std::size_t id)
+void  RPG::ServerNetworkSystem::onConnect(std::size_t id, float elapsed)
 {
+  // Update game before action
+  onTimeout(elapsed);
+
   assert(id != RPG::NetworkComponent::NoController && "Invalid ID used in RPG::ServerNetworkSystem::onConnect.");
   assert(_players.contains(id) == false && "ID already registered in RPG::ServerNetworkSystem::onConnect.");
 
@@ -88,6 +90,11 @@ void  RPG::ServerNetworkSystem::onConnect(std::size_t id)
   json.clear();
   json.set(L"entities", ecs.getSystem<RPG::ServerEntitySystem>().json());
   send(id, { L"entity", L"load", L"entities" }, json);
+
+  // Send actions
+  json.clear();
+  json.set(L"actions", ecs.getSystem<RPG::ServerActionSystem>().jsonActions());
+  send(id, { L"action", L"load", L"entities" }, json);
 
   Game::JSON::Object  messageConnect;
 
@@ -130,8 +137,11 @@ void  RPG::ServerNetworkSystem::onConnect(std::size_t id)
   std::cerr << "[DEBUG::Server] Client #" << id << " connected." << std::endl;
 }
 
-void  RPG::ServerNetworkSystem::onDisconnect(std::size_t id)
+void  RPG::ServerNetworkSystem::onDisconnect(std::size_t id, float elapsed)
 {
+  // Update game before action
+  onTimeout(elapsed);
+
   assert(id != RPG::NetworkComponent::NoController && "Invalid ID used in RPG::ServerNetworkSystem::onDisconnect.");
   assert(_players.contains(id) == true && "ID not registered in RPG::ServerNetworkSystem::onDisconnect.");
 
@@ -169,10 +179,13 @@ void  RPG::ServerNetworkSystem::onDisconnect(std::size_t id)
   std::cerr << "[DEBUG::Server] Client #" << id << " disconnected." << std::endl;
 }
 
-void  RPG::ServerNetworkSystem::onReceive(std::size_t id, const Game::JSON::Object& json)
+void  RPG::ServerNetworkSystem::onReceive(std::size_t id, float elapsed, const Game::JSON::Object& json)
 {
-  // TODO
+  // TODO: remove this
   std::wcout << "[DEBUG::Server] Received (id: " << id << ", type: " << json.get(L"type").array() << ", size: " << json.stringify().size() << "): " << json << std::endl;
+
+  // Update game before action
+  onTimeout(elapsed);
 
   const auto& type = json.get(L"type").array().get(0).string();
 
@@ -185,12 +198,10 @@ void  RPG::ServerNetworkSystem::onReceive(std::size_t id, const Game::JSON::Obje
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
 }
 
-void  RPG::ServerNetworkSystem::onTick()
+void  RPG::ServerNetworkSystem::onTimeout(float elapsed)
 {
-  assert(getTickrate() > 0 && "Unexpected tickrate.");
-
   // Execute actions
-  ecs.getSystem<RPG::ServerActionSystem>().execute(1.f / getTickrate());
+  ecs.getSystem<RPG::ServerActionSystem>().execute(elapsed);
 }
 
 void  RPG::ServerNetworkSystem::header(Game::JSON::Object& json, const std::vector<std::wstring>& type) const
@@ -202,9 +213,6 @@ void  RPG::ServerNetworkSystem::header(Game::JSON::Object& json, const std::vect
   for (const auto& field : type)
     typeArray.push(field);
   json.set(L"type", std::move(typeArray));
-
-  // Serialize tick
-  json.set(L"tick", (double)_tick);
 }
 
 void  RPG::ServerNetworkSystem::send(std::size_t id, const std::vector<std::wstring>& type, Game::JSON::Object& json)
@@ -262,7 +270,7 @@ void  RPG::ClientNetworkSystem::receive()
     try {
       // TODO: remove this
       auto jsonStr = json.stringify();
-      std::wcout << "Client received (tick: " << (std::size_t)json.get(L"tick").number() << ", type: " << json.get(L"type").array() << ", size: " << jsonStr.length() << "): ";
+      std::wcout << "Client received (type: " << json.get(L"type").array() << ", size: " << jsonStr.length() << "): ";
       std::cout << Game::Utilities::Convert(jsonStr) << std::endl;
 
       const auto& type = json.get(L"type").array().get(0).string();

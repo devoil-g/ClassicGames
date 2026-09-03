@@ -11,13 +11,16 @@ RPG::TcpServer::TcpServer(std::uint16_t port, std::uint32_t address) :
   _thread(),
   _listener(),
   _address(address),
-  _tickrate(DefaultTickrate),
+  _timeout(DefaultTimeout),
   _running(false),
   _clients()
 {
   // Start TCP listener
   if (_listener.listen(port, sf::IpAddress(address)) != sf::Socket::Status::Done)
     throw std::runtime_error((std::string(__FILE__) + ": l." + std::to_string(__LINE__)).c_str());
+
+  // Non-blocking socket
+  _listener.setBlocking(false);
 }
 
 RPG::TcpServer::~TcpServer()
@@ -27,16 +30,16 @@ RPG::TcpServer::~TcpServer()
   wait();
 }
 
-void  RPG::TcpServer::setTickrate(unsigned int tickrate)
+void  RPG::TcpServer::setTimeout(unsigned int timeout)
 {
-  // Set tickrate of server
-  _tickrate = tickrate;
+  // Set timeout of server
+  _timeout = timeout;
 }
 
-unsigned int  RPG::TcpServer::getTickrate() const
+float RPG::TcpServer::getTimeout() const
 {
-  // Get current tickrate of server
-  return _tickrate;
+  // Get current timeout of server
+  return _timeout;
 }
 
 std::uint16_t RPG::TcpServer::getPort() const
@@ -102,87 +105,137 @@ void  RPG::TcpServer::stop()
   _running = false;
 }
 
+void  RPG::TcpServer::selected(RPG::TcpServer::TcpClient& client, sf::SocketSelector::ReadinessType type)
+{
+  // Read from socket
+  if (type & sf::SocketSelector::Receive) {
+    auto status = client.socket.receive(client.received);
+
+    // Full packet received
+    if (status == sf::Socket::Status::Done) {
+      try {
+        std::wstring raw;
+
+        client.received >> raw;
+        client.received.clear();
+        onReceive(client.id, _clock.restart().asSeconds(), Game::JSON::Object(raw));
+      }
+      catch (const std::exception& error) {
+        std::cerr << "[RPG::TcpServer] Warning: invalid JSON from client #" << client.id << "." << std::endl;
+        client.kick = true;
+        client.sent = {};
+      }
+    }
+
+    // Does nothing, wait for the complete packet
+    else if (status == sf::Socket::Status::Partial) {}
+
+    // Handle errors
+    else {
+      std::cerr << "[RPG::TcpServer] Warning: read socket error (" << (int)status << "#) from client #" << client.id << "." << std::endl;
+      client.kick = true;
+      client.sent = {};
+    }
+  }
+
+  // Write to socket
+  if ((type & sf::SocketSelector::Send) && client.sent.empty() == false) {
+    auto status = client.socket.send(client.sent.front());
+
+    // Send completed, removed packet
+    if (status == sf::Socket::Status::Done)
+      client.sent.pop();
+
+    // Incomplete, wait for full sending
+    else if (status == sf::Socket::Status::Partial) {}
+
+    // Handle errors
+    else {
+      std::cerr << "[RPG::TcpServer] Warning: write socket error (" << (int)status << "#) from client #" << client.id << "." << std::endl;
+      client.kick = true;
+      client.sent = {};
+    }
+  }
+
+  // Refresh client callbacks
+  refresh(client);
+}
+
+void  RPG::TcpServer::refresh(RPG::TcpServer::TcpClient& client)
+{
+  // Refresh client callback
+  _selector.add(client.socket,
+    ((client.kick == false) ? sf::SocketSelector::Receive : 0) | ((client.sent.empty() == false) ? sf::SocketSelector::Send : 0),
+    [this, &client](auto type) {
+      selected(client, type);
+    });
+}
+
 void  RPG::TcpServer::loop()
 {
-  sf::SocketSelector  selector;
-  sf::Clock           clock;
-  float               elapsed = 0.f;
+  // Reset clock
+  _clock.restart();
 
   // Add TCP listener and UDP socket to selector
-  selector.add(_listener);
+  _selector.add(_listener, sf::SocketSelector::Receive,
+    [&](auto readinessType)
+    {
+      assert(readinessType == sf::SocketSelector::Receive && "Invalid readiness type.");
+
+      sf::Socket::Status status;
+
+      // Add new client
+      _clients.emplace_back();
+      auto& client = _clients.back();
+      status = _listener.accept(client.socket);
+
+      // Check for error
+      if (status == sf::Socket::Status::Done)
+      {
+        // Non-blocking socket
+        client.socket.setBlocking(false);
+
+        // Register new client
+        refresh(client);
+
+        // Trigger connect event
+        onConnect(_clients.back().id, _clock.restart().asSeconds());
+      }
+      else {
+        _clients.pop_back(); _clients.pop_back();
+        std::cerr << "[RPG::TcpServer] Warning: failed to accept a new client (error #" << (int)status << ")." << std::endl;
+      }
+    });
 
   // TODO: add TLS support
 
   // Run server loop
   while (_running == true)
   {
-    // Handle game tick
-    for (elapsed += clock.restart().asSeconds(); _tickrate > 0 && elapsed >= 1.f / _tickrate; elapsed -= 1.f / _tickrate)
-      onTick();
+    // Wait for events
+    if (_selector.wait(sf::seconds(_timeout)) == true)
+      _selector.dispatchReadyCallbacks();
 
-    // Reset elapsed time when not tick is waited
-    if (_tickrate == 0)
-      elapsed = 0.f;
+    // No event, timeout!
+    else
+      onTimeout(_clock.restart().asSeconds());
 
-    // Monitor sockets before next tick
-    if (selector.wait((_tickrate == 0) ? (sf::Time::Zero) : (sf::seconds((1.f / _tickrate) - elapsed))) == false)
-      continue;
-
-    // Handle new TCP client
-    if (selector.isReady(_listener) == true)
-    {
-      // Add new client
-      _clients.emplace_back();
-      if (_listener.accept(_clients.back().socket) == sf::Socket::Status::Done) {
-        selector.add(_clients.back().socket);
-        onConnect(_clients.back().id);
-      }
-      
-      // Cancel in case of error
-      else
-        _clients.pop_back();
-    }
-
-    // Handle clients
-    for (auto& client : _clients) {
-      if (client.kick == false && selector.isReady(client.socket) == true) {
-        sf::Packet          packet;
-        sf::Socket::Status  status = client.socket.receive(packet);
-
-        if (status == sf::Socket::Status::Done) {
-          try {
-            std::wstring raw;
-
-            packet >> raw;
-            onReceive(client.id, Game::JSON::Object(raw));
-          }
-          catch (const std::exception&) {
-            client.kick = true;
-          }
-        }
-        else
-          client.kick = true;
-      }
-    }
-
-    // Remove clients
+    // Remove kicked clients
     for (auto it = _clients.begin(); it != _clients.end();) {
-      if (it->kick == true) {
-        onDisconnect(it->id);
-        selector.remove(it->socket);
+      if (it->kick == true && it->sent.empty() == true) {
+        onDisconnect(it->id, _clock.restart().asSeconds());
+        _selector.remove(it->socket);
         it = _clients.erase(it);
       }
-      else
+      else {
         it++;
+      }
     }
   }
 }
 
 void  RPG::TcpServer::send(std::size_t id, const Game::JSON::Object& json)
 {
-  // NOTE: blocking send, SFML does not provide a socket selector for write
-  // TODO: find another network library
-
   auto  it = std::find_if(_clients.begin(), _clients.end(), [id](const auto& client) { return client.id == id; });
 
   // Client does not exist
@@ -198,9 +251,11 @@ void  RPG::TcpServer::send(std::size_t id, const Game::JSON::Object& json)
   // Serialize JSON
   packet << json.stringify();
 
-  // Kick client in case of error
-  if (it->socket.send(packet) != sf::Socket::Status::Done)
-    it->kick = true;
+  // Add packet to sent queue
+  it->sent.push(std::move(packet));
+
+  // Refresh client flags
+  refresh(*it);
 }
 
 void  RPG::TcpServer::broadcast(const Game::JSON::Object& json)
@@ -217,9 +272,11 @@ void  RPG::TcpServer::broadcast(const Game::JSON::Object& json)
     if (client.kick == true)
       continue;
 
-    // Kick client in case of error
-    if (client.socket.send(packet) != sf::Socket::Status::Done)
-      client.kick = true;
+    // Add packet to sent queue
+    client.sent.push(packet);
+
+    // Refresh client flags
+    refresh(client);
   }
 }
 
@@ -238,7 +295,9 @@ void  RPG::TcpServer::kick(std::size_t id)
 RPG::TcpServer::TcpClient::TcpClient() :
   socket(),
   id(),
-  kick(false)
+  kick(false),
+  received(),
+  sent()
 {
   static std::size_t  idGenerator = 0;
 

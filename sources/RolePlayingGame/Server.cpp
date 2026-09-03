@@ -50,9 +50,7 @@ RPG::Server::Server(const std::filesystem::path& config, std::uint16_t port, std
   // TODO: remove this
   sf::IpAddress net_address(0);
 
-  try {
-    net_address = sf::IpAddress::getPublicAddress().value_or(sf::IpAddress(0));
-  }
+  try { net_address = sf::IpAddress::getPublicAddress().value_or(sf::IpAddress(0)); }
   catch (const std::exception&) {}
   std::cout << "[RPG::Server] Server started: " << net_address << ":" << _ecs.getSystem<RPG::ServerNetworkSystem>().getPort() << "." << std::endl;
 
