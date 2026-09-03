@@ -337,7 +337,7 @@ FIND_PACKAGE(Threads REQUIRED)
 # Import SFML library
 INCLUDE(FetchContent)
 SET(BUILD_SHARED_LIBS OFF)
-FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TAG 3.1.0)
+FetchContent_Declare(SFML GIT_REPOSITORY https://github.com/SFML/SFML.git GIT_TAG 3.1.0 GIT_SHALLOW ON SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
 # Set includes directories
@@ -345,10 +345,10 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/sources/)
 
 # Generate executables
 ADD_EXECUTABLE(Game ${GAME_SRCS} ${GAME_RSRC})
-TARGET_LINK_LIBRARIES(Game Threads::Threads SFML::System SFML::Window SFML::Network SFML::Graphics SFML::Audio)
+TARGET_LINK_LIBRARIES(Game PRIVATE Threads::Threads SFML::System SFML::Window SFML::Network SFML::Graphics SFML::Audio)
 
 # Force C++23
-SET_PROPERTY(TARGET Game PROPERTY CXX_STANDARD 23)
+TARGET_COMPILE_FEATURES(Game PRIVATE cxx_std_23)
 
 # Copy assets to build directory
 ADD_CUSTOM_COMMAND(TARGET Game POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/assets/ $<TARGET_FILE_DIR:Game>/assets/)
