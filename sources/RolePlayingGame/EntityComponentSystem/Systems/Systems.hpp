@@ -21,7 +21,7 @@ namespace RPG
     void  handleMove(std::size_t id, const Game::JSON::Object& json); // Handle a move action
 
     template<typename Action, typename ... Args>
-    void  action(RPG::ECS::Entity entity, Args&& ... args)  // Push a new action to entity
+    void  action(RPG::ECS::Entity entity, Args ... args)  // Push a new action to entity
     {
       auto& action = ecs.getComponent<RPG::ServerActionComponent>(entity);
 
@@ -70,7 +70,7 @@ namespace RPG
     float _bufferingMax;  // Maximal time (value * timeout) in buffer before accelerating time
 
     template<typename Action, typename ... Args>
-    void  action(const Game::JSON::Object& json, Args&& ... args)  // Push a null action to entity
+    void  action(const Game::JSON::Object& json, Args ... args)  // Push a null action to entity
     {
       auto entity = ecs.getSystem<RPG::ClientEntitySystem>().getEntity(json.get(L"id").string());
 
