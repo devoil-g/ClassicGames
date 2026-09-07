@@ -183,7 +183,7 @@ namespace RPG
     ClientMoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, RPG::Coordinates target, RPG::Coordinates coordinates, RPG::Position position, RPG::Direction direction);
     ClientMoveAction(const ClientMoveAction&) = delete;
     ClientMoveAction(ClientMoveAction&&) = delete;
-    ~ClientMoveAction();
+    ~ClientMoveAction() = default;
 
     ClientMoveAction& operator=(const ClientMoveAction&) = delete;
     ClientMoveAction& operator=(ClientMoveAction&&) = delete;

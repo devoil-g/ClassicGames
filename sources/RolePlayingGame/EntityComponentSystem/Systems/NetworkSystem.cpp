@@ -473,7 +473,7 @@ void  RPG::ClientNetworkSystem::executeDraw()
 void  RPG::ClientNetworkSystem::select(RPG::ECS::Entity entity)
 {
   // Not controlled entities are considered as invalid
-  if (entity != RPG::ECS::InvalidEntity && std::find(_assigned.begin(), _assigned.end(), entity) == _assigned.end())
+  if (assigned(entity) == false)
     entity = RPG::ECS::InvalidEntity;
 
   // Set given entity as controlled

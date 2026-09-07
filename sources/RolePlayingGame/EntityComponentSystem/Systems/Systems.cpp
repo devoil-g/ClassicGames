@@ -515,14 +515,12 @@ RPG::ClientMoveAction::ClientMoveAction(RPG::ECS& ecs, RPG::ECS::Entity self, RP
   ecs.getSystem<RPG::ClientModelSystem>().setAnimation(self, RPG::Model::Actor::RunAnimation, RPG::Model::Actor::Mode::Loop, +1.f);
 }
 
-RPG::ClientMoveAction::~ClientMoveAction()
-{
-  // Stop run animation
-  ecs.getSystem<RPG::ClientModelSystem>().setAnimation(self, RPG::Model::Actor::IdleAnimation, RPG::Model::Actor::Mode::Loop, +1.f);
-}
-
 void  RPG::ClientMoveAction::update(float elapsed)
 {
+  // Already completed
+  if (_remaining <= 0.f)
+    return;
+
   auto& entity = ecs.getComponent<RPG::EntityComponent>(self);
 
   // Move entity to new position
